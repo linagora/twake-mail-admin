@@ -1,0 +1,7 @@
+# Include all patterns from .gitignore
+.gitignore
+
+# Add any Docker-specific ignore rules below
+specs
+Dockerfile
+docker-compose.yml
