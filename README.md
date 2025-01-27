@@ -1,23 +1,53 @@
-# Twak Mail Admin
+# Twake Mail Admin
 
-Welcome to Twake Mail Administration (version `0.0.0`) built with [Vite](https://vitejs.dev/)! This ease working with webadmin to manage Twake Mail.
+Welcome to Twake Mail Administration (version `0.0.0`)
 
-## Commands
+This project is a simple frontend for Twake Mail system operators. It enables quick and
+timely verification of running systems and if need be ease remediations. Hopefully,
+with this tool, regular operators will no longer need to cope with 
+[WebAmin REST interface](https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html) 
+via CLI.
 
-- **`dev`**: Starts the development server.  
-  Run:  
-  ```bash
-  npm run dev
-  ```
-  
-- **`build`**: Builds the project for production using TypeScript and Vite.  
-  Run:  
-  ```bash
-  npm run build
-  ```
-  
-- **`lint`**: Lints the codebase using ESLint to ensure code quality.  
-  Run:  
-  ```bash
-  npm run lint
-  ```
+[This document](specs/poc-tmail-admin.pdf) summarizes feature included in Twake Mail admin 
+interface MVP.
+
+![Healthchecks landing page](images/landing-page.png)
+
+**Non goals:** This project is not meant for doing:
+ - functional administration. Use **LinID** instead.
+ - presenting log and metrics. Use **Loki/Prometheus/Grafana** instead.
+
+## Run it!
+
+### Prerequisite
+
+ - Install [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) 
+ for managing local node versions.
+ - Install [bun](https://bun.sh/docs/installation) for compiling.
+
+### Commands
+
+Then use node version 18:
+
+```
+nvm install 18
+nvm use 18
+```
+
+Rename `.env.sample` into `.env` and edit the file accordingly to your Twake Mail environment.
+
+Install other project dependencies:
+
+```
+bun install
+```
+
+Then run the dev version of the project:
+
+```
+bun run dev
+```
+
+### Dependencies
+
+This project is built with [Vite](https://vitejs.dev/)!
