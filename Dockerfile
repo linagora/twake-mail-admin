@@ -1,28 +1,20 @@
-FROM oven/bun:alpine AS build
+# Base image
+FROM oven/bun:latest
 
-# Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Copy package files and lock files
-COPY package.json bun.lockb /app/
+# Copy package and lock files
+COPY package.json bun.lockb ./
 
 # Install dependencies
 RUN bun install
 
-# Copy the rest of the application code
-COPY . /app
+# Copy the rest of the source code
+COPY . .
 
-# Build the application
-RUN bun run build
+# Expose port 3000
+EXPOSE 3000
 
-# Stage 2: Serve the application
-FROM nginx:alpine
-
-# Copy the built application to Nginx's html directory
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Expose the Nginx default port
-EXPOSE 80
-
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start the development server
+CMD ["bun", "run", "dev"]

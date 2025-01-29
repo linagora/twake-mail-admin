@@ -24,7 +24,6 @@ export default function HealthCheck() {
     try {
       setIsLoading(true);
       const result = await getHealthCheck();
-      console.log("resule is:: ", result);
       setHealthCheckResults(result?.checks);
     } catch (error: unknown) {
       const e = error as APIError;
@@ -67,7 +66,7 @@ export default function HealthCheck() {
             }
           >
             <CardContent className="py-4 text-center">
-              {result.componentName}
+              {`${result.componentName}`}
             </CardContent>
           </Card>
         ))}
