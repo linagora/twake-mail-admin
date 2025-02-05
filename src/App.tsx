@@ -5,6 +5,7 @@ import HealthCheck from "./modules/health-check";
 import MailRepositories from "./modules/mail-repositories";
 import MailRepositoriesList from "./modules/mail-repositories/mail-repositories-list";
 import MailRepositoryDetail from "./modules/mail-repositories/details/mail-repository";
+import CommonTasks from "./modules/common-tasks/index";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route index element={<MailRepositoriesList />} />
           <Route path="repository/:id" element={<MailRepositoryDetail />} />
         </Route>
+        <Route path="/common-tasks" element={<CommonTasks />} />
       </Routes>
     </SidebarProvider>
   );
