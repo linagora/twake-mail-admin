@@ -8,3 +8,9 @@ export type GetMailRepositoriesResponseType = MailRepository[]; // Array of mail
 
 // Type for the response, which is an array of mail keys
 export type MailKeysResponseType = string[];
+
+export interface RepositoryInfo {
+  repository: string;
+  path: string;
+  size: number;
+}

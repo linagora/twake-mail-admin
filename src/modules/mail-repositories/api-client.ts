@@ -1,5 +1,9 @@
 import { apiClient } from "@/lib/apiClient";
-import { GetMailRepositoriesResponseType, MailKeysResponseType } from "./types";
+import {
+  GetMailRepositoriesResponseType,
+  MailKeysResponseType,
+  RepositoryInfo,
+} from "./types";
 
 /**
  * Fetches the list of mail repositories from the James server at `/mailRepositories`.
@@ -51,5 +55,26 @@ export const getMailsInRepository = async (
     `/mailRepositories/${encodedPathOfTheRepository}/mails?${params.toString()}`
   );
 
+  return response;
+};
+
+/**
+ * Fetches additional information for a specified mail repository.
+ *
+ * API: `GET http://ip:port/mailRepositories/{encodedPathOfTheRepository}`
+ *
+ * - Returns detailed information about the specified mail repository.
+ * - HTTP 200: Successfully retrieved additional information for the repository.
+ * - HTTP 404: Repository not found.
+ *
+ * @param encodedPathOfTheRepository - The URL-encoded path of the mail repository.
+ * @returns A promise resolving to an object with repository details.
+ */
+export const getRepositoryInfo = async (
+  encodedPathOfTheRepository: string
+): Promise<RepositoryInfo> => {
+  const response = await apiClient.get<any, RepositoryInfo>(
+    `/mailRepositories/${encodedPathOfTheRepository}`
+  );
   return response;
 };
