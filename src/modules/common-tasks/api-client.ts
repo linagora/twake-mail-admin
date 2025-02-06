@@ -1,10 +1,14 @@
 import { apiClient } from "@/lib/apiClient";
 import { TaskRequest } from "./types";
 
-export const runMailBoxesTask = async (payload: TaskRequest): Promise<any> => {
+export const runMailBoxesTask = async (payload: TaskRequest, options?: any): Promise<any> => {
   const params = new URLSearchParams(payload).toString();
   const response = await apiClient.post<any, any>(
-    `/mailboxes?${params}`
+    `/mailboxes?${params}`,
+    {},
+    {
+      ...options,
+    }
   );
   return response;
 };

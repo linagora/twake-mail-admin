@@ -28,6 +28,10 @@ export default function TaskContainer({ name, taskKey, command, doc }: TaskProps
         case TaskKey.FIX_MAILBOX_INCONSISTENCIES:
           await runMailBoxesTask({
             task: Task.SOLVE_INCONSISTENCIES,
+          }, {
+            headers: {
+              'I-KNOW-WHAT-I-M-DOING': 'ALL-SERVICES-ARE-OFFLINE',
+            },
           });
           break;
         case TaskKey.FIX_MESSAGE_INCONSISTENCIES:
