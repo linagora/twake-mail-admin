@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { APIError } from "@/lib/apiClient";
 import { getHealthCheck } from "./api-client";
-import { HealthCheckType, HealthStatuses } from "./types";
+import { HealthCheckResponseType, HealthStatuses } from "./types";
 import Header from "@/components/custom/header";
+import { useFetchData } from "@/hooks/use-fetch-data";
 
 const headerTitle =
   "Welcome to Twake Mail administration! This ease working with webadmin to manage Twake mail";
@@ -16,26 +15,15 @@ const docuUrl =
   "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_healthcheck";
 
 export default function HealthCheck() {
-  const [healthCheckResults, setHealthCheckResults] =
-    useState<HealthCheckType[]>();
-  const [isLoading, setIsLoading] = useState(false);
+  // Modify the hook to extract `checks` from the response
+  const {
+    data: healthCheckResponse,
+    isLoading,
+    error: _error,
+  } = useFetchData<HealthCheckResponseType>(getHealthCheck);
 
-  const handleGetHealthCheck = async () => {
-    try {
-      setIsLoading(true);
-      const result = await getHealthCheck();
-      setHealthCheckResults(result?.checks);
-    } catch (error: unknown) {
-      const e = error as APIError;
-      console.error("Failed to fetch health check status", e.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    handleGetHealthCheck();
-  }, []);
+  // Extract health check results from the response
+  const healthCheckResults = healthCheckResponse?.checks || [];
 
   return (
     <div className="p-4">
@@ -65,7 +53,7 @@ export default function HealthCheck() {
                 : "bg-red-600"
             }
           >
-            <CardContent className="py-4 text-center">
+            <CardContent className="py-4 text-center break-words">
               {`${result.componentName}`}
             </CardContent>
           </Card>

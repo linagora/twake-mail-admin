@@ -3,6 +3,9 @@ import { AppSidebar } from "./components/side-bar";
 import { SidebarProvider } from "./components/ui/sidebar";
 import HealthCheck from "./modules/health-check";
 import MailRepositories from "./modules/mail-repositories";
+import MailRepositoriesList from "./modules/mail-repositories/mail-repositories-list";
+import MailRepositoryDetail from "./modules/mail-repositories/details/mail-repository";
+import CommonTasks from "./modules/common-tasks/index";
 
 function App() {
   return (
@@ -12,7 +15,11 @@ function App() {
         {/* Redirect root path to /health-check */}
         <Route path="/" element={<Navigate to="/health-check" replace />} />
         <Route path="/health-check" element={<HealthCheck />} />
-        <Route path="/mail-repositories" element={<MailRepositories />} />
+        <Route path="/mail-repositories" element={<MailRepositories />}>
+          <Route index element={<MailRepositoriesList />} />
+          <Route path="repository/:id" element={<MailRepositoryDetail />} />
+        </Route>
+        <Route path="/common-tasks" element={<CommonTasks />} />
       </Routes>
     </SidebarProvider>
   );

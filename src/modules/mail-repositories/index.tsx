@@ -1,3 +1,4 @@
+import { Outlet } from "react-router";
 import Header from "@/components/custom/header";
 
 const headerTitle = "Mail Repositories";
@@ -16,6 +17,7 @@ export default function MailRepositories() {
         headerSubTitle={headerSubTitle}
         docuUrl={docuUrl}
       />
+      <Outlet />
     </div>
   );
 }

@@ -15,22 +15,22 @@ import {
 const items = [
   {
     title: "Health Check",
-    url: "health-check",
+    url: "/health-check",
     icon: Heart,
   },
   {
     title: "Mail Repositories",
-    url: "mail-repositories",
+    url: "/mail-repositories",
     icon: Mail,
   },
   {
     title: "Event Dead Letter",
-    url: "event-dead-letter",
+    url: "/event-dead-letter",
     icon: AlertCircle,
   },
   {
     title: "Common Tasks",
-    url: "common-tasks",
+    url: "/common-tasks",
     icon: ClipboardList,
   },
 ];
