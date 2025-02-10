@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
-import { TaskRequest } from "./types";
+import { TaskDetailResponse, TaskRequest } from "./types";
 
 export const runMailBoxesTask = async (payload: TaskRequest, options?: any): Promise<any> => {
   const params = new URLSearchParams(payload).toString();
@@ -46,6 +46,20 @@ export const runCleanupJmapUploadsTask = async (): Promise<any> => {
 export const runBlobGarbageCollectionTask = async (): Promise<any> => {
   const response = await apiClient.delete<any, any>(
     '/blobs?scope=unreferenced'
+  );
+  return response;
+}
+
+export const getTaskDetail = async (id: string): Promise<TaskDetailResponse> => {
+  const response = await apiClient.get<any, TaskDetailResponse>(
+    `/tasks/${id}`
+  );
+  return response;
+}
+
+export const cancelTask = async (id: string): Promise<any> => {
+  const response = await apiClient.delete<any, any>(
+    `/tasks/${id}`
   );
   return response;
 }

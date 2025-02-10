@@ -11,15 +11,14 @@ export enum Task {
 };
 
 export enum TaskKey {
-  REINDEX_FIXING_OUTDATE_MODE,
-  REINDEX_ALL_MODE,
-  FIX_MAILBOX_INCONSISTENCIES,
-  FIX_MESSAGE_INCONSISTENCIES,
-  RECOMPUTE_MAILBOX_COUNTERS,
-  RECOMPUTE_MAILBOX_QUOTA,
-  FIX_MAPPING_DENORMALIZATION,
-  CLEANUP_JMAP_UPLOADS,
-  BLOB_GARBAGE_COLLECTION,
+  REINDEX = 'full-reindexing',
+  FIX_MAILBOX_INCONSISTENCIES = 'solve-mailbox-inconsistencies',
+  FIX_MESSAGE_INCONSISTENCIES = 'solve-message-inconsistencies',
+  RECOMPUTE_MAILBOX_COUNTERS = 'recompute-mailbox-counters',
+  RECOMPUTE_MAILBOX_QUOTA = 'recompute-current-quotas',
+  FIX_MAPPING_DENORMALIZATION = 'cassandra-mappings-solve-inconsistencies',
+  CLEANUP_JMAP_UPLOADS = 'UploadRepositoryCleanupTask',
+  BLOB_GARBAGE_COLLECTION = 'BlobGCTask',
 };
 
 export type TaskRequest = {
@@ -30,6 +29,34 @@ export type TaskRequest = {
 export type TaskProps = {
   name: string;
   taskKey: TaskKey;
+  mode?: ReIndexMode;
   command: string;
   doc: string;
+}
+
+export enum TaskStatus {
+  COMPLETED = 'completed',
+  WAITING = 'waiting',
+  IN_PROGRESS = 'inProgress',
+  CANCELLED = 'cancelled',
+  FAILED = 'failed',
+};
+
+export type TaskDetailResponse = {
+  submitDate: string;
+  startedDate: string;
+  completedDate: string;
+  cancelledDate?: string;
+  failedDate?: string;
+  taskId: string;
+  additionalInformation: any;
+  status: TaskStatus;
+  type: TaskKey;
+  executedOn: string;
+  submittedFrom?: string;
+  cancelledFrom?: string;
+}
+
+export type RunTaskResponse = {
+  taskId: string;
 }
