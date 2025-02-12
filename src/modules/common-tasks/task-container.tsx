@@ -2,7 +2,6 @@ import { Loader2, X } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { TaskProps } from "./types";
 import { useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRunTask } from "@/hooks/use-run-task";
 import { useConfirm } from "@/hooks/use-confirm";

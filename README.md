@@ -26,6 +26,22 @@ interface MVP.
   for managing local node versions.
 - Install [bun](https://bun.sh/docs/installation) for compiling.
 
+### Environment Variables
+
+Before running the project, create a `.env` file based on `.env.example`:
+
+```sh
+cp .env.example .env
+```
+
+Then, update the values as needed.
+
+| Variable          | Description                                      | Default Value               |
+|------------------|------------------------------------------------|-----------------------------|
+| `VITE_API_BASE_URL` | The base URL for the admin API.                     | `http://localhost:8000`     |
+| `VITE_PAGE_LIMIT`  | Defines the number of items per page in pagination. | `20`                         |
+
+
 ### Commands
 
 Then use node version 18:

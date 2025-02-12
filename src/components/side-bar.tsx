@@ -52,7 +52,9 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem
+                  key={item.title}
+                >
                   <SidebarMenuButton asChild>
                     <a href={item.url} className={location.pathname.includes(item.url) ? 'font-bold' : ''}>
                       <item.icon />
