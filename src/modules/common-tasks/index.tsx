@@ -1,18 +1,20 @@
-import { TaskKey } from "./types";
+import { ReIndexMode, TaskKey } from "./types";
 import TaskContainer from "./task-container";
 import Header from "@/components/custom/header";
 
 const TASKS = [
   {
     name: 'Reindex all data in OpenSearch (fix outdated mode)',
-    taskKey: TaskKey.REINDEX_FIXING_OUTDATE_MODE,
-    command: 'curl -XPOST http://ip:port/mailboxes?task=reIndex&mode=fixOutdated',
+    taskKey: TaskKey.REINDEX,
+    mode: ReIndexMode.FIX_OUTDATED,
+    command: 'curl -XPOST /mailboxes?task=reIndex&mode=fixOutdated',
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_reindexing_action',
   },
   {
     name: 'Reindex all data in OpenSearch (reindex all mode)',
-    taskKey: TaskKey.REINDEX_ALL_MODE,
-    command: 'curl -XPOST http://ip:port/mailboxes?task=reIndex&mode=rebuildAll',
+    taskKey: TaskKey.REINDEX,
+    mode: ReIndexMode.REBUILD_ALL,
+    command: 'curl -XPOST /mailboxes?task=reIndex&mode=rebuildAll',
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_reindexing_action',
   },
   {
