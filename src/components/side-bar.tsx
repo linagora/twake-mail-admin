@@ -6,10 +6,13 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import Logo from '../assets/images/logo.svg';
+import { useLocation } from "react-router";
 
 // Menu items.
 const items = [
@@ -36,8 +39,13 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const location = useLocation();
+
   return (
     <Sidebar>
+      <SidebarHeader>
+        <img className="w-full" src={Logo} />
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -46,7 +54,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <a href={item.url} className={location.pathname.includes(item.url) ? 'font-bold' : ''}>
                       <item.icon />
                       <span>{item.title}</span>
                     </a>
