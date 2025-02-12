@@ -4,6 +4,7 @@ import { getMailsInRepository } from "../api-client";
 import { MailKeysResponseType } from "../types";
 import { useCallback } from "react";
 import { apiClient } from "@/lib/apiClient";
+import { useToast } from "@/hooks/use-toast";
 
 // Define the types for the expected responses
 interface JsonMailResponse {
@@ -56,11 +57,12 @@ const fetchMailData = async (
 };
 
 export default function MailRepositoryDetail() {
+  const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
 
   const page = Number(searchParams.get("page")) || 1;
-  const size = Number(searchParams.get("size")) || 10;
+  const size = Number(searchParams.get("size")) || 0;
   const limit = import.meta.env.VITE_PAGE_LIMIT;
   const offset = (page - 1) * limit;
   // check if we reached the end of the list
@@ -128,7 +130,10 @@ export default function MailRepositoryDetail() {
                       navigator.clipboard
                         .writeText(mailKey)
                         .then(() => {
-                          alert("Mail key copied to clipboard!");
+                          toast({
+                            title: "Mail key copied to clipboard!",
+                            description: `${mailKey}`,
+                          });
                         })
                         .catch((err) => {
                           console.error("Failed to copy text: ", err);

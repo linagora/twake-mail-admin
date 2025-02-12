@@ -1,10 +1,19 @@
 import { RefreshCw, Trash2 } from "lucide-react";
 import { GetMailRepositoriesResponseType, MailRepository } from "./types";
-import { getMailRepositories, getRepositoryInfo } from "./api-client";
+import {
+  clearMailRepository,
+  getMailRepositories,
+  getRepositoryInfo,
+  reprocessMailRepository,
+} from "./api-client";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCallback, useEffect, useState } from "react";
+import { useConfirm } from "@/hooks/use-confirm";
+import { useToast } from "@/hooks/use-toast";
 
 export default function MailRepositoriesList() {
+  const confirm = useConfirm();
+  const { toast } = useToast();
   const {
     data: mailRepositoriesResult,
     isLoading,
@@ -42,6 +51,49 @@ export default function MailRepositoriesList() {
       fetchRepositoryInfo();
     }
   }, [mailRepositoriesResult, fetchRepositoryInfo]);
+
+  const handleReprocessTask = async (path: string) => {
+    const result = await confirm({
+      header: "Run Task",
+      message: `Do you want to reprocess the mail repository: ${path}.`,
+    });
+    if (!result) {
+      return;
+    }
+    const { taskId } = await reprocessMailRepository(path);
+    toast({
+      title: "Run Task Successfully",
+      description: (
+        <p>
+          Task{" "}
+          <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>
+            {taskId}
+          </a>
+        </p>
+      ),
+    });
+  };
+  const handleClearTask = async (path: string) => {
+    const result = await confirm({
+      header: "Run Task",
+      message: `Do you want to clear the mail repository: ${path}.`,
+    });
+    if (!result) {
+      return;
+    }
+    const { taskId } = await clearMailRepository(path);
+    toast({
+      title: "Run Task Successfully",
+      description: (
+        <p>
+          Task{" "}
+          <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>
+            {taskId}
+          </a>
+        </p>
+      ),
+    });
+  };
   return (
     <>
       <div>
@@ -61,7 +113,9 @@ export default function MailRepositoriesList() {
             >
               <div>
                 <h4 className="text-sm font-medium leading-none">
-                  <a href={`/mail-repositories/repository/${result.path}?&page=1&size=${result.size}`}>
+                  <a
+                    href={`/mail-repositories/repository/${result.path}?&page=1&size=${result.size}`}
+                  >
                     {result.repository} ({result.size})
                   </a>
                 </h4>
@@ -69,11 +123,21 @@ export default function MailRepositoriesList() {
               </div>
 
               <div className="flex gap-2">
-                <button className="p-2 rounded-md hover:bg-gray-200">
+                <button
+                  className="p-2 rounded-md hover:bg-gray-200"
+                  onClick={() => {
+                    handleReprocessTask(result.path);
+                  }}
+                >
                   <RefreshCw className="w-5 h-5 text-blue-600" />
                 </button>
 
-                <button className="p-2 rounded-md hover:bg-gray-200">
+                <button
+                  className="p-2 rounded-md hover:bg-gray-200"
+                  onClick={() => {
+                    handleClearTask(result.path);
+                  }}
+                >
                   <Trash2 className="w-5 h-5 text-red-600" />
                 </button>
               </div>
