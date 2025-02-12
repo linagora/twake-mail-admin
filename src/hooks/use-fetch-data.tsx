@@ -24,5 +24,5 @@ export function useFetchData<T>(getter: () => Promise<T>) {
     fetchData();
   }, [getter]);
 
-  return { data, isLoading, error };
+  return { data, isLoading, error, refresh: fetchData };
 }

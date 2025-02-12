@@ -2,7 +2,6 @@ import { Loader2, X } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { TaskProps } from "./types";
 import { useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRunTask } from "@/hooks/use-run-task";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -29,12 +28,12 @@ export default function TaskContainer({ name, taskKey, mode, command, doc }: Tas
       setIsLoading(true);
       const taskId = await runTask(taskKey, mode);
       toast({
-        title: "Run Task Successfully",
+        title: "Task is running",
         description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>{taskId}</a></p>,
       });
     } catch (error) {
       toast({
-        title: "Run Task Error",
+        title: "Error running task",
         description: (error as APIError)?.response?.data?.message,
       });
     } finally {
