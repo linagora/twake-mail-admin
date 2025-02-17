@@ -124,7 +124,10 @@ export const reprocessMailRepository = async (
     redeliver_group_events?: boolean;
   }
 ): Promise<{ taskId: string }> => {
-  const queryParams = new URLSearchParams({ action: "reprocess" });
+  const queryParams = new URLSearchParams({
+    action: "reprocess",
+    processor: "root",
+  });
 
   if (options?.queue) queryParams.append("queue", options.queue);
   if (options?.processor) queryParams.append("processor", options.processor);
