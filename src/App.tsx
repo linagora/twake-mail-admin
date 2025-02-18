@@ -30,7 +30,7 @@ function App() {
             <Route path="/event-dead-letter" element={<EventDeadletter />}>
               <Route index element={<EventListenersList />} />
               <Route
-                path="event-dead-letter/:id"
+                path="group/:id"
                 element={<EventListenersDetail />}
               />
             </Route>

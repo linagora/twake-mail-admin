@@ -21,11 +21,20 @@ import { useToast } from "@/hooks/use-toast";
 export default function EventListenersList() {
   const confirm = useConfirm();
   const { toast } = useToast();
-  const {
+  let {
     data: mailRepositoriesResult,
     isLoading,
     error: _error,
   } = useFetchData<ListenerGroupsResponseType>(getMailboxListenerGroups);
+
+  // REMOVE
+  const mailRepositoriesResultMocked = [
+    ...(mailRepositoriesResult || []),
+    "org.apache.james.mailbox.events.EventBusTestFixture$GroupA",
+    "org.apache.james.mailbox.events.GenericGroup-abc",
+  ];
+  // REMOVE
+  mailRepositoriesResult = mailRepositoriesResultMocked;
 
   const [_isLoadingInfo, setIsLoadingInfo] = useState<boolean>(false);
   const [_errorInfo, setErrorInfo] = useState<string | null>(null);
@@ -85,12 +94,11 @@ export default function EventListenersList() {
               <div>
                 <h4 className="text-sm font-medium leading-none">
                   <a
-                    href={`/mail-repositories/repository/${result}?&page=1&size=10`}
+                    href={`/event-dead-letter/group/${result}?&page=1&size=10`}
                   >
                     {result} (0)
                   </a>
                 </h4>
-                <p className="text-sm text-muted-foreground">{result}</p>
               </div>
 
               <div className="flex gap-2">
