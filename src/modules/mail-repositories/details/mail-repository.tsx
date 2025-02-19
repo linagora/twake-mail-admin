@@ -63,7 +63,7 @@ export default function MailRepositoryDetail() {
 
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 0;
-  const limit = import.meta.env.VITE_PAGE_LIMIT;
+  const limit = Number(import.meta.env.VITE_PAGE_LIMIT) || 200;
   const offset = (page - 1) * limit;
   // check if we reached the end of the list
   const hasMore = offset + limit < size;
@@ -94,6 +94,14 @@ export default function MailRepositoryDetail() {
       {error && <p className="text-red-500">Error: {error}</p>}
       {/* Pagination UI */}
       <div className="mt-6 flex justify-between items-center">
+        {/** first page */}
+        <button
+          onClick={() => goToPage(1)}
+          disabled={page <= 1}
+          className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          First
+        </button>
         <button
           onClick={() => goToPage(page - 1)}
           disabled={page <= 1}
@@ -110,6 +118,14 @@ export default function MailRepositoryDetail() {
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next
+        </button>
+        {/** last page */}
+        <button
+          disabled={!hasMore}
+          onClick={() => goToPage(Math.ceil(size / limit))}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Last
         </button>
       </div>
       {mailKeys && (
