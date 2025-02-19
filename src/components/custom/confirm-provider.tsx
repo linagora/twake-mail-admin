@@ -44,7 +44,7 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
           <p>{confirmState.message}</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => handleClose(false)}>Cancel</Button>
-            <Button onClick={() => handleClose(true)}>Confirm</Button>
+            <Button className="mb-4 md:mb-0" onClick={() => handleClose(true)}>Confirm</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
