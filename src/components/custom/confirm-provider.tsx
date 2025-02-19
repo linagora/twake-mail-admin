@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 
 export interface ConfirmState {
   isOpen: boolean;
-  message: string;
+  message: string | ReactNode;
   header: string;
   resolve: ((value: boolean) => void) | null;
 }
 
 export interface ConfirmContextType {
-  ({ message, header }: { message: string; header: string; }): Promise<boolean>;
+  ({ message, header }: { message: string | ReactNode; header: string; }): Promise<boolean>;
 }
 
 export const ConfirmContext = createContext<ConfirmContextType | null>(null);
@@ -22,7 +22,7 @@ interface ConfirmProviderProps {
 export function ConfirmProvider({ children }: ConfirmProviderProps) {
   const [confirmState, setConfirmState] = useState<ConfirmState>({ isOpen: false, message: '', header: '', resolve: null });
 
-  const confirm: ConfirmContextType = ({ message, header }: { message: string; header: string; }) => {
+  const confirm: ConfirmContextType = ({ message, header }: { message: string | ReactNode; header: string; }) => {
     return new Promise<boolean>((resolve) => {
       setConfirmState({ isOpen: true, message, header, resolve });
     });
@@ -41,7 +41,7 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
           <DialogHeader>
             <DialogTitle>{confirmState.header}</DialogTitle>
           </DialogHeader>
-          <p>{confirmState.message}</p>
+          { typeof confirmState.message === 'string' ? <p>{confirmState.message}</p> : confirmState.message }
           <DialogFooter>
             <Button variant="outline" onClick={() => handleClose(false)}>Cancel</Button>
             <Button onClick={() => handleClose(true)}>Confirm</Button>

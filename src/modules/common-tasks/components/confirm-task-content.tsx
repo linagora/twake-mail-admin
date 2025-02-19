@@ -1,0 +1,34 @@
+import { useState } from "react";
+import { TaskParam } from "../types";
+import TaskParamsModifier from "./task-prams-modifier";
+
+interface Props {
+  name: string;
+  command: string;
+  params?: TaskParam[];
+  getParamValues: (key: string, value: string | boolean) => void;
+}
+
+const ConfirmTaskContent = ({ name, command, params, getParamValues }: Props) => {
+  const [customParams, setCustomParams] = useState({});
+
+  const handleChangeParam = (key: string, value: string | boolean) => {
+    setCustomParams(prev => ({ ...prev, [key]: value }))
+    getParamValues(key, value);
+  };
+
+  return (
+    <div className="overflow-hidden">
+      <p>Do you want to run task <b>{name}</b>?</p>
+      {params?.length && (
+        <>
+          <p>You can modify { params?.length > 1 ? 'these parameters' : 'this parameter' }</p>
+          <TaskParamsModifier params={params} handleChangeParam={handleChangeParam} />
+        </>
+      )}
+      <p className="break-words">Command: {customParams ? `&${command}${new URLSearchParams(customParams)}` : command}</p>
+    </div>
+  );
+};
+
+export default ConfirmTaskContent;
