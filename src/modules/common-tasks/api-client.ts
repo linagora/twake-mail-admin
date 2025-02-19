@@ -1,8 +1,22 @@
 import { apiClient } from "@/lib/apiClient";
-import { TaskDetailResponse, TaskRequest } from "./types";
+import { AdditionalParams, TaskDetailResponse, TaskRequest } from "./types";
+
+const parsePayloadToSearchParams = (payload: any) => {
+  if (!payload) {
+    return '';
+  }
+
+  const cleanedPayload: any = {};
+  for (const key in payload) {
+    if (payload[key]) {
+      cleanedPayload[key] = payload[key]
+    }
+  }
+  return new URLSearchParams(cleanedPayload).toString();
+}
 
 export const runMailBoxesTask = async (payload: TaskRequest, options?: any): Promise<any> => {
-  const params = new URLSearchParams(payload).toString();
+  const params = parsePayloadToSearchParams(payload);
   const response = await apiClient.post<any, any>(
     `/mailboxes?${params}`,
     {},
@@ -13,39 +27,42 @@ export const runMailBoxesTask = async (payload: TaskRequest, options?: any): Pro
   return response;
 };
 
-export const runMessageTask = async (payload: TaskRequest): Promise<any> => {
-  const params = new URLSearchParams(payload).toString();
+export const runMessageTask = async (payload: TaskRequest & AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams(payload);
   const response = await apiClient.post<any, any>(
     `/messages?${params}`
   );
   return response;
 };
 
-export const runQuotaTask = async (payload: TaskRequest): Promise<any> => {
-  const params = new URLSearchParams(payload).toString()
+export const runQuotaTask = async (payload: TaskRequest & AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams(payload)
   const response = await apiClient.post<any, any>(
     `/quota/users?${params}`
   );
   return response;
 };
 
-export const runFixMappingTask = async (): Promise<any> => {
+export const runFixMappingTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams(payload);
   const response = await apiClient.post<any, any>(
-    '/cassandra/mappings?action=SolveInconsistencies'
+    `/cassandra/mappings?action=SolveInconsistencies?${params}`
   );
   return response;
 };
 
-export const runCleanupJmapUploadsTask = async (): Promise<any> => {
+export const runCleanupJmapUploadsTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams(payload);
   const response = await apiClient.delete<any, any>(
-    '/jmap/uploads?scope=expired'
+    `/jmap/uploads?scope=expired?${params}`
   );
   return response;
 }
 
-export const runBlobGarbageCollectionTask = async (): Promise<any> => {
+export const runBlobGarbageCollectionTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams(payload);
   const response = await apiClient.delete<any, any>(
-    '/blobs?scope=unreferenced'
+    `/blobs?scope=unreferenced?${params}`
   );
   return response;
 }

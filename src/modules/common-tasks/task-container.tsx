@@ -1,4 +1,4 @@
-import { Loader2, X } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { TaskProps } from "./types";
 import { useState } from "react";
@@ -7,8 +7,9 @@ import { useRunTask } from "@/hooks/use-run-task";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import { APIError } from "@/lib/apiClient";
+import ConfirmTaskContent from "./components/confirm-task-content";
 
-export default function TaskContainer({ name, taskKey, mode, command, doc }: TaskProps) {
+export default function TaskContainer({ name, taskKey, mode, command, doc, params }: TaskProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { toast } = useToast();
@@ -17,16 +18,27 @@ export default function TaskContainer({ name, taskKey, mode, command, doc }: Tas
 
   const handleRunTask = async () => {
     try {
+      const additionParams: any = {};
       const result = await confirm({
         header: 'Run Task',
-        message: `Do you want to run task ${name} with comman ${command}`,
+        message: (
+          <ConfirmTaskContent
+            name={name}
+            command={command}
+            params={params}
+            getParamValues={(key, value) => {
+              console.log('key: ', value)
+              additionParams[key] = value
+            }}
+          />
+        ),
       });
       if (!result) {
         return;
       }
 
       setIsLoading(true);
-      const taskId = await runTask(taskKey, mode);
+      const taskId = await runTask(taskKey, mode, additionParams);
       toast({
         title: "Task is running",
         description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>{taskId}</a></p>,

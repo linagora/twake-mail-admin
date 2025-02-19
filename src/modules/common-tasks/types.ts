@@ -26,12 +26,22 @@ export type TaskRequest = {
   mode?: ReIndexMode.REBUILD_ALL | ReIndexMode.FIX_OUTDATED;
 };
 
+export type AdditionalParams = {
+  messagesPerSecond?: string;
+  trustMessageProjection?: boolean;
+  usersPerSecond?: string;
+  quotaComponent?: string;
+  associatedProbability?: string;
+  expectedBlobCount?: string;
+}
+
 export type TaskProps = {
   name: string;
   taskKey: TaskKey;
   mode?: ReIndexMode;
   command: string;
   doc: string;
+  params?: TaskParam[]
 }
 
 export enum TaskStatus {
@@ -59,4 +69,19 @@ export type TaskDetailResponse = {
 
 export type RunTaskResponse = {
   taskId: string;
+}
+
+export interface TaskParam {
+  key: string;
+  defaultValue?: string | boolean;
+  type: "input" | "checkbox" | "select";
+  values?: string[];
+}
+
+export interface CommonTask {
+  name: string;
+  taskKey: string;
+  command: string;
+  params?: TaskParam[];
+  doc?: string;
 }
