@@ -43,7 +43,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="hidden md:block">
         <img className="w-full" src={Logo} />
       </SidebarHeader>
       <SidebarContent>

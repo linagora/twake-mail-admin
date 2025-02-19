@@ -67,7 +67,7 @@ const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/dis
 
 export default function CommonTasks() {
   return (
-    <div className="p-4 relative">
+    <div className="p-4 relative w-fit">
       <Header
         headerSubTitle={headerSubTitle}
         docuUrl={docuUrl}

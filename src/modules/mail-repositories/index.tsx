@@ -13,7 +13,7 @@ export default function MailRepositories() {
   const { id } = useParams();
 
   return (
-    <div className="p-4">
+    <div className="p-4 w-fit">
       <Header
         headerTitle={headerTitle}
         headerSubTitle={headerSubTitle}
