@@ -39,6 +39,9 @@ export default function TaskDetail() {
   }
 
   const formatDateTime = (dateTime: string) => {
+    if (!dateTime) {
+      return null;
+    }
     const dateTimeValue = new Date(dateTime);
     return `${dateTimeValue.toLocaleDateString()} ${dateTimeValue.toLocaleTimeString()}`;
   }

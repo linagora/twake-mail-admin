@@ -109,7 +109,7 @@ export default function MailRepositoryDetail() {
         >
           Previous
         </button>
-        <span className="text-sm font-medium">
+        <span className="text-sm font-medium text-center">
           Page {page} / {limit} mails per page / Total: {size}
         </span>
         <button
