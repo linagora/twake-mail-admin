@@ -1,15 +1,7 @@
 import { RefreshCw, Trash2 } from "lucide-react";
-import {
-  ListenerGroupsResponseType,
-  InsertionIdsResponseType,
-  EventDetails,
-  TaskResponse,
-} from "./types";
+import { ListenerGroupsResponseType } from "./types";
 import {
   getMailboxListenerGroups,
-  getFailedEvents,
-  getEventDetails,
-  deleteEvent,
   deleteAllEventsForGroup,
   redeliverGroupEvents,
 } from "./api-client";
@@ -22,27 +14,27 @@ export default function EventListenersList() {
   const confirm = useConfirm();
   const { toast } = useToast();
   let {
-    data: mailRepositoriesResult,
+    data: listenerGroupsResult,
     isLoading,
     error: _error,
   } = useFetchData<ListenerGroupsResponseType>(getMailboxListenerGroups);
 
   // REMOVE
   const mailRepositoriesResultMocked = [
-    ...(mailRepositoriesResult || []),
+    ...(listenerGroupsResult || []),
     "org.apache.james.mailbox.events.EventBusTestFixture$GroupA",
     "org.apache.james.mailbox.events.GenericGroup-abc",
   ];
   // REMOVE
-  mailRepositoriesResult = mailRepositoriesResultMocked;
+  listenerGroupsResult = mailRepositoriesResultMocked;
 
-  const [_isLoadingInfo, setIsLoadingInfo] = useState<boolean>(false);
-  const [_errorInfo, setErrorInfo] = useState<string | null>(null);
+  const [_isLoadingInfo, _setIsLoadingInfo] = useState<boolean>(false);
+  const [_errorInfo, _setErrorInfo] = useState<string | null>(null);
 
-  const handleReprocessTask = async (path: string) => {
+  const handleRedeliverGroup = async (path: string) => {
     const result = await confirm({
       header: "Run Task",
-      message: `Do you want to reprocess the mail repository: ${path}.`,
+      message: `Do you want to re-deliver events for the group: ${path}.`,
     });
     if (!result) {
       return;
@@ -60,10 +52,10 @@ export default function EventListenersList() {
       ),
     });
   };
-  const handleClearTask = async (path: string) => {
+  const handleClearGroup = async (path: string) => {
     const result = await confirm({
       header: "Run Task",
-      message: `Do you want to clear the mail repository: ${path}.`,
+      message: `Do you want to clear group: ${path}.`,
     });
     if (!result) {
       return;
@@ -86,7 +78,7 @@ export default function EventListenersList() {
         )}
         <p>List</p>
         <div>
-          {mailRepositoriesResult?.map((result) => (
+          {listenerGroupsResult?.map((result) => (
             <div
               key={result}
               className="space-y-1 p-4 bg-white rounded-2 my-4 p-4 flex justify-between items-center"
@@ -105,7 +97,7 @@ export default function EventListenersList() {
                 <button
                   className="p-2 rounded-md hover:bg-gray-200"
                   onClick={() => {
-                    handleReprocessTask(result);
+                    handleRedeliverGroup(result);
                   }}
                 >
                   <RefreshCw className="w-5 h-5 text-blue-600" />
@@ -114,7 +106,7 @@ export default function EventListenersList() {
                 <button
                   className="p-2 rounded-md hover:bg-gray-200"
                   onClick={() => {
-                    handleClearTask(result);
+                    handleClearGroup(result);
                   }}
                 >
                   <Trash2 className="w-5 h-5 text-red-600" />

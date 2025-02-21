@@ -1,62 +1,33 @@
 import { useParams, useSearchParams } from "react-router";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import {
-  InsertionIdsResponseType,
-} from "../types";
-import {
-  getFailedEvents,
-} from "../api-client";
+import { InsertionIdsResponseType } from "../types";
+import { getFailedEvents } from "../api-client";
 import { useCallback } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { useToast } from "@/hooks/use-toast";
 
-// Define the types for the expected responses
-interface JsonMailResponse {
-  name: string;
-  sender: string;
-  recipients: string[];
-  state: string;
-  error: string;
-  remoteHost: string;
-  remoteAddr: string;
-  lastUpdated: string | null;
+interface EventResponse {
+  [key: string]: any; // Represents the full JSON structure of the event
 }
 
-type MailResponse = JsonMailResponse | Blob;
-
-const fetchMailData = async (
-  repo: string,
-  mailKey: string,
-  acceptType: "application/json" | "message/rfc822"
+const fetchFailedEventJson = async (
+  group: string,
+  insertionId: string
 ): Promise<void> => {
-  const repositoryPath = encodeURIComponent(repo);
-  const endpoint = `/mailRepositories/${repositoryPath}/mails/${mailKey}`;
+  const endpoint = `/events/deadLetter/groups/${group}/${insertionId}`;
 
   try {
-    const response = (await apiClient.get<MailResponse>(endpoint, {
-      headers: { Accept: acceptType },
-      responseType: acceptType === "message/rfc822" ? "blob" : "json",
-    })) as any;
+    const response = await apiClient.get<EventResponse>(endpoint);
 
-    if (acceptType === "application/json") {
-      const jsonWindow = window.open("", "_blank");
-      if (jsonWindow) {
-        jsonWindow.document.write(
-          "<pre>" + JSON.stringify(response, null, 2) + "</pre>"
-        );
-        jsonWindow.document.close();
-      }
-    } else if (acceptType === "message/rfc822") {
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${mailKey}.eml`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+    const jsonWindow = window.open("", "_blank");
+    if (jsonWindow) {
+      jsonWindow.document.write(
+        "<pre>" + JSON.stringify(response, null, 2) + "</pre>"
+      );
+      jsonWindow.document.close();
     }
   } catch (error) {
-    console.error("Error fetching mail data:", error);
+    console.error("Error fetching failed event JSON:", error);
   }
 };
 
@@ -72,16 +43,16 @@ export default function EventListenersDetail() {
   // check if we reached the end of the list
   const hasMore = offset + limit < size;
 
-  const fetchMails = useCallback(
+  const fetchFailedEvents = useCallback(
     () => getFailedEvents(id!),
     [id, limit, offset]
   );
 
   const {
-    data: mailKeys,
+    data: failedEventKeys,
     isLoading,
     error,
-  } = useFetchData<InsertionIdsResponseType>(fetchMails);
+  } = useFetchData<InsertionIdsResponseType>(fetchFailedEvents);
 
   // Handle pagination navigation
   const goToPage = (newPage: number) => {
@@ -114,7 +85,7 @@ export default function EventListenersDetail() {
           Previous
         </button>
         <span className="text-sm font-medium">
-          Page {page} / {limit} mails per page / Total: {size}
+          Page {page} / {limit} failed events per page / Total: {size}
         </span>
         <button
           disabled={!hasMore}
@@ -132,12 +103,12 @@ export default function EventListenersDetail() {
           Last
         </button>
       </div>
-      {mailKeys && (
+      {failedEventKeys && (
         <div className="mt-8">
           <ul>
-            {mailKeys.map((mailKey, index) => (
+            {failedEventKeys.map((failedEventKey, index) => (
               <li
-                key={mailKey}
+                key={failedEventKey}
                 className="flex justify-between items-center border-b pb-1"
               >
                 <span className="font-medium text-gray-800">
@@ -148,11 +119,11 @@ export default function EventListenersDetail() {
                     className="text-lg font-semibold cursor-pointer"
                     onDoubleClick={() => {
                       navigator.clipboard
-                        .writeText(mailKey)
+                        .writeText(failedEventKey)
                         .then(() => {
                           toast({
-                            title: "Mail key copied to clipboard!",
-                            description: `${mailKey}`,
+                            title: "Event key copied to clipboard!",
+                            description: `${failedEventKey}`,
                           });
                         })
                         .catch((err) => {
@@ -160,7 +131,7 @@ export default function EventListenersDetail() {
                         });
                     }}
                   >
-                    {mailKey}
+                    {failedEventKey}
                   </span>
                 </span>
 
@@ -169,21 +140,11 @@ export default function EventListenersDetail() {
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      fetchMailData(id!, mailKey, "application/json");
+                      fetchFailedEventJson(id!, failedEventKey);
                     }}
                     className="hover:text-blue-500 hover:underline transition"
                   >
                     (JSON)
-                  </a>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      fetchMailData(id!, mailKey, "message/rfc822");
-                    }}
-                    className="hover:text-blue-500 hover:underline transition"
-                  >
-                    (MIME)
                   </a>
                 </span>
               </li>
