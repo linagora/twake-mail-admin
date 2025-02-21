@@ -19,15 +19,6 @@ export default function EventListenersList() {
     error: _error,
   } = useFetchData<ListenerGroupsResponseType>(getMailboxListenerGroups);
 
-  // REMOVE
-  const mailRepositoriesResultMocked = [
-    ...(listenerGroupsResult || []),
-    "org.apache.james.mailbox.events.EventBusTestFixture$GroupA",
-    "org.apache.james.mailbox.events.GenericGroup-abc",
-  ];
-  // REMOVE
-  listenerGroupsResult = mailRepositoriesResultMocked;
-
   const [_isLoadingInfo, _setIsLoadingInfo] = useState<boolean>(false);
   const [_errorInfo, _setErrorInfo] = useState<string | null>(null);
 
