@@ -4,7 +4,8 @@ import { getMailsInRepository } from "../api-client";
 import { MailKeysResponseType } from "../types";
 import { useCallback } from "react";
 import { apiClient } from "@/lib/apiClient";
-import { useToast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
+import ErrorDisplayer from "@/components/custom/error-displayer";
 
 // Define the types for the expected responses
 interface JsonMailResponse {
@@ -52,7 +53,10 @@ const fetchMailData = async (
       link.remove();
     }
   } catch (error) {
-    console.error("Error fetching mail data:", error);
+    toast({
+      title: "Error fetching failed event JSON",
+      description: <ErrorDisplayer error={error} />,
+    });
   }
 };
 

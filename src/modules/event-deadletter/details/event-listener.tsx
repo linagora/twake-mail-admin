@@ -4,7 +4,8 @@ import { InsertionIdsResponseType } from "../types";
 import { getFailedEvents } from "../api-client";
 import { useCallback } from "react";
 import { apiClient } from "@/lib/apiClient";
-import { useToast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
+import ErrorDisplayer from "@/components/custom/error-displayer";
 
 interface EventResponse {
   [key: string]: any; // Represents the full JSON structure of the event
@@ -27,7 +28,10 @@ const fetchFailedEventJson = async (
       jsonWindow.document.close();
     }
   } catch (error) {
-    console.error("Error fetching failed event JSON:", error);
+    toast({
+      title: "Error fetching failed event JSON",
+      description: <ErrorDisplayer error={error} />,
+    });
   }
 };
 
