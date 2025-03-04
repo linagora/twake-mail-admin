@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { CircleStop, RefreshCcw } from "lucide-react";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tooltip } from "@radix-ui/react-tooltip";
-import { APIError } from "@/lib/apiClient";
 import { useToast } from "@/hooks/use-toast";
 import { TaskStatus } from "../types";
 import Header from "@/components/custom/header";
+import ErrorDisplayer from "@/components/custom/error-displayer";
 
 export default function TaskDetail() {
   const { id } = useParams();
@@ -33,7 +33,7 @@ export default function TaskDetail() {
     } catch (error) {
       toast({
         title: "Error Canceling Task",
-        description: (error as APIError)?.response?.data?.message,
+        description: <ErrorDisplayer error={error} />,
       });
     }
   }

@@ -6,8 +6,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useRunTask } from "@/hooks/use-run-task";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
-import { APIError } from "@/lib/apiClient";
 import ConfirmTaskContent from "./components/confirm-task-content";
+import ErrorDisplayer from "@/components/custom/error-displayer";
 
 export default function TaskContainer({ name, taskKey, mode, command, doc, params }: TaskProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -46,7 +46,7 @@ export default function TaskContainer({ name, taskKey, mode, command, doc, param
     } catch (error) {
       toast({
         title: "Error running task",
-        description: (error as APIError)?.response?.data?.message,
+        description: <ErrorDisplayer error={error} />,
       });
     } finally {
       setIsLoading(false);
