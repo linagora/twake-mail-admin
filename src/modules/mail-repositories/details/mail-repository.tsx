@@ -1,11 +1,13 @@
 import { useParams, useSearchParams } from "react-router";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getMailsInRepository } from "../api-client";
+import { getMailsInRepository, removeSingleMailFromRepository } from "../api-client";
 import { MailKeysResponseType } from "../types";
 import { useCallback } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { toast, useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { Trash2 } from "lucide-react";
+import { useConfirm } from "@/hooks/use-confirm";
 
 // Define the types for the expected responses
 interface JsonMailResponse {
@@ -64,6 +66,7 @@ export default function MailRepositoryDetail() {
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
+  const confirm = useConfirm();
 
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 0;
@@ -81,12 +84,35 @@ export default function MailRepositoryDetail() {
     data: mailKeys,
     isLoading,
     error,
+    refresh,
   } = useFetchData<MailKeysResponseType>(fetchMails);
 
   // Handle pagination navigation
   const goToPage = (newPage: number) => {
     if (newPage < 1) return;
     setSearchParams({ page: newPage.toString(), size: size.toString() });
+  };
+
+  const handleRemoveMail = async (mailKey: string) => {
+    try {
+      const result = await confirm({
+        header: "Run Task",
+        message: `Do you want to clear mail ${mailKey} in the mail repository: ${id}.`,
+      });
+      if (!result || !id) {
+        return;
+      }
+      await removeSingleMailFromRepository(encodeURIComponent(id), mailKey);
+      toast({
+        title: "Remove Mail Successfully",
+      });
+      await refresh();
+    } catch (error) {
+      toast({
+        title: "Error Removing Mail",
+        description: <ErrorDisplayer error={error} />,
+      });
+    }
   };
 
   return (
@@ -164,7 +190,7 @@ export default function MailRepositoryDetail() {
                   </span>
                 </span>
 
-                <span className="flex space-x-2 text-sm text-gray-500">
+                <span className="flex items-center space-x-2 text-sm text-gray-500">
                   <a
                     href="#"
                     onClick={(e) => {
@@ -185,6 +211,12 @@ export default function MailRepositoryDetail() {
                   >
                     (MIME)
                   </a>
+                  <button
+                    className="p-2 rounded-md hover:bg-gray-200"
+                    onClick={() => handleRemoveMail(mailKey)}
+                  >
+                    <Trash2 className="w-5 h-5 text-red-600" />
+                  </button>
                 </span>
               </li>
             ))}

@@ -149,3 +149,25 @@ export const reprocessMailRepository = async (
 
   return response;
 };
+
+/**
+ * Removes a mail from a specified mail repository.
+ *
+ * API: `DELETE http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails/mailKey`
+ *
+ * - Schedules a task to clear a mail from the repository.
+ * - HTTP 201: Task generation succeeded, returns corresponding task ID.
+ * - HTTP 404: Repository not found.
+ *
+ * @param encodedPathOfTheRepository - The URL-encoded path of the mail repository.
+ * @returns A promise resolving to the task details.
+ */
+ export const removeSingleMailFromRepository = async (
+  encodedPathOfTheRepository: string,
+  mailKey: string,
+): Promise<{ taskId: string }> => {
+  const response = await apiClient.delete<any, { taskId: string }>(
+    `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}`
+  );
+  return response;
+};
