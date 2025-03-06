@@ -45,15 +45,15 @@ export default function EventListenersList() {
   };
   const handleClearGroup = async (path: string) => {
     const result = await confirm({
-      header: "Run Task",
-      message: `Do you want to clear group: ${path}.`,
+      header: "Clear event group",
+      message: `Do you want to clear the event group: ${path}.`,
     });
     if (!result) {
       return;
     }
     await deleteAllEventsForGroup(path);
     toast({
-      title: "Run Task Successfully",
+      title: "Success",
       description: <p>The events were deleted.</p>,
     });
   };
