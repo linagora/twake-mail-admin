@@ -1,11 +1,13 @@
 import { useParams, useSearchParams } from "react-router";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { InsertionIdsResponseType } from "../types";
-import { getFailedEvents } from "../api-client";
+import { deleteEvent, getFailedEvents } from "../api-client";
 import { useCallback } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { toast, useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { Trash2 } from "lucide-react";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface EventResponse {
   [key: string]: any; // Represents the full JSON structure of the event
@@ -39,6 +41,7 @@ export default function EventListenersDetail() {
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
+  const confirm = useConfirm();
 
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 0;
@@ -56,12 +59,35 @@ export default function EventListenersDetail() {
     data: failedEventKeys,
     isLoading,
     error,
+    refresh,
   } = useFetchData<InsertionIdsResponseType>(fetchFailedEvents);
 
   // Handle pagination navigation
   const goToPage = (newPage: number) => {
     if (newPage < 1) return;
     setSearchParams({ page: newPage.toString(), size: size.toString() });
+  };
+
+  const handleRemoveEvent = async (insertionId: string) => {
+    try {
+      const result = await confirm({
+        header: "Run Deleting Event",
+        message: `Do you want to delete event ${insertionId} in the group: ${id}.`,
+      });
+      if (!result || !id) {
+        return;
+      }
+      await deleteEvent(id, insertionId);
+      toast({
+        title: "Delete Event Successfully",
+      });
+      await refresh();
+    } catch (error) {
+      toast({
+        title: "Error Deleting Event",
+        description: <ErrorDisplayer error={error} />,
+      });
+    }
   };
 
   return (
@@ -139,7 +165,7 @@ export default function EventListenersDetail() {
                   </span>
                 </span>
 
-                <span className="flex space-x-2 text-sm text-gray-500">
+                <span className="flex items-center space-x-2 text-sm text-gray-500">
                   <a
                     href="#"
                     onClick={(e) => {
@@ -150,6 +176,12 @@ export default function EventListenersDetail() {
                   >
                     (JSON)
                   </a>
+                  <button
+                    className="p-2 rounded-md hover:bg-gray-200"
+                    onClick={() => handleRemoveEvent(failedEventKey)}
+                  >
+                    <Trash2 className="w-5 h-5 text-red-600" />
+                  </button>
                 </span>
               </li>
             ))}
