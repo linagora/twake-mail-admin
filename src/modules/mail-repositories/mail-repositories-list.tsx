@@ -69,7 +69,7 @@ export default function MailRepositoriesList() {
       header: "Run Task",
       message: (
         <ConfirmTaskContent
-          name={"Reprocess Mail Repository"}
+          message={<p>Do you want to run task <b>Reprocess Mail Repository</b>?</p>}
           command={command}
           params={params}
           getParamValues={(key, value) => {

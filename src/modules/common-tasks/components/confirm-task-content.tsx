@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { TaskParam } from "../types";
 import TaskParamsModifier from "./task-prams-modifier";
 
 interface Props {
-  name: string;
+  message: string | ReactNode;
   command: string;
   params?: TaskParam[];
   getParamValues: (key: string, value: string | boolean) => void;
 }
 
 const ConfirmTaskContent = ({
-  name,
+  message,
   command,
   params,
   getParamValues,
@@ -24,9 +24,7 @@ const ConfirmTaskContent = ({
 
   return (
     <div className="overflow-hidden">
-      <p>
-        Do you want to run task <b>{name}</b>?
-      </p>
+      {message}
       {params?.length && (
         <>
           <p>
