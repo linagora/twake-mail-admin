@@ -10,6 +10,8 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCallback, useEffect, useState } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
+import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
+import { TaskParam } from "../common-tasks/types";
 
 export default function MailRepositoriesList() {
   const confirm = useConfirm();
@@ -53,14 +55,34 @@ export default function MailRepositoriesList() {
   }, [mailRepositoriesResult, fetchRepositoryInfo]);
 
   const handleReprocessTask = async (path: string) => {
+    const params = [
+      { key: "queue", defaultValue: "spool", type: "input" as const }, // Target mail queue
+      { key: "processor", defaultValue: "root", type: "input" as const }, // Override state of reprocessing mails
+      { key: "consume", defaultValue: true, type: "checkbox" as const }, // Non-destructive reprocessing option
+      { key: "limit", defaultValue: "", type: "input" as const }, // Limit count of elements
+      { key: "maxRetries", defaultValue: "", type: "input" as const }, // Limit retries
+    ];
+    const paramValues: { [key: string]: string } = {};
+    const command =
+      "curl -XPATCH http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails?action=reprocess&";
     const result = await confirm({
       header: "Run Task",
-      message: `Do you want to reprocess the mail repository: ${path}.`,
+      message: (
+        <ConfirmTaskContent
+          name={"Reprocess Mail Repository"}
+          command={command}
+          params={params}
+          getParamValues={(key, value) => {
+            paramValues[key] =
+              typeof value === "boolean" ? value.toString() : value;
+          }}
+        />
+      ),
     });
     if (!result) {
       return;
     }
-    const { taskId } = await reprocessMailRepository(path);
+    const { taskId } = await reprocessMailRepository(path, paramValues);
     toast({
       title: "Run Task Successfully",
       description: (
