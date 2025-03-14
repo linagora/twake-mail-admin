@@ -9,6 +9,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { useState } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
+import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 
 export default function EventListenersList() {
   const confirm = useConfirm();
@@ -23,14 +24,32 @@ export default function EventListenersList() {
   const [_errorInfo, _setErrorInfo] = useState<string | null>(null);
 
   const handleRedeliverGroup = async (path: string) => {
+    const params = [
+      { key: "limit", defaultValue: "", type: "input" as const },
+      { key: "maxRetries", defaultValue: "", type: "input" as const },
+      { key: "redeliver_group_events", defaultValue: false, type: "checkbox" as const },
+    ];
+    const paramValues: { [key: string]: string } = {};
+    const command =
+      "curl -XPOST http://ip:port/events/deadLetter/groups/{encodedPathOfTheGroup}?action=reDeliver&";
     const result = await confirm({
       header: "Run Task",
-      message: `Do you want to re-deliver events for the group: ${path}.`,
+      message: (
+        <ConfirmTaskContent
+          message={<p>Do you want to re-deliver events for the group: ${path}.</p>}
+          command={command}
+          params={params}
+          getParamValues={(key, value) => {
+            paramValues[key] =
+              typeof value === "boolean" ? value.toString() : value;
+          }}
+        />
+      ),
     });
     if (!result) {
       return;
     }
-    const { taskId } = await redeliverGroupEvents(path);
+    const { taskId } = await redeliverGroupEvents(path, paramValues);
     toast({
       title: "Run Task Successfully",
       description: (
