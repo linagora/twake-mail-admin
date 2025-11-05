@@ -15,14 +15,16 @@ import EventListenersDetail from "./modules/event-deadletter/details/event-liste
 import CommonTasks from "./modules/common-tasks/index";
 import TaskDetail from "./modules/common-tasks/task-detail";
 import { ConfirmProvider } from "./components/custom/confirm-provider";
+import { AuthProvider } from "./components/custom/auth-provider";
 import { Toaster } from "./components/ui/toaster";
 import Logo from "./assets/images/logo.svg";
 
 function App() {
   return (
     <>
-      <ConfirmProvider>
-        <SidebarProvider>
+      <AuthProvider>
+        <ConfirmProvider>
+          <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
             <header className="block md:hidden flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -52,8 +54,9 @@ function App() {
               <Route path="/task/:id" element={<TaskDetail />} />
             </Routes>
           </SidebarInset>
-        </SidebarProvider>
-      </ConfirmProvider>
+          </SidebarProvider>
+        </ConfirmProvider>
+      </AuthProvider>
       <Toaster />
     </>
   );
