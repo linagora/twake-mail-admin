@@ -12,6 +12,9 @@ import MailRepositoryDetail from "./modules/mail-repositories/details/mail-repos
 import EventDeadletter from "./modules/event-deadletter";
 import EventListenersList from "./modules/event-deadletter/eventl-listeners-list";
 import EventListenersDetail from "./modules/event-deadletter/details/event-listener";
+import Domains from "./modules/domains";
+import DomainsList from "./modules/domains/domains-list";
+import DomainDetail from "./modules/domains/details/domain-detail";
 import Users from "./modules/users";
 import UsersList from "./modules/users/users-list";
 import UserDetail from "./modules/users/details/user-detail";
@@ -54,6 +57,10 @@ function App() {
               <Route path="/event-dead-letter" element={<EventDeadletter />}>
                 <Route index element={<EventListenersList />} />
                 <Route path="group/:id" element={<EventListenersDetail />} />
+              </Route>
+              <Route path="/domains" element={<Domains />}>
+                <Route index element={<DomainsList />} />
+                <Route path="domain/:domain" element={<DomainDetail />} />
               </Route>
               <Route path="/users" element={<Users />}>
                 <Route index element={<UsersList />} />

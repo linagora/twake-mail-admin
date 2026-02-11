@@ -1,0 +1,1 @@
+export type GetDomainsResponseType = string[];
