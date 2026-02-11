@@ -32,3 +32,9 @@ export interface UserQuota {
   computed: QuotaValues | null;
   occupation: QuotaOccupation;
 }
+
+export interface AliasSource {
+  source: string;
+}
+
+export type GetUserAliasesResponseType = AliasSource[];

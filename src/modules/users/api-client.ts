@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType } from "./types";
 
 export const getUsers = async (): Promise<GetUsersResponseType> => {
   const response = await apiClient.get<any, GetUsersResponseType>("/users");
@@ -94,6 +94,25 @@ export const subscribeAllUserMailboxes = async (
     `/users/${encodeURIComponent(username)}/mailboxes?task=subscribeAll`
   );
   return response;
+};
+
+export const getUserAliases = async (username: string): Promise<GetUserAliasesResponseType> => {
+  const response = await apiClient.get<any, GetUserAliasesResponseType>(
+    `/address/aliases/${encodeURIComponent(username)}`
+  );
+  return response;
+};
+
+export const addUserAlias = async (username: string, alias: string): Promise<void> => {
+  await apiClient.put(
+    `/address/aliases/${encodeURIComponent(username)}/sources/${encodeURIComponent(alias)}`
+  );
+};
+
+export const removeUserAlias = async (username: string, alias: string): Promise<void> => {
+  await apiClient.delete(
+    `/address/aliases/${encodeURIComponent(username)}/sources/${encodeURIComponent(alias)}`
+  );
 };
 
 export const recomputeFastViewProjection = async (
