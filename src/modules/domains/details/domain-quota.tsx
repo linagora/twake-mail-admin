@@ -5,6 +5,7 @@ import { DomainQuota, DomainQuotaValues } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
+import ExploreUserQuota from "@/components/custom/explore-user-quota";
 
 interface Props {
   domain: string;
@@ -162,8 +163,11 @@ export default function DomainQuotaSection({ domain }: Props) {
           ) : (
             <p className="text-sm text-muted-foreground">Could not load quota.</p>
           )}
+
         </div>
       )}
+
+      {open && <ExploreUserQuota domain={domain} />}
     </div>
   );
 }
