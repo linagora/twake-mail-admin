@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota } from "./types";
 
 export const getUsers = async (): Promise<GetUsersResponseType> => {
   const response = await apiClient.get<any, GetUsersResponseType>("/users");
@@ -45,6 +45,27 @@ export const clearMailboxContent = async (username: string, mailboxName: string)
     `/users/${encodeURIComponent(username)}/mailboxes/${encodeURIComponent(mailboxName)}/messages`
   );
   return response;
+};
+
+export const getUserQuota = async (username: string): Promise<UserQuota> => {
+  const response = await apiClient.get<any, UserQuota>(
+    `/quota/users/${encodeURIComponent(username)}`
+  );
+  return response;
+};
+
+export const updateUserQuotaSize = async (username: string, size: number): Promise<void> => {
+  await apiClient.put(
+    `/quota/users/${encodeURIComponent(username)}/size`,
+    size,
+    { headers: { "Content-Type": "application/json" } }
+  );
+};
+
+export const deleteUserQuotaSize = async (username: string): Promise<void> => {
+  await apiClient.delete(
+    `/quota/users/${encodeURIComponent(username)}/size`
+  );
 };
 
 export const deleteAllUserMailboxes = async (username: string): Promise<void> => {

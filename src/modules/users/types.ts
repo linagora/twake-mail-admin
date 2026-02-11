@@ -9,3 +9,26 @@ export interface Mailbox {
 }
 
 export type GetUserMailboxesResponseType = Mailbox[];
+
+export interface QuotaValues {
+  count: number | null;
+  size: number | null;
+}
+
+export interface QuotaOccupation {
+  size: number;
+  count: number;
+  ratio: {
+    size: number;
+    count: number;
+    max: number;
+  };
+}
+
+export interface UserQuota {
+  global: QuotaValues | null;
+  domain: QuotaValues | null;
+  user: QuotaValues | null;
+  computed: QuotaValues | null;
+  occupation: QuotaOccupation;
+}
