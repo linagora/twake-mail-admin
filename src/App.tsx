@@ -12,6 +12,8 @@ import MailRepositoryDetail from "./modules/mail-repositories/details/mail-repos
 import EventDeadletter from "./modules/event-deadletter";
 import EventListenersList from "./modules/event-deadletter/eventl-listeners-list";
 import EventListenersDetail from "./modules/event-deadletter/details/event-listener";
+import Users from "./modules/users";
+import UsersList from "./modules/users/users-list";
 import CommonTasks from "./modules/common-tasks/index";
 import TaskDetail from "./modules/common-tasks/task-detail";
 import { ConfirmProvider } from "./components/custom/confirm-provider";
@@ -49,6 +51,9 @@ function App() {
               <Route path="/event-dead-letter" element={<EventDeadletter />}>
                 <Route index element={<EventListenersList />} />
                 <Route path="group/:id" element={<EventListenersDetail />} />
+              </Route>
+              <Route path="/users" element={<Users />}>
+                <Route index element={<UsersList />} />
               </Route>
               <Route path="/common-tasks" element={<CommonTasks />} />
               <Route path="/task/:id" element={<TaskDetail />} />

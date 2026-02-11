@@ -1,4 +1,4 @@
-import { Heart, Mail, AlertCircle, ClipboardList } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, Users } from "lucide-react";
 
 import {
   Sidebar,
@@ -30,6 +30,11 @@ const items = [
     title: "Event Dead Letter",
     url: "/event-dead-letter",
     icon: AlertCircle,
+  },
+  {
+    title: "Users",
+    url: "/users",
+    icon: Users,
   },
   {
     title: "Common Tasks",
