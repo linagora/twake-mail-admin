@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetDomainsResponseType, GetDomainAliasesResponseType, DomainQuota, DomainQuotaValues } from "./types";
+import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, DomainQuota, DomainQuotaValues } from "./types";
 
 export const getDomains = async (): Promise<GetDomainsResponseType> => {
   const response = await apiClient.get<any, GetDomainsResponseType>("/domains");
@@ -33,6 +33,18 @@ export const getDomainQuota = async (domain: string): Promise<DomainQuota> => {
 
 export const updateDomainQuota = async (domain: string, quota: DomainQuotaValues): Promise<void> => {
   await apiClient.put(`/quota/domains/${encodeURIComponent(domain)}`, quota);
+};
+
+export const getTeamMailboxes = async (domain: string): Promise<GetTeamMailboxesResponseType> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes`);
+};
+
+export const createTeamMailbox = async (domain: string, name: string): Promise<void> => {
+  await apiClient.put(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(name)}`);
+};
+
+export const deleteTeamMailbox = async (domain: string, name: string): Promise<void> => {
+  await apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(name)}`);
 };
 
 export const deleteAllUsersData = async (domain: string): Promise<RunTaskResponse> => {

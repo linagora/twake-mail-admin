@@ -15,6 +15,7 @@ import EventListenersDetail from "./modules/event-deadletter/details/event-liste
 import Domains from "./modules/domains";
 import DomainsList from "./modules/domains/domains-list";
 import DomainDetail from "./modules/domains/details/domain-detail";
+import TeamMailboxDetail from "./modules/domains/details/team-mailbox-detail";
 import Users from "./modules/users";
 import UsersList from "./modules/users/users-list";
 import UserDetail from "./modules/users/details/user-detail";
@@ -61,6 +62,7 @@ function App() {
               <Route path="/domains" element={<Domains />}>
                 <Route index element={<DomainsList />} />
                 <Route path="domain/:domain" element={<DomainDetail />} />
+                <Route path="domain/:domain/team-mailbox/:mailbox" element={<TeamMailboxDetail />} />
               </Route>
               <Route path="/users" element={<Users />}>
                 <Route index element={<UsersList />} />

@@ -6,6 +6,13 @@ export interface DomainAliasSource {
 
 export type GetDomainAliasesResponseType = DomainAliasSource[];
 
+export interface TeamMailbox {
+  name: string;
+  emailAddress: string;
+}
+
+export type GetTeamMailboxesResponseType = TeamMailbox[];
+
 export interface DomainQuotaValues {
   count: number | null;
   size: number | null;
