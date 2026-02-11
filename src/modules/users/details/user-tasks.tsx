@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
-import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages } from "../api-client";
+import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, deleteUserData } from "../api-client";
 import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 import { TaskParam } from "@/modules/common-tasks/types";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -32,6 +33,7 @@ export default function UserTasks({ username }: Props) {
   const [subscribeLoading, setSubscribeLoading] = useState(false);
   const [fastViewLoading, setFastViewLoading] = useState(false);
   const [restoreLoading, setRestoreLoading] = useState(false);
+  const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);
 
   const handleReindex = async () => {
     try {
@@ -184,6 +186,44 @@ export default function UserTasks({ username }: Props) {
     }
   };
 
+  const handleDeleteUserData = async () => {
+    let fromStep = "";
+
+    try {
+      const result = await confirm({
+        header: "Delete User Data",
+        message: (
+          <div>
+            <p>Delete all data for <strong>{username}</strong>. This cannot be undone.</p>
+            <div className="mt-4 flex items-center gap-2">
+              <label className="text-sm font-medium whitespace-nowrap">From step (optional):</label>
+              <Input
+                type="text"
+                placeholder="e.g. MailboxUserDeletionTaskStep"
+                onChange={(e) => { fromStep = e.target.value; }}
+              />
+            </div>
+          </div>
+        ),
+      });
+      if (!result) return;
+
+      setDeleteUserDataLoading(true);
+      const data = await deleteUserData(username, fromStep || undefined);
+      toast({
+        title: "Task is running",
+        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+      });
+    } catch (err) {
+      toast({
+        title: "Error deleting user data",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setDeleteUserDataLoading(false);
+    }
+  };
+
   return (
     <div className="mt-6">
       <button
@@ -271,6 +311,22 @@ export default function UserTasks({ username }: Props) {
                 </TooltipTrigger>
                 <TooltipContent>
                   curl -XDELETE /users/{username}/mailboxes
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+            <p>Delete user data</p>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteUserData}>
+                    {deleteUserDataLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XPOST /users/{username}?action=deleteData
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

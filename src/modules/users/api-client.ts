@@ -139,6 +139,17 @@ export const removeUserForward = async (username: string, destination: string): 
   );
 };
 
+export const deleteUserData = async (
+  username: string,
+  fromStep?: string
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ action: "deleteData" });
+  if (fromStep) query.set("fromStep", fromStep);
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}?${query.toString()}`
+  );
+};
+
 export const restoreDeletedMessages = async (
   username: string,
   body: RestoreDeletedMessagesRequest
