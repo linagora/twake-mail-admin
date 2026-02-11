@@ -1,15 +1,24 @@
 import { useParams } from "react-router";
 import { useCallback, useMemo, useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Loader2, Plus, Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getUserMailboxes, createUserMailbox, deleteUserMailbox } from "../api-client";
+import { getUserMailboxes, createUserMailbox, deleteUserMailbox, reindexUserMailboxes } from "../api-client";
 import { GetUserMailboxesResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
+import { TaskParam } from "@/modules/common-tasks/types";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 const INVALID_MAILBOX_PATTERN = /[%*]|^#/;
+
+const REINDEX_PARAMS: TaskParam[] = [
+  { key: "messagesPerSecond", defaultValue: "50", type: "input" },
+  { key: "mode", values: ["rebuildAll", "fixOutdated"], type: "select" },
+];
 
 export default function UserDetail() {
   const { username } = useParams();
@@ -33,6 +42,8 @@ export default function UserDetail() {
   const [page, setPage] = useState(1);
   const [newMailbox, setNewMailbox] = useState("");
   const [showCreateInput, setShowCreateInput] = useState(false);
+  const [reindexLoading, setReindexLoading] = useState(false);
+  const [tasksOpen, setTasksOpen] = useState(false);
 
   const filtered = useMemo(() => {
     if (!mailboxes) return [];
@@ -94,6 +105,40 @@ export default function UserDetail() {
         title: "Error deleting mailbox",
         description: <ErrorDisplayer error={err} />,
       });
+    }
+  };
+
+  const handleReindex = async () => {
+    try {
+      const additionalParams: any = {};
+      const result = await confirm({
+        header: "Reindex User Mailboxes",
+        message: (
+          <ConfirmTaskContent
+            message={<p>Reindex all mailboxes for <strong>{username}</strong>.</p>}
+            command={`curl -XPOST /users/${username}/mailboxes?task=reIndex`}
+            params={REINDEX_PARAMS}
+            getParamValues={(key, value) => {
+              additionalParams[key] = value;
+            }}
+          />
+        ),
+      });
+      if (!result) return;
+
+      setReindexLoading(true);
+      const data = await reindexUserMailboxes(username!, additionalParams);
+      toast({
+        title: "Task is running",
+        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+      });
+    } catch (err) {
+      toast({
+        title: "Error running reindex task",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setReindexLoading(false);
     }
   };
 
@@ -238,6 +283,41 @@ export default function UserDetail() {
                 )}
               </>
             )}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-6">
+        <button
+          onClick={() => setTasksOpen(!tasksOpen)}
+          className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
+        >
+          {tasksOpen ? (
+            <ChevronDown className="w-4 h-4" />
+          ) : (
+            <ChevronRight className="w-4 h-4" />
+          )}
+          Tasks
+        </button>
+
+        {tasksOpen && (
+          <div className="mt-2 p-4 bg-gray-50 rounded-2">
+            <div className="flex justify-between items-center">
+              <p>Reindex all mailboxes</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleReindex}>
+                      {reindexLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}/mailboxes?task=reIndex
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
         )}
       </div>

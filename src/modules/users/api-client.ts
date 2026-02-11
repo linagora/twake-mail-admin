@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
+import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetUsersResponseType, GetUserMailboxesResponseType } from "./types";
 
 export const getUsers = async (): Promise<GetUsersResponseType> => {
@@ -23,4 +24,17 @@ export const deleteUserMailbox = async (username: string, mailboxName: string): 
   await apiClient.delete(
     `/users/${encodeURIComponent(username)}/mailboxes/${encodeURIComponent(mailboxName)}`
   );
+};
+
+export const reindexUserMailboxes = async (
+  username: string,
+  params: { messagesPerSecond?: string; mode?: string }
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ task: "reIndex" });
+  if (params.messagesPerSecond) query.set("messagesPerSecond", params.messagesPerSecond);
+  if (params.mode) query.set("mode", params.mode);
+  const response = await apiClient.post<any, RunTaskResponse>(
+    `/users/${encodeURIComponent(username)}/mailboxes?${query.toString()}`
+  );
+  return response;
 };
