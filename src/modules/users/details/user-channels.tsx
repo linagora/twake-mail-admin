@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronDown, ChevronRight, Loader2, RefreshCw } from "lucide-react";
-import { getUserChannels } from "../api-client";
+import { getUserChannels, disconnectUserChannels } from "../api-client";
 import { NetworkChannel } from "../types";
+import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/hooks/use-confirm";
+import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -10,9 +13,12 @@ interface Props {
 }
 
 export default function UserChannels({ username }: Props) {
+  const { toast } = useToast();
+  const confirm = useConfirm();
   const [open, setOpen] = useState(false);
   const [channels, setChannels] = useState<NetworkChannel[]>([]);
   const [loading, setLoading] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState<NetworkChannel | null>(null);
 
   const fetchChannels = useCallback(async () => {
@@ -26,6 +32,28 @@ export default function UserChannels({ username }: Props) {
       setLoading(false);
     }
   }, [username]);
+
+  const handleDisconnectAll = async () => {
+    const confirmed = await confirm({
+      header: "Disconnect All Channels",
+      message: `Disconnect all channels for "${username}"?`,
+    });
+    if (!confirmed) return;
+
+    setDisconnecting(true);
+    try {
+      await disconnectUserChannels(username);
+      toast({ title: "All channels disconnected" });
+      await fetchChannels();
+    } catch (err) {
+      toast({
+        title: "Error disconnecting channels",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setDisconnecting(false);
+    }
+  };
 
   useEffect(() => {
     if (open) fetchChannels();
@@ -43,9 +71,19 @@ export default function UserChannels({ username }: Props) {
 
       {open && (
         <div className="mt-2">
-          <div className="flex justify-end mb-2">
+          <div className="flex justify-end gap-2 mb-2">
             <Button variant="outline" size="sm" onClick={fetchChannels} disabled={loading}>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleDisconnectAll}
+              disabled={disconnecting}
+            >
+              {disconnecting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+              Disconnect all
             </Button>
           </div>
 

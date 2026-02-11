@@ -143,6 +143,10 @@ export const getUserChannels = async (username: string): Promise<GetUserChannels
   return apiClient.get(`/servers/channels/${encodeURIComponent(username)}`);
 };
 
+export const disconnectUserChannels = async (username: string): Promise<void> => {
+  await apiClient.delete(`/servers/channels/${encodeURIComponent(username)}`);
+};
+
 export const renameUser = async (
   username: string,
   newUsername: string,
