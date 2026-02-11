@@ -108,6 +108,7 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
             <span>Written Bytes</span>
             <span>Read Bytes</span>
             <span>Live Read B/s</span>
+            <span>Live Write B/s</span>
           </div>
           <div className="space-y-1">
             {displayed.map((channel, index) => {
@@ -127,6 +128,7 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
                   <span className="truncate">{info.cumulativeWrittenBytes ?? "-"}</span>
                   <span className="truncate">{info.cumulativeReadBytes ?? "-"}</span>
                   <span className="truncate">{info.liveReadThroughputBytePerSecond ?? "-"}</span>
+                  <span className="truncate">{info.liveWriteThroughputBytePerSecond ?? "-"}</span>
                 </div>
               );
             })}
