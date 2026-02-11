@@ -22,6 +22,17 @@ function getFieldValue(channel: NetworkChannel, field: SortField): string {
   return channel.protocolSpecificInformation?.[field] ?? "";
 }
 
+function formatBytes(value: string | undefined, perSecond = false): string {
+  if (value == null || value === "") return "-";
+  const num = Number(value);
+  if (isNaN(num)) return value;
+  const suffix = perSecond ? "/s" : "";
+  if (num < 1024) return `${num} B${suffix}`;
+  if (num < 1024 * 1024) return `${(num / 1024).toFixed(1)} KB${suffix}`;
+  if (num < 1024 * 1024 * 1024) return `${(num / (1024 * 1024)).toFixed(1)} MB${suffix}`;
+  return `${(num / (1024 * 1024 * 1024)).toFixed(2)} GB${suffix}`;
+}
+
 function compareValues(a: string, b: string): number {
   const numA = Number(a);
   const numB = Number(b);
@@ -105,10 +116,10 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
             <span>Protocol</span>
             <span>User Agent</span>
             <span>Requests</span>
-            <span>Written Bytes</span>
-            <span>Read Bytes</span>
-            <span>Live Read B/s</span>
-            <span>Live Write B/s</span>
+            <span>Written</span>
+            <span>Read</span>
+            <span>Live Read</span>
+            <span>Live Write</span>
           </div>
           <div className="space-y-1">
             {displayed.map((channel, index) => {
@@ -125,10 +136,10 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
                   <span className="truncate">{channel.protocol}</span>
                   <span className="truncate">{info.userAgent ?? "-"}</span>
                   <span className="truncate">{info.requestCount ?? "-"}</span>
-                  <span className="truncate">{info.cumulativeWrittenBytes ?? "-"}</span>
-                  <span className="truncate">{info.cumulativeReadBytes ?? "-"}</span>
-                  <span className="truncate">{info.liveReadThroughputBytePerSecond ?? "-"}</span>
-                  <span className="truncate">{info.liveWriteThroughputBytePerSecond ?? "-"}</span>
+                  <span className="truncate">{formatBytes(info.cumulativeWrittenBytes)}</span>
+                  <span className="truncate">{formatBytes(info.cumulativeReadBytes)}</span>
+                  <span className="truncate">{formatBytes(info.liveReadThroughputBytePerSecond, true)}</span>
+                  <span className="truncate">{formatBytes(info.liveWriteThroughputBytePerSecond, true)}</span>
                 </div>
               );
             })}
