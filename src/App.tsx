@@ -14,6 +14,7 @@ import EventListenersList from "./modules/event-deadletter/eventl-listeners-list
 import EventListenersDetail from "./modules/event-deadletter/details/event-listener";
 import Users from "./modules/users";
 import UsersList from "./modules/users/users-list";
+import UserDetail from "./modules/users/details/user-detail";
 import CommonTasks from "./modules/common-tasks/index";
 import TaskDetail from "./modules/common-tasks/task-detail";
 import { ConfirmProvider } from "./components/custom/confirm-provider";
@@ -54,6 +55,7 @@ function App() {
               </Route>
               <Route path="/users" element={<Users />}>
                 <Route index element={<UsersList />} />
+                <Route path="user/:username" element={<UserDetail />} />
               </Route>
               <Route path="/common-tasks" element={<CommonTasks />} />
               <Route path="/task/:id" element={<TaskDetail />} />

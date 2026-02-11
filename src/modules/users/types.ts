@@ -3,3 +3,9 @@ export interface User {
 }
 
 export type GetUsersResponseType = User[];
+
+export interface Mailbox {
+  mailboxName: string;
+}
+
+export type GetUserMailboxesResponseType = Mailbox[];

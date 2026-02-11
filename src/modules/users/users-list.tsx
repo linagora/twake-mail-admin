@@ -98,7 +98,12 @@ export default function UsersList() {
             <div>
               <h4 className="text-sm font-medium leading-none">
                 <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
-                {user.username}
+                <a
+                  href={`/users/user/${encodeURIComponent(user.username)}`}
+                  className="text-blue-600 hover:underline"
+                >
+                  {user.username}
+                </a>
               </h4>
             </div>
           </div>
