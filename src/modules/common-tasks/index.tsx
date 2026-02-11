@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
-import { reloadCertificates } from "./api-client";
+import { reloadCertificates, cleanupOldTasks } from "./api-client";
 import TaskContainer from "./task-container";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
@@ -98,6 +98,8 @@ export default function CommonTasks() {
   const confirm = useConfirm();
   const [reloadLoading, setReloadLoading] = useState(false);
   const [reloadPort, setReloadPort] = useState("");
+  const [cleanupLoading, setCleanupLoading] = useState(false);
+  const [cleanupDays, setCleanupDays] = useState("30");
 
   const handleReloadCertificates = async () => {
     const confirmed = await confirm({
@@ -117,6 +119,29 @@ export default function CommonTasks() {
       });
     } finally {
       setReloadLoading(false);
+    }
+  };
+
+  const handleCleanupOldTasks = async () => {
+    const days = parseInt(cleanupDays);
+    if (isNaN(days) || days <= 0) return;
+    const confirmed = await confirm({
+      header: "Cleanup Old Tasks",
+      message: `Delete all tasks older than ${days} day${days > 1 ? "s" : ""}?`,
+    });
+    if (!confirmed) return;
+
+    setCleanupLoading(true);
+    try {
+      await cleanupOldTasks(days);
+      toast({ title: `Old tasks (>${days} days) cleaned up` });
+    } catch (err) {
+      toast({
+        title: "Error cleaning up old tasks",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setCleanupLoading(false);
     }
   };
 
@@ -152,6 +177,33 @@ export default function CommonTasks() {
               </TooltipTrigger>
               <TooltipContent>
                 curl -XPOST /servers?reload-certificate
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <div className="flex justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <p>Cleaning up old tasks</p>
+            <input
+              type="number"
+              min="1"
+              placeholder="days"
+              value={cleanupDays}
+              onChange={(e) => setCleanupDays(e.target.value)}
+              className="border rounded px-2 py-1 text-sm w-24"
+            />
+            <span className="text-sm text-gray-500">days</span>
+          </div>
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleCleanupOldTasks}>
+                  {cleanupLoading && <Loader2 className="animate-spin" />}
+                  Run
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                curl -XDELETE /tasks?olderThan=Nday
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

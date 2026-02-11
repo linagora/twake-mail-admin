@@ -73,6 +73,10 @@ export const reloadCertificates = async (port?: string): Promise<void> => {
   await apiClient.post(`/servers?${query.toString()}`);
 };
 
+export const cleanupOldTasks = async (olderThanDays: number): Promise<any> => {
+  return apiClient.delete(`/tasks?olderThan=${olderThanDays}day`);
+};
+
 export const getTaskDetail = async (id: string): Promise<TaskDetailResponse> => {
   const response = await apiClient.get<any, TaskDetailResponse>(
     `/tasks/${id}`
