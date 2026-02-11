@@ -1,19 +1,45 @@
 import { useMemo, useState } from "react";
+import { Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getDomains } from "./api-client";
+import { useConfirm } from "@/hooks/use-confirm";
+import { useToast } from "@/hooks/use-toast";
+import { getDomains, deleteDomain } from "./api-client";
 import { GetDomainsResponseType } from "./types";
+import ErrorDisplayer from "@/components/custom/error-displayer";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function DomainsList() {
+  const { toast } = useToast();
+  const confirm = useConfirm();
+
   const {
     data: domainsResult,
     isLoading,
     error,
+    refresh,
   } = useFetchData<GetDomainsResponseType>(getDomains);
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+
+  const handleDelete = async (domain: string) => {
+    const confirmed = await confirm({
+      header: "Delete Domain",
+      message: `Delete "${domain}"? The domain can be re-created afterwards and existing user data will not be affected.`,
+    });
+    if (!confirmed) return;
+    try {
+      await deleteDomain(domain);
+      toast({ title: `Domain "${domain}" deleted` });
+      refresh();
+    } catch (err) {
+      toast({
+        title: "Error deleting domain",
+        description: <ErrorDisplayer error={err} />,
+      });
+    }
+  };
 
   const filtered = useMemo(() => {
     if (!domainsResult) return [];
@@ -101,6 +127,13 @@ export default function DomainsList() {
                 </a>
               </h4>
             </div>
+            <button
+              onClick={() => handleDelete(domain)}
+              className="p-2 rounded-md hover:bg-gray-200"
+              title="Delete domain"
+            >
+              <Trash2 className="w-4 h-4 text-red-600" />
+            </button>
           </div>
         ))}
       </div>
