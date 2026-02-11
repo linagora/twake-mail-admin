@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, GetUserChannelsResponseType, RestoreDeletedMessagesRequest } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest } from "./types";
+import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
 export const getUsers = async (): Promise<GetUsersResponseType> => {
   const response = await apiClient.get<any, GetUsersResponseType>("/users");

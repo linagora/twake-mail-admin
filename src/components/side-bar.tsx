@@ -1,4 +1,4 @@
-import { Heart, Mail, AlertCircle, ClipboardList, Users } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, Users, Network } from "lucide-react";
 
 import {
   Sidebar,
@@ -35,6 +35,11 @@ const items = [
     title: "Users",
     url: "/users",
     icon: Users,
+  },
+  {
+    title: "Network Channels",
+    url: "/network-channels",
+    icon: Network,
   },
   {
     title: "Common Tasks",
