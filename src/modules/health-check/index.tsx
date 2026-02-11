@@ -19,7 +19,6 @@ export default function HealthCheck() {
   const {
     data: healthCheckResponse,
     isLoading,
-    error: _error,
   } = useFetchData<HealthCheckResponseType>(getHealthCheck);
 
   // Extract health check results from the response

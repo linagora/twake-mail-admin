@@ -18,14 +18,13 @@ export default function MailRepositoriesList() {
   const {
     data: mailRepositoriesResult,
     isLoading,
-    error: _error,
   } = useFetchData<GetMailRepositoriesResponseType>(getMailRepositories);
 
   const [repositoriesWithSize, setRepositoriesWithSize] = useState<
     (MailRepository & { size: number })[]
   >([]);
-  const [_isLoadingInfo, setIsLoadingInfo] = useState<boolean>(false);
-  const [_errorInfo, setErrorInfo] = useState<string | null>(null);
+  const [, setIsLoadingInfo] = useState<boolean>(false);
+  const [, setErrorInfo] = useState<string | null>(null);
 
   const fetchRepositoryInfo = useCallback(async () => {
     if (!mailRepositoriesResult) return;
@@ -36,7 +35,7 @@ export default function MailRepositoriesList() {
         try {
           const repoInfo = await getRepositoryInfo(repository.path);
           return { ...repository, size: repoInfo.size };
-        } catch (error) {
+        } catch {
           setErrorInfo(`Failed to fetch info for ${repository.repository}`);
           return { ...repository, size: 0 }; // Handle the error case, e.g., set size to 0 or keep existing data
         }
