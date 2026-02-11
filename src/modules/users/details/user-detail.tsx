@@ -5,6 +5,7 @@ import UserAliases from "./user-aliases";
 import UserForwards from "./user-forwards";
 import UserTeamMailboxes from "./user-team-mailboxes";
 import UserVacation from "./user-vacation";
+import UserDelegation from "./user-delegation";
 import UserTasks from "./user-tasks";
 import UserChannels from "./user-channels";
 
@@ -22,6 +23,7 @@ export default function UserDetail() {
       <UserForwards username={username!} />
       <UserTeamMailboxes username={username!} />
       <UserVacation username={username!} />
+      <UserDelegation username={username!} />
       <UserTasks username={username!} />
       <UserChannels username={username!} />
     </div>

@@ -152,6 +152,18 @@ export const deleteUserVacation = async (username: string): Promise<void> => {
   await apiClient.delete(`/vacation/${encodeURIComponent(username)}`);
 };
 
+export const getDelegatedUsers = async (username: string): Promise<string[]> => {
+  return apiClient.get(`/users/${encodeURIComponent(username)}/authorizedUsers`);
+};
+
+export const addDelegatedUser = async (username: string, delegated: string): Promise<void> => {
+  await apiClient.put(`/users/${encodeURIComponent(username)}/authorizedUsers/${encodeURIComponent(delegated)}`);
+};
+
+export const removeDelegatedUser = async (username: string, delegated: string): Promise<void> => {
+  await apiClient.delete(`/users/${encodeURIComponent(username)}/authorizedUsers/${encodeURIComponent(delegated)}`);
+};
+
 export const getUserTeamMailboxes = async (username: string): Promise<{ name: string; emailAddress: string }[]> => {
   return apiClient.get(`/users/${encodeURIComponent(username)}/team-mailboxes`);
 };
