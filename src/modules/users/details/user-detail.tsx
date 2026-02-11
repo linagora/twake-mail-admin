@@ -7,6 +7,7 @@ import UserTeamMailboxes from "./user-team-mailboxes";
 import UserVacation from "./user-vacation";
 import UserDelegation from "./user-delegation";
 import UserAllowedFrom from "./user-allowed-from";
+import UserIdentities from "./user-identities";
 import UserTasks from "./user-tasks";
 import UserChannels from "./user-channels";
 
@@ -26,6 +27,7 @@ export default function UserDetail() {
       <UserVacation username={username!} />
       <UserDelegation username={username!} />
       <UserAllowedFrom username={username!} />
+      <UserIdentities username={username!} />
       <UserTasks username={username!} />
       <UserChannels username={username!} />
     </div>

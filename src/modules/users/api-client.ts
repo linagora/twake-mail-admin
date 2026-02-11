@@ -152,6 +152,60 @@ export const deleteUserVacation = async (username: string): Promise<void> => {
   await apiClient.delete(`/vacation/${encodeURIComponent(username)}`);
 };
 
+export interface JmapIdentityBcc {
+  emailerName: string;
+  mailAddress: string;
+}
+
+export interface JmapIdentityReplyTo {
+  emailerName: string;
+  mailAddress: string;
+}
+
+export interface JmapIdentity {
+  id: string;
+  name: string;
+  email: string;
+  mayDelete: boolean;
+  textSignature: string;
+  htmlSignature: string;
+  sortOrder: number;
+  bcc: JmapIdentityBcc[];
+  replyTo: JmapIdentityReplyTo[];
+}
+
+export interface JmapIdentityCreatePayload {
+  name: string;
+  email: string;
+  mayDelete?: boolean;
+  textSignature?: string;
+  htmlSignature?: string;
+  sortOrder?: number;
+  bcc?: { email: string; name: string }[];
+  replyTo?: { email: string; name: string }[];
+}
+
+export interface JmapIdentityUpdatePayload {
+  name?: string;
+  textSignature?: string;
+  htmlSignature?: string;
+  sortOrder?: number;
+  bcc?: { email: string; name: string }[];
+  replyTo?: { email: string; name: string }[];
+}
+
+export const getUserIdentities = async (username: string): Promise<JmapIdentity[]> => {
+  return apiClient.get(`/users/${encodeURIComponent(username)}/identities`);
+};
+
+export const createUserIdentity = async (username: string, payload: JmapIdentityCreatePayload): Promise<void> => {
+  await apiClient.post(`/users/${encodeURIComponent(username)}/identities`, payload);
+};
+
+export const updateUserIdentity = async (username: string, identityId: string, payload: JmapIdentityUpdatePayload): Promise<void> => {
+  await apiClient.put(`/users/${encodeURIComponent(username)}/identities/${encodeURIComponent(identityId)}`, payload);
+};
+
 export const getAllowedFromHeaders = async (username: string): Promise<string[]> => {
   return apiClient.get(`/users/${encodeURIComponent(username)}/allowedFromHeaders`);
 };
