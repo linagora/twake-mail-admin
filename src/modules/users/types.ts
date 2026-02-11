@@ -44,3 +44,15 @@ export interface ForwardDestination {
 }
 
 export type GetUserForwardsResponseType = ForwardDestination[];
+
+export interface RestoreCriterion {
+  fieldName: string;
+  operator: string;
+  value: string;
+}
+
+export interface RestoreDeletedMessagesRequest {
+  combinator: "and";
+  criteria: RestoreCriterion[];
+  limit?: number;
+}

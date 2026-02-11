@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
-import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes } from "../api-client";
+import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages } from "../api-client";
+import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
+import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -29,6 +31,7 @@ export default function UserTasks({ username }: Props) {
   const [reindexLoading, setReindexLoading] = useState(false);
   const [subscribeLoading, setSubscribeLoading] = useState(false);
   const [fastViewLoading, setFastViewLoading] = useState(false);
+  const [restoreLoading, setRestoreLoading] = useState(false);
 
   const handleReindex = async () => {
     try {
@@ -122,6 +125,48 @@ export default function UserTasks({ username }: Props) {
     }
   };
 
+  const handleRestoreDeletedMessages = async () => {
+    let currentCriteria: RestoreCriterion[] = [];
+    let currentLimit: number | undefined = undefined;
+
+    try {
+      const result = await confirm({
+        header: "Restore deleted messages",
+        className: "max-w-3xl",
+        message: (
+          <RestoreCriteriaBuilder
+            onChange={(criteria, limit) => {
+              currentCriteria = criteria;
+              currentLimit = limit;
+            }}
+          />
+        ),
+      });
+      if (!result) return;
+
+      setRestoreLoading(true);
+      const body: RestoreDeletedMessagesRequest = {
+        combinator: "and",
+        criteria: currentCriteria,
+      };
+      if (currentLimit !== undefined) {
+        body.limit = currentLimit;
+      }
+      const data = await restoreDeletedMessages(username, body);
+      toast({
+        title: "Task is running",
+        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+      });
+    } catch (err) {
+      toast({
+        title: "Error restoring deleted messages",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setRestoreLoading(false);
+    }
+  };
+
   const handleDeleteAllMailboxes = async () => {
     const confirmed = await confirm({
       header: "Delete All Mailboxes",
@@ -195,6 +240,22 @@ export default function UserTasks({ username }: Props) {
                 </TooltipTrigger>
                 <TooltipContent>
                   curl -XPOST /users/{username}/mailboxes?task=recomputeFastViewProjectionItems
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+            <p>Restore deleted messages</p>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRestoreDeletedMessages}>
+                    {restoreLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XPOST /deletedMessages/users/{username}?action=restore
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
