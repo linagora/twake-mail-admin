@@ -58,6 +58,12 @@ export function useRunTask() {
       case TaskKey.BLOB_GARBAGE_COLLECTION:
         data = await runBlobGarbageCollectionTask(taskParamValues);
         break;
+      case TaskKey.CONTACT_INDEXING:
+        data = await runMailBoxesTask({
+          task: Task.CONTACT_INDEXING,
+          ...taskParamValues,
+        });
+        break;
       default:
         break;
     }

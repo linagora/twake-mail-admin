@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
+
 import { reloadCertificates, cleanupOldTasks } from "./api-client";
 import TaskContainer from "./task-container";
 import Header from "@/components/custom/header";
@@ -86,6 +87,15 @@ const TASKS: TaskProps[] = [
       { key: 'expectedBlobCount', defaultValue: '1.000.000', type: 'input' },
     ],
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_running_blob_garbage_collection',
+  },
+  {
+    name: 'Reindex contacts from sent mailbox',
+    taskKey: TaskKey.CONTACT_INDEXING,
+    command: 'curl -XPOST /mailboxes?task=ContactIndexing',
+    params: [
+      { key: 'usersPerSecond', defaultValue: '1', type: 'input' },
+    ],
+    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_contact_indexing',
   },
 ];
 

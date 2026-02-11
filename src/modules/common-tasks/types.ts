@@ -8,6 +8,7 @@ export enum Task {
   SOLVE_INCONSISTENCIES = 'SolveInconsistencies',
   RECOMPUTE_MAILBOX_COUNTERS = 'RecomputeMailboxCounters',
   RECOMPUTE_CURRENT_QUOTAS = 'RecomputeCurrentQuotas',
+  CONTACT_INDEXING = 'ContactIndexing',
 };
 
 export enum TaskKey {
@@ -19,10 +20,11 @@ export enum TaskKey {
   FIX_MAPPING_DENORMALIZATION = 'cassandra-mappings-solve-inconsistencies',
   CLEANUP_JMAP_UPLOADS = 'UploadRepositoryCleanupTask',
   BLOB_GARBAGE_COLLECTION = 'BlobGCTask',
+  CONTACT_INDEXING = 'ContactIndexing',
 };
 
 export type TaskRequest = {
-  task: Task.REINDEX | Task.SOLVE_INCONSISTENCIES | Task.RECOMPUTE_MAILBOX_COUNTERS | Task.RECOMPUTE_CURRENT_QUOTAS;
+  task: Task.REINDEX | Task.SOLVE_INCONSISTENCIES | Task.RECOMPUTE_MAILBOX_COUNTERS | Task.RECOMPUTE_CURRENT_QUOTAS | Task.CONTACT_INDEXING;
   mode?: ReIndexMode.REBUILD_ALL | ReIndexMode.FIX_OUTDATED;
 };
 
