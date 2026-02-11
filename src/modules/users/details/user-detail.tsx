@@ -1,8 +1,8 @@
 import { useParams } from "react-router";
 import { useCallback, useMemo, useState } from "react";
-import { ChevronDown, ChevronRight, Loader2, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Eraser, Loader2, Plus, Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getUserMailboxes, createUserMailbox, deleteUserMailbox, reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection } from "../api-client";
+import { getUserMailboxes, createUserMailbox, deleteUserMailbox, clearMailboxContent, reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection } from "../api-client";
 import { GetUserMailboxesResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -110,6 +110,26 @@ export default function UserDetail() {
     } catch (err) {
       toast({
         title: "Error deleting mailbox",
+        description: <ErrorDisplayer error={err} />,
+      });
+    }
+  };
+
+  const handleClearMailbox = async (mailboxName: string) => {
+    const confirmed = await confirm({
+      header: "Clear Mailbox Content",
+      message: `Are you sure you want to delete all messages in "${mailboxName}"?`,
+    });
+    if (!confirmed) return;
+    try {
+      const data = await clearMailboxContent(username!, mailboxName);
+      toast({
+        title: "Task is running",
+        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+      });
+    } catch (err) {
+      toast({
+        title: "Error clearing mailbox",
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -334,6 +354,13 @@ export default function UserDetail() {
                       </h4>
                       <span className="flex items-center gap-2">
                         <MailboxCounts username={username!} mailboxName={mailbox.mailboxName} />
+                        <button
+                          onClick={() => handleClearMailbox(mailbox.mailboxName)}
+                          className="p-2 rounded-md hover:bg-gray-200"
+                          title="Clear mailbox content"
+                        >
+                          <Eraser className="w-4 h-4 text-red-600" />
+                        </button>
                         <button
                           onClick={() => handleDelete(mailbox.mailboxName)}
                           className="p-2 rounded-md hover:bg-gray-200"

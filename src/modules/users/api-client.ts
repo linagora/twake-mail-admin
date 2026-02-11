@@ -40,6 +40,13 @@ export const getMailboxUnseenCount = async (username: string, mailboxName: strin
   return response;
 };
 
+export const clearMailboxContent = async (username: string, mailboxName: string): Promise<RunTaskResponse> => {
+  const response = await apiClient.delete<any, RunTaskResponse>(
+    `/users/${encodeURIComponent(username)}/mailboxes/${encodeURIComponent(mailboxName)}/messages`
+  );
+  return response;
+};
+
 export const reindexUserMailboxes = async (
   username: string,
   params: { messagesPerSecond?: string; mode?: string }
