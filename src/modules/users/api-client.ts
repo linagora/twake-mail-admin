@@ -152,6 +152,10 @@ export const deleteUserVacation = async (username: string): Promise<void> => {
   await apiClient.delete(`/vacation/${encodeURIComponent(username)}`);
 };
 
+export const getUserTeamMailboxes = async (username: string): Promise<{ name: string; emailAddress: string }[]> => {
+  return apiClient.get(`/users/${encodeURIComponent(username)}/team-mailboxes`);
+};
+
 export const getUserChannels = async (username: string): Promise<GetUserChannelsResponseType> => {
   return apiClient.get(`/servers/channels/${encodeURIComponent(username)}`);
 };
