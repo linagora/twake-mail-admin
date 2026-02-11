@@ -3,7 +3,7 @@ import { Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
-import { getDomains, deleteDomain } from "./api-client";
+import { getDomains, createDomain, deleteDomain } from "./api-client";
 import { GetDomainsResponseType } from "./types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 
@@ -22,6 +22,23 @@ export default function DomainsList() {
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [newDomain, setNewDomain] = useState("");
+
+  const handleCreate = async () => {
+    const name = newDomain.trim();
+    if (!name) return;
+    try {
+      await createDomain(name);
+      toast({ title: `Domain "${name}" created` });
+      setNewDomain("");
+      refresh();
+    } catch (err) {
+      toast({
+        title: "Error creating domain",
+        description: <ErrorDisplayer error={err} />,
+      });
+    }
+  };
 
   const handleDelete = async (domain: string) => {
     const confirmed = await confirm({
@@ -59,6 +76,23 @@ export default function DomainsList() {
 
   return (
     <div>
+      <div className="flex gap-2 mt-4">
+        <input
+          type="text"
+          value={newDomain}
+          onChange={(e) => setNewDomain(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+          placeholder="New domain name"
+          className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onClick={handleCreate}
+          disabled={!newDomain.trim()}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Create
+        </button>
+      </div>
       {isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
           <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />

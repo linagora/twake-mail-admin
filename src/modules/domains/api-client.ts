@@ -6,6 +6,10 @@ export const getDomains = async (): Promise<GetDomainsResponseType> => {
   return response;
 };
 
+export const createDomain = async (domain: string): Promise<void> => {
+  await apiClient.put(`/domains/${encodeURIComponent(domain)}`);
+};
+
 export const deleteDomain = async (domain: string): Promise<void> => {
   await apiClient.delete(`/domains/${encodeURIComponent(domain)}`);
 };
