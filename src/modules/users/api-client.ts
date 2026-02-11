@@ -38,3 +38,24 @@ export const reindexUserMailboxes = async (
   );
   return response;
 };
+
+export const subscribeAllUserMailboxes = async (
+  username: string
+): Promise<RunTaskResponse> => {
+  const response = await apiClient.post<any, RunTaskResponse>(
+    `/users/${encodeURIComponent(username)}/mailboxes?task=subscribeAll`
+  );
+  return response;
+};
+
+export const recomputeFastViewProjection = async (
+  username: string,
+  params: { messagesPerSecond?: string }
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ task: "recomputeFastViewProjectionItems" });
+  if (params.messagesPerSecond) query.set("messagesPerSecond", params.messagesPerSecond);
+  const response = await apiClient.post<any, RunTaskResponse>(
+    `/users/${encodeURIComponent(username)}/mailboxes?${query.toString()}`
+  );
+  return response;
+};
