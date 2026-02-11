@@ -16,6 +16,7 @@ import Domains from "./modules/domains";
 import DomainsList from "./modules/domains/domains-list";
 import DomainDetail from "./modules/domains/details/domain-detail";
 import TeamMailboxDetail from "./modules/domains/details/team-mailbox-detail";
+import GlobalQuota from "./modules/global-quota";
 import Users from "./modules/users";
 import UsersList from "./modules/users/users-list";
 import UserDetail from "./modules/users/details/user-detail";
@@ -64,6 +65,7 @@ function App() {
                 <Route path="domain/:domain" element={<DomainDetail />} />
                 <Route path="domain/:domain/team-mailbox/:mailbox" element={<TeamMailboxDetail />} />
               </Route>
+              <Route path="/global-quota" element={<GlobalQuota />} />
               <Route path="/users" element={<Users />}>
                 <Route index element={<UsersList />} />
                 <Route path="user/:username" element={<UserDetail />} />

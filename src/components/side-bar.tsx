@@ -1,4 +1,4 @@
-import { Heart, Mail, AlertCircle, ClipboardList, Users, Network, Globe } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, Users, Network, Globe, Gauge } from "lucide-react";
 
 import {
   Sidebar,
@@ -35,6 +35,11 @@ const items = [
     title: "Domains",
     url: "/domains",
     icon: Globe,
+  },
+  {
+    title: "Global Quota",
+    url: "/global-quota",
+    icon: Gauge,
   },
   {
     title: "Users",
