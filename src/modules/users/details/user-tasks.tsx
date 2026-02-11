@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
-import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, deleteUserData } from "../api-client";
+import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData } from "../api-client";
 import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
+import RenameUserForm from "../components/rename-user-form";
+import DeleteUserDataForm from "../components/delete-user-data-form";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 import { TaskParam } from "@/modules/common-tasks/types";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -33,6 +34,7 @@ export default function UserTasks({ username }: Props) {
   const [subscribeLoading, setSubscribeLoading] = useState(false);
   const [fastViewLoading, setFastViewLoading] = useState(false);
   const [restoreLoading, setRestoreLoading] = useState(false);
+  const [renameLoading, setRenameLoading] = useState(false);
   const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);
 
   const handleReindex = async () => {
@@ -186,30 +188,62 @@ export default function UserTasks({ username }: Props) {
     }
   };
 
+  const handleRenameUser = async () => {
+    let currentValues = { newUsername: "", force: false, fromStep: "" };
+
+    try {
+      const result = await confirm({
+        header: "Rename User",
+        message: (
+          <RenameUserForm
+            username={username}
+            onChange={(values) => { currentValues = values; }}
+          />
+        ),
+      });
+      if (!result) return;
+
+      if (!currentValues.newUsername.trim()) {
+        toast({ title: "New username is required" });
+        return;
+      }
+
+      setRenameLoading(true);
+      const data = await renameUser(username, currentValues.newUsername.trim(), {
+        force: currentValues.force || undefined,
+        fromStep: currentValues.fromStep || undefined,
+      });
+      toast({
+        title: "Task is running",
+        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+      });
+    } catch (err) {
+      toast({
+        title: "Error renaming user",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setRenameLoading(false);
+    }
+  };
+
   const handleDeleteUserData = async () => {
-    let fromStep = "";
+    let currentFromStep = "";
 
     try {
       const result = await confirm({
         header: "Delete User Data",
         message: (
-          <div>
-            <p>Delete all data for <strong>{username}</strong>. This cannot be undone.</p>
-            <div className="mt-4 flex items-center gap-2">
-              <label className="text-sm font-medium whitespace-nowrap">From step (optional):</label>
-              <Input
-                type="text"
-                placeholder="e.g. MailboxUserDeletionTaskStep"
-                onChange={(e) => { fromStep = e.target.value; }}
-              />
-            </div>
-          </div>
+          <DeleteUserDataForm
+            username={username}
+            onChange={(value) => { currentFromStep = value; }}
+          />
         ),
       });
       if (!result) return;
 
       setDeleteUserDataLoading(true);
-      const data = await deleteUserData(username, fromStep || undefined);
+      const data = await deleteUserData(username, currentFromStep || undefined);
       toast({
         title: "Task is running",
         description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
@@ -296,6 +330,22 @@ export default function UserTasks({ username }: Props) {
                 </TooltipTrigger>
                 <TooltipContent>
                   curl -XPOST /deletedMessages/users/{username}?action=restore
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+            <p>Rename user</p>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleRenameUser}>
+                    {renameLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XPOST /users/{username}/rename/newUser?action=rename
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

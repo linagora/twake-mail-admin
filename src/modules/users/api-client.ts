@@ -139,6 +139,19 @@ export const removeUserForward = async (username: string, destination: string): 
   );
 };
 
+export const renameUser = async (
+  username: string,
+  newUsername: string,
+  options?: { force?: boolean; fromStep?: string }
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ action: "rename" });
+  if (options?.force) query.set("force", "");
+  if (options?.fromStep) query.set("fromStep", options.fromStep);
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}/rename/${encodeURIComponent(newUsername)}?${query.toString()}`
+  );
+};
+
 export const deleteUserData = async (
   username: string,
   fromStep?: string
