@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { RefreshCcw, CircleStop, ChevronDown, ChevronRight, Filter } from "lucide-react";
+import { RefreshCcw, CircleStop, Filter } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { listTasks, ListTasksParams } from "./api-client";
 import { cancelTask } from "@/modules/common-tasks/api-client";
@@ -161,9 +161,6 @@ export default function Tasks() {
     { key: "status", label: "Status" },
     { key: "type", label: "Type" },
   ];
-
-  const isCancellable = (status: TaskStatus) =>
-    status === TaskStatus.WAITING || status === TaskStatus.IN_PROGRESS;
 
   return (
     <div className="p-4 w-fit">

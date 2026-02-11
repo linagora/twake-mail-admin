@@ -11,7 +11,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
-import { TaskParam } from "../common-tasks/types";
 
 export default function MailRepositoriesList() {
   const confirm = useConfirm();

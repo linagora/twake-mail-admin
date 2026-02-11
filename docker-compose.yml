@@ -1,7 +1,8 @@
 services:
-  tmail-admin:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  twake-mail-admin:
+    build: .
+    image: twake-mail-admin
     ports:
-      - "3000:3000"
+      - "3333:80"
+    volumes:
+      - ./env.js:/usr/share/nginx/html/env.js

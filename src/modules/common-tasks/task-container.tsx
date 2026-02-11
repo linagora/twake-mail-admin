@@ -23,7 +23,7 @@ export default function TaskContainer({ name, taskKey, mode, command, doc, param
         header: 'Run Task',
         message: (
           <ConfirmTaskContent
-            name={name}
+            message={<p>Do you want to run task <b>{name}</b>?</p>}
             command={command}
             params={params}
             getParamValues={(key, value) => {
