@@ -45,6 +45,15 @@ export interface ForwardDestination {
 
 export type GetUserForwardsResponseType = ForwardDestination[];
 
+export interface VacationSettings {
+  enabled: boolean;
+  fromDate?: string;
+  toDate?: string;
+  subject?: string;
+  textBody?: string;
+  htmlBody?: string;
+}
+
 export interface RestoreCriterion {
   fieldName: string;
   operator: string;

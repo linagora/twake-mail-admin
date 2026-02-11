@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings } from "./types";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
 export const getUsers = async (): Promise<GetUsersResponseType> => {
@@ -138,6 +138,18 @@ export const removeUserForward = async (username: string, destination: string): 
   await apiClient.delete(
     `/address/forwards/${encodeURIComponent(username)}/targets/${encodeURIComponent(destination)}`
   );
+};
+
+export const getUserVacation = async (username: string): Promise<VacationSettings> => {
+  return apiClient.get(`/vacation/${encodeURIComponent(username)}`);
+};
+
+export const updateUserVacation = async (username: string, settings: Partial<VacationSettings>): Promise<void> => {
+  await apiClient.post(`/vacation/${encodeURIComponent(username)}`, settings);
+};
+
+export const deleteUserVacation = async (username: string): Promise<void> => {
+  await apiClient.delete(`/vacation/${encodeURIComponent(username)}`);
 };
 
 export const getUserChannels = async (username: string): Promise<GetUserChannelsResponseType> => {
