@@ -2,7 +2,7 @@ import { useParams } from "react-router";
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Eraser, Loader2, Plus, Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getUserMailboxes, createUserMailbox, deleteUserMailbox, clearMailboxContent, reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection } from "../api-client";
+import { getUserMailboxes, createUserMailbox, deleteUserMailbox, deleteAllUserMailboxes, clearMailboxContent, reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection } from "../api-client";
 import { GetUserMailboxesResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -227,6 +227,24 @@ export default function UserDetail() {
     }
   };
 
+  const handleDeleteAllMailboxes = async () => {
+    const confirmed = await confirm({
+      header: "Delete All Mailboxes",
+      message: `Are you sure you want to delete ALL mailboxes for "${username}"? This cannot be undone.`,
+    });
+    if (!confirmed) return;
+    try {
+      await deleteAllUserMailboxes(username!);
+      toast({ title: "All mailboxes deleted successfully" });
+      await refresh();
+    } catch (err) {
+      toast({
+        title: "Error deleting all mailboxes",
+        description: <ErrorDisplayer error={err} />,
+      });
+    }
+  };
+
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
       <h3 className="text-lg font-semibold">User Details</h3>
@@ -441,6 +459,21 @@ export default function UserDetail() {
                   </TooltipTrigger>
                   <TooltipContent>
                     curl -XPOST /users/{username}/mailboxes?task=recomputeFastViewProjectionItems
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Delete all mailboxes</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteAllMailboxes}>
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XDELETE /users/{username}/mailboxes
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

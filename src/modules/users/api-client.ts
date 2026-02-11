@@ -47,6 +47,12 @@ export const clearMailboxContent = async (username: string, mailboxName: string)
   return response;
 };
 
+export const deleteAllUserMailboxes = async (username: string): Promise<void> => {
+  await apiClient.delete(
+    `/users/${encodeURIComponent(username)}/mailboxes`
+  );
+};
+
 export const reindexUserMailboxes = async (
   username: string,
   params: { messagesPerSecond?: string; mode?: string }
