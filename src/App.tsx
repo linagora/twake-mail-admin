@@ -23,6 +23,7 @@ import UserDetail from "./modules/users/details/user-detail";
 import NetworkChannels from "./modules/network-channels";
 import ChannelsList from "./modules/network-channels/channels-list";
 import CommonTasks from "./modules/common-tasks/index";
+import LiveMetrics from "./modules/live-metrics";
 import TaskDetail from "./modules/common-tasks/task-detail";
 import { ConfirmProvider } from "./components/custom/confirm-provider";
 import { AuthProvider } from "./components/custom/auth-provider";
@@ -74,6 +75,7 @@ function App() {
                 <Route index element={<ChannelsList />} />
               </Route>
               <Route path="/common-tasks" element={<CommonTasks />} />
+              <Route path="/live-metrics" element={<LiveMetrics />} />
               <Route path="/task/:id" element={<TaskDetail />} />
             </Routes>
           </SidebarInset>

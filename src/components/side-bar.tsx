@@ -1,4 +1,4 @@
-import { Heart, Mail, AlertCircle, ClipboardList, Users, Network, Globe, Gauge } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, Users, Network, Globe, Gauge, Activity } from "lucide-react";
 
 import {
   Sidebar,
@@ -55,6 +55,11 @@ const items = [
     title: "Common Tasks",
     url: "/common-tasks",
     icon: ClipboardList,
+  },
+  {
+    title: "Live Metrics",
+    url: "/live-metrics",
+    icon: Activity,
   },
 ];
 
