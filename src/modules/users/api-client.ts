@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings } from "./types";
+import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
 export const getUsers = async (): Promise<GetUsersResponseType> => {
@@ -266,6 +267,16 @@ export const restoreDeletedMessages = async (
     `/deletedMessages/users/${encodeURIComponent(username)}?action=restore`,
     body
   );
+};
+
+export const getUserRateLimits = async (username: string): Promise<RateLimits> => {
+  return apiClient.get(`/users/${encodeURIComponent(username)}/ratelimits`);
+};
+
+export const updateUserRateLimits = async (username: string, limits: RateLimits): Promise<void> => {
+  await apiClient.put(`/users/${encodeURIComponent(username)}/ratelimits`, limits, {
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const recomputeFastViewProjection = async (

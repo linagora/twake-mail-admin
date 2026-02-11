@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact } from "./types";
+import { RateLimits } from "@/components/custom/rate-limits-section";
 
 export const getDomains = async (): Promise<GetDomainsResponseType> => {
   const response = await apiClient.get<any, GetDomainsResponseType>("/domains");
@@ -88,4 +89,14 @@ export const updateDomainContact = async (
 
 export const deleteDomainContact = async (domain: string, username: string): Promise<void> => {
   await apiClient.delete(`/domains/${encodeURIComponent(domain)}/contacts/${encodeURIComponent(username)}`);
+};
+
+export const getDomainRateLimits = async (domain: string): Promise<RateLimits> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/ratelimits`);
+};
+
+export const updateDomainRateLimits = async (domain: string, limits: RateLimits): Promise<void> => {
+  await apiClient.put(`/domains/${encodeURIComponent(domain)}/ratelimits`, limits, {
+    headers: { "Content-Type": "application/json" },
+  });
 };
