@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
+import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetDomainsResponseType, GetDomainAliasesResponseType, DomainQuota, DomainQuotaValues } from "./types";
 
 export const getDomains = async (): Promise<GetDomainsResponseType> => {
@@ -32,4 +33,8 @@ export const getDomainQuota = async (domain: string): Promise<DomainQuota> => {
 
 export const updateDomainQuota = async (domain: string, quota: DomainQuotaValues): Promise<void> => {
   await apiClient.put(`/quota/domains/${encodeURIComponent(domain)}`, quota);
+};
+
+export const deleteAllUsersData = async (domain: string): Promise<RunTaskResponse> => {
+  return apiClient.post(`/domains/${encodeURIComponent(domain)}?action=deleteData`);
 };
