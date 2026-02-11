@@ -1,4 +1,4 @@
-import { Heart, Mail, AlertCircle, ClipboardList, Users, Network, Globe, Gauge, Activity, Database } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database } from "lucide-react";
 
 import {
   Sidebar,
@@ -55,6 +55,11 @@ const items = [
     title: "Cassandra",
     url: "/cassandra",
     icon: Database,
+  },
+  {
+    title: "Tasks",
+    url: "/tasks",
+    icon: ListChecks,
   },
   {
     title: "Common Tasks",
