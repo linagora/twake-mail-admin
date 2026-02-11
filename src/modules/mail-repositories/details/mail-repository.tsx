@@ -1,12 +1,12 @@
 import { useParams, useSearchParams } from "react-router";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getMailsInRepository, removeSingleMailFromRepository } from "../api-client";
+import { getMailsInRepository, removeSingleMailFromRepository, reprocessSingleMail } from "../api-client";
 import { MailKeysResponseType } from "../types";
 import { useCallback } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { toast, useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
-import { Trash2 } from "lucide-react";
+import { Trash2, RefreshCw } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 
 // Define the types for the expected responses
@@ -93,6 +93,33 @@ export default function MailRepositoryDetail() {
     setSearchParams({ page: newPage.toString(), size: size.toString() });
   };
 
+  const handleReprocessMail = async (mailKey: string) => {
+    const confirmed = await confirm({
+      header: "Reprocess Mail",
+      message: `Reprocess mail "${mailKey}"?`,
+    });
+    if (!confirmed || !id) return;
+    try {
+      const { taskId } = await reprocessSingleMail(encodeURIComponent(id), mailKey);
+      toast({
+        title: "Reprocess scheduled",
+        description: (
+          <p>
+            Task{" "}
+            <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>
+              {taskId}
+            </a>
+          </p>
+        ),
+      });
+    } catch (error) {
+      toast({
+        title: "Error reprocessing mail",
+        description: <ErrorDisplayer error={error} />,
+      });
+    }
+  };
+
   const handleRemoveMail = async (mailKey: string) => {
     try {
       const result = await confirm({
@@ -117,8 +144,18 @@ export default function MailRepositoryDetail() {
 
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
-      <h3 className="text-lg font-semibold">Mail Repository Details</h3>
-      <p>Repository ID: {id}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold">Mail Repository Details</h3>
+          <p>Repository ID: {id}</p>
+        </div>
+        <a
+          href={`/mail-repositories/repository/${encodeURIComponent(id!)}/extended?page=${page}&size=${size}`}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
+        >
+          Extended View
+        </a>
+      </div>
 
       {isLoading && <p>Loading mails...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
@@ -213,7 +250,15 @@ export default function MailRepositoryDetail() {
                   </a>
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"
+                    onClick={() => handleReprocessMail(mailKey)}
+                    title="Reprocess mail"
+                  >
+                    <RefreshCw className="w-5 h-5 text-green-600" />
+                  </button>
+                  <button
+                    className="p-2 rounded-md hover:bg-gray-200"
                     onClick={() => handleRemoveMail(mailKey)}
+                    title="Delete mail"
                   >
                     <Trash2 className="w-5 h-5 text-red-600" />
                   </button>

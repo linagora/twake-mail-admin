@@ -3,6 +3,7 @@ import {
   GetMailRepositoriesResponseType,
   MailKeysResponseType,
   RepositoryInfo,
+  MailDetail,
 } from "./types";
 
 /**
@@ -162,7 +163,30 @@ export const reprocessMailRepository = async (
  * @param encodedPathOfTheRepository - The URL-encoded path of the mail repository.
  * @returns A promise resolving to the task details.
  */
- export const removeSingleMailFromRepository = async (
+export const getMailDetail = async (
+  encodedPathOfTheRepository: string,
+  mailKey: string
+): Promise<MailDetail> => {
+  return apiClient.get(
+    `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}`,
+    { headers: { Accept: "application/json" } }
+  );
+};
+
+export const reprocessSingleMail = async (
+  encodedPathOfTheRepository: string,
+  mailKey: string,
+  options?: { queue?: string; processor?: string }
+): Promise<{ taskId: string }> => {
+  const params = new URLSearchParams({ action: "reprocess" });
+  if (options?.queue) params.set("queue", options.queue);
+  if (options?.processor) params.set("processor", options.processor);
+  return apiClient.patch(
+    `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}?${params.toString()}`
+  );
+};
+
+export const removeSingleMailFromRepository = async (
   encodedPathOfTheRepository: string,
   mailKey: string,
 ): Promise<{ taskId: string }> => {

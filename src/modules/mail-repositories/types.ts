@@ -14,3 +14,14 @@ export interface RepositoryInfo {
   path: string;
   size: number;
 }
+
+export interface MailDetail {
+  name: string;
+  sender: string;
+  recipients: string[];
+  state: string;
+  error: string;
+  remoteHost: string;
+  remoteAddr: string;
+  lastUpdated: string | null;
+}

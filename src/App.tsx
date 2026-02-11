@@ -9,6 +9,7 @@ import HealthCheck from "./modules/health-check";
 import MailRepositories from "./modules/mail-repositories";
 import MailRepositoriesList from "./modules/mail-repositories/mail-repositories-list";
 import MailRepositoryDetail from "./modules/mail-repositories/details/mail-repository";
+import MailRepositoryExtended from "./modules/mail-repositories/details/mail-repository-extended";
 import EventDeadletter from "./modules/event-deadletter";
 import EventListenersList from "./modules/event-deadletter/eventl-listeners-list";
 import EventListenersDetail from "./modules/event-deadletter/details/event-listener";
@@ -55,6 +56,10 @@ function App() {
                 <Route
                   path="repository/:id"
                   element={<MailRepositoryDetail />}
+                />
+                <Route
+                  path="repository/:id/extended"
+                  element={<MailRepositoryExtended />}
                 />
               </Route>
 
