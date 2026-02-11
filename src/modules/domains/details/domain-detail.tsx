@@ -1,5 +1,6 @@
 import { useParams } from "react-router";
 import DomainQuotaSection from "./domain-quota";
+import DomainAliases from "./domain-aliases";
 
 export default function DomainDetail() {
   const { domain } = useParams();
@@ -10,6 +11,7 @@ export default function DomainDetail() {
       <p>Domain: {domain}</p>
 
       <DomainQuotaSection domain={domain!} />
+      <DomainAliases domain={domain!} />
     </div>
   );
 }
