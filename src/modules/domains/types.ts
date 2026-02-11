@@ -13,6 +13,13 @@ export interface TeamMailbox {
 
 export type GetTeamMailboxesResponseType = TeamMailbox[];
 
+export interface TeamMailboxMember {
+  username: string;
+  role: string;
+}
+
+export type GetTeamMailboxMembersResponseType = TeamMailboxMember[];
+
 export interface DomainQuotaValues {
   count: number | null;
   size: number | null;
