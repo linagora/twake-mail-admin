@@ -11,6 +11,7 @@ import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-c
 import { TaskParam } from "@/modules/common-tasks/types";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import MailboxCounts from "./mailbox-counts";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 const INVALID_MAILBOX_PATTERN = /[%*]|^#/;
@@ -331,13 +332,16 @@ export default function UserDetail() {
                         </span>
                         {mailbox.mailboxName}
                       </h4>
-                      <button
-                        onClick={() => handleDelete(mailbox.mailboxName)}
-                        className="p-2 rounded-md hover:bg-gray-200"
-                        title="Delete mailbox"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                      </button>
+                      <span className="flex items-center gap-2">
+                        <MailboxCounts username={username!} mailboxName={mailbox.mailboxName} />
+                        <button
+                          onClick={() => handleDelete(mailbox.mailboxName)}
+                          className="p-2 rounded-md hover:bg-gray-200"
+                          title="Delete mailbox"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </button>
+                      </span>
                     </div>
                   ))}
                 </div>

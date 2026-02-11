@@ -26,6 +26,20 @@ export const deleteUserMailbox = async (username: string, mailboxName: string): 
   );
 };
 
+export const getMailboxMessageCount = async (username: string, mailboxName: string): Promise<number> => {
+  const response = await apiClient.get<any, number>(
+    `/users/${encodeURIComponent(username)}/mailboxes/${encodeURIComponent(mailboxName)}/messageCount`
+  );
+  return response;
+};
+
+export const getMailboxUnseenCount = async (username: string, mailboxName: string): Promise<number> => {
+  const response = await apiClient.get<any, number>(
+    `/users/${encodeURIComponent(username)}/mailboxes/${encodeURIComponent(mailboxName)}/unseenMessageCount`
+  );
+  return response;
+};
+
 export const reindexUserMailboxes = async (
   username: string,
   params: { messagesPerSecond?: string; mode?: string }
