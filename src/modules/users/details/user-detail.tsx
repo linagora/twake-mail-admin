@@ -4,6 +4,7 @@ import UserQuota from "./user-quota";
 import UserAliases from "./user-aliases";
 import UserForwards from "./user-forwards";
 import UserTasks from "./user-tasks";
+import UserChannels from "./user-channels";
 
 export default function UserDetail() {
   const { username } = useParams();
@@ -18,6 +19,7 @@ export default function UserDetail() {
       <UserAliases username={username!} />
       <UserForwards username={username!} />
       <UserTasks username={username!} />
+      <UserChannels username={username!} />
     </div>
   );
 }

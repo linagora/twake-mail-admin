@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, GetUserChannelsResponseType, RestoreDeletedMessagesRequest } from "./types";
 
 export const getUsers = async (): Promise<GetUsersResponseType> => {
   const response = await apiClient.get<any, GetUsersResponseType>("/users");
@@ -137,6 +137,10 @@ export const removeUserForward = async (username: string, destination: string): 
   await apiClient.delete(
     `/address/forwards/${encodeURIComponent(username)}/targets/${encodeURIComponent(destination)}`
   );
+};
+
+export const getUserChannels = async (username: string): Promise<GetUserChannelsResponseType> => {
+  return apiClient.get(`/servers/channels/${encodeURIComponent(username)}`);
 };
 
 export const renameUser = async (
