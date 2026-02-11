@@ -20,6 +20,15 @@ export interface TeamMailboxMember {
 
 export type GetTeamMailboxMembersResponseType = TeamMailboxMember[];
 
+export interface DomainContact {
+  id: string;
+  emailAddress: string;
+  firstname?: string;
+  surname?: string;
+}
+
+export type GetDomainContactsResponseType = string[];
+
 export interface DomainQuotaValues {
   count: number | null;
   size: number | null;

@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, DomainQuota, DomainQuotaValues } from "./types";
+import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact } from "./types";
 
 export const getDomains = async (): Promise<GetDomainsResponseType> => {
   const response = await apiClient.get<any, GetDomainsResponseType>("/domains");
@@ -61,4 +61,31 @@ export const removeTeamMailboxMember = async (domain: string, mailbox: string, u
 
 export const deleteAllUsersData = async (domain: string): Promise<RunTaskResponse> => {
   return apiClient.post(`/domains/${encodeURIComponent(domain)}?action=deleteData`);
+};
+
+export const getDomainContacts = async (domain: string): Promise<GetDomainContactsResponseType> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/contacts`);
+};
+
+export const getDomainContact = async (domain: string, username: string): Promise<DomainContact> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/contacts/${encodeURIComponent(username)}`);
+};
+
+export const createDomainContact = async (
+  domain: string,
+  payload: { emailAddress: string; firstname?: string; surname?: string }
+): Promise<{ id: string }> => {
+  return apiClient.post(`/domains/${encodeURIComponent(domain)}/contacts`, payload);
+};
+
+export const updateDomainContact = async (
+  domain: string,
+  username: string,
+  payload: { firstname?: string; surname?: string }
+): Promise<void> => {
+  await apiClient.put(`/domains/${encodeURIComponent(domain)}/contacts/${encodeURIComponent(username)}`, payload);
+};
+
+export const deleteDomainContact = async (domain: string, username: string): Promise<void> => {
+  await apiClient.delete(`/domains/${encodeURIComponent(domain)}/contacts/${encodeURIComponent(username)}`);
 };

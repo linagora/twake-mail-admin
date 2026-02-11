@@ -2,6 +2,7 @@ import { useParams } from "react-router";
 import DomainQuotaSection from "./domain-quota";
 import DomainAliases from "./domain-aliases";
 import DomainTeamMailboxes from "./domain-team-mailboxes";
+import DomainContacts from "./domain-contacts";
 import DomainTasks from "./domain-tasks";
 
 export default function DomainDetail() {
@@ -15,6 +16,7 @@ export default function DomainDetail() {
       <DomainQuotaSection domain={domain!} />
       <DomainAliases domain={domain!} />
       <DomainTeamMailboxes domain={domain!} />
+      <DomainContacts domain={domain!} />
       <DomainTasks domain={domain!} />
     </div>
   );
