@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType } from "./types";
 
 export const getUsers = async (): Promise<GetUsersResponseType> => {
   const response = await apiClient.get<any, GetUsersResponseType>("/users");
@@ -112,6 +112,30 @@ export const addUserAlias = async (username: string, alias: string): Promise<voi
 export const removeUserAlias = async (username: string, alias: string): Promise<void> => {
   await apiClient.delete(
     `/address/aliases/${encodeURIComponent(username)}/sources/${encodeURIComponent(alias)}`
+  );
+};
+
+export const getUserForwards = async (username: string): Promise<GetUserForwardsResponseType> => {
+  try {
+    const response = await apiClient.get<any, GetUserForwardsResponseType>(
+      `/address/forwards/${encodeURIComponent(username)}`
+    );
+    return response;
+  } catch (err: any) {
+    if (err?.response?.status === 404) return [];
+    throw err;
+  }
+};
+
+export const addUserForward = async (username: string, destination: string): Promise<void> => {
+  await apiClient.put(
+    `/address/forwards/${encodeURIComponent(username)}/targets/${encodeURIComponent(destination)}`
+  );
+};
+
+export const removeUserForward = async (username: string, destination: string): Promise<void> => {
+  await apiClient.delete(
+    `/address/forwards/${encodeURIComponent(username)}/targets/${encodeURIComponent(destination)}`
   );
 };
 

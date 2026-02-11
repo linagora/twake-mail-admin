@@ -38,3 +38,9 @@ export interface AliasSource {
 }
 
 export type GetUserAliasesResponseType = AliasSource[];
+
+export interface ForwardDestination {
+  mailAddress: string;
+}
+
+export type GetUserForwardsResponseType = ForwardDestination[];
