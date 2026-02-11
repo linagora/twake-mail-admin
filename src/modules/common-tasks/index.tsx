@@ -1,6 +1,14 @@
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
+import { reloadCertificates } from "./api-client";
 import TaskContainer from "./task-container";
 import Header from "@/components/custom/header";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useConfirm } from "@/hooks/use-confirm";
+import { useToast } from "@/hooks/use-toast";
+import ErrorDisplayer from "@/components/custom/error-displayer";
 
 const TASKS: TaskProps[] = [
   {
@@ -86,6 +94,32 @@ const headerSubTitle = "Common tasks for data maintenance of a Twake Mail server
 const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_task_management";
 
 export default function CommonTasks() {
+  const { toast } = useToast();
+  const confirm = useConfirm();
+  const [reloadLoading, setReloadLoading] = useState(false);
+  const [reloadPort, setReloadPort] = useState("");
+
+  const handleReloadCertificates = async () => {
+    const confirmed = await confirm({
+      header: "Reload Certificates",
+      message: `Reload server certificates${reloadPort ? ` for port ${reloadPort}` : " for all ports"}?`,
+    });
+    if (!confirmed) return;
+
+    setReloadLoading(true);
+    try {
+      await reloadCertificates(reloadPort || undefined);
+      toast({ title: "Certificates reloaded successfully" });
+    } catch (err) {
+      toast({
+        title: "Error reloading certificates",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setReloadLoading(false);
+    }
+  };
+
   return (
     <div className="p-4 relative w-fit">
       <Header
@@ -94,9 +128,34 @@ export default function CommonTasks() {
       />
 
       <div className="grid grid-cols-1 gap-4 mt-4">
-        {TASKS?.map((task) => (
+        {TASKS.map((task) => (
           <TaskContainer {...task} key={task.name} />
         ))}
+        <div className="flex justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <p>Reload certificates</p>
+            <input
+              type="text"
+              placeholder="port (optional)"
+              value={reloadPort}
+              onChange={(e) => setReloadPort(e.target.value)}
+              className="border rounded px-2 py-1 text-sm w-32"
+            />
+          </div>
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleReloadCertificates}>
+                  {reloadLoading && <Loader2 className="animate-spin" />}
+                  Run
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                curl -XPOST /servers?reload-certificate
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
     </div>
   );

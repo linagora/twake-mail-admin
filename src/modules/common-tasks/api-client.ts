@@ -67,6 +67,12 @@ export const runBlobGarbageCollectionTask = async (payload?: AdditionalParams): 
   return response;
 }
 
+export const reloadCertificates = async (port?: string): Promise<void> => {
+  const query = new URLSearchParams({ "reload-certificate": "" });
+  if (port) query.set("port", port);
+  await apiClient.post(`/servers?${query.toString()}`);
+};
+
 export const getTaskDetail = async (id: string): Promise<TaskDetailResponse> => {
   const response = await apiClient.get<any, TaskDetailResponse>(
     `/tasks/${id}`
