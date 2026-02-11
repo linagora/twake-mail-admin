@@ -152,6 +152,10 @@ export const deleteUserVacation = async (username: string): Promise<void> => {
   await apiClient.delete(`/vacation/${encodeURIComponent(username)}`);
 };
 
+export const getAllowedFromHeaders = async (username: string): Promise<string[]> => {
+  return apiClient.get(`/users/${encodeURIComponent(username)}/allowedFromHeaders`);
+};
+
 export const getDelegatedUsers = async (username: string): Promise<string[]> => {
   return apiClient.get(`/users/${encodeURIComponent(username)}/authorizedUsers`);
 };
