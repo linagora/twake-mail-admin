@@ -1,10 +1,11 @@
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getMappings, createAddressMapping } from "./api-client";
+import { getMappings, createAddressMapping, deleteAddressMapping } from "./api-client";
 import { GetMappingsResponseType, FlatMapping } from "./types";
 import { useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
+import { useConfirm } from "@/hooks/use-confirm";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -24,6 +25,25 @@ export default function MappingsList() {
   const [destination, setDestination] = useState("");
   const [creating, setCreating] = useState(false);
   const { toast } = useToast();
+  const confirm = useConfirm();
+
+  const handleDelete = async (mapping: FlatMapping) => {
+    const confirmed = await confirm({
+      header: "Remove Address Mapping",
+      message: `Remove address mapping "${mapping.source}" → "${mapping.destination}"?`,
+    });
+    if (!confirmed) return;
+    try {
+      await deleteAddressMapping(mapping.source, mapping.destination);
+      toast({ title: "Address mapping removed successfully" });
+      await refresh();
+    } catch (err) {
+      toast({
+        title: "Error removing address mapping",
+        description: <ErrorDisplayer error={err} />,
+      });
+    }
+  };
 
   const handleCreate = async () => {
     const src = source.trim();
@@ -192,6 +212,7 @@ export default function MappingsList() {
             <th className="text-left px-4 py-2 text-sm font-medium">Source</th>
             <th className="text-left px-4 py-2 text-sm font-medium">Type</th>
             <th className="text-left px-4 py-2 text-sm font-medium">Destination</th>
+            <th className="text-left px-4 py-2 text-sm font-medium">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -206,6 +227,17 @@ export default function MappingsList() {
               <td className="px-4 py-2 text-sm">{mapping.source}</td>
               <td className="px-4 py-2 text-sm">{mapping.type}</td>
               <td className="px-4 py-2 text-sm">{mapping.destination}</td>
+              <td className="px-4 py-2 text-sm">
+                {mapping.type === "Address" && (
+                  <button
+                    onClick={() => handleDelete(mapping)}
+                    className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
+                    title="Remove address mapping"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>

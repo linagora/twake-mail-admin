@@ -14,3 +14,12 @@ export const createAddressMapping = async (
     `/mappings/address/${encodeURIComponent(source)}/targets/${encodeURIComponent(destination)}`
   );
 };
+
+export const deleteAddressMapping = async (
+  source: string,
+  destination: string
+): Promise<void> => {
+  await apiClient.delete(
+    `/mappings/address/${encodeURIComponent(source)}/targets/${encodeURIComponent(destination)}`
+  );
+};
