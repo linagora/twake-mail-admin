@@ -21,6 +21,8 @@ import GlobalQuota from "./modules/global-quota";
 import Users from "./modules/users";
 import UsersList from "./modules/users/users-list";
 import UserDetail from "./modules/users/details/user-detail";
+import Mappings from "./modules/mappings";
+import MappingsList from "./modules/mappings/mappings-list";
 import NetworkChannels from "./modules/network-channels";
 import ChannelsList from "./modules/network-channels/channels-list";
 import Cassandra from "./modules/cassandra";
@@ -77,6 +79,9 @@ function App() {
               <Route path="/users" element={<Users />}>
                 <Route index element={<UsersList />} />
                 <Route path="user/:username" element={<UserDetail />} />
+              </Route>
+              <Route path="/mappings" element={<Mappings />}>
+                <Route index element={<MappingsList />} />
               </Route>
               <Route path="/network-channels" element={<NetworkChannels />}>
                 <Route index element={<ChannelsList />} />
