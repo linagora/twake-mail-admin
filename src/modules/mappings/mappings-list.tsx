@@ -1,5 +1,12 @@
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getMappings, createAddressMapping, deleteAddressMapping } from "./api-client";
+import {
+  getMappings,
+  createAddressMapping,
+  deleteAddressMapping,
+  deleteAliasMapping,
+  deleteForwardMapping,
+  deleteDomainMapping,
+} from "./api-client";
 import { GetMappingsResponseType, FlatMapping } from "./types";
 import { useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -28,18 +35,35 @@ export default function MappingsList() {
   const confirm = useConfirm();
 
   const handleDelete = async (mapping: FlatMapping) => {
+    const typeLabel = mapping.type.toLowerCase();
     const confirmed = await confirm({
-      header: "Remove Address Mapping",
-      message: `Remove address mapping "${mapping.source}" → "${mapping.destination}"?`,
+      header: `Remove ${mapping.type} Mapping`,
+      message: `Remove ${typeLabel} mapping "${mapping.source}" → "${mapping.destination}"?`,
     });
     if (!confirmed) return;
     try {
-      await deleteAddressMapping(mapping.source, mapping.destination);
-      toast({ title: "Address mapping removed successfully" });
+      switch (mapping.type) {
+        case "Address":
+          await deleteAddressMapping(mapping.source, mapping.destination);
+          break;
+        case "Alias":
+          await deleteAliasMapping(mapping.source, mapping.destination);
+          break;
+        case "Forward":
+          await deleteForwardMapping(mapping.source, mapping.destination);
+          break;
+        case "Domain":
+        case "DomainAlias":
+          await deleteDomainMapping(mapping.source, mapping.destination);
+          break;
+        default:
+          return;
+      }
+      toast({ title: `${mapping.type} mapping removed successfully` });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error removing address mapping",
+        title: `Error removing ${typeLabel} mapping`,
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -228,11 +252,11 @@ export default function MappingsList() {
               <td className="px-4 py-2 text-sm">{mapping.type}</td>
               <td className="px-4 py-2 text-sm">{mapping.destination}</td>
               <td className="px-4 py-2 text-sm">
-                {mapping.type === "Address" && (
+                {["Address", "Alias", "Forward", "Domain", "DomainAlias"].includes(mapping.type) && (
                   <button
                     onClick={() => handleDelete(mapping)}
                     className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
-                    title="Remove address mapping"
+                    title={`Remove ${mapping.type.toLowerCase()} mapping`}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

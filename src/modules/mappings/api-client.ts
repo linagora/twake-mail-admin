@@ -23,3 +23,30 @@ export const deleteAddressMapping = async (
     `/mappings/address/${encodeURIComponent(source)}/targets/${encodeURIComponent(destination)}`
   );
 };
+
+export const deleteAliasMapping = async (
+  aliasSource: string,
+  userAddress: string
+): Promise<void> => {
+  await apiClient.delete(
+    `/address/aliases/${encodeURIComponent(userAddress)}/sources/${encodeURIComponent(aliasSource)}`
+  );
+};
+
+export const deleteForwardMapping = async (
+  userAddress: string,
+  targetAddress: string
+): Promise<void> => {
+  await apiClient.delete(
+    `/address/forwards/${encodeURIComponent(userAddress)}/targets/${encodeURIComponent(targetAddress)}`
+  );
+};
+
+export const deleteDomainMapping = async (
+  sourceDomain: string,
+  destinationDomain: string
+): Promise<void> => {
+  await apiClient.delete(
+    `/domainAliases/${encodeURIComponent(destinationDomain)}/sources/${encodeURIComponent(sourceDomain)}`
+  );
+};
