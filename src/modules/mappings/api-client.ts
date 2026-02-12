@@ -50,3 +50,21 @@ export const deleteDomainMapping = async (
     `/domainAliases/${encodeURIComponent(destinationDomain)}/sources/${encodeURIComponent(sourceDomain)}`
   );
 };
+
+export const createRegexMapping = async (
+  mappingSource: string,
+  regex: string
+): Promise<void> => {
+  await apiClient.post(
+    `/mappings/regex/${encodeURIComponent(mappingSource)}/targets/${encodeURIComponent(regex)}`
+  );
+};
+
+export const deleteRegexMapping = async (
+  mappingSource: string,
+  regex: string
+): Promise<void> => {
+  await apiClient.delete(
+    `/mappings/regex/${encodeURIComponent(mappingSource)}/targets/${encodeURIComponent(regex)}`
+  );
+};

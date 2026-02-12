@@ -6,6 +6,8 @@ import {
   deleteAliasMapping,
   deleteForwardMapping,
   deleteDomainMapping,
+  createRegexMapping,
+  deleteRegexMapping,
 } from "./api-client";
 import { GetMappingsResponseType, FlatMapping } from "./types";
 import { useMemo, useState } from "react";
@@ -31,6 +33,11 @@ export default function MappingsList() {
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
   const [creating, setCreating] = useState(false);
+
+  const [showCreateRegex, setShowCreateRegex] = useState(false);
+  const [regexSource, setRegexSource] = useState("");
+  const [regexValue, setRegexValue] = useState("");
+  const [creatingRegex, setCreatingRegex] = useState(false);
   const { toast } = useToast();
   const confirm = useConfirm();
 
@@ -56,6 +63,9 @@ export default function MappingsList() {
         case "DomainAlias":
           await deleteDomainMapping(mapping.source, mapping.destination);
           break;
+        case "Regex":
+          await deleteRegexMapping(mapping.source, mapping.destination);
+          break;
         default:
           return;
       }
@@ -66,6 +76,28 @@ export default function MappingsList() {
         title: `Error removing ${typeLabel} mapping`,
         description: <ErrorDisplayer error={err} />,
       });
+    }
+  };
+
+  const handleCreateRegex = async () => {
+    const src = regexSource.trim();
+    const regex = regexValue.trim();
+    if (!src || !regex) return;
+    setCreatingRegex(true);
+    try {
+      await createRegexMapping(src, regex);
+      toast({ title: "Regex mapping created successfully" });
+      setRegexSource("");
+      setRegexValue("");
+      setShowCreateRegex(false);
+      await refresh();
+    } catch (err) {
+      toast({
+        title: "Error creating regex mapping",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setCreatingRegex(false);
     }
   };
 
@@ -133,11 +165,18 @@ export default function MappingsList() {
     <div>
       <div className="mt-4 flex items-center gap-2">
         <button
-          onClick={() => setShowCreate(!showCreate)}
+          onClick={() => { setShowCreate(!showCreate); setShowCreateRegex(false); }}
           className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
         >
           <Plus className="w-4 h-4" />
           Add Address Mapping
+        </button>
+        <button
+          onClick={() => { setShowCreateRegex(!showCreateRegex); setShowCreate(false); }}
+          className="flex items-center gap-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Add Regex Mapping
         </button>
       </div>
 
@@ -171,6 +210,44 @@ export default function MappingsList() {
             </button>
             <button
               onClick={() => { setShowCreate(false); setSource(""); setDestination(""); }}
+              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showCreateRegex && (
+        <div className="mt-3 p-4 border rounded-md bg-gray-50 flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={regexSource}
+              onChange={(e) => setRegexSource(e.target.value)}
+              placeholder="Mapping source (e.g. user@domain.com)"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <span className="text-gray-400 text-sm">→</span>
+            <input
+              type="text"
+              value={regexValue}
+              onChange={(e) => setRegexValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleCreateRegex()}
+              placeholder="Regex (e.g. user@.*:intern@domain.com)"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCreateRegex}
+              disabled={creatingRegex || !regexSource.trim() || !regexValue.trim()}
+              className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {creatingRegex ? "Creating..." : "Create"}
+            </button>
+            <button
+              onClick={() => { setShowCreateRegex(false); setRegexSource(""); setRegexValue(""); }}
               className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition text-sm"
             >
               Cancel
@@ -252,7 +329,7 @@ export default function MappingsList() {
               <td className="px-4 py-2 text-sm">{mapping.type}</td>
               <td className="px-4 py-2 text-sm">{mapping.destination}</td>
               <td className="px-4 py-2 text-sm">
-                {["Address", "Alias", "Forward", "Domain", "DomainAlias"].includes(mapping.type) && (
+                {["Address", "Alias", "Forward", "Domain", "DomainAlias", "Regex"].includes(mapping.type) && (
                   <button
                     onClick={() => handleDelete(mapping)}
                     className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
