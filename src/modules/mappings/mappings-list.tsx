@@ -1,7 +1,10 @@
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getMappings } from "./api-client";
+import { getMappings, createAddressMapping } from "./api-client";
 import { GetMappingsResponseType, FlatMapping } from "./types";
 import { useMemo, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import ErrorDisplayer from "@/components/custom/error-displayer";
+import { Plus } from "lucide-react";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -10,10 +13,39 @@ export default function MappingsList() {
     data: mappingsResult,
     isLoading,
     error,
+    refresh,
   } = useFetchData<GetMappingsResponseType>(getMappings);
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+
+  const [showCreate, setShowCreate] = useState(false);
+  const [source, setSource] = useState("");
+  const [destination, setDestination] = useState("");
+  const [creating, setCreating] = useState(false);
+  const { toast } = useToast();
+
+  const handleCreate = async () => {
+    const src = source.trim();
+    const dest = destination.trim();
+    if (!src || !dest) return;
+    setCreating(true);
+    try {
+      await createAddressMapping(src, dest);
+      toast({ title: "Address mapping created successfully" });
+      setSource("");
+      setDestination("");
+      setShowCreate(false);
+      await refresh();
+    } catch (err) {
+      toast({
+        title: "Error creating address mapping",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const flatMappings = useMemo<FlatMapping[]>(() => {
     if (!mappingsResult) return [];
@@ -55,6 +87,54 @@ export default function MappingsList() {
 
   return (
     <div>
+      <div className="mt-4 flex items-center gap-2">
+        <button
+          onClick={() => setShowCreate(!showCreate)}
+          className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Add Address Mapping
+        </button>
+      </div>
+
+      {showCreate && (
+        <div className="mt-3 p-4 border rounded-md bg-gray-50 flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={source}
+              onChange={(e) => setSource(e.target.value)}
+              placeholder="Source (e.g. user@domain.com)"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span className="text-gray-400 text-sm">→</span>
+            <input
+              type="text"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+              placeholder="Destination (e.g. alias@domain.com)"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCreate}
+              disabled={creating || !source.trim() || !destination.trim()}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {creating ? "Creating..." : "Create"}
+            </button>
+            <button
+              onClick={() => { setShowCreate(false); setSource(""); setDestination(""); }}
+              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
       {isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
