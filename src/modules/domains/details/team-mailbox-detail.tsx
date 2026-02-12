@@ -6,6 +6,7 @@ import { getTeamMailboxMembers, addTeamMailboxMember, removeTeamMailboxMember } 
 import { GetTeamMailboxMembersResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
@@ -24,6 +25,7 @@ export default function TeamMailboxDetail() {
   const [page, setPage] = useState(1);
   const [newMember, setNewMember] = useState("");
   const [role, setRole] = useState<"member" | "manager">("member");
+  const memberStatus = useCheckUserExists(newMember);
 
   const sorted = useMemo(() => {
     if (!members) return [];
@@ -90,6 +92,27 @@ export default function TeamMailboxDetail() {
             placeholder="user@domain.tld"
             className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          {memberStatus === "checking" && (
+            <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">Checking...</span>
+          )}
+          {memberStatus === "exists" && (
+            <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
+              <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+              User exists
+            </span>
+          )}
+          {memberStatus === "not_found" && (
+            <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
+              <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
+              User not found
+            </span>
+          )}
+          {memberStatus === "invalid" && (
+            <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap">
+              <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
+              Invalid username
+            </span>
+          )}
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as "member" | "manager")}

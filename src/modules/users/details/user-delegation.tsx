@@ -4,6 +4,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getDelegatedUsers, addDelegatedUser, removeDelegatedUser } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 
 interface Props {
@@ -25,6 +26,7 @@ export default function UserDelegation({ username }: Props) {
   const [open, setOpen] = useState(false);
   const [newUser, setNewUser] = useState("");
   const [showCreateInput, setShowCreateInput] = useState(false);
+  const delegatedUserStatus = useCheckUserExists(newUser);
 
   const sorted = useMemo(() => {
     if (!delegated) return [];
@@ -104,6 +106,27 @@ export default function UserDelegation({ username }: Props) {
                 placeholder="user@domain.tld"
                 className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              {delegatedUserStatus === "checking" && (
+                <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">Checking...</span>
+              )}
+              {delegatedUserStatus === "exists" && (
+                <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
+                  <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+                  User exists
+                </span>
+              )}
+              {delegatedUserStatus === "not_found" && (
+                <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
+                  <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
+                  User not found
+                </span>
+              )}
+              {delegatedUserStatus === "invalid" && (
+                <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap">
+                  <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
+                  Invalid username
+                </span>
+              )}
               <button
                 onClick={handleAdd}
                 disabled={!newUser.trim()}
