@@ -279,6 +279,29 @@ export const updateUserRateLimits = async (username: string, limits: RateLimits)
   });
 };
 
+export interface UserMappingEntry {
+  type: string;
+  mapping: string;
+}
+
+export const getUserMappings = async (username: string): Promise<UserMappingEntry[]> => {
+  return apiClient.get(`/mappings/user/${encodeURIComponent(username)}`);
+};
+
+export const getUserMappingSources = async (
+  username: string,
+  type: "group" | "forward" | "address" | "alias"
+): Promise<string[]> => {
+  return apiClient.get(`/mappings/sources/${encodeURIComponent(username)}?type=${type}`);
+};
+
+export const deleteUserMappingSources = async (
+  username: string,
+  type: "group" | "forward" | "address" | "alias"
+): Promise<void> => {
+  await apiClient.delete(`/mappings/sources/${encodeURIComponent(username)}?type=${type}`);
+};
+
 export const recomputeFastViewProjection = async (
   username: string,
   params: { messagesPerSecond?: string }

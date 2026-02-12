@@ -11,6 +11,7 @@ import UserAllowedFrom from "./user-allowed-from";
 import UserIdentities from "./user-identities";
 import UserTasks from "./user-tasks";
 import UserChannels from "./user-channels";
+import UserMappings from "./user-mappings";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
 import { getUserRateLimits, updateUserRateLimits } from "../api-client";
 
@@ -29,6 +30,7 @@ export default function UserDetail() {
       <UserQuota username={username!} />
       <UserAliases username={username!} />
       <UserForwards username={username!} />
+      <UserMappings username={username!} />
       <UserTeamMailboxes username={username!} />
       <UserVacation username={username!} />
       <UserDelegation username={username!} />
