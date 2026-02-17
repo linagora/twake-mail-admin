@@ -6,6 +6,7 @@ export type GetUsersResponseType = User[];
 
 export interface Mailbox {
   mailboxName: string;
+  mailboxId: string;
 }
 
 export type GetUserMailboxesResponseType = Mailbox[];

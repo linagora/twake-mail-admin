@@ -235,12 +235,15 @@ export default function UserMailboxes({ username }: Props) {
                     key={mailbox.mailboxName}
                     className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center"
                   >
-                    <h4 className="text-sm font-medium leading-none">
-                      <span className="text-gray-500 mr-2">
-                        {(page - 1) * PAGE_LIMIT + index + 1}/
-                      </span>
-                      {mailbox.mailboxName}
-                    </h4>
+                    <div>
+                      <h4 className="text-sm font-medium leading-none">
+                        <span className="text-gray-500 mr-2">
+                          {(page - 1) * PAGE_LIMIT + index + 1}/
+                        </span>
+                        {mailbox.mailboxName}
+                      </h4>
+                      <p className="text-xs text-gray-400 mt-1 ml-6">{mailbox.mailboxId}</p>
+                    </div>
                     <span className="flex items-center gap-2">
                       <MailboxCounts username={username} mailboxName={mailbox.mailboxName} />
                       <button
