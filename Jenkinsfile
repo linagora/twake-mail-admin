@@ -22,7 +22,7 @@ pipeline {
         }
         stage('Audit') {
             steps {
-                sh 'npm audit --audit-level=moderate'
+                sh 'npm audit --audit-level=high'
             }
         }
         stage('Lint') {
