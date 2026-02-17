@@ -12,24 +12,26 @@ docker build -t linagora/twake-mail-admin .
 docker run -p 3333:80 linagora/twake-mail-admin
 ```
 
-The SPA is served on `http://localhost:3333`. By default the app points to `http://127.0.0.1:8000`.
+The SPA is served on `http://localhost:3333`. By default the app points to `http://localhost:8000`.
 
 ### Override the API URL
 
-Create an `env.js` file (see `env.js.example`) and volume-mount it:
+Pass the `VITE_API_BASE_URL` environment variable:
 
 ```sh
-docker run -p 3333:80 -v ./env.js:/usr/share/nginx/html/env.js linagora/twake-mail-admin
+docker run -p 3333:80 -e VITE_API_BASE_URL=https://api.example.com linagora/twake-mail-admin
 ```
 
 ## Docker Compose
 
-Copy the example config and adjust the API URL:
+Set the API URL via the environment variable:
 
-```sh
-cp env.js.example env.js
-# edit env.js as needed
-docker compose up
+```yaml
+services:
+  twake-mail-admin:
+    image: linagora/twake-mail-admin
+    ports:
+      - "3333:80"
+    environment:
+      - VITE_API_BASE_URL=https://api.example.com
 ```
-
-This binds port 3333 and mounts your local `env.js` into the container.
