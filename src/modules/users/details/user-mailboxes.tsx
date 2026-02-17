@@ -9,6 +9,20 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import MailboxCounts from "./mailbox-counts";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
+
+const UUID_V1_EPOCH_OFFSET = 122192928000000000n;
+
+function uuidV1ToDate(uuid: string): string | null {
+  try {
+    const parts = uuid.split("-");
+    const timeHex = parts[2].slice(1) + parts[1] + parts[0];
+    const timestamp100ns = BigInt("0x" + timeHex);
+    const ms = Number((timestamp100ns - UUID_V1_EPOCH_OFFSET) / 10000n);
+    return new Date(ms).toUTCString();
+  } catch {
+    return null;
+  }
+}
 const INVALID_MAILBOX_PATTERN = /[%*]|^#/;
 
 interface Props {
@@ -44,7 +58,7 @@ export default function UserMailboxes({ username }: Props) {
     );
     if (!search) return sorted;
     const lower = search.toLowerCase();
-    return sorted.filter((m) => m.mailboxName.toLowerCase().includes(lower));
+    return sorted.filter((m) => m.mailboxName.toLowerCase().includes(lower) || m.mailboxId.toLowerCase().includes(lower));
   }, [mailboxes, search]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_LIMIT));
@@ -242,7 +256,12 @@ export default function UserMailboxes({ username }: Props) {
                         </span>
                         {mailbox.mailboxName}
                       </h4>
-                      <p className="text-xs text-gray-400 mt-1 ml-6">{mailbox.mailboxId}</p>
+                      <p className="text-xs text-gray-400 mt-1 ml-6">
+                        {mailbox.mailboxId}
+                        {uuidV1ToDate(mailbox.mailboxId) && (
+                          <span className="ml-2">— Creation date: {uuidV1ToDate(mailbox.mailboxId)}</span>
+                        )}
+                      </p>
                     </div>
                     <span className="flex items-center gap-2">
                       <MailboxCounts username={username} mailboxName={mailbox.mailboxName} />
