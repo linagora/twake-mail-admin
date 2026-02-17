@@ -1,7 +1,7 @@
 services:
   twake-mail-admin:
     build: .
-    image: twake-mail-admin
+    image: linagora/twake-mail-admin
     ports:
       - "3333:80"
     volumes:
