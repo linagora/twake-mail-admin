@@ -21,6 +21,7 @@ export enum TaskKey {
   CLEANUP_JMAP_UPLOADS = 'UploadRepositoryCleanupTask',
   BLOB_GARBAGE_COLLECTION = 'BlobGCTask',
   CONTACT_INDEXING = 'ContactIndexing',
+  PURGE_DELETED_MESSAGES = 'DeletedMessageVaultDeleteExpiredMessagesTask',
 };
 
 export type TaskRequest = {

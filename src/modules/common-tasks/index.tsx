@@ -97,6 +97,12 @@ const TASKS: TaskProps[] = [
     ],
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_contact_indexing',
   },
+  {
+    name: 'Purge Deleted Messages',
+    taskKey: TaskKey.PURGE_DELETED_MESSAGES,
+    command: 'curl -XDELETE /deletedMessages?scope=expired',
+    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_purging_expired_deleted_messages',
+  },
 ];
 
 const headerSubTitle = "Common tasks for data maintenance of a Twake Mail server";
