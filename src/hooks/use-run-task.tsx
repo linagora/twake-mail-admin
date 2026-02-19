@@ -1,4 +1,4 @@
-import { runBlobGarbageCollectionTask, runCleanupJmapUploadsTask, runFixMappingTask, runMailBoxesTask, runMessageTask, runQuotaTask } from "@/modules/common-tasks/api-client";
+import { runBlobGarbageCollectionTask, runCleanupJmapUploadsTask, runFixMappingTask, runMailBoxesTask, runMessageTask, runPurgeDeletedMessagesTask, runQuotaTask } from "@/modules/common-tasks/api-client";
 import { AdditionalParams, ReIndexMode, Task, TaskKey } from "@/modules/common-tasks/types";
 
 export function useRunTask() {
@@ -63,6 +63,9 @@ export function useRunTask() {
           task: Task.CONTACT_INDEXING,
           ...taskParamValues,
         });
+        break;
+      case TaskKey.PURGE_DELETED_MESSAGES:
+        data = await runPurgeDeletedMessagesTask();
         break;
       default:
         break;

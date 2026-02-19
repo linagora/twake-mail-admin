@@ -67,6 +67,13 @@ export const runBlobGarbageCollectionTask = async (payload?: AdditionalParams): 
   return response;
 }
 
+export const runPurgeDeletedMessagesTask = async (): Promise<any> => {
+  const response = await apiClient.delete<any, any>(
+    `/deletedMessages?scope=expired`
+  );
+  return response;
+}
+
 export const reloadCertificates = async (port?: string): Promise<void> => {
   const query = new URLSearchParams({ "reload-certificate": "" });
   if (port) query.set("port", port);
