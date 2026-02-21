@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
 
-import { reloadCertificates, cleanupOldTasks } from "./api-client";
+import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights } from "./api-client";
 import TaskContainer from "./task-container";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
@@ -116,6 +116,7 @@ export default function CommonTasks() {
   const [reloadPort, setReloadPort] = useState("");
   const [cleanupLoading, setCleanupLoading] = useState(false);
   const [cleanupDays, setCleanupDays] = useState("30");
+  const [repositionLoading, setRepositionLoading] = useState(false);
 
   const handleReloadCertificates = async () => {
     const confirmed = await confirm({
@@ -161,6 +162,27 @@ export default function CommonTasks() {
     }
   };
 
+  const handleRepositionSystemRights = async () => {
+    const confirmed = await confirm({
+      header: "Reposition System Rights",
+      message: "Ensure admin and self system users have full rights on all folders of all team mailboxes across all domains? This may take a while.",
+    });
+    if (!confirmed) return;
+
+    setRepositionLoading(true);
+    try {
+      await repositionTeamMailboxSystemRights();
+      toast({ title: "System rights repositioned successfully" });
+    } catch (err) {
+      toast({
+        title: "Error repositioning system rights",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setRepositionLoading(false);
+    }
+  };
+
   return (
     <div className="p-4 relative w-fit">
       <Header
@@ -193,6 +215,22 @@ export default function CommonTasks() {
               </TooltipTrigger>
               <TooltipContent>
                 curl -XPOST /servers?reload-certificate
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <div className="flex justify-between items-center gap-4">
+          <p>Reposition system rights on all Team Mailbox folders</p>
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRepositionSystemRights}>
+                  {repositionLoading && <Loader2 className="animate-spin" />}
+                  Run
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                curl -XPOST /team-mailboxes?action=repositionSystemRights
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
