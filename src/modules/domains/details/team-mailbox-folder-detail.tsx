@@ -4,6 +4,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxFolderSubaddressing, setTeamMailboxFolderSubaddressing } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import TeamMailboxFolderExtraAcl from "./team-mailbox-folder-extra-acl";
 
 export default function TeamMailboxFolderDetail() {
   const { domain, mailbox, folder } = useParams();
@@ -72,6 +73,7 @@ export default function TeamMailboxFolderDetail() {
           </button>
         )}
       </div>
+      <TeamMailboxFolderExtraAcl domain={domain!} mailbox={mailbox!} folder={folder!} />
     </div>
   );
 }

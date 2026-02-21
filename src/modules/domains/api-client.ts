@@ -92,6 +92,26 @@ export const setTeamMailboxFolderSubaddressing = async (domain: string, mailbox:
   );
 };
 
+export const getTeamMailboxFolderExtraAcl = async (domain: string, mailbox: string, folderName: string): Promise<Record<string, string>> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/mailboxes/${encodeURIComponent(folderName)}/extraAcl`);
+};
+
+export const setTeamMailboxFolderExtraAclEntry = async (domain: string, mailbox: string, folderName: string, username: string, rights: string): Promise<void> => {
+  await apiClient.put(
+    `/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/mailboxes/${encodeURIComponent(folderName)}/extraAcl/${encodeURIComponent(username)}`,
+    rights,
+    { headers: { "Content-Type": "text/plain" } }
+  );
+};
+
+export const removeTeamMailboxFolderExtraAclEntry = async (domain: string, mailbox: string, folderName: string, username: string): Promise<void> => {
+  await apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/mailboxes/${encodeURIComponent(folderName)}/extraAcl/${encodeURIComponent(username)}`);
+};
+
+export const clearTeamMailboxFolderExtraAcl = async (domain: string, mailbox: string, folderName: string): Promise<void> => {
+  await apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/mailboxes/${encodeURIComponent(folderName)}/extraAcl`);
+};
+
 export const getTeamMailboxQuota = async (domain: string, mailbox: string): Promise<TeamMailboxQuota> => {
   return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/quota`);
 };
