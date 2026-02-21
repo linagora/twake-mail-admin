@@ -84,6 +84,10 @@ export const cleanupOldTasks = async (olderThanDays: number): Promise<any> => {
   return apiClient.delete(`/tasks?olderThan=${olderThanDays}day`);
 };
 
+export const repositionTeamMailboxSystemRights = async (): Promise<void> => {
+  await apiClient.post(`/team-mailboxes?action=repositionSystemRights`);
+};
+
 export const getTaskDetail = async (id: string): Promise<TaskDetailResponse> => {
   const response = await apiClient.get<any, TaskDetailResponse>(
     `/tasks/${id}`
