@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router";
-import { Trash2 } from "lucide-react";
+import { Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxMembers, addTeamMailboxMember, removeTeamMailboxMember } from "../api-client";
 import { GetTeamMailboxMembersResponseType } from "../types";
@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import TeamMailboxFolders from "./team-mailbox-folders";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -22,6 +23,7 @@ export default function TeamMailboxDetail() {
   );
   const { data: members, isLoading, error, refresh } = useFetchData<GetTeamMailboxMembersResponseType>(fetchMembers);
 
+  const [membersOpen, setMembersOpen] = useState(true);
   const [page, setPage] = useState(1);
   const [newMember, setNewMember] = useState("");
   const [role, setRole] = useState<"member" | "manager">("member");
@@ -80,8 +82,15 @@ export default function TeamMailboxDetail() {
       <p>Mailbox: {mailbox}@{domain}</p>
 
       <div className="mt-6">
-        <h4 className="text-md font-semibold">Members</h4>
+        <button
+          onClick={() => setMembersOpen((o) => !o)}
+          className="flex items-center gap-1 text-md font-semibold w-full text-left"
+        >
+          {membersOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+          Members {members && <span className="text-sm font-normal text-gray-500">({members.length})</span>}
+        </button>
 
+        {membersOpen && (<>
         {/* Add member */}
         <div className="flex gap-2 mt-3 mb-4">
           <input
@@ -200,7 +209,9 @@ export default function TeamMailboxDetail() {
             <p className="mt-2 text-sm text-gray-500">No members.</p>
           )}
         </div>
+        </>)}
       </div>
+      <TeamMailboxFolders domain={domain!} mailbox={mailbox!} />
     </div>
   );
 }
