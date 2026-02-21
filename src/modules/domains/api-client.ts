@@ -112,6 +112,18 @@ export const clearTeamMailboxFolderExtraAcl = async (domain: string, mailbox: st
   await apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/mailboxes/${encodeURIComponent(folderName)}/extraAcl`);
 };
 
+export const getTeamMailboxExtraSenders = async (domain: string, mailbox: string): Promise<string[]> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/extraSenders`);
+};
+
+export const addTeamMailboxExtraSender = async (domain: string, mailbox: string, username: string): Promise<void> => {
+  await apiClient.put(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/extraSenders/${encodeURIComponent(username)}`);
+};
+
+export const removeTeamMailboxExtraSender = async (domain: string, mailbox: string, username: string): Promise<void> => {
+  await apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/extraSenders/${encodeURIComponent(username)}`);
+};
+
 export const getTeamMailboxQuota = async (domain: string, mailbox: string): Promise<TeamMailboxQuota> => {
   return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/quota`);
 };
