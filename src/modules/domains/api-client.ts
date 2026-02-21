@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact } from "./types";
+import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 
 export const getDomains = async (): Promise<GetDomainsResponseType> => {
@@ -78,6 +78,24 @@ export const getTeamMailboxFolderMessageCount = async (domain: string, mailbox: 
 
 export const getTeamMailboxFolderUnseenCount = async (domain: string, mailbox: string, folderName: string): Promise<number> => {
   return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/mailboxes/${encodeURIComponent(folderName)}/unseenMessageCount`);
+};
+
+export const getTeamMailboxQuota = async (domain: string, mailbox: string): Promise<TeamMailboxQuota> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/quota`);
+};
+
+export const updateTeamMailboxQuotaSize = async (domain: string, mailbox: string, size: number): Promise<void> => {
+  await apiClient.put(
+    `/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/quota/limit/size`,
+    size,
+    { headers: { "Content-Type": "application/json" } }
+  );
+};
+
+export const deleteTeamMailboxQuotaSize = async (domain: string, mailbox: string): Promise<void> => {
+  await apiClient.delete(
+    `/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/quota/limit/size`
+  );
 };
 
 export const deleteAllUsersData = async (domain: string): Promise<RunTaskResponse> => {

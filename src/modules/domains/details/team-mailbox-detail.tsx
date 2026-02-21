@@ -9,6 +9,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import TeamMailboxFolders from "./team-mailbox-folders";
+import TeamMailboxQuota from "./team-mailbox-quota";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -212,6 +213,7 @@ export default function TeamMailboxDetail() {
         </>)}
       </div>
       <TeamMailboxFolders domain={domain!} mailbox={mailbox!} />
+      <TeamMailboxQuota domain={domain!} mailbox={mailbox!} />
     </div>
   );
 }

@@ -27,6 +27,29 @@ export interface TeamMailboxFolder {
 
 export type GetTeamMailboxFoldersResponseType = TeamMailboxFolder[];
 
+export interface TeamMailboxQuotaValues {
+  count: number | null;
+  size: number | null;
+}
+
+export interface TeamMailboxQuotaOccupation {
+  size: number;
+  count: number;
+  ratio: {
+    size: number;
+    count: number;
+    max: number;
+  };
+}
+
+export interface TeamMailboxQuota {
+  global: TeamMailboxQuotaValues | null;
+  domain: TeamMailboxQuotaValues | null;
+  teamMailbox: TeamMailboxQuotaValues | null;
+  computed: TeamMailboxQuotaValues | null;
+  occupation: TeamMailboxQuotaOccupation;
+}
+
 export interface DomainContact {
   id: string;
   emailAddress: string;
