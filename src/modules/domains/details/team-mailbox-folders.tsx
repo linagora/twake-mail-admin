@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxFolders, createTeamMailboxFolder, deleteTeamMailboxFolder } from "../api-client";
@@ -189,7 +190,12 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                     <div>
                       <h4 className="text-sm font-medium leading-none">
                         <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
-                        {folder.mailboxName}
+                        <Link
+                          to={`/domains/domain/${encodeURIComponent(domain)}/team-mailbox/${encodeURIComponent(mailbox)}/folder/${encodeURIComponent(folder.mailboxName)}`}
+                          className="hover:underline text-blue-600"
+                        >
+                          {folder.mailboxName}
+                        </Link>
                       </h4>
                       <p className="text-xs text-gray-400 mt-1 ml-6">{folder.mailboxId}</p>
                     </div>

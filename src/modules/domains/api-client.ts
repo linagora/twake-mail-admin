@@ -80,6 +80,18 @@ export const getTeamMailboxFolderUnseenCount = async (domain: string, mailbox: s
   return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/mailboxes/${encodeURIComponent(folderName)}/unseenMessageCount`);
 };
 
+export const getTeamMailboxFolderSubaddressing = async (domain: string, mailbox: string, folderName: string): Promise<{ enabled: boolean }> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/mailboxes/${encodeURIComponent(folderName)}/subaddressing`);
+};
+
+export const setTeamMailboxFolderSubaddressing = async (domain: string, mailbox: string, folderName: string, enabled: boolean): Promise<void> => {
+  await apiClient.put(
+    `/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/mailboxes/${encodeURIComponent(folderName)}/subaddressing`,
+    { enabled },
+    { headers: { "Content-Type": "application/json" } }
+  );
+};
+
 export const getTeamMailboxQuota = async (domain: string, mailbox: string): Promise<TeamMailboxQuota> => {
   return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/quota`);
 };
