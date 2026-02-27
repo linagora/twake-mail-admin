@@ -1,12 +1,18 @@
 import { useParams, useSearchParams } from "react-router";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getMailsInRepository, removeSingleMailFromRepository, reprocessSingleMail } from "../api-client";
-import { MailKeysResponseType } from "../types";
-import { useCallback } from "react";
+import {
+  getMailRepositories,
+  getMailsInRepository,
+  moveSingleMail,
+  removeSingleMailFromRepository,
+  reprocessSingleMail,
+} from "../api-client";
+import { GetMailRepositoriesResponseType, MailKeysResponseType } from "../types";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { toast, useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
-import { Trash2, RefreshCw } from "lucide-react";
+import { MoveHorizontal, Trash2, RefreshCw } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 
 // Define the types for the expected responses
@@ -67,6 +73,11 @@ export default function MailRepositoryDetail() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
   const confirm = useConfirm();
+
+  const [allRepos, setAllRepos] = useState<GetMailRepositoriesResponseType>([]);
+  useEffect(() => {
+    getMailRepositories().then(setAllRepos).catch(() => {});
+  }, []);
 
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 0;
@@ -138,6 +149,49 @@ export default function MailRepositoryDetail() {
       toast({
         title: "Error Removing Mail",
         description: <ErrorDisplayer error={error} />,
+      });
+    }
+  };
+
+  const handleMoveMail = async (mailKey: string) => {
+    const otherRepos = allRepos.filter((r) => r.path !== id);
+    if (otherRepos.length === 0) {
+      toast({ title: "No other repositories available to move this mail to" });
+      return;
+    }
+    let targetRepo = otherRepos[0].path;
+    const confirmed = await confirm({
+      header: "Move Mail",
+      message: (
+        <div className="space-y-2 py-2">
+          <p className="text-sm">
+            Move mail <b>{mailKey}</b> to:
+          </p>
+          <select
+            className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            defaultValue={otherRepos[0].path}
+            onChange={(e) => {
+              targetRepo = e.target.value;
+            }}
+          >
+            {otherRepos.map((r) => (
+              <option key={r.path} value={r.path}>
+                {r.repository} ({r.path})
+              </option>
+            ))}
+          </select>
+        </div>
+      ),
+    });
+    if (!confirmed || !id) return;
+    try {
+      await moveSingleMail(encodeURIComponent(id), mailKey, targetRepo);
+      toast({ title: "Mail moved successfully" });
+      await refresh();
+    } catch (err) {
+      toast({
+        title: "Error moving mail",
+        description: <ErrorDisplayer error={err} />,
       });
     }
   };
@@ -254,6 +308,13 @@ export default function MailRepositoryDetail() {
                     title="Reprocess mail"
                   >
                     <RefreshCw className="w-5 h-5 text-green-600" />
+                  </button>
+                  <button
+                    className="p-2 rounded-md hover:bg-gray-200"
+                    onClick={() => handleMoveMail(mailKey)}
+                    title="Move mail to another repository"
+                  >
+                    <MoveHorizontal className="w-5 h-5 text-orange-500" />
                   </button>
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"

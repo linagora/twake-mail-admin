@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router";
-import { Download, Trash2, RefreshCw, Loader2 } from "lucide-react";
+import { Download, MoveHorizontal, Trash2, RefreshCw, Loader2 } from "lucide-react";
 import {
+  getMailRepositories,
   getMailsInRepository,
   getMailDetail,
+  moveSingleMail,
   removeSingleMailFromRepository,
   reprocessSingleMail,
 } from "../api-client";
-import { MailDetail } from "../types";
+import { GetMailRepositoriesResponseType, MailDetail } from "../types";
 import { apiClient } from "@/lib/apiClient";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -70,6 +72,11 @@ export default function MailRepositoryExtended() {
   const [sortAsc, setSortAsc] = useState(true);
 
   const [selectedMail, setSelectedMail] = useState<MailRow | null>(null);
+
+  const [allRepos, setAllRepos] = useState<GetMailRepositoriesResponseType>([]);
+  useEffect(() => {
+    getMailRepositories().then(setAllRepos).catch(() => {});
+  }, []);
 
   const encodedRepo = encodeURIComponent(id!);
 
@@ -191,6 +198,46 @@ export default function MailRepositoryExtended() {
     }
   };
 
+  const handleMove = async (mailKey: string) => {
+    const otherRepos = allRepos.filter((r) => r.path !== id);
+    if (otherRepos.length === 0) {
+      toast({ title: "No other repositories available to move this mail to" });
+      return;
+    }
+    let targetRepo = otherRepos[0].path;
+    const confirmed = await confirm({
+      header: "Move Mail",
+      message: (
+        <div className="space-y-2 py-2">
+          <p className="text-sm">
+            Move mail <b>{mailKey}</b> to:
+          </p>
+          <select
+            className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            defaultValue={otherRepos[0].path}
+            onChange={(e) => {
+              targetRepo = e.target.value;
+            }}
+          >
+            {otherRepos.map((r) => (
+              <option key={r.path} value={r.path}>
+                {r.repository} ({r.path})
+              </option>
+            ))}
+          </select>
+        </div>
+      ),
+    });
+    if (!confirmed) return;
+    try {
+      await moveSingleMail(encodedRepo, mailKey, targetRepo);
+      toast({ title: "Mail moved successfully" });
+      await fetchPage();
+    } catch (err) {
+      toast({ title: "Error moving mail", description: <ErrorDisplayer error={err} /> });
+    }
+  };
+
   const SORT_FIELDS: { key: SortField; label: string }[] = [
     { key: "name", label: "Name" },
     { key: "sender", label: "Sender" },
@@ -241,7 +288,7 @@ export default function MailRepositoryExtended() {
             <span>Recipients</span>
             <span>Last Updated</span>
             <span className="w-16 text-right">Size</span>
-            <span className="w-28 text-center">Actions</span>
+            <span className="w-36 text-center">Actions</span>
             <span className="w-0" />
           </div>
 
@@ -263,7 +310,7 @@ export default function MailRepositoryExtended() {
                   <span className="truncate text-xs">{mail.recipients.join(", ") || "—"}</span>
                   <span className="truncate text-xs">{formatDate(mail.lastUpdated)}</span>
                   <span className="w-16 text-right text-xs">{formatSize(mail.size)}</span>
-                  <div className="w-28 flex justify-center gap-1" onClick={(e) => e.stopPropagation()}>
+                  <div className="w-36 flex justify-center gap-1" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => handleDownload(mail.name)}
                       className="p-1.5 rounded-md hover:bg-gray-200"
@@ -277,6 +324,13 @@ export default function MailRepositoryExtended() {
                       title="Reprocess"
                     >
                       <RefreshCw className="w-4 h-4 text-green-600" />
+                    </button>
+                    <button
+                      onClick={() => handleMove(mail.name)}
+                      className="p-1.5 rounded-md hover:bg-gray-200"
+                      title="Move to another repository"
+                    >
+                      <MoveHorizontal className="w-4 h-4 text-orange-500" />
                     </button>
                     <button
                       onClick={() => handleDelete(mail.name)}

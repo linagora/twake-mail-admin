@@ -186,6 +186,65 @@ export const reprocessSingleMail = async (
   );
 };
 
+/**
+ * Moves all mails from a repository to another.
+ *
+ * API: `PATCH http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails`
+ * Body: `{"mailRepository": "/var/mail/target"}`
+ *
+ * - HTTP 204: Mails moved.
+ * - HTTP 400: Target repository does not exist.
+ */
+export const moveAllMails = async (
+  encodedPathOfTheRepository: string,
+  targetRepository: string
+): Promise<void> => {
+  await apiClient.patch(
+    `/mailRepositories/${encodedPathOfTheRepository}/mails`,
+    { mailRepository: targetRepository }
+  );
+};
+
+/**
+ * Moves a single mail from a repository to another.
+ *
+ * API: `PATCH http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails/{mailKey}`
+ * Body: `{"mailRepository": "/var/mail/target"}`
+ *
+ * - HTTP 204: Mail moved.
+ * - HTTP 400: Target repository does not exist.
+ */
+export const moveSingleMail = async (
+  encodedPathOfTheRepository: string,
+  mailKey: string,
+  targetRepository: string
+): Promise<void> => {
+  await apiClient.patch(
+    `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}`,
+    { mailRepository: targetRepository }
+  );
+};
+
+/**
+ * Creates a mail repository.
+ *
+ * API: `PUT http://ip:port/mailRepositories/{encodedPathOfTheRepository}?protocol={someProtocol}`
+ *
+ * - HTTP 204: The repository is created.
+ *
+ * @param encodedPathOfTheRepository - The URL-encoded path of the mail repository.
+ * @param protocol - Optional protocol for the repository.
+ */
+export const createMailRepository = async (
+  encodedPathOfTheRepository: string,
+  protocol?: string
+): Promise<void> => {
+  const params = protocol ? `?protocol=${encodeURIComponent(protocol)}` : "";
+  await apiClient.put(
+    `/mailRepositories/${encodedPathOfTheRepository}${params}`
+  );
+};
+
 export const removeSingleMailFromRepository = async (
   encodedPathOfTheRepository: string,
   mailKey: string,

@@ -21,6 +21,7 @@ const RIGHTS: { key: string; label: string }[] = [
   { key: "s", label: "Write Seen Flag" },
   { key: "w", label: "Write" },
   { key: "i", label: "Insert" },
+  { key: "p", label: "Post" },
   { key: "k", label: "Create Mailbox" },
   { key: "t", label: "Delete Messages" },
   { key: "e", label: "Perform Expunge" },

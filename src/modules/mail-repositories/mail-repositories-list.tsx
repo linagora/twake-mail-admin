@@ -1,9 +1,11 @@
-import { RefreshCw, Trash2 } from "lucide-react";
+import { MoveHorizontal, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { GetMailRepositoriesResponseType, MailRepository } from "./types";
 import {
   clearMailRepository,
+  createMailRepository,
   getMailRepositories,
   getRepositoryInfo,
+  moveAllMails,
   reprocessMailRepository,
 } from "./api-client";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -12,12 +14,40 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 
+function CreateMailRepositoryForm({
+  onChange,
+}: {
+  onChange: (field: "path" | "protocol", value: string) => void;
+}) {
+  return (
+    <div className="space-y-3 py-2">
+      <div className="space-y-1">
+        <label className="text-sm font-medium">Repository path <span className="text-red-500">*</span></label>
+        <input
+          className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="e.g. mailRepo"
+          onChange={(e) => onChange("path", e.target.value)}
+        />
+      </div>
+      <div className="space-y-1">
+        <label className="text-sm font-medium">Protocol <span className="text-red-500">*</span></label>
+        <input
+          className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          defaultValue="cassandra"
+          onChange={(e) => onChange("protocol", e.target.value)}
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function MailRepositoriesList() {
   const confirm = useConfirm();
   const { toast } = useToast();
   const {
     data: mailRepositoriesResult,
     isLoading,
+    refresh,
   } = useFetchData<GetMailRepositoriesResponseType>(getMailRepositories);
 
   const [repositoriesWithSize, setRepositoriesWithSize] = useState<
@@ -93,6 +123,74 @@ export default function MailRepositoriesList() {
       ),
     });
   };
+  const handleCreateRepository = async () => {
+    const values = { path: "", protocol: "cassandra" };
+    const result = await confirm({
+      header: "Create Mail Repository",
+      message: (
+        <CreateMailRepositoryForm
+          onChange={(field, value) => {
+            values[field] = value;
+          }}
+        />
+      ),
+    });
+    if (!result) return;
+    if (!values.path || !values.protocol) {
+      toast({ title: "Repository path and protocol are required", variant: "destructive" });
+      return;
+    }
+    await createMailRepository(
+      encodeURIComponent(values.path),
+      values.protocol
+    );
+    toast({ title: "Mail repository created successfully" });
+    refresh();
+  };
+
+  const handleMoveAll = async (sourcePath: string) => {
+    const otherRepos = repositoriesWithSize.filter((r) => r.path !== sourcePath);
+    if (otherRepos.length === 0) {
+      toast({ title: "No other repositories available to move mails to" });
+      return;
+    }
+    let targetRepo = otherRepos[0].path;
+    const result = await confirm({
+      header: "Move All Mails",
+      message: (
+        <div className="space-y-2 py-2">
+          <p className="text-sm">
+            Move all mails from <b>{sourcePath}</b> to:
+          </p>
+          <select
+            className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            defaultValue={otherRepos[0].path}
+            onChange={(e) => {
+              targetRepo = e.target.value;
+            }}
+          >
+            {otherRepos.map((r) => (
+              <option key={r.path} value={r.path}>
+                {r.repository} ({r.path})
+              </option>
+            ))}
+          </select>
+        </div>
+      ),
+    });
+    if (!result) return;
+    try {
+      await moveAllMails(encodeURIComponent(sourcePath), targetRepo);
+      toast({ title: "All mails moved successfully" });
+      refresh();
+    } catch (err: any) {
+      toast({
+        title: "Error moving mails",
+        description: err?.response?.data?.message || err?.message || "Failed to move mails",
+      });
+    }
+  };
+
   const handleClearTask = async (path: string) => {
     const result = await confirm({
       header: "Run Task",
@@ -124,7 +222,16 @@ export default function MailRepositoriesList() {
             <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
           </div>
         )}
-        <p>List</p>
+        <div className="flex items-center justify-between mt-4">
+          <p>List</p>
+          <button
+            className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700"
+            onClick={handleCreateRepository}
+          >
+            <Plus className="w-4 h-4" />
+            New repository
+          </button>
+        </div>
         <div>
           {repositoriesWithSize?.map((result) => (
             <div
@@ -145,6 +252,7 @@ export default function MailRepositoriesList() {
               <div className="flex gap-2">
                 <button
                   className="p-2 rounded-md hover:bg-gray-200"
+                  title="Reprocess all mails"
                   onClick={() => {
                     handleReprocessTask(result.path);
                   }}
@@ -154,6 +262,17 @@ export default function MailRepositoriesList() {
 
                 <button
                   className="p-2 rounded-md hover:bg-gray-200"
+                  title="Move all mails to another repository"
+                  onClick={() => {
+                    handleMoveAll(result.path);
+                  }}
+                >
+                  <MoveHorizontal className="w-5 h-5 text-orange-500" />
+                </button>
+
+                <button
+                  className="p-2 rounded-md hover:bg-gray-200"
+                  title="Clear all mails"
                   onClick={() => {
                     handleClearTask(result.path);
                   }}
