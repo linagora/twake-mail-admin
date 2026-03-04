@@ -26,6 +26,7 @@ import Mappings from "./modules/mappings";
 import MappingsList from "./modules/mappings/mappings-list";
 import NetworkChannels from "./modules/network-channels";
 import ChannelsList from "./modules/network-channels/channels-list";
+import ChannelsMap from "./modules/network-channels/channels-map";
 import Cassandra from "./modules/cassandra";
 import TasksList from "./modules/tasks";
 import CommonTasks from "./modules/common-tasks/index";
@@ -87,6 +88,7 @@ function App() {
               </Route>
               <Route path="/network-channels" element={<NetworkChannels />}>
                 <Route index element={<ChannelsList />} />
+                <Route path="map" element={<ChannelsMap />} />
               </Route>
               <Route path="/cassandra" element={<Cassandra />} />
               <Route path="/tasks" element={<TasksList />} />

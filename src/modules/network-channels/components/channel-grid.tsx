@@ -51,16 +51,27 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
   const [sortAsc, setSortAsc] = useState(true);
   const [page, setPage] = useState(1);
   const [selectedChannel, setSelectedChannel] = useState<NetworkChannel | null>(null);
+  const [search, setSearch] = useState("");
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return channels;
+    return channels.filter((c) =>
+      (c.username ?? "").toLowerCase().includes(q) ||
+      (c.remoteAddress ?? "").toLowerCase().includes(q) ||
+      (c.protocolSpecificInformation?.userAgent ?? "").toLowerCase().includes(q)
+    );
+  }, [channels, search]);
 
   const sorted = useMemo(() => {
-    const copy = [...channels];
+    const copy = [...filtered];
     copy.sort((a, b) => {
       const va = getFieldValue(a, sortField);
       const vb = getFieldValue(b, sortField);
       return sortAsc ? compareValues(va, vb) : compareValues(vb, va);
     });
     return copy;
-  }, [channels, sortField, sortAsc]);
+  }, [filtered, sortField, sortAsc]);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_LIMIT));
   const displayed = paginate
@@ -75,7 +86,7 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
   return (
     <div>
       {/* Sort controls */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
         <label className="text-sm font-medium">Sort by:</label>
         <select
           className="border rounded px-2 py-1 text-sm"
@@ -92,6 +103,13 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
         >
           {sortAsc ? "Asc \u2191" : "Desc \u2193"}
         </button>
+        <input
+          type="search"
+          placeholder="Search username, IP, user agent…"
+          className="border rounded px-2 py-1 text-sm ml-4 w-64"
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+        />
       </div>
 
       {/* Loading state */}
@@ -110,10 +128,11 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
       {/* Legend + Channel rows */}
       {channels.length > 0 && (
         <div>
-          <div className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 text-xs font-semibold text-muted-foreground px-3 pb-2 border-b mb-1">
+          <div className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 text-xs font-semibold text-muted-foreground px-3 pb-2 border-b mb-1">
             <span className="w-10">#</span>
             <span>Username</span>
             <span>Protocol</span>
+            <span>Remote Address</span>
             <span>User Agent</span>
             <span>Requests</span>
             <span>Written</span>
@@ -128,12 +147,13 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
               return (
                 <div
                   key={index}
-                  className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 items-center p-3 bg-gray-50 rounded-2 cursor-pointer hover:bg-gray-100 transition text-sm"
+                  className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 items-center p-3 bg-gray-50 rounded-2 cursor-pointer hover:bg-gray-100 transition text-sm"
                   onClick={() => setSelectedChannel(channel)}
                 >
                   <span className="text-muted-foreground w-10">{globalIndex}.</span>
                   <span className="font-mono truncate">{channel.username}</span>
                   <span className="truncate">{channel.protocol}</span>
+                  <span className="font-mono truncate">{channel.remoteAddress ?? "-"}</span>
                   <span className="truncate">{info.userAgent ?? "-"}</span>
                   <span className="truncate">{info.requestCount ?? "-"}</span>
                   <span className="truncate">{formatBytes(info.cumulativeWrittenBytes)}</span>
