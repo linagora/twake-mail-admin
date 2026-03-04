@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, Map } from "lucide-react";
+import { useNavigate } from "react-router";
 import { getAllChannels, disconnectAllChannels } from "./api-client";
 import { NetworkChannel } from "./types";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import ChannelGrid from "./components/channel-grid";
 
 export default function ChannelsList() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const confirm = useConfirm();
   const fetchAll = useCallback(() => getAllChannels(), []);
@@ -41,6 +43,9 @@ export default function ChannelsList() {
   return (
     <div className="mt-4">
       <div className="flex justify-end gap-2 mb-4">
+        <Button variant="outline" size="sm" onClick={() => navigate("/network-channels/map")}>
+          <Map className="w-4 h-4 mr-1" /> Map
+        </Button>
         <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
         </Button>
