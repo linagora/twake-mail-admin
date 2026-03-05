@@ -31,6 +31,7 @@ import Cassandra from "./modules/cassandra";
 import TasksList from "./modules/tasks";
 import CommonTasks from "./modules/common-tasks/index";
 import LiveMetrics from "./modules/live-metrics";
+import ResourceLocator from "./modules/resource-locator";
 import TaskDetail from "./modules/common-tasks/task-detail";
 import { ConfirmProvider } from "./components/custom/confirm-provider";
 import { AuthProvider } from "./components/custom/auth-provider";
@@ -93,6 +94,7 @@ function App() {
               <Route path="/cassandra" element={<Cassandra />} />
               <Route path="/tasks" element={<TasksList />} />
               <Route path="/common-tasks" element={<CommonTasks />} />
+              <Route path="/resource-locator" element={<ResourceLocator />} />
               <Route path="/live-metrics" element={<LiveMetrics />} />
               <Route path="/task/:id" element={<TaskDetail />} />
             </Routes>

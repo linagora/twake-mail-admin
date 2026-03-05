@@ -66,3 +66,16 @@ export interface RestoreDeletedMessagesRequest {
   criteria: RestoreCriterion[];
   limit?: number;
 }
+
+export interface DeletedMessage {
+  messageId: string;
+  originMailboxes: string[];
+  owner: string;
+  deliveryDate: string;
+  deletionDate: string;
+  sender: string;
+  recipients: string[];
+  subject: string;
+  hasAttachment: boolean;
+  size: number;
+}

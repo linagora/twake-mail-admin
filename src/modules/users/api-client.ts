@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -265,6 +265,16 @@ export const restoreDeletedMessages = async (
 ): Promise<RunTaskResponse> => {
   return apiClient.post(
     `/deletedMessages/users/${encodeURIComponent(username)}?action=restore`,
+    body
+  );
+};
+
+export const searchDeletedMessages = async (
+  username: string,
+  body: RestoreDeletedMessagesRequest
+): Promise<DeletedMessage[]> => {
+  return apiClient.post(
+    `/deletedMessages/users/${encodeURIComponent(username)}/messages`,
     body
   );
 };
