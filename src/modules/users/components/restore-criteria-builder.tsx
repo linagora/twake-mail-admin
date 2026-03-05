@@ -13,6 +13,10 @@ import {
 import { RestoreCriterion } from "../types";
 
 const FIELD_CONFIG: Record<string, { operators: string[]; inputType: string }> = {
+  messageId: {
+    operators: ["equals"],
+    inputType: "text",
+  },
   subject: {
     operators: ["contains", "containsIgnoreCase", "equals", "equalsIgnoreCase"],
     inputType: "text",

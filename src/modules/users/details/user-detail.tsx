@@ -12,6 +12,7 @@ import UserIdentities from "./user-identities";
 import UserTasks from "./user-tasks";
 import UserChannels from "./user-channels";
 import UserMappings from "./user-mappings";
+import UserDeletedMessageVault from "./user-deleted-message-vault";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
 import { getUserRateLimits, updateUserRateLimits } from "../api-client";
 
@@ -37,6 +38,7 @@ export default function UserDetail() {
       <UserAllowedFrom username={username!} />
       <UserIdentities username={username!} />
       <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} />
+      <UserDeletedMessageVault username={username!} />
       <UserTasks username={username!} />
       <UserChannels username={username!} />
     </div>
