@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Loader2, Search } from "lucide-react";
+import { ChevronDown, ChevronRight, Loader2, Search, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
-import { searchDeletedMessages } from "../api-client";
+import { searchDeletedMessages, restoreDeletedMessages } from "../api-client";
 import { DeletedMessage, RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 
 const PAGE_SIZE = 10;
@@ -29,10 +30,12 @@ function formatSize(bytes: number): string {
 
 export default function UserDeletedMessageVault({ username }: Props) {
   const { toast } = useToast();
+  const confirm = useConfirm();
   const [open, setOpen] = useState(false);
   const [criteria, setCriteria] = useState<RestoreCriterion[]>([]);
   const [limit, setLimit] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  const [restoreLoading, setRestoreLoading] = useState(false);
   const [results, setResults] = useState<DeletedMessage[] | null>(null);
   const [page, setPage] = useState(1);
 
@@ -55,6 +58,48 @@ export default function UserDeletedMessageVault({ username }: Props) {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRestore = async () => {
+    const count = results?.length;
+    const confirmed = await confirm({
+      header: "Restore deleted messages",
+      message: (
+        <p>
+          Restore <strong>{count ?? "all matching"}</strong> message{count !== 1 ? "s" : ""} for <strong>{username}</strong>?
+          This will enqueue a background task.
+        </p>
+      ),
+    });
+    if (!confirmed) return;
+
+    setRestoreLoading(true);
+    try {
+      const body: RestoreDeletedMessagesRequest = {
+        combinator: "and",
+        criteria,
+        ...(limit !== undefined ? { limit } : {}),
+      };
+      const data = await restoreDeletedMessages(username, body);
+      toast({
+        title: "Restore task started",
+        description: (
+          <p>
+            Task{" "}
+            <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>
+              {data.taskId}
+            </a>
+          </p>
+        ),
+      });
+    } catch (err) {
+      toast({
+        title: "Error restoring deleted messages",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setRestoreLoading(false);
     }
   };
 
@@ -82,15 +127,27 @@ export default function UserDeletedMessageVault({ username }: Props) {
             }}
           />
 
-          <Button
-            size="sm"
-            onClick={handleSearch}
-            disabled={loading}
-            className="flex items-center gap-2"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            Search
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={handleSearch}
+              disabled={loading || restoreLoading}
+              className="flex items-center gap-2"
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              Search
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleRestore}
+              disabled={loading || restoreLoading}
+              className="flex items-center gap-2 text-green-700 border-green-600 hover:bg-green-50"
+            >
+              {restoreLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+              Restore
+            </Button>
+          </div>
 
           {results !== null && (
             <div className="space-y-2">
