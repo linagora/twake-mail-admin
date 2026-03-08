@@ -67,6 +67,47 @@ export interface RestoreDeletedMessagesRequest {
   limit?: number;
 }
 
+export interface EmailAddress {
+  name?: string;
+  email: string;
+}
+
+export interface MailSearchFilter {
+  text?: string;
+  from?: string;
+  to?: string;
+  subject?: string;
+  hasAttachment?: boolean;
+  hasKeywords?: string[];
+  inMailboxes?: string[];
+  inMailboxOtherThan?: string[];
+  before?: string;
+  after?: string;
+}
+
+export interface MailSearchSort {
+  property: "receivedAt" | "from" | "subject";
+  isAscending?: boolean;
+}
+
+export interface MailSearchRequest {
+  reason: string;
+  filter?: MailSearchFilter;
+  sort?: MailSearchSort[];
+}
+
+export interface MailSearchResult {
+  id: string;
+  keywords?: Record<string, boolean>;
+  mailboxIds?: Record<string, boolean>;
+  receivedAt?: string;
+  from?: EmailAddress[];
+  to?: EmailAddress[];
+  hasAttachment?: boolean;
+  preview?: string;
+  subject?: string;
+}
+
 export interface DeletedMessage {
   messageId: string;
   originMailboxes: string[];

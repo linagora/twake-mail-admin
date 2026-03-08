@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
-import { ChevronDown, ChevronRight, Eraser, Plus, Trash2 } from "lucide-react";
+import { Link } from "react-router";
+import { ChevronDown, ChevronRight, Eraser, Plus, Search, Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserMailboxes, createUserMailbox, deleteUserMailbox, clearMailboxContent } from "../api-client";
 import { GetUserMailboxesResponseType } from "../types";
@@ -153,6 +154,13 @@ export default function UserMailboxes({ username }: Props) {
             </span>
           )}
         </button>
+        <Link
+          to={`/users/user/${encodeURIComponent(username)}/message-search`}
+          className="p-1 rounded-md hover:bg-gray-200 transition text-gray-500 hover:text-blue-600"
+          title="Search messages"
+        >
+          <Search className="w-4 h-4" />
+        </Link>
         {open && (
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
