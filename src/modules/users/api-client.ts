@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -310,6 +310,20 @@ export const deleteUserMappingSources = async (
   type: "group" | "forward" | "address" | "alias"
 ): Promise<void> => {
   await apiClient.delete(`/mappings/sources/${encodeURIComponent(username)}?type=${type}`);
+};
+
+export const searchUserMails = async (
+  username: string,
+  body: MailSearchRequest,
+  params: { limit?: number; offset?: number }
+): Promise<MailSearchResult[]> => {
+  const query = new URLSearchParams();
+  if (params.limit !== undefined) query.set("limit", String(params.limit));
+  if (params.offset !== undefined) query.set("offset", String(params.offset));
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}/mails?${query.toString()}`,
+    body
+  );
 };
 
 export const recomputeFastViewProjection = async (

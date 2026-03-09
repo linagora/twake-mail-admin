@@ -22,6 +22,7 @@ import GlobalQuota from "./modules/global-quota";
 import Users from "./modules/users";
 import UsersList from "./modules/users/users-list";
 import UserDetail from "./modules/users/details/user-detail";
+import UserMessageSearch from "./modules/users/details/user-message-search";
 import Mappings from "./modules/mappings";
 import MappingsList from "./modules/mappings/mappings-list";
 import NetworkChannels from "./modules/network-channels";
@@ -83,6 +84,7 @@ function App() {
               <Route path="/users" element={<Users />}>
                 <Route index element={<UsersList />} />
                 <Route path="user/:username" element={<UserDetail />} />
+                <Route path="user/:username/message-search" element={<UserMessageSearch />} />
               </Route>
               <Route path="/mappings" element={<Mappings />}>
                 <Route index element={<MappingsList />} />
