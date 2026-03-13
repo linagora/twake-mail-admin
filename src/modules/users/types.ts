@@ -108,6 +108,29 @@ export interface MailSearchResult {
   subject?: string;
 }
 
+export interface UserLabel {
+  id: string;
+  displayName: string;
+  keyword: string;
+  color?: string;
+  description?: string;
+  readOnly: boolean;
+}
+
+export interface UserLabelCreatePayload {
+  displayName: string;
+  keyword?: string;
+  color?: string;
+  description?: string;
+}
+
+export interface UserLabelUpdatePayload {
+  displayName: string;
+  color?: string | null;
+  description?: string | null;
+  readOnly?: boolean;
+}
+
 export interface DeletedMessage {
   messageId: string;
   originMailboxes: string[];

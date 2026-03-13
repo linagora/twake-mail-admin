@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -324,6 +324,22 @@ export const searchUserMails = async (
     `/users/${encodeURIComponent(username)}/mails?${query.toString()}`,
     body
   );
+};
+
+export const getUserLabels = async (username: string): Promise<UserLabel[]> => {
+  return apiClient.get(`/users/${encodeURIComponent(username)}/labels`);
+};
+
+export const createUserLabel = async (username: string, payload: UserLabelCreatePayload): Promise<UserLabel> => {
+  return apiClient.post(`/users/${encodeURIComponent(username)}/labels`, payload);
+};
+
+export const updateUserLabel = async (username: string, labelId: string, payload: UserLabelUpdatePayload): Promise<void> => {
+  await apiClient.patch(`/users/${encodeURIComponent(username)}/labels/${encodeURIComponent(labelId)}`, payload);
+};
+
+export const deleteUserLabel = async (username: string, labelId: string): Promise<void> => {
+  await apiClient.delete(`/users/${encodeURIComponent(username)}/labels/${encodeURIComponent(labelId)}`);
 };
 
 export const recomputeFastViewProjection = async (
