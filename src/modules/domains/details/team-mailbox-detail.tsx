@@ -220,7 +220,7 @@ export default function TeamMailboxDetail() {
       <UserDeletedMessageVault
         label={`${mailbox}@${domain}`}
         onSearch={(body) => searchTeamMailboxDeletedMessages(domain!, mailbox!, body)}
-        onRestore={(body) => restoreTeamMailboxDeletedMessages(domain!, mailbox!, body)}
+        onRestore={() => restoreTeamMailboxDeletedMessages(domain!, mailbox!)}
       />
     </div>
   );

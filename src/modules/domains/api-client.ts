@@ -195,8 +195,7 @@ export const searchTeamMailboxDeletedMessages = async (
 
 export const restoreTeamMailboxDeletedMessages = async (
   domain: string,
-  mailbox: string,
-  _body: RestoreDeletedMessagesRequest
+  mailbox: string
 ): Promise<RunTaskResponse> => {
   const address = encodeURIComponent(`${mailbox}@${domain}`);
   return apiClient.post(`/deletedMessages/teamMailbox/${address}?action=restore`);
