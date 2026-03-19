@@ -2,16 +2,18 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight, Loader2, Search, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
-import { searchDeletedMessages, restoreDeletedMessages } from "../api-client";
 import { DeletedMessage, RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { RunTaskResponse } from "@/modules/common-tasks/types";
 
 const PAGE_SIZE = 10;
 
 interface Props {
-  username: string;
+  label: string;
+  onSearch: (body: RestoreDeletedMessagesRequest) => Promise<DeletedMessage[]>;
+  onRestore: (body: RestoreDeletedMessagesRequest) => Promise<RunTaskResponse>;
 }
 
 function formatDate(iso: string): string {
@@ -28,7 +30,7 @@ function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export default function UserDeletedMessageVault({ username }: Props) {
+export default function UserDeletedMessageVault({ label, onSearch, onRestore }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
   const [open, setOpen] = useState(false);
@@ -49,7 +51,7 @@ export default function UserDeletedMessageVault({ username }: Props) {
         criteria,
         ...(limit !== undefined ? { limit } : {}),
       };
-      const data = await searchDeletedMessages(username, body);
+      const data = await onSearch(body);
       setResults(data);
     } catch (err) {
       toast({
@@ -67,7 +69,7 @@ export default function UserDeletedMessageVault({ username }: Props) {
       header: "Restore deleted messages",
       message: (
         <p>
-          Restore <strong>{count ?? "all matching"}</strong> message{count !== 1 ? "s" : ""} for <strong>{username}</strong>?
+          Restore <strong>{count ?? "all matching"}</strong> message{count !== 1 ? "s" : ""} for <strong>{label}</strong>?
           This will enqueue a background task.
         </p>
       ),
@@ -81,7 +83,7 @@ export default function UserDeletedMessageVault({ username }: Props) {
         criteria,
         ...(limit !== undefined ? { limit } : {}),
       };
-      const data = await restoreDeletedMessages(username, body);
+      const data = await onRestore(body);
       toast({
         title: "Restore task started",
         description: (

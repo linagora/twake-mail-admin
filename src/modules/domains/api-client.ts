@@ -2,6 +2,7 @@ import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
+import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
 
 export const getDomains = async (): Promise<GetDomainsResponseType> => {
   const response = await apiClient.get<any, GetDomainsResponseType>("/domains");
@@ -181,4 +182,21 @@ export const updateDomainRateLimits = async (domain: string, limits: RateLimits)
   await apiClient.put(`/domains/${encodeURIComponent(domain)}/ratelimits`, limits, {
     headers: { "Content-Type": "application/json" },
   });
+};
+
+export const searchTeamMailboxDeletedMessages = async (
+  domain: string,
+  mailbox: string,
+  body: RestoreDeletedMessagesRequest
+): Promise<DeletedMessage[]> => {
+  const address = encodeURIComponent(`${mailbox}@${domain}`);
+  return apiClient.post(`/deletedMessages/users/${address}/messages?force=true`, body);
+};
+
+export const restoreTeamMailboxDeletedMessages = async (
+  domain: string,
+  mailbox: string
+): Promise<RunTaskResponse> => {
+  const address = encodeURIComponent(`${mailbox}@${domain}`);
+  return apiClient.post(`/deletedMessages/teamMailbox/${address}?action=restore`);
 };

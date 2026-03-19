@@ -15,7 +15,7 @@ import UserMappings from "./user-mappings";
 import UserDeletedMessageVault from "./user-deleted-message-vault";
 import UserLabels from "./user-labels";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
-import { getUserRateLimits, updateUserRateLimits } from "../api-client";
+import { getUserRateLimits, updateUserRateLimits, searchDeletedMessages, restoreDeletedMessages } from "../api-client";
 
 export default function UserDetail() {
   const { username } = useParams();
@@ -40,7 +40,11 @@ export default function UserDetail() {
       <UserIdentities username={username!} />
       <UserLabels username={username!} />
       <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} />
-      <UserDeletedMessageVault username={username!} />
+      <UserDeletedMessageVault
+        label={username!}
+        onSearch={(body) => searchDeletedMessages(username!, body)}
+        onRestore={(body) => restoreDeletedMessages(username!, body)}
+      />
       <UserTasks username={username!} />
       <UserChannels username={username!} />
     </div>

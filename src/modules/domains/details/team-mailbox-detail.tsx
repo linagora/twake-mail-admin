@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getTeamMailboxMembers, addTeamMailboxMember, removeTeamMailboxMember } from "../api-client";
+import { getTeamMailboxMembers, addTeamMailboxMember, removeTeamMailboxMember, searchTeamMailboxDeletedMessages, restoreTeamMailboxDeletedMessages } from "../api-client";
 import { GetTeamMailboxMembersResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -11,6 +11,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import TeamMailboxFolders from "./team-mailbox-folders";
 import TeamMailboxQuota from "./team-mailbox-quota";
 import TeamMailboxExtraSenders from "./team-mailbox-extra-senders";
+import UserDeletedMessageVault from "@/modules/users/details/user-deleted-message-vault";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -216,6 +217,11 @@ export default function TeamMailboxDetail() {
       <TeamMailboxFolders domain={domain!} mailbox={mailbox!} />
       <TeamMailboxQuota domain={domain!} mailbox={mailbox!} />
       <TeamMailboxExtraSenders domain={domain!} mailbox={mailbox!} />
+      <UserDeletedMessageVault
+        label={`${mailbox}@${domain}`}
+        onSearch={(body) => searchTeamMailboxDeletedMessages(domain!, mailbox!, body)}
+        onRestore={() => restoreTeamMailboxDeletedMessages(domain!, mailbox!)}
+      />
     </div>
   );
 }
