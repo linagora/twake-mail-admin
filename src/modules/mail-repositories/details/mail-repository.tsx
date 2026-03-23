@@ -14,6 +14,7 @@ import { toast, useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { MoveHorizontal, Trash2, RefreshCw } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
+import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 
 // Define the types for the expected responses
 interface JsonMailResponse {
@@ -105,13 +106,30 @@ export default function MailRepositoryDetail() {
   };
 
   const handleReprocessMail = async (mailKey: string) => {
+    const params = [
+      { key: "queue", defaultValue: "spool", type: "input" as const },
+      { key: "processor", defaultValue: "", type: "input" as const },
+    ];
+    const paramValues: { [key: string]: string } = {};
     const confirmed = await confirm({
       header: "Reprocess Mail",
-      message: `Reprocess mail "${mailKey}"?`,
+      message: (
+        <ConfirmTaskContent
+          message={<p>Reprocess mail <b>{mailKey}</b>?</p>}
+          command={`curl -XPATCH 'http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails/${mailKey}?action=reprocess&'`}
+          params={params}
+          getParamValues={(key, value) => {
+            paramValues[key] = typeof value === "boolean" ? value.toString() : value;
+          }}
+        />
+      ),
     });
     if (!confirmed || !id) return;
     try {
-      const { taskId } = await reprocessSingleMail(encodeURIComponent(id), mailKey);
+      const { taskId } = await reprocessSingleMail(encodeURIComponent(id), mailKey, {
+        queue: paramValues["queue"] || undefined,
+        processor: paramValues["processor"] || undefined,
+      });
       toast({
         title: "Reprocess scheduled",
         description: (
