@@ -15,6 +15,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import { MoveHorizontal, Trash2, RefreshCw } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
+import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
 
 // Define the types for the expected responses
 interface JsonMailResponse {
@@ -87,9 +88,38 @@ export default function MailRepositoryDetail() {
   // check if we reached the end of the list
   const hasMore = offset + limit < size;
 
+  const activeFilters: MailFilters = {
+    sender: searchParams.get("sender") || "",
+    recipient: searchParams.get("recipient") || "",
+    updatedBefore: searchParams.get("updatedBefore") || "",
+    updatedAfter: searchParams.get("updatedAfter") || "",
+    remoteAddress: searchParams.get("remoteAddress") || "",
+    remoteHost: searchParams.get("remoteHost") || "",
+  };
+
   const fetchMails = useCallback(
-    () => getMailsInRepository(encodeURIComponent(id!), { limit, offset }),
-    [id, limit, offset]
+    () =>
+      getMailsInRepository(encodeURIComponent(id!), {
+        limit,
+        offset,
+        sender: activeFilters.sender || undefined,
+        recipient: activeFilters.recipient || undefined,
+        updatedBefore: activeFilters.updatedBefore || undefined,
+        updatedAfter: activeFilters.updatedAfter || undefined,
+        remoteAddress: activeFilters.remoteAddress || undefined,
+        remoteHost: activeFilters.remoteHost || undefined,
+      }),
+    [
+      id,
+      limit,
+      offset,
+      activeFilters.sender,
+      activeFilters.recipient,
+      activeFilters.updatedBefore,
+      activeFilters.updatedAfter,
+      activeFilters.remoteAddress,
+      activeFilters.remoteHost,
+    ]
   );
 
   const {
@@ -99,10 +129,32 @@ export default function MailRepositoryDetail() {
     refresh,
   } = useFetchData<MailKeysResponseType>(fetchMails);
 
+  const buildParams = (overrides: Record<string, string> = {}): Record<string, string> => {
+    const params: Record<string, string> = { page: page.toString(), size: size.toString(), ...overrides };
+    if (activeFilters.sender) params.sender = activeFilters.sender;
+    if (activeFilters.recipient) params.recipient = activeFilters.recipient;
+    if (activeFilters.updatedBefore) params.updatedBefore = activeFilters.updatedBefore;
+    if (activeFilters.updatedAfter) params.updatedAfter = activeFilters.updatedAfter;
+    if (activeFilters.remoteAddress) params.remoteAddress = activeFilters.remoteAddress;
+    if (activeFilters.remoteHost) params.remoteHost = activeFilters.remoteHost;
+    return params;
+  };
+
   // Handle pagination navigation
   const goToPage = (newPage: number) => {
     if (newPage < 1) return;
-    setSearchParams({ page: newPage.toString(), size: size.toString() });
+    setSearchParams(buildParams({ page: newPage.toString() }));
+  };
+
+  const handleApplyFilters = (newFilters: MailFilters) => {
+    const params: Record<string, string> = { page: "1", size: size.toString() };
+    if (newFilters.sender) params.sender = newFilters.sender;
+    if (newFilters.recipient) params.recipient = newFilters.recipient;
+    if (newFilters.updatedBefore) params.updatedBefore = newFilters.updatedBefore;
+    if (newFilters.updatedAfter) params.updatedAfter = newFilters.updatedAfter;
+    if (newFilters.remoteAddress) params.remoteAddress = newFilters.remoteAddress;
+    if (newFilters.remoteHost) params.remoteHost = newFilters.remoteHost;
+    setSearchParams(params);
   };
 
   const handleReprocessMail = async (mailKey: string) => {
@@ -214,20 +266,27 @@ export default function MailRepositoryDetail() {
     }
   };
 
+  const extendedHref = (() => {
+    const p = new URLSearchParams(buildParams({ page: page.toString() }));
+    return `/mail-repositories/repository/${encodeURIComponent(id!)}/extended?${p.toString()}`;
+  })();
+
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-lg font-semibold">Mail Repository Details</h3>
           <p>Repository ID: {id}</p>
         </div>
         <a
-          href={`/mail-repositories/repository/${encodeURIComponent(id!)}/extended?page=${page}&size=${size}`}
+          href={extendedHref}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
         >
           Extended View
         </a>
       </div>
+
+      <MailFiltersPanel filters={activeFilters} onApply={handleApplyFilters} />
 
       {isLoading && <p>Loading mails...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}

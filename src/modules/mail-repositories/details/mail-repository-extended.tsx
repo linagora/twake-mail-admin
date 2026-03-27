@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router";
 import { Download, MoveHorizontal, Trash2, RefreshCw, Loader2 } from "lucide-react";
+import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
 import {
   getMailRepositories,
   getMailsInRepository,
@@ -64,6 +65,15 @@ export default function MailRepositoryExtended() {
   const totalPages = Math.max(1, Math.ceil(repoSize / PAGE_LIMIT));
   const hasMore = offset + PAGE_LIMIT < repoSize;
 
+  const activeFilters: MailFilters = {
+    sender: searchParams.get("sender") || "",
+    recipient: searchParams.get("recipient") || "",
+    updatedBefore: searchParams.get("updatedBefore") || "",
+    updatedAfter: searchParams.get("updatedAfter") || "",
+    remoteAddress: searchParams.get("remoteAddress") || "",
+    remoteHost: searchParams.get("remoteHost") || "",
+  };
+
   const [mailKeys, setMailKeys] = useState<string[]>([]);
   const [mails, setMails] = useState<MailRow[]>([]);
   const [loading, setLoading] = useState(false);
@@ -85,7 +95,16 @@ export default function MailRepositoryExtended() {
     setLoading(true);
     setError(null);
     try {
-      const keys = await getMailsInRepository(encodedRepo, { limit: PAGE_LIMIT, offset });
+      const keys = await getMailsInRepository(encodedRepo, {
+        limit: PAGE_LIMIT,
+        offset,
+        sender: activeFilters.sender || undefined,
+        recipient: activeFilters.recipient || undefined,
+        updatedBefore: activeFilters.updatedBefore || undefined,
+        updatedAfter: activeFilters.updatedAfter || undefined,
+        remoteAddress: activeFilters.remoteAddress || undefined,
+        remoteHost: activeFilters.remoteHost || undefined,
+      });
       setMailKeys(keys);
 
       const details = await Promise.all(
@@ -116,7 +135,16 @@ export default function MailRepositoryExtended() {
     } finally {
       setLoading(false);
     }
-  }, [encodedRepo, offset]);
+  }, [
+    encodedRepo,
+    offset,
+    activeFilters.sender,
+    activeFilters.recipient,
+    activeFilters.updatedBefore,
+    activeFilters.updatedAfter,
+    activeFilters.remoteAddress,
+    activeFilters.remoteHost,
+  ]);
 
   useEffect(() => {
     fetchPage();
@@ -140,9 +168,31 @@ export default function MailRepositoryExtended() {
     return copy;
   }, [mails, sortField, sortAsc]);
 
+  const buildParams = (overrides: Record<string, string> = {}): Record<string, string> => {
+    const params: Record<string, string> = { page: page.toString(), size: repoSize.toString(), ...overrides };
+    if (activeFilters.sender) params.sender = activeFilters.sender;
+    if (activeFilters.recipient) params.recipient = activeFilters.recipient;
+    if (activeFilters.updatedBefore) params.updatedBefore = activeFilters.updatedBefore;
+    if (activeFilters.updatedAfter) params.updatedAfter = activeFilters.updatedAfter;
+    if (activeFilters.remoteAddress) params.remoteAddress = activeFilters.remoteAddress;
+    if (activeFilters.remoteHost) params.remoteHost = activeFilters.remoteHost;
+    return params;
+  };
+
   const goToPage = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages) return;
-    setSearchParams({ page: newPage.toString(), size: repoSize.toString() });
+    setSearchParams(buildParams({ page: newPage.toString() }));
+  };
+
+  const handleApplyFilters = (newFilters: MailFilters) => {
+    const params: Record<string, string> = { page: "1", size: repoSize.toString() };
+    if (newFilters.sender) params.sender = newFilters.sender;
+    if (newFilters.recipient) params.recipient = newFilters.recipient;
+    if (newFilters.updatedBefore) params.updatedBefore = newFilters.updatedBefore;
+    if (newFilters.updatedAfter) params.updatedAfter = newFilters.updatedAfter;
+    if (newFilters.remoteAddress) params.remoteAddress = newFilters.remoteAddress;
+    if (newFilters.remoteHost) params.remoteHost = newFilters.remoteHost;
+    setSearchParams(params);
   };
 
   const handleDownload = async (mailKey: string) => {
@@ -267,7 +317,9 @@ export default function MailRepositoryExtended() {
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
       <h3 className="text-lg font-semibold">Mail Repository — Extended View</h3>
-      <p className="text-sm text-gray-500">Repository: {id}</p>
+      <p className="text-sm text-gray-500 mb-4">Repository: {id}</p>
+
+      <MailFiltersPanel filters={activeFilters} onApply={handleApplyFilters} />
 
       {/* Sort controls */}
       <div className="flex items-center gap-2 mt-4 mb-3">
