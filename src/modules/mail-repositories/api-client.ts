@@ -41,16 +41,27 @@ export const getMailRepositories =
  */
 export const getMailsInRepository = async (
   encodedPathOfTheRepository: string,
-  options?: { limit?: number; offset?: number }
+  options?: {
+    limit?: number;
+    offset?: number;
+    sender?: string;
+    recipient?: string;
+    updatedBefore?: string;
+    updatedAfter?: string;
+    remoteAddress?: string;
+    remoteHost?: string;
+  }
 ): Promise<MailKeysResponseType> => {
   const params = new URLSearchParams();
 
-  if (options?.limit !== undefined) {
-    params.append("limit", options.limit.toString());
-  }
-  if (options?.offset !== undefined) {
-    params.append("offset", options.offset.toString());
-  }
+  if (options?.limit !== undefined) params.append("limit", options.limit.toString());
+  if (options?.offset !== undefined) params.append("offset", options.offset.toString());
+  if (options?.sender) params.append("sender", options.sender);
+  if (options?.recipient) params.append("recipient", options.recipient);
+  if (options?.updatedBefore) params.append("updatedBefore", options.updatedBefore);
+  if (options?.updatedAfter) params.append("updatedAfter", options.updatedAfter);
+  if (options?.remoteAddress) params.append("remoteAddress", options.remoteAddress);
+  if (options?.remoteHost) params.append("remoteHost", options.remoteHost);
 
   const response = await apiClient.get<any, MailKeysResponseType>(
     `/mailRepositories/${encodedPathOfTheRepository}/mails?${params.toString()}`
