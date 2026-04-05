@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
-import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData } from "../api-client";
+import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData, cleanupUserMailbox } from "../api-client";
 import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import RenameUserForm from "../components/rename-user-form";
@@ -22,6 +22,10 @@ const FAST_VIEW_PARAMS: TaskParam[] = [
   { key: "messagesPerSecond", defaultValue: "10", type: "input" },
 ];
 
+const CLEANUP_PARAMS: TaskParam[] = [
+  { key: "olderThan", defaultValue: "5d", type: "input" },
+];
+
 interface Props {
   username: string;
 }
@@ -34,6 +38,8 @@ export default function UserTasks({ username }: Props) {
   const [subscribeLoading, setSubscribeLoading] = useState(false);
   const [fastViewLoading, setFastViewLoading] = useState(false);
   const [restoreLoading, setRestoreLoading] = useState(false);
+  const [cleanupTrashLoading, setCleanupTrashLoading] = useState(false);
+  const [cleanupSpamLoading, setCleanupSpamLoading] = useState(false);
   const [renameLoading, setRenameLoading] = useState(false);
   const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);
 
@@ -188,6 +194,76 @@ export default function UserTasks({ username }: Props) {
     }
   };
 
+  const handleCleanupTrash = async () => {
+    let olderThan = "5d";
+
+    try {
+      const result = await confirm({
+        header: "Cleanup Trash folder",
+        message: (
+          <ConfirmTaskContent
+            message={<p>Delete messages older than the grace period from the <strong>Trash</strong> folder of <strong>{username}</strong>.</p>}
+            command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Trash&user=${username}&useSavedDate"`}
+            params={CLEANUP_PARAMS}
+            getParamValues={(key, value) => {
+              if (key === "olderThan") olderThan = value as string;
+            }}
+          />
+        ),
+      });
+      if (!result) return;
+
+      setCleanupTrashLoading(true);
+      const trashData = await cleanupUserMailbox(username, "Trash", olderThan);
+      toast({
+        title: "Task is running",
+        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${trashData.taskId}`}>{trashData.taskId}</a></p>,
+      });
+    } catch (err) {
+      toast({
+        title: "Error cleaning up Trash",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setCleanupTrashLoading(false);
+    }
+  };
+
+  const handleCleanupSpam = async () => {
+    let olderThan = "5d";
+
+    try {
+      const result = await confirm({
+        header: "Cleanup Spam folder",
+        message: (
+          <ConfirmTaskContent
+            message={<p>Delete messages older than the grace period from the <strong>Spam</strong> folder of <strong>{username}</strong>.</p>}
+            command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Spam&user=${username}&useSavedDate"`}
+            params={CLEANUP_PARAMS}
+            getParamValues={(key, value) => {
+              if (key === "olderThan") olderThan = value as string;
+            }}
+          />
+        ),
+      });
+      if (!result) return;
+
+      setCleanupSpamLoading(true);
+      const spamData = await cleanupUserMailbox(username, "Spam", olderThan);
+      toast({
+        title: "Task is running",
+        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${spamData.taskId}`}>{spamData.taskId}</a></p>,
+      });
+    } catch (err) {
+      toast({
+        title: "Error cleaning up Spam",
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setCleanupSpamLoading(false);
+    }
+  };
+
   const handleRenameUser = async () => {
     let currentValues = { newUsername: "", force: false, fromStep: "" };
 
@@ -330,6 +406,38 @@ export default function UserTasks({ username }: Props) {
                 </TooltipTrigger>
                 <TooltipContent>
                   curl -XPOST /deletedMessages/users/{username}?action=restore
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+            <p>Cleanup user Trash folder</p>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupTrash}>
+                    {cleanupTrashLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XDELETE /messages?olderThan=5d&amp;mailbox=Trash&amp;user={username}&amp;useSavedDate
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+            <p>Cleanup user Spam folder</p>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupSpam}>
+                    {cleanupSpamLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;user={username}&amp;useSavedDate
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

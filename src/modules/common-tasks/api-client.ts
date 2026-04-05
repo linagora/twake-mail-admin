@@ -80,6 +80,14 @@ export const reloadCertificates = async (port?: string): Promise<void> => {
   await apiClient.post(`/servers?${query.toString()}`);
 };
 
+export const cleanupMailbox = async (
+  mailbox: "Trash" | "Spam",
+  olderThan: string
+): Promise<any> => {
+  const query = new URLSearchParams({ olderThan, mailbox, useSavedDate: "" });
+  return apiClient.delete(`/messages?${query.toString()}`);
+};
+
 export const cleanupOldTasks = async (olderThanDays: number): Promise<any> => {
   return apiClient.delete(`/tasks?olderThan=${olderThanDays}day`);
 };
