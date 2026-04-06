@@ -342,6 +342,15 @@ export const deleteUserLabel = async (username: string, labelId: string): Promis
   await apiClient.delete(`/users/${encodeURIComponent(username)}/labels/${encodeURIComponent(labelId)}`);
 };
 
+export const cleanupUserMailbox = async (
+  username: string,
+  mailbox: "Trash" | "Spam",
+  olderThan: string
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ olderThan, mailbox, user: username, useSavedDate: "" });
+  return apiClient.delete(`/messages?${query.toString()}`);
+};
+
 export const recomputeFastViewProjection = async (
   username: string,
   params: { messagesPerSecond?: string }

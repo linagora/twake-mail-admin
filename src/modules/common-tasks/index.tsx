@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
 
-import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights } from "./api-client";
+import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights, cleanupMailbox } from "./api-client";
+import ConfirmTaskContent from "./components/confirm-task-content";
+import { TaskParam } from "./types";
 import TaskContainer from "./task-container";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
@@ -105,6 +107,10 @@ const TASKS: TaskProps[] = [
   },
 ];
 
+const CLEANUP_PARAMS: TaskParam[] = [
+  { key: "olderThan", defaultValue: "5d", type: "input" },
+];
+
 const headerSubTitle = "Common tasks for data maintenance of a Twake Mail server";
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_task_management";
@@ -117,6 +123,8 @@ export default function CommonTasks() {
   const [cleanupLoading, setCleanupLoading] = useState(false);
   const [cleanupDays, setCleanupDays] = useState("30");
   const [repositionLoading, setRepositionLoading] = useState(false);
+  const [cleanupTrashLoading, setCleanupTrashLoading] = useState(false);
+  const [cleanupSpamLoading, setCleanupSpamLoading] = useState(false);
 
   const handleReloadCertificates = async () => {
     const confirmed = await confirm({
@@ -136,6 +144,68 @@ export default function CommonTasks() {
       });
     } finally {
       setReloadLoading(false);
+    }
+  };
+
+  const handleCleanupTrash = async () => {
+    let olderThan = "5d";
+    const result = await confirm({
+      header: "Cleanup Trash folder",
+      message: (
+        <ConfirmTaskContent
+          message={<p>Delete messages older than the grace period from the <strong>Trash</strong> folder of all users.</p>}
+          command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Trash&useSavedDate"`}
+          params={CLEANUP_PARAMS}
+          getParamValues={(key, value) => {
+            if (key === "olderThan") olderThan = value as string;
+          }}
+        />
+      ),
+    });
+    if (!result) return;
+
+    setCleanupTrashLoading(true);
+    try {
+      const data = await cleanupMailbox("Trash", olderThan);
+      toast({
+        title: "Task is running",
+        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+      });
+    } catch (err) {
+      toast({ title: "Error cleaning up Trash", description: <ErrorDisplayer error={err} /> });
+    } finally {
+      setCleanupTrashLoading(false);
+    }
+  };
+
+  const handleCleanupSpam = async () => {
+    let olderThan = "5d";
+    const result = await confirm({
+      header: "Cleanup Spam folder",
+      message: (
+        <ConfirmTaskContent
+          message={<p>Delete messages older than the grace period from the <strong>Spam</strong> folder of all users.</p>}
+          command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Spam&useSavedDate"`}
+          params={CLEANUP_PARAMS}
+          getParamValues={(key, value) => {
+            if (key === "olderThan") olderThan = value as string;
+          }}
+        />
+      ),
+    });
+    if (!result) return;
+
+    setCleanupSpamLoading(true);
+    try {
+      const data = await cleanupMailbox("Spam", olderThan);
+      toast({
+        title: "Task is running",
+        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+      });
+    } catch (err) {
+      toast({ title: "Error cleaning up Spam", description: <ErrorDisplayer error={err} /> });
+    } finally {
+      setCleanupSpamLoading(false);
     }
   };
 
@@ -231,6 +301,38 @@ export default function CommonTasks() {
               </TooltipTrigger>
               <TooltipContent>
                 curl -XPOST /team-mailboxes?action=repositionSystemRights
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <div className="flex justify-between items-center gap-4">
+          <p>Cleanup Trash folder (all users)</p>
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupTrash}>
+                  {cleanupTrashLoading && <Loader2 className="animate-spin" />}
+                  Run
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                curl -XDELETE /messages?olderThan=5d&amp;mailbox=Trash&amp;useSavedDate
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <div className="flex justify-between items-center gap-4">
+          <p>Cleanup Spam folder (all users)</p>
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupSpam}>
+                  {cleanupSpamLoading && <Loader2 className="animate-spin" />}
+                  Run
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;useSavedDate
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
