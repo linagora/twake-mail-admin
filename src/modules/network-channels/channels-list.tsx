@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Loader2, RefreshCw, Map } from "lucide-react";
+import { Loader2, RefreshCw, Map, MonitorSmartphone } from "lucide-react";
 import { useNavigate } from "react-router";
 import { getAllChannels, disconnectAllChannels } from "./api-client";
 import { NetworkChannel } from "./types";
@@ -43,6 +43,9 @@ export default function ChannelsList() {
   return (
     <div className="mt-4">
       <div className="flex justify-end gap-2 mb-4">
+        <Button variant="outline" size="sm" onClick={() => navigate("/network-channels/user-agent")}>
+          <MonitorSmartphone className="w-4 h-4 mr-1" /> User agent
+        </Button>
         <Button variant="outline" size="sm" onClick={() => navigate("/network-channels/map")}>
           <Map className="w-4 h-4 mr-1" /> Map
         </Button>
