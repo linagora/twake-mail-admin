@@ -37,75 +37,102 @@ import ResourceLocator from "./modules/resource-locator";
 import TaskDetail from "./modules/common-tasks/task-detail";
 import { ConfirmProvider } from "./components/custom/confirm-provider";
 import { AuthProvider } from "./components/custom/auth-provider";
+import { OIDCProvider } from "./components/custom/oidc-provider";
+import { OIDCCallback } from "./components/custom/oidc-callback";
 import { Toaster } from "./components/ui/toaster";
 import Logo from "./assets/images/logo.svg";
+import { loadAppConfig } from "./lib/env-config";
+import { configureApiClient, installStaticTokenAuth } from "./lib/apiClient";
+
+// Load and validate config once at startup.
+// Throws immediately if SSO variables are partially set.
+const appConfig = loadAppConfig();
+configureApiClient(appConfig.apiBaseUrl);
+
+if (!appConfig.sso) {
+  installStaticTokenAuth();
+}
+
+function MainLayout() {
+  return (
+    <ConfirmProvider>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <header className="block md:hidden flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <img className="w-[50%]" src={Logo} />
+          </header>
+          <Routes>
+            <Route path="/" element={<Navigate to="/health-check" replace />} />
+            <Route path="/health-check" element={<HealthCheck />} />
+            <Route path="/mail-repositories" element={<MailRepositories />}>
+              <Route index element={<MailRepositoriesList />} />
+              <Route path="repository/:id" element={<MailRepositoryDetail />} />
+              <Route path="repository/:id/extended" element={<MailRepositoryExtended />} />
+            </Route>
+            <Route path="/event-dead-letter" element={<EventDeadletter />}>
+              <Route index element={<EventListenersList />} />
+              <Route path="group/:id" element={<EventListenersDetail />} />
+            </Route>
+            <Route path="/domains" element={<Domains />}>
+              <Route index element={<DomainsList />} />
+              <Route path="domain/:domain" element={<DomainDetail />} />
+              <Route path="domain/:domain/team-mailbox/:mailbox" element={<TeamMailboxDetail />} />
+              <Route path="domain/:domain/team-mailbox/:mailbox/folder/:folder" element={<TeamMailboxFolderDetail />} />
+            </Route>
+            <Route path="/global-quota" element={<GlobalQuota />} />
+            <Route path="/users" element={<Users />}>
+              <Route index element={<UsersList />} />
+              <Route path="user/:username" element={<UserDetail />} />
+              <Route path="user/:username/message-search" element={<UserMessageSearch />} />
+            </Route>
+            <Route path="/mappings" element={<Mappings />}>
+              <Route index element={<MappingsList />} />
+            </Route>
+            <Route path="/network-channels" element={<NetworkChannels />}>
+              <Route index element={<ChannelsList />} />
+              <Route path="map" element={<ChannelsMap />} />
+              <Route path="user-agent" element={<ChannelsUserAgent />} />
+            </Route>
+            <Route path="/cassandra" element={<Cassandra />} />
+            <Route path="/tasks" element={<TasksList />} />
+            <Route path="/common-tasks" element={<CommonTasks />} />
+            <Route path="/resource-locator" element={<ResourceLocator />} />
+            <Route path="/live-metrics" element={<LiveMetrics />} />
+            <Route path="/task/:id" element={<TaskDetail />} />
+          </Routes>
+        </SidebarInset>
+      </SidebarProvider>
+    </ConfirmProvider>
+  );
+}
 
 function App() {
   return (
     <>
-      <AuthProvider>
-        <ConfirmProvider>
-          <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <header className="block md:hidden flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <SidebarTrigger className="-ml-1" />
-              <img className="w-[50%]" src={Logo} />
-            </header>
-            <Routes>
-              {/* Redirect root path to /health-check */}
-              <Route
-                path="/"
-                element={<Navigate to="/health-check" replace />}
-              />
-              <Route path="/health-check" element={<HealthCheck />} />
-              <Route path="/mail-repositories" element={<MailRepositories />}>
-                <Route index element={<MailRepositoriesList />} />
-                <Route
-                  path="repository/:id"
-                  element={<MailRepositoryDetail />}
-                />
-                <Route
-                  path="repository/:id/extended"
-                  element={<MailRepositoryExtended />}
-                />
-              </Route>
-
-              <Route path="/event-dead-letter" element={<EventDeadletter />}>
-                <Route index element={<EventListenersList />} />
-                <Route path="group/:id" element={<EventListenersDetail />} />
-              </Route>
-              <Route path="/domains" element={<Domains />}>
-                <Route index element={<DomainsList />} />
-                <Route path="domain/:domain" element={<DomainDetail />} />
-                <Route path="domain/:domain/team-mailbox/:mailbox" element={<TeamMailboxDetail />} />
-                <Route path="domain/:domain/team-mailbox/:mailbox/folder/:folder" element={<TeamMailboxFolderDetail />} />
-              </Route>
-              <Route path="/global-quota" element={<GlobalQuota />} />
-              <Route path="/users" element={<Users />}>
-                <Route index element={<UsersList />} />
-                <Route path="user/:username" element={<UserDetail />} />
-                <Route path="user/:username/message-search" element={<UserMessageSearch />} />
-              </Route>
-              <Route path="/mappings" element={<Mappings />}>
-                <Route index element={<MappingsList />} />
-              </Route>
-              <Route path="/network-channels" element={<NetworkChannels />}>
-                <Route index element={<ChannelsList />} />
-                <Route path="map" element={<ChannelsMap />} />
-                <Route path="user-agent" element={<ChannelsUserAgent />} />
-              </Route>
-              <Route path="/cassandra" element={<Cassandra />} />
-              <Route path="/tasks" element={<TasksList />} />
-              <Route path="/common-tasks" element={<CommonTasks />} />
-              <Route path="/resource-locator" element={<ResourceLocator />} />
-              <Route path="/live-metrics" element={<LiveMetrics />} />
-              <Route path="/task/:id" element={<TaskDetail />} />
-            </Routes>
-          </SidebarInset>
-          </SidebarProvider>
-        </ConfirmProvider>
-      </AuthProvider>
+      <Routes>
+        {appConfig.sso && (
+          <Route
+            path="/oidc-callback"
+            element={<OIDCCallback config={appConfig.sso} />}
+          />
+        )}
+        <Route
+          path="*"
+          element={
+            appConfig.sso ? (
+              <OIDCProvider config={appConfig.sso}>
+                <MainLayout />
+              </OIDCProvider>
+            ) : (
+              <AuthProvider>
+                <MainLayout />
+              </AuthProvider>
+            )
+          }
+        />
+      </Routes>
       <Toaster />
     </>
   );
