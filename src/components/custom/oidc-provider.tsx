@@ -1,10 +1,17 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { getAccessToken, getRefreshToken, refreshTokens, redirectToLogin } from "@/lib/oidc";
+import * as client from "openid-client";
+import { getAccessToken, getRefreshToken, refreshTokens, redirectToLogin, clearTokens, getOIDCConfig } from "@/lib/oidc";
 import { installOIDCAuth } from "@/lib/oidc-interceptors";
+import { Button } from "@/components/ui/button";
 import type { SSOConfig } from "@/lib/env-config";
+
+function isLoggedOut(): boolean {
+  return new URLSearchParams(window.location.search).get('logout') === '1';
+}
 
 interface OIDCContextType {
   isAuthenticated: boolean;
+  logout: () => Promise<void>;
 }
 
 const OIDCContext = createContext<OIDCContextType | undefined>(undefined);
@@ -16,13 +23,25 @@ interface OIDCProviderProps {
 
 export const OIDCProvider: React.FC<OIDCProviderProps> = ({ config, children }) => {
   const [isReady, setIsReady] = useState(false);
+  const [loggedOut, setLoggedOut] = useState(() => isLoggedOut());
   const [error, setError] = useState<string | null>(null);
+
+  const logout = async () => {
+    const oidcConfig = await getOIDCConfig(config);
+    clearTokens();
+    const endSessionUrl = client.buildEndSessionUrl(oidcConfig, {
+      post_logout_redirect_uri: config.postLogoutRedirect,
+    });
+    window.location.href = endSessionUrl.toString();
+  };
 
   useEffect(() => {
     installOIDCAuth(config);
 
+    if (loggedOut) return;
+
     const init = async () => {
-      // Access token already in memory (e.g. after callback redirect)
+      // Access token in sessionStorage — still valid
       if (getAccessToken()) {
         setIsReady(true);
         return;
@@ -44,7 +63,25 @@ export const OIDCProvider: React.FC<OIDCProviderProps> = ({ config, children }) 
     };
 
     init().catch((err) => setError(err instanceof Error ? err.message : String(err)));
-  }, [config]);
+  }, [config, loggedOut]);
+
+  if (loggedOut) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen gap-6">
+        <p className="text-muted-foreground text-lg">You have been logged out.</p>
+        <Button
+          size="lg"
+          onClick={() => {
+            // Strip ?logout=1 before starting a new login flow
+            window.history.replaceState({}, '', window.location.pathname);
+            setLoggedOut(false);
+          }}
+        >
+          Reconnect
+        </Button>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -63,7 +100,7 @@ export const OIDCProvider: React.FC<OIDCProviderProps> = ({ config, children }) 
   }
 
   return (
-    <OIDCContext.Provider value={{ isAuthenticated: true }}>
+    <OIDCContext.Provider value={{ isAuthenticated: true, logout }}>
       {children}
     </OIDCContext.Provider>
   );

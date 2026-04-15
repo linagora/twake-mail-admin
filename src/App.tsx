@@ -37,9 +37,11 @@ import ResourceLocator from "./modules/resource-locator";
 import TaskDetail from "./modules/common-tasks/task-detail";
 import { ConfirmProvider } from "./components/custom/confirm-provider";
 import { AuthProvider } from "./components/custom/auth-provider";
-import { OIDCProvider } from "./components/custom/oidc-provider";
+import { OIDCProvider, useOIDC } from "./components/custom/oidc-provider";
 import { OIDCCallback } from "./components/custom/oidc-callback";
 import { Toaster } from "./components/ui/toaster";
+import { Button } from "./components/ui/button";
+import { LogOut } from "lucide-react";
 import Logo from "./assets/images/logo.svg";
 import { loadAppConfig } from "./lib/env-config";
 import { configureApiClient, installStaticTokenAuth } from "./lib/apiClient";
@@ -53,15 +55,29 @@ if (!appConfig.sso) {
   installStaticTokenAuth();
 }
 
+function OIDCLogoutButton() {
+  const { logout } = useOIDC();
+  return (
+    <Button variant="ghost" size="sm" onClick={logout} className="gap-2">
+      <LogOut className="h-4 w-4" />
+      Logout
+    </Button>
+  );
+}
+
 function MainLayout() {
   return (
     <ConfirmProvider>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <header className="block md:hidden flex h-16 shrink-0 items-center gap-2 border-b px-4">
-            <SidebarTrigger className="-ml-1" />
-            <img className="w-[50%]" src={Logo} />
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <div className="flex items-center gap-2 md:hidden">
+              <SidebarTrigger className="-ml-1" />
+              <img className="w-32" src={Logo} />
+            </div>
+            <div className="flex-1" />
+            {appConfig.sso && <OIDCLogoutButton />}
           </header>
           <Routes>
             <Route path="/" element={<Navigate to="/health-check" replace />} />
