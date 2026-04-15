@@ -34,11 +34,12 @@ const FIELDS: { key: keyof RateLimits; label: string }[] = [
 interface Props {
   fetchRateLimits: () => Promise<RateLimits>;
   updateRateLimits: (limits: RateLimits) => Promise<void>;
+  defaultOpen?: boolean;
 }
 
-export default function RateLimitsSection({ fetchRateLimits, updateRateLimits }: Props) {
+export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, defaultOpen }: Props) {
   const { toast } = useToast();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<RateLimits>({ ...EMPTY });

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Route, Routes, Navigate } from "react-router";
 import { AppSidebar } from "./components/side-bar";
 import {
@@ -44,7 +45,8 @@ import { Button } from "./components/ui/button";
 import { LogOut } from "lucide-react";
 import Logo from "./assets/images/logo.svg";
 import { loadAppConfig } from "./lib/env-config";
-import { configureApiClient, installStaticTokenAuth } from "./lib/apiClient";
+import { configureApiClient, installStaticTokenAuth, apiClient } from "./lib/apiClient";
+import DomainAdminApp from "./modules/domain-admin";
 
 // Load and validate config once at startup.
 // Throws immediately if SSO variables are partially set.
@@ -54,6 +56,10 @@ configureApiClient(appConfig.apiBaseUrl);
 if (!appConfig.sso) {
   installStaticTokenAuth();
 }
+
+// ---------------------------------------------------------------------------
+// GLOBAL mode — unchanged layout
+// ---------------------------------------------------------------------------
 
 function OIDCLogoutButton() {
   const { logout } = useOIDC();
@@ -65,7 +71,7 @@ function OIDCLogoutButton() {
   );
 }
 
-function MainLayout() {
+function GlobalLayout() {
   return (
     <ConfirmProvider>
       <SidebarProvider>
@@ -124,6 +130,54 @@ function MainLayout() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// DOMAIN mode — resolves domain then renders DomainAdminApp
+// ---------------------------------------------------------------------------
+
+function DomainModeWrapper() {
+  const [domain, setDomain] = useState<string | null>(appConfig.domain);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (domain) return; // already resolved from env.js
+    apiClient.get<any, { domain: string }>('/.proxy/myDomain')
+      .then((res) => setDomain(res.domain))
+      .catch(() => setError('Could not resolve domain from /.proxy/myDomain'));
+  }, [domain]);
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
+
+  if (!domain) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-muted-foreground">Resolving domain…</p>
+      </div>
+    );
+  }
+
+  return <DomainAdminApp domain={domain} sso={appConfig.sso} />;
+}
+
+// ---------------------------------------------------------------------------
+// Root — picks the right layout based on MODE, wraps with auth provider
+// ---------------------------------------------------------------------------
+
+function AppContent() {
+  const inner = appConfig.mode === 'DOMAIN' ? <DomainModeWrapper /> : <GlobalLayout />;
+
+  return appConfig.sso ? (
+    <OIDCProvider config={appConfig.sso}>{inner}</OIDCProvider>
+  ) : (
+    <AuthProvider>{inner}</AuthProvider>
+  );
+}
+
 function App() {
   return (
     <>
@@ -134,20 +188,7 @@ function App() {
             element={<OIDCCallback config={appConfig.sso} />}
           />
         )}
-        <Route
-          path="*"
-          element={
-            appConfig.sso ? (
-              <OIDCProvider config={appConfig.sso}>
-                <MainLayout />
-              </OIDCProvider>
-            ) : (
-              <AuthProvider>
-                <MainLayout />
-              </AuthProvider>
-            )
-          }
-        />
+        <Route path="*" element={<AppContent />} />
       </Routes>
       <Toaster />
     </>

@@ -11,6 +11,8 @@ interface ImportMeta {
 interface Window {
   __ENV__?: {
     VITE_API_BASE_URL?: string;
+    MODE?: 'GLOBAL' | 'DOMAIN';
+    DOMAIN?: string;
     SSO_BASE_URL?: string;
     SSO_CLIENT_ID?: string;
     SSO_SCOPE?: string;

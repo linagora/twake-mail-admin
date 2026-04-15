@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 
 interface Props {
   domain: string;
+  defaultOpen?: boolean;
 }
 
-export default function DomainTasks({ domain }: Props) {
+export default function DomainTasks({ domain, defaultOpen }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen ?? false);
   const [deleting, setDeleting] = useState(false);
 
   const handleDeleteAllUsersData = async () => {

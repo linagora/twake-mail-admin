@@ -1,3 +1,5 @@
+export type AppMode = 'GLOBAL' | 'DOMAIN';
+
 const SSO_REQUIRED_KEYS = [
   'SSO_BASE_URL',
   'SSO_CLIENT_ID',
@@ -20,6 +22,9 @@ export interface SSOConfig {
 
 export interface AppConfig {
   apiBaseUrl: string;
+  mode: AppMode;
+  /** DOMAIN mode only. null = must be resolved via /.proxy/myDomain */
+  domain: string | null;
   sso: SSOConfig | null;
 }
 
@@ -34,10 +39,14 @@ export function loadAppConfig(): AppConfig {
     import.meta.env.VITE_API_BASE_URL ||
     '';
 
+  const rawMode = getEnvVar('MODE') ?? 'GLOBAL';
+  const mode: AppMode = rawMode === 'DOMAIN' ? 'DOMAIN' : 'GLOBAL';
+  const domain = getEnvVar('DOMAIN') ?? null;
+
   const presentKeys = SSO_REQUIRED_KEYS.filter((k) => getEnvVar(k) !== undefined);
 
   if (presentKeys.length === 0) {
-    return { apiBaseUrl, sso: null };
+    return { apiBaseUrl, mode, domain, sso: null };
   }
 
   const missingKeys = SSO_REQUIRED_KEYS.filter((k) => getEnvVar(k) === undefined);
@@ -49,6 +58,8 @@ export function loadAppConfig(): AppConfig {
 
   return {
     apiBaseUrl,
+    mode,
+    domain,
     sso: {
       baseUrl: getEnvVar('SSO_BASE_URL')!,
       clientId: getEnvVar('SSO_CLIENT_ID')!,

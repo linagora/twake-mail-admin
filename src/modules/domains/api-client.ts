@@ -4,6 +4,10 @@ import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesR
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
 
+export const getDomainUsers = async (domain: string): Promise<string[]> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/users`);
+};
+
 export const getDomains = async (): Promise<GetDomainsResponseType> => {
   const response = await apiClient.get<any, GetDomainsResponseType>("/domains");
   return response;
