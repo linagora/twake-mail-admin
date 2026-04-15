@@ -4,12 +4,11 @@ import type { SSOConfig } from './env-config';
 const STORAGE_KEYS = {
   CODE_VERIFIER: 'oidc_code_verifier',
   STATE: 'oidc_state',
+  ACCESS_TOKEN: 'oidc_access_token',
   REFRESH_TOKEN: 'oidc_refresh_token',
   POST_LOGIN_REDIRECT: 'oidc_post_login_redirect',
 } as const;
 
-// Access token lives in memory only — cleared on page refresh
-let currentAccessToken: string | null = null;
 let cachedConfig: client.Configuration | null = null;
 
 // --- OIDC discovery (cached) ---
@@ -24,7 +23,7 @@ export async function getOIDCConfig(ssoConfig: SSOConfig): Promise<client.Config
 // --- Token accessors ---
 
 export function getAccessToken(): string | null {
-  return currentAccessToken;
+  return sessionStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
 }
 
 export function getRefreshToken(): string | null {
@@ -32,19 +31,19 @@ export function getRefreshToken(): string | null {
 }
 
 export function storeTokens(tokens: { access_token: string; refresh_token?: string }): void {
-  currentAccessToken = tokens.access_token;
+  sessionStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, tokens.access_token);
   if (tokens.refresh_token) {
     sessionStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, tokens.refresh_token);
   }
 }
 
 export function clearTokens(): void {
-  currentAccessToken = null;
+  sessionStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
   sessionStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
 }
 
 export function clearAccessToken(): void {
-  currentAccessToken = null;
+  sessionStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
 }
 
 // --- Login redirect ---
