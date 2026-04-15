@@ -15,8 +15,17 @@ FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-ENV VITE_API_BASE_URL="http://localhost:8000"
-
 EXPOSE 80
 
-CMD ["/bin/sh", "-c", "echo \"window.__ENV__ = { VITE_API_BASE_URL: \\\"${VITE_API_BASE_URL}\\\" };\" > /usr/share/nginx/html/env.js && nginx -g 'daemon off;'"]
+# env.js must be bind-mounted at runtime — see env.js.example
+CMD ["/bin/sh", "-c", "\
+  ENV_JS=/usr/share/nginx/html/env.js; \
+  DIR_DEV=$(stat -c %d /usr/share/nginx/html); \
+  FILE_DEV=$(stat -c %d \"$ENV_JS\" 2>/dev/null || echo ''); \
+  if [ \"$FILE_DEV\" = \"$DIR_DEV\" ]; then \
+    echo 'ERROR: env.js must be bind-mounted. Example:'; \
+    echo '  -v /path/to/your/env.js:/usr/share/nginx/html/env.js:ro'; \
+    echo 'See env.js.example for reference.'; \
+    exit 1; \
+  fi; \
+  exec nginx -g 'daemon off;'"]

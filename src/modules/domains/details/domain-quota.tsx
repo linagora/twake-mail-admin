@@ -9,6 +9,7 @@ import ExploreUserQuota from "@/components/custom/explore-user-quota";
 
 interface Props {
   domain: string;
+  defaultOpen?: boolean;
 }
 
 function formatSize(bytes: number | null): string {
@@ -49,9 +50,9 @@ function toBytes(value: number, unit: string): number {
   }
 }
 
-export default function DomainQuotaSection({ domain }: Props) {
+export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
   const { toast } = useToast();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
   const [quota, setQuota] = useState<DomainQuota | null>(null);
   const [showSizeEdit, setShowSizeEdit] = useState(false);

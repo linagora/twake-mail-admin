@@ -9,9 +9,10 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 
 interface Props {
   domain: string;
+  defaultOpen?: boolean;
 }
 
-export default function DomainAliases({ domain }: Props) {
+export default function DomainAliases({ domain, defaultOpen }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
 
@@ -23,7 +24,7 @@ export default function DomainAliases({ domain }: Props) {
     refresh,
   } = useFetchData<GetDomainAliasesResponseType>(fetchAliases);
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen ?? false);
   const [newAlias, setNewAlias] = useState("");
   const [showCreateInput, setShowCreateInput] = useState(false);
 
