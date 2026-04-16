@@ -22,6 +22,13 @@ export enum TaskKey {
   BLOB_GARBAGE_COLLECTION = 'BlobGCTask',
   CONTACT_INDEXING = 'ContactIndexing',
   PURGE_DELETED_MESSAGES = 'DeletedMessageVaultDeleteExpiredMessagesTask',
+  // Calendar-specific tasks
+  IMPORT_LDAP_USERS = 'importFromLDAP',
+  DOMAIN_MEMBER_SYNC = 'domainMemberSync',
+  ADD_MISSING_FIELDS = 'addMissingFields',
+  CALENDAR_EVENT_REINDEX = 'calendarEventReindex',
+  ALARM_RESCHEDULING = 'alarmRescheduling',
+  CALENDAR_EVENT_ARCHIVAL = 'calendarEventArchival',
 };
 
 export type TaskRequest = {
@@ -36,6 +43,14 @@ export type AdditionalParams = {
   quotaComponent?: string;
   associatedProbability?: string;
   expectedBlobCount?: string;
+  // Calendar-specific params
+  ignoredDomains?: string;
+  eventsPerSecond?: string;
+  createdBefore?: string;
+  lastModifiedBefore?: string;
+  masterDtStartBefore?: string;
+  isRejected?: string;
+  isNotRecurring?: string;
 }
 
 export type TaskProps = {
@@ -77,7 +92,7 @@ export type RunTaskResponse = {
 export interface TaskParam {
   key: string;
   defaultValue?: string | boolean;
-  type: "input" | "checkbox" | "select";
+  type: "input" | "checkbox" | "select" | "duration";
   values?: string[];
 }
 

@@ -1,5 +1,6 @@
 window.__ENV__ = {
   VITE_API_BASE_URL: "http://127.0.0.1:8000",
   MODE: "GLOBAL",
-  DOMAIN: "linagora.com"
+  DOMAIN: "linagora.com",
+//  APPLICATION: "CALENDAR"
 };

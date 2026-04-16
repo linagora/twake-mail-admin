@@ -69,3 +69,19 @@ export interface DomainQuota {
   domain: DomainQuotaValues;
   computed: DomainQuotaValues;
 }
+
+// Calendar-specific types
+export interface ResourceAdmin {
+  email: string;
+}
+
+export interface Resource {
+  id: string;
+  name: string;
+  deleted: boolean;
+  description: string;
+  icon: string;
+  domain: string;
+  creator: string;
+  administrators: ResourceAdmin[];
+}

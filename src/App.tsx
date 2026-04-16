@@ -17,13 +17,18 @@ import EventListenersDetail from "./modules/event-deadletter/details/event-liste
 import Domains from "./modules/domains";
 import DomainsList from "./modules/domains/domains-list";
 import DomainDetail from "./modules/domains/details/domain-detail";
+import CalendarDomainDetail from "./modules/domains/details/calendar-domain-detail";
+import CalendarResourceDetail from "./modules/domains/details/calendar-resource-detail";
 import TeamMailboxDetail from "./modules/domains/details/team-mailbox-detail";
 import TeamMailboxFolderDetail from "./modules/domains/details/team-mailbox-folder-detail";
 import GlobalQuota from "./modules/global-quota";
 import Users from "./modules/users";
 import UsersList from "./modules/users/users-list";
 import UserDetail from "./modules/users/details/user-detail";
+import CalendarUserDetail from "./modules/users/details/calendar-user-detail";
 import UserMessageSearch from "./modules/users/details/user-message-search";
+import RegisteredUsers from "./modules/registered-users";
+import RegisteredUsersList from "./modules/registered-users/registered-users-list";
 import Mappings from "./modules/mappings";
 import MappingsList from "./modules/mappings/mappings-list";
 import NetworkChannels from "./modules/network-channels";
@@ -44,18 +49,10 @@ import { Toaster } from "./components/ui/toaster";
 import { Button } from "./components/ui/button";
 import { LogOut } from "lucide-react";
 import Logo from "./assets/images/logo.svg";
-import { loadAppConfig } from "./lib/env-config";
-import { configureApiClient, installStaticTokenAuth, apiClient } from "./lib/apiClient";
+import { appConfig } from "./lib/config";
+import { apiClient } from "./lib/apiClient";
 import DomainAdminApp from "./modules/domain-admin";
-
-// Load and validate config once at startup.
-// Throws immediately if SSO variables are partially set.
-const appConfig = loadAppConfig();
-configureApiClient(appConfig.apiBaseUrl);
-
-if (!appConfig.sso) {
-  installStaticTokenAuth();
-}
+import CalendarDomainApp from "./modules/domain-admin/calendar-domain-app";
 
 // ---------------------------------------------------------------------------
 // GLOBAL mode — unchanged layout
@@ -72,6 +69,8 @@ function OIDCLogoutButton() {
 }
 
 function GlobalLayout() {
+  const isCalendar = appConfig.application === 'CALENDAR';
+
   return (
     <ConfirmProvider>
       <SidebarProvider>
@@ -88,39 +87,73 @@ function GlobalLayout() {
           <Routes>
             <Route path="/" element={<Navigate to="/health-check" replace />} />
             <Route path="/health-check" element={<HealthCheck />} />
-            <Route path="/mail-repositories" element={<MailRepositories />}>
-              <Route index element={<MailRepositoriesList />} />
-              <Route path="repository/:id" element={<MailRepositoryDetail />} />
-              <Route path="repository/:id/extended" element={<MailRepositoryExtended />} />
-            </Route>
-            <Route path="/event-dead-letter" element={<EventDeadletter />}>
-              <Route index element={<EventListenersList />} />
-              <Route path="group/:id" element={<EventListenersDetail />} />
-            </Route>
+
+            {/* Mail-only routes */}
+            {!isCalendar && (
+              <>
+                <Route path="/mail-repositories" element={<MailRepositories />}>
+                  <Route index element={<MailRepositoriesList />} />
+                  <Route path="repository/:id" element={<MailRepositoryDetail />} />
+                  <Route path="repository/:id/extended" element={<MailRepositoryExtended />} />
+                </Route>
+                <Route path="/event-dead-letter" element={<EventDeadletter />}>
+                  <Route index element={<EventListenersList />} />
+                  <Route path="group/:id" element={<EventListenersDetail />} />
+                </Route>
+                <Route path="/global-quota" element={<GlobalQuota />} />
+                <Route path="/mappings" element={<Mappings />}>
+                  <Route index element={<MappingsList />} />
+                </Route>
+                <Route path="/network-channels" element={<NetworkChannels />}>
+                  <Route index element={<ChannelsList />} />
+                  <Route path="map" element={<ChannelsMap />} />
+                  <Route path="user-agent" element={<ChannelsUserAgent />} />
+                </Route>
+                <Route path="/cassandra" element={<Cassandra />} />
+                <Route path="/resource-locator" element={<ResourceLocator />} />
+              </>
+            )}
+
+            {/* Domains — detail page differs by application */}
             <Route path="/domains" element={<Domains />}>
               <Route index element={<DomainsList />} />
-              <Route path="domain/:domain" element={<DomainDetail />} />
-              <Route path="domain/:domain/team-mailbox/:mailbox" element={<TeamMailboxDetail />} />
-              <Route path="domain/:domain/team-mailbox/:mailbox/folder/:folder" element={<TeamMailboxFolderDetail />} />
+              {isCalendar ? (
+                <>
+                  <Route path="domain/:domain" element={<CalendarDomainDetail />} />
+                  <Route path="domain/:domain/resource/:resourceId" element={<CalendarResourceDetail />} />
+                </>
+              ) : (
+                <>
+                  <Route path="domain/:domain" element={<DomainDetail />} />
+                  <Route path="domain/:domain/team-mailbox/:mailbox" element={<TeamMailboxDetail />} />
+                  <Route path="domain/:domain/team-mailbox/:mailbox/folder/:folder" element={<TeamMailboxFolderDetail />} />
+                </>
+              )}
             </Route>
-            <Route path="/global-quota" element={<GlobalQuota />} />
+
+            {/* Users — detail page differs by application */}
             <Route path="/users" element={<Users />}>
               <Route index element={<UsersList />} />
-              <Route path="user/:username" element={<UserDetail />} />
-              <Route path="user/:username/message-search" element={<UserMessageSearch />} />
+              {isCalendar ? (
+                <Route path="user/:username" element={<CalendarUserDetail />} />
+              ) : (
+                <>
+                  <Route path="user/:username" element={<UserDetail />} />
+                  <Route path="user/:username/message-search" element={<UserMessageSearch />} />
+                </>
+              )}
             </Route>
-            <Route path="/mappings" element={<Mappings />}>
-              <Route index element={<MappingsList />} />
-            </Route>
-            <Route path="/network-channels" element={<NetworkChannels />}>
-              <Route index element={<ChannelsList />} />
-              <Route path="map" element={<ChannelsMap />} />
-              <Route path="user-agent" element={<ChannelsUserAgent />} />
-            </Route>
-            <Route path="/cassandra" element={<Cassandra />} />
+
+            {/* Calendar-only routes */}
+            {isCalendar && (
+              <Route path="/registered-users" element={<RegisteredUsers />}>
+                <Route index element={<RegisteredUsersList />} />
+              </Route>
+            )}
+
+            {/* Common routes */}
             <Route path="/tasks" element={<TasksList />} />
             <Route path="/common-tasks" element={<CommonTasks />} />
-            <Route path="/resource-locator" element={<ResourceLocator />} />
             <Route path="/live-metrics" element={<LiveMetrics />} />
             <Route path="/task/:id" element={<TaskDetail />} />
           </Routes>
@@ -161,6 +194,9 @@ function DomainModeWrapper() {
     );
   }
 
+  if (appConfig.application === 'CALENDAR') {
+    return <CalendarDomainApp domain={domain} sso={appConfig.sso} />;
+  }
   return <DomainAdminApp domain={domain} sso={appConfig.sso} />;
 }
 

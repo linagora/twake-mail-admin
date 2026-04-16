@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { appConfig } from "@/lib/config";
 
 const TASKS: TaskProps[] = [
   {
@@ -111,11 +112,89 @@ const CLEANUP_PARAMS: TaskParam[] = [
   { key: "olderThan", defaultValue: "5d", type: "input" },
 ];
 
-const headerSubTitle = "Common tasks for data maintenance of a Twake Mail server";
+const MAIL_HEADER_SUBTITLE = "Common tasks for data maintenance of a Twake Mail server";
+const CALENDAR_HEADER_SUBTITLE = "Common tasks for data maintenance of a Twake Calendar server";
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_task_management";
 
+const CALENDAR_TASKS: TaskProps[] = [
+  {
+    name: 'Import LDAP users',
+    taskKey: TaskKey.IMPORT_LDAP_USERS,
+    command: 'curl -XPOST /registeredUsers/tasks?task=importFromLDAP&usersPerSecond=100',
+    params: [
+      { key: 'usersPerSecond', defaultValue: '100', type: 'input' },
+    ],
+    doc: '',
+  },
+  {
+    name: 'Domain member synchronization',
+    taskKey: TaskKey.DOMAIN_MEMBER_SYNC,
+    command: 'curl -XPOST /addressbook/domain-members?task=sync',
+    params: [
+      { key: 'ignoredDomains', defaultValue: '', type: 'input' },
+    ],
+    doc: '',
+  },
+  {
+    name: 'Calendar event reindexing',
+    taskKey: TaskKey.CALENDAR_EVENT_REINDEX,
+    command: 'curl -XPOST /calendars?task=reindex&eventsPerSecond=100',
+    params: [
+      { key: 'eventsPerSecond', defaultValue: '100', type: 'input' },
+    ],
+    doc: '',
+  },
+  {
+    name: 'Calendar event archival',
+    taskKey: TaskKey.CALENDAR_EVENT_ARCHIVAL,
+    command: 'curl -XPOST /calendars?task=archive',
+    params: [
+      { key: 'createdBefore', defaultValue: '', type: 'duration' },
+      { key: 'lastModifiedBefore', defaultValue: '', type: 'duration' },
+      { key: 'masterDtStartBefore', defaultValue: '', type: 'duration' },
+      { key: 'isRejected', defaultValue: '', type: 'select', values: ['', 'true', 'false'] },
+      { key: 'isNotRecurring', defaultValue: '', type: 'select', values: ['', 'true', 'false'] },
+      { key: 'eventsPerSecond', defaultValue: '100', type: 'input' },
+    ],
+    doc: '',
+  },
+  {
+    name: 'Alarm rescheduling',
+    taskKey: TaskKey.ALARM_RESCHEDULING,
+    command: 'curl -XPOST /calendars?task=scheduleAlarms&eventsPerSecond=100',
+    params: [
+      { key: 'eventsPerSecond', defaultValue: '100', type: 'input' },
+    ],
+    doc: '',
+  },
+  {
+    name: 'Add missing fields to registered users',
+    taskKey: TaskKey.ADD_MISSING_FIELDS,
+    command: 'curl -XPOST /registeredUsers?action=addMissingFields',
+    params: [],
+    doc: '',
+  },
+];
+
 export default function CommonTasks() {
+  if (appConfig.application === 'CALENDAR') {
+    return (
+      <div className="p-4 relative w-fit">
+        <Header headerSubTitle={CALENDAR_HEADER_SUBTITLE} docuUrl="" />
+        <div className="grid grid-cols-1 gap-4 mt-4">
+          {CALENDAR_TASKS.map((task) => (
+            <TaskContainer {...task} key={task.name} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return <MailCommonTasks />;
+}
+
+function MailCommonTasks() {
   const { toast } = useToast();
   const confirm = useConfirm();
   const [reloadLoading, setReloadLoading] = useState(false);
@@ -256,7 +335,7 @@ export default function CommonTasks() {
   return (
     <div className="p-4 relative w-fit">
       <Header
-        headerSubTitle={headerSubTitle}
+        headerSubTitle={MAIL_HEADER_SUBTITLE}
         docuUrl={docuUrl}
       />
 

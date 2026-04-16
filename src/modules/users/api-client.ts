@@ -362,3 +362,27 @@ export const recomputeFastViewProjection = async (
   );
   return response;
 };
+
+// ---------------------------------------------------------------------------
+// Calendar-specific user functions
+// ---------------------------------------------------------------------------
+
+export const archiveUserCalendarEvents = async (
+  username: string,
+  params: {
+    createdBefore?: string;
+    lastModifiedBefore?: string;
+    masterDtStartBefore?: string;
+    isRejected?: string;
+    isNotRecurring?: string;
+    eventsPerSecond?: string;
+  }
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ task: "archive" });
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) query.set(key, value);
+  });
+  return apiClient.post(
+    `/calendars/${encodeURIComponent(username)}?${query.toString()}`
+  );
+};
