@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 
 interface Props {
   domain: string;
+  defaultOpen?: boolean;
 }
 
-export default function CalendarDomainTasks({ domain }: Props) {
+export default function CalendarDomainTasks({ domain, defaultOpen = false }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const [deleting, setDeleting] = useState(false);
   const [syncing, setSyncing] = useState(false);
 

@@ -48,9 +48,6 @@ export function loadAppConfig(): AppConfig {
   const rawApplication = getEnvVar('APPLICATION') ?? 'MAIL';
   const application: AppApplication = rawApplication === 'CALENDAR' ? 'CALENDAR' : 'MAIL';
 
-  if (application === 'CALENDAR' && mode === 'DOMAIN') {
-    throw new Error('APPLICATION=CALENDAR is not supported with MODE=DOMAIN');
-  }
 
   const presentKeys = SSO_REQUIRED_KEYS.filter((k) => getEnvVar(k) !== undefined);
 

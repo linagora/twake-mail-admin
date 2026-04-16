@@ -13,16 +13,18 @@ const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 interface Props {
   domain: string;
+  defaultOpen?: boolean;
+  resourceLink?: (resourceId: string) => string;
 }
 
-export default function CalendarDomainResources({ domain }: Props) {
+export default function CalendarDomainResources({ domain, defaultOpen = false, resourceLink }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
 
   const fetchResources = useCallback(() => getResources(domain), [domain]);
   const { data: resources, isLoading, error, refresh } = useFetchData<Resource[]>(fetchResources);
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
@@ -207,7 +209,7 @@ export default function CalendarDomainResources({ domain }: Props) {
                 <div key={resource.id} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center">
                   <h4 className="text-sm font-medium leading-none">
                     <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
-                    <a href={`/domains/domain/${encodeURIComponent(domain)}/resource/${encodeURIComponent(resource.id)}`}
+                    <a href={resourceLink ? resourceLink(resource.id) : `/domains/domain/${encodeURIComponent(domain)}/resource/${encodeURIComponent(resource.id)}`}
                       className="text-blue-600 hover:underline">{resource.name}</a>
                     {resource.description && (
                       <span className="text-xs text-muted-foreground ml-2">{resource.description}</span>

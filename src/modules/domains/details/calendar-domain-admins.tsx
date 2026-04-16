@@ -11,16 +11,17 @@ const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 interface Props {
   domain: string;
+  defaultOpen?: boolean;
 }
 
-export default function CalendarDomainAdmins({ domain }: Props) {
+export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
 
   const fetchAdmins = useCallback(() => getDomainAdmins(domain), [domain]);
   const { data: admins, isLoading, error, refresh } = useFetchData<string[]>(fetchAdmins);
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const [showAddInput, setShowAddInput] = useState(false);
   const [newAdmin, setNewAdmin] = useState("");
   const [page, setPage] = useState(1);

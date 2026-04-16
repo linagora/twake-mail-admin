@@ -52,6 +52,7 @@ import Logo from "./assets/images/logo.svg";
 import { appConfig } from "./lib/config";
 import { apiClient } from "./lib/apiClient";
 import DomainAdminApp from "./modules/domain-admin";
+import CalendarDomainApp from "./modules/domain-admin/calendar-domain-app";
 
 // ---------------------------------------------------------------------------
 // GLOBAL mode — unchanged layout
@@ -193,6 +194,9 @@ function DomainModeWrapper() {
     );
   }
 
+  if (appConfig.application === 'CALENDAR') {
+    return <CalendarDomainApp domain={domain} sso={appConfig.sso} />;
+  }
   return <DomainAdminApp domain={domain} sso={appConfig.sso} />;
 }
 
