@@ -1,4 +1,18 @@
-import { runBlobGarbageCollectionTask, runCleanupJmapUploadsTask, runFixMappingTask, runMailBoxesTask, runMessageTask, runPurgeDeletedMessagesTask, runQuotaTask } from "@/modules/common-tasks/api-client";
+import {
+  runBlobGarbageCollectionTask,
+  runCleanupJmapUploadsTask,
+  runFixMappingTask,
+  runMailBoxesTask,
+  runMessageTask,
+  runPurgeDeletedMessagesTask,
+  runQuotaTask,
+  runImportLdapUsersTask,
+  runDomainMemberSyncTask,
+  runCalendarEventReindexTask,
+  runCalendarEventArchivalTask,
+  runAlarmReschedulingTask,
+  runAddMissingFieldsTask,
+} from "@/modules/common-tasks/api-client";
 import { AdditionalParams, ReIndexMode, Task, TaskKey } from "@/modules/common-tasks/types";
 
 export function useRunTask() {
@@ -66,6 +80,24 @@ export function useRunTask() {
         break;
       case TaskKey.PURGE_DELETED_MESSAGES:
         data = await runPurgeDeletedMessagesTask();
+        break;
+      case TaskKey.IMPORT_LDAP_USERS:
+        data = await runImportLdapUsersTask(taskParamValues);
+        break;
+      case TaskKey.DOMAIN_MEMBER_SYNC:
+        data = await runDomainMemberSyncTask(taskParamValues);
+        break;
+      case TaskKey.ADD_MISSING_FIELDS:
+        data = await runAddMissingFieldsTask();
+        break;
+      case TaskKey.CALENDAR_EVENT_REINDEX:
+        data = await runCalendarEventReindexTask(taskParamValues);
+        break;
+      case TaskKey.CALENDAR_EVENT_ARCHIVAL:
+        data = await runCalendarEventArchivalTask(taskParamValues);
+        break;
+      case TaskKey.ALARM_RESCHEDULING:
+        data = await runAlarmReschedulingTask(taskParamValues);
         break;
       default:
         break;

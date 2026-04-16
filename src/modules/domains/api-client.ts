@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact } from "./types";
+import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
 
@@ -203,4 +203,51 @@ export const restoreTeamMailboxDeletedMessages = async (
 ): Promise<RunTaskResponse> => {
   const address = encodeURIComponent(`${mailbox}@${domain}`);
   return apiClient.post(`/deletedMessages/teamMailbox/${address}?action=restore`);
+};
+
+// ---------------------------------------------------------------------------
+// Calendar-specific domain functions
+// ---------------------------------------------------------------------------
+
+export const getDomainAdmins = async (domain: string): Promise<string[]> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/admins`);
+};
+
+export const addDomainAdmin = async (domain: string, username: string): Promise<void> => {
+  await apiClient.put(`/domains/${encodeURIComponent(domain)}/admins/${encodeURIComponent(username)}`);
+};
+
+export const removeDomainAdmin = async (domain: string, username: string): Promise<void> => {
+  await apiClient.delete(`/domains/${encodeURIComponent(domain)}/admins/${encodeURIComponent(username)}`);
+};
+
+export const syncDomainMembers = async (domain: string): Promise<RunTaskResponse> => {
+  return apiClient.post(`/addressbook/domain-members/${encodeURIComponent(domain)}?task=sync`);
+};
+
+export const getResources = async (domain: string): Promise<Resource[]> => {
+  return apiClient.get(`/resources?domain=${encodeURIComponent(domain)}`);
+};
+
+export const getResource = async (id: string): Promise<Resource> => {
+  return apiClient.get(`/resources/${encodeURIComponent(id)}`);
+};
+
+export const createResource = async (payload: {
+  name: string;
+  description: string;
+  icon: string;
+  domain: string;
+  creator: string;
+  administrators: { email: string }[];
+}): Promise<void> => {
+  await apiClient.post('/resources', payload);
+};
+
+export const deleteResource = async (id: string): Promise<void> => {
+  await apiClient.delete(`/resources/${encodeURIComponent(id)}`);
+};
+
+export const updateResource = async (id: string, payload: Partial<Resource>): Promise<void> => {
+  await apiClient.patch(`/resources/${encodeURIComponent(id)}`, payload);
 };

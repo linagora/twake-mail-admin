@@ -27,8 +27,7 @@ export default function TaskContainer({ name, taskKey, mode, command, doc, param
             command={command}
             params={params}
             getParamValues={(key, value) => {
-              console.log('key: ', value)
-              additionParams[key] = value
+additionParams[key] = value
             }}
           />
         ),

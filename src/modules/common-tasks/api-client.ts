@@ -96,6 +96,39 @@ export const repositionTeamMailboxSystemRights = async (): Promise<void> => {
   await apiClient.post(`/team-mailboxes?action=repositionSystemRights`);
 };
 
+// ---------------------------------------------------------------------------
+// Calendar-specific task runners
+// ---------------------------------------------------------------------------
+
+export const runImportLdapUsersTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams({ task: 'importFromLDAP', ...payload });
+  return apiClient.post<any, any>(`/registeredUsers/tasks?${params}`);
+};
+
+export const runDomainMemberSyncTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams({ task: 'sync', ...payload });
+  return apiClient.post<any, any>(`/addressbook/domain-members?${params}`);
+};
+
+export const runCalendarEventReindexTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams({ task: 'reindex', ...payload });
+  return apiClient.post<any, any>(`/calendars?${params}`);
+};
+
+export const runCalendarEventArchivalTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams({ task: 'archive', ...payload });
+  return apiClient.post<any, any>(`/calendars?${params}`);
+};
+
+export const runAlarmReschedulingTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams({ task: 'scheduleAlarms', ...payload });
+  return apiClient.post<any, any>(`/calendars?${params}`);
+};
+
+export const runAddMissingFieldsTask = async (): Promise<any> => {
+  return apiClient.post<any, any>(`/registeredUsers?action=addMissingFields`);
+};
+
 export const getTaskDetail = async (id: string): Promise<TaskDetailResponse> => {
   const response = await apiClient.get<any, TaskDetailResponse>(
     `/tasks/${id}`

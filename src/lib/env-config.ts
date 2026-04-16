@@ -1,4 +1,5 @@
 export type AppMode = 'GLOBAL' | 'DOMAIN';
+export type AppApplication = 'MAIL' | 'CALENDAR';
 
 const SSO_REQUIRED_KEYS = [
   'SSO_BASE_URL',
@@ -23,6 +24,7 @@ export interface SSOConfig {
 export interface AppConfig {
   apiBaseUrl: string;
   mode: AppMode;
+  application: AppApplication;
   /** DOMAIN mode only. null = must be resolved via /.proxy/myDomain */
   domain: string | null;
   sso: SSOConfig | null;
@@ -43,10 +45,17 @@ export function loadAppConfig(): AppConfig {
   const mode: AppMode = rawMode === 'DOMAIN' ? 'DOMAIN' : 'GLOBAL';
   const domain = getEnvVar('DOMAIN') ?? null;
 
+  const rawApplication = getEnvVar('APPLICATION') ?? 'MAIL';
+  const application: AppApplication = rawApplication === 'CALENDAR' ? 'CALENDAR' : 'MAIL';
+
+  if (application === 'CALENDAR' && mode === 'DOMAIN') {
+    throw new Error('APPLICATION=CALENDAR is not supported with MODE=DOMAIN');
+  }
+
   const presentKeys = SSO_REQUIRED_KEYS.filter((k) => getEnvVar(k) !== undefined);
 
   if (presentKeys.length === 0) {
-    return { apiBaseUrl, mode, domain, sso: null };
+    return { apiBaseUrl, mode, application, domain, sso: null };
   }
 
   const missingKeys = SSO_REQUIRED_KEYS.filter((k) => getEnvVar(k) === undefined);
@@ -59,6 +68,7 @@ export function loadAppConfig(): AppConfig {
   return {
     apiBaseUrl,
     mode,
+    application,
     domain,
     sso: {
       baseUrl: getEnvVar('SSO_BASE_URL')!,
