@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Pencil } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -7,6 +7,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { getRegisteredUsers, createRegisteredUser, updateRegisteredUser } from "./api-client";
 import { RegisteredUser } from "./types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { useDomain } from "@/modules/domain-admin/domain-context";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -55,13 +56,16 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
 export default function RegisteredUsersList() {
   const { toast } = useToast();
   const confirm = useConfirm();
+  // In DOMAIN mode this returns the current domain; in GLOBAL mode returns "".
+  const domain = useDomain() || undefined;
 
+  const fetchUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
   const {
     data: usersResult,
     isLoading,
     error,
     refresh,
-  } = useFetchData<RegisteredUser[]>(getRegisteredUsers);
+  } = useFetchData<RegisteredUser[]>(fetchUsers);
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -80,7 +84,7 @@ export default function RegisteredUsersList() {
         firstname: parts[0] || "",
         lastname: "",
       };
-      await createRegisteredUser(user);
+      await createRegisteredUser(user, domain);
       toast({ title: `User "${username}" registered` });
       setNewUsername("");
       refresh();
@@ -107,7 +111,7 @@ export default function RegisteredUsersList() {
     if (!result) return;
 
     try {
-      await updateRegisteredUser(user.id, currentValues);
+      await updateRegisteredUser(user.id, currentValues, domain);
       toast({ title: "User updated" });
       refresh();
     } catch (err) {

@@ -243,7 +243,7 @@ async function withResourceApiFallback<T>(
   if (resourceApiVersion === 'new') return newApiFn();
   if (resourceApiVersion === 'old') return oldApiFn();
 
-  // First call: probe the new API.
+  // First call: probe the new domain-scoped API.
   try {
     const result = await newApiFn();
     resourceApiVersion = 'new';
