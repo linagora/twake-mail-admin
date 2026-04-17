@@ -1,15 +1,17 @@
 import { useCallback, useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Pencil, Save, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Pencil, Save, Loader2, Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import {
   getUserIdentities,
   createUserIdentity,
   updateUserIdentity,
+  deleteUserIdentity,
   JmapIdentity,
   JmapIdentityCreatePayload,
   JmapIdentityUpdatePayload,
 } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -28,6 +30,7 @@ const EMPTY_CREATE: JmapIdentityCreatePayload = {
 
 export default function UserIdentities({ username }: Props) {
   const { toast } = useToast();
+  const confirm = useConfirm();
 
   const fetchIdentities = useCallback(() => getUserIdentities(username), [username]);
   const { data: identities, isLoading, error, refresh } = useFetchData<JmapIdentity[]>(fetchIdentities);
@@ -91,6 +94,25 @@ export default function UserIdentities({ username }: Props) {
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async (identity: JmapIdentity) => {
+    const confirmed = await confirm({
+      header: "Delete Identity",
+      message: `Delete identity "${identity.name} <${identity.email}>"?`,
+    });
+    if (!confirmed) return;
+    try {
+      await deleteUserIdentity(username, identity.id);
+      toast({ title: "Identity deleted" });
+      setViewIdentity(null);
+      await refresh();
+    } catch (err) {
+      toast({
+        title: "Error deleting identity",
+        description: <ErrorDisplayer error={err} />,
+      });
     }
   };
 
@@ -219,13 +241,24 @@ export default function UserIdentities({ username }: Props) {
                       {identity.htmlSignature && <span>Has HTML signature</span>}
                     </div>
                   </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); openEdit(identity); }}
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    title="Edit identity"
-                  >
-                    <Pencil className="w-4 h-4 text-blue-600" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); openEdit(identity); }}
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      title="Edit identity"
+                    >
+                      <Pencil className="w-4 h-4 text-blue-600" />
+                    </button>
+                    {identity.mayDelete && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDelete(identity); }}
+                        className="p-2 rounded-md hover:bg-gray-200"
+                        title="Delete identity"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
               {identities.length === 0 && (
@@ -273,7 +306,13 @@ export default function UserIdentities({ username }: Props) {
                   <pre className="mt-1 p-2 bg-gray-50 rounded text-xs whitespace-pre-wrap">{viewIdentity.htmlSignature}</pre>
                 </div>
               )}
-              <div className="flex justify-end pt-2">
+              <div className="flex justify-end gap-2 pt-2">
+                {viewIdentity.mayDelete && (
+                  <Button size="sm" variant="destructive" onClick={() => handleDelete(viewIdentity)}>
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Delete
+                  </Button>
+                )}
                 <Button size="sm" onClick={() => openEdit(viewIdentity)}>
                   <Pencil className="w-4 h-4 mr-1" />
                   Edit
