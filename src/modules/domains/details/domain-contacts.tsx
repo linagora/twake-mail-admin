@@ -29,7 +29,7 @@ export default function DomainContacts({ domain }: Props) {
   const canDelete = useIsAllowed("DELETE", "/domains/{domain}/contacts/{username}");
 
   const fetchContacts = useCallback(() => getDomainContacts(domain), [domain]);
-  const { data: contacts, isLoading, error, refresh } = useFetchData<string[]>(fetchContacts);
+  const { data: contacts, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchContacts : null);
 
   const [open, setOpen] = useState(false);
   const [showCreate, setShowCreate] = useState(false);

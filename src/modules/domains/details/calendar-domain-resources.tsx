@@ -26,7 +26,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
   const canDelete = useIsAllowed("DELETE", "/domains/{domain}/resources/{resourceId}");
 
   const fetchResources = useCallback(() => getResources(domain), [domain]);
-  const { data: resources, isLoading, error, refresh } = useFetchData<Resource[]>(fetchResources);
+  const { data: resources, isLoading, error, refresh } = useFetchData<Resource[]>(canView ? fetchResources : null);
 
   const [open, setOpen] = useState(defaultOpen);
   const [showCreate, setShowCreate] = useState(false);

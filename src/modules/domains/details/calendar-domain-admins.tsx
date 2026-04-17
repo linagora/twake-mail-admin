@@ -23,7 +23,7 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
   const canRemove = useIsAllowed("DELETE", "/domains/{domain}/admins/{username}");
 
   const fetchAdmins = useCallback(() => getDomainAdmins(domain), [domain]);
-  const { data: admins, isLoading, error, refresh } = useFetchData<string[]>(fetchAdmins);
+  const { data: admins, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchAdmins : null);
 
   const [open, setOpen] = useState(defaultOpen);
   const [showAddInput, setShowAddInput] = useState(false);

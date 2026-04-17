@@ -58,7 +58,7 @@ export default function UserQuota({ username }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<UserQuotaType>(fetchQuota);
+  } = useFetchData<UserQuotaType>(canView ? fetchQuota : null);
 
   if (!canView) return null;
 

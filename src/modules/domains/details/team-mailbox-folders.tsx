@@ -31,7 +31,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
     [domain, mailbox]
   );
 
-  const { data: folders, isLoading, error, refresh } = useFetchData<GetTeamMailboxFoldersResponseType>(fetchFolders);
+  const { data: folders, isLoading, error, refresh } = useFetchData<GetTeamMailboxFoldersResponseType>(canView ? fetchFolders : null);
 
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);

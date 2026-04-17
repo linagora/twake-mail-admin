@@ -25,7 +25,7 @@ export default function UserAliases({ username }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<GetUserAliasesResponseType>(fetchAliases);
+  } = useFetchData<GetUserAliasesResponseType>(canView ? fetchAliases : null);
 
   const [open, setOpen] = useState(false);
   const [newAlias, setNewAlias] = useState("");

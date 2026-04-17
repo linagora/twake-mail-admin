@@ -26,7 +26,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<GetTeamMailboxesResponseType>(fetchMailboxes);
+  } = useFetchData<GetTeamMailboxesResponseType>(canView ? fetchMailboxes : null);
 
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [newName, setNewName] = useState("");

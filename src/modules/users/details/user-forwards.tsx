@@ -26,7 +26,7 @@ export default function UserForwards({ username }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<GetUserForwardsResponseType>(fetchForwards);
+  } = useFetchData<GetUserForwardsResponseType>(canView ? fetchForwards : null);
 
   const [open, setOpen] = useState(false);
   const [newForward, setNewForward] = useState("");

@@ -38,7 +38,7 @@ export default function UserIdentities({ username }: Props) {
   const canDelete = useIsAllowed("DELETE", "/users/{username}/identities/{id}");
 
   const fetchIdentities = useCallback(() => getUserIdentities(username), [username]);
-  const { data: identities, isLoading, error, refresh } = useFetchData<JmapIdentity[]>(fetchIdentities);
+  const { data: identities, isLoading, error, refresh } = useFetchData<JmapIdentity[]>(canView ? fetchIdentities : null);
 
   const [open, setOpen] = useState(false);
   const [showCreate, setShowCreate] = useState(false);

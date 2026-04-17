@@ -30,7 +30,7 @@ export default function UserLabels({ username }: Props) {
   const canDelete = useIsAllowed("DELETE", "/users/{username}/labels/{labelId}");
 
   const fetchLabels = useCallback(() => getUserLabels(username), [username]);
-  const { data: labels, isLoading, error, refresh } = useFetchData<UserLabel[]>(fetchLabels);
+  const { data: labels, isLoading, error, refresh } = useFetchData<UserLabel[]>(canView ? fetchLabels : null);
 
   const [open, setOpen] = useState(false);
   const [showCreate, setShowCreate] = useState(false);

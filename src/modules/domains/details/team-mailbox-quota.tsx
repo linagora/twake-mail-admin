@@ -54,7 +54,7 @@ export default function TeamMailboxQuota({ domain, mailbox }: Props) {
   const [showSizeEdit, setShowSizeEdit] = useState(false);
 
   const fetchQuota = useCallback(() => getTeamMailboxQuota(domain, mailbox), [domain, mailbox]);
-  const { data: quota, isLoading, error, refresh } = useFetchData<TeamMailboxQuotaType>(fetchQuota);
+  const { data: quota, isLoading, error, refresh } = useFetchData<TeamMailboxQuotaType>(canView ? fetchQuota : null);
 
   if (!canView) return null;
 

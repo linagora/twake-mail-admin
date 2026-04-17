@@ -26,7 +26,7 @@ export default function DomainAliases({ domain, defaultOpen }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<GetDomainAliasesResponseType>(fetchAliases);
+  } = useFetchData<GetDomainAliasesResponseType>(canView ? fetchAliases : null);
 
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [newAlias, setNewAlias] = useState("");

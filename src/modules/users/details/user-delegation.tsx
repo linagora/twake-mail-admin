@@ -25,7 +25,7 @@ export default function UserDelegation({ username }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<string[]>(fetchDelegated);
+  } = useFetchData<string[]>(canView ? fetchDelegated : null);
 
   const [open, setOpen] = useState(false);
   const [newUser, setNewUser] = useState("");

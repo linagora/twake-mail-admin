@@ -24,7 +24,7 @@ export default function UserTeamMailboxes({ username }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<{ name: string; emailAddress: string }[]>(fetchMailboxes);
+  } = useFetchData<{ name: string; emailAddress: string }[]>(canView ? fetchMailboxes : null);
 
   const [open, setOpen] = useState(false);
 

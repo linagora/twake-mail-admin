@@ -56,7 +56,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
     () => getTeamMailboxFolderExtraAcl(domain, mailbox, folder),
     [domain, mailbox, folder]
   );
-  const { data: acl, isLoading, error, refresh } = useFetchData<Record<string, string>>(fetchAcl);
+  const { data: acl, isLoading, error, refresh } = useFetchData<Record<string, string>>(canViewAcl ? fetchAcl : null);
 
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);

@@ -33,7 +33,7 @@ export default function UserMappings({ username }: Props) {
     data: mappings,
     isLoading: loadingMappings,
     error: errorMappings,
-  } = useFetchData<UserMappingEntry[]>(fetchMappings);
+  } = useFetchData<UserMappingEntry[]>(canView ? fetchMappings : null);
 
   // Sources pointing to user (one per type)
   const fetchSources = useCallback(async () => {
@@ -55,7 +55,7 @@ export default function UserMappings({ username }: Props) {
     isLoading: loadingSources,
     error: errorSources,
     refresh: refreshSources,
-  } = useFetchData<{ type: SourceType; sources: string[] }[]>(fetchSources);
+  } = useFetchData<{ type: SourceType; sources: string[] }[]>(canView ? fetchSources : null);
 
   const sortedMappings = useMemo(() => {
     if (!mappings) return [];

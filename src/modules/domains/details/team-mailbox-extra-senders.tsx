@@ -26,7 +26,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
     () => getTeamMailboxExtraSenders(domain, mailbox),
     [domain, mailbox]
   );
-  const { data: senders, isLoading, error, refresh } = useFetchData<string[]>(fetchSenders);
+  const { data: senders, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchSenders : null);
 
   const [open, setOpen] = useState(true);
   const [page, setPage] = useState(1);

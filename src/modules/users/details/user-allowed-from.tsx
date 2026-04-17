@@ -11,7 +11,7 @@ interface Props {
 export default function UserAllowedFrom({ username }: Props) {
   const canView = useIsAllowed("GET", "/users/{username}/allowedFromHeaders");
   const fetchHeaders = useCallback(() => getAllowedFromHeaders(username), [username]);
-  const { data: headers, isLoading, error } = useFetchData<string[]>(fetchHeaders);
+  const { data: headers, isLoading, error } = useFetchData<string[]>(canView ? fetchHeaders : null);
 
   const [open, setOpen] = useState(false);
 

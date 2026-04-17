@@ -49,7 +49,7 @@ export default function UserMailboxes({ username }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<GetUserMailboxesResponseType>(fetchMailboxes);
+  } = useFetchData<GetUserMailboxesResponseType>(canView ? fetchMailboxes : null);
 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
