@@ -94,7 +94,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
     });
     if (!confirmed) return;
     try {
-      await deleteResource(resource.id);
+      await deleteResource(domain, resource.id);
       toast({ title: "Resource deleted" });
       await refresh();
     } catch (err) {

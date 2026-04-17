@@ -207,6 +207,10 @@ export const updateUserIdentity = async (username: string, identityId: string, p
   await apiClient.put(`/users/${encodeURIComponent(username)}/identities/${encodeURIComponent(identityId)}`, payload);
 };
 
+export const deleteUserIdentity = async (username: string, identityId: string): Promise<void> => {
+  await apiClient.delete(`/users/${encodeURIComponent(username)}/identities/${encodeURIComponent(identityId)}`);
+};
+
 export const getAllowedFromHeaders = async (username: string): Promise<string[]> => {
   return apiClient.get(`/users/${encodeURIComponent(username)}/allowedFromHeaders`);
 };

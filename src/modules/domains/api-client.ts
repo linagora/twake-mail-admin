@@ -225,13 +225,50 @@ export const syncDomainMembers = async (domain: string): Promise<RunTaskResponse
   return apiClient.post(`/addressbook/domain-members/${encodeURIComponent(domain)}?task=sync`);
 };
 
-export const getResources = async (domain: string): Promise<Resource[]> => {
-  return apiClient.get(`/resources?domain=${encodeURIComponent(domain)}`);
-};
+// ---------------------------------------------------------------------------
+// Resource API — domain-scoped routes with fallback to legacy routes
+//
+// Probe result is cached for the lifetime of the page session so that we
+// only pay the fallback cost once.
+// ---------------------------------------------------------------------------
 
-export const getResource = async (id: string): Promise<Resource> => {
-  return apiClient.get(`/resources/${encodeURIComponent(id)}`);
-};
+// null = not yet probed | 'new' = use domain-scoped API | 'old' = use legacy API
+let resourceApiVersion: 'new' | 'old' | null = null;
+
+async function withResourceApiFallback<T>(
+  newApiFn: () => Promise<T>,
+  oldApiFn: () => Promise<T>,
+): Promise<T> {
+  // Version already determined for this session — call directly, no fallback.
+  if (resourceApiVersion === 'new') return newApiFn();
+  if (resourceApiVersion === 'old') return oldApiFn();
+
+  // First call: probe the new domain-scoped API.
+  try {
+    const result = await newApiFn();
+    resourceApiVersion = 'new';
+    return result;
+  } catch (err: any) {
+    const status: number | undefined = err?.response?.status;
+    if (status !== undefined && status >= 400 && status < 500) {
+      resourceApiVersion = 'old';
+      return oldApiFn();
+    }
+    throw err;
+  }
+}
+
+export const getResources = async (domain: string): Promise<Resource[]> =>
+  withResourceApiFallback(
+    () => apiClient.get(`/domains/${encodeURIComponent(domain)}/resources`),
+    () => apiClient.get(`/resources?domain=${encodeURIComponent(domain)}`),
+  );
+
+export const getResource = async (domain: string, id: string): Promise<Resource> =>
+  withResourceApiFallback(
+    () => apiClient.get(`/domains/${encodeURIComponent(domain)}/resources/${encodeURIComponent(id)}`),
+    () => apiClient.get(`/resources/${encodeURIComponent(id)}`),
+  );
 
 export const createResource = async (payload: {
   name: string;
@@ -241,13 +278,27 @@ export const createResource = async (payload: {
   creator: string;
   administrators: { email: string }[];
 }): Promise<void> => {
-  await apiClient.post('/resources', payload);
+  const { domain, ...bodyWithoutDomain } = payload;
+  return withResourceApiFallback(
+    () => apiClient.post(`/domains/${encodeURIComponent(domain)}/resources`, bodyWithoutDomain),
+    () => apiClient.post('/resources', payload),
+  );
 };
 
-export const deleteResource = async (id: string): Promise<void> => {
-  await apiClient.delete(`/resources/${encodeURIComponent(id)}`);
-};
+export const deleteResource = async (domain: string, id: string): Promise<void> =>
+  withResourceApiFallback(
+    () => apiClient.delete(`/domains/${encodeURIComponent(domain)}/resources/${encodeURIComponent(id)}`),
+    () => apiClient.delete(`/resources/${encodeURIComponent(id)}`),
+  );
 
-export const updateResource = async (id: string, payload: Partial<Resource>): Promise<void> => {
-  await apiClient.patch(`/resources/${encodeURIComponent(id)}`, payload);
-};
+export const updateResource = async (domain: string, id: string, payload: Partial<Resource>): Promise<void> =>
+  withResourceApiFallback(
+    () => apiClient.patch(`/domains/${encodeURIComponent(domain)}/resources/${encodeURIComponent(id)}`, payload),
+    () => apiClient.patch(`/resources/${encodeURIComponent(id)}`, payload),
+  );
+
+export const repositionResourceWriteRights = async (domain: string): Promise<RunTaskResponse> =>
+  withResourceApiFallback(
+    () => apiClient.post(`/domains/${encodeURIComponent(domain)}/resources?task=repositionWriteRights`),
+    () => apiClient.post(`/resources?task=repositionWriteRights`),
+  );

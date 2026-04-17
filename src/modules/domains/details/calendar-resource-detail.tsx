@@ -9,15 +9,19 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ResourceIconPicker, { RESOURCE_ICONS } from "@/components/custom/resource-icon-picker";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { useDomain } from "@/modules/domain-admin/domain-context";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function CalendarResourceDetail() {
-  const { domain, resourceId } = useParams();
+  const { domain: domainParam, resourceId } = useParams();
+  const domainContext = useDomain();
+  // In GLOBAL mode domain comes from the URL; in DOMAIN mode it comes from context.
+  const domain = domainParam || domainContext;
   const { toast } = useToast();
   const confirm = useConfirm();
 
-  const fetchResource = useCallback(() => getResource(resourceId!), [resourceId]);
+  const fetchResource = useCallback(() => getResource(domain, resourceId!), [domain, resourceId]);
   const { data: resource, isLoading, error, refresh } = useFetchData<Resource>(fetchResource);
 
   const [page, setPage] = useState(1);
@@ -52,7 +56,7 @@ export default function CalendarResourceDetail() {
       return;
     }
     try {
-      await updateResource(resource.id, {
+      await updateResource(domain, resource.id, {
         administrators: [...resource.administrators, { email }],
       });
       toast({ title: "Administrator added" });
@@ -71,7 +75,7 @@ export default function CalendarResourceDetail() {
     });
     if (!confirmed) return;
     try {
-      await updateResource(resource.id, {
+      await updateResource(domain, resource.id, {
         administrators: resource.administrators.filter((a) => a.email !== email),
       });
       toast({ title: "Administrator removed" });
@@ -93,7 +97,7 @@ export default function CalendarResourceDetail() {
     if (!resource) return;
     setSaving(true);
     try {
-      await updateResource(resource.id, {
+      await updateResource(domain, resource.id, {
         name: editName.trim(),
         description: editDescription.trim(),
         icon: editIcon.trim(),
