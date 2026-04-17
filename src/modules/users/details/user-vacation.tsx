@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, Loader2, Save, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getUserVacation, updateUserVacation, deleteUserVacation } from "../api-client";
 import { VacationSettings } from "../types";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +25,9 @@ const EMPTY_VACATION: VacationSettings = {
 export default function UserVacation({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/vacation/{username}");
+  const canSave = useIsAllowed("POST", "/vacation/{username}");
+  const canDelete = useIsAllowed("DELETE", "/vacation/{username}");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -51,6 +55,8 @@ export default function UserVacation({ username }: Props) {
   useEffect(() => {
     if (open) fetchVacation();
   }, [open, fetchVacation]);
+
+  if (!canView) return null;
 
   const handleSave = async () => {
     setSaving(true);
@@ -174,19 +180,23 @@ export default function UserVacation({ username }: Props) {
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  onClick={handleDelete}
-                >
-                  <Trash2 className="w-4 h-4 mr-1" />
-                  Delete
-                </Button>
-                <Button size="sm" onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
-                  Save
-                </Button>
+                {canDelete && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={handleDelete}
+                  >
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Delete
+                  </Button>
+                )}
+                {canSave && (
+                  <Button size="sm" onClick={handleSave} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
+                    Save
+                  </Button>
+                )}
               </div>
             </div>
           )}

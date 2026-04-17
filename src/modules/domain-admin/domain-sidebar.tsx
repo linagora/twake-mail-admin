@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/sidebar";
 import { useLocation } from "react-router";
 import { useDomain } from "./domain-context";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
-const items = [
+const ALL_ITEMS = [
   { title: "Users",          url: "/users",         icon: Users },
   { title: "Domain Aliases", url: "/aliases",        icon: BookMarked },
   { title: "Team Mailboxes", url: "/team-mailboxes", icon: Mailbox },
@@ -26,6 +27,23 @@ const items = [
 export function DomainSidebar() {
   const domain = useDomain();
   const location = useLocation();
+  const canUsers = useIsAllowed("GET", "/domains/{domain}/users");
+  const canAliases = useIsAllowed("GET", "/domains/{domain}/aliases");
+  const canTeamMailboxes = useIsAllowed("GET", "/domains/{domain}/team-mailboxes");
+  const canQuota = useIsAllowed("GET", "/quota/domains/{domain}");
+  const canRateLimiting = useIsAllowed("GET", "/domains/{domain}/ratelimits");
+  const canTasks = useIsAllowed("GET", "/tasks");
+
+  const VISIBILITY: Record<string, boolean> = {
+    "/users": canUsers,
+    "/aliases": canAliases,
+    "/team-mailboxes": canTeamMailboxes,
+    "/quota": canQuota,
+    "/rate-limiting": canRateLimiting,
+    "/tasks": canTasks,
+  };
+
+  const items = ALL_ITEMS.filter(item => VISIBILITY[item.url] !== false);
 
   return (
     <Sidebar>

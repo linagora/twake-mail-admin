@@ -2,9 +2,11 @@ import { useCallback } from "react";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
 import { getDomainRateLimits, updateDomainRateLimits } from "@/modules/domains/api-client";
 import { useDomain } from "../domain-context";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 export default function RateLimitingPage() {
   const domain = useDomain();
+  const canUpdate = useIsAllowed("PUT", "/domains/{domain}/ratelimits");
 
   const fetchRateLimits = useCallback(() => getDomainRateLimits(domain), [domain]);
   const updateRateLimits = useCallback((limits: any) => updateDomainRateLimits(domain, limits), [domain]);
@@ -16,6 +18,7 @@ export default function RateLimitingPage() {
         fetchRateLimits={fetchRateLimits}
         updateRateLimits={updateRateLimits}
         defaultOpen
+        canUpdate={canUpdate}
       />
     </div>
   );

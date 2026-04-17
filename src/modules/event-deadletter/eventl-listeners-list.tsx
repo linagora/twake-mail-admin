@@ -10,11 +10,14 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { useState, useEffect } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 
 export default function EventListenersList() {
   const confirm = useConfirm();
   const { toast } = useToast();
+  const canRedeliver = useIsAllowed("POST", "/events/deadLetter/groups/{group}");
+  const canDelete = useIsAllowed("DELETE", "/events/deadLetter/groups/{group}");
   const { data: listenerGroupsResult, isLoading } =
     useFetchData<ListenerGroupsResponseType>(getMailboxListenerGroups);
 
@@ -122,19 +125,23 @@ export default function EventListenersList() {
               </div>
 
               <div className="flex gap-2">
-                <button
-                  className="p-2 rounded-md hover:bg-gray-200"
-                  onClick={() => handleRedeliverGroup(group)}
-                >
-                  <RefreshCw className="w-5 h-5 text-blue-600" />
-                </button>
+                {canRedeliver && (
+                  <button
+                    className="p-2 rounded-md hover:bg-gray-200"
+                    onClick={() => handleRedeliverGroup(group)}
+                  >
+                    <RefreshCw className="w-5 h-5 text-blue-600" />
+                  </button>
+                )}
 
-                <button
-                  className="p-2 rounded-md hover:bg-gray-200"
-                  onClick={() => handleClearGroup(group)}
-                >
-                  <Trash2 className="w-5 h-5 text-red-600" />
-                </button>
+                {canDelete && (
+                  <button
+                    className="p-2 rounded-md hover:bg-gray-200"
+                    onClick={() => handleClearGroup(group)}
+                  >
+                    <Trash2 className="w-5 h-5 text-red-600" />
+                  </button>
+                )}
               </div>
             </div>
           ))}

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { Trash2, ChevronDown, ChevronRight } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxMembers, addTeamMailboxMember, removeTeamMailboxMember, searchTeamMailboxDeletedMessages, restoreTeamMailboxDeletedMessages } from "../api-client";
 import { GetTeamMailboxMembersResponseType } from "../types";
@@ -19,6 +20,10 @@ export default function TeamMailboxDetail() {
   const { domain, mailbox } = useParams();
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canAddMember = useIsAllowed("PUT", "/domains/{domain}/team-mailboxes/{mailbox}/members/{username}");
+  const canRemoveMember = useIsAllowed("DELETE", "/domains/{domain}/team-mailboxes/{mailbox}/members/{username}");
+  const canSearch = useIsAllowed("POST", "/deletedMessages/users/{mailbox}/messages?force=true");
+  const canRestore = useIsAllowed("POST", "/deletedMessages/teamMailbox/{mailbox}?action=restore");
 
   const fetchMembers = useCallback(
     () => getTeamMailboxMembers(domain!, mailbox!),
@@ -95,7 +100,7 @@ export default function TeamMailboxDetail() {
 
         {membersOpen && (<>
         {/* Add member */}
-        <div className="flex gap-2 mt-3 mb-4">
+        {canAddMember && (<div className="flex gap-2 mt-3 mb-4">
           <input
             type="text"
             value={newMember}
@@ -140,7 +145,7 @@ export default function TeamMailboxDetail() {
           >
             Add
           </button>
-        </div>
+        </div>)}
 
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -199,13 +204,15 @@ export default function TeamMailboxDetail() {
                 {member.username}
                 <span className="text-xs text-muted-foreground ml-2">({member.role})</span>
               </h4>
-              <button
-                onClick={() => handleRemove(member.username)}
-                className="p-2 rounded-md hover:bg-gray-200"
-                title="Remove member"
-              >
-                <Trash2 className="w-4 h-4 text-red-600" />
-              </button>
+              {canRemoveMember && (
+                <button
+                  onClick={() => handleRemove(member.username)}
+                  className="p-2 rounded-md hover:bg-gray-200"
+                  title="Remove member"
+                >
+                  <Trash2 className="w-4 h-4 text-red-600" />
+                </button>
+              )}
             </div>
           ))}
           {members && members.length === 0 && (
@@ -217,11 +224,15 @@ export default function TeamMailboxDetail() {
       <TeamMailboxFolders domain={domain!} mailbox={mailbox!} />
       <TeamMailboxQuota domain={domain!} mailbox={mailbox!} />
       <TeamMailboxExtraSenders domain={domain!} mailbox={mailbox!} />
-      <UserDeletedMessageVault
-        label={`${mailbox}@${domain}`}
-        onSearch={(body) => searchTeamMailboxDeletedMessages(domain!, mailbox!, body)}
-        onRestore={() => restoreTeamMailboxDeletedMessages(domain!, mailbox!)}
-      />
+      {(canSearch || canRestore) && (
+        <UserDeletedMessageVault
+          label={`${mailbox}@${domain}`}
+          onSearch={(body) => searchTeamMailboxDeletedMessages(domain!, mailbox!, body)}
+          onRestore={() => restoreTeamMailboxDeletedMessages(domain!, mailbox!)}
+          canSearch={canSearch}
+          canRestore={canRestore}
+        />
+      )}
     </div>
   );
 }

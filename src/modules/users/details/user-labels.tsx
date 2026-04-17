@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Pencil, Trash2, Save, Loader2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserLabels, createUserLabel, updateUserLabel, deleteUserLabel } from "../api-client";
 import { UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload } from "../types";
@@ -23,6 +24,10 @@ const EMPTY_CREATE: UserLabelCreatePayload = {
 export default function UserLabels({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/users/{username}/labels");
+  const canCreate = useIsAllowed("POST", "/users/{username}/labels");
+  const canEdit = useIsAllowed("PATCH", "/users/{username}/labels/{labelId}");
+  const canDelete = useIsAllowed("DELETE", "/users/{username}/labels/{labelId}");
 
   const fetchLabels = useCallback(() => getUserLabels(username), [username]);
   const { data: labels, isLoading, error, refresh } = useFetchData<UserLabel[]>(fetchLabels);
@@ -35,6 +40,8 @@ export default function UserLabels({ username }: Props) {
   const [editLabel, setEditLabel] = useState<UserLabel | null>(null);
   const [editForm, setEditForm] = useState<UserLabelUpdatePayload>({ displayName: "" });
   const [saving, setSaving] = useState(false);
+
+  if (!canView) return null;
 
   const handleCreate = async () => {
     if (!createForm.displayName.trim()) return;
@@ -117,7 +124,7 @@ export default function UserLabels({ username }: Props) {
             <span className="text-sm font-normal text-gray-500">({labels.length})</span>
           )}
         </button>
-        {open && (
+        {open && canCreate && (
           <button
             onClick={() => setShowCreate(!showCreate)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -250,20 +257,24 @@ export default function UserLabels({ username }: Props) {
                         <td className="px-3 py-2 text-gray-600">{label.description ?? <span className="text-gray-400">—</span>}</td>
                         <td className="px-3 py-2">
                           <div className="flex gap-1 justify-end">
-                            <button
-                              onClick={() => openEdit(label)}
-                              className="p-1.5 rounded-md hover:bg-gray-200"
-                              title="Edit label"
-                            >
-                              <Pencil className="w-3.5 h-3.5 text-blue-600" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(label)}
-                              className="p-1.5 rounded-md hover:bg-gray-200"
-                              title="Delete label"
-                            >
-                              <Trash2 className="w-3.5 h-3.5 text-red-600" />
-                            </button>
+                            {canEdit && (
+                              <button
+                                onClick={() => openEdit(label)}
+                                className="p-1.5 rounded-md hover:bg-gray-200"
+                                title="Edit label"
+                              >
+                                <Pencil className="w-3.5 h-3.5 text-blue-600" />
+                              </button>
+                            )}
+                            {canDelete && (
+                              <button
+                                onClick={() => handleDelete(label)}
+                                className="p-1.5 rounded-md hover:bg-gray-200"
+                                title="Delete label"
+                              >
+                                <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>

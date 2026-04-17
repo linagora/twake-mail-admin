@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2, Pencil, AlertTriangle, Loader2, Save } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import {
   getDomainContacts,
@@ -22,6 +23,10 @@ interface Props {
 export default function DomainContacts({ domain }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/domains/{domain}/contacts");
+  const canCreate = useIsAllowed("POST", "/domains/{domain}/contacts");
+  const canEdit = useIsAllowed("PUT", "/domains/{domain}/contacts/{username}");
+  const canDelete = useIsAllowed("DELETE", "/domains/{domain}/contacts/{username}");
 
   const fetchContacts = useCallback(() => getDomainContacts(domain), [domain]);
   const { data: contacts, isLoading, error, refresh } = useFetchData<string[]>(fetchContacts);
@@ -47,6 +52,8 @@ export default function DomainContacts({ domain }: Props) {
     if (!contacts) return [];
     return [...contacts].sort((a, b) => a.localeCompare(b));
   }, [contacts]);
+
+  if (!canView) return null;
 
   // Extract username part from email (part before @)
   const usernameFromEmail = (email: string) => email.split("@")[0] || email;
@@ -167,7 +174,7 @@ export default function DomainContacts({ domain }: Props) {
             </span>
           )}
         </button>
-        {open && (
+        {open && canCreate && (
           <button
             onClick={() => setShowCreate(!showCreate)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -248,20 +255,24 @@ export default function DomainContacts({ domain }: Props) {
                     {email}
                   </h4>
                   <div className="flex gap-1">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); openEditFromList(email); }}
-                      className="p-2 rounded-md hover:bg-gray-200"
-                      title="Edit contact"
-                    >
-                      <Pencil className="w-4 h-4 text-blue-600" />
-                    </button>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleDelete(email); }}
-                      className="p-2 rounded-md hover:bg-gray-200"
-                      title="Delete contact"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-600" />
-                    </button>
+                    {canEdit && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); openEditFromList(email); }}
+                        className="p-2 rounded-md hover:bg-gray-200"
+                        title="Edit contact"
+                      >
+                        <Pencil className="w-4 h-4 text-blue-600" />
+                      </button>
+                    )}
+                    {canDelete && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDelete(email); }}
+                        className="p-2 rounded-md hover:bg-gray-200"
+                        title="Delete contact"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -290,12 +301,14 @@ export default function DomainContacts({ domain }: Props) {
               <Row label="Email" value={viewContact.emailAddress} />
               <Row label="Firstname" value={viewContact.firstname || "—"} />
               <Row label="Surname" value={viewContact.surname || "—"} />
-              <div className="flex justify-end pt-2">
-                <Button size="sm" onClick={() => openEdit(viewContact)}>
-                  <Pencil className="w-4 h-4 mr-1" />
-                  Edit
-                </Button>
-              </div>
+              {canEdit && (
+                <div className="flex justify-end pt-2">
+                  <Button size="sm" onClick={() => openEdit(viewContact)}>
+                    <Pencil className="w-4 h-4 mr-1" />
+                    Edit
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>

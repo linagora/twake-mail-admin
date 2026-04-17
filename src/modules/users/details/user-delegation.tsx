@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getDelegatedUsers, addDelegatedUser, removeDelegatedUser } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +15,9 @@ interface Props {
 export default function UserDelegation({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/users/{username}/authorizedUsers");
+  const canAdd = useIsAllowed("PUT", "/users/{username}/authorizedUsers/{authorizedUser}");
+  const canRemove = useIsAllowed("DELETE", "/users/{username}/authorizedUsers/{authorizedUser}");
 
   const fetchDelegated = useCallback(() => getDelegatedUsers(username), [username]);
   const {
@@ -32,6 +36,8 @@ export default function UserDelegation({ username }: Props) {
     if (!delegated) return [];
     return [...delegated].sort((a, b) => a.localeCompare(b));
   }, [delegated]);
+
+  if (!canView) return null;
 
   const handleAdd = async () => {
     const user = newUser.trim();
@@ -83,7 +89,7 @@ export default function UserDelegation({ username }: Props) {
             </span>
           )}
         </button>
-        {open && (
+        {open && canAdd && (
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -155,13 +161,15 @@ export default function UserDelegation({ username }: Props) {
                     <span className="text-gray-500 mr-2">{index + 1}/</span>
                     {user}
                   </h4>
-                  <button
-                    onClick={() => handleRemove(user)}
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    title="Remove delegated user"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
+                  {canRemove && (
+                    <button
+                      onClick={() => handleRemove(user)}
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      title="Remove delegated user"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </button>
+                  )}
                 </div>
               ))}
               {delegated.length === 0 && (

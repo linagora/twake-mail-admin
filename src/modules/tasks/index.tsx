@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { RefreshCcw, CircleStop, Filter } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { listTasks, ListTasksParams } from "./api-client";
 import { cancelTask } from "@/modules/common-tasks/api-client";
@@ -51,6 +52,7 @@ const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/dis
 export default function Tasks() {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canCancel = useIsAllowed("DELETE", "/tasks/{id}");
 
   // Filters
   const [statusFilter, setStatusFilter] = useState("");
@@ -298,7 +300,7 @@ export default function Tasks() {
                     )}
                   </div>
                   <div className="w-16 flex justify-center" onClick={(e) => e.stopPropagation()}>
-                    {isCancellable(task.status) && (
+                    {canCancel && isCancellable(task.status) && (
                       <button
                         onClick={() => handleCancel(task)}
                         className="p-1.5 rounded-md hover:bg-gray-200"
@@ -403,7 +405,7 @@ export default function Tasks() {
                 </div>
               )}
               <div className="flex justify-end gap-2 pt-2">
-                {isCancellable(selectedTask.status) && (
+                {canCancel && isCancellable(selectedTask.status) && (
                   <Button
                     variant="outline"
                     size="sm"

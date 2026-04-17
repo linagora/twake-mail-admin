@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Eraser, Plus, Search, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserMailboxes, createUserMailbox, deleteUserMailbox, clearMailboxContent } from "../api-client";
 import { GetUserMailboxesResponseType } from "../types";
@@ -33,6 +34,10 @@ interface Props {
 export default function UserMailboxes({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/users/{username}/mailboxes");
+  const canCreate = useIsAllowed("PUT", "/users/{username}/mailboxes/{mailboxName}");
+  const canDelete = useIsAllowed("DELETE", "/users/{username}/mailboxes/{mailboxName}");
+  const canClear = useIsAllowed("DELETE", "/users/{username}/mailboxes/{mailboxName}/messages");
 
   const fetchMailboxes = useCallback(
     () => getUserMailboxes(username),
@@ -61,6 +66,8 @@ export default function UserMailboxes({ username }: Props) {
     const lower = search.toLowerCase();
     return sorted.filter((m) => m.mailboxName.toLowerCase().includes(lower) || m.mailboxId.toLowerCase().includes(lower));
   }, [mailboxes, search]);
+
+  if (!canView) return null;
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_LIMIT));
   const paginated = filtered.slice(
@@ -161,7 +168,7 @@ export default function UserMailboxes({ username }: Props) {
         >
           <Search className="w-4 h-4" />
         </Link>
-        {open && (
+        {open && canCreate && (
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -273,20 +280,24 @@ export default function UserMailboxes({ username }: Props) {
                     </div>
                     <span className="flex items-center gap-2">
                       <MailboxCounts username={username} mailboxName={mailbox.mailboxName} />
-                      <button
-                        onClick={() => handleClearMailbox(mailbox.mailboxName)}
-                        className="p-2 rounded-md hover:bg-gray-200"
-                        title="Clear mailbox content"
-                      >
-                        <Eraser className="w-4 h-4 text-red-600" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(mailbox.mailboxName)}
-                        className="p-2 rounded-md hover:bg-gray-200"
-                        title="Delete mailbox"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                      </button>
+                      {canClear && (
+                        <button
+                          onClick={() => handleClearMailbox(mailbox.mailboxName)}
+                          className="p-2 rounded-md hover:bg-gray-200"
+                          title="Clear mailbox content"
+                        >
+                          <Eraser className="w-4 h-4 text-red-600" />
+                        </button>
+                      )}
+                      {canDelete && (
+                        <button
+                          onClick={() => handleDelete(mailbox.mailboxName)}
+                          className="p-2 rounded-md hover:bg-gray-200"
+                          title="Delete mailbox"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </button>
+                      )}
                     </span>
                   </div>
                 ))}

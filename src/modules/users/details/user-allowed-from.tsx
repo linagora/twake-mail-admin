@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getAllowedFromHeaders } from "../api-client";
 
@@ -8,10 +9,13 @@ interface Props {
 }
 
 export default function UserAllowedFrom({ username }: Props) {
+  const canView = useIsAllowed("GET", "/users/{username}/allowedFromHeaders");
   const fetchHeaders = useCallback(() => getAllowedFromHeaders(username), [username]);
   const { data: headers, isLoading, error } = useFetchData<string[]>(fetchHeaders);
 
   const [open, setOpen] = useState(false);
+
+  if (!canView) return null;
 
   return (
     <div className="mt-6">

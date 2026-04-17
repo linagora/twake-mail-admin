@@ -15,10 +15,14 @@ import UserMappings from "./user-mappings";
 import UserDeletedMessageVault from "./user-deleted-message-vault";
 import UserLabels from "./user-labels";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getUserRateLimits, updateUserRateLimits, searchDeletedMessages, restoreDeletedMessages } from "../api-client";
 
 export default function UserDetail() {
   const { username } = useParams();
+  const canUpdateRateLimits = useIsAllowed("PUT", "/users/{username}/ratelimits");
+  const canSearchDeleted = useIsAllowed("POST", "/deletedMessages/users/{username}/messages");
+  const canRestoreDeleted = useIsAllowed("POST", "/deletedMessages/users/{username}");
 
   const fetchRateLimits = useCallback(() => getUserRateLimits(username!), [username]);
   const updateRateLimits = useCallback((limits: any) => updateUserRateLimits(username!, limits), [username]);
@@ -39,12 +43,16 @@ export default function UserDetail() {
       <UserAllowedFrom username={username!} />
       <UserIdentities username={username!} />
       <UserLabels username={username!} />
-      <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} />
-      <UserDeletedMessageVault
-        label={username!}
-        onSearch={(body) => searchDeletedMessages(username!, body)}
-        onRestore={(body) => restoreDeletedMessages(username!, body)}
-      />
+      <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} canUpdate={canUpdateRateLimits} />
+      {(canSearchDeleted || canRestoreDeleted) && (
+        <UserDeletedMessageVault
+          label={username!}
+          onSearch={(body) => searchDeletedMessages(username!, body)}
+          onRestore={(body) => restoreDeletedMessages(username!, body)}
+          canSearch={canSearchDeleted}
+          canRestore={canRestoreDeleted}
+        />
+      )}
       <UserTasks username={username!} />
       <UserChannels username={username!} />
     </div>

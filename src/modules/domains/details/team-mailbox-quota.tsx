@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxQuota, updateTeamMailboxQuotaSize, deleteTeamMailboxQuotaSize } from "../api-client";
 import { TeamMailboxQuota as TeamMailboxQuotaType, TeamMailboxQuotaValues } from "../types";
@@ -44,6 +45,9 @@ interface Props {
 export default function TeamMailboxQuota({ domain, mailbox }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/domains/{domain}/team-mailboxes/{mailbox}/quota");
+  const canUpdate = useIsAllowed("PUT", "/domains/{domain}/team-mailboxes/{mailbox}/quota/limit/size");
+  const canReset = useIsAllowed("DELETE", "/domains/{domain}/team-mailboxes/{mailbox}/quota/limit/size");
   const [open, setOpen] = useState(false);
   const [sizeInput, setSizeInput] = useState("");
   const [sizeUnit, setSizeUnit] = useState<"B" | "KB" | "MB" | "GB">("GB");
@@ -51,6 +55,8 @@ export default function TeamMailboxQuota({ domain, mailbox }: Props) {
 
   const fetchQuota = useCallback(() => getTeamMailboxQuota(domain, mailbox), [domain, mailbox]);
   const { data: quota, isLoading, error, refresh } = useFetchData<TeamMailboxQuotaType>(fetchQuota);
+
+  if (!canView) return null;
 
   const toBytes = (value: number, unit: string): number => {
     if (value === -1) return -1;
@@ -155,20 +161,24 @@ export default function TeamMailboxQuota({ domain, mailbox }: Props) {
               <hr className="border-gray-200" />
 
               <div className="flex items-center gap-2 flex-wrap">
-                <Button
-                  variant="outline"
-                  className="rounded-sm"
-                  onClick={() => setShowSizeEdit(!showSizeEdit)}
-                >
-                  Update size limit
-                </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-sm"
-                  onClick={handleResetSize}
-                >
-                  Reset to domain default
-                </Button>
+                {canUpdate && (
+                  <Button
+                    variant="outline"
+                    className="rounded-sm"
+                    onClick={() => setShowSizeEdit(!showSizeEdit)}
+                  >
+                    Update size limit
+                  </Button>
+                )}
+                {canReset && (
+                  <Button
+                    variant="outline"
+                    className="rounded-sm"
+                    onClick={handleResetSize}
+                  >
+                    Reset to domain default
+                  </Button>
+                )}
               </div>
 
               {showSizeEdit && (

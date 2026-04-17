@@ -9,6 +9,7 @@ import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-c
 import { TaskParam } from "@/modules/common-tasks/types";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 const ARCHIVE_CALENDAR_PARAMS: TaskParam[] = [
   { key: "createdBefore", defaultValue: "", type: "duration" },
@@ -26,6 +27,8 @@ interface Props {
 export default function CalendarUserTasks({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canDeleteData = useIsAllowed("POST", "/users/{username}");
+  const canArchiveCalendar = useIsAllowed("POST", "/calendars/{username}");
   const [open, setOpen] = useState(false);
   const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);
   const [archiveCalendarLoading, setArchiveCalendarLoading] = useState(false);
@@ -101,38 +104,42 @@ export default function CalendarUserTasks({ username }: Props) {
 
       {open && (
         <div className="mt-2 space-y-2">
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Archive calendar events</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleArchiveCalendarEvents}>
-                    {archiveCalendarLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XPOST /calendars/{username}?task=archive
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Delete user data</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteUserData}>
-                    {deleteUserDataLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XPOST /users/{username}?action=deleteData
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          {canArchiveCalendar && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Archive calendar events</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleArchiveCalendarEvents}>
+                      {archiveCalendarLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /calendars/{username}?task=archive
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canDeleteData && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Delete user data</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteUserData}>
+                      {deleteUserDataLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}?action=deleteData
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
         </div>
       )}
     </div>

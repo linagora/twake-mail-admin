@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxFolders, createTeamMailboxFolder, deleteTeamMailboxFolder } from "../api-client";
 import { GetTeamMailboxFoldersResponseType } from "../types";
@@ -21,6 +22,9 @@ interface Props {
 export default function TeamMailboxFolders({ domain, mailbox }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes");
+  const canCreate = useIsAllowed("PUT", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}");
+  const canDelete = useIsAllowed("DELETE", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}");
 
   const fetchFolders = useCallback(
     () => getTeamMailboxFolders(domain, mailbox),
@@ -38,6 +42,8 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
     if (!folders) return [];
     return [...folders].sort((a, b) => a.mailboxName.localeCompare(b.mailboxName));
   }, [folders]);
+
+  if (!canView) return null;
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_LIMIT));
   const paginated = sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
@@ -102,7 +108,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
             <span className="text-sm font-normal text-gray-500">({folders.length})</span>
           )}
         </button>
-        {open && (
+        {open && canCreate && (
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -201,13 +207,15 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                     </div>
                     <span className="flex items-center gap-2">
                       <TeamMailboxFolderCounts domain={domain} mailbox={mailbox} folderName={folder.mailboxName} />
-                      <button
-                        onClick={() => handleDelete(folder.mailboxName)}
-                        className="p-2 rounded-md hover:bg-gray-200"
-                        title="Delete folder"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                      </button>
+                      {canDelete && (
+                        <button
+                          onClick={() => handleDelete(folder.mailboxName)}
+                          className="p-2 rounded-md hover:bg-gray-200"
+                          title="Delete folder"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </button>
+                      )}
                     </span>
                   </div>
                 ))}

@@ -45,6 +45,7 @@ import { ConfirmProvider } from "./components/custom/confirm-provider";
 import { AuthProvider } from "./components/custom/auth-provider";
 import { OIDCProvider, useOIDC } from "./components/custom/oidc-provider";
 import { OIDCCallback } from "./components/custom/oidc-callback";
+import { ProxyResolverProvider } from "./lib/proxy-resolver-context";
 import { Toaster } from "./components/ui/toaster";
 import { Button } from "./components/ui/button";
 import { LogOut } from "lucide-react";
@@ -208,9 +209,13 @@ function AppContent() {
   const inner = appConfig.mode === 'DOMAIN' ? <DomainModeWrapper /> : <GlobalLayout />;
 
   return appConfig.sso ? (
-    <OIDCProvider config={appConfig.sso}>{inner}</OIDCProvider>
+    <OIDCProvider config={appConfig.sso}>
+      <ProxyResolverProvider>{inner}</ProxyResolverProvider>
+    </OIDCProvider>
   ) : (
-    <AuthProvider>{inner}</AuthProvider>
+    <AuthProvider>
+      <ProxyResolverProvider>{inner}</ProxyResolverProvider>
+    </AuthProvider>
   );
 }
 

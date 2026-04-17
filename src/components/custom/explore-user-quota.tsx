@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Search, Loader2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { apiClient } from "@/lib/apiClient";
 import { Button } from "@/components/ui/button";
 
@@ -59,16 +60,17 @@ interface Props {
 }
 
 export default function ExploreUserQuota({ domain }: Props) {
+  const canSearch = useIsAllowed("GET", "/quota/users");
   const [open, setOpen] = useState(false);
-
   const [minPercent, setMinPercent] = useState("80");
   const [maxPercent, setMaxPercent] = useState("100");
   const [page, setPage] = useState(1);
-
   const [results, setResults] = useState<UserQuotaEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
+
+  if (!canSearch) return null;
 
   const fetchUsers = async (targetPage: number) => {
     const minRatio = parseFloat(minPercent) / 100;

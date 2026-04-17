@@ -7,9 +7,11 @@ import DomainContacts from "./domain-contacts";
 import DomainTasks from "./domain-tasks";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
 import { getDomainRateLimits, updateDomainRateLimits } from "../api-client";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 export default function DomainDetail() {
   const { domain } = useParams();
+  const canUpdateRateLimits = useIsAllowed("PUT", "/domains/{domain}/ratelimits");
 
   const fetchRateLimits = useCallback(() => getDomainRateLimits(domain!), [domain]);
   const updateRateLimits = useCallback((limits: any) => updateDomainRateLimits(domain!, limits), [domain]);
@@ -23,7 +25,7 @@ export default function DomainDetail() {
       <DomainAliases domain={domain!} />
       <DomainTeamMailboxes domain={domain!} />
       <DomainContacts domain={domain!} />
-      <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} />
+      <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} canUpdate={canUpdateRateLimits} />
       <DomainTasks domain={domain!} />
     </div>
   );

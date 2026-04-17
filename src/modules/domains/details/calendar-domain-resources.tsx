@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getResources, createResource, deleteResource } from "../api-client";
 import { Resource } from "../types";
@@ -20,6 +21,9 @@ interface Props {
 export default function CalendarDomainResources({ domain, defaultOpen = false, resourceLink }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/domains/{domain}/resources");
+  const canCreate = useIsAllowed("POST", "/domains/{domain}/resources");
+  const canDelete = useIsAllowed("DELETE", "/domains/{domain}/resources/{resourceId}");
 
   const fetchResources = useCallback(() => getResources(domain), [domain]);
   const { data: resources, isLoading, error, refresh } = useFetchData<Resource[]>(fetchResources);
@@ -40,6 +44,8 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
     if (!resources) return [];
     return resources.filter((r) => !r.deleted).sort((a, b) => a.name.localeCompare(b.name));
   }, [resources]);
+
+  if (!canView) return null;
 
   const totalPages = Math.max(1, Math.ceil(active.length / PAGE_LIMIT));
   const paginated = active.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
@@ -115,7 +121,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
             <span className="text-sm font-normal text-gray-500">({active.length})</span>
           )}
         </button>
-        {open && (
+        {open && canCreate && (
           <button onClick={() => setShowCreate(!showCreate)} className="p-1 rounded-md hover:bg-gray-200 transition" title="Add resource">
             <Plus className="w-4 h-4" />
           </button>
@@ -215,10 +221,12 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                       <span className="text-xs text-muted-foreground ml-2">{resource.description}</span>
                     )}
                   </h4>
-                  <button onClick={(e) => { e.preventDefault(); handleRemove(resource); }}
-                    className="p-2 rounded-md hover:bg-gray-200" title="Delete resource">
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
+                  {canDelete && (
+                    <button onClick={(e) => { e.preventDefault(); handleRemove(resource); }}
+                      className="p-2 rounded-md hover:bg-gray-200" title="Delete resource">
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </button>
+                  )}
                 </div>
               ))}
               {active.length === 0 && (

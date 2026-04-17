@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/sidebar";
 import { useLocation } from "react-router";
 import { useDomain } from "./domain-context";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
-const items = [
+const ALL_ITEMS = [
   { title: "Domain Admins",    url: "/domain-admins",    icon: ShieldCheck },
   { title: "Resources",        url: "/resources",        icon: Box },
   { title: "Users",            url: "/users",            icon: Users },
@@ -24,6 +25,21 @@ const items = [
 export function CalendarDomainSidebar() {
   const domain = useDomain();
   const location = useLocation();
+  const canDomainAdmins = useIsAllowed("GET", "/domains/{domain}/admins");
+  const canResources = useIsAllowed("GET", "/domains/{domain}/resources");
+  const canUsers = useIsAllowed("GET", "/domains/{domain}/users");
+  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const canTasks = useIsAllowed("GET", "/tasks");
+
+  const VISIBILITY: Record<string, boolean> = {
+    "/domain-admins": canDomainAdmins,
+    "/resources": canResources,
+    "/users": canUsers,
+    "/registered-users": canRegisteredUsers,
+    "/tasks": canTasks,
+  };
+
+  const items = ALL_ITEMS.filter(item => VISIBILITY[item.url] !== false);
 
   return (
     <Sidebar>

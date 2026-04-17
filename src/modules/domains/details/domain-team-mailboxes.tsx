@@ -6,6 +6,7 @@ import { GetTeamMailboxesResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 interface Props {
   domain: string;
@@ -15,6 +16,9 @@ interface Props {
 export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/domains/{domain}/team-mailboxes");
+  const canCreate = useIsAllowed("PUT", "/domains/{domain}/team-mailboxes/{name}");
+  const canDelete = useIsAllowed("DELETE", "/domains/{domain}/team-mailboxes/{name}");
 
   const fetchMailboxes = useCallback(() => getTeamMailboxes(domain), [domain]);
   const {
@@ -32,6 +36,8 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
     if (!mailboxes) return [];
     return [...mailboxes].sort((a, b) => a.name.localeCompare(b.name));
   }, [mailboxes]);
+
+  if (!canView) return null;
 
   const handleAdd = async () => {
     const name = newName.trim();
@@ -83,7 +89,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
             </span>
           )}
         </button>
-        {open && (
+        {open && canCreate && (
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -140,13 +146,15 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
                     </a>
                     <span className="text-xs text-muted-foreground ml-2">{mb.emailAddress}</span>
                   </h4>
-                  <button
-                    onClick={(e) => { e.preventDefault(); handleRemove(mb.name); }}
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    title="Delete team mailbox"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
+                  {canDelete && (
+                    <button
+                      onClick={(e) => { e.preventDefault(); handleRemove(mb.name); }}
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      title="Delete team mailbox"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </button>
+                  )}
                 </div>
               ))}
               {mailboxes.length === 0 && (

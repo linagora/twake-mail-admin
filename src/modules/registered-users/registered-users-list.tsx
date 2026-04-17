@@ -8,6 +8,7 @@ import { getRegisteredUsers, createRegisteredUser, updateRegisteredUser } from "
 import { RegisteredUser } from "./types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useDomain } from "@/modules/domain-admin/domain-context";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -58,6 +59,9 @@ export default function RegisteredUsersList() {
   const confirm = useConfirm();
   // In DOMAIN mode this returns the current domain; in GLOBAL mode returns "".
   const domain = useDomain() || undefined;
+
+  const canCreate = useIsAllowed("POST", "/registeredUsers");
+  const canEdit = useIsAllowed("PATCH", "/registeredUsers");
 
   const fetchUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
   const {
@@ -151,46 +155,48 @@ export default function RegisteredUsersList() {
 
   return (
     <div>
-      <div className="flex gap-2 mt-4">
-        <input
-          type="text"
-          value={newUsername}
-          onChange={(e) => setNewUsername(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-          placeholder="user@domain.tld"
-          className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        {userStatus === "checking" && (
-          <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">
-            Checking...
-          </span>
-        )}
-        {userStatus === "exists" && (
-          <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
-            <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
-            User exists
-          </span>
-        )}
-        {userStatus === "not_found" && (
-          <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
-            <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
-            User not found
-          </span>
-        )}
-        {userStatus === "invalid" && (
-          <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap">
-            <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
-            Invalid username
-          </span>
-        )}
-        <button
-          onClick={handleAdd}
-          disabled={!newUsername.trim() || userStatus !== "exists"}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Add
-        </button>
-      </div>
+      {canCreate && (
+        <div className="flex gap-2 mt-4">
+          <input
+            type="text"
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+            placeholder="user@domain.tld"
+            className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {userStatus === "checking" && (
+            <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">
+              Checking...
+            </span>
+          )}
+          {userStatus === "exists" && (
+            <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
+              <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+              User exists
+            </span>
+          )}
+          {userStatus === "not_found" && (
+            <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
+              <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
+              User not found
+            </span>
+          )}
+          {userStatus === "invalid" && (
+            <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap">
+              <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
+              Invalid username
+            </span>
+          )}
+          <button
+            onClick={handleAdd}
+            disabled={!newUsername.trim() || userStatus !== "exists"}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Add
+          </button>
+        </div>
+      )}
 
       {isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
@@ -269,13 +275,15 @@ export default function RegisteredUsersList() {
                 ID: {user.id}
               </p>
             </div>
-            <button
-              onClick={() => handleEdit(user)}
-              className="p-2 rounded-md hover:bg-gray-200"
-              title="Edit user"
-            >
-              <Pencil className="w-4 h-4 text-blue-600" />
-            </button>
+            {canEdit && (
+              <button
+                onClick={() => handleEdit(user)}
+                className="p-2 rounded-md hover:bg-gray-200"
+                title="Edit user"
+              >
+                <Pencil className="w-4 h-4 text-blue-600" />
+              </button>
+            )}
           </div>
         ))}
       </div>

@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Pencil, Save, Loader2, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import {
   getUserIdentities,
@@ -31,6 +32,10 @@ const EMPTY_CREATE: JmapIdentityCreatePayload = {
 export default function UserIdentities({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/users/{username}/identities");
+  const canCreate = useIsAllowed("POST", "/users/{username}/identities");
+  const canEdit = useIsAllowed("PUT", "/users/{username}/identities/{id}");
+  const canDelete = useIsAllowed("DELETE", "/users/{username}/identities/{id}");
 
   const fetchIdentities = useCallback(() => getUserIdentities(username), [username]);
   const { data: identities, isLoading, error, refresh } = useFetchData<JmapIdentity[]>(fetchIdentities);
@@ -47,6 +52,8 @@ export default function UserIdentities({ username }: Props) {
   const [editIdentity, setEditIdentity] = useState<JmapIdentity | null>(null);
   const [editForm, setEditForm] = useState<JmapIdentityUpdatePayload>({});
   const [saving, setSaving] = useState(false);
+
+  if (!canView) return null;
 
   const handleCreate = async () => {
     if (!createForm.name.trim() || !createForm.email.trim()) return;
@@ -131,7 +138,7 @@ export default function UserIdentities({ username }: Props) {
             </span>
           )}
         </button>
-        {open && (
+        {open && canCreate && (
           <button
             onClick={() => setShowCreate(!showCreate)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -242,14 +249,16 @@ export default function UserIdentities({ username }: Props) {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); openEdit(identity); }}
-                      className="p-2 rounded-md hover:bg-gray-200"
-                      title="Edit identity"
-                    >
-                      <Pencil className="w-4 h-4 text-blue-600" />
-                    </button>
-                    {identity.mayDelete && (
+                    {canEdit && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); openEdit(identity); }}
+                        className="p-2 rounded-md hover:bg-gray-200"
+                        title="Edit identity"
+                      >
+                        <Pencil className="w-4 h-4 text-blue-600" />
+                      </button>
+                    )}
+                    {canDelete && identity.mayDelete && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(identity); }}
                         className="p-2 rounded-md hover:bg-gray-200"
@@ -307,16 +316,18 @@ export default function UserIdentities({ username }: Props) {
                 </div>
               )}
               <div className="flex justify-end gap-2 pt-2">
-                {viewIdentity.mayDelete && (
+                {canDelete && viewIdentity.mayDelete && (
                   <Button size="sm" variant="destructive" onClick={() => handleDelete(viewIdentity)}>
                     <Trash2 className="w-4 h-4 mr-1" />
                     Delete
                   </Button>
                 )}
-                <Button size="sm" onClick={() => openEdit(viewIdentity)}>
-                  <Pencil className="w-4 h-4 mr-1" />
-                  Edit
-                </Button>
+                {canEdit && (
+                  <Button size="sm" onClick={() => openEdit(viewIdentity)}>
+                    <Pencil className="w-4 h-4 mr-1" />
+                    Edit
+                  </Button>
+                )}
               </div>
             </div>
           )}

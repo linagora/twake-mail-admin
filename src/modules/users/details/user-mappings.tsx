@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import {
   getUserMappings,
@@ -21,6 +22,8 @@ type SourceType = (typeof SOURCE_TYPES)[number];
 export default function UserMappings({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/mappings/user/{username}");
+  const canDeleteSources = useIsAllowed("DELETE", "/mappings/sources/{username}");
 
   const [open, setOpen] = useState(false);
 
@@ -58,6 +61,8 @@ export default function UserMappings({ username }: Props) {
     if (!mappings) return [];
     return [...mappings].sort((a, b) => a.type.localeCompare(b.type));
   }, [mappings]);
+
+  if (!canView) return null;
 
   const handleDeleteSources = async (type: SourceType) => {
     const confirmed = await confirm({
@@ -143,13 +148,15 @@ export default function UserMappings({ username }: Props) {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-sm font-medium capitalize">{type}</span>
                     <span className="text-sm text-gray-500">({sources.length})</span>
-                    <button
-                      onClick={() => handleDeleteSources(type)}
-                      className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
-                      title={`Remove all ${type} sources`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {canDeleteSources && (
+                      <button
+                        onClick={() => handleDeleteSources(type)}
+                        className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
+                        title={`Remove all ${type} sources`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                   {sources.map((source, index) => (
                     <div

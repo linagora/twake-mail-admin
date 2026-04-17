@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserAliases, addUserAlias, removeUserAlias } from "../api-client";
 import { GetUserAliasesResponseType } from "../types";
@@ -14,6 +15,9 @@ interface Props {
 export default function UserAliases({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/address/aliases/{username}");
+  const canAdd = useIsAllowed("PUT", "/address/aliases/{username}/sources/{source}");
+  const canRemove = useIsAllowed("DELETE", "/address/aliases/{username}/sources/{source}");
 
   const fetchAliases = useCallback(() => getUserAliases(username), [username]);
   const {
@@ -31,6 +35,8 @@ export default function UserAliases({ username }: Props) {
     if (!aliases) return [];
     return [...aliases].sort((a, b) => a.source.localeCompare(b.source));
   }, [aliases]);
+
+  if (!canView) return null;
 
   const handleAdd = async () => {
     const alias = newAlias.trim();
@@ -82,7 +88,7 @@ export default function UserAliases({ username }: Props) {
             </span>
           )}
         </button>
-        {open && (
+        {open && canAdd && (
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -133,13 +139,15 @@ export default function UserAliases({ username }: Props) {
                     <span className="text-gray-500 mr-2">{index + 1}/</span>
                     {alias.source}
                   </h4>
-                  <button
-                    onClick={() => handleRemove(alias.source)}
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    title="Remove alias"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
+                  {canRemove && (
+                    <button
+                      onClick={() => handleRemove(alias.source)}
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      title="Remove alias"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </button>
+                  )}
                 </div>
               ))}
               {aliases.length === 0 && (

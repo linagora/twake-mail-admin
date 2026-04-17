@@ -6,12 +6,15 @@ import { useToast } from "@/hooks/use-toast";
 import { getDomains, createDomain, deleteDomain } from "./api-client";
 import { GetDomainsResponseType } from "./types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function DomainsList() {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canCreate = useIsAllowed("PUT", "/domains/{domain}");
+  const canDelete = useIsAllowed("DELETE", "/domains/{domain}");
 
   const {
     data: domainsResult,
@@ -76,23 +79,25 @@ export default function DomainsList() {
 
   return (
     <div>
-      <div className="flex gap-2 mt-4">
-        <input
-          type="text"
-          value={newDomain}
-          onChange={(e) => setNewDomain(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-          placeholder="New domain name"
-          className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          onClick={handleCreate}
-          disabled={!newDomain.trim()}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Create
-        </button>
-      </div>
+      {canCreate && (
+        <div className="flex gap-2 mt-4">
+          <input
+            type="text"
+            value={newDomain}
+            onChange={(e) => setNewDomain(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+            placeholder="New domain name"
+            className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleCreate}
+            disabled={!newDomain.trim()}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Create
+          </button>
+        </div>
+      )}
       {isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
           <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
@@ -161,13 +166,15 @@ export default function DomainsList() {
                 </a>
               </h4>
             </div>
-            <button
-              onClick={() => handleDelete(domain)}
-              className="p-2 rounded-md hover:bg-gray-200"
-              title="Delete domain"
-            >
-              <Trash2 className="w-4 h-4 text-red-600" />
-            </button>
+            {canDelete && (
+              <button
+                onClick={() => handleDelete(domain)}
+                className="p-2 rounded-md hover:bg-gray-200"
+                title="Delete domain"
+              >
+                <Trash2 className="w-4 h-4 text-red-600" />
+              </button>
+            )}
           </div>
         ))}
       </div>

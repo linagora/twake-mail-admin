@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
 
 import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights, cleanupMailbox } from "./api-client";
@@ -24,6 +25,7 @@ const TASKS: TaskProps[] = [
       { key: 'messagesPerSecond', defaultValue: '50', type: 'input' },
     ],
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_reindexing_action',
+    allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
     name: 'Reindex all data in OpenSearch (reindex all mode)',
@@ -34,12 +36,14 @@ const TASKS: TaskProps[] = [
       { key: 'messagesPerSecond', defaultValue: '50', type: 'input' },
     ],
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_reindexing_action',
+    allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
     name: 'Fix mailbox inconsistencies',
     taskKey: TaskKey.FIX_MAILBOX_INCONSISTENCIES,
     command: 'curl -XPOST /mailboxes?task=SolveInconsistencies',
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_fixing_mailboxes_inconsistencies',
+    allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
     name: 'Fix message inconsistencies',
@@ -49,6 +53,7 @@ const TASKS: TaskProps[] = [
       { key: 'messagesPerSecond', defaultValue: '100', type: 'input' },
     ],
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_fixing_message_inconsistencies_2',
+    allowanceCheck: { verb: 'POST', pattern: '/messages' },
   },
   {
     name: 'Recompute mailbox counters',
@@ -58,6 +63,7 @@ const TASKS: TaskProps[] = [
       { key: 'trustMessageProjection', defaultValue: false, type: 'checkbox' },
     ],
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_recomputing_mailbox_counters',
+    allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
     name: 'Recompute mailbox quota',
@@ -68,18 +74,21 @@ const TASKS: TaskProps[] = [
       { key: 'quotaComponent', values: ['MAILBOX', 'SIEVE', 'JMAP_UPLOADS'], type: 'select' },
     ],
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_recomputing_current_quotas_for_users',
+    allowanceCheck: { verb: 'POST', pattern: '/quota/users' },
   },
   {
     name: 'Fix mapping denormalization',
     taskKey: TaskKey.FIX_MAPPING_DENORMALIZATION,
     command: 'curl -XPOST /cassandra/mappings?action=SolveInconsistenciescurl -XPOST /cassandra/mappings?action=SolveInconsistencies',
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_operations_on_mappings_sources',
+    allowanceCheck: { verb: 'POST', pattern: '/cassandra/mappings' },
   },
   {
     name: 'Cleanup JMAP uploads',
     taskKey: TaskKey.CLEANUP_JMAP_UPLOADS,
     command: 'curl -XDELETE /jmap/uploads?scope=expired',
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_cleaning_upload_repository',
+    allowanceCheck: { verb: 'DELETE', pattern: '/jmap/uploads' },
   },
   {
     name: 'Blob garbage collection',
@@ -90,6 +99,7 @@ const TASKS: TaskProps[] = [
       { key: 'expectedBlobCount', defaultValue: '1.000.000', type: 'input' },
     ],
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_running_blob_garbage_collection',
+    allowanceCheck: { verb: 'DELETE', pattern: '/blobs' },
   },
   {
     name: 'Reindex contacts from sent mailbox',
@@ -99,12 +109,14 @@ const TASKS: TaskProps[] = [
       { key: 'usersPerSecond', defaultValue: '1', type: 'input' },
     ],
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_contact_indexing',
+    allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
     name: 'Purge Deleted Messages',
     taskKey: TaskKey.PURGE_DELETED_MESSAGES,
     command: 'curl -XDELETE /deletedMessages?scope=expired',
     doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_purging_expired_deleted_messages',
+    allowanceCheck: { verb: 'DELETE', pattern: '/deletedMessages' },
   },
 ];
 
@@ -197,6 +209,10 @@ export default function CommonTasks() {
 function MailCommonTasks() {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canReloadCerts = useIsAllowed("POST", "/servers");
+  const canRepositionRights = useIsAllowed("POST", "/team-mailboxes");
+  const canCleanupMailbox = useIsAllowed("DELETE", "/messages");
+  const canCleanupOldTasks = useIsAllowed("DELETE", "/tasks");
   const [reloadLoading, setReloadLoading] = useState(false);
   const [reloadPort, setReloadPort] = useState("");
   const [cleanupLoading, setCleanupLoading] = useState(false);
@@ -343,106 +359,116 @@ function MailCommonTasks() {
         {TASKS.map((task) => (
           <TaskContainer {...task} key={task.name} />
         ))}
-        <div className="flex justify-between items-center gap-4">
-          <div className="flex items-center gap-2">
-            <p>Reload certificates</p>
-            <input
-              type="text"
-              placeholder="port (optional)"
-              value={reloadPort}
-              onChange={(e) => setReloadPort(e.target.value)}
-              className="border rounded px-2 py-1 text-sm w-32"
-            />
+        {canReloadCerts && (
+          <div className="flex justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <p>Reload certificates</p>
+              <input
+                type="text"
+                placeholder="port (optional)"
+                value={reloadPort}
+                onChange={(e) => setReloadPort(e.target.value)}
+                className="border rounded px-2 py-1 text-sm w-32"
+              />
+            </div>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleReloadCertificates}>
+                    {reloadLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XPOST /servers?reload-certificate
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleReloadCertificates}>
-                  {reloadLoading && <Loader2 className="animate-spin" />}
-                  Run
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                curl -XPOST /servers?reload-certificate
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-        <div className="flex justify-between items-center gap-4">
-          <p>Reposition system rights on all Team Mailbox folders</p>
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRepositionSystemRights}>
-                  {repositionLoading && <Loader2 className="animate-spin" />}
-                  Run
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                curl -XPOST /team-mailboxes?action=repositionSystemRights
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-        <div className="flex justify-between items-center gap-4">
-          <p>Cleanup Trash folder (all users)</p>
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupTrash}>
-                  {cleanupTrashLoading && <Loader2 className="animate-spin" />}
-                  Run
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                curl -XDELETE /messages?olderThan=5d&amp;mailbox=Trash&amp;useSavedDate
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-        <div className="flex justify-between items-center gap-4">
-          <p>Cleanup Spam folder (all users)</p>
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupSpam}>
-                  {cleanupSpamLoading && <Loader2 className="animate-spin" />}
-                  Run
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;useSavedDate
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-        <div className="flex justify-between items-center gap-4">
-          <div className="flex items-center gap-2">
-            <p>Cleaning up old tasks</p>
-            <input
-              type="number"
-              min="1"
-              placeholder="days"
-              value={cleanupDays}
-              onChange={(e) => setCleanupDays(e.target.value)}
-              className="border rounded px-2 py-1 text-sm w-24"
-            />
-            <span className="text-sm text-gray-500">days</span>
+        )}
+        {canRepositionRights && (
+          <div className="flex justify-between items-center gap-4">
+            <p>Reposition system rights on all Team Mailbox folders</p>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRepositionSystemRights}>
+                    {repositionLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XPOST /team-mailboxes?action=repositionSystemRights
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-          <TooltipProvider>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleCleanupOldTasks}>
-                  {cleanupLoading && <Loader2 className="animate-spin" />}
-                  Run
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                curl -XDELETE /tasks?olderThan=Nday
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        )}
+        {canCleanupMailbox && (
+          <div className="flex justify-between items-center gap-4">
+            <p>Cleanup Trash folder (all users)</p>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupTrash}>
+                    {cleanupTrashLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XDELETE /messages?olderThan=5d&amp;mailbox=Trash&amp;useSavedDate
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )}
+        {canCleanupMailbox && (
+          <div className="flex justify-between items-center gap-4">
+            <p>Cleanup Spam folder (all users)</p>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupSpam}>
+                    {cleanupSpamLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;useSavedDate
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )}
+        {canCleanupOldTasks && (
+          <div className="flex justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <p>Cleaning up old tasks</p>
+              <input
+                type="number"
+                min="1"
+                placeholder="days"
+                value={cleanupDays}
+                onChange={(e) => setCleanupDays(e.target.value)}
+                className="border rounded px-2 py-1 text-sm w-24"
+              />
+              <span className="text-sm text-gray-500">days</span>
+            </div>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleCleanupOldTasks}>
+                    {cleanupLoading && <Loader2 className="animate-spin" />}
+                    Run
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  curl -XDELETE /tasks?olderThan=Nday
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )}
       </div>
     </div>
   );
