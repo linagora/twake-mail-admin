@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { AdditionalParams, TaskDetailResponse, TaskRequest } from "./types";
+import { appConfig } from "@/lib/config";
 
 const parsePayloadToSearchParams = (payload: any) => {
   if (!payload) {
@@ -129,16 +130,32 @@ export const runAddMissingFieldsTask = async (): Promise<any> => {
   return apiClient.post<any, any>(`/registeredUsers?action=addMissingFields`);
 };
 
-export const getTaskDetail = async (id: string): Promise<TaskDetailResponse> => {
-  const response = await apiClient.get<any, TaskDetailResponse>(
-    `/tasks/${id}`
-  );
-  return response;
+// In DOMAIN mode, try domain-scoped task route first; fall back to global on 404.
+// No session cache — 404 here means "task not owned by this domain", not a backend capability gap.
+async function callTaskRoute<T>(
+  domain: string | undefined,
+  domainScopedFn: () => Promise<T>,
+  globalFn: () => Promise<T>,
+): Promise<T> {
+  if (appConfig.mode !== 'DOMAIN' || !domain) return globalFn();
+  try {
+    return await domainScopedFn();
+  } catch (err: any) {
+    if (err?.response?.status === 404) return globalFn();
+    throw err;
+  }
 }
 
-export const cancelTask = async (id: string): Promise<any> => {
-  const response = await apiClient.delete<any, any>(
-    `/tasks/${id}`
+export const getTaskDetail = async (id: string, domain?: string): Promise<TaskDetailResponse> =>
+  callTaskRoute(
+    domain,
+    () => apiClient.get(`/domains/${encodeURIComponent(domain!)}/tasks/${encodeURIComponent(id)}`),
+    () => apiClient.get(`/tasks/${encodeURIComponent(id)}`),
   );
-  return response;
-}
+
+export const cancelTask = async (id: string, domain?: string): Promise<any> =>
+  callTaskRoute(
+    domain,
+    () => apiClient.delete(`/domains/${encodeURIComponent(domain!)}/tasks/${encodeURIComponent(id)}`),
+    () => apiClient.delete(`/tasks/${encodeURIComponent(id)}`),
+  );

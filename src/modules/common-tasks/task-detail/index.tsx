@@ -2,6 +2,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCallback } from "react";
 import { useParams } from "react-router";
 import { cancelTask, getTaskDetail } from "../api-client";
+import { useDomain } from "@/modules/domain-admin/domain-context";
 import { Button } from "@/components/ui/button";
 import { CircleStop, RefreshCcw } from "lucide-react";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,10 +15,11 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 export default function TaskDetail() {
   const { id } = useParams();
   const { toast } = useToast();
+  const domain = useDomain() || undefined;
 
   const fetchTaskDetail = useCallback(
-    () => getTaskDetail(id!),
-    [id]
+    () => getTaskDetail(id!, domain),
+    [id, domain]
   );
 
   const {
@@ -29,7 +31,7 @@ export default function TaskDetail() {
 
   const handleCancelTask = async () => {
     try {
-      await cancelTask(id!);
+      await cancelTask(id!, domain);
     } catch (error) {
       toast({
         title: "Error Canceling Task",
