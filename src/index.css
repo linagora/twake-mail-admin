@@ -115,3 +115,22 @@ html[data-theme="calendar"] {
   color: hsl(var(--primary));
   font-weight: 600;
 }
+
+/* ─── Calendar: replace hardcoded blue with theme orange ──────────────────── */
+html[data-theme="calendar"] .text-blue-600,
+html[data-theme="calendar"] .text-blue-500 {
+  color: hsl(var(--primary));
+}
+html[data-theme="calendar"] .hover\:text-blue-600:hover {
+  color: hsl(var(--primary));
+}
+html[data-theme="calendar"] .bg-blue-500,
+html[data-theme="calendar"] .bg-blue-600 {
+  background-color: hsl(var(--primary));
+}
+html[data-theme="calendar"] .hover\:bg-blue-600:hover {
+  background-color: hsl(var(--primary) / 0.9);
+}
+html[data-theme="calendar"] .focus\:ring-blue-500:focus {
+  --tw-ring-color: hsl(var(--primary));
+}
