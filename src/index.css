@@ -189,6 +189,13 @@ html[data-theme="calendar"] {
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
+/* ─── Icon-only buttons: circular hover area ──────────────────────────────── */
+button.p-1,
+button.p-1\.5,
+button.p-2 {
+  border-radius: 9999px;
+}
+
 /* ─── Card / panel shadows ────────────────────────────────────────────────── */
 .card {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
