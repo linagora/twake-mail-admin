@@ -94,7 +94,7 @@ export function AppSidebar() {
   const items = allItems.filter(item => VISIBILITY[item.url] !== false);
 
   return (
-    <Sidebar>
+    <Sidebar variant="inset">
       <SidebarHeader>
         {appConfig.application === 'CALENDAR' ? (
           <div className="flex items-center gap-2 px-1 py-1">

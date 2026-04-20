@@ -86,8 +86,8 @@ html[data-theme="mail"] {
   --primary: 221 83% 53%;
   --primary-foreground: 0 0% 100%;
   --ring: 221 83% 53%;
-  /* sidebar */
-  --sidebar-background: 0 0% 99%;
+  /* sidebar / page background */
+  --sidebar-background: 220 20% 96%;
   --sidebar-primary: 221 83% 53%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 213 100% 96%;
@@ -100,8 +100,8 @@ html[data-theme="calendar"] {
   --primary: 24 95% 53%;
   --primary-foreground: 0 0% 100%;
   --ring: 24 95% 53%;
-  /* sidebar */
-  --sidebar-background: 220 17% 96%;
+  /* sidebar / page background */
+  --sidebar-background: 220 17% 95%;
   --sidebar-primary: 24 95% 53%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 24 100% 95%;

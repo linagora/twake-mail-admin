@@ -62,7 +62,7 @@ export function DomainSidebar() {
   const items = ALL_ITEMS.filter(item => VISIBILITY[item.url] !== false);
 
   return (
-    <Sidebar>
+    <Sidebar variant="inset">
       <SidebarHeader className="px-4 py-4 space-y-3">
         <img className="w-full" src={Logo} />
         <div className="space-y-1">

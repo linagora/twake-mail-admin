@@ -58,7 +58,7 @@ export function CalendarDomainSidebar() {
   const items = ALL_ITEMS.filter(item => VISIBILITY[item.url] !== false);
 
   return (
-    <Sidebar>
+    <Sidebar variant="inset">
       <SidebarHeader className="px-4 py-4 space-y-3">
         <div className="flex items-center gap-2">
           <img src="/favicon-calendar.svg" alt="Twake Calendar" className="w-8 h-8 shrink-0" />
