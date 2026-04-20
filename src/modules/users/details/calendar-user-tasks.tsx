@@ -110,7 +110,7 @@ export default function CalendarUserTasks({ username }: Props) {
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleArchiveCalendarEvents}>
+                    <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleArchiveCalendarEvents}>
                       {archiveCalendarLoading && <Loader2 className="animate-spin" />}
                       Run
                     </Button>

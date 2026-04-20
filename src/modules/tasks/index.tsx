@@ -30,7 +30,7 @@ type SortField = "submitDate" | "startedDate" | "completedDate" | "status" | "ty
 const STATUS_COLORS: Record<string, string> = {
   completed: "bg-green-100 text-green-800",
   failed: "bg-red-100 text-red-800",
-  inProgress: "bg-blue-100 text-blue-800",
+  inProgress: "bg-primary/10 text-primary",
   waiting: "bg-yellow-100 text-yellow-800",
   cancelled: "bg-gray-100 text-gray-600",
   cancelledRequested: "bg-orange-100 text-orange-800",

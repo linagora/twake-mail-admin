@@ -78,7 +78,7 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
           {canSyncMembers && (
             <>
               <Button
-                className="bg-green-600 hover:bg-green-700 rounded-sm w-full"
+                className="bg-green-400 hover:bg-green-500 rounded-sm w-full"
                 onClick={handleSyncDomainMembers}
                 disabled={syncing}
               >

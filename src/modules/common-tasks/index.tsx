@@ -193,7 +193,7 @@ export default function CommonTasks() {
   if (appConfig.application === 'CALENDAR') {
     return (
       <div className="p-4 relative w-fit">
-        <Header headerSubTitle={CALENDAR_HEADER_SUBTITLE} docuUrl="" />
+        <Header headerTitle="Common Tasks" headerSubTitle={CALENDAR_HEADER_SUBTITLE} docuUrl="" />
         <div className="grid grid-cols-1 gap-4 mt-4">
           {CALENDAR_TASKS.map((task) => (
             <TaskContainer {...task} key={task.name} />
@@ -351,6 +351,7 @@ function MailCommonTasks() {
   return (
     <div className="p-4 relative w-fit">
       <Header
+        headerTitle="Common Tasks"
         headerSubTitle={MAIL_HEADER_SUBTITLE}
         docuUrl={docuUrl}
       />
@@ -374,7 +375,7 @@ function MailCommonTasks() {
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleReloadCertificates}>
+                  <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleReloadCertificates}>
                     {reloadLoading && <Loader2 className="animate-spin" />}
                     Run
                   </Button>
@@ -392,7 +393,7 @@ function MailCommonTasks() {
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRepositionSystemRights}>
+                  <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRepositionSystemRights}>
                     {repositionLoading && <Loader2 className="animate-spin" />}
                     Run
                   </Button>
