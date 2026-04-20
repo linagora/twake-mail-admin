@@ -6,7 +6,7 @@ import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 
 const headerSubTitle = "Live Prometheus metrics from the server.";
-const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/metrics.html";
+const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/metrics.html";
 
 interface MetricFamily {
   name: string;

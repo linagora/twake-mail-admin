@@ -6,7 +6,7 @@ const headerTitle = "Mappings";
 const headerSubTitle = "View all recipients rewrite mappings (aliases, groups, domains, forwards).";
 
 const docuUrl =
-  "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_listing_all_mappings";
+  "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_listing_all_mappings";
 
 export default function Mappings() {
   return (

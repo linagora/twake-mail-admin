@@ -24,7 +24,7 @@ const TASKS: TaskProps[] = [
     params: [
       { key: 'messagesPerSecond', defaultValue: '50', type: 'input' },
     ],
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_reindexing_action',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_reindexing_action',
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
@@ -35,14 +35,14 @@ const TASKS: TaskProps[] = [
     params: [
       { key: 'messagesPerSecond', defaultValue: '50', type: 'input' },
     ],
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_reindexing_action',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_reindexing_action',
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
     name: 'Fix mailbox inconsistencies',
     taskKey: TaskKey.FIX_MAILBOX_INCONSISTENCIES,
     command: 'curl -XPOST /mailboxes?task=SolveInconsistencies',
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_fixing_mailboxes_inconsistencies',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_fixing_mailboxes_inconsistencies',
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
@@ -52,7 +52,7 @@ const TASKS: TaskProps[] = [
     params: [
       { key: 'messagesPerSecond', defaultValue: '100', type: 'input' },
     ],
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_fixing_message_inconsistencies_2',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_fixing_message_inconsistencies_2',
     allowanceCheck: { verb: 'POST', pattern: '/messages' },
   },
   {
@@ -62,7 +62,7 @@ const TASKS: TaskProps[] = [
     params: [
       { key: 'trustMessageProjection', defaultValue: false, type: 'checkbox' },
     ],
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_recomputing_mailbox_counters',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_recomputing_mailbox_counters',
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
@@ -73,21 +73,21 @@ const TASKS: TaskProps[] = [
       { key: 'usersPerSecond', defaultValue: '1', type: 'input' },
       { key: 'quotaComponent', values: ['MAILBOX', 'SIEVE', 'JMAP_UPLOADS'], type: 'select' },
     ],
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_recomputing_current_quotas_for_users',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_recomputing_current_quotas_for_users',
     allowanceCheck: { verb: 'POST', pattern: '/quota/users' },
   },
   {
     name: 'Fix mapping denormalization',
     taskKey: TaskKey.FIX_MAPPING_DENORMALIZATION,
     command: 'curl -XPOST /cassandra/mappings?action=SolveInconsistenciescurl -XPOST /cassandra/mappings?action=SolveInconsistencies',
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_operations_on_mappings_sources',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_operations_on_mappings_sources',
     allowanceCheck: { verb: 'POST', pattern: '/cassandra/mappings' },
   },
   {
     name: 'Cleanup JMAP uploads',
     taskKey: TaskKey.CLEANUP_JMAP_UPLOADS,
     command: 'curl -XDELETE /jmap/uploads?scope=expired',
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_cleaning_upload_repository',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_cleaning_upload_repository',
     allowanceCheck: { verb: 'DELETE', pattern: '/jmap/uploads' },
   },
   {
@@ -98,7 +98,7 @@ const TASKS: TaskProps[] = [
       { key: 'associatedProbability', defaultValue: '0.01', type: 'input' },
       { key: 'expectedBlobCount', defaultValue: '1.000.000', type: 'input' },
     ],
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_running_blob_garbage_collection',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_running_blob_garbage_collection',
     allowanceCheck: { verb: 'DELETE', pattern: '/blobs' },
   },
   {
@@ -108,14 +108,14 @@ const TASKS: TaskProps[] = [
     params: [
       { key: 'usersPerSecond', defaultValue: '1', type: 'input' },
     ],
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_contact_indexing',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_contact_indexing',
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
     name: 'Purge Deleted Messages',
     taskKey: TaskKey.PURGE_DELETED_MESSAGES,
     command: 'curl -XDELETE /deletedMessages?scope=expired',
-    doc: 'https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_purging_expired_deleted_messages',
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_purging_expired_deleted_messages',
     allowanceCheck: { verb: 'DELETE', pattern: '/deletedMessages' },
   },
 ];
@@ -127,7 +127,7 @@ const CLEANUP_PARAMS: TaskParam[] = [
 const MAIL_HEADER_SUBTITLE = "Common tasks for data maintenance of a Twake Mail server";
 const CALENDAR_HEADER_SUBTITLE = "Common tasks for data maintenance of a Twake Calendar server";
 
-const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_task_management";
+const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";
 
 const CALENDAR_TASKS: TaskProps[] = [
   {

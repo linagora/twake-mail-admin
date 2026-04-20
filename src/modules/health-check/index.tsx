@@ -12,7 +12,7 @@ const headerSubTitle =
   "Healthcheck allows a quick diagnostic of your tmail server health.";
 
 const docuUrl =
-  "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_healthcheck";
+  "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_healthcheck";
 
 export default function HealthCheck() {
   // Modify the hook to extract `checks` from the response

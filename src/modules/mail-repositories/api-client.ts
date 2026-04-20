@@ -10,7 +10,7 @@ import {
  * Fetches the list of mail repositories from the James server at `/mailRepositories`.
  *
  * API: `GET http://ip:port/mailRepositories`
- * Documentation: https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_administrating_mail_repositories
+ * Documentation: https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_administrating_mail_repositories
  *
  * - Returns a list of mail repositories, each with a `repository` name and its `path`.
  * - HTTP 200: Successfully retrieved the list of mail repositories.
@@ -27,7 +27,7 @@ export const getMailRepositories =
  * Fetches the list of mail keys contained in a specified mail repository.
  *
  * API: `GET http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails`
- * Documentation: https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_administrating_mail_repositories
+ * Documentation: https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_administrating_mail_repositories
  *
  * - Returns an array of mail keys for a given repository.
  * - Supports optional `limit` and `offset` query parameters.

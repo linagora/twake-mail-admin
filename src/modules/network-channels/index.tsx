@@ -4,7 +4,7 @@ import Header from "@/components/custom/header";
 const headerSubTitle = "Network channels currently active on the server.";
 
 const docuUrl =
-  "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_server_channels";
+  "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_server_channels";
 
 export default function NetworkChannels() {
   return (

@@ -5,7 +5,7 @@ import { appConfig } from "@/lib/config";
 const headerTitle = "Users";
 
 const docuUrl =
-  "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_administrating_users";
+  "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_administrating_users";
 
 export default function Users() {
   const { username } = useParams();

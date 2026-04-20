@@ -47,7 +47,7 @@ function formatDate(d: string | null | undefined): string {
 }
 
 const headerSubTitle = "Monitor and manage server tasks";
-const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_task_management";
+const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";
 
 export default function Tasks() {
   const { toast } = useToast();
