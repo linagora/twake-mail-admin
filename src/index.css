@@ -80,3 +80,38 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ─── Twake Mail theme ────────────────────────────────────────────────────── */
+html[data-theme="mail"] {
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 221 83% 53%;
+  /* sidebar */
+  --sidebar-background: 0 0% 99%;
+  --sidebar-primary: 221 83% 53%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 213 100% 96%;
+  --sidebar-accent-foreground: 221 83% 35%;
+  --sidebar-ring: 221 83% 53%;
+}
+
+/* ─── Twake Calendar theme ────────────────────────────────────────────────── */
+html[data-theme="calendar"] {
+  --primary: 24 95% 53%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 24 95% 53%;
+  /* sidebar */
+  --sidebar-background: 220 17% 96%;
+  --sidebar-primary: 24 95% 53%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 24 100% 95%;
+  --sidebar-accent-foreground: 24 95% 33%;
+  --sidebar-ring: 24 95% 53%;
+}
+
+/* ─── Active sidebar nav item ─────────────────────────────────────────────── */
+[data-sidebar="menu-button"].font-bold {
+  background-color: hsl(var(--sidebar-accent));
+  color: hsl(var(--primary));
+  font-weight: 600;
+}
