@@ -83,7 +83,7 @@ export default function GlobalQuota() {
 
   return (
     <div className="p-4 w-fit">
-      <Header headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle="Global Quota" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
 
       <div className="mt-4">
         {isLoading && (

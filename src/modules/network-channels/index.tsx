@@ -10,7 +10,7 @@ export default function NetworkChannels() {
   return (
     <div className="p-4 w-fit">
       <Header
-        headerSubTitle={headerSubTitle}
+        headerTitle="Network Channels" headerSubTitle={headerSubTitle}
         docuUrl={docuUrl}
       />
       <Outlet />

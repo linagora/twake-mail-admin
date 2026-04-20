@@ -84,7 +84,7 @@ export default function LiveMetrics() {
 
   return (
     <div className="p-4">
-      <Header headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle="Live Metrics" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
 
       <div className="mt-4 flex items-center gap-2">
         <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>

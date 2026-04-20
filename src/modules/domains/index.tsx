@@ -14,6 +14,7 @@ export default function Domains() {
   return (
     <div className="p-4 w-fit">
       <Header
+        headerTitle="Domains"
         headerSubTitle={headerSubTitle}
         docuUrl={docuUrl}
         enableBackBtn={!!domain}

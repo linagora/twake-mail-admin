@@ -121,7 +121,7 @@ export default function ResourceLocator() {
 
   return (
     <div className="p-4">
-      <Header headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle="Resource Locator" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
 
       <div className="mt-6 flex flex-col gap-8 max-w-2xl">
         {canLookupMailbox && (

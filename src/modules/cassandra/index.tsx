@@ -67,7 +67,7 @@ export default function Cassandra() {
 
   return (
     <div className="p-4 w-fit">
-      <Header headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle="Cassandra" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
 
       <div className="mt-4">
         {isLoading && (
