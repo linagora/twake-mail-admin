@@ -1,6 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ─── Fonts ───────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/InterVariable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cal Sans';
+  src: url('/fonts/CalSans-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -27,8 +53,12 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
-  ;
+    --radius: 0.5rem;
+    --shadow-panel: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --transition-fast: 0.15s ease;
+    --transition-std: 0.2s ease;
+    --transition-slow: 0.3s ease;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -78,7 +108,28 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', 'Roboto', ui-sans-serif, system-ui, sans-serif;
   }
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+*:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
 }
 
 /* ─── Twake Mail theme ────────────────────────────────────────────────────── */
@@ -116,9 +167,35 @@ html[data-theme="calendar"] {
 
 /* ─── Active sidebar nav item ─────────────────────────────────────────────── */
 [data-sidebar="menu-button"].font-bold {
+  position: relative;
   background-color: hsl(var(--sidebar-accent));
   color: hsl(var(--primary));
   font-weight: 600;
+}
+[data-sidebar="menu-button"].font-bold::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  border-radius: 0 4px 4px 0;
+  background-color: hsl(var(--primary));
+}
+
+/* ─── Smooth transitions on interactive elements ──────────────────────────── */
+[data-sidebar="menu-button"] {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* ─── Card / panel shadows ────────────────────────────────────────────────── */
+.card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+[data-sidebar="inset"] [role="main"],
+.shadow-panel {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 /* ─── Calendar: replace hardcoded blue with theme orange ──────────────────── */
