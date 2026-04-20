@@ -16,6 +16,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Plus, Trash2 } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { PaginationControls } from "@/components/custom/pagination-controls";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -281,39 +282,15 @@ export default function MappingsList() {
         className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       {filteredMappings.length > 0 && (
-        <div className="mt-4 flex justify-between items-center">
-          <button
-            onClick={() => goToPage(1)}
-            disabled={page <= 1}
-            className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            First
-          </button>
-          <button
-            onClick={() => goToPage(page - 1)}
-            disabled={page <= 1}
-            className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Previous
-          </button>
-          <span className="text-sm font-medium text-center">
-            Page {page} / {totalPages} — Total: {filteredMappings.length}
-          </span>
-          <button
-            onClick={() => goToPage(page + 1)}
-            disabled={page >= totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-          </button>
-          <button
-            onClick={() => goToPage(totalPages)}
-            disabled={page >= totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Last
-          </button>
-        </div>
+        <PaginationControls
+          onFirst={() => goToPage(1)}
+          onPrev={() => goToPage(page - 1)}
+          onNext={() => goToPage(page + 1)}
+          onLast={() => goToPage(totalPages)}
+          disabledPrev={page <= 1}
+          disabledNext={page >= totalPages}
+          label={`Page ${page} / ${totalPages} — Total: ${filteredMappings.length}`}
+        />
       )}
       <table className="mt-4 w-full border-collapse">
         <thead>

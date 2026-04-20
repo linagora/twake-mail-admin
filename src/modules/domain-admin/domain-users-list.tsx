@@ -2,6 +2,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getDomainUsers } from "@/modules/domains/api-client";
 import { useCallback, useMemo, useState } from "react";
 import { useDomain } from "./domain-context";
+import { PaginationControls } from "@/components/custom/pagination-controls";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -48,39 +49,15 @@ export default function DomainUsersList() {
         className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       {filteredUsers.length > 0 && (
-        <div className="mt-4 flex justify-between items-center">
-          <button
-            onClick={() => goToPage(1)}
-            disabled={page <= 1}
-            className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            First
-          </button>
-          <button
-            onClick={() => goToPage(page - 1)}
-            disabled={page <= 1}
-            className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Previous
-          </button>
-          <span className="text-sm font-medium text-center">
-            Page {page} / {totalPages} — Total: {filteredUsers.length}
-          </span>
-          <button
-            onClick={() => goToPage(page + 1)}
-            disabled={page >= totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-          </button>
-          <button
-            onClick={() => goToPage(totalPages)}
-            disabled={page >= totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Last
-          </button>
-        </div>
+        <PaginationControls
+          onFirst={() => goToPage(1)}
+          onPrev={() => goToPage(page - 1)}
+          onNext={() => goToPage(page + 1)}
+          onLast={() => goToPage(totalPages)}
+          disabledPrev={page <= 1}
+          disabledNext={page >= totalPages}
+          label={`Page ${page} / ${totalPages} — Total: ${filteredUsers.length}`}
+        />
       )}
       <div>
         {paginatedUsers.map((username, index) => (

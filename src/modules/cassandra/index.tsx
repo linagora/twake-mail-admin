@@ -10,7 +10,7 @@ import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 
 const headerSubTitle = "Cassandra schema version management";
-const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_cassandra_schema_upgrades";
+const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_cassandra_schema_upgrades";
 
 export default function Cassandra() {
   const { toast } = useToast();
@@ -67,7 +67,7 @@ export default function Cassandra() {
 
   return (
     <div className="p-4 w-fit">
-      <Header headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle="Cassandra" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
 
       <div className="mt-4">
         {isLoading && (

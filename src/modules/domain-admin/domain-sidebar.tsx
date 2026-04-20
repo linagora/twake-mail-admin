@@ -1,8 +1,9 @@
-import { Users, BookMarked, Mailbox, Gauge, Zap, ListChecks, Globe } from "lucide-react";
+import { Users, BookMarked, Mailbox, Gauge, Zap, ListChecks, Globe, LogOut } from "lucide-react";
 import Logo from "@/assets/images/logo.svg";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -10,10 +11,25 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { useLocation } from "react-router";
 import { useDomain } from "./domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { appConfig } from "@/lib/config";
+import { useOIDC } from "@/components/custom/oidc-provider";
+
+function SidebarLogoutButton() {
+  const { logout } = useOIDC();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton onClick={logout}>
+        <LogOut />
+        <span>Logout</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
 
 const ALL_ITEMS = [
   { title: "Users",          url: "/users",         icon: Users },
@@ -46,7 +62,7 @@ export function DomainSidebar() {
   const items = ALL_ITEMS.filter(item => VISIBILITY[item.url] !== false);
 
   return (
-    <Sidebar>
+    <Sidebar variant="inset">
       <SidebarHeader className="px-4 py-4 space-y-3">
         <img className="w-full" src={Logo} />
         <div className="space-y-1">
@@ -79,6 +95,16 @@ export function DomainSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      {appConfig.sso && (
+        <>
+          <SidebarSeparator />
+          <SidebarFooter>
+            <SidebarMenu>
+              <SidebarLogoutButton />
+            </SidebarMenu>
+          </SidebarFooter>
+        </>
+      )}
     </Sidebar>
   );
 }

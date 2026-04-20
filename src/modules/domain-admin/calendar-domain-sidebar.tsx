@@ -1,7 +1,8 @@
-import { ShieldCheck, Box, Users, UserCheck, ListChecks, Globe } from "lucide-react";
+import { ShieldCheck, Box, Users, UserCheck, ListChecks, Globe, LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -9,10 +10,25 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { useLocation } from "react-router";
 import { useDomain } from "./domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { appConfig } from "@/lib/config";
+import { useOIDC } from "@/components/custom/oidc-provider";
+
+function SidebarLogoutButton() {
+  const { logout } = useOIDC();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton onClick={logout}>
+        <LogOut />
+        <span>Logout</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
 
 const ALL_ITEMS = [
   { title: "Domain Admins",    url: "/domain-admins",    icon: ShieldCheck },
@@ -42,7 +58,7 @@ export function CalendarDomainSidebar() {
   const items = ALL_ITEMS.filter(item => VISIBILITY[item.url] !== false);
 
   return (
-    <Sidebar>
+    <Sidebar variant="inset">
       <SidebarHeader className="px-4 py-4 space-y-3">
         <div className="flex items-center gap-2">
           <img src="/favicon-calendar.svg" alt="Twake Calendar" className="w-8 h-8 shrink-0" />
@@ -80,6 +96,16 @@ export function CalendarDomainSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      {appConfig.sso && (
+        <>
+          <SidebarSeparator />
+          <SidebarFooter>
+            <SidebarMenu>
+              <SidebarLogoutButton />
+            </SidebarMenu>
+          </SidebarFooter>
+        </>
+      )}
     </Sidebar>
   );
 }

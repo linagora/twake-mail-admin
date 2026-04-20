@@ -5,6 +5,8 @@ import "./index.css";
 import App from "./App.tsx";
 import { appConfig } from "./lib/config.ts";
 
+document.documentElement.setAttribute('data-theme', appConfig.application.toLowerCase());
+
 if (appConfig.application === 'CALENDAR') {
   const link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
   if (link) link.href = '/favicon-calendar.svg';

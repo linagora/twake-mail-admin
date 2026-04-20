@@ -8,7 +8,7 @@ import { lookupMailbox, lookupMessage, MailboxResult } from "./api-client";
 import { APIError } from "@/lib/apiClient";
 
 const headerSubTitle = "Look up a mailbox or a message by its internal identifier.";
-const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html";
+const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html";
 
 type Status = "idle" | "loading" | "success" | "not_found" | "invalid" | "error";
 
@@ -121,7 +121,7 @@ export default function ResourceLocator() {
 
   return (
     <div className="p-4">
-      <Header headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle="Resource Locator" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
 
       <div className="mt-6 flex flex-col gap-8 max-w-2xl">
         {canLookupMailbox && (

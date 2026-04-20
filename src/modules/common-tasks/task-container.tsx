@@ -62,7 +62,7 @@ additionParams[key] = value
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRunTask}>
+              <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRunTask}>
                 {isLoading && <Loader2 className="animate-spin" />}
                 Run
               </Button>

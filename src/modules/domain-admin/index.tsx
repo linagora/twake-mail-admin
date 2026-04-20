@@ -2,25 +2,11 @@ import { Navigate, Route, Routes } from "react-router";
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { ConfirmProvider } from "@/components/custom/confirm-provider";
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
-import { useOIDC } from "@/components/custom/oidc-provider";
 import type { SSOConfig } from "@/lib/env-config";
 import { DomainProvider } from "./domain-context";
 import { DomainSidebar } from "./domain-sidebar";
-
-function OIDCLogoutButton() {
-  const { logout } = useOIDC();
-  return (
-    <Button variant="ghost" size="sm" onClick={logout} className="gap-2">
-      <LogOut className="h-4 w-4" />
-      Logout
-    </Button>
-  );
-}
 import DomainUsersList from "./domain-users-list";
 import AliasesPage from "./pages/aliases";
 import TeamMailboxesPage from "./pages/team-mailboxes";
@@ -41,20 +27,13 @@ interface Props {
   sso: SSOConfig | null;
 }
 
-export default function DomainAdminApp({ domain, sso }: Props) {
+export default function DomainAdminApp({ domain }: Props) {
   return (
     <DomainProvider value={domain}>
       <ConfirmProvider>
         <SidebarProvider>
           <DomainSidebar />
           <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="md:hidden">
-                <SidebarTrigger className="-ml-1" />
-              </div>
-              <div className="flex-1" />
-              {sso && <OIDCLogoutButton />}
-            </header>
             <div className="p-4">
               <Routes>
                 <Route path="/" element={<Navigate to="/users" replace />} />

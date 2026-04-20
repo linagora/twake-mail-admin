@@ -361,7 +361,7 @@ export default function UserTasks({ username }: Props) {
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleReindex}>
+                    <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleReindex}>
                       {reindexLoading && <Loader2 className="animate-spin" />}
                       Run
                     </Button>
@@ -379,7 +379,7 @@ export default function UserTasks({ username }: Props) {
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleSubscribeAll}>
+                    <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleSubscribeAll}>
                       {subscribeLoading && <Loader2 className="animate-spin" />}
                       Run
                     </Button>
@@ -397,7 +397,7 @@ export default function UserTasks({ username }: Props) {
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRecomputeFastView}>
+                    <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRecomputeFastView}>
                       {fastViewLoading && <Loader2 className="animate-spin" />}
                       Run
                     </Button>
@@ -415,7 +415,7 @@ export default function UserTasks({ username }: Props) {
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRestoreDeletedMessages}>
+                    <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRestoreDeletedMessages}>
                       {restoreLoading && <Loader2 className="animate-spin" />}
                       Run
                     </Button>

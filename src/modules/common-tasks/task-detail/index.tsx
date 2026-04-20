@@ -53,7 +53,7 @@ export default function TaskDetail() {
       <div className="flex items-center mb-4">
         <Header
           headerSubTitle={<span>Task <u>{id}</u></span>}
-          docuUrl="https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_getting_a_task_details"
+          docuUrl="https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_getting_a_task_details"
           enableBackBtn={true}
         />
 

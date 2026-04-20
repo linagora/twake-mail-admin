@@ -1,22 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ─── Fonts ───────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/InterVariable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cal Sans';
+  src: url('/fonts/CalSans-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: 210 38% 24%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 210 38% 24%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --popover-foreground: 210 38% 24%;
     --primary: 0 0% 9%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary-foreground: 210 38% 24%;
     --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted-foreground: 210 20% 45%;
     --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --accent-foreground: 210 38% 24%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
@@ -27,10 +53,14 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
-  ;
+    --radius: 0.5rem;
+    --shadow-panel: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --transition-fast: 0.15s ease;
+    --transition-std: 0.2s ease;
+    --transition-slow: 0.3s ease;
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-foreground: 210 30% 28%;
     --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 4.8% 95.9%;
@@ -78,5 +108,118 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', 'Roboto', ui-sans-serif, system-ui, sans-serif;
   }
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+*:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Twake Mail theme ────────────────────────────────────────────────────── */
+html[data-theme="mail"] {
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 221 83% 53%;
+  /* sidebar / page background */
+  --sidebar-background: 220 20% 96%;
+  --sidebar-primary: 221 83% 53%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 213 100% 96%;
+  --sidebar-accent-foreground: 221 83% 35%;
+  --sidebar-ring: 221 83% 53%;
+}
+
+/* ─── Twake Calendar theme ────────────────────────────────────────────────── */
+html[data-theme="calendar"] {
+  --primary: 24 95% 53%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 24 95% 53%;
+  /* sidebar / page background */
+  --sidebar-background: 220 17% 95%;
+  --sidebar-primary: 24 95% 53%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 24 100% 95%;
+  --sidebar-accent-foreground: 24 95% 33%;
+  --sidebar-ring: 24 95% 53%;
+}
+
+/* ─── Sidebar icons use theme primary color ───────────────────────────────── */
+[data-sidebar="menu-button"] svg {
+  color: hsl(var(--primary));
+}
+
+/* ─── Active sidebar nav item ─────────────────────────────────────────────── */
+[data-sidebar="menu-button"].font-bold {
+  position: relative;
+  background-color: hsl(var(--sidebar-accent));
+  color: hsl(var(--primary));
+  font-weight: 600;
+}
+[data-sidebar="menu-button"].font-bold::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  border-radius: 0 4px 4px 0;
+  background-color: hsl(var(--primary));
+}
+
+/* ─── Smooth transitions on interactive elements ──────────────────────────── */
+[data-sidebar="menu-button"] {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* ─── Icon-only buttons: circular hover area ──────────────────────────────── */
+button.p-1,
+button.p-1\.5,
+button.p-2 {
+  border-radius: 9999px;
+}
+
+/* ─── Card / panel shadows ────────────────────────────────────────────────── */
+.card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+[data-sidebar="inset"] [role="main"],
+.shadow-panel {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ─── Calendar: replace hardcoded blue with theme orange ──────────────────── */
+html[data-theme="calendar"] .text-blue-600,
+html[data-theme="calendar"] .text-blue-500 {
+  color: hsl(var(--primary));
+}
+html[data-theme="calendar"] .hover\:text-blue-600:hover {
+  color: hsl(var(--primary));
+}
+html[data-theme="calendar"] .bg-blue-500,
+html[data-theme="calendar"] .bg-blue-600 {
+  background-color: hsl(var(--primary));
+}
+html[data-theme="calendar"] .hover\:bg-blue-600:hover {
+  background-color: hsl(var(--primary) / 0.9);
+}
+html[data-theme="calendar"] .focus\:ring-blue-500:focus {
+  --tw-ring-color: hsl(var(--primary));
 }

@@ -1,8 +1,9 @@
-import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -10,11 +11,25 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import Logo from '../assets/images/logo.svg';
 import { useLocation } from "react-router";
 import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { useOIDC } from "@/components/custom/oidc-provider";
+
+function SidebarLogoutButton() {
+  const { logout } = useOIDC();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton onClick={logout}>
+        <LogOut />
+        <span>Logout</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
 
 const MAIL_ITEMS = [
   { title: "Health Check", url: "/health-check", icon: Heart },
@@ -79,13 +94,13 @@ export function AppSidebar() {
   const items = allItems.filter(item => VISIBILITY[item.url] !== false);
 
   return (
-    <Sidebar>
-      <SidebarHeader className="hidden md:block">
+    <Sidebar variant="inset">
+      <SidebarHeader>
         {appConfig.application === 'CALENDAR' ? (
           <div className="flex items-center gap-2 px-1 py-1">
             <img src="/favicon-calendar.svg" alt="Twake Calendar" className="w-8 h-8 shrink-0" />
             <span className="text-xl font-semibold leading-tight">
-              Twake <span className="text-orange-500">Calendar</span>
+              Twake <span className="text-primary">Calendar</span>
             </span>
           </div>
         ) : (
@@ -111,6 +126,16 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      {appConfig.sso && (
+        <>
+          <SidebarSeparator />
+          <SidebarFooter>
+            <SidebarMenu>
+              <SidebarLogoutButton />
+            </SidebarMenu>
+          </SidebarFooter>
+        </>
+      )}
     </Sidebar>
   );
 }

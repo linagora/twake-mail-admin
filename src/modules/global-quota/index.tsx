@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
 
 const headerSubTitle = "Global quota applied to all users by default.";
-const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/distributed/operate/webadmin.html#_administrating_quotas";
+const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_administrating_quotas";
 
 function formatSize(bytes: number | null): string {
   if (bytes === null) return "not set";
@@ -83,7 +83,7 @@ export default function GlobalQuota() {
 
   return (
     <div className="p-4 w-fit">
-      <Header headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle="Global Quota" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
 
       <div className="mt-4">
         {isLoading && (
