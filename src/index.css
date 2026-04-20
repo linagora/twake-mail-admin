@@ -109,6 +109,11 @@ html[data-theme="calendar"] {
   --sidebar-ring: 24 95% 53%;
 }
 
+/* ─── Sidebar icons use theme primary color ───────────────────────────────── */
+[data-sidebar="menu-button"] svg {
+  color: hsl(var(--primary));
+}
+
 /* ─── Active sidebar nav item ─────────────────────────────────────────────── */
 [data-sidebar="menu-button"].font-bold {
   background-color: hsl(var(--sidebar-accent));

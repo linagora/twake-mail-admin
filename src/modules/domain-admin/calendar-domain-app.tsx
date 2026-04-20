@@ -2,12 +2,8 @@ import { Navigate, Route, Routes } from "react-router";
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { ConfirmProvider } from "@/components/custom/confirm-provider";
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
-import { useOIDC } from "@/components/custom/oidc-provider";
 import type { SSOConfig } from "@/lib/env-config";
 import { DomainProvider } from "./domain-context";
 import { CalendarDomainSidebar } from "./calendar-domain-sidebar";
@@ -23,35 +19,18 @@ import RegisteredUsersList from "@/modules/registered-users/registered-users-lis
 import TaskDetail from "@/modules/common-tasks/task-detail";
 import CalendarResourceDetail from "@/modules/domains/details/calendar-resource-detail";
 
-function OIDCLogoutButton() {
-  const { logout } = useOIDC();
-  return (
-    <Button variant="ghost" size="sm" onClick={logout} className="gap-2">
-      <LogOut className="h-4 w-4" />
-      Logout
-    </Button>
-  );
-}
-
 interface Props {
   domain: string;
   sso: SSOConfig | null;
 }
 
-export default function CalendarDomainApp({ domain, sso }: Props) {
+export default function CalendarDomainApp({ domain }: Props) {
   return (
     <DomainProvider value={domain}>
       <ConfirmProvider>
         <SidebarProvider>
           <CalendarDomainSidebar />
           <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="md:hidden">
-                <SidebarTrigger className="-ml-1" />
-              </div>
-              <div className="flex-1" />
-              {sso && <OIDCLogoutButton />}
-            </header>
             <div className="p-4">
               <Routes>
                 <Route path="/" element={<Navigate to="/domain-admins" replace />} />
