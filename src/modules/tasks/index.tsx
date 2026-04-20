@@ -11,6 +11,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PaginationControls } from "@/components/custom/pagination-controls";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -321,32 +322,14 @@ export default function Tasks() {
 
         {/* Pagination */}
         {tasks && tasks.length > 0 && (
-          <div className="mt-4 flex justify-between items-center">
-            <button
-              onClick={() => setPage(1)}
-              disabled={page <= 1}
-              className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              First
-            </button>
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page <= 1}
-              className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <span className="text-sm font-medium text-center">
-              Page {page} — {tasks.length} result{tasks.length !== 1 ? "s" : ""}
-            </span>
-            <button
-              onClick={() => setPage((p) => p + 1)}
-              disabled={!hasMore}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
+          <PaginationControls
+            onFirst={() => setPage(1)}
+            onPrev={() => setPage((p) => Math.max(1, p - 1))}
+            onNext={() => setPage((p) => p + 1)}
+            disabledPrev={page <= 1}
+            disabledNext={!hasMore}
+            label={`Page ${page} — ${tasks.length} result${tasks.length !== 1 ? "s" : ""}`}
+          />
         )}
       </div>
 
