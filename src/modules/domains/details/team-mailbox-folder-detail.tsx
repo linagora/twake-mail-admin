@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useParams } from "react-router";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxFolderSubaddressing, setTeamMailboxFolderSubaddressing } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
@@ -9,6 +10,7 @@ import TeamMailboxFolderExtraAcl from "./team-mailbox-folder-extra-acl";
 export default function TeamMailboxFolderDetail() {
   const { domain, mailbox, folder } = useParams();
   const { toast } = useToast();
+  const canToggleSubaddressing = useIsAllowed("PUT", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/subaddressing");
 
   const fetchSubaddressing = useCallback(
     () => getTeamMailboxFolderSubaddressing(domain!, mailbox!, folder!),
@@ -44,7 +46,8 @@ export default function TeamMailboxFolderDetail() {
 
         {data !== undefined && data !== null && !isLoading && (
           <button
-            onClick={handleToggle}
+            onClick={canToggleSubaddressing ? handleToggle : undefined}
+            style={!canToggleSubaddressing ? { cursor: 'default', opacity: 0.6 } : undefined}
             className={`w-full flex items-center justify-between px-6 py-4 rounded-2 border-2 transition-colors ${
               data.enabled
                 ? "bg-blue-50 border-blue-400 hover:bg-blue-100"

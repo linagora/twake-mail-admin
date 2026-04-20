@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserQuota, updateUserQuotaSize, deleteUserQuotaSize } from "../api-client";
 import { UserQuota as UserQuotaType, QuotaValues } from "../types";
@@ -43,6 +44,9 @@ interface Props {
 export default function UserQuota({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/quota/users/{username}");
+  const canUpdate = useIsAllowed("PUT", "/quota/users/{username}/size");
+  const canReset = useIsAllowed("DELETE", "/quota/users/{username}/size");
   const [open, setOpen] = useState(false);
   const [sizeInput, setSizeInput] = useState("");
   const [sizeUnit, setSizeUnit] = useState<"B" | "KB" | "MB" | "GB">("GB");
@@ -54,7 +58,9 @@ export default function UserQuota({ username }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<UserQuotaType>(fetchQuota);
+  } = useFetchData<UserQuotaType>(canView ? fetchQuota : null);
+
+  if (!canView) return null;
 
   const toBytes = (value: number, unit: string): number => {
     if (value === -1) return -1;
@@ -159,20 +165,24 @@ export default function UserQuota({ username }: Props) {
               <hr className="border-gray-200" />
 
               <div className="flex items-center gap-2 flex-wrap">
-                <Button
-                  variant="outline"
-                  className="rounded-sm"
-                  onClick={() => setShowSizeEdit(!showSizeEdit)}
-                >
-                  Update size limit
-                </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-sm"
-                  onClick={handleResetSize}
-                >
-                  Reset to domain default
-                </Button>
+                {canUpdate && (
+                  <Button
+                    variant="outline"
+                    className="rounded-sm"
+                    onClick={() => setShowSizeEdit(!showSizeEdit)}
+                  >
+                    Update size limit
+                  </Button>
+                )}
+                {canReset && (
+                  <Button
+                    variant="outline"
+                    className="rounded-sm"
+                    onClick={handleResetSize}
+                  >
+                    Reset to domain default
+                  </Button>
+                )}
               </div>
 
               {showSizeEdit && (

@@ -12,6 +12,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCallback, useEffect, useState } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 
 function CreateMailRepositoryForm({
@@ -44,6 +45,10 @@ function CreateMailRepositoryForm({
 export default function MailRepositoriesList() {
   const confirm = useConfirm();
   const { toast } = useToast();
+  const canCreate = useIsAllowed("PUT", "/mailRepositories/{encodedPath}");
+  const canReprocess = useIsAllowed("PATCH", "/mailRepositories/{encodedPath}/mails");
+  const canMove = useIsAllowed("PATCH", "/mailRepositories/{encodedPath}/mails");
+  const canClear = useIsAllowed("DELETE", "/mailRepositories/{encodedPath}/mails");
   const {
     data: mailRepositoriesResult,
     isLoading,
@@ -224,13 +229,15 @@ export default function MailRepositoriesList() {
         )}
         <div className="flex items-center justify-between mt-4">
           <p>List</p>
-          <button
-            className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700"
-            onClick={handleCreateRepository}
-          >
-            <Plus className="w-4 h-4" />
-            New repository
-          </button>
+          {canCreate && (
+            <button
+              className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700"
+              onClick={handleCreateRepository}
+            >
+              <Plus className="w-4 h-4" />
+              New repository
+            </button>
+          )}
         </div>
         <div>
           {repositoriesWithSize?.map((result) => (
@@ -250,35 +257,41 @@ export default function MailRepositoriesList() {
               </div>
 
               <div className="flex gap-2">
-                <button
-                  className="p-2 rounded-md hover:bg-gray-200"
-                  title="Reprocess all mails"
-                  onClick={() => {
-                    handleReprocessTask(result.path);
-                  }}
-                >
-                  <RefreshCw className="w-5 h-5 text-blue-600" />
-                </button>
+                {canReprocess && (
+                  <button
+                    className="p-2 rounded-md hover:bg-gray-200"
+                    title="Reprocess all mails"
+                    onClick={() => {
+                      handleReprocessTask(result.path);
+                    }}
+                  >
+                    <RefreshCw className="w-5 h-5 text-blue-600" />
+                  </button>
+                )}
 
-                <button
-                  className="p-2 rounded-md hover:bg-gray-200"
-                  title="Move all mails to another repository"
-                  onClick={() => {
-                    handleMoveAll(result.path);
-                  }}
-                >
-                  <MoveHorizontal className="w-5 h-5 text-orange-500" />
-                </button>
+                {canMove && (
+                  <button
+                    className="p-2 rounded-md hover:bg-gray-200"
+                    title="Move all mails to another repository"
+                    onClick={() => {
+                      handleMoveAll(result.path);
+                    }}
+                  >
+                    <MoveHorizontal className="w-5 h-5 text-orange-500" />
+                  </button>
+                )}
 
-                <button
-                  className="p-2 rounded-md hover:bg-gray-200"
-                  title="Clear all mails"
-                  onClick={() => {
-                    handleClearTask(result.path);
-                  }}
-                >
-                  <Trash2 className="w-5 h-5 text-red-600" />
-                </button>
+                {canClear && (
+                  <button
+                    className="p-2 rounded-md hover:bg-gray-200"
+                    title="Clear all mails"
+                    onClick={() => {
+                      handleClearTask(result.path);
+                    }}
+                  >
+                    <Trash2 className="w-5 h-5 text-red-600" />
+                  </button>
+                )}
               </div>
             </div>
           ))}

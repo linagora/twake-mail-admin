@@ -14,6 +14,8 @@ interface Props {
   label: string;
   onSearch: (body: RestoreDeletedMessagesRequest) => Promise<DeletedMessage[]>;
   onRestore: (body: RestoreDeletedMessagesRequest) => Promise<RunTaskResponse>;
+  canSearch?: boolean;
+  canRestore?: boolean;
 }
 
 function formatDate(iso: string): string {
@@ -30,7 +32,7 @@ function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export default function UserDeletedMessageVault({ label, onSearch, onRestore }: Props) {
+export default function UserDeletedMessageVault({ label, onSearch, onRestore, canSearch = true, canRestore = true }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
   const [open, setOpen] = useState(false);
@@ -130,25 +132,29 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore }: 
           />
 
           <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              onClick={handleSearch}
-              disabled={loading || restoreLoading}
-              className="flex items-center gap-2"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-              Search
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleRestore}
-              disabled={loading || restoreLoading}
-              className="flex items-center gap-2 text-green-700 border-green-600 hover:bg-green-50"
-            >
-              {restoreLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
-              Restore
-            </Button>
+            {canSearch && (
+              <Button
+                size="sm"
+                onClick={handleSearch}
+                disabled={loading || restoreLoading}
+                className="flex items-center gap-2"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                Search
+              </Button>
+            )}
+            {canRestore && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleRestore}
+                disabled={loading || restoreLoading}
+                className="flex items-center gap-2 text-green-700 border-green-600 hover:bg-green-50"
+              >
+                {restoreLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                Restore
+              </Button>
+            )}
           </div>
 
           {results !== null && (

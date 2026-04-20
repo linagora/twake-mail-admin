@@ -8,6 +8,7 @@ import { toast, useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Trash2 } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 interface EventResponse {
   [key: string]: any; // Represents the full JSON structure of the event
@@ -42,6 +43,8 @@ export default function EventListenersDetail() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
   const confirm = useConfirm();
+  const canViewJson = useIsAllowed("GET", "/events/deadLetter/groups/{group}/{insertionId}");
+  const canDelete = useIsAllowed("DELETE", "/events/deadLetter/groups/{group}/{insertionId}");
 
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 0;
@@ -166,22 +169,26 @@ export default function EventListenersDetail() {
                 </span>
 
                 <span className="flex items-center space-x-2 text-sm text-gray-500">
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      fetchFailedEventJson(id!, failedEventKey);
-                    }}
-                    className="hover:text-blue-500 hover:underline transition"
-                  >
-                    (JSON)
-                  </a>
-                  <button
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    onClick={() => handleRemoveEvent(failedEventKey)}
-                  >
-                    <Trash2 className="w-5 h-5 text-red-600" />
-                  </button>
+                  {canViewJson && (
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        fetchFailedEventJson(id!, failedEventKey);
+                      }}
+                      className="hover:text-blue-500 hover:underline transition"
+                    >
+                      (JSON)
+                    </a>
+                  )}
+                  {canDelete && (
+                    <button
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      onClick={() => handleRemoveEvent(failedEventKey)}
+                    >
+                      <Trash2 className="w-5 h-5 text-red-600" />
+                    </button>
+                  )}
                 </span>
               </li>
             ))}

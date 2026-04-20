@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData, cleanupUserMailbox } from "../api-client";
 import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
@@ -33,6 +34,14 @@ interface Props {
 export default function UserTasks({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canReindex = useIsAllowed("POST", "/users/{username}/mailboxes");
+  const canSubscribeAll = useIsAllowed("POST", "/users/{username}/mailboxes");
+  const canRecomputeFastView = useIsAllowed("POST", "/users/{username}/mailboxes");
+  const canRestoreDeleted = useIsAllowed("POST", "/deletedMessages/users/{username}");
+  const canCleanupMailbox = useIsAllowed("DELETE", "/messages");
+  const canRename = useIsAllowed("POST", "/users/{username}/rename/{newUser}");
+  const canDeleteAllMailboxes = useIsAllowed("DELETE", "/users/{username}/mailboxes");
+  const canDeleteData = useIsAllowed("POST", "/users/{username}");
   const [open, setOpen] = useState(false);
   const [reindexLoading, setReindexLoading] = useState(false);
   const [subscribeLoading, setSubscribeLoading] = useState(false);
@@ -346,149 +355,167 @@ export default function UserTasks({ username }: Props) {
 
       {open && (
         <div className="mt-2 space-y-2">
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Reindex all mailboxes</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleReindex}>
-                    {reindexLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XPOST /users/{username}/mailboxes?task=reIndex
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Subscribe to all mailboxes</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleSubscribeAll}>
-                    {subscribeLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XPOST /users/{username}/mailboxes?task=subscribeAll
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Recompute JMAP fast view projection</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRecomputeFastView}>
-                    {fastViewLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XPOST /users/{username}/mailboxes?task=recomputeFastViewProjectionItems
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Restore deleted messages</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRestoreDeletedMessages}>
-                    {restoreLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XPOST /deletedMessages/users/{username}?action=restore
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Cleanup user Trash folder</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupTrash}>
-                    {cleanupTrashLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XDELETE /messages?olderThan=5d&amp;mailbox=Trash&amp;user={username}&amp;useSavedDate
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Cleanup user Spam folder</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupSpam}>
-                    {cleanupSpamLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;user={username}&amp;useSavedDate
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Rename user</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleRenameUser}>
-                    {renameLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XPOST /users/{username}/rename/newUser?action=rename
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Delete all mailboxes</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteAllMailboxes}>
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XDELETE /users/{username}/mailboxes
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-            <p>Delete user data</p>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteUserData}>
-                    {deleteUserDataLoading && <Loader2 className="animate-spin" />}
-                    Run
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  curl -XPOST /users/{username}?action=deleteData
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          {canReindex && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Reindex all mailboxes</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleReindex}>
+                      {reindexLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}/mailboxes?task=reIndex
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canSubscribeAll && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Subscribe to all mailboxes</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleSubscribeAll}>
+                      {subscribeLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}/mailboxes?task=subscribeAll
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canRecomputeFastView && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Recompute JMAP fast view projection</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRecomputeFastView}>
+                      {fastViewLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}/mailboxes?task=recomputeFastViewProjectionItems
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canRestoreDeleted && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Restore deleted messages</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-green-600 hover:bg-green-700 rounded-sm" onClick={handleRestoreDeletedMessages}>
+                      {restoreLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /deletedMessages/users/{username}?action=restore
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canCleanupMailbox && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Cleanup user Trash folder</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupTrash}>
+                      {cleanupTrashLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XDELETE /messages?olderThan=5d&amp;mailbox=Trash&amp;user={username}&amp;useSavedDate
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canCleanupMailbox && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Cleanup user Spam folder</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupSpam}>
+                      {cleanupSpamLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;user={username}&amp;useSavedDate
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canRename && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Rename user</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleRenameUser}>
+                      {renameLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}/rename/newUser?action=rename
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canDeleteAllMailboxes && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Delete all mailboxes</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteAllMailboxes}>
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XDELETE /users/{username}/mailboxes
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canDeleteData && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>Delete user data</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteUserData}>
+                      {deleteUserDataLoading && <Loader2 className="animate-spin" />}
+                      Run
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}?action=deleteData
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
         </div>
       )}
     </div>

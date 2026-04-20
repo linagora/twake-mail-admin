@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 interface Props {
   domain: string;
@@ -52,6 +53,8 @@ function toBytes(value: number, unit: string): number {
 
 export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
   const { toast } = useToast();
+  const canView = useIsAllowed("GET", "/quota/domains/{domain}");
+  const canUpdate = useIsAllowed("PUT", "/quota/domains/{domain}");
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
   const [quota, setQuota] = useState<DomainQuota | null>(null);
@@ -74,6 +77,8 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
   useEffect(() => {
     if (open) fetchQuota();
   }, [open, fetchQuota]);
+
+  if (!canView) return null;
 
   const handleUpdateSize = async () => {
     const raw = parseFloat(sizeInput);
@@ -123,13 +128,15 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
 
               <hr className="border-gray-200" />
 
-              <Button
-                variant="outline"
-                className="rounded-sm"
-                onClick={() => setShowSizeEdit(!showSizeEdit)}
-              >
-                Update size limit
-              </Button>
+              {canUpdate && (
+                <Button
+                  variant="outline"
+                  className="rounded-sm"
+                  onClick={() => setShowSizeEdit(!showSizeEdit)}
+                >
+                  Update size limit
+                </Button>
+              )}
 
               {showSizeEdit && (
                 <div className="flex gap-2 mt-2">

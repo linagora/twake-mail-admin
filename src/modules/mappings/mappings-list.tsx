@@ -15,10 +15,15 @@ import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Plus, Trash2 } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function MappingsList() {
+  const canAddAddress = useIsAllowed("POST", "/mappings/address/{source}/targets/{destination}");
+  const canAddRegex = useIsAllowed("POST", "/mappings/regex/{source}/targets/{regex}");
+  const canDelete = useIsAllowed("DELETE", "/mappings/address/{source}/targets/{destination}");
+
   const {
     data: mappingsResult,
     isLoading,
@@ -164,20 +169,24 @@ export default function MappingsList() {
   return (
     <div>
       <div className="mt-4 flex items-center gap-2">
-        <button
-          onClick={() => { setShowCreate(!showCreate); setShowCreateRegex(false); }}
-          className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Add Address Mapping
-        </button>
-        <button
-          onClick={() => { setShowCreateRegex(!showCreateRegex); setShowCreate(false); }}
-          className="flex items-center gap-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition text-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Add Regex Mapping
-        </button>
+        {canAddAddress && (
+          <button
+            onClick={() => { setShowCreate(!showCreate); setShowCreateRegex(false); }}
+            className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Add Address Mapping
+          </button>
+        )}
+        {canAddRegex && (
+          <button
+            onClick={() => { setShowCreateRegex(!showCreateRegex); setShowCreate(false); }}
+            className="flex items-center gap-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Add Regex Mapping
+          </button>
+        )}
       </div>
 
       {showCreate && (
@@ -329,7 +338,7 @@ export default function MappingsList() {
               <td className="px-4 py-2 text-sm">{mapping.type}</td>
               <td className="px-4 py-2 text-sm">{mapping.destination}</td>
               <td className="px-4 py-2 text-sm">
-                {["Address", "Alias", "Forward", "Domain", "DomainAlias", "Regex"].includes(mapping.type) && (
+                {canDelete && ["Address", "Alias", "Forward", "Domain", "DomainAlias", "Regex"].includes(mapping.type) && (
                   <button
                     onClick={() => handleDelete(mapping)}
                     className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"

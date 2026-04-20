@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getDomainAdmins, addDomainAdmin, removeDomainAdmin } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
@@ -17,9 +18,12 @@ interface Props {
 export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/domains/{domain}/admins");
+  const canAdd = useIsAllowed("PUT", "/domains/{domain}/admins/{username}");
+  const canRemove = useIsAllowed("DELETE", "/domains/{domain}/admins/{username}");
 
   const fetchAdmins = useCallback(() => getDomainAdmins(domain), [domain]);
-  const { data: admins, isLoading, error, refresh } = useFetchData<string[]>(fetchAdmins);
+  const { data: admins, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchAdmins : null);
 
   const [open, setOpen] = useState(defaultOpen);
   const [showAddInput, setShowAddInput] = useState(false);
@@ -31,6 +35,8 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
     if (!admins) return [];
     return [...admins].sort((a, b) => a.localeCompare(b));
   }, [admins]);
+
+  if (!canView) return null;
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_LIMIT));
   const paginated = sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
@@ -90,7 +96,7 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
             </span>
           )}
         </button>
-        {open && (
+        {open && canAdd && (
           <button
             onClick={() => setShowAddInput(!showAddInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -173,9 +179,11 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
                     <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
                     {admin}
                   </h4>
-                  <button onClick={() => handleRemove(admin)} className="p-2 rounded-md hover:bg-gray-200" title="Remove administrator">
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
+                  {canRemove && (
+                    <button onClick={() => handleRemove(admin)} className="p-2 rounded-md hover:bg-gray-200" title="Remove administrator">
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </button>
+                  )}
                 </div>
               ))}
               {admins.length === 0 && (

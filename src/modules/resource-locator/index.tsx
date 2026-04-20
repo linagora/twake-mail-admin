@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, Loader2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/custom/header";
@@ -78,6 +79,8 @@ function MailboxCard({ mailbox }: { mailbox: MailboxResult }) {
 }
 
 export default function ResourceLocator() {
+  const canLookupMailbox = useIsAllowed("GET", "/mailboxes/{mailboxId}");
+  const canLookupMessage = useIsAllowed("GET", "/messages/{messageId}");
   const [mailboxStatus, setMailboxStatus] = useState<Status>("idle");
   const [mailboxResult, setMailboxResult] = useState<MailboxResult | null>(null);
 
@@ -121,36 +124,40 @@ export default function ResourceLocator() {
       <Header headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
 
       <div className="mt-6 flex flex-col gap-8 max-w-2xl">
-        <SearchSection
-          label="Look up a mailbox by ID"
-          placeholder="e.g. 15b47950-5799-11ef-91ef-0242ac120002"
-          onSearch={handleMailboxSearch}
-          status={mailboxStatus}
-        >
-          {mailboxResult && <MailboxCard mailbox={mailboxResult} />}
-        </SearchSection>
+        {canLookupMailbox && (
+          <SearchSection
+            label="Look up a mailbox by ID"
+            placeholder="e.g. 15b47950-5799-11ef-91ef-0242ac120002"
+            onSearch={handleMailboxSearch}
+            status={mailboxStatus}
+          >
+            {mailboxResult && <MailboxCard mailbox={mailboxResult} />}
+          </SearchSection>
+        )}
 
-        <hr />
+        {canLookupMailbox && canLookupMessage && <hr />}
 
-        <SearchSection
-          label="Locate a message by ID"
-          placeholder="e.g. a UUID or integer depending on the backend"
-          onSearch={handleMessageSearch}
-          status={messageStatus}
-        >
-          {messageMailboxes.length > 0 ? (
-            <div className="flex flex-col gap-2">
-              <p className="text-sm text-muted-foreground">
-                Found in {messageMailboxes.length} mailbox{messageMailboxes.length !== 1 ? "es" : ""}:
-              </p>
-              {messageMailboxes.map((mb) => (
-                <MailboxCard key={mb.mailboxId} mailbox={mb} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">The message was found but belongs to no mailbox.</p>
-          )}
-        </SearchSection>
+        {canLookupMessage && (
+          <SearchSection
+            label="Locate a message by ID"
+            placeholder="e.g. a UUID or integer depending on the backend"
+            onSearch={handleMessageSearch}
+            status={messageStatus}
+          >
+            {messageMailboxes.length > 0 ? (
+              <div className="flex flex-col gap-2">
+                <p className="text-sm text-muted-foreground">
+                  Found in {messageMailboxes.length} mailbox{messageMailboxes.length !== 1 ? "es" : ""}:
+                </p>
+                {messageMailboxes.map((mb) => (
+                  <MailboxCard key={mb.mailboxId} mailbox={mb} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">The message was found but belongs to no mailbox.</p>
+            )}
+          </SearchSection>
+        )}
       </div>
     </div>
   );

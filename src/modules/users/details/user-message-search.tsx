@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight, Loader2, Paperclip, Search } from "lucide-re
 import { searchUserMails, getUserMailboxes } from "../api-client";
 import { MailSearchFilter, MailSearchResult } from "../types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -25,6 +26,7 @@ interface SortEntry {
 
 export default function UserMessageSearch() {
   const { username } = useParams<{ username: string }>();
+  const canSearch = useIsAllowed("POST", "/users/{username}/mails");
 
   // Form state
   const [reason, setReason] = useState("");
@@ -104,6 +106,8 @@ export default function UserMessageSearch() {
       setIsLoading(false);
     }
   };
+
+  if (!canSearch) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

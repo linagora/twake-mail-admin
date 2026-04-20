@@ -8,13 +8,16 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import ConfirmTaskContent from "./components/confirm-task-content";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
-export default function TaskContainer({ name, taskKey, mode, command, doc, params }: TaskProps) {
+export default function TaskContainer({ name, taskKey, mode, command, doc, params, allowanceCheck }: TaskProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const { toast } = useToast();
   const confirm = useConfirm();
   const runTask = useRunTask();
+  const isAllowed = useIsAllowed(allowanceCheck?.verb ?? "POST", allowanceCheck?.pattern ?? "");
+
+  if (allowanceCheck && !isAllowed) return null;
 
   const handleRunTask = async () => {
     try {

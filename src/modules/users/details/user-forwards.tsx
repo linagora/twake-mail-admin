@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserForwards, addUserForward, removeUserForward } from "../api-client";
 import { GetUserForwardsResponseType } from "../types";
@@ -15,6 +16,9 @@ interface Props {
 export default function UserForwards({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/address/forwards/{username}");
+  const canAdd = useIsAllowed("PUT", "/address/forwards/{username}/targets/{destination}");
+  const canRemove = useIsAllowed("DELETE", "/address/forwards/{username}/targets/{destination}");
 
   const fetchForwards = useCallback(() => getUserForwards(username), [username]);
   const {
@@ -22,7 +26,7 @@ export default function UserForwards({ username }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<GetUserForwardsResponseType>(fetchForwards);
+  } = useFetchData<GetUserForwardsResponseType>(canView ? fetchForwards : null);
 
   const [open, setOpen] = useState(false);
   const [newForward, setNewForward] = useState("");
@@ -42,6 +46,8 @@ export default function UserForwards({ username }: Props) {
     if (!forwards) return false;
     return forwards.some((f) => f.mailAddress !== username);
   }, [forwards, username]);
+
+  if (!canView) return null;
 
   // Checkbox is disabled when there are no external forwards
   // (no forwards at all, or only the user itself)
@@ -115,7 +121,7 @@ export default function UserForwards({ username }: Props) {
             </span>
           )}
         </button>
-        {open && (
+        {open && canAdd && (
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -181,13 +187,15 @@ export default function UserForwards({ username }: Props) {
                       <span className="ml-2 text-xs text-blue-500">(self)</span>
                     )}
                   </h4>
-                  <button
-                    onClick={() => handleRemove(fwd.mailAddress)}
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    title="Remove forward"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
+                  {canRemove && (
+                    <button
+                      onClick={() => handleRemove(fwd.mailAddress)}
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      title="Remove forward"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </button>
+                  )}
                 </div>
               ))}
               {forwards.length === 0 && (

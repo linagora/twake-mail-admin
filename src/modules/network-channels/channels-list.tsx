@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Loader2, RefreshCw, Map, MonitorSmartphone } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getAllChannels, disconnectAllChannels } from "./api-client";
 import { NetworkChannel } from "./types";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -14,6 +15,7 @@ export default function ChannelsList() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canDisconnectAll = useIsAllowed("DELETE", "/servers/channels");
   const fetchAll = useCallback(() => getAllChannels(), []);
   const { data, isLoading, refresh } = useFetchData<NetworkChannel[]>(fetchAll);
   const [disconnecting, setDisconnecting] = useState(false);
@@ -52,15 +54,17 @@ export default function ChannelsList() {
         <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
         </Button>
-        <Button
-          className="bg-orange-500 hover:bg-orange-600 rounded-sm"
-          size="sm"
-          onClick={handleDisconnectAll}
-          disabled={disconnecting}
-        >
-          {disconnecting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-          Disconnect all users
-        </Button>
+        {canDisconnectAll && (
+          <Button
+            className="bg-orange-500 hover:bg-orange-600 rounded-sm"
+            size="sm"
+            onClick={handleDisconnectAll}
+            disabled={disconnecting}
+          >
+            {disconnecting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+            Disconnect all users
+          </Button>
+        )}
       </div>
 
       <ChannelGrid channels={data ?? []} paginate loading={isLoading} />

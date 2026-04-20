@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useToast } from "@/hooks/use-toast";
@@ -17,12 +18,15 @@ interface Props {
 export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/domains/{domain}/team-mailboxes/{mailbox}/extraSenders");
+  const canAdd = useIsAllowed("PUT", "/domains/{domain}/team-mailboxes/{mailbox}/extraSenders/{username}");
+  const canRemove = useIsAllowed("DELETE", "/domains/{domain}/team-mailboxes/{mailbox}/extraSenders/{username}");
 
   const fetchSenders = useCallback(
     () => getTeamMailboxExtraSenders(domain, mailbox),
     [domain, mailbox]
   );
-  const { data: senders, isLoading, error, refresh } = useFetchData<string[]>(fetchSenders);
+  const { data: senders, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchSenders : null);
 
   const [open, setOpen] = useState(true);
   const [page, setPage] = useState(1);
@@ -33,6 +37,8 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
     if (!senders) return [];
     return [...senders].sort((a, b) => a.localeCompare(b));
   }, [senders]);
+
+  if (!canView) return null;
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_LIMIT));
   const paginated = sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
@@ -83,7 +89,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
 
       {open && (<>
         {/* Add sender */}
-        <div className="flex gap-2 mt-3 mb-4">
+        {canAdd && (<div className="flex gap-2 mt-3 mb-4">
           <input
             type="text"
             value={newSender}
@@ -120,7 +126,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
           >
             Add
           </button>
-        </div>
+        </div>)}
 
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -178,13 +184,15 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
                 <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
                 {username}
               </h4>
-              <button
-                onClick={() => handleRemove(username)}
-                className="p-2 rounded-md hover:bg-gray-200"
-                title="Remove extra sender"
-              >
-                <Trash2 className="w-4 h-4 text-red-600" />
-              </button>
+              {canRemove && (
+                <button
+                  onClick={() => handleRemove(username)}
+                  className="p-2 rounded-md hover:bg-gray-200"
+                  title="Remove extra sender"
+                >
+                  <Trash2 className="w-4 h-4 text-red-600" />
+                </button>
+              )}
             </div>
           ))}
           {senders && senders.length === 0 && (

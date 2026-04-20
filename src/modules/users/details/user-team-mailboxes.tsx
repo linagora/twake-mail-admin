@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, LogOut } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserTeamMailboxes } from "../api-client";
 import { removeTeamMailboxMember } from "@/modules/domains/api-client";
@@ -14,6 +15,8 @@ interface Props {
 export default function UserTeamMailboxes({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/users/{username}/team-mailboxes");
+  const canLeave = useIsAllowed("DELETE", "/domains/{domain}/team-mailboxes/{mailbox}/members/{member}");
 
   const fetchMailboxes = useCallback(() => getUserTeamMailboxes(username), [username]);
   const {
@@ -21,7 +24,7 @@ export default function UserTeamMailboxes({ username }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<{ name: string; emailAddress: string }[]>(fetchMailboxes);
+  } = useFetchData<{ name: string; emailAddress: string }[]>(canView ? fetchMailboxes : null);
 
   const [open, setOpen] = useState(false);
 
@@ -29,6 +32,8 @@ export default function UserTeamMailboxes({ username }: Props) {
     if (!mailboxes) return [];
     return [...mailboxes].sort((a, b) => a.name.localeCompare(b.name));
   }, [mailboxes]);
+
+  if (!canView) return null;
 
   const handleLeave = async (mb: { name: string; emailAddress: string }) => {
     const domain = mb.emailAddress.split("@")[1];
@@ -84,14 +89,16 @@ export default function UserTeamMailboxes({ username }: Props) {
                     <span className="text-gray-500 mr-2">{index + 1}/</span>
                     {mb.emailAddress}
                   </h4>
-                  <button
-                    onClick={() => handleLeave(mb)}
-                    className="flex items-center gap-1 px-2 py-1 text-sm text-red-600 rounded-md hover:bg-gray-200"
-                    title="Leave team mailbox"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Leave
-                  </button>
+                  {canLeave && (
+                    <button
+                      onClick={() => handleLeave(mb)}
+                      className="flex items-center gap-1 px-2 py-1 text-sm text-red-600 rounded-md hover:bg-gray-200"
+                      title="Leave team mailbox"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Leave
+                    </button>
+                  )}
                 </div>
               ))}
               {mailboxes.length === 0 && (

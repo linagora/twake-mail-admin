@@ -16,6 +16,7 @@ import { MoveHorizontal, Trash2, RefreshCw } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 // Define the types for the expected responses
 interface JsonMailResponse {
@@ -75,6 +76,9 @@ export default function MailRepositoryDetail() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
   const confirm = useConfirm();
+  const canViewMail = useIsAllowed("GET", "/mailRepositories/{encodedPath}/mails/{mailKey}");
+  const canPatchMail = useIsAllowed("PATCH", "/mailRepositories/{encodedPath}/mails/{mailKey}");
+  const canDeleteMail = useIsAllowed("DELETE", "/mailRepositories/{encodedPath}/mails/{mailKey}");
 
   const [allRepos, setAllRepos] = useState<GetMailRepositoriesResponseType>([]);
   useEffect(() => {
@@ -359,47 +363,57 @@ export default function MailRepositoryDetail() {
                 </span>
 
                 <span className="flex items-center space-x-2 text-sm text-gray-500">
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      fetchMailData(id!, mailKey, "application/json");
-                    }}
-                    className="hover:text-blue-500 hover:underline transition"
-                  >
-                    (JSON)
-                  </a>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      fetchMailData(id!, mailKey, "message/rfc822");
-                    }}
-                    className="hover:text-blue-500 hover:underline transition"
-                  >
-                    (MIME)
-                  </a>
-                  <button
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    onClick={() => handleReprocessMail(mailKey)}
-                    title="Reprocess mail"
-                  >
-                    <RefreshCw className="w-5 h-5 text-green-600" />
-                  </button>
-                  <button
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    onClick={() => handleMoveMail(mailKey)}
-                    title="Move mail to another repository"
-                  >
-                    <MoveHorizontal className="w-5 h-5 text-orange-500" />
-                  </button>
-                  <button
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    onClick={() => handleRemoveMail(mailKey)}
-                    title="Delete mail"
-                  >
-                    <Trash2 className="w-5 h-5 text-red-600" />
-                  </button>
+                  {canViewMail && (
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        fetchMailData(id!, mailKey, "application/json");
+                      }}
+                      className="hover:text-blue-500 hover:underline transition"
+                    >
+                      (JSON)
+                    </a>
+                  )}
+                  {canViewMail && (
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        fetchMailData(id!, mailKey, "message/rfc822");
+                      }}
+                      className="hover:text-blue-500 hover:underline transition"
+                    >
+                      (MIME)
+                    </a>
+                  )}
+                  {canPatchMail && (
+                    <button
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      onClick={() => handleReprocessMail(mailKey)}
+                      title="Reprocess mail"
+                    >
+                      <RefreshCw className="w-5 h-5 text-green-600" />
+                    </button>
+                  )}
+                  {canPatchMail && (
+                    <button
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      onClick={() => handleMoveMail(mailKey)}
+                      title="Move mail to another repository"
+                    >
+                      <MoveHorizontal className="w-5 h-5 text-orange-500" />
+                    </button>
+                  )}
+                  {canDeleteMail && (
+                    <button
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      onClick={() => handleRemoveMail(mailKey)}
+                      title="Delete mail"
+                    >
+                      <Trash2 className="w-5 h-5 text-red-600" />
+                    </button>
+                  )}
                 </span>
               </li>
             ))}

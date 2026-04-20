@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getCassandraVersion, getCassandraLatestVersion, upgradeCassandraToLatest, CassandraVersion } from "./api-client";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +15,7 @@ const docuUrl = "https://james.staged.apache.org/james-project/3.9.0/servers/dis
 export default function Cassandra() {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canUpgrade = useIsAllowed("POST", "/cassandra/version/upgrade/latest");
   const [upgrading, setUpgrading] = useState(false);
 
   const fetchVersions = useCallback(async () => {
@@ -93,7 +95,7 @@ export default function Cassandra() {
               <Button disabled className="rounded-sm opacity-50 cursor-not-allowed">
                 Already at latest version
               </Button>
-            ) : (
+            ) : canUpgrade ? (
               <Button
                 className="bg-blue-500 hover:bg-blue-600 rounded-sm"
                 onClick={handleUpgrade}
@@ -102,7 +104,7 @@ export default function Cassandra() {
                 {upgrading && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
                 Upgrade to version {data.latest.version}
               </Button>
-            )}
+            ) : null}
           </div>
         )}
       </div>

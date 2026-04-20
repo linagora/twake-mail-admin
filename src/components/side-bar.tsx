@@ -14,6 +14,7 @@ import {
 import Logo from '../assets/images/logo.svg';
 import { useLocation } from "react-router";
 import { appConfig } from "@/lib/config";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 const MAIL_ITEMS = [
   { title: "Health Check", url: "/health-check", icon: Heart },
@@ -42,7 +43,40 @@ const CALENDAR_ITEMS = [
 
 export function AppSidebar() {
   const location = useLocation();
-  const items = appConfig.application === 'CALENDAR' ? CALENDAR_ITEMS : MAIL_ITEMS;
+  const canHealthCheck = useIsAllowed("GET", "/healthcheck");
+  const canDomains = useIsAllowed("GET", "/domains");
+  const canUsers = useIsAllowed("GET", "/users");
+  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const canTasks = useIsAllowed("GET", "/tasks");
+  const canCommonTasks = useIsAllowed("GET", "/tasks/{id}");
+  const canResourceLocator = useIsAllowed("GET", "/mailboxes/{mailboxId}");
+  const canMailRepositories = useIsAllowed("GET", "/mailRepositories");
+  const canEventDeadletter = useIsAllowed("GET", "/events/deadLetter/groups");
+  const canGlobalQuota = useIsAllowed("GET", "/quota");
+  const canMappings = useIsAllowed("GET", "/mappings");
+  const canNetworkChannels = useIsAllowed("GET", "/servers/channels");
+  const canCassandra = useIsAllowed("GET", "/cassandra/version");
+  const canLiveMetrics = useIsAllowed("GET", "/metrics");
+
+  const VISIBILITY: Record<string, boolean> = {
+    "/health-check": canHealthCheck,
+    "/domains": canDomains,
+    "/users": canUsers,
+    "/registered-users": canRegisteredUsers,
+    "/tasks": canTasks,
+    "/common-tasks": canCommonTasks,
+    "/resource-locator": canResourceLocator,
+    "/mail-repositories": canMailRepositories,
+    "/event-dead-letter": canEventDeadletter,
+    "/global-quota": canGlobalQuota,
+    "/mappings": canMappings,
+    "/network-channels": canNetworkChannels,
+    "/cassandra": canCassandra,
+    "/live-metrics": canLiveMetrics,
+  };
+
+  const allItems = appConfig.application === 'CALENDAR' ? CALENDAR_ITEMS : MAIL_ITEMS;
+  const items = allItems.filter(item => VISIBILITY[item.url] !== false);
 
   return (
     <Sidebar>

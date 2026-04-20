@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronDown, ChevronRight, Loader2, RefreshCw } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getUserChannels, disconnectUserChannels } from "../api-client";
 import { NetworkChannel } from "@/modules/network-channels/types";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +16,8 @@ interface Props {
 export default function UserChannels({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/servers/channels/{username}");
+  const canDisconnect = useIsAllowed("DELETE", "/servers/channels/{username}");
   const [open, setOpen] = useState(false);
   const [channels, setChannels] = useState<NetworkChannel[]>([]);
   const [loading, setLoading] = useState(false);
@@ -58,6 +61,8 @@ export default function UserChannels({ username }: Props) {
     if (open) fetchChannels();
   }, [open, fetchChannels]);
 
+  if (!canView) return null;
+
   return (
     <div className="mt-6">
       <button
@@ -74,16 +79,18 @@ export default function UserChannels({ username }: Props) {
             <Button variant="outline" size="sm" onClick={fetchChannels} disabled={loading}>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              onClick={handleDisconnectAll}
-              disabled={disconnecting}
-            >
-              {disconnecting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-              Disconnect all
-            </Button>
+            {canDisconnect && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={handleDisconnectAll}
+                disabled={disconnecting}
+              >
+                {disconnecting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+                Disconnect all
+              </Button>
+            )}
           </div>
 
           <ChannelGrid channels={channels} loading={loading} />

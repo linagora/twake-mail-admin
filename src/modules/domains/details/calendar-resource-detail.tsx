@@ -10,6 +10,7 @@ import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ResourceIconPicker, { RESOURCE_ICONS } from "@/components/custom/resource-icon-picker";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useDomain } from "@/modules/domain-admin/domain-context";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -23,6 +24,8 @@ export default function CalendarResourceDetail() {
 
   const fetchResource = useCallback(() => getResource(domain, resourceId!), [domain, resourceId]);
   const { data: resource, isLoading, error, refresh } = useFetchData<Resource>(fetchResource);
+
+  const canEdit = useIsAllowed("PATCH", "/domains/{domain}/resources/{resourceId}");
 
   const [page, setPage] = useState(1);
   const [newAdmin, setNewAdmin] = useState("");
@@ -116,7 +119,7 @@ export default function CalendarResourceDetail() {
     <div className="mt-4 p-4 bg-white rounded-2">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Resource Details</h3>
-        {resource && !editing && (
+        {resource && !editing && canEdit && (
           <button onClick={startEdit}
             className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition">
             <Pencil className="w-4 h-4" />
@@ -183,6 +186,7 @@ export default function CalendarResourceDetail() {
 
           <div className="mt-6">
             <h4 className="text-md font-semibold">Administrators</h4>
+            {canEdit && (
             <div className="flex gap-2 mt-3 mb-4">
               <input type="text" value={newAdmin} onChange={(e) => setNewAdmin(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddAdmin()} placeholder="admin@domain.tld"
@@ -194,6 +198,7 @@ export default function CalendarResourceDetail() {
               <button onClick={handleAddAdmin} disabled={adminStatus !== "exists"}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">Add</button>
             </div>
+          )}
 
             {admins.length > PAGE_LIMIT && (
               <div className="mt-2 flex justify-between items-center">
@@ -216,9 +221,11 @@ export default function CalendarResourceDetail() {
                     <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
                     {admin.email}
                   </h4>
-                  <button onClick={() => handleRemoveAdmin(admin.email)} className="p-2 rounded-md hover:bg-gray-200" title="Remove administrator">
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
+                  {canEdit && (
+                    <button onClick={() => handleRemoveAdmin(admin.email)} className="p-2 rounded-md hover:bg-gray-200" title="Remove administrator">
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </button>
+                  )}
                 </div>
               ))}
               {admins.length === 0 && <p className="mt-2 text-sm text-gray-500">No administrators.</p>}

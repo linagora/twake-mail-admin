@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useToast } from "@/hooks/use-toast";
@@ -46,12 +47,16 @@ interface Props {
 export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canViewAcl = useIsAllowed("GET", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl");
+  const canAddAcl = useIsAllowed("PUT", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl/{username}");
+  const canRemoveAcl = useIsAllowed("DELETE", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl/{username}");
+  const canClearAcl = useIsAllowed("DELETE", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl");
 
   const fetchAcl = useCallback(
     () => getTeamMailboxFolderExtraAcl(domain, mailbox, folder),
     [domain, mailbox, folder]
   );
-  const { data: acl, isLoading, error, refresh } = useFetchData<Record<string, string>>(fetchAcl);
+  const { data: acl, isLoading, error, refresh } = useFetchData<Record<string, string>>(canViewAcl ? fetchAcl : null);
 
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -65,6 +70,8 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
     if (!acl) return [];
     return Object.entries(acl).sort(([a], [b]) => a.localeCompare(b));
   }, [acl]);
+
+  if (!canViewAcl) return null;
 
   const totalPages = Math.max(1, Math.ceil(entries.length / PAGE_LIMIT));
   const paginated = entries.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
@@ -145,14 +152,16 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
         </button>
         {open && (
           <div className="flex items-center gap-1 shrink-0">
-            <button
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="p-1 rounded-md hover:bg-gray-200 transition"
-              title="Add ACL entry"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-            {entries.length > 0 && (
+            {canAddAcl && (
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="p-1 rounded-md hover:bg-gray-200 transition"
+                title="Add ACL entry"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            )}
+            {canClearAcl && entries.length > 0 && (
               <button
                 onClick={handleClearAll}
                 className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -312,13 +321,15 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
                         ))}
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleRemove(username)}
-                      className="p-2 rounded-md hover:bg-gray-200 shrink-0"
-                      title="Remove ACL entry"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-600" />
-                    </button>
+                    {canRemoveAcl && (
+                      <button
+                        onClick={() => handleRemove(username)}
+                        className="p-2 rounded-md hover:bg-gray-200 shrink-0"
+                        title="Remove ACL entry"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

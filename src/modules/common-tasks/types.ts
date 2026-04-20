@@ -59,7 +59,8 @@ export type TaskProps = {
   mode?: ReIndexMode;
   command: string;
   doc: string;
-  params?: TaskParam[]
+  params?: TaskParam[];
+  allowanceCheck?: { verb: import("@/lib/proxy-resolver").HttpVerb; pattern: string };
 }
 
 export enum TaskStatus {

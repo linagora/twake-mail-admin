@@ -35,9 +35,10 @@ interface Props {
   fetchRateLimits: () => Promise<RateLimits>;
   updateRateLimits: (limits: RateLimits) => Promise<void>;
   defaultOpen?: boolean;
+  canUpdate?: boolean;
 }
 
-export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, defaultOpen }: Props) {
+export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, defaultOpen, canUpdate = true }: Props) {
   const { toast } = useToast();
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
@@ -123,12 +124,14 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
                 ))}
               </div>
               <p className="text-xs text-gray-400">Leave empty for no limit (null).</p>
-              <div className="flex justify-end">
-                <Button size="sm" onClick={handleSave} disabled={saving}>
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
-                  Save
-                </Button>
-              </div>
+              {canUpdate && (
+                <div className="flex justify-end">
+                  <Button size="sm" onClick={handleSave} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
+                    Save
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>

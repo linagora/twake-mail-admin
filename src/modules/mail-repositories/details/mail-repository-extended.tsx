@@ -17,6 +17,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -58,6 +59,9 @@ export default function MailRepositoryExtended() {
   const confirm = useConfirm();
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const canViewMail = useIsAllowed("GET", "/mailRepositories/{encodedPath}/mails/{mailKey}");
+  const canPatchMail = useIsAllowed("PATCH", "/mailRepositories/{encodedPath}/mails/{mailKey}");
+  const canDeleteMail = useIsAllowed("DELETE", "/mailRepositories/{encodedPath}/mails/{mailKey}");
 
   const repoSize = Number(searchParams.get("size")) || 0;
   const page = Number(searchParams.get("page")) || 1;
@@ -381,34 +385,42 @@ export default function MailRepositoryExtended() {
                   <span className="truncate text-xs">{formatDate(mail.lastUpdated)}</span>
                   <span className="w-16 text-right text-xs">{formatSize(mail.size)}</span>
                   <div className="w-36 flex justify-center gap-1" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      onClick={() => handleDownload(mail.name)}
-                      className="p-1.5 rounded-md hover:bg-gray-200"
-                      title="Download (.eml)"
-                    >
-                      <Download className="w-4 h-4 text-blue-600" />
-                    </button>
-                    <button
-                      onClick={() => handleReprocess(mail.name)}
-                      className="p-1.5 rounded-md hover:bg-gray-200"
-                      title="Reprocess"
-                    >
-                      <RefreshCw className="w-4 h-4 text-green-600" />
-                    </button>
-                    <button
-                      onClick={() => handleMove(mail.name)}
-                      className="p-1.5 rounded-md hover:bg-gray-200"
-                      title="Move to another repository"
-                    >
-                      <MoveHorizontal className="w-4 h-4 text-orange-500" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(mail.name)}
-                      className="p-1.5 rounded-md hover:bg-gray-200"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-600" />
-                    </button>
+                    {canViewMail && (
+                      <button
+                        onClick={() => handleDownload(mail.name)}
+                        className="p-1.5 rounded-md hover:bg-gray-200"
+                        title="Download (.eml)"
+                      >
+                        <Download className="w-4 h-4 text-blue-600" />
+                      </button>
+                    )}
+                    {canPatchMail && (
+                      <button
+                        onClick={() => handleReprocess(mail.name)}
+                        className="p-1.5 rounded-md hover:bg-gray-200"
+                        title="Reprocess"
+                      >
+                        <RefreshCw className="w-4 h-4 text-green-600" />
+                      </button>
+                    )}
+                    {canPatchMail && (
+                      <button
+                        onClick={() => handleMove(mail.name)}
+                        className="p-1.5 rounded-md hover:bg-gray-200"
+                        title="Move to another repository"
+                      >
+                        <MoveHorizontal className="w-4 h-4 text-orange-500" />
+                      </button>
+                    )}
+                    {canDeleteMail && (
+                      <button
+                        onClick={() => handleDelete(mail.name)}
+                        className="p-1.5 rounded-md hover:bg-gray-200"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                    )}
                   </div>
                   <span className="w-0" />
                 </div>

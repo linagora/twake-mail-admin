@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 interface Props {
   domain: string;
@@ -14,6 +15,7 @@ interface Props {
 export default function DomainTasks({ domain, defaultOpen }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canDeleteData = useIsAllowed("POST", "/domains/{domain}?action=deleteData");
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [deleting, setDeleting] = useState(false);
 
@@ -51,7 +53,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
         Tasks
       </button>
 
-      {open && (
+      {open && canDeleteData && (
         <div className="mt-2 p-4 bg-gray-50 rounded-2">
           <Button
             className="bg-red-600 hover:bg-red-700 rounded-sm w-full"

@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getGlobalQuota, updateGlobalQuota, getUsersWithSpecificQuotas, getQuotaExtraSummary } from "./api-client";
 import { GlobalQuotaValues, UserSpecificQuota, QuotaExtraSummary } from "./types";
@@ -38,6 +39,7 @@ function toBytes(value: number, unit: string): number {
 
 export default function GlobalQuota() {
   const { toast } = useToast();
+  const canUpdate = useIsAllowed("PUT", "/quota");
 
   const fetchAll = useCallback(async () => {
     const [quota, users, summary] = await Promise.all([
@@ -108,13 +110,15 @@ export default function GlobalQuota() {
 
               <hr className="border-gray-200" />
 
-              <Button
-                variant="outline"
-                className="rounded-sm"
-                onClick={() => setShowSizeEdit(!showSizeEdit)}
-              >
-                Update size limit
-              </Button>
+              {canUpdate && (
+                <Button
+                  variant="outline"
+                  className="rounded-sm"
+                  onClick={() => setShowSizeEdit(!showSizeEdit)}
+                >
+                  Update size limit
+                </Button>
+              )}
 
               {showSizeEdit && (
                 <div className="flex gap-2 mt-2">

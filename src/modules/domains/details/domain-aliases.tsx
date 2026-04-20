@@ -6,6 +6,7 @@ import { GetDomainAliasesResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 interface Props {
   domain: string;
@@ -15,6 +16,9 @@ interface Props {
 export default function DomainAliases({ domain, defaultOpen }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
+  const canView = useIsAllowed("GET", "/domains/{domain}/aliases");
+  const canAdd = useIsAllowed("PUT", "/domains/{domain}/aliases/{source}");
+  const canRemove = useIsAllowed("DELETE", "/domains/{domain}/aliases/{source}");
 
   const fetchAliases = useCallback(() => getDomainAliases(domain), [domain]);
   const {
@@ -22,7 +26,7 @@ export default function DomainAliases({ domain, defaultOpen }: Props) {
     isLoading,
     error,
     refresh,
-  } = useFetchData<GetDomainAliasesResponseType>(fetchAliases);
+  } = useFetchData<GetDomainAliasesResponseType>(canView ? fetchAliases : null);
 
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [newAlias, setNewAlias] = useState("");
@@ -32,6 +36,8 @@ export default function DomainAliases({ domain, defaultOpen }: Props) {
     if (!aliases) return [];
     return [...aliases].sort((a, b) => a.source.localeCompare(b.source));
   }, [aliases]);
+
+  if (!canView) return null;
 
   const handleAdd = async () => {
     const source = newAlias.trim();
@@ -83,7 +89,7 @@ export default function DomainAliases({ domain, defaultOpen }: Props) {
             </span>
           )}
         </button>
-        {open && (
+        {open && canAdd && (
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -134,13 +140,15 @@ export default function DomainAliases({ domain, defaultOpen }: Props) {
                     <span className="text-gray-500 mr-2">{index + 1}/</span>
                     {alias.source}
                   </h4>
-                  <button
-                    onClick={() => handleRemove(alias.source)}
-                    className="p-2 rounded-md hover:bg-gray-200"
-                    title="Remove alias"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
+                  {canRemove && (
+                    <button
+                      onClick={() => handleRemove(alias.source)}
+                      className="p-2 rounded-md hover:bg-gray-200"
+                      title="Remove alias"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </button>
+                  )}
                 </div>
               ))}
               {aliases.length === 0 && (
