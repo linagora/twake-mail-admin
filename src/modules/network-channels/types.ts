@@ -12,3 +12,11 @@ export interface NetworkChannel {
 }
 
 export type GetUserChannelsResponseType = NetworkChannel[];
+
+export interface ChannelQueryParams {
+  limit?: number;
+  offset?: number;
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
+  sortType?: "alphabetical" | "numerical";
+}
