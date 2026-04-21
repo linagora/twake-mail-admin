@@ -5,22 +5,29 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
-const SORTABLE_FIELDS = [
-  { key: "username", label: "Username" },
-  { key: "protocol", label: "Protocol" },
-  { key: "userAgent", label: "User Agent" },
-  { key: "requestCount", label: "Request Count" },
-  { key: "cumulativeWrittenBytes", label: "Written Bytes" },
-  { key: "cumulativeReadBytes", label: "Read Bytes" },
-  { key: "liveReadThroughputBytePerSecond", label: "Live Read Throughput" },
-  { key: "liveWriteThroughputBytePerSecond", label: "Live Write Throughput" },
+export const SORTABLE_FIELDS = [
+  { key: "username",                          label: "Username",           sortType: "alphabetical" as const, sortBy: "username" },
+  { key: "protocol",                          label: "Protocol",           sortType: "alphabetical" as const, sortBy: "protocol" },
+  { key: "userAgent",                         label: "User Agent",         sortType: "alphabetical" as const, sortBy: "protocolSpecificInformation.userAgent" },
+  { key: "requestCount",                      label: "Request Count",      sortType: "numerical"    as const, sortBy: "protocolSpecificInformation.requestCount" },
+  { key: "cumulativeWrittenBytes",            label: "Written Bytes",      sortType: "numerical"    as const, sortBy: "protocolSpecificInformation.cumulativeWrittenBytes" },
+  { key: "cumulativeReadBytes",               label: "Read Bytes",         sortType: "numerical"    as const, sortBy: "protocolSpecificInformation.cumulativeReadBytes" },
+  { key: "liveReadThroughputBytePerSecond",   label: "Live Read",          sortType: "numerical"    as const, sortBy: "protocolSpecificInformation.liveReadThroughputBytePerSecond" },
+  { key: "liveWriteThroughputBytePerSecond",  label: "Live Write",         sortType: "numerical"    as const, sortBy: "protocolSpecificInformation.liveWriteThroughputBytePerSecond" },
 ] as const;
 
-type SortField = (typeof SORTABLE_FIELDS)[number]["key"];
+export type SortField = (typeof SORTABLE_FIELDS)[number]["key"];
 
-function getFieldValue(channel: NetworkChannel, field: SortField): string {
+export function getFieldValue(channel: NetworkChannel, field: SortField): string {
   if (field === "username" || field === "protocol") return channel[field] ?? "";
   return channel.protocolSpecificInformation?.[field] ?? "";
+}
+
+export function compareValues(a: string, b: string): number {
+  const numA = Number(a);
+  const numB = Number(b);
+  if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+  return a.localeCompare(b);
 }
 
 function formatBytes(value: string | undefined, perSecond = false): string {
@@ -34,25 +41,48 @@ function formatBytes(value: string | undefined, perSecond = false): string {
   return `${(num / (1024 * 1024 * 1024)).toFixed(2)} GB${suffix}`;
 }
 
-function compareValues(a: string, b: string): number {
-  const numA = Number(a);
-  const numB = Number(b);
-  if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-  return a.localeCompare(b);
-}
-
 interface Props {
   channels: NetworkChannel[];
   paginate?: boolean;
   loading?: boolean;
+  // Controlled props (server-driven, used when paginate=true)
+  page?: number;
+  hasMore?: boolean;
+  onPageChange?: (page: number) => void;
+  sortField?: SortField;
+  sortAsc?: boolean;
+  onSortChange?: (field: SortField, asc: boolean) => void;
 }
 
-export default function ChannelGrid({ channels, paginate = false, loading = false }: Props) {
-  const [sortField, setSortField] = useState<SortField>("username");
-  const [sortAsc, setSortAsc] = useState(true);
-  const [page, setPage] = useState(1);
+export default function ChannelGrid({
+  channels, paginate = false, loading = false,
+  page: controlledPage, hasMore, onPageChange,
+  sortField: controlledSortField, sortAsc: controlledSortAsc, onSortChange,
+}: Props) {
+  const isControlled = paginate && onPageChange != null;
+
+  const [internalSortField, setInternalSortField] = useState<SortField>("username");
+  const [internalSortAsc, setInternalSortAsc] = useState(true);
+  const [internalPage, setInternalPage] = useState(1);
   const [selectedChannel, setSelectedChannel] = useState<NetworkChannel | null>(null);
   const [search, setSearch] = useState("");
+
+  const sortField = isControlled ? (controlledSortField ?? "username") : internalSortField;
+  const sortAsc   = isControlled ? (controlledSortAsc  ?? true)        : internalSortAsc;
+  const page      = isControlled ? (controlledPage     ?? 1)           : internalPage;
+
+  const handleSortFieldChange = (field: SortField) => {
+    if (isControlled) onSortChange?.(field, sortAsc);
+    else { setInternalSortField(field); setInternalPage(1); }
+  };
+  const handleSortAscChange = (asc: boolean) => {
+    if (isControlled) onSortChange?.(sortField, asc);
+    else setInternalSortAsc(asc);
+  };
+  const handlePageChange = (newPage: number) => {
+    if (isControlled) onPageChange?.(newPage);
+    else setInternalPage(newPage);
+  };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -64,6 +94,7 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
     );
   }, [channels, search]);
 
+  // Client-side sort fallback (no-op when server already sorted correctly)
   const sorted = useMemo(() => {
     const copy = [...filtered];
     copy.sort((a, b) => {
@@ -74,14 +105,20 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
     return copy;
   }, [filtered, sortField, sortAsc]);
 
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_LIMIT));
-  const displayed = paginate
-    ? sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT)
-    : sorted;
+  // Client-side limit fallback; when controlled, data is already one page from server
+  const displayed = isControlled
+    ? sorted.slice(0, PAGE_LIMIT)
+    : paginate
+      ? sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT)
+      : sorted;
+
+  const totalPages  = Math.max(1, Math.ceil(sorted.length / PAGE_LIMIT));
+  const disabledNext = isControlled ? !hasMore : page >= totalPages;
 
   const goToPage = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return;
-    setPage(newPage);
+    if (newPage < 1) return;
+    if (!isControlled && newPage > totalPages) return;
+    handlePageChange(newPage);
   };
 
   return (
@@ -92,7 +129,7 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
         <select
           className="border rounded px-2 py-1 text-sm"
           value={sortField}
-          onChange={(e) => { setSortField(e.target.value as SortField); setPage(1); }}
+          onChange={(e) => handleSortFieldChange(e.target.value as SortField)}
         >
           {SORTABLE_FIELDS.map((f) => (
             <option key={f.key} value={f.key}>{f.label}</option>
@@ -100,7 +137,7 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
         </select>
         <button
           className="border rounded px-2 py-1 text-sm"
-          onClick={() => setSortAsc(!sortAsc)}
+          onClick={() => handleSortAscChange(!sortAsc)}
         >
           {sortAsc ? "Asc \u2191" : "Desc \u2193"}
         </button>
@@ -109,7 +146,7 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
           placeholder="Search username, IP, user agent…"
           className="border rounded px-2 py-1 text-sm ml-4 w-64"
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          onChange={(e) => { setSearch(e.target.value); handlePageChange(1); }}
         />
       </div>
 
@@ -174,10 +211,12 @@ export default function ChannelGrid({ channels, paginate = false, loading = fals
           onFirst={() => goToPage(1)}
           onPrev={() => goToPage(page - 1)}
           onNext={() => goToPage(page + 1)}
-          onLast={() => goToPage(totalPages)}
+          onLast={isControlled ? undefined : () => goToPage(totalPages)}
           disabledPrev={page <= 1}
-          disabledNext={page >= totalPages}
-          label={`Page ${page} / ${totalPages} — Total: ${sorted.length}`}
+          disabledNext={disabledNext}
+          label={isControlled
+            ? `Page ${page}`
+            : `Page ${page} / ${totalPages} — Total: ${sorted.length}`}
         />
       )}
 
