@@ -167,6 +167,7 @@ export default function CalendarResourceDetail() {
           ) : (
             <div className="mt-2 space-y-1 text-sm">
               <p><span className="text-gray-500 font-medium">Name:</span> {resource.name}</p>
+              <p><span className="text-gray-500 font-medium">Resource ID:</span> {resource.id}</p>
               <p><span className="text-gray-500 font-medium">Domain:</span> {domain}</p>
               {resource.description && (
                 <p><span className="text-gray-500 font-medium">Description:</span> {resource.description}</p>
