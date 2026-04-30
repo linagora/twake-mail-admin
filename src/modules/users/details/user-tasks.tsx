@@ -39,7 +39,8 @@ export default function UserTasks({ username }: Props) {
   const canSubscribeAll = useIsAllowed("POST", "/users/{username}/mailboxes");
   const canRecomputeFastView = useIsAllowed("POST", "/users/{username}/mailboxes");
   const canRestoreDeleted = useIsAllowed("POST", "/deletedMessages/users/{username}");
-  const canCleanupMailbox = useIsAllowed("DELETE", "/messages");
+  const canCleanupTrash = useIsAllowed("DELETE", "/messages?mailbox=Trash");
+  const canCleanupSpam = useIsAllowed("DELETE", "/messages?mailbox=Spam");
   const canRename = useIsAllowed("POST", "/users/{username}/rename/{newUser}");
   const canDeleteAllMailboxes = useIsAllowed("DELETE", "/users/{username}/mailboxes");
   const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
@@ -428,7 +429,7 @@ export default function UserTasks({ username }: Props) {
               </TooltipProvider>
             </div>
           )}
-          {canCleanupMailbox && (
+          {canCleanupTrash && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
               <p>Cleanup user Trash folder</p>
               <TooltipProvider>
@@ -446,7 +447,7 @@ export default function UserTasks({ username }: Props) {
               </TooltipProvider>
             </div>
           )}
-          {canCleanupMailbox && (
+          {canCleanupSpam && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
               <p>Cleanup user Spam folder</p>
               <TooltipProvider>
