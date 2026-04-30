@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router";
 import { Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -135,12 +136,12 @@ export default function DomainsList() {
             <div>
               <h4 className="text-sm font-medium leading-none">
                 <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
-                <a
-                  href={`/domains/domain/${encodeURIComponent(domain)}`}
+                <Link
+                  to={`/domains/domain/${encodeURIComponent(domain)}`}
                   className="text-blue-600 hover:underline"
                 >
                   {domain}
-                </a>
+                </Link>
               </h4>
             </div>
             {canDelete && (

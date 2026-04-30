@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { deleteUserData, archiveUserCalendarEvents } from "../api-client";
 import DeleteUserDataForm from "../components/delete-user-data-form";
@@ -27,7 +28,7 @@ interface Props {
 export default function CalendarUserTasks({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
-  const canDeleteData = useIsAllowed("POST", "/users/{username}");
+  const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
   const canArchiveCalendar = useIsAllowed("POST", "/calendars/{username}");
   const [open, setOpen] = useState(false);
   const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);
@@ -52,7 +53,7 @@ export default function CalendarUserTasks({ username }: Props) {
       const data = await deleteUserData(username, currentFromStep || undefined);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({ title: "Error deleting user data", description: <ErrorDisplayer error={err} /> });
@@ -83,7 +84,7 @@ export default function CalendarUserTasks({ username }: Props) {
       const data = await archiveUserCalendarEvents(username, additionalParams);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({ title: "Error running archive task", description: <ErrorDisplayer error={err} /> });

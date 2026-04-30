@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams, useSearchParams } from "react-router";
+import { useParams, useSearchParams, Link } from "react-router";
 import { Download, MoveHorizontal, Trash2, RefreshCw, Loader2 } from "lucide-react";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
 import {
@@ -262,7 +262,7 @@ export default function MailRepositoryExtended() {
         title: "Reprocess scheduled",
         description: (
           <span>
-            Task: <a href={`/task/${taskId}`} className="text-blue-500 hover:underline">{taskId}</a>
+            Task: <Link to={`/task/${taskId}`} className="text-blue-500 hover:underline">{taskId}</Link>
           </span>
         ),
       });

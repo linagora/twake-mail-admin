@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxes, createTeamMailbox, deleteTeamMailbox } from "../api-client";
@@ -138,12 +139,12 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
                 >
                   <h4 className="text-sm font-medium leading-none">
                     <span className="text-gray-500 mr-2">{index + 1}/</span>
-                    <a
-                      href={`/domains/domain/${encodeURIComponent(domain)}/team-mailbox/${encodeURIComponent(mb.name)}`}
+                    <Link
+                      to={`/domains/domain/${encodeURIComponent(domain)}/team-mailbox/${encodeURIComponent(mb.name)}`}
                       className="text-blue-600 hover:underline"
                     >
                       {mb.name}
-                    </a>
+                    </Link>
                     <span className="text-xs text-muted-foreground ml-2">{mb.emailAddress}</span>
                   </h4>
                   {canDelete && (

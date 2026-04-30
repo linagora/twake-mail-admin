@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { Link } from "react-router";
 import { RefreshCcw, CircleStop, Filter } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -400,9 +401,9 @@ export default function Tasks() {
                   </Button>
                 )}
                 <Button size="sm" asChild>
-                  <a href={`/task/${selectedTask.taskId}`}>
+                  <Link to={`/task/${selectedTask.taskId}`}>
                     Full Details
-                  </a>
+                  </Link>
                 </Button>
               </div>
             </div>

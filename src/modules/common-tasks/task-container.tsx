@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { TaskProps } from "./types";
@@ -43,7 +44,7 @@ additionParams[key] = value
       const taskId = await runTask(taskKey, mode, additionParams);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>{taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
       });
     } catch (error) {
       toast({

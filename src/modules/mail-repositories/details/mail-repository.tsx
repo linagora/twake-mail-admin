@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from "react-router";
+import { useParams, useSearchParams, Link } from "react-router";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import {
   getMailRepositories,
@@ -191,9 +191,9 @@ export default function MailRepositoryDetail() {
         description: (
           <p>
             Task{" "}
-            <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>
+            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
               {taskId}
-            </a>
+            </Link>
           </p>
         ),
       });

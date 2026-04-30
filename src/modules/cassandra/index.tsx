@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { Link } from "react-router";
 import { Loader2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -48,9 +49,9 @@ export default function Cassandra() {
         description: (
           <span>
             Task started:{" "}
-            <a href={`/task/${result.taskId}`} className="underline text-blue-600">
+            <Link to={`/task/${result.taskId}`} className="underline text-blue-600">
               {result.taskId}
-            </a>
+            </Link>
           </span>
         ),
       });
