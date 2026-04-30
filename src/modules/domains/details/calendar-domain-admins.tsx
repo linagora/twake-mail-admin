@@ -171,6 +171,10 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
             </div>
           )}
 
+          <p className="mt-2 mb-2 text-sm text-gray-500 italic">
+            Domain admins have the right to manage Domain contacts within the contact application.
+          </p>
+
           {admins && (
             <div>
               {paginated.map((admin, index) => (
