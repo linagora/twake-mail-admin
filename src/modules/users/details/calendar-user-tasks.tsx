@@ -28,7 +28,7 @@ interface Props {
 export default function CalendarUserTasks({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
-  const canDeleteData = useIsAllowed("POST", "/users/{username}");
+  const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
   const canArchiveCalendar = useIsAllowed("POST", "/calendars/{username}");
   const [open, setOpen] = useState(false);
   const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);

@@ -42,7 +42,7 @@ export default function UserTasks({ username }: Props) {
   const canCleanupMailbox = useIsAllowed("DELETE", "/messages");
   const canRename = useIsAllowed("POST", "/users/{username}/rename/{newUser}");
   const canDeleteAllMailboxes = useIsAllowed("DELETE", "/users/{username}/mailboxes");
-  const canDeleteData = useIsAllowed("POST", "/users/{username}");
+  const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
   const [open, setOpen] = useState(false);
   const [reindexLoading, setReindexLoading] = useState(false);
   const [subscribeLoading, setSubscribeLoading] = useState(false);
