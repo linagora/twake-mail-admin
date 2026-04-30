@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useDomain } from "./domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { appConfig } from "@/lib/config";
@@ -82,13 +82,13 @@ export function CalendarDomainSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a
-                      href={item.url}
+                    <Link
+                      to={item.url}
                       className={location.pathname.startsWith(item.url) ? "font-bold" : ""}
                     >
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
