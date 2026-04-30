@@ -16,7 +16,7 @@ interface Props {
 export default function CalendarDomainTasks({ domain, defaultOpen = false }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
-  const canDeleteData = useIsAllowed("POST", "/domains/{domain}");
+  const canDeleteData = useIsAllowed("POST", "/domains/{domain}?action=deleteData");
   const canSyncMembers = useIsAllowed("POST", "/addressbook/domain-members/{domain}");
   const [open, setOpen] = useState(defaultOpen);
   const [deleting, setDeleting] = useState(false);
