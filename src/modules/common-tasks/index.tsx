@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { Loader2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
@@ -264,7 +265,7 @@ function MailCommonTasks() {
       const data = await cleanupMailbox("Trash", olderThan);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({ title: "Error cleaning up Trash", description: <ErrorDisplayer error={err} /> });
@@ -295,7 +296,7 @@ function MailCommonTasks() {
       const data = await cleanupMailbox("Spam", olderThan);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({ title: "Error cleaning up Spam", description: <ErrorDisplayer error={err} /> });

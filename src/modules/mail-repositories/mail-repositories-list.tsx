@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { MoveHorizontal, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { GetMailRepositoriesResponseType, MailRepository } from "./types";
 import {
@@ -121,9 +122,9 @@ export default function MailRepositoriesList() {
       description: (
         <p>
           Task{" "}
-          <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>
+          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
             {taskId}
-          </a>
+          </Link>
         </p>
       ),
     });
@@ -210,9 +211,9 @@ export default function MailRepositoriesList() {
       description: (
         <p>
           Task{" "}
-          <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>
+          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
             {taskId}
-          </a>
+          </Link>
         </p>
       ),
     });
@@ -247,11 +248,11 @@ export default function MailRepositoriesList() {
             >
               <div>
                 <h4 className="text-sm font-medium leading-none">
-                  <a
-                    href={`/mail-repositories/repository/${result.path}?&page=1&size=${result.size}`}
+                  <Link
+                    to={`/mail-repositories/repository/${result.path}?&page=1&size=${result.size}`}
                   >
                     {result.repository} ({result.size})
-                  </a>
+                  </Link>
                 </h4>
                 <p className="text-sm text-muted-foreground">{result.path}</p>
               </div>

@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { RefreshCw, Trash2 } from "lucide-react";
 import { ListenerGroupsResponseType } from "./types";
 import {
@@ -75,9 +76,9 @@ export default function EventListenersList() {
       description: (
         <p>
           Task{" "}
-          <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>
+          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
             {taskId}
-          </a>
+          </Link>
         </p>
       ),
     });
@@ -118,9 +119,9 @@ export default function EventListenersList() {
             >
               <div>
                 <h4 className="text-sm font-medium leading-none">
-                  <a href={`/event-dead-letter/group/${group}?&page=1&size=10`}>
+                  <Link to={`/event-dead-letter/group/${group}?&page=1&size=10`}>
                     {group} ({eventCounts[group] ?? "Loading..."})
-                  </a>
+                  </Link>
                 </h4>
               </div>
 

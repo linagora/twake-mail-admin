@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUsers } from "./api-client";
 import { GetUsersResponseType } from "./types";
@@ -75,12 +76,12 @@ export default function UsersList() {
             <div>
               <h4 className="text-sm font-medium leading-none">
                 <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
-                <a
-                  href={`/users/user/${encodeURIComponent(user.username)}`}
+                <Link
+                  to={`/users/user/${encodeURIComponent(user.username)}`}
                   className="text-blue-600 hover:underline"
                 >
                   {user.username}
-                </a>
+                </Link>
               </h4>
             </div>
           </div>

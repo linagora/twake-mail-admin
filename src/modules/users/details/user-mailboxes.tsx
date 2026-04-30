@@ -133,7 +133,7 @@ export default function UserMailboxes({ username }: Props) {
       const data = await clearMailboxContent(username, mailboxName);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({

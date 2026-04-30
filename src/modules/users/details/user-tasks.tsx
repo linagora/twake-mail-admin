@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData, cleanupUserMailbox } from "../api-client";
@@ -74,7 +75,7 @@ export default function UserTasks({ username }: Props) {
       const data = await reindexUserMailboxes(username, additionalParams);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({
@@ -98,7 +99,7 @@ export default function UserTasks({ username }: Props) {
       const data = await subscribeAllUserMailboxes(username);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({
@@ -132,7 +133,7 @@ export default function UserTasks({ username }: Props) {
       const data = await recomputeFastViewProjection(username, additionalParams);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({
@@ -174,7 +175,7 @@ export default function UserTasks({ username }: Props) {
       const data = await restoreDeletedMessages(username, body);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({
@@ -226,7 +227,7 @@ export default function UserTasks({ username }: Props) {
       const trashData = await cleanupUserMailbox(username, "Trash", olderThan);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${trashData.taskId}`}>{trashData.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${trashData.taskId}`}>{trashData.taskId}</Link></p>,
       });
     } catch (err) {
       toast({
@@ -261,7 +262,7 @@ export default function UserTasks({ username }: Props) {
       const spamData = await cleanupUserMailbox(username, "Spam", olderThan);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${spamData.taskId}`}>{spamData.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${spamData.taskId}`}>{spamData.taskId}</Link></p>,
       });
     } catch (err) {
       toast({
@@ -300,7 +301,7 @@ export default function UserTasks({ username }: Props) {
       });
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({
@@ -331,7 +332,7 @@ export default function UserTasks({ username }: Props) {
       const data = await deleteUserData(username, currentFromStep || undefined);
       toast({
         title: "Task is running",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${data.taskId}`}>{data.taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({

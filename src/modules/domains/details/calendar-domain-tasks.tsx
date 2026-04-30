@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { deleteAllUsersData, syncDomainMembers } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
@@ -33,7 +34,7 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
       const { taskId } = await deleteAllUsersData(domain);
       toast({
         title: "Task started",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>{taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
       });
     } catch (err) {
       toast({ title: "Error deleting users data", description: <ErrorDisplayer error={err} /> });
@@ -54,7 +55,7 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
       const { taskId } = await syncDomainMembers(domain);
       toast({
         title: "Task started",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>{taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
       });
     } catch (err) {
       toast({ title: "Error synchronizing domain members", description: <ErrorDisplayer error={err} /> });

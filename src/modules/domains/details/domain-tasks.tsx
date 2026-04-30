@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { deleteAllUsersData } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
@@ -31,7 +32,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
       const { taskId } = await deleteAllUsersData(domain);
       toast({
         title: "Task started",
-        description: <p>Task <a className="text-blue-500 hover:underline" href={`/task/${taskId}`}>{taskId}</a></p>,
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
       });
     } catch (err) {
       toast({

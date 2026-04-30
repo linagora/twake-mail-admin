@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getDomainUsers } from "@/modules/domains/api-client";
 import { useCallback, useMemo, useState } from "react";
@@ -64,9 +65,9 @@ export default function CalendarDomainUsersList() {
           <div key={username} className="space-y-1 p-4 bg-white rounded-2 my-4 flex justify-between items-center">
             <h4 className="text-sm font-medium leading-none">
               <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
-              <a href={`/users/user/${encodeURIComponent(username)}`} className="text-blue-600 hover:underline">
+              <Link to={`/users/user/${encodeURIComponent(username)}`} className="text-blue-600 hover:underline">
                 {username}
-              </a>
+              </Link>
             </h4>
           </div>
         ))}

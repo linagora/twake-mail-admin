@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { Link } from "react-router";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getGlobalQuota, updateGlobalQuota, getUsersWithSpecificQuotas, getQuotaExtraSummary } from "./api-client";
@@ -177,12 +178,12 @@ export default function GlobalQuota() {
                     <div key={u.user} className="flex justify-between items-center py-1 text-sm">
                       <span>
                         <span className="text-gray-500 mr-2">{i + 1}/</span>
-                        <a
-                          href={`/users/user/${encodeURIComponent(u.user)}`}
+                        <Link
+                          to={`/users/user/${encodeURIComponent(u.user)}`}
                           className="text-blue-600 hover:underline"
                         >
                           {u.user}
-                        </a>
+                        </Link>
                       </span>
                       <span>
                         <span className="mr-4">Count: <strong>{formatCount(u.countLimit)}</strong></span>
