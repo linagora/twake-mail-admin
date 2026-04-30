@@ -14,7 +14,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import Logo from '../assets/images/logo.svg';
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useOIDC } from "@/components/custom/oidc-provider";
@@ -115,10 +115,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url} className={location.pathname.includes(item.url) ? 'font-bold' : ''}>
+                    <Link to={item.url} className={location.pathname.includes(item.url) ? 'font-bold' : ''}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
