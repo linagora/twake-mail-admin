@@ -13,6 +13,24 @@ type ResolverState =
   | { status: "error"; message: string };
 
 // ---------------------------------------------------------------------------
+// Module-level cache — cleared on page reload (F5), survives React navigation
+// ---------------------------------------------------------------------------
+
+let rulesCache: Promise<ProxyRule[] | null> | null = null;
+
+function fetchRules(): Promise<ProxyRule[] | null> {
+  if (rulesCache) return rulesCache;
+  rulesCache = apiClient
+    .get<ProxyRule[] | string>("/.proxy/allowed/urls")
+    .then((data) => (Array.isArray(data) ? data : null))
+    .catch((err: any) => {
+      rulesCache = null; // allow retry on next mount after error
+      return Promise.reject(err);
+    });
+  return rulesCache;
+}
+
+// ---------------------------------------------------------------------------
 // Context
 // ---------------------------------------------------------------------------
 
@@ -32,16 +50,12 @@ export function ProxyResolverProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    apiClient
-      .get<ProxyRule[] | string>("/.proxy/allowed/urls")
-      .then((data) => {
-        if (!Array.isArray(data)) {
-          // 204 No Content → axios returns "" → no restrictions
-          setState({ status: "ready", resolver: null });
-        } else {
-          // Empty array → all forbidden; populated array → apply rules
-          setState({ status: "ready", resolver: new ProxyResolver(data) });
-        }
+    fetchRules()
+      .then((rules) => {
+        setState({
+          status: "ready",
+          resolver: rules === null ? null : new ProxyResolver(rules),
+        });
       })
       .catch((err: any) => {
         const message =
