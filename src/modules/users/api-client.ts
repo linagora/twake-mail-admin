@@ -371,6 +371,17 @@ export const recomputeFastViewProjection = async (
 // Calendar-specific user functions
 // ---------------------------------------------------------------------------
 
+export const tierUserData = async (
+  username: string,
+  params: { tiering: string; messagesPerSecond?: string }
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ tiering: params.tiering });
+  if (params.messagesPerSecond) query.set("messagesPerSecond", params.messagesPerSecond);
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}/data?${query.toString()}`
+  );
+};
+
 export const archiveUserCalendarEvents = async (
   username: string,
   params: {

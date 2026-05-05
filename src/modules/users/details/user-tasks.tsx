@@ -3,11 +3,12 @@ import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
-import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData, cleanupUserMailbox } from "../api-client";
+import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData, cleanupUserMailbox, tierUserData } from "../api-client";
 import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import RenameUserForm from "../components/rename-user-form";
 import DeleteUserDataForm from "../components/delete-user-data-form";
+import { appConfig } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -29,6 +30,11 @@ const CLEANUP_PARAMS: TaskParam[] = [
   { key: "olderThan", defaultValue: "5d", type: "input" },
 ];
 
+const TIER_PARAMS: TaskParam[] = [
+  { key: "tiering", defaultValue: "", type: "duration" },
+  { key: "messagesPerSecond", defaultValue: "50", type: "input" },
+];
+
 interface Props {
   username: string;
 }
@@ -46,6 +52,7 @@ export default function UserTasks({ username }: Props) {
   const canRename = useIsAllowed("POST", "/users/{username}/rename/{newUser}");
   const canDeleteAllMailboxes = useIsAllowed("DELETE", "/users/{username}/mailboxes");
   const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
+  const canTierData = useIsAllowed("POST", "/users/{username}/data?tiering={tiering}");
   const [open, setOpen] = useState(false);
   const [reindexLoading, setReindexLoading] = useState(false);
   const [subscribeLoading, setSubscribeLoading] = useState(false);
@@ -55,6 +62,7 @@ export default function UserTasks({ username }: Props) {
   const [cleanupSpamLoading, setCleanupSpamLoading] = useState(false);
   const [renameLoading, setRenameLoading] = useState(false);
   const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);
+  const [tierDataLoading, setTierDataLoading] = useState(false);
 
   const handleReindex = async () => {
     try {
@@ -347,6 +355,49 @@ export default function UserTasks({ username }: Props) {
     }
   };
 
+  const handleTierData = async () => {
+    const additionalParams: any = {};
+
+    try {
+      const result = await confirm({
+        header: t("users.tasks.tierDataTitle"),
+        message: (
+          <ConfirmTaskContent
+            message={<p>{t("users.tasks.tierDataDesc", { username })}</p>}
+            command={`curl -XPOST /users/${username}/data?tiering=30d`}
+            params={TIER_PARAMS}
+            getParamValues={(key, value) => {
+              additionalParams[key] = value;
+            }}
+          />
+        ),
+      });
+      if (!result) return;
+
+      if (!additionalParams.tiering) {
+        toast({ title: t("users.tasks.tieringRequired") });
+        return;
+      }
+
+      setTierDataLoading(true);
+      const data = await tierUserData(username, {
+        tiering: additionalParams.tiering,
+        messagesPerSecond: additionalParams.messagesPerSecond || undefined,
+      });
+      toast({
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
+      });
+    } catch (err) {
+      toast({
+        title: t("users.tasks.errorTierData"),
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setTierDataLoading(false);
+    }
+  };
+
   return (
     <div className="mt-6">
       <button
@@ -462,6 +513,24 @@ export default function UserTasks({ username }: Props) {
                   </TooltipTrigger>
                   <TooltipContent>
                     curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;user={username}&amp;useSavedDate
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canTierData && appConfig.application === 'MAIL' && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>{t("users.tasks.tierData")}</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleTierData}>
+                      {tierDataLoading && <Loader2 className="animate-spin" />}
+                      {t("common.run")}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}/data?tiering=&#123;duration&#125;
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
