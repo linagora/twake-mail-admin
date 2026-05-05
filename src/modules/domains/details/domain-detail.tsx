@@ -6,9 +6,11 @@ import DomainAliases from "./domain-aliases";
 import DomainTeamMailboxes from "./domain-team-mailboxes";
 import DomainContacts from "./domain-contacts";
 import DomainTasks from "./domain-tasks";
+import DomainSignatureTemplates from "./domain-signature-templates";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
 import { getDomainRateLimits, updateDomainRateLimits } from "../api-client";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { appConfig } from "@/lib/config";
 
 export default function DomainDetail() {
   const { t } = useTranslation();
@@ -27,6 +29,7 @@ export default function DomainDetail() {
       <DomainAliases domain={domain!} />
       <DomainTeamMailboxes domain={domain!} />
       <DomainContacts domain={domain!} />
+      {appConfig.application === 'MAIL' && <DomainSignatureTemplates domain={domain!} />}
       <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} canUpdate={canUpdateRateLimits} />
       <DomainTasks domain={domain!} />
     </div>

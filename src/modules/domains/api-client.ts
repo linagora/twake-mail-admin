@@ -206,6 +206,47 @@ export const restoreTeamMailboxDeletedMessages = async (
 };
 
 // ---------------------------------------------------------------------------
+// Signature templates
+// ---------------------------------------------------------------------------
+
+export interface SignatureTemplate {
+  language: string;
+  textSignature: string;
+  htmlSignature: string;
+}
+
+export const getDomainSignatureTemplates = async (domain: string): Promise<SignatureTemplate[]> => {
+  const response: { signatures: SignatureTemplate[] } = await apiClient.get(
+    `/domains/${encodeURIComponent(domain)}/signature-templates`
+  );
+  return response.signatures ?? [];
+};
+
+export const updateDomainSignatureTemplates = async (domain: string, signatures: SignatureTemplate[]): Promise<void> => {
+  await apiClient.put(
+    `/domains/${encodeURIComponent(domain)}/signature-templates`,
+    { signatures },
+    { headers: { "Content-Type": "application/json" } }
+  );
+};
+
+export const deleteDomainSignatureTemplates = async (domain: string): Promise<void> => {
+  await apiClient.delete(`/domains/${encodeURIComponent(domain)}/signature-templates`);
+};
+
+export interface ApplySignatureTemplatesResult {
+  applied: number;
+  skipped: number;
+  error: number;
+}
+
+export const applyDomainSignatureTemplates = async (domain: string): Promise<ApplySignatureTemplatesResult> => {
+  return apiClient.post(
+    `/domains/${encodeURIComponent(domain)}/signature-templates?action=apply`
+  );
+};
+
+// ---------------------------------------------------------------------------
 // Calendar-specific domain functions
 // ---------------------------------------------------------------------------
 
