@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight, Search, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { apiClient } from "@/lib/apiClient";
+import { appConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
@@ -63,7 +64,9 @@ interface Props {
 
 export default function ExploreUserQuota({ domain }: Props) {
   const { t } = useTranslation();
-  const canSearch = useIsAllowed("GET", "/quota/users");
+  const canSearchGlobal = useIsAllowed("GET", "/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}");
+  const canSearchDomain = useIsAllowed("GET", "/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}&domain={domain}");
+  const canSearch = domain ? canSearchDomain : canSearchGlobal;
   const [open, setOpen] = useState(false);
   const [minPercent, setMinPercent] = useState("80");
   const [maxPercent, setMaxPercent] = useState("100");
@@ -73,7 +76,7 @@ export default function ExploreUserQuota({ domain }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
 
-  if (!canSearch) return null;
+  if (!canSearch || appConfig.application !== 'MAIL') return null;
 
   const fetchUsers = async (targetPage: number) => {
     const minRatio = parseFloat(minPercent) / 100;
