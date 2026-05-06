@@ -11,6 +11,7 @@ import {
 } from "./api-client";
 import { GetMappingsResponseType, FlatMapping } from "./types";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Plus, Trash2 } from "lucide-react";
@@ -21,6 +22,7 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function MappingsList() {
+  const { t } = useTranslation();
   const canAddAddress = useIsAllowed("POST", "/mappings/address/{source}/targets/{destination}");
   const canAddRegex = useIsAllowed("POST", "/mappings/regex/{source}/targets/{regex}");
   const canDelete = useIsAllowed("DELETE", "/mappings/address/{source}/targets/{destination}");
@@ -50,8 +52,8 @@ export default function MappingsList() {
   const handleDelete = async (mapping: FlatMapping) => {
     const typeLabel = mapping.type.toLowerCase();
     const confirmed = await confirm({
-      header: `Remove ${mapping.type} Mapping`,
-      message: `Remove ${typeLabel} mapping "${mapping.source}" → "${mapping.destination}"?`,
+      header: t("mappings.removeTitle", { type: mapping.type }),
+      message: t("mappings.removeConfirm", { typeLabel, source: mapping.source, destination: mapping.destination }),
     });
     if (!confirmed) return;
     try {
@@ -75,11 +77,11 @@ export default function MappingsList() {
         default:
           return;
       }
-      toast({ title: `${mapping.type} mapping removed successfully` });
+      toast({ title: t("mappings.removed", { type: mapping.type }) });
       await refresh();
     } catch (err) {
       toast({
-        title: `Error removing ${typeLabel} mapping`,
+        title: t("mappings.errorRemoving", { typeLabel }),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -92,14 +94,14 @@ export default function MappingsList() {
     setCreatingRegex(true);
     try {
       await createRegexMapping(src, regex);
-      toast({ title: "Regex mapping created successfully" });
+      toast({ title: t("mappings.regexCreated") });
       setRegexSource("");
       setRegexValue("");
       setShowCreateRegex(false);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error creating regex mapping",
+        title: t("mappings.errorCreatingRegex"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -114,14 +116,14 @@ export default function MappingsList() {
     setCreating(true);
     try {
       await createAddressMapping(src, dest);
-      toast({ title: "Address mapping created successfully" });
+      toast({ title: t("mappings.addressCreated") });
       setSource("");
       setDestination("");
       setShowCreate(false);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error creating address mapping",
+        title: t("mappings.errorCreatingAddress"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -176,7 +178,7 @@ export default function MappingsList() {
             className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
           >
             <Plus className="w-4 h-4" />
-            Add Address Mapping
+            {t("mappings.addAddress")}
           </button>
         )}
         {canAddRegex && (
@@ -185,7 +187,7 @@ export default function MappingsList() {
             className="flex items-center gap-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition text-sm"
           >
             <Plus className="w-4 h-4" />
-            Add Regex Mapping
+            {t("mappings.addRegex")}
           </button>
         )}
       </div>
@@ -197,7 +199,7 @@ export default function MappingsList() {
               type="text"
               value={source}
               onChange={(e) => setSource(e.target.value)}
-              placeholder="Source (e.g. user@domain.com)"
+              placeholder={t("mappings.sourcePlaceholder")}
               className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <span className="text-gray-400 text-sm">→</span>
@@ -206,7 +208,7 @@ export default function MappingsList() {
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-              placeholder="Destination (e.g. alias@domain.com)"
+              placeholder={t("mappings.destinationPlaceholder")}
               className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -216,13 +218,13 @@ export default function MappingsList() {
               disabled={creating || !source.trim() || !destination.trim()}
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {creating ? "Creating..." : "Create"}
+              {creating ? t("mappings.creating") : t("common.create")}
             </button>
             <button
               onClick={() => { setShowCreate(false); setSource(""); setDestination(""); }}
               className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition text-sm"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
           </div>
         </div>
@@ -235,7 +237,7 @@ export default function MappingsList() {
               type="text"
               value={regexSource}
               onChange={(e) => setRegexSource(e.target.value)}
-              placeholder="Mapping source (e.g. user@domain.com)"
+              placeholder={t("mappings.mappingSourcePlaceholder")}
               className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
             <span className="text-gray-400 text-sm">→</span>
@@ -244,7 +246,7 @@ export default function MappingsList() {
               value={regexValue}
               onChange={(e) => setRegexValue(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreateRegex()}
-              placeholder="Regex (e.g. user@.*:intern@domain.com)"
+              placeholder={t("mappings.regexPlaceholder")}
               className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
@@ -254,13 +256,13 @@ export default function MappingsList() {
               disabled={creatingRegex || !regexSource.trim() || !regexValue.trim()}
               className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {creatingRegex ? "Creating..." : "Create"}
+              {creatingRegex ? t("mappings.creating") : t("common.create")}
             </button>
             <button
               onClick={() => { setShowCreateRegex(false); setRegexSource(""); setRegexValue(""); }}
               className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition text-sm"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
           </div>
         </div>
@@ -278,7 +280,7 @@ export default function MappingsList() {
         type="text"
         value={search}
         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-        placeholder="Search by source, type or destination..."
+        placeholder={t("mappings.searchPlaceholder")}
         className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       {filteredMappings.length > 0 && (
@@ -289,17 +291,17 @@ export default function MappingsList() {
           onLast={() => goToPage(totalPages)}
           disabledPrev={page <= 1}
           disabledNext={page >= totalPages}
-          label={`Page ${page} / ${totalPages} — Total: ${filteredMappings.length}`}
+          label={t("common.page", { page, totalPages, total: filteredMappings.length })}
         />
       )}
       <table className="mt-4 w-full border-collapse">
         <thead>
           <tr className="bg-gray-100">
             <th className="text-left px-4 py-2 text-sm font-medium">#</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">Source</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">Type</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">Destination</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">Action</th>
+            <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.source")}</th>
+            <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.type")}</th>
+            <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.destination")}</th>
+            <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.action")}</th>
           </tr>
         </thead>
         <tbody>
@@ -319,7 +321,7 @@ export default function MappingsList() {
                   <button
                     onClick={() => handleDelete(mapping)}
                     className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
-                    title={`Remove ${mapping.type.toLowerCase()} mapping`}
+                    title={t("mappings.removeTitle", { type: mapping.type })}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -330,7 +332,7 @@ export default function MappingsList() {
         </tbody>
       </table>
       {!isLoading && filteredMappings.length === 0 && (
-        <p className="mt-4 text-gray-500 text-sm">No mappings found.</p>
+        <p className="mt-4 text-gray-500 text-sm">{t("mappings.empty")}</p>
       )}
     </div>
   );

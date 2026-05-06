@@ -7,6 +7,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   domain: string;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function CalendarDomainTasks({ domain, defaultOpen = false }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canDeleteData = useIsAllowed("POST", "/domains/{domain}?action=deleteData");
@@ -24,8 +26,8 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
 
   const handleDeleteAllUsersData = async () => {
     const confirmed = await confirm({
-      header: "Delete All Users Data",
-      message: `This will delete the data of ALL users belonging to "${domain}". This action cannot be undone. Are you sure?`,
+      header: t("domains.tasks.deleteAllDataTitle"),
+      message: t("domains.tasks.deleteAllDataConfirm", { domain }),
     });
     if (!confirmed) return;
 
@@ -33,11 +35,11 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
     try {
       const { taskId } = await deleteAllUsersData(domain);
       toast({
-        title: "Task started",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
+        title: t("common.taskStarted"),
+        description: <p>{t("domains.calendarTasks.taskLabel")} <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
       });
     } catch (err) {
-      toast({ title: "Error deleting users data", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("domains.tasks.errorDeletingData"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setDeleting(false);
     }
@@ -45,8 +47,8 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
 
   const handleSyncDomainMembers = async () => {
     const confirmed = await confirm({
-      header: "Domain Member Synchronization",
-      message: `Synchronize LDAP members for "${domain}"?`,
+      header: t("domains.calendarTasks.syncTitle"),
+      message: t("domains.calendarTasks.syncConfirm", { domain }),
     });
     if (!confirmed) return;
 
@@ -54,11 +56,11 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
     try {
       const { taskId } = await syncDomainMembers(domain);
       toast({
-        title: "Task started",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
+        title: t("common.taskStarted"),
+        description: <p>{t("domains.calendarTasks.taskLabel")} <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
       });
     } catch (err) {
-      toast({ title: "Error synchronizing domain members", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("domains.calendarTasks.errorSyncing"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setSyncing(false);
     }
@@ -71,7 +73,7 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Tasks
+        {t("domains.calendarTasks.title")}
       </button>
 
       {open && (canSyncMembers || canDeleteData) && (
@@ -84,10 +86,10 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
                 disabled={syncing}
               >
                 {syncing && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-                Domain member synchronization
+                {t("domains.calendarTasks.syncButton")}
               </Button>
               <p className="text-xs text-muted-foreground">
-                Synchronizes LDAP members for this domain. A task will be created to track progress.
+                {t("domains.calendarTasks.syncDesc")}
               </p>
             </>
           )}
@@ -99,10 +101,10 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
                 disabled={deleting}
               >
                 {deleting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-                Delete all users data
+                {t("domains.tasks.deleteAllData")}
               </Button>
               <p className="text-xs text-muted-foreground">
-                Deletes the data of every user belonging to this domain. A task will be created to track progress.
+                {t("domains.tasks.deleteAllDataDesc")}
               </p>
             </>
           )}

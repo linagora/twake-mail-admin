@@ -4,32 +4,31 @@ import { getHealthCheck } from "./api-client";
 import { HealthCheckResponseType, HealthStatuses } from "./types";
 import Header from "@/components/custom/header";
 import { useFetchData } from "@/hooks/use-fetch-data";
+import { useTranslation } from "react-i18next";
+import { appConfig } from "@/lib/config";
 
-const headerTitle =
-  "Welcome to Twake Mail administration! This ease working with webadmin to manage Twake mail";
-
-const headerSubTitle =
-  "Healthcheck allows a quick diagnostic of your tmail server health.";
-
-const docuUrl =
+const DOCU_URL_MAIL =
   "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_healthcheck";
+const DOCU_URL_CALENDAR =
+  "https://github.com/linagora/twake-calendar-side-service/blob/main/docs/apis/webadmin.md";
+
+const isCalendar = appConfig.application === "CALENDAR";
 
 export default function HealthCheck() {
-  // Modify the hook to extract `checks` from the response
+  const { t } = useTranslation();
   const {
     data: healthCheckResponse,
     isLoading,
   } = useFetchData<HealthCheckResponseType>(getHealthCheck);
 
-  // Extract health check results from the response
   const healthCheckResults = healthCheckResponse?.checks || [];
 
   return (
     <div className="p-4">
       <Header
-        headerTitle={headerTitle}
-        headerSubTitle={headerSubTitle}
-        docuUrl={docuUrl}
+        headerTitle={isCalendar ? t("healthCheck.welcomeCalendar") : t("healthCheck.welcome")}
+        headerSubTitle={isCalendar ? t("healthCheck.descriptionCalendar") : t("healthCheck.description")}
+        docuUrl={isCalendar ? DOCU_URL_CALENDAR : DOCU_URL_MAIL}
       />
 
       {isLoading && (

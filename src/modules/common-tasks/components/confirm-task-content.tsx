@@ -1,6 +1,7 @@
 import { ReactNode, useState } from "react";
 import { TaskParam } from "../types";
 import TaskParamsModifier from "./task-prams-modifier";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   message: string | ReactNode;
@@ -15,6 +16,7 @@ const ConfirmTaskContent = ({
   params,
   getParamValues,
 }: Props) => {
+  const { t } = useTranslation();
   const [customParams, setCustomParams] = useState({});
 
   const handleChangeParam = (key: string, value: string | boolean) => {
@@ -28,8 +30,9 @@ const ConfirmTaskContent = ({
       {params?.length && (
         <>
           <p>
-            You can modify{" "}
-            {params?.length > 1 ? "these parameters" : "this parameter"}:
+            {params?.length > 1
+              ? t("confirmTask.modifyThese", "You can modify these parameters:")
+              : t("confirmTask.modifyThis", "You can modify this parameter:")}
           </p>
           <div className="p-4">
             <TaskParamsModifier
@@ -40,7 +43,7 @@ const ConfirmTaskContent = ({
         </>
       )}
       <p className="break-words">
-        Command:{" "}
+        {t("confirmTask.command", "Command:")}:{" "}
         {customParams
           ? `&${command}${new URLSearchParams(customParams)}`
           : command}

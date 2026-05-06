@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { Trash2, ChevronDown, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxMembers, addTeamMailboxMember, removeTeamMailboxMember, searchTeamMailboxDeletedMessages, restoreTeamMailboxDeletedMessages } from "../api-client";
@@ -17,6 +18,7 @@ import UserDeletedMessageVault from "@/modules/users/details/user-deleted-messag
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function TeamMailboxDetail() {
+  const { t } = useTranslation();
   const { domain, mailbox } = useParams();
   const { toast } = useToast();
   const confirm = useConfirm();
@@ -55,12 +57,12 @@ export default function TeamMailboxDetail() {
     if (!username) return;
     try {
       await addTeamMailboxMember(domain!, mailbox!, username, role);
-      toast({ title: "Member added" });
+      toast({ title: t("domains.teamMailbox.memberAdded") });
       setNewMember("");
       await refresh();
     } catch (err) {
       toast({
-        title: "Error adding member",
+        title: t("domains.teamMailbox.errorAddingMember"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -68,17 +70,17 @@ export default function TeamMailboxDetail() {
 
   const handleRemove = async (username: string) => {
     const confirmed = await confirm({
-      header: "Remove Member",
-      message: `Remove "${username}" from ${mailbox}@${domain}?`,
+      header: t("domains.teamMailbox.removeMemberTitle"),
+      message: t("domains.teamMailbox.removeMemberConfirm", { username, mailbox, domain }),
     });
     if (!confirmed) return;
     try {
       await removeTeamMailboxMember(domain!, mailbox!, username);
-      toast({ title: "Member removed" });
+      toast({ title: t("domains.teamMailbox.memberRemoved") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error removing member",
+        title: t("domains.teamMailbox.errorRemovingMember"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -86,8 +88,8 @@ export default function TeamMailboxDetail() {
 
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
-      <h3 className="text-lg font-semibold">Team Mailbox Details</h3>
-      <p>Mailbox: {mailbox}@{domain}</p>
+      <h3 className="text-lg font-semibold">{t("domains.teamMailbox.detailTitle")}</h3>
+      <p>{t("domains.teamMailbox.label", { mailbox, domain })}</p>
 
       <div className="mt-6">
         <button
@@ -95,7 +97,7 @@ export default function TeamMailboxDetail() {
           className="flex items-center gap-1 text-md font-semibold w-full text-left"
         >
           {membersOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Members {members && <span className="text-sm font-normal text-gray-500">({members.length})</span>}
+          {t("domains.teamMailbox.members")} {members && <span className="text-sm font-normal text-gray-500">({members.length})</span>}
         </button>
 
         {membersOpen && (<>
@@ -110,24 +112,24 @@ export default function TeamMailboxDetail() {
             className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {memberStatus === "checking" && (
-            <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">Checking...</span>
+            <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>
           )}
           {memberStatus === "exists" && (
             <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
-              User exists
+              {t("common.userExists")}
             </span>
           )}
           {memberStatus === "not_found" && (
             <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
-              User not found
+              {t("common.userNotFound")}
             </span>
           )}
           {memberStatus === "invalid" && (
             <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
-              Invalid username
+              {t("common.invalidUsername")}
             </span>
           )}
           <select
@@ -135,15 +137,15 @@ export default function TeamMailboxDetail() {
             onChange={(e) => setRole(e.target.value as "member" | "manager")}
             className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="member">member</option>
-            <option value="manager">manager</option>
+            <option value="member">{t("domains.teamMailbox.member")}</option>
+            <option value="manager">{t("domains.teamMailbox.manager")}</option>
           </select>
           <button
             onClick={handleAdd}
             disabled={!newMember.trim()}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Add
+            {t("common.add")}
           </button>
         </div>)}
 
@@ -163,31 +165,31 @@ export default function TeamMailboxDetail() {
               disabled={page <= 1}
               className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              First
+              {t("common.first")}
             </button>
             <button
               onClick={() => goToPage(page - 1)}
               disabled={page <= 1}
               className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Previous
+              {t("common.previous")}
             </button>
             <span className="text-sm font-medium text-center">
-              Page {page} / {totalPages} — Total: {sorted.length}
+              {t("common.page", { page, totalPages, total: sorted.length })}
             </span>
             <button
               onClick={() => goToPage(page + 1)}
               disabled={page >= totalPages}
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next
+              {t("common.next")}
             </button>
             <button
               onClick={() => goToPage(totalPages)}
               disabled={page >= totalPages}
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Last
+              {t("common.last")}
             </button>
           </div>
         )}
@@ -208,7 +210,7 @@ export default function TeamMailboxDetail() {
                 <button
                   onClick={() => handleRemove(member.username)}
                   className="p-2 rounded-md hover:bg-gray-200"
-                  title="Remove member"
+                  title={t("domains.teamMailbox.removeMemberTooltip")}
                 >
                   <Trash2 className="w-4 h-4 text-red-600" />
                 </button>
@@ -216,7 +218,7 @@ export default function TeamMailboxDetail() {
             </div>
           ))}
           {members && members.length === 0 && (
-            <p className="mt-2 text-sm text-gray-500">No members.</p>
+            <p className="mt-2 text-sm text-gray-500">{t("domains.teamMailbox.noMembers")}</p>
           )}
         </div>
         </>)}

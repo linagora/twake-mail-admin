@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { Pencil } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +15,7 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (data: { email: string; firstname: string; lastname: string }) => void }) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState(user.email ?? "");
   const [firstname, setFirstname] = useState(user.firstname ?? "");
   const [lastname, setLastname] = useState(user.lastname ?? "");
@@ -25,7 +27,7 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
   return (
     <div className="space-y-3">
       <div>
-        <label className="text-sm font-medium">Email</label>
+        <label className="text-sm font-medium">{t("registeredUsers.email")}</label>
         <input
           type="text"
           value={email}
@@ -34,7 +36,7 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
         />
       </div>
       <div>
-        <label className="text-sm font-medium">Firstname</label>
+        <label className="text-sm font-medium">{t("registeredUsers.firstname")}</label>
         <input
           type="text"
           value={firstname}
@@ -43,7 +45,7 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
         />
       </div>
       <div>
-        <label className="text-sm font-medium">Lastname</label>
+        <label className="text-sm font-medium">{t("registeredUsers.lastname")}</label>
         <input
           type="text"
           value={lastname}
@@ -56,6 +58,7 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
 }
 
 export default function RegisteredUsersList() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   // In DOMAIN mode this returns the current domain; in GLOBAL mode returns "".
@@ -90,12 +93,12 @@ export default function RegisteredUsersList() {
         lastname: "",
       };
       await createRegisteredUser(user, domain);
-      toast({ title: `User "${username}" registered` });
+      toast({ title: t("registeredUsers.registered", { username }) });
       setNewUsername("");
       refresh();
     } catch (err) {
       toast({
-        title: "Error registering user",
+        title: t("registeredUsers.errorRegistering"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -105,7 +108,7 @@ export default function RegisteredUsersList() {
     let currentValues = { email: user.email ?? "", firstname: user.firstname ?? "", lastname: user.lastname ?? "" };
 
     const result = await confirm({
-      header: "Edit Registered User",
+      header: t("registeredUsers.editTitle"),
       message: (
         <EditUserForm
           user={user}
@@ -117,11 +120,11 @@ export default function RegisteredUsersList() {
 
     try {
       await updateRegisteredUser(user.id, currentValues, domain);
-      toast({ title: "User updated" });
+      toast({ title: t("registeredUsers.updated") });
       refresh();
     } catch (err) {
       toast({
-        title: "Error updating user",
+        title: t("registeredUsers.errorUpdating"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -163,30 +166,30 @@ export default function RegisteredUsersList() {
             value={newUsername}
             onChange={(e) => setNewUsername(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-            placeholder="user@domain.tld"
+            placeholder={t("registeredUsers.placeholder")}
             className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {userStatus === "checking" && (
             <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">
-              Checking...
+              {t("common.checking")}
             </span>
           )}
           {userStatus === "exists" && (
             <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
-              User exists
+              {t("common.userExists")}
             </span>
           )}
           {userStatus === "not_found" && (
             <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
-              User not found
+              {t("common.userNotFound")}
             </span>
           )}
           {userStatus === "invalid" && (
             <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
-              Invalid username
+              {t("common.invalidUsername")}
             </span>
           )}
           <button
@@ -194,7 +197,7 @@ export default function RegisteredUsersList() {
             disabled={!newUsername.trim() || userStatus !== "exists"}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Add
+            {t("common.add")}
           </button>
         </div>
       )}
@@ -215,11 +218,10 @@ export default function RegisteredUsersList() {
           setSearch(e.target.value);
           setPage(1);
         }}
-        placeholder="Search registered users..."
+        placeholder={t("registeredUsers.searchPlaceholder")}
         className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
-      <p>List</p>
       {filtered.length > 0 && (
         <PaginationControls
           onFirst={() => goToPage(1)}
@@ -228,7 +230,7 @@ export default function RegisteredUsersList() {
           onLast={() => goToPage(totalPages)}
           disabledPrev={page <= 1}
           disabledNext={page >= totalPages}
-          label={`Page ${page} / ${totalPages} — Total: ${filtered.length}`}
+          label={t("common.page", { page, totalPages, total: filtered.length })}
         />
       )}
 
@@ -249,14 +251,14 @@ export default function RegisteredUsersList() {
                 {user.firstname} {user.lastname}
               </p>
               <p className="text-xs text-gray-400 mt-1">
-                ID: {user.id}
+                {t("registeredUsers.id")} {user.id}
               </p>
             </div>
             {canEdit && (
               <button
                 onClick={() => handleEdit(user)}
                 className="p-2 rounded-md hover:bg-gray-200"
-                title="Edit user"
+                title={t("registeredUsers.editTooltip")}
               >
                 <Pencil className="w-4 h-4 text-blue-600" />
               </button>

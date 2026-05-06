@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxes, createTeamMailbox, deleteTeamMailbox } from "../api-client";
 import { GetTeamMailboxesResponseType } from "../types";
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/domains/{domain}/team-mailboxes");
@@ -45,13 +47,13 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
     if (!name) return;
     try {
       await createTeamMailbox(domain, name);
-      toast({ title: "Team mailbox created" });
+      toast({ title: t("domains.teamMailboxes.created") });
       setNewName("");
       setShowCreateInput(false);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error creating team mailbox",
+        title: t("domains.teamMailboxes.errorCreating"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -59,17 +61,17 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
 
   const handleRemove = async (name: string) => {
     const confirmed = await confirm({
-      header: "Delete Team Mailbox",
-      message: `Delete team mailbox "${name}@${domain}"?`,
+      header: t("domains.teamMailboxes.deleteTitle"),
+      message: t("domains.teamMailboxes.deleteConfirm", { name, domain }),
     });
     if (!confirmed) return;
     try {
       await deleteTeamMailbox(domain, name);
-      toast({ title: "Team mailbox deleted" });
+      toast({ title: t("domains.teamMailboxes.deleted") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error deleting team mailbox",
+        title: t("domains.teamMailboxes.errorDeleting"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -83,7 +85,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
           className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
         >
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Team Mailboxes
+          {t("domains.teamMailboxes.title")}
           {mailboxes && (
             <span className="text-sm font-normal text-gray-500">
               ({mailboxes.length})
@@ -94,7 +96,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
-            title="Add team mailbox"
+            title={t("domains.teamMailboxes.addTooltip")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -110,7 +112,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-                placeholder="mailbox name"
+                placeholder={t("domains.teamMailboxes.namePlaceholder")}
                 className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -118,7 +120,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
                 disabled={!newName.trim()}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Add
+                {t("common.add")}
               </button>
             </div>
           )}
@@ -151,7 +153,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
                     <button
                       onClick={(e) => { e.preventDefault(); handleRemove(mb.name); }}
                       className="p-2 rounded-md hover:bg-gray-200"
-                      title="Delete team mailbox"
+                      title={t("domains.teamMailboxes.deleteTooltip")}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
@@ -159,7 +161,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
                 </div>
               ))}
               {mailboxes.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No team mailboxes configured.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("domains.teamMailboxes.empty")}</p>
               )}
             </div>
           )}

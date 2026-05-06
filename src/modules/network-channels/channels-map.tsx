@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { getAllChannels } from "./api-client";
 import { NetworkChannel } from "./types";
 import { Button } from "@/components/ui/button";
@@ -51,14 +52,15 @@ function loadLeaflet(): Promise<void> {
 }
 
 export default function ChannelsMap() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const mapRef = useRef<HTMLDivElement>(null);
-  const [statusText, setStatusText] = useState("Loading channels...");
+  const [statusText, setStatusText] = useState(() => t("networkChannels.loadingChannels"));
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
-    setStatusText("Loading channels...");
+    setStatusText(t("networkChannels.loadingChannels"));
     setError(null);
     let cancelled = false;
     let mapInstance: any = null;
@@ -69,7 +71,7 @@ export default function ChannelsMap() {
       try {
         channels = await getAllChannels();
       } catch {
-        if (!cancelled) setError("Failed to fetch channels.");
+        if (!cancelled) setError(t("networkChannels.fetchError"));
         return;
       }
 
@@ -86,11 +88,11 @@ export default function ChannelsMap() {
       const uniqueIPs = Object.keys(ipCount);
 
       // 3. Load Leaflet from CDN
-      setStatusText("Loading map...");
+      setStatusText(t("networkChannels.loadingMap"));
       try {
         await loadLeaflet();
       } catch {
-        if (!cancelled) setError("Failed to load Leaflet from CDN.");
+        if (!cancelled) setError(t("networkChannels.leafletError"));
         return;
       }
 
@@ -104,12 +106,12 @@ export default function ChannelsMap() {
       }).addTo(mapInstance);
 
       if (uniqueIPs.length === 0) {
-        setStatusText("No public IPs to geolocate.");
+        setStatusText(t("networkChannels.noPublicIPs"));
         return;
       }
 
       // 5. Geolocate IPs via ip-api.com batch (free, CORS supported)
-      setStatusText(`Geolocating ${uniqueIPs.length} IP(s)…`);
+      setStatusText(t("networkChannels.geolocatingIPs", { count: uniqueIPs.length }));
       let geoResults: ({ ip: string; lat: number; lon: number; city: string; country: string } | null)[] = [];
       try {
         const res = await fetch("http://ip-api.com/batch?fields=status,lat,lon,city,country,query", {
@@ -124,7 +126,7 @@ export default function ChannelsMap() {
             : null
         );
       } catch {
-        setStatusText("Geolocation failed.");
+        setStatusText(t("networkChannels.geolocationFailed"));
       }
 
       if (cancelled) return;
@@ -155,7 +157,7 @@ export default function ChannelsMap() {
     <div className="mt-4">
       <div className="flex items-center gap-3 mb-3">
         <Button variant="outline" size="sm" onClick={() => navigate("/network-channels")}>
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back
+          <ArrowLeft className="w-4 h-4 mr-1" /> {t("networkChannels.backButton")}
         </Button>
         <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)} disabled={!!statusText && !error}>
           <RefreshCw className="w-4 h-4" />

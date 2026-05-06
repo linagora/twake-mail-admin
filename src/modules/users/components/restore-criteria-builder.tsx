@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -60,6 +61,7 @@ interface Props {
 }
 
 export default function RestoreCriteriaBuilder({ onChange }: Props) {
+  const { t } = useTranslation();
   const [criteria, setCriteria] = useState<CriterionRow[]>([]);
   const [limit, setLimit] = useState<string>("");
 
@@ -124,7 +126,7 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
   return (
     <div className="space-y-4 w-full">
       <p className="text-sm text-muted-foreground">
-        Define criteria to match deleted messages for restoration.
+        {t("users.deletedVault.criteria.description")}
       </p>
 
       {criteria.map((criterion, index) => {
@@ -138,12 +140,12 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
               onValueChange={(v) => updateCriterion(index, "fieldName", v)}
             >
               <SelectTrigger className="w-[160px] shrink-0">
-                <SelectValue placeholder="Field" />
+                <SelectValue placeholder={t("users.deletedVault.criteria.fieldPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {FIELD_NAMES.map((name) => (
                   <SelectItem key={name} value={name}>
-                    {name}
+                    {t(`users.deletedVault.${name}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -155,12 +157,12 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
               disabled={!criterion.fieldName}
             >
               <SelectTrigger className="w-[180px] shrink-0">
-                <SelectValue placeholder="Operator" />
+                <SelectValue placeholder={t("users.deletedVault.criteria.operatorPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {operators.map((op) => (
                   <SelectItem key={op} value={op}>
-                    {op}
+                    {t(`users.deletedVault.operators.${op}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -201,7 +203,7 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
               <Input
                 type="text"
                 className="flex-1"
-                placeholder="Value"
+                placeholder={t("users.deletedVault.criteria.valuePlaceholder")}
                 disabled={!criterion.operator}
                 value={criterion.value}
                 onChange={(e) =>
@@ -223,15 +225,15 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
 
       <Button variant="outline" size="sm" onClick={addCriterion}>
         <Plus className="w-4 h-4 mr-1" />
-        Add criterion
+        {t("users.deletedVault.criteria.addCriterion")}
       </Button>
 
       <div className="flex items-center gap-2 pt-2 border-t">
-        <label className="text-sm font-medium">Limit (optional):</label>
+        <label className="text-sm font-medium">{t("users.deletedVault.criteria.limitLabel")}</label>
         <Input
           type="number"
           className="w-[120px]"
-          placeholder="No limit"
+          placeholder={t("users.deletedVault.criteria.noLimit")}
           min={1}
           value={limit}
           onChange={(e) => setLimit(e.target.value)}

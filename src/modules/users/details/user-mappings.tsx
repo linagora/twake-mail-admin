@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -20,6 +21,7 @@ const SOURCE_TYPES = ["address", "alias", "forward", "group"] as const;
 type SourceType = (typeof SOURCE_TYPES)[number];
 
 export default function UserMappings({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/mappings/user/{username}");
@@ -66,17 +68,17 @@ export default function UserMappings({ username }: Props) {
 
   const handleDeleteSources = async (type: SourceType) => {
     const confirmed = await confirm({
-      header: `Remove all ${type} sources`,
-      message: `Remove all ${type} mappings pointing to ${username}?`,
+      header: t("users.mappings.removeAllSources", { type }),
+      message: t("users.mappings.removeAllSources", { type }),
     });
     if (!confirmed) return;
     try {
       await deleteUserMappingSources(username, type);
-      toast({ title: `All ${type} sources removed successfully` });
+      toast({ title: t("users.mappings.removeAllSources", { type }) });
       await refreshSources();
     } catch (err) {
       toast({
-        title: `Error removing ${type} sources`,
+        title: t("users.mappings.removeAllSources", { type }),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -95,7 +97,7 @@ export default function UserMappings({ username }: Props) {
           className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
         >
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Mappings
+          {t("users.mappings.title")}
           {!isLoading && (
             <span className="text-sm font-normal text-gray-500">
               ({totalCount})
@@ -111,19 +113,19 @@ export default function UserMappings({ username }: Props) {
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {errorMappings && <p className="text-red-500 mt-2">Error loading mappings: {errorMappings}</p>}
-          {errorSources && <p className="text-red-500 mt-2">Error loading sources: {errorSources}</p>}
+          {errorMappings && <p className="text-red-500 mt-2">{t("users.mappings.errorLoading")} {errorMappings}</p>}
+          {errorSources && <p className="text-red-500 mt-2">{t("users.mappings.errorLoadingSources")} {errorSources}</p>}
 
           {/* Mappings originating from user */}
           {sortedMappings.length > 0 && (
             <div className="mt-2">
-              <h4 className="text-sm font-semibold text-gray-600 mb-1">Mappings from this user</h4>
+              <h4 className="text-sm font-semibold text-gray-600 mb-1">{t("users.mappings.from")}</h4>
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-100">
                     <th className="text-left px-4 py-2 text-sm font-medium">#</th>
-                    <th className="text-left px-4 py-2 text-sm font-medium">Type</th>
-                    <th className="text-left px-4 py-2 text-sm font-medium">Destination</th>
+                    <th className="text-left px-4 py-2 text-sm font-medium">{t("users.mappings.type")}</th>
+                    <th className="text-left px-4 py-2 text-sm font-medium">{t("users.mappings.destination")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -142,7 +144,7 @@ export default function UserMappings({ username }: Props) {
           {/* Sources pointing to user */}
           {sourcesData && sourcesData.length > 0 && (
             <div className="mt-4">
-              <h4 className="text-sm font-semibold text-gray-600 mb-1">Sources pointing to this user</h4>
+              <h4 className="text-sm font-semibold text-gray-600 mb-1">{t("users.mappings.sources")}</h4>
               {sourcesData.map(({ type, sources }) => (
                 <div key={type} className="mt-2">
                   <div className="flex items-center gap-2 mb-1">
@@ -152,7 +154,7 @@ export default function UserMappings({ username }: Props) {
                       <button
                         onClick={() => handleDeleteSources(type)}
                         className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
-                        title={`Remove all ${type} sources`}
+                        title={t("users.mappings.removeAllSources", { type })}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

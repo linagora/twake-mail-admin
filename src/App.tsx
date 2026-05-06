@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Route, Routes, Navigate } from "react-router";
 import { AppSidebar } from "./components/side-bar";
 import {
@@ -147,6 +148,7 @@ function GlobalLayout() {
 // ---------------------------------------------------------------------------
 
 function DomainModeWrapper() {
+  const { t } = useTranslation();
   const [domain, setDomain] = useState<string | null>(appConfig.domain);
   const [error, setError] = useState<string | null>(null);
 
@@ -154,7 +156,7 @@ function DomainModeWrapper() {
     if (domain) return; // already resolved from env.js
     apiClient.get<any, { domain: string }>('/.proxy/myDomain')
       .then((res) => setDomain(res.domain))
-      .catch(() => setError('Could not resolve domain from /.proxy/myDomain'));
+      .catch(() => setError(t("common.domainResolveError")));
   }, [domain]);
 
   if (error) {
@@ -168,7 +170,7 @@ function DomainModeWrapper() {
   if (!domain) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-muted-foreground">Resolving domain…</p>
+        <p className="text-muted-foreground">{t("common.resolvingDomain")}</p>
       </div>
     );
   }

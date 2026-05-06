@@ -1,6 +1,7 @@
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCallback } from "react";
 import { useParams } from "react-router";
+import { useTranslation } from "react-i18next";
 import { cancelTask, getTaskDetail } from "../api-client";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import Header from "@/components/custom/header";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 
 export default function TaskDetail() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { toast } = useToast();
   const domain = useDomain() || undefined;
@@ -32,9 +34,10 @@ export default function TaskDetail() {
   const handleCancelTask = async () => {
     try {
       await cancelTask(id!, domain);
+      await refresh();
     } catch (error) {
       toast({
-        title: "Error Canceling Task",
+        title: t("tasks.errorCancelling"),
         description: <ErrorDisplayer error={error} />,
       });
     }
@@ -65,7 +68,7 @@ export default function TaskDetail() {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              Refresh task
+              {t("tasks.refresh")}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -78,13 +81,13 @@ export default function TaskDetail() {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              Cancel task
+              {t("tasks.cancelButton")}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>}
       </div>
 
-      {isLoading && <p>Loading task detail...</p>}
+      {isLoading && <p>{t("common.loading")}</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
 
       {

@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Plus, Pencil, Save, Loader2, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -30,6 +31,7 @@ const EMPTY_CREATE: JmapIdentityCreatePayload = {
 };
 
 export default function UserIdentities({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/identities");
@@ -60,13 +62,13 @@ export default function UserIdentities({ username }: Props) {
     setCreating(true);
     try {
       await createUserIdentity(username, createForm);
-      toast({ title: "Identity created" });
+      toast({ title: t("users.identities.created") });
       setCreateForm({ ...EMPTY_CREATE });
       setShowCreate(false);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error creating identity",
+        title: t("users.identities.errorCreating"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -90,13 +92,13 @@ export default function UserIdentities({ username }: Props) {
     setSaving(true);
     try {
       await updateUserIdentity(username, editIdentity.id, editForm);
-      toast({ title: "Identity updated" });
+      toast({ title: t("users.identities.updated") });
       setEditIdentity(null);
       setEditForm({});
       await refresh();
     } catch (err) {
       toast({
-        title: "Error updating identity",
+        title: t("users.identities.errorUpdating"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -106,18 +108,18 @@ export default function UserIdentities({ username }: Props) {
 
   const handleDelete = async (identity: JmapIdentity) => {
     const confirmed = await confirm({
-      header: "Delete Identity",
-      message: `Delete identity "${identity.name} <${identity.email}>"?`,
+      header: t("users.identities.deleteTitle"),
+      message: t("users.identities.deleteConfirm", { name: identity.name, email: identity.email }),
     });
     if (!confirmed) return;
     try {
       await deleteUserIdentity(username, identity.id);
-      toast({ title: "Identity deleted" });
+      toast({ title: t("users.identities.deleted") });
       setViewIdentity(null);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error deleting identity",
+        title: t("users.identities.errorDeleting"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -131,7 +133,7 @@ export default function UserIdentities({ username }: Props) {
           className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
         >
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          JMAP Identities
+          {t("users.identities.title")}
           {identities && (
             <span className="text-sm font-normal text-gray-500">
               ({identities.length})
@@ -142,7 +144,7 @@ export default function UserIdentities({ username }: Props) {
           <button
             onClick={() => setShowCreate(!showCreate)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
-            title="Create identity"
+            title={t("users.identities.createButton")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -153,26 +155,26 @@ export default function UserIdentities({ username }: Props) {
         <div className="mt-2">
           {showCreate && (
             <div className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2">
-              <h5 className="text-sm font-semibold">New Identity</h5>
+              <h5 className="text-sm font-semibold">{t("users.identities.newTitle")}</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <input
                   type="text"
                   value={createForm.name}
                   onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
-                  placeholder="Name"
+                  placeholder={t("users.identities.namePlaceholder")}
                   className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="email"
                   value={createForm.email}
                   onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
-                  placeholder="email@domain.tld"
+                  placeholder={t("users.identities.emailPlaceholder")}
                   className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs text-gray-500">Text Signature</label>
+                  <label className="text-xs text-gray-500">{t("users.identities.textSignature")}</label>
                   <textarea
                     value={createForm.textSignature ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, textSignature: e.target.value }))}
@@ -181,7 +183,7 @@ export default function UserIdentities({ username }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">HTML Signature</label>
+                  <label className="text-xs text-gray-500">{t("users.identities.htmlSignature")}</label>
                   <textarea
                     value={createForm.htmlSignature ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, htmlSignature: e.target.value }))}
@@ -191,7 +193,7 @@ export default function UserIdentities({ username }: Props) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-xs text-gray-500">Sort Order</label>
+                <label className="text-xs text-gray-500">{t("users.identities.sortOrder")}</label>
                 <input
                   type="number"
                   value={createForm.sortOrder ?? 0}
@@ -201,7 +203,7 @@ export default function UserIdentities({ username }: Props) {
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" size="sm" onClick={() => setShowCreate(false)}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button
                   size="sm"
@@ -209,7 +211,7 @@ export default function UserIdentities({ username }: Props) {
                   disabled={creating || !createForm.name.trim() || !createForm.email.trim()}
                 >
                   {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
-                  Create
+                  {t("common.create")}
                 </Button>
               </div>
             </div>
@@ -220,7 +222,7 @@ export default function UserIdentities({ username }: Props) {
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {identities && (
             <div>
@@ -236,16 +238,16 @@ export default function UserIdentities({ username }: Props) {
                       {identity.name} &lt;{identity.email}&gt;
                     </h4>
                     <div className="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
-                      <span>Sort: {identity.sortOrder}</span>
-                      <span>Deletable: {identity.mayDelete ? "Yes" : "No"}</span>
+                      <span>{t("users.identities.sort")} {identity.sortOrder}</span>
+                      <span>{t("users.identities.deletable")} {identity.mayDelete ? t("common.yes") : t("common.no")}</span>
                       {identity.replyTo?.length > 0 && (
                         <span>Reply-To: {identity.replyTo.map((r) => r.mailAddress).join(", ")}</span>
                       )}
                       {identity.bcc?.length > 0 && (
                         <span>BCC: {identity.bcc.map((b) => b.mailAddress).join(", ")}</span>
                       )}
-                      {identity.textSignature && <span>Has text signature</span>}
-                      {identity.htmlSignature && <span>Has HTML signature</span>}
+                      {identity.textSignature && <span>{t("users.identities.hasTextSignature")}</span>}
+                      {identity.htmlSignature && <span>{t("users.identities.hasHtmlSignature")}</span>}
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -253,7 +255,7 @@ export default function UserIdentities({ username }: Props) {
                       <button
                         onClick={(e) => { e.stopPropagation(); openEdit(identity); }}
                         className="p-2 rounded-md hover:bg-gray-200"
-                        title="Edit identity"
+                        title={t("users.identities.editTooltip")}
                       >
                         <Pencil className="w-4 h-4 text-blue-600" />
                       </button>
@@ -262,7 +264,7 @@ export default function UserIdentities({ username }: Props) {
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(identity); }}
                         className="p-2 rounded-md hover:bg-gray-200"
-                        title="Delete identity"
+                        title={t("users.identities.deleteTooltip")}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>
@@ -271,7 +273,7 @@ export default function UserIdentities({ username }: Props) {
                 </div>
               ))}
               {identities.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No JMAP identities.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("users.identities.empty")}</p>
               )}
             </div>
           )}
@@ -282,36 +284,36 @@ export default function UserIdentities({ username }: Props) {
       <Dialog open={!!viewIdentity} onOpenChange={(v) => !v && setViewIdentity(null)}>
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Identity — {viewIdentity?.name}</DialogTitle>
+            <DialogTitle>{t("users.identities.viewTitle", { name: viewIdentity?.name })}</DialogTitle>
           </DialogHeader>
           {viewIdentity && (
             <div className="space-y-3 text-sm">
-              <Row label="ID" value={viewIdentity.id} />
-              <Row label="Name" value={viewIdentity.name} />
-              <Row label="Email" value={viewIdentity.email} />
-              <Row label="Sort Order" value={String(viewIdentity.sortOrder)} />
-              <Row label="May Delete" value={viewIdentity.mayDelete ? "Yes" : "No"} />
+              <Row label={t("users.identities.id")} value={viewIdentity.id} />
+              <Row label={t("users.identities.name")} value={viewIdentity.name} />
+              <Row label={t("users.identities.email")} value={viewIdentity.email} />
+              <Row label={t("users.identities.sortOrder")} value={String(viewIdentity.sortOrder)} />
+              <Row label={t("users.identities.mayDelete")} value={viewIdentity.mayDelete ? t("common.yes") : t("common.no")} />
               {viewIdentity.replyTo?.length > 0 && (
                 <Row
-                  label="Reply-To"
+                  label={t("users.identities.replyTo")}
                   value={viewIdentity.replyTo.map((r) => `${r.emailerName} <${r.mailAddress}>`).join(", ")}
                 />
               )}
               {viewIdentity.bcc?.length > 0 && (
                 <Row
-                  label="BCC"
+                  label={t("users.identities.bcc")}
                   value={viewIdentity.bcc.map((b) => `${b.emailerName} <${b.mailAddress}>`).join(", ")}
                 />
               )}
               {viewIdentity.textSignature && (
                 <div>
-                  <span className="text-gray-500 font-medium">Text Signature</span>
+                  <span className="text-gray-500 font-medium">{t("users.identities.textSignature")}</span>
                   <pre className="mt-1 p-2 bg-gray-50 rounded text-xs whitespace-pre-wrap">{viewIdentity.textSignature}</pre>
                 </div>
               )}
               {viewIdentity.htmlSignature && (
                 <div>
-                  <span className="text-gray-500 font-medium">HTML Signature</span>
+                  <span className="text-gray-500 font-medium">{t("users.identities.htmlSignature")}</span>
                   <pre className="mt-1 p-2 bg-gray-50 rounded text-xs whitespace-pre-wrap">{viewIdentity.htmlSignature}</pre>
                 </div>
               )}
@@ -319,13 +321,13 @@ export default function UserIdentities({ username }: Props) {
                 {canDelete && viewIdentity.mayDelete && (
                   <Button size="sm" variant="destructive" onClick={() => handleDelete(viewIdentity)}>
                     <Trash2 className="w-4 h-4 mr-1" />
-                    Delete
+                    {t("common.delete")}
                   </Button>
                 )}
                 {canEdit && (
                   <Button size="sm" onClick={() => openEdit(viewIdentity)}>
                     <Pencil className="w-4 h-4 mr-1" />
-                    Edit
+                    {t("common.edit")}
                   </Button>
                 )}
               </div>
@@ -338,12 +340,12 @@ export default function UserIdentities({ username }: Props) {
       <Dialog open={!!editIdentity} onOpenChange={(v) => { if (!v) { setEditIdentity(null); setEditForm({}); } }}>
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Identity — {editIdentity?.email}</DialogTitle>
+            <DialogTitle>{t("users.identities.editTitle", { email: editIdentity?.email })}</DialogTitle>
           </DialogHeader>
           {editIdentity && (
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium">Name</label>
+                <label className="text-sm font-medium">{t("users.identities.name")}</label>
                 <input
                   type="text"
                   value={editForm.name ?? ""}
@@ -352,7 +354,7 @@ export default function UserIdentities({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">Sort Order</label>
+                <label className="text-sm font-medium">{t("users.identities.sortOrder")}</label>
                 <input
                   type="number"
                   value={editForm.sortOrder ?? 0}
@@ -361,7 +363,7 @@ export default function UserIdentities({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">Text Signature</label>
+                <label className="text-sm font-medium">{t("users.identities.textSignature")}</label>
                 <textarea
                   value={editForm.textSignature ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, textSignature: e.target.value }))}
@@ -370,7 +372,7 @@ export default function UserIdentities({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">HTML Signature</label>
+                <label className="text-sm font-medium">{t("users.identities.htmlSignature")}</label>
                 <textarea
                   value={editForm.htmlSignature ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, htmlSignature: e.target.value }))}
@@ -380,11 +382,11 @@ export default function UserIdentities({ username }: Props) {
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" size="sm" onClick={() => { setEditIdentity(null); setEditForm({}); }}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button size="sm" onClick={handleUpdate} disabled={saving}>
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
-                  Save
+                  {t("common.save")}
                 </Button>
               </div>
             </div>

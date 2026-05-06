@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useParams } from "react-router";
+import { useTranslation } from "react-i18next";
 import UserMailboxes from "./user-mailboxes";
 import UserQuota from "./user-quota";
 import UserAliases from "./user-aliases";
@@ -19,6 +20,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getUserRateLimits, updateUserRateLimits, searchDeletedMessages, restoreDeletedMessages } from "../api-client";
 
 export default function UserDetail() {
+  const { t } = useTranslation();
   const { username } = useParams();
   const canUpdateRateLimits = useIsAllowed("PUT", "/users/{username}/ratelimits");
   const canSearchDeleted = useIsAllowed("POST", "/deletedMessages/users/{username}/messages");
@@ -29,8 +31,8 @@ export default function UserDetail() {
 
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
-      <h3 className="text-lg font-semibold">User Details</h3>
-      <p>Username: {username}</p>
+      <h3 className="text-lg font-semibold">{t("users.title")}</h3>
+      <p>{t("users.label", { username })}</p>
 
       <UserMailboxes username={username!} />
       <UserQuota username={username!} />

@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getCassandraVersion, getCassandraLatestVersion, upgradeCassandraToLatest, CassandraVersion } from "./api-client";
@@ -10,10 +11,10 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 
-const headerSubTitle = "Cassandra schema version management";
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_cassandra_schema_upgrades";
 
 export default function Cassandra() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canUpgrade = useIsAllowed("POST", "/cassandra/version/upgrade/latest");
@@ -36,8 +37,8 @@ export default function Cassandra() {
 
   const handleUpgrade = async () => {
     const confirmed = await confirm({
-      header: "Upgrade Cassandra Schema",
-      message: `Upgrade schema from version ${data?.current.version} to version ${data?.latest.version}? This will schedule migration tasks.`,
+      header: t("cassandra.upgradeTitle"),
+      message: t("cassandra.upgradeConfirm", { current: data?.current.version, latest: data?.latest.version }),
     });
     if (!confirmed) return;
 
@@ -45,10 +46,10 @@ export default function Cassandra() {
     try {
       const result = await upgradeCassandraToLatest();
       toast({
-        title: "Upgrade scheduled",
+        title: t("cassandra.upgradeScheduled"),
         description: (
           <span>
-            Task started:{" "}
+            {t("common.taskStarted")}{" "}
             <Link to={`/task/${result.taskId}`} className="underline text-blue-600">
               {result.taskId}
             </Link>
@@ -58,7 +59,7 @@ export default function Cassandra() {
       await refresh();
     } catch (err) {
       toast({
-        title: "Error upgrading schema",
+        title: t("cassandra.errorUpgrading"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -68,7 +69,7 @@ export default function Cassandra() {
 
   return (
     <div className="p-4 w-fit">
-      <Header headerTitle="Cassandra" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle={t("cassandra.title")} headerSubTitle={t("cassandra.subtitle")} docuUrl={docuUrl} />
 
       <div className="mt-4">
         {isLoading && (
@@ -82,11 +83,11 @@ export default function Cassandra() {
         {data && (
           <div className="p-4 bg-gray-50 rounded-2 space-y-4">
             <div className="flex justify-between items-center py-1">
-              <span className="text-sm text-gray-600">Current schema version</span>
+              <span className="text-sm text-gray-600">{t("cassandra.currentVersion")}</span>
               <strong className="text-sm">{data.current.version}</strong>
             </div>
             <div className="flex justify-between items-center py-1">
-              <span className="text-sm text-gray-600">Latest available version</span>
+              <span className="text-sm text-gray-600">{t("cassandra.latestVersion")}</span>
               <strong className="text-sm">{data.latest.version}</strong>
             </div>
 
@@ -94,7 +95,7 @@ export default function Cassandra() {
 
             {isUpToDate ? (
               <Button disabled className="rounded-sm opacity-50 cursor-not-allowed">
-                Already at latest version
+                {t("cassandra.alreadyLatest")}
               </Button>
             ) : canUpgrade ? (
               <Button
@@ -103,7 +104,7 @@ export default function Cassandra() {
                 disabled={upgrading}
               >
                 {upgrading && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-                Upgrade to version {data.latest.version}
+                {t("cassandra.upgradeButton", { version: data.latest.version })}
               </Button>
             ) : null}
           </div>

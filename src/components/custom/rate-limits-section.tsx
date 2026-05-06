@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, Loader2, Save } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
@@ -22,13 +23,13 @@ const EMPTY: RateLimits = {
   mailsReceivedPerDays: null,
 };
 
-const FIELDS: { key: keyof RateLimits; label: string }[] = [
-  { key: "mailsSentPerMinute", label: "Mails sent / minute" },
-  { key: "mailsSentPerHours", label: "Mails sent / hour" },
-  { key: "mailsSentPerDays", label: "Mails sent / day" },
-  { key: "mailsReceivedPerMinute", label: "Mails received / minute" },
-  { key: "mailsReceivedPerHours", label: "Mails received / hour" },
-  { key: "mailsReceivedPerDays", label: "Mails received / day" },
+const FIELD_KEYS: (keyof RateLimits)[] = [
+  "mailsSentPerMinute",
+  "mailsSentPerHours",
+  "mailsSentPerDays",
+  "mailsReceivedPerMinute",
+  "mailsReceivedPerHours",
+  "mailsReceivedPerDays",
 ];
 
 interface Props {
@@ -39,6 +40,7 @@ interface Props {
 }
 
 export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, defaultOpen, canUpdate = true }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
@@ -80,10 +82,10 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
     setSaving(true);
     try {
       await updateRateLimits(form);
-      toast({ title: "Rate limits updated" });
+      toast({ title: t("rateLimits.updated") });
     } catch (err) {
       toast({
-        title: "Error updating rate limits",
+        title: t("rateLimits.errorUpdating"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -98,7 +100,7 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Rate Limiting
+        {t("rateLimits.sectionTitle")}
       </button>
 
       {open && (
@@ -110,25 +112,25 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
           ) : (
             <div className="p-4 bg-gray-50 rounded-2 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                {FIELDS.map(({ key, label }) => (
+                {FIELD_KEYS.map((key) => (
                   <div key={key} className="flex items-center justify-between gap-3">
-                    <label className="text-sm text-gray-600 whitespace-nowrap">{label}</label>
+                    <label className="text-sm text-gray-600 whitespace-nowrap">{t(`rateLimits.${key}`)}</label>
                     <input
                       type="number"
                       value={form[key] === null ? "" : form[key]}
                       onChange={(e) => handleChange(key, e.target.value)}
-                      placeholder="no limit"
+                      placeholder={t("rateLimits.noLimit")}
                       className="w-28 px-3 py-1.5 border rounded-md text-sm text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-400">Leave empty for no limit (null).</p>
+              <p className="text-xs text-gray-400">{t("rateLimits.noLimitHint")}</p>
               {canUpdate && (
                 <div className="flex justify-end">
                   <Button size="sm" onClick={handleSave} disabled={saving}>
                     {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
-                    Save
+                    {t("common.save")}
                   </Button>
                 </div>
               )}

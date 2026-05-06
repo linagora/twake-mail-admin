@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { getDomainQuota, updateDomainQuota } from "../api-client";
 import { DomainQuota, DomainQuotaValues } from "../types";
 import { useToast } from "@/hooks/use-toast";
@@ -28,14 +29,14 @@ function formatCount(count: number | null): string {
   return count.toLocaleString();
 }
 
-function QuotaRow({ label, values }: { label: string; values: DomainQuotaValues | null }) {
+function QuotaRow({ label, values, countLabel, sizeLabel }: { label: string; values: DomainQuotaValues | null; countLabel?: string; sizeLabel?: string }) {
   if (!values) return null;
   return (
     <div className="flex justify-between items-center py-1">
       <span className="text-sm text-gray-600 capitalize">{label}</span>
       <span className="text-sm">
-        <span className="mr-4">Count: <strong>{formatCount(values.count)}</strong></span>
-        Size: <strong>{formatSize(values.size)}</strong>
+        <span className="mr-4">{countLabel ?? "Count:"} <strong>{formatCount(values.count)}</strong></span>
+        {sizeLabel ?? "Size:"} <strong>{formatSize(values.size)}</strong>
       </span>
     </div>
   );
@@ -52,6 +53,7 @@ function toBytes(value: number, unit: string): number {
 }
 
 export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const canView = useIsAllowed("GET", "/quota/domains/{domain}");
   const canUpdate = useIsAllowed("PUT", "/quota/domains/{domain}");
@@ -83,7 +85,7 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
   const handleUpdateSize = async () => {
     const raw = parseFloat(sizeInput);
     if (isNaN(raw) || (raw < -1) || raw === 0) {
-      toast({ title: "Invalid size", description: "Enter a positive number or -1 for unlimited." });
+      toast({ title: t("common.invalidSize"), description: t("common.invalidSizeDesc") });
       return;
     }
     const bytes = Math.round(toBytes(raw, sizeUnit));
@@ -92,12 +94,12 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
         count: quota?.domain?.count ?? null,
         size: bytes,
       });
-      toast({ title: "Domain quota size updated" });
+      toast({ title: t("domains.quota.updated") });
       setSizeInput("");
       setShowSizeEdit(false);
       await fetchQuota();
     } catch (err) {
-      toast({ title: "Error updating quota size", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("domains.quota.errorUpdating"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
@@ -108,7 +110,7 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Quota
+        {t("domains.quota.title")}
       </button>
 
       {open && (
@@ -120,10 +122,10 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
           ) : quota ? (
             <div className="p-4 bg-gray-50 rounded-2 space-y-3">
               <div>
-                <h4 className="text-sm font-semibold mb-1">Limits</h4>
-                <QuotaRow label="Computed (effective)" values={quota.computed} />
-                <QuotaRow label="Domain" values={quota.domain} />
-                <QuotaRow label="Global" values={quota.global} />
+                <h4 className="text-sm font-semibold mb-1">{t("common.limits")}</h4>
+                <QuotaRow label={t("common.computedEffective")} values={quota.computed} countLabel={t("common.count")} sizeLabel={t("common.size")} />
+                <QuotaRow label={t("common.domain")} values={quota.domain} countLabel={t("common.count")} sizeLabel={t("common.size")} />
+                <QuotaRow label={t("common.global")} values={quota.global} countLabel={t("common.count")} sizeLabel={t("common.size")} />
               </div>
 
               <hr className="border-gray-200" />
@@ -134,7 +136,7 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
                   className="rounded-sm"
                   onClick={() => setShowSizeEdit(!showSizeEdit)}
                 >
-                  Update size limit
+                  {t("common.updateSizeLimit")}
                 </Button>
               )}
 
@@ -145,7 +147,7 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
                     value={sizeInput}
                     onChange={(e) => setSizeInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleUpdateSize()}
-                    placeholder="-1 for unlimited"
+                    placeholder={t("common.sizeUnlimited")}
                     className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <select
@@ -163,13 +165,13 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
                     disabled={!sizeInput.trim()}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Save
+                    {t("common.save")}
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">Could not load quota.</p>
+            <p className="text-sm text-muted-foreground">{t("domains.quota.couldNotLoad")}</p>
           )}
 
         </div>

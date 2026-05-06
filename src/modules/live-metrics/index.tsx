@@ -1,11 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 import { Loader2, RefreshCw, Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getMetrics } from "./api-client";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
-
-const headerSubTitle = "Live Prometheus metrics from the server.";
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/metrics.html";
 
 interface MetricFamily {
@@ -58,6 +57,7 @@ function formatValue(val: string): string {
 }
 
 export default function LiveMetrics() {
+  const { t } = useTranslation();
   const fetchMetrics = useCallback(() => getMetrics(), []);
   const { data: raw, isLoading, refresh } = useFetchData<string>(fetchMetrics);
   const [search, setSearch] = useState("");
@@ -84,7 +84,7 @@ export default function LiveMetrics() {
 
   return (
     <div className="p-4">
-      <Header headerTitle="Live Metrics" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle={t("sidebar.liveMetrics")} headerSubTitle={t("liveMetrics.subtitle")} docuUrl={docuUrl} />
 
       <div className="mt-4 flex items-center gap-2">
         <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>

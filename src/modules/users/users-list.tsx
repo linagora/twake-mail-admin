@@ -4,10 +4,12 @@ import { getUsers } from "./api-client";
 import { GetUsersResponseType } from "./types";
 import { useMemo, useState } from "react";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { useTranslation } from "react-i18next";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function UsersList() {
+  const { t } = useTranslation();
   const {
     data: usersResult,
     isLoading,
@@ -47,15 +49,15 @@ export default function UsersList() {
           <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
         </div>
       )}
-      {error && <p className="text-red-500 mt-4">Error: {error}</p>}
+      {error && <p className="text-red-500 mt-4">{t("common.errorPrefix", { message: error })}</p>}
       <input
         type="text"
         value={search}
         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-        placeholder="Search users..."
+        placeholder={t("users.searchPlaceholder")}
         className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
-      <p>List</p>
+
       {filteredUsers.length > 0 && (
         <PaginationControls
           onFirst={() => goToPage(1)}
@@ -64,7 +66,7 @@ export default function UsersList() {
           onLast={() => goToPage(totalPages)}
           disabledPrev={page <= 1}
           disabledNext={page >= totalPages}
-          label={`Page ${page} / ${totalPages} — Total: ${filteredUsers.length}`}
+          label={t("common.page", { page, totalPages, total: filteredUsers.length })}
         />
       )}
       <div>

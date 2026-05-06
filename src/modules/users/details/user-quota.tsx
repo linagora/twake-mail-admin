@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -24,14 +25,14 @@ function formatCount(count: number | null): string {
   return count.toLocaleString();
 }
 
-function QuotaRow({ label, values }: { label: string; values: QuotaValues | null }) {
+function QuotaRow({ label, values, countLabel, sizeLabel }: { label: string; values: QuotaValues | null; countLabel: string; sizeLabel: string }) {
   if (!values) return null;
   return (
     <div className="flex justify-between items-center py-1">
       <span className="text-sm text-gray-600 capitalize">{label}</span>
       <span className="text-sm">
-        <span className="mr-4">Count: <strong>{formatCount(values.count)}</strong></span>
-        Size: <strong>{formatSize(values.size)}</strong>
+        <span className="mr-4">{countLabel} <strong>{formatCount(values.count)}</strong></span>
+        {sizeLabel} <strong>{formatSize(values.size)}</strong>
       </span>
     </div>
   );
@@ -42,6 +43,7 @@ interface Props {
 }
 
 export default function UserQuota({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/quota/users/{username}");
@@ -75,33 +77,33 @@ export default function UserQuota({ username }: Props) {
   const handleUpdateSize = async () => {
     const raw = parseFloat(sizeInput);
     if (isNaN(raw) || (raw < -1) || raw === 0) {
-      toast({ title: "Invalid size", description: "Enter a positive number or -1 for unlimited." });
+      toast({ title: t("common.invalidSize"), description: t("common.invalidSizeDesc") });
       return;
     }
     const value = Math.round(toBytes(raw, sizeUnit));
     try {
       await updateUserQuotaSize(username, value);
-      toast({ title: "Quota size updated" });
+      toast({ title: t("common.quotaSizeUpdated") });
       setSizeInput("");
       setShowSizeEdit(false);
       await refresh();
     } catch (err) {
-      toast({ title: "Error updating quota size", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("common.errorUpdatingQuota"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
   const handleResetSize = async () => {
     const confirmed = await confirm({
-      header: "Reset Quota Size",
-      message: `Reset the quota size for "${username}" to domain default?`,
+      header: t("common.resetQuotaSize"),
+      message: t("users.quota.resetConfirm", { username }),
     });
     if (!confirmed) return;
     try {
       await deleteUserQuotaSize(username);
-      toast({ title: "Quota size reset to domain default" });
+      toast({ title: t("common.quotaSizeReset") });
       await refresh();
     } catch (err) {
-      toast({ title: "Error resetting quota size", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("common.errorResettingQuota"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
@@ -112,7 +114,7 @@ export default function UserQuota({ username }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Quota
+        {t("users.quota.title")}
       </button>
 
       {open && (
@@ -123,24 +125,24 @@ export default function UserQuota({ username }: Props) {
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {quota && (
             <div className="p-4 bg-gray-50 rounded-2 space-y-3">
               <div>
-                <h4 className="text-sm font-semibold mb-1">Occupation</h4>
+                <h4 className="text-sm font-semibold mb-1">{t("common.occupation")}</h4>
                 <div className="flex justify-between items-center py-1">
-                  <span className="text-sm text-gray-600">Used</span>
+                  <span className="text-sm text-gray-600">{t("common.used")}</span>
                   <span className="text-sm">
-                    <span className="mr-4">Count: <strong>{formatCount(quota.occupation.count)}</strong></span>
-                    Size: <strong>{formatSize(quota.occupation.size)}</strong>
+                    <span className="mr-4">{t("common.count")} <strong>{formatCount(quota.occupation.count)}</strong></span>
+                    {t("common.size")} <strong>{formatSize(quota.occupation.size)}</strong>
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-1">
-                  <span className="text-sm text-gray-600">Ratio</span>
+                  <span className="text-sm text-gray-600">{t("common.ratio")}</span>
                   <span className="text-sm">
-                    <span className="mr-4">Count: <strong>{(quota.occupation.ratio.count * 100).toFixed(1)}%</strong></span>
-                    <span className="mr-4">Size: <strong>{(quota.occupation.ratio.size * 100).toFixed(1)}%</strong></span>
+                    <span className="mr-4">{t("common.count")} <strong>{(quota.occupation.ratio.count * 100).toFixed(1)}%</strong></span>
+                    <span className="mr-4">{t("common.size")} <strong>{(quota.occupation.ratio.size * 100).toFixed(1)}%</strong></span>
                     Max: <strong>{(quota.occupation.ratio.max * 100).toFixed(1)}%</strong>
                   </span>
                 </div>
@@ -155,11 +157,11 @@ export default function UserQuota({ username }: Props) {
               <hr className="border-gray-200" />
 
               <div>
-                <h4 className="text-sm font-semibold mb-1">Limits</h4>
-                <QuotaRow label="Computed (effective)" values={quota.computed} />
-                <QuotaRow label="User" values={quota.user} />
-                <QuotaRow label="Domain" values={quota.domain} />
-                <QuotaRow label="Global" values={quota.global} />
+                <h4 className="text-sm font-semibold mb-1">{t("common.limits")}</h4>
+                <QuotaRow label={t("common.computedEffective")} values={quota.computed} countLabel={t("common.count")} sizeLabel={t("common.size")} />
+                <QuotaRow label={t("users.quota.user")} values={quota.user} countLabel={t("common.count")} sizeLabel={t("common.size")} />
+                <QuotaRow label={t("common.domain")} values={quota.domain} countLabel={t("common.count")} sizeLabel={t("common.size")} />
+                <QuotaRow label={t("common.global")} values={quota.global} countLabel={t("common.count")} sizeLabel={t("common.size")} />
               </div>
 
               <hr className="border-gray-200" />
@@ -171,7 +173,7 @@ export default function UserQuota({ username }: Props) {
                     className="rounded-sm"
                     onClick={() => setShowSizeEdit(!showSizeEdit)}
                   >
-                    Update size limit
+                    {t("common.updateSizeLimit")}
                   </Button>
                 )}
                 {canReset && (
@@ -180,7 +182,7 @@ export default function UserQuota({ username }: Props) {
                     className="rounded-sm"
                     onClick={handleResetSize}
                   >
-                    Reset to domain default
+                    {t("common.resetToDomainDefault")}
                   </Button>
                 )}
               </div>
@@ -192,7 +194,7 @@ export default function UserQuota({ username }: Props) {
                     value={sizeInput}
                     onChange={(e) => setSizeInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleUpdateSize()}
-                    placeholder="-1 for unlimited"
+                    placeholder={t("common.sizeUnlimited")}
                     className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <select
@@ -210,7 +212,7 @@ export default function UserQuota({ username }: Props) {
                     disabled={!sizeInput.trim()}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Save
+                    {t("common.save")}
                   </button>
                 </div>
               )}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { deleteAllUsersData } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function DomainTasks({ domain, defaultOpen }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canDeleteData = useIsAllowed("POST", "/domains/{domain}?action=deleteData");
@@ -22,8 +24,8 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
 
   const handleDeleteAllUsersData = async () => {
     const confirmed = await confirm({
-      header: "Delete All Users Data",
-      message: `This will delete the data of ALL users belonging to "${domain}". This action cannot be undone. Are you sure?`,
+      header: t("domains.tasks.deleteAllDataTitle"),
+      message: t("domains.tasks.deleteAllDataConfirm", { domain }),
     });
     if (!confirmed) return;
 
@@ -31,12 +33,12 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
     try {
       const { taskId } = await deleteAllUsersData(domain);
       toast({
-        title: "Task started",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
+        title: t("common.taskStarted"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{t("common.taskLink", { taskId })}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error deleting users data",
+        title: t("domains.tasks.errorDeletingData"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -51,7 +53,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Tasks
+        {t("domains.tasks.title")}
       </button>
 
       {open && canDeleteData && (
@@ -62,10 +64,10 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
             disabled={deleting}
           >
             {deleting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-            Delete all users data
+            {t("domains.tasks.deleteAllData")}
           </Button>
           <p className="text-xs text-muted-foreground mt-2">
-            Deletes the data of every user belonging to this domain. A task will be created to track progress.
+            {t("domains.tasks.deleteAllDataDesc")}
           </p>
         </div>
       )}

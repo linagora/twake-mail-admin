@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { getAllChannels } from "./api-client";
 import { NetworkChannel } from "./types";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -85,6 +86,7 @@ function PieChart({ slices }: { slices: PieSlice[] }) {
 }
 
 export default function ChannelsUserAgent() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const fetchAll = useCallback(() => getAllChannels(), []);
   const { data, isLoading, refresh } = useFetchData<NetworkChannel[]>(fetchAll);
@@ -97,27 +99,27 @@ export default function ChannelsUserAgent() {
     <div className="mt-4">
       <div className="flex items-center gap-3 mb-4">
         <Button variant="outline" size="sm" onClick={() => navigate("/network-channels")}>
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back
+          <ArrowLeft className="w-4 h-4 mr-1" /> {t("networkChannels.backButton")}
         </Button>
         <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
         </Button>
         {isLoading && (
           <span className="text-sm text-muted-foreground flex items-center gap-1">
-            <Loader2 className="w-3 h-3 animate-spin" /> Loading…
+            <Loader2 className="w-3 h-3 animate-spin" /> {t("common.loading")}
           </span>
         )}
       </div>
 
       {!isLoading && total === 0 && (
-        <p className="text-sm text-muted-foreground">No active channels.</p>
+        <p className="text-sm text-muted-foreground">{t("networkChannels.noActiveChannels")}</p>
       )}
 
       {total > 0 && (
         <div className="flex flex-col md:flex-row gap-8 items-start">
           <PieChart slices={slices} />
           <div className="flex flex-col gap-2 min-w-0">
-            <p className="text-sm text-muted-foreground mb-1">Total: {total} connection{total > 1 ? "s" : ""}</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("networkChannels.totalConnections", { count: total })}</p>
             {slices.map((s, i) => (
               <div key={i} className="flex items-center gap-2 text-sm">
                 <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: s.color }} />

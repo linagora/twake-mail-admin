@@ -32,16 +32,12 @@ const Header: React.FC<HeaderProps> = ({
       <div>
         {headerTitle && (
           <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">
-            {headerTitle} (
-            <a href={docuUrl} target="_blank" className="text-blue-500 underline">
-              doc
-            </a>
-            )
+            {headerTitle}{!headerSubTitle && (<> (<a href={docuUrl} target="_blank" className="text-blue-500 underline">doc</a>)</>)}
           </h2>
         )}
         {headerSubTitle && (
-          <p className={`leading-7 text-muted-foreground ${headerTitle ? 'mt-4' : ''}`}>
-            {headerSubTitle}{!headerTitle && (<> (<a href={docuUrl} target="_blank" className="text-blue-500 underline">doc</a>)</>)}
+          <p className={`leading-7 text-muted-foreground ${headerTitle ? 'mt-1' : ''}`}>
+            {headerSubTitle} (<a href={docuUrl} target="_blank" className="text-blue-500 underline">doc</a>)
           </p>
         )}
       </div>

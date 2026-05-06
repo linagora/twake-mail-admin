@@ -15,24 +15,26 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
+import { useTranslation } from "react-i18next";
 
 function CreateMailRepositoryForm({
   onChange,
 }: {
   onChange: (field: "path" | "protocol", value: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-3 py-2">
       <div className="space-y-1">
-        <label className="text-sm font-medium">Repository path <span className="text-red-500">*</span></label>
+        <label className="text-sm font-medium">{t("mailRepositories.pathLabel")} <span className="text-red-500">*</span></label>
         <input
           className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="e.g. mailRepo"
+          placeholder={t("mailRepositories.pathPlaceholder")}
           onChange={(e) => onChange("path", e.target.value)}
         />
       </div>
       <div className="space-y-1">
-        <label className="text-sm font-medium">Protocol <span className="text-red-500">*</span></label>
+        <label className="text-sm font-medium">{t("mailRepositories.protocolLabel")} <span className="text-red-500">*</span></label>
         <input
           className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           defaultValue="cassandra"
@@ -44,6 +46,7 @@ function CreateMailRepositoryForm({
 }
 
 export default function MailRepositoriesList() {
+  const { t } = useTranslation();
   const confirm = useConfirm();
   const { toast } = useToast();
   const canCreate = useIsAllowed("PUT", "/mailRepositories/{encodedPath}");
@@ -100,10 +103,10 @@ export default function MailRepositoriesList() {
     const command =
       "curl -XPATCH http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails?action=reprocess&";
     const result = await confirm({
-      header: "Run Task",
+      header: t("mailRepositories.runTaskHeader"),
       message: (
         <ConfirmTaskContent
-          message={<p>Do you want to run task <b>Reprocess Mail Repository</b>?</p>}
+          message={<p>{t("mailRepositories.reprocessRepoConfirm")}</p>}
           command={command}
           params={params}
           getParamValues={(key, value) => {
@@ -118,10 +121,10 @@ export default function MailRepositoriesList() {
     }
     const { taskId } = await reprocessMailRepository(path, paramValues);
     toast({
-      title: "Run Task Successfully",
+      title: t("mailRepositories.runTaskSuccess"),
       description: (
         <p>
-          Task{" "}
+          {t("mailRepositories.taskLabel")}{" "}
           <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
             {taskId}
           </Link>
@@ -132,7 +135,7 @@ export default function MailRepositoriesList() {
   const handleCreateRepository = async () => {
     const values = { path: "", protocol: "cassandra" };
     const result = await confirm({
-      header: "Create Mail Repository",
+      header: t("mailRepositories.createTitle"),
       message: (
         <CreateMailRepositoryForm
           onChange={(field, value) => {
@@ -143,30 +146,30 @@ export default function MailRepositoriesList() {
     });
     if (!result) return;
     if (!values.path || !values.protocol) {
-      toast({ title: "Repository path and protocol are required", variant: "destructive" });
+      toast({ title: t("mailRepositories.pathAndProtocolRequired"), variant: "destructive" });
       return;
     }
     await createMailRepository(
       encodeURIComponent(values.path),
       values.protocol
     );
-    toast({ title: "Mail repository created successfully" });
+    toast({ title: t("mailRepositories.created") });
     refresh();
   };
 
   const handleMoveAll = async (sourcePath: string) => {
     const otherRepos = repositoriesWithSize.filter((r) => r.path !== sourcePath);
     if (otherRepos.length === 0) {
-      toast({ title: "No other repositories available to move mails to" });
+      toast({ title: t("mailRepositories.noOtherRepositories") });
       return;
     }
     let targetRepo = otherRepos[0].path;
     const result = await confirm({
-      header: "Move All Mails",
+      header: t("mailRepositories.moveTitle"),
       message: (
         <div className="space-y-2 py-2">
           <p className="text-sm">
-            Move all mails from <b>{sourcePath}</b> to:
+            {t("mailRepositories.moveConfirm", { sourcePath })}
           </p>
           <select
             className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -187,30 +190,30 @@ export default function MailRepositoriesList() {
     if (!result) return;
     try {
       await moveAllMails(encodeURIComponent(sourcePath), targetRepo);
-      toast({ title: "All mails moved successfully" });
+      toast({ title: t("mailRepositories.moveDone") });
       refresh();
     } catch (err: any) {
       toast({
-        title: "Error moving mails",
-        description: err?.response?.data?.message || err?.message || "Failed to move mails",
+        title: t("mailRepositories.errorMoving"),
+        description: err?.response?.data?.message || err?.message || t("mailRepositories.errorMoving"),
       });
     }
   };
 
   const handleClearTask = async (path: string) => {
     const result = await confirm({
-      header: "Run Task",
-      message: `Do you want to clear the mail repository: ${path}.`,
+      header: t("mailRepositories.runTaskHeader"),
+      message: t("mailRepositories.clearConfirm", { path }),
     });
     if (!result) {
       return;
     }
     const { taskId } = await clearMailRepository(path);
     toast({
-      title: "Run Task Successfully",
+      title: t("mailRepositories.runTaskSuccess"),
       description: (
         <p>
-          Task{" "}
+          {t("mailRepositories.taskLabel")}{" "}
           <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
             {taskId}
           </Link>
@@ -229,14 +232,14 @@ export default function MailRepositoriesList() {
           </div>
         )}
         <div className="flex items-center justify-between mt-4">
-          <p>List</p>
+          <p>{t("common.list")}</p>
           {canCreate && (
             <button
               className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700"
               onClick={handleCreateRepository}
             >
               <Plus className="w-4 h-4" />
-              New repository
+              {t("mailRepositories.newRepository")}
             </button>
           )}
         </div>
@@ -261,7 +264,7 @@ export default function MailRepositoriesList() {
                 {canReprocess && (
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"
-                    title="Reprocess all mails"
+                    title={t("mailRepositories.reprocessAll")}
                     onClick={() => {
                       handleReprocessTask(result.path);
                     }}
@@ -273,7 +276,7 @@ export default function MailRepositoriesList() {
                 {canMove && (
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"
-                    title="Move all mails to another repository"
+                    title={t("mailRepositories.moveAll")}
                     onClick={() => {
                       handleMoveAll(result.path);
                     }}
@@ -285,7 +288,7 @@ export default function MailRepositoriesList() {
                 {canClear && (
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"
-                    title="Clear all mails"
+                    title={t("mailRepositories.clearAll")}
                     onClick={() => {
                       handleClearTask(result.path);
                     }}

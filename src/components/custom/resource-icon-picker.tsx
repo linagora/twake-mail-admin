@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown } from "lucide-react";
 
 export const RESOURCE_ICONS = [
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function ResourceIconPicker({ value, onChange }: Props) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -35,8 +37,8 @@ export default function ResourceIconPicker({ value, onChange }: Props) {
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center gap-2 px-3 py-2 border rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-gray-50"
       >
-        <img src={`/icons/resources/${value}.svg`} alt={value} className="w-5 h-5 shrink-0" />
-        <span className="flex-1 text-left">{value}</span>
+        <img src={`/icons/resources/${value}.svg`} alt={t(`resourceIcons.${value}`)} className="w-5 h-5 shrink-0" />
+        <span className="flex-1 text-left">{t(`resourceIcons.${value}`)}</span>
         <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
       </button>
 
@@ -49,8 +51,8 @@ export default function ResourceIconPicker({ value, onChange }: Props) {
               onClick={() => { onChange(icon); setOpen(false); }}
               className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-blue-50 transition ${icon === value ? "bg-blue-100 font-medium" : ""}`}
             >
-              <img src={`/icons/resources/${icon}.svg`} alt={icon} className="w-5 h-5 shrink-0" />
-              <span>{icon}</span>
+              <img src={`/icons/resources/${icon}.svg`} alt={t(`resourceIcons.${icon}`)} className="w-5 h-5 shrink-0" />
+              <span>{t(`resourceIcons.${icon}`)}</span>
             </button>
           ))}
         </div>

@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function UserDelegation({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/authorizedUsers");
@@ -44,13 +46,13 @@ export default function UserDelegation({ username }: Props) {
     if (!user) return;
     try {
       await addDelegatedUser(username, user);
-      toast({ title: "Delegated user added" });
+      toast({ title: t("users.delegation.added") });
       setNewUser("");
       setShowCreateInput(false);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error adding delegated user",
+        title: t("users.delegation.errorAdding"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -58,17 +60,17 @@ export default function UserDelegation({ username }: Props) {
 
   const handleRemove = async (delegatedUser: string) => {
     const confirmed = await confirm({
-      header: "Remove Delegated User",
-      message: `Remove delegation of "${delegatedUser}" from ${username}?`,
+      header: t("users.delegation.removeTitle"),
+      message: t("users.delegation.removeConfirm", { delegatedUser, username }),
     });
     if (!confirmed) return;
     try {
       await removeDelegatedUser(username, delegatedUser);
-      toast({ title: "Delegated user removed" });
+      toast({ title: t("users.delegation.removed") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error removing delegated user",
+        title: t("users.delegation.errorRemoving"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -82,7 +84,7 @@ export default function UserDelegation({ username }: Props) {
           className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
         >
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Delegated Users
+          {t("users.delegation.title")}
           {delegated && (
             <span className="text-sm font-normal text-gray-500">
               ({delegated.length})
@@ -93,7 +95,7 @@ export default function UserDelegation({ username }: Props) {
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
-            title="Add delegated user"
+            title={t("users.delegation.addTooltip")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -109,28 +111,28 @@ export default function UserDelegation({ username }: Props) {
                 value={newUser}
                 onChange={(e) => setNewUser(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-                placeholder="user@domain.tld"
+                placeholder={t("users.delegation.placeholder")}
                 className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {delegatedUserStatus === "checking" && (
-                <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">Checking...</span>
+                <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>
               )}
               {delegatedUserStatus === "exists" && (
                 <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
                   <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
-                  User exists
+                  {t("common.userExists")}
                 </span>
               )}
               {delegatedUserStatus === "not_found" && (
                 <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
                   <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
-                  User not found
+                  {t("common.userNotFound")}
                 </span>
               )}
               {delegatedUserStatus === "invalid" && (
                 <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap">
                   <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
-                  Invalid username
+                  {t("common.invalidUsername")}
                 </span>
               )}
               <button
@@ -138,7 +140,7 @@ export default function UserDelegation({ username }: Props) {
                 disabled={!newUser.trim()}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Add
+                {t("common.add")}
               </button>
             </div>
           )}
@@ -148,7 +150,7 @@ export default function UserDelegation({ username }: Props) {
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {delegated && (
             <div>
@@ -165,7 +167,7 @@ export default function UserDelegation({ username }: Props) {
                     <button
                       onClick={() => handleRemove(user)}
                       className="p-2 rounded-md hover:bg-gray-200"
-                      title="Remove delegated user"
+                      title={t("users.delegation.removeTooltip")}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
@@ -173,7 +175,7 @@ export default function UserDelegation({ username }: Props) {
                 </div>
               ))}
               {delegated.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No delegated users.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("users.delegation.empty")}</p>
               )}
             </div>
           )}

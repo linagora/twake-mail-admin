@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function UserForwards({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/address/forwards/{username}");
@@ -57,15 +59,15 @@ export default function UserForwards({ username }: Props) {
     try {
       if (userInForwards) {
         await removeUserForward(username, username);
-        toast({ title: "User removed from forward destinations" });
+        toast({ title: t("users.forwards.removedFromDestinations") });
       } else {
         await addUserForward(username, username);
-        toast({ title: "User added to forward destinations" });
+        toast({ title: t("users.forwards.addedToDestinations") });
       }
       await refresh();
     } catch (err) {
       toast({
-        title: "Error updating forward",
+        title: t("users.forwards.errorUpdating"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -76,13 +78,13 @@ export default function UserForwards({ username }: Props) {
     if (!dest) return;
     try {
       await addUserForward(username, dest);
-      toast({ title: "Forward added successfully" });
+      toast({ title: t("users.forwards.added") });
       setNewForward("");
       setShowCreateInput(false);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error adding forward",
+        title: t("users.forwards.errorAdding"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -90,17 +92,17 @@ export default function UserForwards({ username }: Props) {
 
   const handleRemove = async (destination: string) => {
     const confirmed = await confirm({
-      header: "Remove Forward",
-      message: `Remove forward to "${destination}" from ${username}?`,
+      header: t("users.forwards.removeTitle"),
+      message: t("users.forwards.removeConfirm", { destination, username }),
     });
     if (!confirmed) return;
     try {
       await removeUserForward(username, destination);
-      toast({ title: "Forward removed successfully" });
+      toast({ title: t("users.forwards.removed") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error removing forward",
+        title: t("users.forwards.errorRemoving"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -114,7 +116,7 @@ export default function UserForwards({ username }: Props) {
           className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
         >
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Forwards
+          {t("users.forwards.title")}
           {forwards && (
             <span className="text-sm font-normal text-gray-500">
               ({forwards.length})
@@ -125,7 +127,7 @@ export default function UserForwards({ username }: Props) {
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
-            title="Add forward"
+            title={t("users.forwards.addTooltip")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -141,7 +143,7 @@ export default function UserForwards({ username }: Props) {
                 value={newForward}
                 onChange={(e) => setNewForward(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-                placeholder="destination@domain.com"
+                placeholder={t("users.forwards.placeholder")}
                 className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -149,7 +151,7 @@ export default function UserForwards({ username }: Props) {
                 disabled={!newForward.trim()}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Add
+                {t("common.add")}
               </button>
             </div>
           )}
@@ -159,7 +161,7 @@ export default function UserForwards({ username }: Props) {
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {forwards && (
             <div>
@@ -171,7 +173,7 @@ export default function UserForwards({ username }: Props) {
                   onCheckedChange={handleToggleUserReceives}
                 />
                 <label htmlFor="user-receives" className="text-sm font-medium cursor-pointer select-none">
-                  User still receives emails
+                  {t("users.forwards.stillReceives")}
                 </label>
               </div>
 
@@ -184,14 +186,14 @@ export default function UserForwards({ username }: Props) {
                     <span className="text-gray-500 mr-2">{index + 1}/</span>
                     {fwd.mailAddress}
                     {fwd.mailAddress === username && (
-                      <span className="ml-2 text-xs text-blue-500">(self)</span>
+                      <span className="ml-2 text-xs text-blue-500">{t("users.forwards.selfLabel")}</span>
                     )}
                   </h4>
                   {canRemove && (
                     <button
                       onClick={() => handleRemove(fwd.mailAddress)}
                       className="p-2 rounded-md hover:bg-gray-200"
-                      title="Remove forward"
+                      title={t("users.forwards.removeTooltip")}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
@@ -199,7 +201,7 @@ export default function UserForwards({ username }: Props) {
                 </div>
               ))}
               {forwards.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No forwards configured.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("users.forwards.empty")}</p>
               )}
             </div>
           )}

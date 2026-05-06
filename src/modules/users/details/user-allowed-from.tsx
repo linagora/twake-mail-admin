@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function UserAllowedFrom({ username }: Props) {
+  const { t } = useTranslation();
   const canView = useIsAllowed("GET", "/users/{username}/allowedFromHeaders");
   const fetchHeaders = useCallback(() => getAllowedFromHeaders(username), [username]);
   const { data: headers, isLoading, error } = useFetchData<string[]>(canView ? fetchHeaders : null);
@@ -24,7 +26,7 @@ export default function UserAllowedFrom({ username }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Allowed From Headers
+        {t("users.allowedFrom.title")}
         {headers && (
           <span className="text-sm font-normal text-gray-500">
             ({headers.length})
@@ -39,7 +41,7 @@ export default function UserAllowedFrom({ username }: Props) {
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {headers && (
             <div>
@@ -55,7 +57,7 @@ export default function UserAllowedFrom({ username }: Props) {
                 </div>
               ))}
               {headers.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No allowed From headers.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("users.allowedFrom.empty")}</p>
               )}
             </div>
           )}

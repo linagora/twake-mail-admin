@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Pencil, Trash2, Save, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserLabels, createUserLabel, updateUserLabel, deleteUserLabel } from "../api-client";
@@ -22,6 +23,7 @@ const EMPTY_CREATE: UserLabelCreatePayload = {
 };
 
 export default function UserLabels({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/labels");
@@ -98,8 +100,8 @@ export default function UserLabels({ username }: Props) {
 
   const handleDelete = async (label: UserLabel) => {
     const confirmed = await confirm({
-      header: "Delete Label",
-      message: `Delete label "${label.displayName}"?`,
+      header: t("users.labels.deleteTitle"),
+      message: t("users.labels.deleteConfirm", { displayName: label.displayName }),
     });
     if (!confirmed) return;
     try {

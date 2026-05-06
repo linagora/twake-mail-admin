@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Eraser, Plus, Search, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -33,6 +34,7 @@ interface Props {
 }
 
 export default function UserMailboxes({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/mailboxes");
@@ -86,20 +88,20 @@ export default function UserMailboxes({ username }: Props) {
     if (!name) return;
     if (INVALID_MAILBOX_PATTERN.test(name)) {
       toast({
-        title: "Invalid mailbox name",
-        description: "Mailbox name must not contain % or * characters, nor start with #.",
+        title: t("users.mailboxes.invalidName"),
+        description: t("users.mailboxes.invalidNameDesc"),
       });
       return;
     }
     try {
       await createUserMailbox(username, name);
-      toast({ title: "Mailbox created successfully" });
+      toast({ title: t("users.mailboxes.created") });
       setNewMailbox("");
       setShowCreateInput(false);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error creating mailbox",
+        title: t("users.mailboxes.errorCreating"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -107,17 +109,17 @@ export default function UserMailboxes({ username }: Props) {
 
   const handleDelete = async (mailboxName: string) => {
     const confirmed = await confirm({
-      header: "Delete Mailbox",
-      message: `Are you sure you want to delete mailbox "${mailboxName}" and all its children?`,
+      header: t("users.mailboxes.deleteTitle"),
+      message: t("users.mailboxes.deleteConfirm", { mailboxName }),
     });
     if (!confirmed) return;
     try {
       await deleteUserMailbox(username, mailboxName);
-      toast({ title: "Mailbox deleted successfully" });
+      toast({ title: t("users.mailboxes.deleted") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error deleting mailbox",
+        title: t("users.mailboxes.errorDeleting"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -125,19 +127,19 @@ export default function UserMailboxes({ username }: Props) {
 
   const handleClearMailbox = async (mailboxName: string) => {
     const confirmed = await confirm({
-      header: "Clear Mailbox Content",
-      message: `Are you sure you want to delete all messages in "${mailboxName}"?`,
+      header: t("users.mailboxes.clearTitle"),
+      message: t("users.mailboxes.clearConfirm", { mailboxName }),
     });
     if (!confirmed) return;
     try {
       const data = await clearMailboxContent(username, mailboxName);
       toast({
-        title: "Task is running",
+        title: t("common.taskRunning"),
         description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error clearing mailbox",
+        title: t("users.mailboxes.errorClearing"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -155,7 +157,7 @@ export default function UserMailboxes({ username }: Props) {
           ) : (
             <ChevronRight className="w-4 h-4" />
           )}
-          Mailboxes
+          {t("users.mailboxes.title")}
           {mailboxes && (
             <span className="text-sm font-normal text-gray-500">
               ({mailboxes.length})
@@ -165,7 +167,7 @@ export default function UserMailboxes({ username }: Props) {
         <Link
           to={`/users/user/${encodeURIComponent(username)}/message-search`}
           className="p-1 rounded-md hover:bg-gray-200 transition text-gray-500 hover:text-blue-600"
-          title="Search messages"
+          title={t("users.mailboxes.searchMessages")}
         >
           <Search className="w-4 h-4" />
         </Link>
@@ -173,7 +175,7 @@ export default function UserMailboxes({ username }: Props) {
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
-            title="Create mailbox"
+            title={t("users.mailboxes.createTooltip")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -189,7 +191,7 @@ export default function UserMailboxes({ username }: Props) {
                 value={newMailbox}
                 onChange={(e) => setNewMailbox(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-                placeholder="New mailbox name (use . for nesting, e.g. INBOX.work)"
+                placeholder={t("users.mailboxes.namePlaceholder")}
                 className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -197,7 +199,7 @@ export default function UserMailboxes({ username }: Props) {
                 disabled={!newMailbox.trim()}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create
+                {t("common.create")}
               </button>
             </div>
           )}
@@ -208,7 +210,7 @@ export default function UserMailboxes({ username }: Props) {
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {mailboxes && (
             <>
@@ -219,7 +221,7 @@ export default function UserMailboxes({ username }: Props) {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                placeholder="Search mailboxes..."
+                placeholder={t("users.mailboxes.searchPlaceholder")}
                 className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
 
@@ -231,7 +233,7 @@ export default function UserMailboxes({ username }: Props) {
                   onLast={() => goToPage(totalPages)}
                   disabledPrev={page <= 1}
                   disabledNext={page >= totalPages}
-                  label={`Page ${page} / ${totalPages} — Total: ${filtered.length}`}
+                  label={t("common.page", { page, totalPages, total: filtered.length })}
                 />
               )}
 
@@ -251,7 +253,7 @@ export default function UserMailboxes({ username }: Props) {
                       <p className="text-xs text-gray-400 mt-1 ml-6">
                         {mailbox.mailboxId}
                         {uuidV1ToDate(mailbox.mailboxId) && (
-                          <span className="ml-2">— Creation date: {uuidV1ToDate(mailbox.mailboxId)}</span>
+                          <span className="ml-2">— {t("users.mailboxes.creationDate")} {uuidV1ToDate(mailbox.mailboxId)}</span>
                         )}
                       </p>
                     </div>
@@ -261,7 +263,7 @@ export default function UserMailboxes({ username }: Props) {
                         <button
                           onClick={() => handleClearMailbox(mailbox.mailboxName)}
                           className="p-2 rounded-md hover:bg-gray-200"
-                          title="Clear mailbox content"
+                          title={t("users.mailboxes.clearTooltip")}
                         >
                           <Eraser className="w-4 h-4 text-red-600" />
                         </button>
@@ -270,7 +272,7 @@ export default function UserMailboxes({ username }: Props) {
                         <button
                           onClick={() => handleDelete(mailbox.mailboxName)}
                           className="p-2 rounded-md hover:bg-gray-200"
-                          title="Delete mailbox"
+                          title={t("users.mailboxes.deleteTooltip")}
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </button>
@@ -281,7 +283,7 @@ export default function UserMailboxes({ username }: Props) {
               </div>
 
               {filtered.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No mailboxes found.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("users.mailboxes.empty")}</p>
               )}
             </>
           )}

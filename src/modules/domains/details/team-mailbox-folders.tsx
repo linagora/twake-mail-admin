@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxFolders, createTeamMailboxFolder, deleteTeamMailboxFolder } from "../api-client";
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export default function TeamMailboxFolders({ domain, mailbox }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes");
@@ -58,20 +60,20 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
     if (!name) return;
     if (INVALID_FOLDER_PATTERN.test(name)) {
       toast({
-        title: "Invalid folder name",
-        description: "Folder name must not contain % or * characters, nor start with #.",
+        title: t("domains.folders.invalidName"),
+        description: t("domains.folders.invalidNameDesc"),
       });
       return;
     }
     try {
       await createTeamMailboxFolder(domain, mailbox, name);
-      toast({ title: "Folder created successfully" });
+      toast({ title: t("domains.folders.created") });
       setNewFolder("");
       setShowCreateInput(false);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error creating folder",
+        title: t("domains.folders.errorCreating"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -79,17 +81,17 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
 
   const handleDelete = async (folderName: string) => {
     const confirmed = await confirm({
-      header: "Delete Folder",
-      message: `Are you sure you want to delete folder "${folderName}"?`,
+      header: t("domains.folders.deleteTitle"),
+      message: t("domains.folders.deleteConfirm", { folderName }),
     });
     if (!confirmed) return;
     try {
       await deleteTeamMailboxFolder(domain, mailbox, folderName);
-      toast({ title: "Folder deleted successfully" });
+      toast({ title: t("domains.folders.deleted") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error deleting folder",
+        title: t("domains.folders.errorDeleting"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -103,7 +105,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
           className="flex items-center gap-1 text-md font-semibold w-full text-left"
         >
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Folders
+          {t("domains.folders.title")}
           {folders && (
             <span className="text-sm font-normal text-gray-500">({folders.length})</span>
           )}
@@ -112,7 +114,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
-            title="Create folder"
+            title={t("domains.folders.createTooltip")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -128,7 +130,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                 value={newFolder}
                 onChange={(e) => setNewFolder(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-                placeholder="New folder name (use . for nesting, e.g. INBOX.work)"
+                placeholder={t("domains.folders.namePlaceholder")}
                 className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -136,7 +138,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                 disabled={!newFolder.trim()}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create
+                {t("common.create")}
               </button>
             </div>
           )}
@@ -158,31 +160,31 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                     disabled={page <= 1}
                     className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    First
+                    {t("common.first")}
                   </button>
                   <button
                     onClick={() => goToPage(page - 1)}
                     disabled={page <= 1}
                     className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Previous
+                    {t("common.previous")}
                   </button>
                   <span className="text-sm font-medium text-center">
-                    Page {page} / {totalPages} — Total: {sorted.length}
+                    {t("common.page", { page, totalPages, total: sorted.length })}
                   </span>
                   <button
                     onClick={() => goToPage(page + 1)}
                     disabled={page >= totalPages}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Next
+                    {t("common.next")}
                   </button>
                   <button
                     onClick={() => goToPage(totalPages)}
                     disabled={page >= totalPages}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Last
+                    {t("common.last")}
                   </button>
                 </div>
               )}
@@ -211,7 +213,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                         <button
                           onClick={() => handleDelete(folder.mailboxName)}
                           className="p-2 rounded-md hover:bg-gray-200"
-                          title="Delete folder"
+                          title={t("domains.folders.deleteTooltip")}
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </button>
@@ -222,7 +224,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
               </div>
 
               {sorted.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No folders.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("domains.folders.empty")}</p>
               )}
             </>
           )}

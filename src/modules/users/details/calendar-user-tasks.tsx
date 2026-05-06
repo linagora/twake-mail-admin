@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { deleteUserData, archiveUserCalendarEvents } from "../api-client";
 import DeleteUserDataForm from "../components/delete-user-data-form";
 import { useToast } from "@/hooks/use-toast";
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export default function CalendarUserTasks({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
@@ -39,7 +41,7 @@ export default function CalendarUserTasks({ username }: Props) {
 
     try {
       const result = await confirm({
-        header: "Delete User Data",
+        header: t("users.tasks.deleteDataTitle"),
         message: (
           <DeleteUserDataForm
             username={username}
@@ -52,11 +54,11 @@ export default function CalendarUserTasks({ username }: Props) {
       setDeleteUserDataLoading(true);
       const data = await deleteUserData(username, currentFromStep || undefined);
       toast({
-        title: "Task is running",
+        title: t("common.taskRunning"),
         description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
-      toast({ title: "Error deleting user data", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("users.tasks.errorDeleteData"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setDeleteUserDataLoading(false);
     }
@@ -66,10 +68,10 @@ export default function CalendarUserTasks({ username }: Props) {
     try {
       const additionalParams: any = {};
       const result = await confirm({
-        header: "Archive Calendar Events",
+        header: t("users.calendarTasks.archiveTitle"),
         message: (
           <ConfirmTaskContent
-            message={<p>Archive calendar events for <strong>{username}</strong>.</p>}
+            message={<p>{t("users.calendarTasks.archiveDesc", { username })}</p>}
             command={`curl -XPOST /calendars/${username}?task=archive`}
             params={ARCHIVE_CALENDAR_PARAMS}
             getParamValues={(key, value) => {
@@ -83,11 +85,11 @@ export default function CalendarUserTasks({ username }: Props) {
       setArchiveCalendarLoading(true);
       const data = await archiveUserCalendarEvents(username, additionalParams);
       toast({
-        title: "Task is running",
+        title: t("common.taskRunning"),
         description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
       });
     } catch (err) {
-      toast({ title: "Error running archive task", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("users.calendarTasks.errorArchive"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setArchiveCalendarLoading(false);
     }
@@ -100,20 +102,20 @@ export default function CalendarUserTasks({ username }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Tasks
+        {t("users.calendarTasks.title")}
       </button>
 
       {open && (
         <div className="mt-2 space-y-2">
           {canArchiveCalendar && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Archive calendar events</p>
+              <p>{t("users.calendarTasks.archiveButton")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleArchiveCalendarEvents}>
                       {archiveCalendarLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -125,13 +127,13 @@ export default function CalendarUserTasks({ username }: Props) {
           )}
           {canDeleteData && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Delete user data</p>
+              <p>{t("users.tasks.deleteData")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteUserData}>
                       {deleteUserDataLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
