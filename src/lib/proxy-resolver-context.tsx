@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { apiClient } from "./apiClient";
 import { appConfig } from "./config";
 import { ProxyResolver, ProxyRule, HttpVerb } from "./proxy-resolver";
@@ -41,6 +42,7 @@ const ProxyResolverContext = createContext<ResolverState>({ status: "loading" })
 // ---------------------------------------------------------------------------
 
 export function ProxyResolverProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const [state, setState] = useState<ResolverState>({ status: "loading" });
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export function ProxyResolverProvider({ children }: { children: ReactNode }) {
   if (state.status === "loading") {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-muted-foreground">Loading…</p>
+        <p className="text-muted-foreground">{t("common.loading")}</p>
       </div>
     );
   }
@@ -76,7 +78,7 @@ export function ProxyResolverProvider({ children }: { children: ReactNode }) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-red-600">
-          Failed to load proxy rules: {state.message}
+          {t("common.proxyRulesError", { message: state.message })}
         </p>
       </div>
     );

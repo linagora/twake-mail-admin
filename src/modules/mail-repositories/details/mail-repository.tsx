@@ -17,6 +17,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { useTranslation } from "react-i18next";
 
 // Define the types for the expected responses
 interface JsonMailResponse {
@@ -64,6 +65,7 @@ const fetchMailData = async (
       link.remove();
     }
   } catch (error) {
+    // error toast handled by caller with translated message
     toast({
       title: "Error fetching failed event JSON",
       description: <ErrorDisplayer error={error} />,
@@ -72,6 +74,7 @@ const fetchMailData = async (
 };
 
 export default function MailRepositoryDetail() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
@@ -168,10 +171,10 @@ export default function MailRepositoryDetail() {
     ];
     const paramValues: { [key: string]: string } = {};
     const confirmed = await confirm({
-      header: "Reprocess Mail",
+      header: t("mailRepositories.reprocessMailHeader"),
       message: (
         <ConfirmTaskContent
-          message={<p>Reprocess mail <b>{mailKey}</b>?</p>}
+          message={<p>{t("mailRepositories.reprocessMailConfirm", { mailKey })}</p>}
           command={`curl -XPATCH 'http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails/${mailKey}?action=reprocess&'`}
           params={params}
           getParamValues={(key, value) => {
@@ -187,10 +190,10 @@ export default function MailRepositoryDetail() {
         processor: paramValues["processor"] || undefined,
       });
       toast({
-        title: "Reprocess scheduled",
+        title: t("mailRepositories.reprocessScheduled"),
         description: (
           <p>
-            Task{" "}
+            {t("mailRepositories.taskLabel")}{" "}
             <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
               {taskId}
             </Link>
@@ -199,7 +202,7 @@ export default function MailRepositoryDetail() {
       });
     } catch (error) {
       toast({
-        title: "Error reprocessing mail",
+        title: t("mailRepositories.errorReprocessing"),
         description: <ErrorDisplayer error={error} />,
       });
     }
@@ -208,20 +211,20 @@ export default function MailRepositoryDetail() {
   const handleRemoveMail = async (mailKey: string) => {
     try {
       const result = await confirm({
-        header: "Run Task",
-        message: `Do you want to clear mail ${mailKey} in the mail repository: ${id}.`,
+        header: t("mailRepositories.removeMailHeader"),
+        message: t("mailRepositories.removeMailConfirm", { mailKey, id }),
       });
       if (!result || !id) {
         return;
       }
       await removeSingleMailFromRepository(encodeURIComponent(id), mailKey);
       toast({
-        title: "Remove Mail Successfully",
+        title: t("mailRepositories.removeMailSuccess"),
       });
       await refresh();
     } catch (error) {
       toast({
-        title: "Error Removing Mail",
+        title: t("mailRepositories.errorRemovingMail"),
         description: <ErrorDisplayer error={error} />,
       });
     }
@@ -230,16 +233,16 @@ export default function MailRepositoryDetail() {
   const handleMoveMail = async (mailKey: string) => {
     const otherRepos = allRepos.filter((r) => r.path !== id);
     if (otherRepos.length === 0) {
-      toast({ title: "No other repositories available to move this mail to" });
+      toast({ title: t("mailRepositories.noOtherRepositoriesForMail") });
       return;
     }
     let targetRepo = otherRepos[0].path;
     const confirmed = await confirm({
-      header: "Move Mail",
+      header: t("mailRepositories.moveMailHeader"),
       message: (
         <div className="space-y-2 py-2">
           <p className="text-sm">
-            Move mail <b>{mailKey}</b> to:
+            {t("mailRepositories.moveMailConfirm", { mailKey })}
           </p>
           <select
             className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -260,11 +263,11 @@ export default function MailRepositoryDetail() {
     if (!confirmed || !id) return;
     try {
       await moveSingleMail(encodeURIComponent(id), mailKey, targetRepo);
-      toast({ title: "Mail moved successfully" });
+      toast({ title: t("mailRepositories.mailMovedSuccess") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error moving mail",
+        title: t("mailRepositories.errorMovingMail"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -279,21 +282,21 @@ export default function MailRepositoryDetail() {
     <div className="mt-4 p-4 bg-white rounded-2">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold">Mail Repository Details</h3>
-          <p>Repository ID: {id}</p>
+          <h3 className="text-lg font-semibold">{t("mailRepositories.detailTitle", { path: id })}</h3>
+          <p>{id}</p>
         </div>
         <a
           href={extendedHref}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
         >
-          Extended View
+          {t("mailRepositories.extendedView")}
         </a>
       </div>
 
       <MailFiltersPanel filters={activeFilters} onApply={handleApplyFilters} />
 
-      {isLoading && <p>Loading mails...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+      {isLoading && <p>{t("mailRepositories.loadingMails")}</p>}
+      {error && <p className="text-red-500">{t("common.errorPrefix", { message: error })}</p>}
       {/* Pagination UI */}
       <div className="mt-6 flex justify-between items-center">
         {/** first page */}
@@ -302,24 +305,24 @@ export default function MailRepositoryDetail() {
           disabled={page <= 1}
           className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          First
+          {t("common.first")}
         </button>
         <button
           onClick={() => goToPage(page - 1)}
           disabled={page <= 1}
           className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Previous
+          {t("common.previous")}
         </button>
         <span className="text-sm font-medium text-center">
-          Page {page} / {limit} mails per page / Total: {size}
+          {t("mailRepositories.pageInfo", { page, limit, size })}
         </span>
         <button
           disabled={!hasMore}
           onClick={() => goToPage(page + 1)}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Next
+          {t("common.next")}
         </button>
         {/** last page */}
         <button
@@ -327,7 +330,7 @@ export default function MailRepositoryDetail() {
           onClick={() => goToPage(Math.ceil(size / limit))}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Last
+          {t("common.last")}
         </button>
       </div>
       {mailKeys && (
@@ -349,7 +352,7 @@ export default function MailRepositoryDetail() {
                         .writeText(mailKey)
                         .then(() => {
                           toast({
-                            title: "Mail key copied to clipboard!",
+                            title: t("mailRepositories.copiedToClipboard"),
                             description: `${mailKey}`,
                           });
                         })
@@ -391,7 +394,7 @@ export default function MailRepositoryDetail() {
                     <button
                       className="p-2 rounded-md hover:bg-gray-200"
                       onClick={() => handleReprocessMail(mailKey)}
-                      title="Reprocess mail"
+                      title={t("mailRepositories.reprocessMailTooltip")}
                     >
                       <RefreshCw className="w-5 h-5 text-green-600" />
                     </button>
@@ -400,7 +403,7 @@ export default function MailRepositoryDetail() {
                     <button
                       className="p-2 rounded-md hover:bg-gray-200"
                       onClick={() => handleMoveMail(mailKey)}
-                      title="Move mail to another repository"
+                      title={t("mailRepositories.moveMailTooltip")}
                     >
                       <MoveHorizontal className="w-5 h-5 text-orange-500" />
                     </button>
@@ -409,7 +412,7 @@ export default function MailRepositoryDetail() {
                     <button
                       className="p-2 rounded-md hover:bg-gray-200"
                       onClick={() => handleRemoveMail(mailKey)}
-                      title="Delete mail"
+                      title={t("mailRepositories.deleteMailTooltip")}
                     >
                       <Trash2 className="w-5 h-5 text-red-600" />
                     </button>

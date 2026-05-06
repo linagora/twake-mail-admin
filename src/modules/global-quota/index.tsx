@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getGlobalQuota, updateGlobalQuota, getUsersWithSpecificQuotas, getQuotaExtraSummary } from "./api-client";
@@ -10,7 +11,6 @@ import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
 
-const headerSubTitle = "Global quota applied to all users by default.";
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_administrating_quotas";
 
 function formatSize(bytes: number | null): string {
@@ -39,6 +39,7 @@ function toBytes(value: number, unit: string): number {
 }
 
 export default function GlobalQuota() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const canUpdate = useIsAllowed("PUT", "/quota");
 
@@ -64,7 +65,7 @@ export default function GlobalQuota() {
   const handleUpdateSize = async () => {
     const raw = parseFloat(sizeInput);
     if (isNaN(raw) || raw < -1 || raw === 0) {
-      toast({ title: "Invalid size", description: "Enter a positive number or -1 for unlimited." });
+      toast({ title: t("common.invalidSize"), description: t("common.invalidSizeDesc") });
       return;
     }
     const bytes = Math.round(toBytes(raw, sizeUnit));
@@ -73,18 +74,18 @@ export default function GlobalQuota() {
         count: data?.quota.count ?? null,
         size: bytes,
       });
-      toast({ title: "Global quota size updated" });
+      toast({ title: t("globalQuota.updated") });
       setSizeInput("");
       setShowSizeEdit(false);
       refresh();
     } catch (err) {
-      toast({ title: "Error updating global quota", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("globalQuota.errorUpdating"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
   return (
     <div className="p-4 w-fit">
-      <Header headerTitle="Global Quota" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle={t("globalQuota.title")} headerSubTitle={t("globalQuota.subtitle")} docuUrl={docuUrl} />
 
       <div className="mt-4">
         {isLoading && (
@@ -99,13 +100,13 @@ export default function GlobalQuota() {
           <div className="space-y-6">
             {/* Current global quota */}
             <div className="p-4 bg-gray-50 rounded-2 space-y-3">
-              <h4 className="text-sm font-semibold">Current global quota</h4>
+              <h4 className="text-sm font-semibold">{t("globalQuota.currentQuota")}</h4>
               <div className="flex justify-between items-center py-1">
-                <span className="text-sm text-gray-600">Count</span>
+                <span className="text-sm text-gray-600">{t("globalQuota.count")}</span>
                 <strong className="text-sm">{formatCount(data.quota.count)}</strong>
               </div>
               <div className="flex justify-between items-center py-1">
-                <span className="text-sm text-gray-600">Size</span>
+                <span className="text-sm text-gray-600">{t("globalQuota.size")}</span>
                 <strong className="text-sm">{formatSize(data.quota.size)}</strong>
               </div>
 
@@ -117,7 +118,7 @@ export default function GlobalQuota() {
                   className="rounded-sm"
                   onClick={() => setShowSizeEdit(!showSizeEdit)}
                 >
-                  Update size limit
+                  {t("common.updateSizeLimit")}
                 </Button>
               )}
 
@@ -128,7 +129,7 @@ export default function GlobalQuota() {
                     value={sizeInput}
                     onChange={(e) => setSizeInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleUpdateSize()}
-                    placeholder="-1 for unlimited"
+                    placeholder={t("common.sizeUnlimited")}
                     className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <select
@@ -146,7 +147,7 @@ export default function GlobalQuota() {
                     disabled={!sizeInput.trim()}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Save
+                    {t("common.save")}
                   </button>
                 </div>
               )}
@@ -154,24 +155,24 @@ export default function GlobalQuota() {
 
             {/* Aggregated extra quotas */}
             <div className="p-4 bg-gray-50 rounded-2 space-y-3">
-              <h4 className="text-sm font-semibold">Aggregated extra quotas</h4>
+              <h4 className="text-sm font-semibold">{t("globalQuota.aggregatedExtra")}</h4>
               <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                <span className="text-gray-600">Total extra storage:</span>
+                <span className="text-gray-600">{t("globalQuota.totalExtraStorage")}</span>
                 <strong>{formatSize(data.summary.totalExtraStorageLimit)}</strong>
-                <span className="text-gray-600">Total extra count:</span>
+                <span className="text-gray-600">{t("globalQuota.totalExtraCount")}</span>
                 <strong>{formatCount(data.summary.totalExtraCountLimit)}</strong>
-                <span className="text-gray-600">Users with unlimited storage:</span>
+                <span className="text-gray-600">{t("globalQuota.usersUnlimitedStorage")}</span>
                 <strong>{data.summary.totalUnlimitedStorage}</strong>
-                <span className="text-gray-600">Users with unlimited count:</span>
+                <span className="text-gray-600">{t("globalQuota.usersUnlimitedCount")}</span>
                 <strong>{data.summary.totalUnlimitedCount}</strong>
               </div>
             </div>
 
             {/* Users with specific quotas */}
             <div className="p-4 bg-gray-50 rounded-2 space-y-3">
-              <h4 className="text-sm font-semibold">Users with specific quotas ({data.users.length})</h4>
+              <h4 className="text-sm font-semibold">{t("globalQuota.usersSpecificTitle", { count: data.users.length })}</h4>
               {data.users.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No users have specific quotas.</p>
+                <p className="text-sm text-muted-foreground">{t("globalQuota.noSpecificQuotas")}</p>
               ) : (
                 <div className="space-y-1">
                   {data.users.map((u, i) => (

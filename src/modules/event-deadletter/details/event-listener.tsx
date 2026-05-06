@@ -3,6 +3,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { InsertionIdsResponseType } from "../types";
 import { deleteEvent, getFailedEvents } from "../api-client";
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { apiClient } from "@/lib/apiClient";
 import { toast, useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -39,6 +40,7 @@ const fetchFailedEventJson = async (
 };
 
 export default function EventListenersDetail() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
@@ -74,20 +76,18 @@ export default function EventListenersDetail() {
   const handleRemoveEvent = async (insertionId: string) => {
     try {
       const result = await confirm({
-        header: "Run Deleting Event",
-        message: `Do you want to delete event ${insertionId} in the group: ${id}.`,
+        header: t("eventDeadletter.deleteEventTitle"),
+        message: t("eventDeadletter.deleteEventConfirm", { insertionId, group: id }),
       });
       if (!result || !id) {
         return;
       }
       await deleteEvent(id, insertionId);
-      toast({
-        title: "Delete Event Successfully",
-      });
+      toast({ title: t("eventDeadletter.deleteEventSuccess") });
       await refresh();
     } catch (error) {
       toast({
-        title: "Error Deleting Event",
+        title: t("eventDeadletter.deleteEventError"),
         description: <ErrorDisplayer error={error} />,
       });
     }
@@ -95,10 +95,10 @@ export default function EventListenersDetail() {
 
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
-      <h3 className="text-lg font-semibold">Event Group Details</h3>
-      <p>Group ID: {id}</p>
+      <h3 className="text-lg font-semibold">{t("eventDeadletter.groupDetails")}</h3>
+      <p>{t("eventDeadletter.groupId", { id })}</p>
 
-      {isLoading && <p>Loading failed events...</p>}
+      {isLoading && <p>{t("eventDeadletter.loadingEvents")}</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
       {/* Pagination UI */}
       <div className="mt-6 flex justify-between items-center">
@@ -108,24 +108,24 @@ export default function EventListenersDetail() {
           disabled={page <= 1}
           className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          First
+          {t("common.first")}
         </button>
         <button
           onClick={() => goToPage(page - 1)}
           disabled={page <= 1}
           className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Previous
+          {t("common.previous")}
         </button>
         <span className="text-sm font-medium">
-          Page {page} / {limit} failed events per page / Total: {size}
+          {t("eventDeadletter.paginationInfo", { page, limit, total: size })}
         </span>
         <button
           disabled={!hasMore}
           onClick={() => goToPage(page + 1)}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Next
+          {t("common.next")}
         </button>
         {/** last page */}
         <button
@@ -133,7 +133,7 @@ export default function EventListenersDetail() {
           onClick={() => goToPage(Math.ceil(size / limit))}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Last
+          {t("common.last")}
         </button>
       </div>
       {failedEventKeys && (
@@ -155,7 +155,7 @@ export default function EventListenersDetail() {
                         .writeText(failedEventKey)
                         .then(() => {
                           toast({
-                            title: "Event key copied to clipboard!",
+                            title: t("eventDeadletter.copiedToClipboard"),
                             description: `${failedEventKey}`,
                           });
                         })

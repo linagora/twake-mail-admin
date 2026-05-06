@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, LogOut } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserTeamMailboxes } from "../api-client";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function UserTeamMailboxes({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/team-mailboxes");
@@ -38,17 +40,17 @@ export default function UserTeamMailboxes({ username }: Props) {
   const handleLeave = async (mb: { name: string; emailAddress: string }) => {
     const domain = mb.emailAddress.split("@")[1];
     const confirmed = await confirm({
-      header: "Leave Team Mailbox",
-      message: `Remove "${username}" from team mailbox "${mb.emailAddress}"?`,
+      header: t("users.teamMailboxes.leaveTitle"),
+      message: t("users.teamMailboxes.leaveConfirm", { username, emailAddress: mb.emailAddress }),
     });
     if (!confirmed) return;
     try {
       await removeTeamMailboxMember(domain, mb.name, username);
-      toast({ title: `Left team mailbox "${mb.emailAddress}"` });
+      toast({ title: t("users.teamMailboxes.left", { emailAddress: mb.emailAddress }) });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error leaving team mailbox",
+        title: t("users.teamMailboxes.errorLeaving"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -61,7 +63,7 @@ export default function UserTeamMailboxes({ username }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Team Mailboxes
+        {t("users.teamMailboxes.title")}
         {mailboxes && (
           <span className="text-sm font-normal text-gray-500">
             ({mailboxes.length})
@@ -96,13 +98,13 @@ export default function UserTeamMailboxes({ username }: Props) {
                       title="Leave team mailbox"
                     >
                       <LogOut className="w-4 h-4" />
-                      Leave
+                      {t("users.teamMailboxes.leave")}
                     </button>
                   )}
                 </div>
               ))}
               {mailboxes.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">Not a member of any team mailbox.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("users.teamMailboxes.empty")}</p>
               )}
             </div>
           )}

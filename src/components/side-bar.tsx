@@ -1,4 +1,5 @@
-import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import {
   Sidebar,
@@ -19,45 +20,37 @@ import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useOIDC } from "@/components/custom/oidc-provider";
 
-function SidebarLogoutButton() {
-  const { logout } = useOIDC();
+function LanguageSelector() {
+  const { i18n, t } = useTranslation();
+  const current = i18n.language?.startsWith("fr") ? "fr" : "en";
+  const next = current === "fr" ? "en" : "fr";
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton onClick={logout}>
-        <LogOut />
-        <span>Logout</span>
+      <SidebarMenuButton onClick={() => i18n.changeLanguage(next)} title={t("sidebar.language")}>
+        <Languages />
+        <span>{current === "fr" ? "Français" : "English"}</span>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
 }
 
-const MAIL_ITEMS = [
-  { title: "Health Check", url: "/health-check", icon: Heart },
-  { title: "Mail Repositories", url: "/mail-repositories", icon: Mail },
-  { title: "Event Dead Letter", url: "/event-dead-letter", icon: AlertCircle },
-  { title: "Domains", url: "/domains", icon: Globe },
-  { title: "Global Quota", url: "/global-quota", icon: Gauge },
-  { title: "Users", url: "/users", icon: Users },
-  { title: "Mappings", url: "/mappings", icon: ArrowRightLeft },
-  { title: "Network Channels", url: "/network-channels", icon: Network },
-  { title: "Cassandra", url: "/cassandra", icon: Database },
-  { title: "Tasks", url: "/tasks", icon: ListChecks },
-  { title: "Common Tasks", url: "/common-tasks", icon: ClipboardList },
-  { title: "Resource Locator", url: "/resource-locator", icon: MapPin },
-  { title: "Live Metrics", url: "/live-metrics", icon: Activity },
-];
-
-const CALENDAR_ITEMS = [
-  { title: "Health Check", url: "/health-check", icon: Heart },
-  { title: "Domains", url: "/domains", icon: Globe },
-  { title: "Users", url: "/users", icon: Users },
-  { title: "Registered Users", url: "/registered-users", icon: UserCheck },
-  { title: "Tasks", url: "/tasks", icon: ListChecks },
-  { title: "Common Tasks", url: "/common-tasks", icon: ClipboardList },
-];
+function SidebarLogoutButton() {
+  const { logout } = useOIDC();
+  const { t } = useTranslation();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton onClick={logout}>
+        <LogOut />
+        <span>{t("sidebar.logout")}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
 
 export function AppSidebar() {
   const location = useLocation();
+  const { t } = useTranslation();
+
   const canHealthCheck = useIsAllowed("GET", "/healthcheck");
   const canDomains = useIsAllowed("GET", "/domains");
   const canUsers = useIsAllowed("GET", "/users");
@@ -72,6 +65,31 @@ export function AppSidebar() {
   const canNetworkChannels = useIsAllowed("GET", "/servers/channels");
   const canCassandra = useIsAllowed("GET", "/cassandra/version");
   const canLiveMetrics = useIsAllowed("GET", "/metrics");
+
+  const MAIL_ITEMS = [
+    { title: t("sidebar.healthCheck"), url: "/health-check", icon: Heart },
+    { title: t("sidebar.mailRepositories"), url: "/mail-repositories", icon: Mail },
+    { title: t("sidebar.eventDeadLetter"), url: "/event-dead-letter", icon: AlertCircle },
+    { title: t("sidebar.domains"), url: "/domains", icon: Globe },
+    { title: t("sidebar.globalQuota"), url: "/global-quota", icon: Gauge },
+    { title: t("sidebar.users"), url: "/users", icon: Users },
+    { title: t("sidebar.mappings"), url: "/mappings", icon: ArrowRightLeft },
+    { title: t("sidebar.networkChannels"), url: "/network-channels", icon: Network },
+    { title: t("sidebar.cassandra"), url: "/cassandra", icon: Database },
+    { title: t("sidebar.tasks"), url: "/tasks", icon: ListChecks },
+    { title: t("sidebar.commonTasks"), url: "/common-tasks", icon: ClipboardList },
+    { title: t("sidebar.resourceLocator"), url: "/resource-locator", icon: MapPin },
+    { title: t("sidebar.liveMetrics"), url: "/live-metrics", icon: Activity },
+  ];
+
+  const CALENDAR_ITEMS = [
+    { title: t("sidebar.healthCheck"), url: "/health-check", icon: Heart },
+    { title: t("sidebar.domains"), url: "/domains", icon: Globe },
+    { title: t("sidebar.users"), url: "/users", icon: Users },
+    { title: t("sidebar.registeredUsers"), url: "/registered-users", icon: UserCheck },
+    { title: t("sidebar.tasks"), url: "/tasks", icon: ListChecks },
+    { title: t("sidebar.commonTasks"), url: "/common-tasks", icon: ClipboardList },
+  ];
 
   const VISIBILITY: Record<string, boolean> = {
     "/health-check": canHealthCheck,
@@ -109,11 +127,11 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("sidebar.application")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild>
                     <Link to={item.url} className={location.pathname.includes(item.url) ? 'font-bold' : ''}>
                       <item.icon />
@@ -126,16 +144,13 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      {appConfig.sso && (
-        <>
-          <SidebarSeparator />
-          <SidebarFooter>
-            <SidebarMenu>
-              <SidebarLogoutButton />
-            </SidebarMenu>
-          </SidebarFooter>
-        </>
-      )}
+      <SidebarSeparator />
+      <SidebarFooter>
+        <SidebarMenu>
+          <LanguageSelector />
+          {appConfig.sso && <SidebarLogoutButton />}
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

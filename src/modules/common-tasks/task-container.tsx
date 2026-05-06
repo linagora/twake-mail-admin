@@ -1,5 +1,6 @@
 import { Link } from "react-router";
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { TaskProps } from "./types";
 import { useState } from "react";
@@ -11,7 +12,9 @@ import ConfirmTaskContent from "./components/confirm-task-content";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
-export default function TaskContainer({ name, taskKey, mode, command, doc, params, allowanceCheck }: TaskProps) {
+export default function TaskContainer({ nameKey, taskKey, mode, command, doc, params, allowanceCheck }: TaskProps) {
+  const { t } = useTranslation();
+  const name = t(nameKey);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { toast } = useToast();
   const confirm = useConfirm();
@@ -24,10 +27,10 @@ export default function TaskContainer({ name, taskKey, mode, command, doc, param
     try {
       const additionParams: any = {};
       const result = await confirm({
-        header: 'Run Task',
+        header: t("common.run"),
         message: (
           <ConfirmTaskContent
-            message={<p>Do you want to run task <b>{name}</b>?</p>}
+            message={<p>{t("commonTasks.runConfirm", { name })}</p>}
             command={command}
             params={params}
             getParamValues={(key, value) => {
@@ -43,12 +46,12 @@ additionParams[key] = value
       setIsLoading(true);
       const taskId = await runTask(taskKey, mode, additionParams);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{t("common.taskLink", { taskId })}</Link></p>,
       });
     } catch (error) {
       toast({
-        title: "Error running task",
+        title: t("common.run"),
         description: <ErrorDisplayer error={error} />,
       });
     } finally {
@@ -65,7 +68,7 @@ additionParams[key] = value
             <TooltipTrigger asChild>
               <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRunTask}>
                 {isLoading && <Loader2 className="animate-spin" />}
-                Run
+                {t("common.run")}
               </Button>
             </TooltipTrigger>
             <TooltipContent>

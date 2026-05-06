@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Loader2, RefreshCw } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getUserChannels, disconnectUserChannels } from "../api-client";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function UserChannels({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/servers/channels/{username}");
@@ -37,19 +39,19 @@ export default function UserChannels({ username }: Props) {
 
   const handleDisconnectAll = async () => {
     const confirmed = await confirm({
-      header: "Disconnect All Channels",
-      message: `Disconnect all channels for "${username}"?`,
+      header: t("users.channels.title"),
+      message: t("networkChannels.disconnectUser", { username }),
     });
     if (!confirmed) return;
 
     setDisconnecting(true);
     try {
       await disconnectUserChannels(username);
-      toast({ title: "All channels disconnected" });
+      toast({ title: t("users.channels.disconnectAll") });
       await fetchChannels();
     } catch (err) {
       toast({
-        title: "Error disconnecting channels",
+        title: t("users.channels.title"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -70,7 +72,7 @@ export default function UserChannels({ username }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Network Channels
+        {t("users.channels.title")}
       </button>
 
       {open && (
@@ -88,7 +90,7 @@ export default function UserChannels({ username }: Props) {
                 disabled={disconnecting}
               >
                 {disconnecting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-                Disconnect all
+                {t("users.channels.disconnectAll")}
               </Button>
             )}
           </div>

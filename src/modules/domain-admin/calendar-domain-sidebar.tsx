@@ -1,4 +1,4 @@
-import { ShieldCheck, Box, Users, UserCheck, ListChecks, Globe, LogOut } from "lucide-react";
+import { ShieldCheck, Box, Users, UserCheck, ListChecks, Globe, LogOut, Languages } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,39 +13,56 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useDomain } from "./domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { appConfig } from "@/lib/config";
 import { useOIDC } from "@/components/custom/oidc-provider";
 
-function SidebarLogoutButton() {
-  const { logout } = useOIDC();
+function LanguageSelector() {
+  const { i18n, t } = useTranslation();
+  const current = i18n.language?.startsWith("fr") ? "fr" : "en";
+  const next = current === "fr" ? "en" : "fr";
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton onClick={logout}>
-        <LogOut />
-        <span>Logout</span>
+      <SidebarMenuButton onClick={() => i18n.changeLanguage(next)} title={t("sidebar.language")}>
+        <Languages />
+        <span>{current === "fr" ? "Français" : "English"}</span>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
 }
 
-const ALL_ITEMS = [
-  { title: "Domain Admins",    url: "/domain-admins",    icon: ShieldCheck },
-  { title: "Resources",        url: "/resources",        icon: Box },
-  { title: "Users",            url: "/users",            icon: Users },
-  { title: "Registered Users", url: "/registered-users", icon: UserCheck },
-  { title: "Tasks",            url: "/tasks",            icon: ListChecks },
-];
+function SidebarLogoutButton() {
+  const { logout } = useOIDC();
+  const { t } = useTranslation();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton onClick={logout}>
+        <LogOut />
+        <span>{t("sidebar.logout")}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
 
 export function CalendarDomainSidebar() {
   const domain = useDomain();
   const location = useLocation();
+  const { t } = useTranslation();
   const canDomainAdmins = useIsAllowed("GET", "/domains/{domain}/admins");
   const canResources = useIsAllowed("GET", "/domains/{domain}/resources");
   const canUsers = useIsAllowed("GET", "/domains/{domain}/users");
   const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
   const canTasks = useIsAllowed("GET", "/tasks");
+
+  const ALL_ITEMS = [
+    { title: t("domainAdminPages.calendarAdmins"),    url: "/domain-admins",    icon: ShieldCheck },
+    { title: t("domainAdminPages.resources"),         url: "/resources",        icon: Box },
+    { title: t("domainAdminPages.users"),             url: "/users",            icon: Users },
+    { title: t("domainAdminPages.registeredUsers"),   url: "/registered-users", icon: UserCheck },
+    { title: t("domainAdminPages.tasks"),             url: "/tasks",            icon: ListChecks },
+  ];
 
   const VISIBILITY: Record<string, boolean> = {
     "/domain-admins": canDomainAdmins,
@@ -71,16 +88,16 @@ export function CalendarDomainSidebar() {
             <Globe className="w-5 h-5 text-muted-foreground shrink-0" />
             <span className="text-lg font-bold truncate" title={domain}>{domain}</span>
           </div>
-          <p className="text-base font-bold text-muted-foreground">Domain admin</p>
+          <p className="text-base font-bold text-muted-foreground">{t("domainAdminPages.domainAdmin")}</p>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Administration</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("domainAdminPages.administration")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild>
                     <Link
                       to={item.url}
@@ -96,16 +113,13 @@ export function CalendarDomainSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      {appConfig.sso && (
-        <>
-          <SidebarSeparator />
-          <SidebarFooter>
-            <SidebarMenu>
-              <SidebarLogoutButton />
-            </SidebarMenu>
-          </SidebarFooter>
-        </>
-      )}
+      <SidebarSeparator />
+      <SidebarFooter>
+        <SidebarMenu>
+          <LanguageSelector />
+          {appConfig.sso && <SidebarLogoutButton />}
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

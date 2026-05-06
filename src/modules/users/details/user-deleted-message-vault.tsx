@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2, Search, RotateCcw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import { DeletedMessage, RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
@@ -34,6 +35,7 @@ function formatSize(bytes: number): string {
 }
 
 export default function UserDeletedMessageVault({ label, onSearch, onRestore, canSearch = true, canRestore = true }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const [open, setOpen] = useState(false);
@@ -58,7 +60,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
       setResults(data);
     } catch (err) {
       toast({
-        title: "Error searching deleted messages",
+        title: t("users.deletedVault.errorSearch"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -69,13 +71,8 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
   const handleRestore = async () => {
     const count = results?.length;
     const confirmed = await confirm({
-      header: "Restore deleted messages",
-      message: (
-        <p>
-          Restore <strong>{count ?? "all matching"}</strong> message{count !== 1 ? "s" : ""} for <strong>{label}</strong>?
-          This will enqueue a background task.
-        </p>
-      ),
+      header: t("users.deletedVault.restoreTitle"),
+      message: t("users.deletedVault.restoreConfirm", { count: count ?? "all matching", label }),
     });
     if (!confirmed) return;
 
@@ -88,7 +85,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
       };
       const data = await onRestore(body);
       toast({
-        title: "Restore task started",
+        title: t("users.deletedVault.restoreStarted"),
         description: (
           <p>
             Task{" "}
@@ -100,7 +97,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
       });
     } catch (err) {
       toast({
-        title: "Error restoring deleted messages",
+        title: t("users.deletedVault.errorRestoring"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -120,7 +117,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Deleted Message Vault
+        {t("users.deletedVault.title")}
       </button>
 
       {open && (
@@ -141,7 +138,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                 className="flex items-center gap-2"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                Search
+                {t("users.deletedVault.search")}
               </Button>
             )}
             {canRestore && (
@@ -153,7 +150,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                 className="flex items-center gap-2 text-green-700 border-green-600 hover:bg-green-50"
               >
                 {restoreLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
-                Restore
+                {t("users.deletedVault.restore")}
               </Button>
             )}
           </div>
@@ -161,8 +158,8 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
           {results !== null && (
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
-                {results.length} message{results.length !== 1 ? "s" : ""} found
-                {totalPages > 1 && ` — page ${page} / ${totalPages}`}
+                {t("users.deletedVault.found", { count: results.length })}
+                {totalPages > 1 && ` — ${t("common.pageOf", { page, count: totalPages })}`}
               </p>
 
               <div className="overflow-x-auto rounded border">
@@ -170,21 +167,21 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                   <thead className="bg-gray-50 border-b">
                     <tr>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground w-10">#</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Subject</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Sender</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Recipients</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Delivery date</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Deletion date</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Attachment</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Size</th>
-                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Message ID</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.subject")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.sender")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.recipients")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.deliveryDate")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.deletionDate")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.attachment")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.size")}</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.messageId")}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {pageItems.length === 0 ? (
                       <tr>
                         <td colSpan={9} className="px-3 py-4 text-center text-muted-foreground">
-                          No messages match the criteria.
+                          {t("users.deletedVault.empty")}
                         </td>
                       </tr>
                     ) : (
@@ -203,7 +200,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                             <td className="px-3 py-2 text-xs whitespace-nowrap">{formatDate(msg.deliveryDate)}</td>
                             <td className="px-3 py-2 text-xs whitespace-nowrap">{formatDate(msg.deletionDate)}</td>
                             <td className="px-3 py-2 text-xs text-center">
-                              {msg.hasAttachment ? "Yes" : "No"}
+                              {msg.hasAttachment ? t("common.yes") : t("common.no")}
                             </td>
                             <td className="px-3 py-2 text-xs whitespace-nowrap">{formatSize(msg.size)}</td>
                             <td className="px-3 py-2 font-mono text-xs text-muted-foreground whitespace-nowrap">
@@ -225,7 +222,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
                   >
-                    Previous
+                    {t("common.previous")}
                   </Button>
                   <span className="text-sm text-muted-foreground">
                     {page} / {totalPages}
@@ -236,7 +233,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
                   >
-                    Next
+                    {t("common.next")}
                   </Button>
                 </div>
               )}

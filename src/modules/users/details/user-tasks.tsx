@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData, cleanupUserMailbox } from "../api-client";
 import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
@@ -33,6 +34,7 @@ interface Props {
 }
 
 export default function UserTasks({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canReindex = useIsAllowed("POST", "/users/{username}/mailboxes");
@@ -58,10 +60,10 @@ export default function UserTasks({ username }: Props) {
     try {
       const additionalParams: any = {};
       const result = await confirm({
-        header: "Reindex User Mailboxes",
+        header: t("users.tasks.reindexTitle"),
         message: (
           <ConfirmTaskContent
-            message={<p>Reindex all mailboxes for <strong>{username}</strong>.</p>}
+            message={<p>{t("users.tasks.reindexDesc", { username })}</p>}
             command={`curl -XPOST /users/${username}/mailboxes?task=reIndex`}
             params={REINDEX_PARAMS}
             getParamValues={(key, value) => {
@@ -75,12 +77,12 @@ export default function UserTasks({ username }: Props) {
       setReindexLoading(true);
       const data = await reindexUserMailboxes(username, additionalParams);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error running reindex task",
+        title: t("users.tasks.errorReindex"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -91,20 +93,20 @@ export default function UserTasks({ username }: Props) {
   const handleSubscribeAll = async () => {
     try {
       const result = await confirm({
-        header: "Subscribe All Mailboxes",
-        message: <p>Subscribe <strong>{username}</strong> to all of its mailboxes?</p>,
+        header: t("users.tasks.subscribeTitle"),
+        message: <p>{t("users.tasks.subscribeDesc", { username })}</p>,
       });
       if (!result) return;
 
       setSubscribeLoading(true);
       const data = await subscribeAllUserMailboxes(username);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error running subscribe all task",
+        title: t("users.tasks.errorSubscribe"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -116,10 +118,10 @@ export default function UserTasks({ username }: Props) {
     try {
       const additionalParams: any = {};
       const result = await confirm({
-        header: "Recompute JMAP Fast View Projection",
+        header: t("users.tasks.fastViewTitle"),
         message: (
           <ConfirmTaskContent
-            message={<p>Recompute fast message view projection for <strong>{username}</strong>.</p>}
+            message={<p>{t("users.tasks.fastViewDesc", { username })}</p>}
             command={`curl -XPOST /users/${username}/mailboxes?task=recomputeFastViewProjectionItems`}
             params={FAST_VIEW_PARAMS}
             getParamValues={(key, value) => {
@@ -133,12 +135,12 @@ export default function UserTasks({ username }: Props) {
       setFastViewLoading(true);
       const data = await recomputeFastViewProjection(username, additionalParams);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error running recompute task",
+        title: t("users.tasks.errorFastView"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -152,7 +154,7 @@ export default function UserTasks({ username }: Props) {
 
     try {
       const result = await confirm({
-        header: "Restore deleted messages",
+        header: t("users.deletedVault.restoreTitle"),
         className: "max-w-3xl",
         message: (
           <RestoreCriteriaBuilder
@@ -175,12 +177,12 @@ export default function UserTasks({ username }: Props) {
       }
       const data = await restoreDeletedMessages(username, body);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error restoring deleted messages",
+        title: t("users.tasks.errorRestoreDeleted"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -190,16 +192,16 @@ export default function UserTasks({ username }: Props) {
 
   const handleDeleteAllMailboxes = async () => {
     const confirmed = await confirm({
-      header: "Delete All Mailboxes",
-      message: `Are you sure you want to delete ALL mailboxes for "${username}"? This cannot be undone.`,
+      header: t("users.tasks.deleteAllMailboxesTitle"),
+      message: t("users.tasks.deleteAllMailboxesConfirm", { username }),
     });
     if (!confirmed) return;
     try {
       await deleteAllUserMailboxes(username);
-      toast({ title: "All mailboxes deleted successfully" });
+      toast({ title: t("users.tasks.allMailboxesDeleted") });
     } catch (err) {
       toast({
-        title: "Error deleting all mailboxes",
+        title: t("users.tasks.errorDeletingMailboxes"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -210,10 +212,10 @@ export default function UserTasks({ username }: Props) {
 
     try {
       const result = await confirm({
-        header: "Cleanup Trash folder",
+        header: t("users.tasks.cleanupTrashTitle"),
         message: (
           <ConfirmTaskContent
-            message={<p>Delete messages older than the grace period from the <strong>Trash</strong> folder of <strong>{username}</strong>.</p>}
+            message={<p>{t("users.tasks.cleanupTrashDesc", { username })}</p>}
             command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Trash&user=${username}&useSavedDate"`}
             params={CLEANUP_PARAMS}
             getParamValues={(key, value) => {
@@ -227,12 +229,12 @@ export default function UserTasks({ username }: Props) {
       setCleanupTrashLoading(true);
       const trashData = await cleanupUserMailbox(username, "Trash", olderThan);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${trashData.taskId}`}>{trashData.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${trashData.taskId}`}>{t("common.taskLink", { taskId: trashData.taskId })}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error cleaning up Trash",
+        title: t("users.tasks.errorCleanupTrash"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -245,10 +247,10 @@ export default function UserTasks({ username }: Props) {
 
     try {
       const result = await confirm({
-        header: "Cleanup Spam folder",
+        header: t("users.tasks.cleanupSpamTitle"),
         message: (
           <ConfirmTaskContent
-            message={<p>Delete messages older than the grace period from the <strong>Spam</strong> folder of <strong>{username}</strong>.</p>}
+            message={<p>{t("users.tasks.cleanupSpamDesc", { username })}</p>}
             command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Spam&user=${username}&useSavedDate"`}
             params={CLEANUP_PARAMS}
             getParamValues={(key, value) => {
@@ -262,12 +264,12 @@ export default function UserTasks({ username }: Props) {
       setCleanupSpamLoading(true);
       const spamData = await cleanupUserMailbox(username, "Spam", olderThan);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${spamData.taskId}`}>{spamData.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${spamData.taskId}`}>{t("common.taskLink", { taskId: spamData.taskId })}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error cleaning up Spam",
+        title: t("users.tasks.errorCleanupSpam"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -280,7 +282,7 @@ export default function UserTasks({ username }: Props) {
 
     try {
       const result = await confirm({
-        header: "Rename User",
+        header: t("users.tasks.renameTitle"),
         message: (
           <RenameUserForm
             username={username}
@@ -291,7 +293,7 @@ export default function UserTasks({ username }: Props) {
       if (!result) return;
 
       if (!currentValues.newUsername.trim()) {
-        toast({ title: "New username is required" });
+        toast({ title: t("renameUserForm.newUsername") });
         return;
       }
 
@@ -301,12 +303,12 @@ export default function UserTasks({ username }: Props) {
         fromStep: currentValues.fromStep || undefined,
       });
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error renaming user",
+        title: t("users.tasks.errorRename"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -319,7 +321,7 @@ export default function UserTasks({ username }: Props) {
 
     try {
       const result = await confirm({
-        header: "Delete User Data",
+        header: t("users.tasks.deleteDataTitle"),
         message: (
           <DeleteUserDataForm
             username={username}
@@ -332,12 +334,12 @@ export default function UserTasks({ username }: Props) {
       setDeleteUserDataLoading(true);
       const data = await deleteUserData(username, currentFromStep || undefined);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
       });
     } catch (err) {
       toast({
-        title: "Error deleting user data",
+        title: t("users.tasks.errorDeleteData"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -352,20 +354,20 @@ export default function UserTasks({ username }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Tasks
+        {t("common.tasks")}
       </button>
 
       {open && (
         <div className="mt-2 space-y-2">
           {canReindex && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Reindex all mailboxes</p>
+              <p>{t("users.tasks.reindexAll")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleReindex}>
                       {reindexLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -377,13 +379,13 @@ export default function UserTasks({ username }: Props) {
           )}
           {canSubscribeAll && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Subscribe to all mailboxes</p>
+              <p>{t("users.tasks.subscribeAll")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleSubscribeAll}>
                       {subscribeLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -395,13 +397,13 @@ export default function UserTasks({ username }: Props) {
           )}
           {canRecomputeFastView && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Recompute JMAP fast view projection</p>
+              <p>{t("users.tasks.fastView")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRecomputeFastView}>
                       {fastViewLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -413,13 +415,13 @@ export default function UserTasks({ username }: Props) {
           )}
           {canRestoreDeleted && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Restore deleted messages</p>
+              <p>{t("users.tasks.restoreDeleted")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRestoreDeletedMessages}>
                       {restoreLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -431,13 +433,13 @@ export default function UserTasks({ username }: Props) {
           )}
           {canCleanupTrash && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Cleanup user Trash folder</p>
+              <p>{t("users.tasks.cleanupTrash")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupTrash}>
                       {cleanupTrashLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -449,13 +451,13 @@ export default function UserTasks({ username }: Props) {
           )}
           {canCleanupSpam && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Cleanup user Spam folder</p>
+              <p>{t("users.tasks.cleanupSpam")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupSpam}>
                       {cleanupSpamLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -467,13 +469,13 @@ export default function UserTasks({ username }: Props) {
           )}
           {canRename && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Rename user</p>
+              <p>{t("users.tasks.renameUser")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleRenameUser}>
                       {renameLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -485,12 +487,12 @@ export default function UserTasks({ username }: Props) {
           )}
           {canDeleteAllMailboxes && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Delete all mailboxes</p>
+              <p>{t("users.tasks.deleteAllMailboxes")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteAllMailboxes}>
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -502,13 +504,13 @@ export default function UserTasks({ username }: Props) {
           )}
           {canDeleteData && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <p>Delete user data</p>
+              <p>{t("users.tasks.deleteData")}</p>
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteUserData}>
                       {deleteUserDataLoading && <Loader2 className="animate-spin" />}
-                      Run
+                      {t("common.run")}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>

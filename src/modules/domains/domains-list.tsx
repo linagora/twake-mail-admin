@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +14,7 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function DomainsList() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canCreate = useIsAllowed("PUT", "/domains/{domain}");
@@ -34,12 +36,12 @@ export default function DomainsList() {
     if (!name) return;
     try {
       await createDomain(name);
-      toast({ title: `Domain "${name}" created` });
+      toast({ title: t("domains.created", { name }) });
       setNewDomain("");
       refresh();
     } catch (err) {
       toast({
-        title: "Error creating domain",
+        title: t("domains.errorCreating"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -47,17 +49,17 @@ export default function DomainsList() {
 
   const handleDelete = async (domain: string) => {
     const confirmed = await confirm({
-      header: "Delete Domain",
-      message: `Delete "${domain}"? The domain can be re-created afterwards and existing user data will not be affected.`,
+      header: t("domains.deleteDomain"),
+      message: t("domains.deleteConfirm", { domain }),
     });
     if (!confirmed) return;
     try {
       await deleteDomain(domain);
-      toast({ title: `Domain "${domain}" deleted` });
+      toast({ title: t("domains.deleted", { domain }) });
       refresh();
     } catch (err) {
       toast({
-        title: "Error deleting domain",
+        title: t("domains.errorDeleting"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -88,7 +90,7 @@ export default function DomainsList() {
             value={newDomain}
             onChange={(e) => setNewDomain(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-            placeholder="New domain name"
+            placeholder={t("domains.newDomainPlaceholder")}
             className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
@@ -96,7 +98,7 @@ export default function DomainsList() {
             disabled={!newDomain.trim()}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Create
+            {t("common.create")}
           </button>
         </div>
       )}
@@ -112,10 +114,10 @@ export default function DomainsList() {
         type="text"
         value={search}
         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-        placeholder="Search domains..."
+        placeholder={t("domains.searchPlaceholder")}
         className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
-      <p>List</p>
+
       {filtered.length > 0 && (
         <PaginationControls
           onFirst={() => goToPage(1)}
@@ -124,7 +126,7 @@ export default function DomainsList() {
           onLast={() => goToPage(totalPages)}
           disabledPrev={page <= 1}
           disabledNext={page >= totalPages}
-          label={`Page ${page} / ${totalPages} — Total: ${filtered.length}`}
+          label={t("common.page", { page, totalPages, total: filtered.length })}
         />
       )}
       <div>
@@ -148,7 +150,7 @@ export default function DomainsList() {
               <button
                 onClick={() => handleDelete(domain)}
                 className="p-2 rounded-md hover:bg-gray-200"
-                title="Delete domain"
+                title={t("domains.deleteDomain")}
               >
                 <Trash2 className="w-4 h-4 text-red-600" />
               </button>

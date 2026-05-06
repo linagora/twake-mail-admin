@@ -9,6 +9,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ResourceIconPicker from "@/components/custom/resource-icon-picker";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { useTranslation } from "react-i18next";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export default function CalendarDomainResources({ domain, defaultOpen = false, resourceLink }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/domains/{domain}/resources");
@@ -79,7 +81,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
         creator: newCreator.trim(),
         administrators: newAdministrators,
       });
-      toast({ title: "Resource created" });
+      toast({ title: t("domains.calendarResources.created") });
       setNewName("");
       setNewDescription("");
       setNewIcon("home");
@@ -89,22 +91,22 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
       setShowCreate(false);
       await refresh();
     } catch (err) {
-      toast({ title: "Error creating resource", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("domains.calendarResources.errorCreating"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
   const handleRemove = async (resource: Resource) => {
     const confirmed = await confirm({
-      header: "Delete Resource",
-      message: `Delete resource "${resource.name}"?`,
+      header: t("domains.calendarResources.deleteTitle"),
+      message: t("domains.calendarResources.deleteConfirm", { name: resource.name }),
     });
     if (!confirmed) return;
     try {
       await deleteResource(domain, resource.id);
-      toast({ title: "Resource deleted" });
+      toast({ title: t("domains.calendarResources.deleted") });
       await refresh();
     } catch (err) {
-      toast({ title: "Error deleting resource", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("domains.calendarResources.errorDeleting"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
@@ -116,13 +118,13 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
           className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
         >
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Resources
+          {t("domains.calendarResources.title")}
           {active.length > 0 && (
             <span className="text-sm font-normal text-gray-500">({active.length})</span>
           )}
         </button>
         {open && canCreate && (
-          <button onClick={() => setShowCreate(!showCreate)} className="p-1 rounded-md hover:bg-gray-200 transition" title="Add resource">
+          <button onClick={() => setShowCreate(!showCreate)} className="p-1 rounded-md hover:bg-gray-200 transition" title={t("domains.calendarResources.addTooltip")}>
             <Plus className="w-4 h-4" />
           </button>
         )}
@@ -132,46 +134,46 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
         <div className="mt-2">
           {showCreate && (
             <div className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2">
-              <h5 className="text-sm font-semibold">New Resource</h5>
-              <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Name"
+              <h5 className="text-sm font-semibold">{t("domains.calendarResources.newTitle")}</h5>
+              <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={t("domains.calendarResources.namePlaceholder")}
                 className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <input type="text" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} placeholder="Description (optional)"
+              <input type="text" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} placeholder={t("domains.calendarResources.descriptionPlaceholder")}
                 className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <div>
-                <label className="text-xs font-medium text-gray-500">Icon</label>
+                <label className="text-xs font-medium text-gray-500">{t("domains.calendarResources.iconLabel")}</label>
                 <div className="mt-1"><ResourceIconPicker value={newIcon} onChange={setNewIcon} /></div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500">Creator <span className="text-red-500">*</span></label>
+                <label className="text-xs font-medium text-gray-500">{t("domains.calendarResources.creatorLabel")} <span className="text-red-500">*</span></label>
                 <div className="flex items-center gap-2 mt-1">
                   <input type="text" value={newCreator} onChange={(e) => setNewCreator(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleAdd()} placeholder="user@domain.tld"
                     className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  {creatorStatus === "checking" && <span className="text-xs text-gray-400 whitespace-nowrap">Checking...</span>}
-                  {creatorStatus === "exists" && <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-green-500" />User exists</span>}
-                  {creatorStatus === "not_found" && <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-orange-400" />User not found</span>}
-                  {creatorStatus === "invalid" && <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-red-500" />Invalid username</span>}
+                  {creatorStatus === "checking" && <span className="text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>}
+                  {creatorStatus === "exists" && <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-green-500" />{t("common.userExists")}</span>}
+                  {creatorStatus === "not_found" && <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-orange-400" />{t("common.userNotFound")}</span>}
+                  {creatorStatus === "invalid" && <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-red-500" />{t("common.invalidUsername")}</span>}
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500">Administrators</label>
+                <label className="text-xs font-medium text-gray-500">{t("domains.calendarResources.administratorsLabel")}</label>
                 <div className="flex items-center gap-2 mt-1">
                   <input type="text" value={newAdminInput} onChange={(e) => setNewAdminInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleAddAdmin()} placeholder="user@domain.tld"
                     className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  {adminInputStatus === "checking" && <span className="text-xs text-gray-400 whitespace-nowrap">Checking...</span>}
-                  {adminInputStatus === "exists" && <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-green-500" />User exists</span>}
-                  {adminInputStatus === "not_found" && <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-orange-400" />User not found</span>}
-                  {adminInputStatus === "invalid" && <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-red-500" />Invalid username</span>}
+                  {adminInputStatus === "checking" && <span className="text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>}
+                  {adminInputStatus === "exists" && <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-green-500" />{t("common.userExists")}</span>}
+                  {adminInputStatus === "not_found" && <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-orange-400" />{t("common.userNotFound")}</span>}
+                  {adminInputStatus === "invalid" && <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-red-500" />{t("common.invalidUsername")}</span>}
                   <button onClick={handleAddAdmin} disabled={adminInputStatus !== "exists"}
-                    className="px-3 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">Add</button>
+                    className="px-3 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.add")}</button>
                 </div>
                 {newAdministrators.length > 0 && (
                   <div className="mt-2 space-y-1">
                     {newAdministrators.map((a) => (
                       <div key={a.email} className="flex items-center justify-between px-3 py-1.5 bg-white border rounded-md text-sm">
                         <span>{a.email}</span>
-                        <button onClick={() => handleRemoveNewAdmin(a.email)} className="p-1 rounded-md hover:bg-gray-100" title="Remove">
+                        <button onClick={() => handleRemoveNewAdmin(a.email)} className="p-1 rounded-md hover:bg-gray-100" title={t("domains.calendarResources.removeAdminTooltip")}>
                           <Trash2 className="w-3 h-3 text-red-600" />
                         </button>
                       </div>
@@ -181,9 +183,9 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
               </div>
               <div className="flex justify-end gap-2">
                 <button onClick={() => setShowCreate(false)}
-                  className="px-4 py-2 border rounded-md text-sm hover:bg-gray-100 transition">Cancel</button>
+                  className="px-4 py-2 border rounded-md text-sm hover:bg-gray-100 transition">{t("common.cancel")}</button>
                 <button onClick={handleAdd} disabled={!newName.trim() || creatorStatus !== "exists"}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">Create</button>
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.create")}</button>
               </div>
             </div>
           )}
@@ -193,19 +195,19 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {active.length > PAGE_LIMIT && (
             <div className="mt-2 flex justify-between items-center">
               <button onClick={() => goToPage(1)} disabled={page <= 1}
-                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">First</button>
+                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">{t("common.first")}</button>
               <button onClick={() => goToPage(page - 1)} disabled={page <= 1}
-                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
-              <span className="text-sm font-medium text-center">Page {page} / {totalPages} — Total: {active.length}</span>
+                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">{t("common.previous")}</button>
+              <span className="text-sm font-medium text-center">{t("common.page", { page, totalPages, total: active.length })}</span>
               <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.next")}</button>
               <button onClick={() => goToPage(totalPages)} disabled={page >= totalPages}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">Last</button>
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.last")}</button>
             </div>
           )}
 
@@ -223,14 +225,14 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                   </h4>
                   {canDelete && (
                     <button onClick={(e) => { e.preventDefault(); handleRemove(resource); }}
-                      className="p-2 rounded-md hover:bg-gray-200" title="Delete resource">
+                      className="p-2 rounded-md hover:bg-gray-200" title={t("domains.calendarResources.deleteTooltip")}>
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   )}
                 </div>
               ))}
               {active.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No resources configured.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("domains.calendarResources.empty")}</p>
               )}
             </div>
           )}

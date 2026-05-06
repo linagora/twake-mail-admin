@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +8,6 @@ import Header from "@/components/custom/header";
 import { lookupMailbox, lookupMessage, MailboxResult } from "./api-client";
 import { APIError } from "@/lib/apiClient";
 
-const headerSubTitle = "Look up a mailbox or a message by its internal identifier.";
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html";
 
 type Status = "idle" | "loading" | "success" | "not_found" | "invalid" | "error";
@@ -21,6 +21,7 @@ interface SearchSectionProps {
 }
 
 function SearchSection({ label, placeholder, onSearch, status, children }: SearchSectionProps) {
+  const { t } = useTranslation();
   const [value, setValue] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,18 +44,18 @@ function SearchSection({ label, placeholder, onSearch, status, children }: Searc
           />
         </div>
         <Button type="submit" size="sm" disabled={status === "loading" || !value.trim()}>
-          {status === "loading" ? <Loader2 className="w-4 h-4 animate-spin" /> : "Look up"}
+          {status === "loading" ? <Loader2 className="w-4 h-4 animate-spin" /> : t("resourceLocator.lookupButton")}
         </Button>
       </form>
 
       {status === "not_found" && (
-        <p className="text-sm text-red-500">No result found for this identifier.</p>
+        <p className="text-sm text-red-500">{t("resourceLocator.notFound")}</p>
       )}
       {status === "invalid" && (
-        <p className="text-sm text-red-500">The provided identifier is syntactically invalid.</p>
+        <p className="text-sm text-red-500">{t("resourceLocator.invalidId")}</p>
       )}
       {status === "error" && (
-        <p className="text-sm text-red-500">An error occurred. Please try again.</p>
+        <p className="text-sm text-red-500">{t("resourceLocator.lookupError")}</p>
       )}
       {status === "success" && children}
     </div>
@@ -62,15 +63,16 @@ function SearchSection({ label, placeholder, onSearch, status, children }: Searc
 }
 
 function MailboxCard({ mailbox }: { mailbox: MailboxResult }) {
+  const { t } = useTranslation();
   return (
     <Card>
       <CardContent className="py-3 flex flex-col gap-1 text-sm">
         <div>
-          <span className="font-medium text-muted-foreground">Mailbox ID: </span>
+          <span className="font-medium text-muted-foreground">{t("resourceLocator.mailboxIdLabel")} </span>
           <span className="font-mono">{mailbox.mailboxId}</span>
         </div>
         <div>
-          <span className="font-medium text-muted-foreground">Mailbox path: </span>
+          <span className="font-medium text-muted-foreground">{t("resourceLocator.mailboxPathLabel")} </span>
           <span className="font-mono">{mailbox.mailboxPath}</span>
         </div>
       </CardContent>
@@ -79,6 +81,7 @@ function MailboxCard({ mailbox }: { mailbox: MailboxResult }) {
 }
 
 export default function ResourceLocator() {
+  const { t } = useTranslation();
   const canLookupMailbox = useIsAllowed("GET", "/mailboxes/{mailboxId}");
   const canLookupMessage = useIsAllowed("GET", "/messages/{messageId}");
   const [mailboxStatus, setMailboxStatus] = useState<Status>("idle");
@@ -121,13 +124,13 @@ export default function ResourceLocator() {
 
   return (
     <div className="p-4">
-      <Header headerTitle="Resource Locator" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle={t("sidebar.resourceLocator")} headerSubTitle={t("resourceLocator.subtitle")} docuUrl={docuUrl} />
 
       <div className="mt-6 flex flex-col gap-8 max-w-2xl">
         {canLookupMailbox && (
           <SearchSection
-            label="Look up a mailbox by ID"
-            placeholder="e.g. 15b47950-5799-11ef-91ef-0242ac120002"
+            label={t("resourceLocator.lookupMailboxLabel")}
+            placeholder={t("resourceLocator.mailboxPlaceholder")}
             onSearch={handleMailboxSearch}
             status={mailboxStatus}
           >
@@ -139,22 +142,22 @@ export default function ResourceLocator() {
 
         {canLookupMessage && (
           <SearchSection
-            label="Locate a message by ID"
-            placeholder="e.g. a UUID or integer depending on the backend"
+            label={t("resourceLocator.locateMessageLabel")}
+            placeholder={t("resourceLocator.messagePlaceholder")}
             onSearch={handleMessageSearch}
             status={messageStatus}
           >
             {messageMailboxes.length > 0 ? (
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">
-                  Found in {messageMailboxes.length} mailbox{messageMailboxes.length !== 1 ? "es" : ""}:
+                  {t("resourceLocator.foundInMailboxes", { count: messageMailboxes.length })}
                 </p>
                 {messageMailboxes.map((mb) => (
                   <MailboxCard key={mb.mailboxId} mailbox={mb} />
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">The message was found but belongs to no mailbox.</p>
+              <p className="text-sm text-muted-foreground">{t("resourceLocator.notInAnyMailbox")}</p>
             )}
           </SearchSection>
         )}

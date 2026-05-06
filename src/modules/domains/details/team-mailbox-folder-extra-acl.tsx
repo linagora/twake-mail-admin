@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -45,6 +46,7 @@ interface Props {
 }
 
 export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canViewAcl = useIsAllowed("GET", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl");
@@ -109,8 +111,8 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
 
   const handleRemove = async (username: string) => {
     const confirmed = await confirm({
-      header: "Remove ACL Entry",
-      message: `Remove all rights for "${username}" on this folder?`,
+      header: t("domains.extraAcl.removeTitle"),
+      message: t("domains.extraAcl.removeConfirm", { username }),
     });
     if (!confirmed) return;
     try {
@@ -124,8 +126,8 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
 
   const handleClearAll = async () => {
     const confirmed = await confirm({
-      header: "Clear All Extra ACL",
-      message: "Remove all extra ACL entries from this folder?",
+      header: t("domains.extraAcl.clearTitle"),
+      message: t("domains.extraAcl.clearConfirm"),
     });
     if (!confirmed) return;
     try {
@@ -270,31 +272,31 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
                     disabled={page <= 1}
                     className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    First
+                    {t("common.first")}
                   </button>
                   <button
                     onClick={() => goToPage(page - 1)}
                     disabled={page <= 1}
                     className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Previous
+                    {t("common.previous")}
                   </button>
                   <span className="text-sm font-medium text-center">
-                    Page {page} / {totalPages} — Total: {entries.length}
+                    {t("common.page", { page, totalPages, total: entries.length })}
                   </span>
                   <button
                     onClick={() => goToPage(page + 1)}
                     disabled={page >= totalPages}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Next
+                    {t("common.next")}
                   </button>
                   <button
                     onClick={() => goToPage(totalPages)}
                     disabled={page >= totalPages}
                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Last
+                    {t("common.last")}
                   </button>
                 </div>
               )}

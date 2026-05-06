@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { Loader2, RefreshCw, Map, MonitorSmartphone } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getAllChannels, disconnectAllChannels } from "./api-client";
 import { NetworkChannel, ChannelQueryParams } from "./types";
@@ -15,6 +16,7 @@ import ChannelGrid from "./components/channel-grid";
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function ChannelsList() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const confirm = useConfirm();
@@ -65,19 +67,19 @@ export default function ChannelsList() {
 
   const handleDisconnectAll = async () => {
     const confirmed = await confirm({
-      header: "Disconnect All Users",
-      message: "Disconnect all user channels on the server? This will close every active connection.",
+      header: t("networkChannels.disconnectAllTitle"),
+      message: t("networkChannels.disconnectAllConfirm"),
     });
     if (!confirmed) return;
 
     setDisconnecting(true);
     try {
       await disconnectAllChannels();
-      toast({ title: "All users disconnected successfully" });
+      toast({ title: t("networkChannels.allDisconnected") });
       refresh();
     } catch (err) {
       toast({
-        title: "Error disconnecting all users",
+        title: t("networkChannels.errorDisconnecting"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -89,10 +91,10 @@ export default function ChannelsList() {
     <div className="mt-4">
       <div className="flex justify-end gap-2 mb-4">
         <Button variant="outline" size="sm" onClick={() => navigate("/network-channels/user-agent")}>
-          <MonitorSmartphone className="w-4 h-4 mr-1" /> User agent
+          <MonitorSmartphone className="w-4 h-4 mr-1" /> {t("networkChannels.userAgentButton")}
         </Button>
         <Button variant="outline" size="sm" onClick={() => navigate("/network-channels/map")}>
-          <Map className="w-4 h-4 mr-1" /> Map
+          <Map className="w-4 h-4 mr-1" /> {t("networkChannels.mapButton")}
         </Button>
         <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
@@ -105,7 +107,7 @@ export default function ChannelsList() {
             disabled={disconnecting}
           >
             {disconnecting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-            Disconnect all users
+            {t("networkChannels.disconnectAll")}
           </Button>
         )}
       </div>

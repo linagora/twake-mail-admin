@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2, Pencil, AlertTriangle, Loader2, Save } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import {
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export default function DomainContacts({ domain }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/domains/{domain}/contacts");
@@ -67,7 +69,7 @@ export default function DomainContacts({ domain }: Props) {
       if (createFirstname.trim()) payload.firstname = createFirstname.trim();
       if (createSurname.trim()) payload.surname = createSurname.trim();
       await createDomainContact(domain, payload);
-      toast({ title: "Contact created" });
+      toast({ title: t("domains.contacts.created") });
       setCreateEmail("");
       setCreateFirstname("");
       setCreateSurname("");
@@ -75,7 +77,7 @@ export default function DomainContacts({ domain }: Props) {
       await refresh();
     } catch (err) {
       toast({
-        title: "Error creating contact",
+        title: t("domains.contacts.errorCreating"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -85,17 +87,17 @@ export default function DomainContacts({ domain }: Props) {
 
   const handleDelete = async (email: string) => {
     const confirmed = await confirm({
-      header: "Delete Contact",
-      message: `Delete contact "${email}" from ${domain}?`,
+      header: t("domains.contacts.deleteTitle"),
+      message: t("domains.contacts.deleteConfirm", { email, domain }),
     });
     if (!confirmed) return;
     try {
       await deleteDomainContact(domain, usernameFromEmail(email));
-      toast({ title: "Contact deleted" });
+      toast({ title: t("domains.contacts.deleted") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error deleting contact",
+        title: t("domains.contacts.errorDeleting"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -109,7 +111,7 @@ export default function DomainContacts({ domain }: Props) {
       setViewContact(contact);
     } catch (err) {
       toast({
-        title: "Error fetching contact",
+        title: t("domains.contacts.errorUpdating"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -132,7 +134,7 @@ export default function DomainContacts({ domain }: Props) {
       setEditSurname(contact.surname ?? "");
     } catch (err) {
       toast({
-        title: "Error fetching contact",
+        title: t("domains.contacts.errorUpdating"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -146,12 +148,12 @@ export default function DomainContacts({ domain }: Props) {
       payload.firstname = editFirstname.trim();
       payload.surname = editSurname.trim();
       await updateDomainContact(domain, usernameFromEmail(editContact.emailAddress), payload);
-      toast({ title: "Contact updated" });
+      toast({ title: t("domains.contacts.updated") });
       setEditContact(null);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error updating contact",
+        title: t("domains.contacts.errorUpdating"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -167,7 +169,7 @@ export default function DomainContacts({ domain }: Props) {
           className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
         >
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Domain Contacts
+          {t("domains.contacts.title")}
           {contacts && (
             <span className="text-sm font-normal text-gray-500">
               ({contacts.length})
@@ -178,7 +180,7 @@ export default function DomainContacts({ domain }: Props) {
           <button
             onClick={() => setShowCreate(!showCreate)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
-            title="Create contact"
+            title={t("domains.contacts.createButton")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -189,17 +191,17 @@ export default function DomainContacts({ domain }: Props) {
         <div className="mt-2">
           <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md mb-3 text-sm text-amber-800">
             <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-            <span>Contacts are automatically populated from LDAP. This section allows manual corrections by an administrator.</span>
+            <span>{t("domains.contacts.ldapNotice")}</span>
           </div>
 
           {showCreate && (
             <div className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2">
-              <h5 className="text-sm font-semibold">New Contact</h5>
+              <h5 className="text-sm font-semibold">{t("domains.contacts.newTitle")}</h5>
               <input
                 type="email"
                 value={createEmail}
                 onChange={(e) => setCreateEmail(e.target.value)}
-                placeholder="email@domain.tld"
+                placeholder={t("domains.contacts.emailPlaceholder")}
                 className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -207,7 +209,7 @@ export default function DomainContacts({ domain }: Props) {
                   type="text"
                   value={createFirstname}
                   onChange={(e) => setCreateFirstname(e.target.value)}
-                  placeholder="Firstname (optional)"
+                  placeholder={t("domains.contacts.firstnamePlaceholder")}
                   className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
@@ -215,13 +217,13 @@ export default function DomainContacts({ domain }: Props) {
                   value={createSurname}
                   onChange={(e) => setCreateSurname(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-                  placeholder="Surname (optional)"
+                  placeholder={t("domains.contacts.surnamePlaceholder")}
                   className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" size="sm" onClick={() => setShowCreate(false)}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button
                   size="sm"
@@ -229,7 +231,7 @@ export default function DomainContacts({ domain }: Props) {
                   disabled={creating || !createEmail.trim()}
                 >
                   {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
-                  Create
+                  {t("common.create")}
                 </Button>
               </div>
             </div>
@@ -259,7 +261,7 @@ export default function DomainContacts({ domain }: Props) {
                       <button
                         onClick={(e) => { e.stopPropagation(); openEditFromList(email); }}
                         className="p-2 rounded-md hover:bg-gray-200"
-                        title="Edit contact"
+                        title={t("domains.contacts.editTooltip")}
                       >
                         <Pencil className="w-4 h-4 text-blue-600" />
                       </button>
@@ -268,7 +270,7 @@ export default function DomainContacts({ domain }: Props) {
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(email); }}
                         className="p-2 rounded-md hover:bg-gray-200"
-                        title="Delete contact"
+                        title={t("domains.contacts.removeTooltip")}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>
@@ -277,7 +279,7 @@ export default function DomainContacts({ domain }: Props) {
                 </div>
               ))}
               {contacts.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No domain contacts.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("domains.contacts.empty")}</p>
               )}
             </div>
           )}
@@ -288,7 +290,7 @@ export default function DomainContacts({ domain }: Props) {
       <Dialog open={!!viewContact || viewLoading} onOpenChange={(v) => { if (!v) { setViewContact(null); setViewLoading(false); } }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Contact Details</DialogTitle>
+            <DialogTitle>{t("domains.contacts.detailTitle")}</DialogTitle>
           </DialogHeader>
           {viewLoading && !viewContact && (
             <div className="flex justify-center py-4">
@@ -297,15 +299,15 @@ export default function DomainContacts({ domain }: Props) {
           )}
           {viewContact && (
             <div className="space-y-3 text-sm">
-              <Row label="ID" value={viewContact.id} />
-              <Row label="Email" value={viewContact.emailAddress} />
-              <Row label="Firstname" value={viewContact.firstname || "—"} />
-              <Row label="Surname" value={viewContact.surname || "—"} />
+              <Row label={t("domains.contacts.id")} value={viewContact.id} />
+              <Row label={t("domains.contacts.email")} value={viewContact.emailAddress} />
+              <Row label={t("domains.contacts.firstname")} value={viewContact.firstname || "—"} />
+              <Row label={t("domains.contacts.surname")} value={viewContact.surname || "—"} />
               {canEdit && (
                 <div className="flex justify-end pt-2">
                   <Button size="sm" onClick={() => openEdit(viewContact)}>
                     <Pencil className="w-4 h-4 mr-1" />
-                    Edit
+                    {t("common.edit")}
                   </Button>
                 </div>
               )}
@@ -318,12 +320,12 @@ export default function DomainContacts({ domain }: Props) {
       <Dialog open={!!editContact} onOpenChange={(v) => { if (!v) setEditContact(null); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Contact — {editContact?.emailAddress}</DialogTitle>
+            <DialogTitle>{t("domains.contacts.editTitle", { email: editContact?.emailAddress })}</DialogTitle>
           </DialogHeader>
           {editContact && (
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium">Firstname</label>
+                <label className="text-sm font-medium">{t("domains.contacts.firstname")}</label>
                 <input
                   type="text"
                   value={editFirstname}
@@ -332,7 +334,7 @@ export default function DomainContacts({ domain }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">Surname</label>
+                <label className="text-sm font-medium">{t("domains.contacts.surname")}</label>
                 <input
                   type="text"
                   value={editSurname}
@@ -343,11 +345,11 @@ export default function DomainContacts({ domain }: Props) {
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" size="sm" onClick={() => setEditContact(null)}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button size="sm" onClick={handleUpdate} disabled={saving}>
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
-                  Save
+                  {t("common.save")}
                 </Button>
               </div>
             </div>

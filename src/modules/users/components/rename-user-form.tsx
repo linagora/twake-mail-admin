@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default function RenameUserForm({ username, onChange }: Props) {
+  const { t } = useTranslation();
   let newUsername = "";
   let force = false;
   let fromStep = "";
@@ -15,9 +17,9 @@ export default function RenameUserForm({ username, onChange }: Props) {
 
   return (
     <div className="space-y-4">
-      <p>Rename <strong>{username}</strong> to a new username.</p>
+      <p>{t("renameUserForm.newUsername")}: <strong>{username}</strong></p>
       <div className="flex items-center gap-2">
-        <label className="text-sm font-medium whitespace-nowrap">New username:</label>
+        <label className="text-sm font-medium whitespace-nowrap">{t("renameUserForm.newUsername")}:</label>
         <Input
           type="text"
           placeholder="new.user@domain.tld"
@@ -29,10 +31,10 @@ export default function RenameUserForm({ username, onChange }: Props) {
           id="rename-force"
           onCheckedChange={(checked) => { force = !!checked; notify(); }}
         />
-        <label htmlFor="rename-force" className="text-sm">Force (bypass user existence check)</label>
+        <label htmlFor="rename-force" className="text-sm">{t("renameUserForm.force")}</label>
       </div>
       <div className="flex items-center gap-2">
-        <label className="text-sm font-medium whitespace-nowrap">From step (optional):</label>
+        <label className="text-sm font-medium whitespace-nowrap">{t("renameUserForm.fromStep")}:</label>
         <Input
           type="text"
           placeholder="e.g. MailboxUsernameChangeTaskStep"

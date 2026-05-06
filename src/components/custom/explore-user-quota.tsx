@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Search, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { apiClient } from "@/lib/apiClient";
 import { Button } from "@/components/ui/button";
@@ -61,6 +62,7 @@ interface Props {
 }
 
 export default function ExploreUserQuota({ domain }: Props) {
+  const { t } = useTranslation();
   const canSearch = useIsAllowed("GET", "/quota/users");
   const [open, setOpen] = useState(false);
   const [minPercent, setMinPercent] = useState("80");
@@ -111,7 +113,7 @@ export default function ExploreUserQuota({ domain }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Explore User Quota
+        {t("exploreQuota.title")}
       </button>
 
       {open && (
@@ -120,7 +122,7 @@ export default function ExploreUserQuota({ domain }: Props) {
           <div className="p-4 bg-gray-50 rounded-2 space-y-3">
             <div className="flex items-end gap-3 flex-wrap">
               <div>
-                <label className="text-xs text-gray-500 font-medium">Min occupation (%)</label>
+                <label className="text-xs text-gray-500 font-medium">{t("exploreQuota.minOccupation")}</label>
                 <input
                   type="number"
                   min="0"
@@ -132,7 +134,7 @@ export default function ExploreUserQuota({ domain }: Props) {
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-500 font-medium">Max occupation (%)</label>
+                <label className="text-xs text-gray-500 font-medium">{t("exploreQuota.maxOccupation")}</label>
                 <input
                   type="number"
                   min="0"
@@ -145,7 +147,7 @@ export default function ExploreUserQuota({ domain }: Props) {
               </div>
               <Button size="sm" onClick={handleSearch} disabled={loading}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Search className="w-4 h-4 mr-1" />}
-                Search
+                {t("common.search")}
               </Button>
             </div>
 
@@ -154,17 +156,17 @@ export default function ExploreUserQuota({ domain }: Props) {
             {searched && !loading && (
               <div className="mt-3">
                 {results.length === 0 ? (
-                  <p className="text-sm text-gray-500">No users found in this occupation range.</p>
+                  <p className="text-sm text-gray-500">{t("exploreQuota.empty")}</p>
                 ) : (
                   <>
                     {/* Legend */}
                     <div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-2 text-xs font-semibold text-muted-foreground px-2 pb-2 border-b mb-1">
                       <span className="w-8">#</span>
-                      <span>Username</span>
-                      <span className="w-24 text-right">Occupation Size</span>
-                      <span className="w-24 text-right">Occupation Count</span>
-                      <span className="w-20 text-right">Ratio Max</span>
-                      <span className="w-28 text-right">Computed Limit</span>
+                      <span>{t("exploreQuota.username")}</span>
+                      <span className="w-24 text-right">{t("exploreQuota.occupationSize")}</span>
+                      <span className="w-24 text-right">{t("exploreQuota.occupationCount")}</span>
+                      <span className="w-20 text-right">{t("exploreQuota.ratioMax")}</span>
+                      <span className="w-28 text-right">{t("exploreQuota.computedLimit")}</span>
                     </div>
 
                     <div className="space-y-1">
@@ -210,17 +212,17 @@ export default function ExploreUserQuota({ domain }: Props) {
                         disabled={page <= 1 || loading}
                         className="px-3 py-1.5 bg-gray-200 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Previous
+                        {t("common.previous")}
                       </button>
                       <span className="text-xs text-gray-500">
-                        Page {page} — {results.length} result{results.length !== 1 ? "s" : ""}
+                        {t("exploreQuota.page", { page, count: results.length })}
                       </span>
                       <button
                         onClick={() => fetchUsers(page + 1)}
                         disabled={!hasMore || loading}
                         className="px-3 py-1.5 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Next
+                        {t("common.next")}
                       </button>
                     </div>
                   </>

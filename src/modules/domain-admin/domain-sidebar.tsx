@@ -1,4 +1,4 @@
-import { Users, BookMarked, Mailbox, Gauge, Zap, ListChecks, Globe, LogOut } from "lucide-react";
+import { Users, BookMarked, Mailbox, Gauge, Zap, ListChecks, Globe, LogOut, Languages } from "lucide-react";
 import Logo from "@/assets/images/logo.svg";
 import {
   Sidebar,
@@ -14,41 +14,58 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useDomain } from "./domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { appConfig } from "@/lib/config";
 import { useOIDC } from "@/components/custom/oidc-provider";
 
-function SidebarLogoutButton() {
-  const { logout } = useOIDC();
+function LanguageSelector() {
+  const { i18n, t } = useTranslation();
+  const current = i18n.language?.startsWith("fr") ? "fr" : "en";
+  const next = current === "fr" ? "en" : "fr";
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton onClick={logout}>
-        <LogOut />
-        <span>Logout</span>
+      <SidebarMenuButton onClick={() => i18n.changeLanguage(next)} title={t("sidebar.language")}>
+        <Languages />
+        <span>{current === "fr" ? "Français" : "English"}</span>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
 }
 
-const ALL_ITEMS = [
-  { title: "Users",          url: "/users",         icon: Users },
-  { title: "Domain Aliases", url: "/aliases",        icon: BookMarked },
-  { title: "Team Mailboxes", url: "/team-mailboxes", icon: Mailbox },
-  { title: "Quota",          url: "/quota",          icon: Gauge },
-  { title: "Rate Limiting",  url: "/rate-limiting",  icon: Zap },
-  { title: "Tasks",          url: "/tasks",          icon: ListChecks },
-];
+function SidebarLogoutButton() {
+  const { logout } = useOIDC();
+  const { t } = useTranslation();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton onClick={logout}>
+        <LogOut />
+        <span>{t("sidebar.logout")}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
 
 export function DomainSidebar() {
   const domain = useDomain();
   const location = useLocation();
+  const { t } = useTranslation();
   const canUsers = useIsAllowed("GET", "/domains/{domain}/users");
   const canAliases = useIsAllowed("GET", "/domains/{domain}/aliases");
   const canTeamMailboxes = useIsAllowed("GET", "/domains/{domain}/team-mailboxes");
   const canQuota = useIsAllowed("GET", "/quota/domains/{domain}");
   const canRateLimiting = useIsAllowed("GET", "/domains/{domain}/ratelimits");
   const canTasks = useIsAllowed("GET", "/tasks");
+
+  const ALL_ITEMS = [
+    { title: t("domainAdminPages.users"),        url: "/users",         icon: Users },
+    { title: t("domainAdminPages.domainAliases"), url: "/aliases",        icon: BookMarked },
+    { title: t("domainAdminPages.teamMailboxes"), url: "/team-mailboxes", icon: Mailbox },
+    { title: t("domainAdminPages.quota"),         url: "/quota",          icon: Gauge },
+    { title: t("domainAdminPages.rateLimiting"),  url: "/rate-limiting",  icon: Zap },
+    { title: t("domainAdminPages.tasks"),         url: "/tasks",          icon: ListChecks },
+  ];
 
   const VISIBILITY: Record<string, boolean> = {
     "/users": canUsers,
@@ -70,16 +87,16 @@ export function DomainSidebar() {
             <Globe className="w-5 h-5 text-muted-foreground shrink-0" />
             <span className="text-lg font-bold truncate" title={domain}>{domain}</span>
           </div>
-          <p className="text-base font-bold text-muted-foreground">Domain admin</p>
+          <p className="text-base font-bold text-muted-foreground">{t("domainAdminPages.domainAdmin")}</p>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Administration</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("domainAdminPages.administration")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild>
                     <Link
                       to={item.url}
@@ -95,16 +112,13 @@ export function DomainSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      {appConfig.sso && (
-        <>
-          <SidebarSeparator />
-          <SidebarFooter>
-            <SidebarMenu>
-              <SidebarLogoutButton />
-            </SidebarMenu>
-          </SidebarFooter>
-        </>
-      )}
+      <SidebarSeparator />
+      <SidebarFooter>
+        <SidebarMenu>
+          <LanguageSelector />
+          {appConfig.sso && <SidebarLogoutButton />}
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

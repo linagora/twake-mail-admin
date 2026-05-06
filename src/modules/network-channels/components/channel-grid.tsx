@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { NetworkChannel } from "../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PaginationControls } from "@/components/custom/pagination-controls";
@@ -59,6 +60,7 @@ export default function ChannelGrid({
   page: controlledPage, hasMore, onPageChange,
   sortField: controlledSortField, sortAsc: controlledSortAsc, onSortChange,
 }: Props) {
+  const { t } = useTranslation();
   const isControlled = paginate && onPageChange != null;
 
   const [internalSortField, setInternalSortField] = useState<SortField>("username");
@@ -125,25 +127,25 @@ export default function ChannelGrid({
     <div>
       {/* Sort controls */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <label className="text-sm font-medium">Sort by:</label>
+        <label className="text-sm font-medium">{t("networkChannels.sortBy")}</label>
         <select
           className="border rounded px-2 py-1 text-sm"
           value={sortField}
           onChange={(e) => handleSortFieldChange(e.target.value as SortField)}
         >
           {SORTABLE_FIELDS.map((f) => (
-            <option key={f.key} value={f.key}>{f.label}</option>
+            <option key={f.key} value={f.key}>{t(`networkChannels.sortField.${f.key}`)}</option>
           ))}
         </select>
         <button
           className="border rounded px-2 py-1 text-sm"
           onClick={() => handleSortAscChange(!sortAsc)}
         >
-          {sortAsc ? "Asc \u2191" : "Desc \u2193"}
+          {sortAsc ? t("networkChannels.asc") : t("networkChannels.desc")}
         </button>
         <input
           type="search"
-          placeholder="Search username, IP, user agent…"
+          placeholder={t("networkChannels.searchPlaceholder")}
           className="border rounded px-2 py-1 text-sm ml-4 w-64"
           value={search}
           onChange={(e) => { setSearch(e.target.value); handlePageChange(1); }}
@@ -160,7 +162,7 @@ export default function ChannelGrid({
       )}
 
       {!loading && channels.length === 0 && (
-        <p className="text-sm text-muted-foreground">No active channels.</p>
+        <p className="text-sm text-muted-foreground">{t("networkChannels.noActiveChannels")}</p>
       )}
 
       {/* Legend + Channel rows */}
@@ -168,15 +170,15 @@ export default function ChannelGrid({
         <div>
           <div className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 text-xs font-semibold text-muted-foreground px-3 pb-2 border-b mb-1">
             <span className="w-10">#</span>
-            <span>Username</span>
-            <span>Protocol</span>
-            <span>Remote Address</span>
-            <span>User Agent</span>
-            <span>Requests</span>
-            <span>Written</span>
-            <span>Read</span>
-            <span>Live Read</span>
-            <span>Live Write</span>
+            <span>{t("networkChannels.colUsername")}</span>
+            <span>{t("networkChannels.colProtocol")}</span>
+            <span>{t("networkChannels.colRemoteAddress")}</span>
+            <span>{t("networkChannels.colUserAgent")}</span>
+            <span>{t("networkChannels.colRequests")}</span>
+            <span>{t("networkChannels.colWritten")}</span>
+            <span>{t("networkChannels.colRead")}</span>
+            <span>{t("networkChannels.colLiveRead")}</span>
+            <span>{t("networkChannels.colLiveWrite")}</span>
           </div>
           <div className="space-y-1">
             {displayed.map((channel, index) => {
@@ -215,8 +217,8 @@ export default function ChannelGrid({
           disabledPrev={page <= 1}
           disabledNext={disabledNext}
           label={isControlled
-            ? `Page ${page}`
-            : `Page ${page} / ${totalPages} — Total: ${sorted.length}`}
+            ? t("common.pageSimple", { page })
+            : t("common.page", { page, totalPages, total: sorted.length })}
         />
       )}
 
@@ -224,7 +226,7 @@ export default function ChannelGrid({
       <Dialog open={!!selectedChannel} onOpenChange={(v) => !v && setSelectedChannel(null)}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Channel — {selectedChannel?.remoteAddress}</DialogTitle>
+            <DialogTitle>{t("networkChannels.channelDetail", { address: selectedChannel?.remoteAddress })}</DialogTitle>
           </DialogHeader>
           <pre className="text-xs bg-gray-50 p-4 rounded overflow-x-auto">
             {JSON.stringify(selectedChannel, null, 2)}

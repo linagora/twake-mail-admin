@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/domains/{domain}/team-mailboxes/{mailbox}/extraSenders");
@@ -53,26 +55,26 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
     if (!username) return;
     try {
       await addTeamMailboxExtraSender(domain, mailbox, username);
-      toast({ title: "Extra sender added" });
+      toast({ title: t("domains.extraSenders.added") });
       setNewSender("");
       await refresh();
     } catch (err) {
-      toast({ title: "Error adding extra sender", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("domains.extraSenders.errorAdding"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
   const handleRemove = async (username: string) => {
     const confirmed = await confirm({
-      header: "Remove Extra Sender",
-      message: `Revoke send-as right for "${username}"?`,
+      header: t("domains.extraSenders.removeTitle"),
+      message: t("domains.extraSenders.removeConfirm", { username }),
     });
     if (!confirmed) return;
     try {
       await removeTeamMailboxExtraSender(domain, mailbox, username);
-      toast({ title: "Extra sender removed" });
+      toast({ title: t("domains.extraSenders.removed") });
       await refresh();
     } catch (err) {
-      toast({ title: "Error removing extra sender", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("domains.extraSenders.errorRemoving"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
@@ -83,7 +85,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
         className="flex items-center gap-1 text-md font-semibold w-full text-left"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Extra Senders
+        {t("domains.extraSenders.title")}
         {senders && <span className="text-sm font-normal text-gray-500">({senders.length})</span>}
       </button>
 
@@ -99,24 +101,24 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
             className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {senderStatus === "checking" && (
-            <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">Checking...</span>
+            <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>
           )}
           {senderStatus === "exists" && (
             <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
-              User exists
+              {t("common.userExists")}
             </span>
           )}
           {senderStatus === "not_found" && (
             <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
-              User not found
+              {t("common.userNotFound")}
             </span>
           )}
           {senderStatus === "invalid" && (
             <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
-              Invalid username
+              {t("common.invalidUsername")}
             </span>
           )}
           <button
@@ -124,7 +126,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
             disabled={!newSender.trim()}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Add
+            {t("common.add")}
           </button>
         </div>)}
 
@@ -144,31 +146,31 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
               disabled={page <= 1}
               className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              First
+              {t("common.first")}
             </button>
             <button
               onClick={() => goToPage(page - 1)}
               disabled={page <= 1}
               className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Previous
+              {t("common.previous")}
             </button>
             <span className="text-sm font-medium text-center">
-              Page {page} / {totalPages} — Total: {sorted.length}
+              {t("common.page", { page, totalPages, total: sorted.length })}
             </span>
             <button
               onClick={() => goToPage(page + 1)}
               disabled={page >= totalPages}
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next
+              {t("common.next")}
             </button>
             <button
               onClick={() => goToPage(totalPages)}
               disabled={page >= totalPages}
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Last
+              {t("common.last")}
             </button>
           </div>
         )}
@@ -188,7 +190,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
                 <button
                   onClick={() => handleRemove(username)}
                   className="p-2 rounded-md hover:bg-gray-200"
-                  title="Remove extra sender"
+                  title={t("domains.extraSenders.removeTooltip")}
                 >
                   <Trash2 className="w-4 h-4 text-red-600" />
                 </button>
@@ -196,7 +198,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
             </div>
           ))}
           {senders && senders.length === 0 && (
-            <p className="mt-2 text-sm text-gray-500">No extra senders.</p>
+            <p className="mt-2 text-sm text-gray-500">{t("domains.extraSenders.empty")}</p>
           )}
         </div>
       </>)}

@@ -54,7 +54,7 @@ export type AdditionalParams = {
 }
 
 export type TaskProps = {
-  name: string;
+  nameKey: string;
   taskKey: TaskKey;
   mode?: ReIndexMode;
   command: string;

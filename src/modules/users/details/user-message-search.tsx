@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2, Paperclip, Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { searchUserMails, getUserMailboxes } from "../api-client";
 import { MailSearchFilter, MailSearchResult } from "../types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -26,6 +27,7 @@ interface SortEntry {
 
 export default function UserMessageSearch() {
   const { username } = useParams<{ username: string }>();
+  const { t } = useTranslation();
   const canSearch = useIsAllowed("POST", "/users/{username}/mails");
 
   // Form state
@@ -136,21 +138,21 @@ export default function UserMessageSearch() {
           ← {username}
         </Link>
         <span className="text-gray-400">/</span>
-        <h3 className="text-lg font-semibold">Message Search</h3>
+        <h3 className="text-lg font-semibold">{t("users.messageSearch.title")}</h3>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Reason */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Reason <span className="text-red-500">*</span>
+            {t("users.messageSearch.reasonLabel")} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             required
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            placeholder="e.g. Support ticket #4242 — user reports missing emails"
+            placeholder={t("users.messageSearch.reasonPlaceholder")}
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -163,101 +165,101 @@ export default function UserMessageSearch() {
             className="flex items-center gap-2 text-sm font-medium hover:text-blue-600 transition"
           >
             {showFilters ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-            Filters
+            {t("users.messageSearch.filters")}
           </button>
 
           {showFilters && (
             <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 pl-4 border-l-2 border-gray-100">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Full-text search</label>
+                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.fullText")}</label>
                 <input
                   type="text"
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
-                  placeholder="Search across subject, body, attachments..."
+                  placeholder={t("users.messageSearch.fullTextPlaceholder")}
                   className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">From</label>
+                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.from")}</label>
                 <input
                   type="text"
                   value={filterFrom}
                   onChange={(e) => setFilterFrom(e.target.value)}
-                  placeholder="billing@vendor.com"
+                  placeholder={t("users.messageSearch.fromPlaceholder")}
                   className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">To</label>
+                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.to")}</label>
                 <input
                   type="text"
                   value={filterTo}
                   onChange={(e) => setFilterTo(e.target.value)}
-                  placeholder="user@domain.com"
+                  placeholder={t("users.messageSearch.toPlaceholder")}
                   className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Subject</label>
+                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.subject")}</label>
                 <input
                   type="text"
                   value={filterSubject}
                   onChange={(e) => setFilterSubject(e.target.value)}
-                  placeholder="Invoice"
+                  placeholder={t("users.messageSearch.subjectPlaceholder")}
                   className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Has attachment</label>
+                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.hasAttachment")}</label>
                 <select
                   value={filterHasAttachment}
                   onChange={(e) => setFilterHasAttachment(e.target.value as "any" | "yes" | "no")}
                   className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="any">Any</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
+                  <option value="any">{t("users.messageSearch.any")}</option>
+                  <option value="yes">{t("common.yes")}</option>
+                  <option value="no">{t("common.no")}</option>
                 </select>
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
-                  Has keywords <span className="font-normal">(comma-separated, e.g. $seen, $flagged)</span>
+                  {t("users.messageSearch.hasKeywords")} <span className="font-normal">{t("users.messageSearch.hasKeywordsHint")}</span>
                 </label>
                 <input
                   type="text"
                   value={filterHasKeywords}
                   onChange={(e) => setFilterHasKeywords(e.target.value)}
-                  placeholder="$seen, $flagged"
+                  placeholder={t("users.messageSearch.hasKeywordsPlaceholder")}
                   className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
-                  In mailboxes <span className="font-normal">(mailbox IDs, comma-separated)</span>
+                  {t("users.messageSearch.inMailboxes")} <span className="font-normal">{t("users.messageSearch.inMailboxesHint")}</span>
                 </label>
                 <input
                   type="text"
                   value={filterInMailboxes}
                   onChange={(e) => setFilterInMailboxes(e.target.value)}
-                  placeholder="mailboxId1, mailboxId2"
+                  placeholder={t("users.messageSearch.inMailboxesPlaceholder")}
                   className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
-                  Exclude mailboxes <span className="font-normal">(mailbox IDs, comma-separated)</span>
+                  {t("users.messageSearch.excludeMailboxes")} <span className="font-normal">{t("users.messageSearch.inMailboxesHint")}</span>
                 </label>
                 <input
                   type="text"
                   value={filterInMailboxOtherThan}
                   onChange={(e) => setFilterInMailboxOtherThan(e.target.value)}
-                  placeholder="mailboxId3"
+                  placeholder={t("users.messageSearch.excludeMailboxesPlaceholder")}
                   className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Received after (ISO-8601)</label>
+                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.receivedAfter")}</label>
                 <input
                   type="text"
                   value={filterAfter}
@@ -267,7 +269,7 @@ export default function UserMessageSearch() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Received before (ISO-8601)</label>
+                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.receivedBefore")}</label>
                 <input
                   type="text"
                   value={filterBefore}
@@ -283,14 +285,14 @@ export default function UserMessageSearch() {
         {/* Sort */}
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm font-medium">Sort</span>
+            <span className="text-sm font-medium">{t("users.messageSearch.sort")}</span>
             {sorts.length < 3 && (
               <button
                 type="button"
                 onClick={addSort}
                 className="text-xs text-blue-500 hover:underline"
               >
-                + Add
+                {t("users.messageSearch.addSort")}
               </button>
             )}
           </div>
@@ -303,7 +305,7 @@ export default function UserMessageSearch() {
                   className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {SORT_PROPERTIES.map((p) => (
-                    <option key={p} value={p}>{p}</option>
+                    <option key={p} value={p}>{t(`users.messageSearch.sortProperty.${p}`)}</option>
                   ))}
                 </select>
                 <select
@@ -311,20 +313,20 @@ export default function UserMessageSearch() {
                   onChange={(e) => updateSort(idx, { isAscending: e.target.value === "asc" })}
                   className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="desc">Descending</option>
-                  <option value="asc">Ascending</option>
+                  <option value="desc">{t("users.messageSearch.descending")}</option>
+                  <option value="asc">{t("users.messageSearch.ascending")}</option>
                 </select>
                 <button
                   type="button"
                   onClick={() => removeSort(idx)}
                   className="text-xs text-red-400 hover:text-red-600"
                 >
-                  Remove
+                  {t("users.messageSearch.removeSort")}
                 </button>
               </div>
             ))}
             {sorts.length === 0 && (
-              <p className="text-xs text-gray-400">No sort — server default order.</p>
+              <p className="text-xs text-gray-400">{t("users.messageSearch.noSort")}</p>
             )}
           </div>
         </div>
@@ -335,7 +337,7 @@ export default function UserMessageSearch() {
           className="flex items-center gap-2 px-5 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-          Search
+          {t("common.search")}
         </button>
       </form>
 
@@ -360,7 +362,7 @@ export default function UserMessageSearch() {
           />
 
           {results.length === 0 ? (
-            <p className="mt-4 text-sm text-gray-500">No messages found.</p>
+            <p className="mt-4 text-sm text-gray-500">{t("users.messageSearch.noResults")}</p>
           ) : (
             <div className="mt-3 space-y-2">
               {results.map((msg, index) => (
@@ -373,7 +375,7 @@ export default function UserMessageSearch() {
                       <span className="text-gray-400 mr-2 font-normal">
                         {offset + index + 1}.
                       </span>
-                      {msg.subject || <span className="text-gray-400 italic">(no subject)</span>}
+                      {msg.subject || <span className="text-gray-400 italic">{t("users.messageSearch.noSubject")}</span>}
                     </h4>
                     <span className="flex items-center gap-1 shrink-0">
                       {msg.hasAttachment && (
@@ -386,10 +388,10 @@ export default function UserMessageSearch() {
                   </div>
 
                   <p className="text-xs text-gray-500 ml-6">
-                    <span className="font-medium">From:</span> {formatAddresses(msg.from)}
+                    <span className="font-medium">{t("users.messageSearch.fromLabel")}</span> {formatAddresses(msg.from)}
                   </p>
                   <p className="text-xs text-gray-500 ml-6">
-                    <span className="font-medium">To:</span> {formatAddresses(msg.to)}
+                    <span className="font-medium">{t("users.messageSearch.toLabel")}</span> {formatAddresses(msg.to)}
                   </p>
 
                   {msg.preview && (
@@ -458,6 +460,7 @@ interface PaginationControlsProps {
 }
 
 function PaginationControls({ page, offset, hasMore, onPrev, onNext, count }: PaginationControlsProps) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between">
       <button
@@ -465,17 +468,17 @@ function PaginationControls({ page, offset, hasMore, onPrev, onNext, count }: Pa
         disabled={offset === 0}
         className="px-4 py-2 bg-gray-200 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Previous
+        {t("common.previous")}
       </button>
       <span className="text-sm text-gray-600">
-        Page {page} — {count} result{count !== 1 ? "s" : ""}{hasMore ? "+" : ""}
+        {t("common.pageOf", { page, count })}{hasMore ? "+" : ""}
       </span>
       <button
         onClick={onNext}
         disabled={!hasMore}
         className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Next
+        {t("common.next")}
       </button>
     </div>
   );

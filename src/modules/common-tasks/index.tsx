@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
 
@@ -18,7 +19,7 @@ import { appConfig } from "@/lib/config";
 
 const TASKS: TaskProps[] = [
   {
-    name: 'Reindex all data in OpenSearch (fix outdated mode)',
+    nameKey: 'commonTasks.reindexFixOutdated',
     taskKey: TaskKey.REINDEX,
     mode: ReIndexMode.FIX_OUTDATED,
     command: 'curl -XPOST /mailboxes?task=reIndex&mode=fixOutdated',
@@ -29,7 +30,7 @@ const TASKS: TaskProps[] = [
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
-    name: 'Reindex all data in OpenSearch (reindex all mode)',
+    nameKey: 'commonTasks.reindexRebuildAll',
     taskKey: TaskKey.REINDEX,
     mode: ReIndexMode.REBUILD_ALL,
     command: 'curl -XPOST /mailboxes?task=reIndex&mode=rebuildAll',
@@ -40,14 +41,14 @@ const TASKS: TaskProps[] = [
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
-    name: 'Fix mailbox inconsistencies',
+    nameKey: 'commonTasks.fixMailboxInconsistencies',
     taskKey: TaskKey.FIX_MAILBOX_INCONSISTENCIES,
     command: 'curl -XPOST /mailboxes?task=SolveInconsistencies',
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_fixing_mailboxes_inconsistencies',
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
-    name: 'Fix message inconsistencies',
+    nameKey: 'commonTasks.fixMessageInconsistencies',
     taskKey: TaskKey.FIX_MESSAGE_INCONSISTENCIES,
     command: 'curl -XPOST /messages?task=SolveInconsistencies',
     params: [
@@ -57,7 +58,7 @@ const TASKS: TaskProps[] = [
     allowanceCheck: { verb: 'POST', pattern: '/messages' },
   },
   {
-    name: 'Recompute mailbox counters',
+    nameKey: 'commonTasks.recomputeMailboxCounters',
     taskKey: TaskKey.RECOMPUTE_MAILBOX_COUNTERS,
     command: 'curl -XPOST /mailboxes?task=RecomputeMailboxCounters',
     params: [
@@ -67,7 +68,7 @@ const TASKS: TaskProps[] = [
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
-    name: 'Recompute mailbox quota',
+    nameKey: 'commonTasks.recomputeMailboxQuota',
     taskKey: TaskKey.RECOMPUTE_MAILBOX_QUOTA,
     command: 'curl -XPOST /quota/users?task=RecomputeCurrentQuotas',
     params: [
@@ -78,21 +79,21 @@ const TASKS: TaskProps[] = [
     allowanceCheck: { verb: 'POST', pattern: '/quota/users' },
   },
   {
-    name: 'Fix mapping denormalization',
+    nameKey: 'commonTasks.fixMappingDenormalization',
     taskKey: TaskKey.FIX_MAPPING_DENORMALIZATION,
     command: 'curl -XPOST /cassandra/mappings?action=SolveInconsistenciescurl -XPOST /cassandra/mappings?action=SolveInconsistencies',
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_operations_on_mappings_sources',
     allowanceCheck: { verb: 'POST', pattern: '/cassandra/mappings' },
   },
   {
-    name: 'Cleanup JMAP uploads',
+    nameKey: 'commonTasks.cleanupJmapUploads',
     taskKey: TaskKey.CLEANUP_JMAP_UPLOADS,
     command: 'curl -XDELETE /jmap/uploads?scope=expired',
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_cleaning_upload_repository',
     allowanceCheck: { verb: 'DELETE', pattern: '/jmap/uploads' },
   },
   {
-    name: 'Blob garbage collection',
+    nameKey: 'commonTasks.blobGarbageCollection',
     taskKey: TaskKey.BLOB_GARBAGE_COLLECTION,
     command: 'curl -XDELETE /blobs?scope=unreferenced',
     params: [
@@ -103,7 +104,7 @@ const TASKS: TaskProps[] = [
     allowanceCheck: { verb: 'DELETE', pattern: '/blobs' },
   },
   {
-    name: 'Reindex contacts from sent mailbox',
+    nameKey: 'commonTasks.reindexContacts',
     taskKey: TaskKey.CONTACT_INDEXING,
     command: 'curl -XPOST /mailboxes?task=ContactIndexing',
     params: [
@@ -113,7 +114,7 @@ const TASKS: TaskProps[] = [
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
   {
-    name: 'Purge Deleted Messages',
+    nameKey: 'commonTasks.purgeDeletedMessages',
     taskKey: TaskKey.PURGE_DELETED_MESSAGES,
     command: 'curl -XDELETE /deletedMessages?scope=expired',
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_purging_expired_deleted_messages',
@@ -125,14 +126,11 @@ const CLEANUP_PARAMS: TaskParam[] = [
   { key: "olderThan", defaultValue: "5d", type: "input" },
 ];
 
-const MAIL_HEADER_SUBTITLE = "Common tasks for data maintenance of a Twake Mail server";
-const CALENDAR_HEADER_SUBTITLE = "Common tasks for data maintenance of a Twake Calendar server";
-
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";
 
 const CALENDAR_TASKS: TaskProps[] = [
   {
-    name: 'Import LDAP users',
+    nameKey: 'commonTasks.importLdapUsers',
     taskKey: TaskKey.IMPORT_LDAP_USERS,
     command: 'curl -XPOST /registeredUsers/tasks?task=importFromLDAP&usersPerSecond=100',
     params: [
@@ -141,7 +139,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     doc: '',
   },
   {
-    name: 'Domain member synchronization',
+    nameKey: 'commonTasks.domainMemberSync',
     taskKey: TaskKey.DOMAIN_MEMBER_SYNC,
     command: 'curl -XPOST /addressbook/domain-members?task=sync',
     params: [
@@ -150,7 +148,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     doc: '',
   },
   {
-    name: 'Calendar event reindexing',
+    nameKey: 'commonTasks.calendarEventReindex',
     taskKey: TaskKey.CALENDAR_EVENT_REINDEX,
     command: 'curl -XPOST /calendars?task=reindex&eventsPerSecond=100',
     params: [
@@ -159,7 +157,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     doc: '',
   },
   {
-    name: 'Calendar event archival',
+    nameKey: 'commonTasks.calendarEventArchival',
     taskKey: TaskKey.CALENDAR_EVENT_ARCHIVAL,
     command: 'curl -XPOST /calendars?task=archive',
     params: [
@@ -173,7 +171,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     doc: '',
   },
   {
-    name: 'Alarm rescheduling',
+    nameKey: 'commonTasks.alarmRescheduling',
     taskKey: TaskKey.ALARM_RESCHEDULING,
     command: 'curl -XPOST /calendars?task=scheduleAlarms&eventsPerSecond=100',
     params: [
@@ -182,7 +180,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     doc: '',
   },
   {
-    name: 'Add missing fields to registered users',
+    nameKey: 'commonTasks.addMissingFields',
     taskKey: TaskKey.ADD_MISSING_FIELDS,
     command: 'curl -XPOST /registeredUsers?action=addMissingFields',
     params: [],
@@ -191,13 +189,14 @@ const CALENDAR_TASKS: TaskProps[] = [
 ];
 
 export default function CommonTasks() {
+  const { t } = useTranslation();
   if (appConfig.application === 'CALENDAR') {
     return (
       <div className="p-4 relative w-fit">
-        <Header headerTitle="Common Tasks" headerSubTitle={CALENDAR_HEADER_SUBTITLE} docuUrl="" />
+        <Header headerTitle={t("commonTasks.title")} headerSubTitle={t("commonTasks.subtitleCalendar")} docuUrl="" />
         <div className="grid grid-cols-1 gap-4 mt-4">
           {CALENDAR_TASKS.map((task) => (
-            <TaskContainer {...task} key={task.name} />
+            <TaskContainer {...task} key={task.nameKey} />
           ))}
         </div>
       </div>
@@ -208,6 +207,7 @@ export default function CommonTasks() {
 }
 
 function MailCommonTasks() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canReloadCerts = useIsAllowed("POST", "/servers");
@@ -224,18 +224,18 @@ function MailCommonTasks() {
 
   const handleReloadCertificates = async () => {
     const confirmed = await confirm({
-      header: "Reload Certificates",
-      message: `Reload server certificates${reloadPort ? ` for port ${reloadPort}` : " for all ports"}?`,
+      header: t("commonTasks.reloadCertTitle"),
+      message: t("commonTasks.reloadCertConfirm", { port: reloadPort ? ` for port ${reloadPort}` : " for all ports" }),
     });
     if (!confirmed) return;
 
     setReloadLoading(true);
     try {
       await reloadCertificates(reloadPort || undefined);
-      toast({ title: "Certificates reloaded successfully" });
+      toast({ title: t("commonTasks.reloadCertSuccess") });
     } catch (err) {
       toast({
-        title: "Error reloading certificates",
+        title: t("commonTasks.errorReloadCert"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -246,10 +246,10 @@ function MailCommonTasks() {
   const handleCleanupTrash = async () => {
     let olderThan = "5d";
     const result = await confirm({
-      header: "Cleanup Trash folder",
+      header: t("users.tasks.cleanupTrashTitle"),
       message: (
         <ConfirmTaskContent
-          message={<p>Delete messages older than the grace period from the <strong>Trash</strong> folder of all users.</p>}
+          message={<p>{t("commonTasks.cleanupTrashAllDesc")}</p>}
           command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Trash&useSavedDate"`}
           params={CLEANUP_PARAMS}
           getParamValues={(key, value) => {
@@ -264,11 +264,11 @@ function MailCommonTasks() {
     try {
       const data = await cleanupMailbox("Trash", olderThan);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
       });
     } catch (err) {
-      toast({ title: "Error cleaning up Trash", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("commonTasks.errorCleanupTrash"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setCleanupTrashLoading(false);
     }
@@ -277,10 +277,10 @@ function MailCommonTasks() {
   const handleCleanupSpam = async () => {
     let olderThan = "5d";
     const result = await confirm({
-      header: "Cleanup Spam folder",
+      header: t("users.tasks.cleanupSpamTitle"),
       message: (
         <ConfirmTaskContent
-          message={<p>Delete messages older than the grace period from the <strong>Spam</strong> folder of all users.</p>}
+          message={<p>{t("commonTasks.cleanupSpamAllDesc")}</p>}
           command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Spam&useSavedDate"`}
           params={CLEANUP_PARAMS}
           getParamValues={(key, value) => {
@@ -295,11 +295,11 @@ function MailCommonTasks() {
     try {
       const data = await cleanupMailbox("Spam", olderThan);
       toast({
-        title: "Task is running",
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
       });
     } catch (err) {
-      toast({ title: "Error cleaning up Spam", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("commonTasks.errorCleanupSpam"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setCleanupSpamLoading(false);
     }
@@ -309,18 +309,18 @@ function MailCommonTasks() {
     const days = parseInt(cleanupDays);
     if (isNaN(days) || days <= 0) return;
     const confirmed = await confirm({
-      header: "Cleanup Old Tasks",
-      message: `Delete all tasks older than ${days} day${days > 1 ? "s" : ""}?`,
+      header: t("commonTasks.cleanupOldTasks"),
+      message: t("commonTasks.cleanupOldTasksConfirm", { days }),
     });
     if (!confirmed) return;
 
     setCleanupLoading(true);
     try {
       await cleanupOldTasks(days);
-      toast({ title: `Old tasks (>${days} days) cleaned up` });
+      toast({ title: t("commonTasks.cleanupOldTasksSuccess", { days }) });
     } catch (err) {
       toast({
-        title: "Error cleaning up old tasks",
+        title: t("commonTasks.errorCleanupOldTasks"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -330,18 +330,18 @@ function MailCommonTasks() {
 
   const handleRepositionSystemRights = async () => {
     const confirmed = await confirm({
-      header: "Reposition System Rights",
-      message: "Ensure admin and self system users have full rights on all folders of all team mailboxes across all domains? This may take a while.",
+      header: t("commonTasks.repositionTitle"),
+      message: t("commonTasks.repositionConfirm"),
     });
     if (!confirmed) return;
 
     setRepositionLoading(true);
     try {
       await repositionTeamMailboxSystemRights();
-      toast({ title: "System rights repositioned successfully" });
+      toast({ title: t("commonTasks.repositionSuccess") });
     } catch (err) {
       toast({
-        title: "Error repositioning system rights",
+        title: t("commonTasks.errorReposition"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -352,22 +352,22 @@ function MailCommonTasks() {
   return (
     <div className="p-4 relative w-fit">
       <Header
-        headerTitle="Common Tasks"
-        headerSubTitle={MAIL_HEADER_SUBTITLE}
+        headerTitle={t("commonTasks.title")}
+        headerSubTitle={t("commonTasks.subtitleMail")}
         docuUrl={docuUrl}
       />
 
       <div className="grid grid-cols-1 gap-4 mt-4">
         {TASKS.map((task) => (
-          <TaskContainer {...task} key={task.name} />
+          <TaskContainer {...task} key={task.nameKey} />
         ))}
         {canReloadCerts && (
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <p>Reload certificates</p>
+              <p>{t("commonTasks.reloadCertificates")}</p>
               <input
                 type="text"
-                placeholder="port (optional)"
+                placeholder={t("commonTasks.portOptional")}
                 value={reloadPort}
                 onChange={(e) => setReloadPort(e.target.value)}
                 className="border rounded px-2 py-1 text-sm w-32"
@@ -378,7 +378,7 @@ function MailCommonTasks() {
                 <TooltipTrigger asChild>
                   <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleReloadCertificates}>
                     {reloadLoading && <Loader2 className="animate-spin" />}
-                    Run
+                    {t("common.run")}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -390,13 +390,13 @@ function MailCommonTasks() {
         )}
         {canRepositionRights && (
           <div className="flex justify-between items-center gap-4">
-            <p>Reposition system rights on all Team Mailbox folders</p>
+            <p>{t("commonTasks.repositionSystemRights")}</p>
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRepositionSystemRights}>
                     {repositionLoading && <Loader2 className="animate-spin" />}
-                    Run
+                    {t("common.run")}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -408,13 +408,13 @@ function MailCommonTasks() {
         )}
         {canCleanupMailbox && (
           <div className="flex justify-between items-center gap-4">
-            <p>Cleanup Trash folder (all users)</p>
+            <p>{t("commonTasks.cleanupTrashAll")}</p>
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupTrash}>
                     {cleanupTrashLoading && <Loader2 className="animate-spin" />}
-                    Run
+                    {t("common.run")}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -426,13 +426,13 @@ function MailCommonTasks() {
         )}
         {canCleanupMailbox && (
           <div className="flex justify-between items-center gap-4">
-            <p>Cleanup Spam folder (all users)</p>
+            <p>{t("commonTasks.cleanupSpamAll")}</p>
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupSpam}>
                     {cleanupSpamLoading && <Loader2 className="animate-spin" />}
-                    Run
+                    {t("common.run")}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -445,23 +445,23 @@ function MailCommonTasks() {
         {canCleanupOldTasks && (
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <p>Cleaning up old tasks</p>
+              <p>{t("commonTasks.cleaningUpOldTasks")}</p>
               <input
                 type="number"
                 min="1"
-                placeholder="days"
+                placeholder={t("commonTasks.days")}
                 value={cleanupDays}
                 onChange={(e) => setCleanupDays(e.target.value)}
                 className="border rounded px-2 py-1 text-sm w-24"
               />
-              <span className="text-sm text-gray-500">days</span>
+              <span className="text-sm text-gray-500">{t("commonTasks.days")}</span>
             </div>
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleCleanupOldTasks}>
                     {cleanupLoading && <Loader2 className="animate-spin" />}
-                    Run
+                    {t("common.run")}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>

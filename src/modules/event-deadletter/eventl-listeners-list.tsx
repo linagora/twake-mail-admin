@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { RefreshCw, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { ListenerGroupsResponseType } from "./types";
 import {
   getMailboxListenerGroups,
@@ -15,6 +16,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 
 export default function EventListenersList() {
+  const { t } = useTranslation();
   const confirm = useConfirm();
   const { toast } = useToast();
   const canRedeliver = useIsAllowed("POST", "/events/deadLetter/groups/{group}");
@@ -55,10 +57,10 @@ export default function EventListenersList() {
     const command =
       "curl -XPOST http://ip:port/events/deadLetter/groups/{encodedPathOfTheGroup}?action=reDeliver&";
     const result = await confirm({
-      header: "Run Task",
+      header: t("common.run"),
       message: (
         <ConfirmTaskContent
-          message={<p>Do you want to re-deliver events for the group: ${path}.</p>}
+          message={<p>{t("eventDeadletter.redeliverGroup", { path })}</p>}
           command={command}
           params={params}
           getParamValues={(key, value) => {
@@ -72,12 +74,11 @@ export default function EventListenersList() {
 
     const { taskId } = await redeliverGroupEvents(path);
     toast({
-      title: "Run Task Successfully",
+      title: t("eventDeadletter.runTaskSuccess"),
       description: (
         <p>
-          Task{" "}
           <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-            {taskId}
+            {t("common.taskLink", { taskId })}
           </Link>
         </p>
       ),
@@ -86,16 +87,13 @@ export default function EventListenersList() {
 
   const handleClearGroup = async (path: string) => {
     const result = await confirm({
-      header: "Clear event group",
-      message: `Do you want to clear the event group: ${path}.`,
+      header: t("eventDeadletter.clearGroupTitle"),
+      message: t("eventDeadletter.clearGroup", { path }),
     });
     if (!result) return;
 
     await deleteAllEventsForGroup(path);
-    toast({
-      title: "Success",
-      description: <p>The events were deleted.</p>,
-    });
+    toast({ title: t("eventDeadletter.clearSuccess") });
 
     setEventCounts((prev) => ({ ...prev, [path]: 0 }));
   };
@@ -110,7 +108,7 @@ export default function EventListenersList() {
             <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
           </div>
         )}
-        <p>List</p>
+
         <div>
           {listenerGroupsResult?.map((group) => (
             <div
@@ -120,7 +118,7 @@ export default function EventListenersList() {
               <div>
                 <h4 className="text-sm font-medium leading-none">
                   <Link to={`/event-dead-letter/group/${group}?&page=1&size=10`}>
-                    {group} ({eventCounts[group] ?? "Loading..."})
+                    {group} ({eventCounts[group] ?? t("common.loading")})
                   </Link>
                 </h4>
               </div>

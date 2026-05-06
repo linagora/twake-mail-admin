@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   const [token, setToken] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -49,22 +51,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Lock className="h-5 w-5" />
-            Authentication Required
+            {t("auth.title")}
           </DialogTitle>
           <DialogDescription>
-            Please enter your Bearer token to continue accessing the API.
+            {t("auth.description")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="token" className="text-sm font-medium">
-                Bearer Token
+                {t("auth.tokenLabel")}
               </label>
               <Input
                 id="token"
                 type="password"
-                placeholder="Enter your Bearer token"
+                placeholder={t("auth.tokenPlaceholder")}
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
                 disabled={isSubmitting}
@@ -79,10 +81,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {t("auth.cancel")}
             </Button>
             <Button type="submit" disabled={!token.trim() || isSubmitting}>
-              {isSubmitting ? "Authenticating..." : "Authenticate"}
+              {isSubmitting ? t("auth.authenticating") : t("auth.authenticate")}
             </Button>
           </DialogFooter>
         </form>

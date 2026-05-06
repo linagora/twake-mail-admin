@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Loader2, Save, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getUserVacation, updateUserVacation, deleteUserVacation } from "../api-client";
@@ -23,6 +24,7 @@ const EMPTY_VACATION: VacationSettings = {
 };
 
 export default function UserVacation({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/vacation/{username}");
@@ -62,10 +64,10 @@ export default function UserVacation({ username }: Props) {
     setSaving(true);
     try {
       await updateUserVacation(username, form);
-      toast({ title: "Vacation settings updated" });
+      toast({ title: t("users.vacation.updated") });
     } catch (err) {
       toast({
-        title: "Error updating vacation",
+        title: t("users.vacation.errorUpdating"),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {
@@ -75,18 +77,18 @@ export default function UserVacation({ username }: Props) {
 
   const handleDelete = async () => {
     const confirmed = await confirm({
-      header: "Delete Vacation",
-      message: `Delete vacation settings for "${username}"? This will disable and clear the vacation.`,
+      header: t("users.vacation.deleteTitle"),
+      message: t("users.vacation.deleteConfirm", { username }),
     });
     if (!confirmed) return;
 
     try {
       await deleteUserVacation(username);
-      toast({ title: "Vacation settings deleted" });
+      toast({ title: t("users.vacation.deleted") });
       setForm(EMPTY_VACATION);
     } catch (err) {
       toast({
-        title: "Error deleting vacation",
+        title: t("users.vacation.errorDeleting"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -103,7 +105,7 @@ export default function UserVacation({ username }: Props) {
         className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        Vacation
+        {t("users.vacation.title")}
       </button>
 
       {open && (
@@ -121,13 +123,13 @@ export default function UserVacation({ username }: Props) {
                   onCheckedChange={(v) => update("enabled", !!v)}
                 />
                 <label htmlFor="vacation-enabled" className="text-sm font-medium cursor-pointer select-none">
-                  Enabled
+                  {t("users.vacation.enabled")}
                 </label>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium">From</label>
+                  <label className="text-sm font-medium">{t("users.vacation.from")}</label>
                   <input
                     type="datetime-local"
                     value={form.fromDate ? form.fromDate.slice(0, 16) : ""}
@@ -136,7 +138,7 @@ export default function UserVacation({ username }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium">To</label>
+                  <label className="text-sm font-medium">{t("users.vacation.to")}</label>
                   <input
                     type="datetime-local"
                     value={form.toDate ? form.toDate.slice(0, 16) : ""}
@@ -147,34 +149,34 @@ export default function UserVacation({ username }: Props) {
               </div>
 
               <div>
-                <label className="text-sm font-medium">Subject</label>
+                <label className="text-sm font-medium">{t("users.vacation.subject")}</label>
                 <input
                   type="text"
                   value={form.subject ?? ""}
                   onChange={(e) => update("subject", e.target.value)}
-                  placeholder="Out of office"
+                  placeholder={t("users.vacation.subjectPlaceholder")}
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium">Text body</label>
+                <label className="text-sm font-medium">{t("users.vacation.textBody")}</label>
                 <textarea
                   value={form.textBody ?? ""}
                   onChange={(e) => update("textBody", e.target.value)}
                   rows={3}
-                  placeholder="I am on vacation, will be back soon."
+                  placeholder={t("users.vacation.textPlaceholder")}
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium">HTML body</label>
+                <label className="text-sm font-medium">{t("users.vacation.htmlBody")}</label>
                 <textarea
                   value={form.htmlBody ?? ""}
                   onChange={(e) => update("htmlBody", e.target.value)}
                   rows={3}
-                  placeholder="<p>I am on vacation, will be back soon.</p>"
+                  placeholder={t("users.vacation.htmlPlaceholder")}
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -188,13 +190,13 @@ export default function UserVacation({ username }: Props) {
                     onClick={handleDelete}
                   >
                     <Trash2 className="w-4 h-4 mr-1" />
-                    Delete
+                    {t("common.delete")}
                   </Button>
                 )}
                 {canSave && (
                   <Button size="sm" onClick={handleSave} disabled={saving}>
                     {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
-                    Save
+                    {t("common.save")}
                   </Button>
                 )}
               </div>

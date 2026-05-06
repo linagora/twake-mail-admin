@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function UserAliases({ username }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/address/aliases/{username}");
@@ -43,13 +45,13 @@ export default function UserAliases({ username }: Props) {
     if (!alias) return;
     try {
       await addUserAlias(username, alias);
-      toast({ title: "Alias added successfully" });
+      toast({ title: t("users.aliases.added") });
       setNewAlias("");
       setShowCreateInput(false);
       await refresh();
     } catch (err) {
       toast({
-        title: "Error adding alias",
+        title: t("users.aliases.errorAdding"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -57,17 +59,17 @@ export default function UserAliases({ username }: Props) {
 
   const handleRemove = async (alias: string) => {
     const confirmed = await confirm({
-      header: "Remove Alias",
-      message: `Remove alias "${alias}" from ${username}?`,
+      header: t("users.aliases.removeTitle"),
+      message: t("users.aliases.removeConfirm", { alias, username }),
     });
     if (!confirmed) return;
     try {
       await removeUserAlias(username, alias);
-      toast({ title: "Alias removed successfully" });
+      toast({ title: t("users.aliases.removed") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error removing alias",
+        title: t("users.aliases.errorRemoving"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -81,7 +83,7 @@ export default function UserAliases({ username }: Props) {
           className="flex items-center gap-2 text-md font-semibold hover:text-blue-600 transition"
         >
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Aliases
+          {t("users.aliases.title")}
           {aliases && (
             <span className="text-sm font-normal text-gray-500">
               ({aliases.length})
@@ -92,7 +94,7 @@ export default function UserAliases({ username }: Props) {
           <button
             onClick={() => setShowCreateInput(!showCreateInput)}
             className="p-1 rounded-md hover:bg-gray-200 transition"
-            title="Add alias"
+            title={t("users.aliases.addTooltip")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -108,7 +110,7 @@ export default function UserAliases({ username }: Props) {
                 value={newAlias}
                 onChange={(e) => setNewAlias(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-                placeholder="alias@domain.com"
+                placeholder={t("users.aliases.placeholder")}
                 className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -116,7 +118,7 @@ export default function UserAliases({ username }: Props) {
                 disabled={!newAlias.trim()}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Add
+                {t("common.add")}
               </button>
             </div>
           )}
@@ -126,7 +128,7 @@ export default function UserAliases({ username }: Props) {
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {aliases && (
             <div>
@@ -143,7 +145,7 @@ export default function UserAliases({ username }: Props) {
                     <button
                       onClick={() => handleRemove(alias.source)}
                       className="p-2 rounded-md hover:bg-gray-200"
-                      title="Remove alias"
+                      title={t("users.aliases.removeTooltip")}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
@@ -151,7 +153,7 @@ export default function UserAliases({ username }: Props) {
                 </div>
               ))}
               {aliases.length === 0 && (
-                <p className="mt-2 text-sm text-gray-500">No aliases configured.</p>
+                <p className="mt-2 text-sm text-gray-500">{t("users.aliases.empty")}</p>
               )}
             </div>
           )}

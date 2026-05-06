@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { RefreshCcw, CircleStop, Filter } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { listTasks, ListTasksParams } from "./api-client";
@@ -17,15 +18,6 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 const STATUS_OPTIONS = ["", "waiting", "inProgress", "cancelledRequested", "completed", "cancelled", "failed"];
-const STATUS_LABELS: Record<string, string> = {
-  "": "All",
-  waiting: "Waiting",
-  inProgress: "In Progress",
-  cancelledRequested: "Cancel Requested",
-  completed: "Completed",
-  cancelled: "Cancelled",
-  failed: "Failed",
-};
 
 type SortField = "submitDate" | "startedDate" | "completedDate" | "status" | "type";
 
@@ -48,10 +40,10 @@ function formatDate(d: string | null | undefined): string {
   }
 }
 
-const headerSubTitle = "Monitor and manage server tasks";
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";
 
 export default function Tasks() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canCancel = useIsAllowed("DELETE", "/tasks/{id}");
@@ -126,16 +118,16 @@ export default function Tasks() {
 
   const handleCancel = async (task: TaskDetailResponse) => {
     const confirmed = await confirm({
-      header: "Cancel Task",
-      message: `Cancel task "${task.taskId}" (${task.type})?`,
+      header: t("tasks.cancelTitle"),
+      message: t("tasks.cancelConfirm", { taskId: task.taskId, type: task.type }),
     });
     if (!confirmed) return;
     try {
       await cancelTask(task.taskId);
-      toast({ title: "Task cancelled" });
+      toast({ title: t("tasks.taskCancelled") });
       await refresh();
     } catch (err) {
-      toast({ title: "Error cancelling task", description: <ErrorDisplayer error={err} /> });
+      toast({ title: t("tasks.errorCancelling"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
@@ -158,23 +150,33 @@ export default function Tasks() {
     setPage(1);
   };
 
+  const STATUS_LABELS: Record<string, string> = {
+    "": t("tasks.all"),
+    waiting: t("tasks.waiting"),
+    inProgress: t("tasks.inProgress"),
+    cancelledRequested: t("tasks.cancelRequested"),
+    completed: t("tasks.completed"),
+    cancelled: t("tasks.cancelled"),
+    failed: t("tasks.failed"),
+  };
+
   const SORT_FIELDS: { key: SortField; label: string }[] = [
-    { key: "submitDate", label: "Submitted" },
-    { key: "startedDate", label: "Started" },
-    { key: "completedDate", label: "Completed" },
-    { key: "status", label: "Status" },
-    { key: "type", label: "Type" },
+    { key: "submitDate", label: t("tasks.submitted") },
+    { key: "startedDate", label: t("tasks.started") },
+    { key: "completedDate", label: t("tasks.completed") },
+    { key: "status", label: t("tasks.status") },
+    { key: "type", label: t("tasks.type") },
   ];
 
   return (
     <div className="p-4 w-fit">
-      <Header headerTitle="Tasks" headerSubTitle={headerSubTitle} docuUrl={docuUrl} />
+      <Header headerTitle={t("tasks.title")} headerSubTitle={t("tasks.subtitle")} docuUrl={docuUrl} />
 
       <div className="mt-4">
         {/* Toolbar: refresh, filter toggle, sort */}
         <div className="flex items-center gap-3 flex-wrap mb-3">
           <Button variant="outline" size="sm" onClick={refresh}>
-            <RefreshCcw className="w-4 h-4 mr-1" /> Refresh
+            <RefreshCcw className="w-4 h-4 mr-1" /> {t("tasks.refresh")}
           </Button>
           <Button
             variant="outline"
@@ -182,11 +184,11 @@ export default function Tasks() {
             onClick={() => setShowFilters(!showFilters)}
           >
             <Filter className="w-4 h-4 mr-1" />
-            {showFilters ? "Hide Filters" : "Filters"}
+            {showFilters ? t("tasks.hideFilters") : t("tasks.filters")}
           </Button>
 
           <div className="flex items-center gap-2 ml-auto">
-            <label className="text-sm font-medium">Sort:</label>
+            <label className="text-sm font-medium">{t("tasks.sort")}</label>
             <select
               className="border rounded px-2 py-1 text-sm"
               value={sortField}
@@ -200,7 +202,7 @@ export default function Tasks() {
               className="border rounded px-2 py-1 text-sm"
               onClick={() => setSortAsc(!sortAsc)}
             >
-              {sortAsc ? "Asc \u2191" : "Desc \u2193"}
+              {sortAsc ? t("tasks.asc") : t("tasks.desc")}
             </button>
           </div>
         </div>
@@ -210,7 +212,7 @@ export default function Tasks() {
           <div className="p-4 bg-gray-50 rounded-2 mb-4 space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label className="text-xs text-gray-500 font-medium">Status</label>
+                <label className="text-xs text-gray-500 font-medium">{t("tasks.status")}</label>
                 <select
                   className="w-full mt-1 border rounded px-2 py-1.5 text-sm"
                   value={statusFilter}
@@ -222,31 +224,31 @@ export default function Tasks() {
                 </select>
               </div>
               <div>
-                <label className="text-xs text-gray-500 font-medium">Type</label>
+                <label className="text-xs text-gray-500 font-medium">{t("tasks.type")}</label>
                 <input
                   type="text"
                   className="w-full mt-1 border rounded px-2 py-1.5 text-sm"
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value)}
-                  placeholder="e.g. full-reindexing"
+                  placeholder={t("tasks.typePlaceholder")}
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-              <DateFilter label="Submitted after" value={submittedAfter} onChange={setSubmittedAfter} />
-              <DateFilter label="Submitted before" value={submittedBefore} onChange={setSubmittedBefore} />
-              <DateFilter label="Started after" value={startedAfter} onChange={setStartedAfter} />
-              <DateFilter label="Started before" value={startedBefore} onChange={setStartedBefore} />
-              <DateFilter label="Completed after" value={completedAfter} onChange={setCompletedAfter} />
-              <DateFilter label="Completed before" value={completedBefore} onChange={setCompletedBefore} />
-              <DateFilter label="Failed after" value={failedAfter} onChange={setFailedAfter} />
-              <DateFilter label="Failed before" value={failedBefore} onChange={setFailedBefore} />
+              <DateFilter label={t("tasks.submittedAfter")} value={submittedAfter} onChange={setSubmittedAfter} />
+              <DateFilter label={t("tasks.submittedBefore")} value={submittedBefore} onChange={setSubmittedBefore} />
+              <DateFilter label={t("tasks.startedAfter")} value={startedAfter} onChange={setStartedAfter} />
+              <DateFilter label={t("tasks.startedBefore")} value={startedBefore} onChange={setStartedBefore} />
+              <DateFilter label={t("tasks.completedAfter")} value={completedAfter} onChange={setCompletedAfter} />
+              <DateFilter label={t("tasks.completedBefore")} value={completedBefore} onChange={setCompletedBefore} />
+              <DateFilter label={t("tasks.failedAfter")} value={failedAfter} onChange={setFailedAfter} />
+              <DateFilter label={t("tasks.failedBefore")} value={failedBefore} onChange={setFailedBefore} />
             </div>
 
             <div className="flex gap-2 pt-1">
-              <Button size="sm" onClick={handleApplyFilters}>Apply</Button>
-              <Button size="sm" variant="outline" onClick={handleResetFilters}>Reset</Button>
+              <Button size="sm" onClick={handleApplyFilters}>{t("tasks.apply")}</Button>
+              <Button size="sm" variant="outline" onClick={handleResetFilters}>{t("tasks.reset")}</Button>
             </div>
           </div>
         )}
@@ -265,11 +267,11 @@ export default function Tasks() {
         {tasks && tasks.length > 0 && (
           <div className="grid grid-cols-[auto_1fr_auto_1fr_1fr_auto] gap-2 text-xs font-semibold text-muted-foreground px-3 pb-2 border-b mb-1">
             <span className="w-8">#</span>
-            <span>Task ID / Type</span>
-            <span className="w-24 text-center">Status</span>
-            <span>Submitted</span>
-            <span>Started / Completed</span>
-            <span className="w-16 text-center">Actions</span>
+            <span>{t("tasks.idType")}</span>
+            <span className="w-24 text-center">{t("tasks.status")}</span>
+            <span>{t("tasks.submitted")}</span>
+            <span>{t("tasks.startedCompleted")}</span>
+            <span className="w-16 text-center">{t("tasks.actions")}</span>
           </div>
         )}
 
@@ -306,7 +308,7 @@ export default function Tasks() {
                       <button
                         onClick={() => handleCancel(task)}
                         className="p-1.5 rounded-md hover:bg-gray-200"
-                        title="Cancel task"
+                        title={t("tasks.cancelButton")}
                       >
                         <CircleStop className="w-4 h-4 text-red-600" />
                       </button>
@@ -316,7 +318,7 @@ export default function Tasks() {
               );
             })}
             {tasks.length === 0 && (
-              <p className="text-sm text-gray-500 mt-4">No tasks found matching the current filters.</p>
+              <p className="text-sm text-gray-500 mt-4">{t("tasks.empty")}</p>
             )}
           </div>
         )}
@@ -329,7 +331,7 @@ export default function Tasks() {
             onNext={() => setPage((p) => p + 1)}
             disabledPrev={page <= 1}
             disabledNext={!hasMore}
-            label={`Page ${page} — ${tasks.length} result${tasks.length !== 1 ? "s" : ""}`}
+            label={t("common.pageOf", { page, count: tasks.length })}
           />
         )}
       </div>
@@ -338,51 +340,51 @@ export default function Tasks() {
       <Dialog open={!!selectedTask} onOpenChange={(v) => !v && setSelectedTask(null)}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Task — {selectedTask?.taskId}</DialogTitle>
+            <DialogTitle>{t("tasks.detailTitle", { taskId: selectedTask?.taskId })}</DialogTitle>
           </DialogHeader>
           {selectedTask && (
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <span className="text-gray-500 font-medium">Status</span>
+                <span className="text-gray-500 font-medium">{t("tasks.status")}</span>
                 <span className={`inline-block w-fit px-2 py-0.5 rounded-full text-xs ${STATUS_COLORS[selectedTask.status] || ""}`}>
                   {selectedTask.status}
                 </span>
-                <span className="text-gray-500 font-medium">Type</span>
+                <span className="text-gray-500 font-medium">{t("tasks.type")}</span>
                 <span>{selectedTask.type}</span>
-                <span className="text-gray-500 font-medium">Submitted</span>
+                <span className="text-gray-500 font-medium">{t("tasks.submitted")}</span>
                 <span>{formatDate(selectedTask.submitDate)}</span>
-                <span className="text-gray-500 font-medium">Started</span>
+                <span className="text-gray-500 font-medium">{t("tasks.started")}</span>
                 <span>{formatDate(selectedTask.startedDate)}</span>
-                <span className="text-gray-500 font-medium">Completed</span>
+                <span className="text-gray-500 font-medium">{t("tasks.completed")}</span>
                 <span>{formatDate(selectedTask.completedDate)}</span>
                 {selectedTask.cancelledDate && (
                   <>
-                    <span className="text-gray-500 font-medium">Cancelled</span>
+                    <span className="text-gray-500 font-medium">{t("tasks.cancelledAt")}</span>
                     <span>{formatDate(selectedTask.cancelledDate)}</span>
                   </>
                 )}
                 {selectedTask.failedDate && (
                   <>
-                    <span className="text-gray-500 font-medium">Failed</span>
+                    <span className="text-gray-500 font-medium">{t("tasks.failedAt")}</span>
                     <span>{formatDate(selectedTask.failedDate)}</span>
                   </>
                 )}
                 {selectedTask.executedOn && (
                   <>
-                    <span className="text-gray-500 font-medium">Executed on</span>
+                    <span className="text-gray-500 font-medium">{t("tasks.executedOn")}</span>
                     <span>{selectedTask.executedOn}</span>
                   </>
                 )}
                 {selectedTask.submittedFrom && (
                   <>
-                    <span className="text-gray-500 font-medium">Submitted from</span>
+                    <span className="text-gray-500 font-medium">{t("tasks.submittedFrom")}</span>
                     <span>{selectedTask.submittedFrom}</span>
                   </>
                 )}
               </div>
               {selectedTask.additionalInformation && Object.keys(selectedTask.additionalInformation).length > 0 && (
                 <div>
-                  <span className="text-sm text-gray-500 font-medium">Additional Information</span>
+                  <span className="text-sm text-gray-500 font-medium">{t("tasks.additionalInfo")}</span>
                   <pre className="mt-1 text-xs bg-gray-50 p-3 rounded overflow-x-auto">
                     {JSON.stringify(selectedTask.additionalInformation, null, 2)}
                   </pre>
@@ -397,12 +399,12 @@ export default function Tasks() {
                     onClick={() => { handleCancel(selectedTask); setSelectedTask(null); }}
                   >
                     <CircleStop className="w-4 h-4 mr-1" />
-                    Cancel
+                    {t("tasks.cancelButton")}
                   </Button>
                 )}
                 <Button size="sm" asChild>
                   <Link to={`/task/${selectedTask.taskId}`}>
-                    Full Details
+                    {t("tasks.fullDetails")}
                   </Link>
                 </Button>
               </div>

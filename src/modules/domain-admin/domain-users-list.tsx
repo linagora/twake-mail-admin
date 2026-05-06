@@ -4,10 +4,12 @@ import { getDomainUsers } from "@/modules/domains/api-client";
 import { useCallback, useMemo, useState } from "react";
 import { useDomain } from "./domain-context";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { useTranslation } from "react-i18next";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function DomainUsersList() {
+  const { t } = useTranslation();
   const domain = useDomain();
 
   const fetchUsers = useCallback(() => getDomainUsers(domain), [domain]);
@@ -41,12 +43,12 @@ export default function DomainUsersList() {
           <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
         </div>
       )}
-      {error && <p className="text-red-500 mt-4">Error: {error}</p>}
+      {error && <p className="text-red-500 mt-4">{t("common.errorPrefix", { message: error })}</p>}
       <input
         type="text"
         value={search}
         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-        placeholder="Search users..."
+        placeholder={t("users.searchPlaceholder")}
         className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       {filteredUsers.length > 0 && (
@@ -57,7 +59,7 @@ export default function DomainUsersList() {
           onLast={() => goToPage(totalPages)}
           disabledPrev={page <= 1}
           disabledNext={page >= totalPages}
-          label={`Page ${page} / ${totalPages} — Total: ${filteredUsers.length}`}
+          label={t("common.page", { page, totalPages, total: filteredUsers.length })}
         />
       )}
       <div>

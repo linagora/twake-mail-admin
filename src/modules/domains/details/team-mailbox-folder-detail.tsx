@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useParams } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxFolderSubaddressing, setTeamMailboxFolderSubaddressing } from "../api-client";
@@ -8,6 +9,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import TeamMailboxFolderExtraAcl from "./team-mailbox-folder-extra-acl";
 
 export default function TeamMailboxFolderDetail() {
+  const { t } = useTranslation();
   const { domain, mailbox, folder } = useParams();
   const { toast } = useToast();
   const canToggleSubaddressing = useIsAllowed("PUT", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/subaddressing");
@@ -23,11 +25,11 @@ export default function TeamMailboxFolderDetail() {
     const next = !data.enabled;
     try {
       await setTeamMailboxFolderSubaddressing(domain!, mailbox!, folder!, next);
-      toast({ title: next ? "Sub-addressing enabled" : "Sub-addressing disabled" });
+      toast({ title: next ? t("domains.folders.subaddressingEnabled") : t("domains.folders.subaddressingDisabled") });
       await refresh();
     } catch (err) {
       toast({
-        title: "Error updating sub-addressing",
+        title: t("domains.folders.errorSubaddressing"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -35,7 +37,7 @@ export default function TeamMailboxFolderDetail() {
 
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
-      <h3 className="text-lg font-semibold">Team Mailbox Folder</h3>
+      <h3 className="text-lg font-semibold">{t("domains.folders.detailTitle")}</h3>
       <p className="text-gray-500 text-sm">{folder} — {mailbox}@{domain}</p>
 
       <div className="mt-6">
@@ -55,11 +57,11 @@ export default function TeamMailboxFolderDetail() {
             }`}
           >
             <div className="text-left">
-              <p className="text-base font-semibold">Sub-addressing</p>
+              <p className="text-base font-semibold">{t("domains.folders.subaddressing")}</p>
               <p className="text-sm text-gray-500 mt-0.5">
                 {data.enabled
-                  ? `Emails to ${mailbox}+${folder}@${domain} are delivered to this folder`
-                  : "Sub-addressing delivery to this folder is disabled"}
+                  ? t("domains.folders.subaddressingEnabledDesc", { mailbox, folder, domain })
+                  : t("domains.folders.subaddressingDisabledDesc")}
               </p>
             </div>
             <div
