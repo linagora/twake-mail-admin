@@ -92,6 +92,7 @@ export default function MailRepositoryDetail() {
   const size = Number(searchParams.get("size")) || 0;
   const limit = Number(import.meta.env.VITE_PAGE_LIMIT) || 200;
   const offset = (page - 1) * limit;
+  const totalPages = Math.max(1, Math.ceil(size / limit));
   // check if we reached the end of the list
   const hasMore = offset + limit < size;
 
@@ -315,7 +316,7 @@ export default function MailRepositoryDetail() {
           {t("common.previous")}
         </button>
         <span className="text-sm font-medium text-center">
-          {t("mailRepositories.pageInfo", { page, limit, size })}
+          {t("mailRepositories.pageInfo", { page, totalPages })}
         </span>
         <button
           disabled={!hasMore}

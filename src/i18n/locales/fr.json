@@ -291,14 +291,14 @@
       "empty": "Aucun administrateur de domaine.",
       "removeTooltip": "Retirer l'administrateur",
       "addTooltip": "Ajouter un administrateur",
-      "roleNote": "Les administrateurs du domaine calendrier peuvent gérer les ressources et les calendriers des utilisateurs de ce domaine."
+      "roleNote": "Les administrateurs du domaine peuvent gérer le carnet d'adresses du domaine."
     },
     "calendarResources": {
-      "title": "Calendrier de ressources",
+      "title": "Ressources de calendrier",
       "addTooltip": "Ajouter une ressource",
       "newTitle": "Nouvelle ressource calendrier",
       "namePlaceholder": "Nom de la ressource",
-      "descriptionPlaceholder": "Description (optionnel)",
+      "descriptionPlaceholder": "Description (optionnelle)",
       "iconLabel": "Icône",
       "creatorLabel": "Créateur",
       "administratorsLabel": "Administrateurs",
@@ -325,7 +325,7 @@
       "errorAddingAdmin": "Erreur lors de l'ajout de l'administrateur",
       "errorRemovingAdmin": "Erreur lors du retrait de l'administrateur",
       "removeAdminTitle": "Retirer l'administrateur",
-      "removeAdminConfirm": "Retirer « {{username}} » des administrateurs ?",
+      "removeAdminConfirm": "Retirer « {{email}} » des administrateurs ?",
       "removeAdminTooltip": "Retirer l'administrateur"
     },
     "calendarTasks": {

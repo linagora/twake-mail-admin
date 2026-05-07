@@ -291,10 +291,10 @@
       "empty": "No domain admins.",
       "removeTooltip": "Remove admin",
       "addTooltip": "Add admin",
-      "roleNote": "Calendar domain admins can manage resources and user calendars within this domain."
+      "roleNote": "Domain admins can manage the domain address book."
     },
     "calendarResources": {
-      "title": "Resource Calendars",
+      "title": "Calendar Resources",
       "addTooltip": "Add calendar resource",
       "newTitle": "New Calendar Resource",
       "namePlaceholder": "Resource name",
@@ -325,7 +325,7 @@
       "errorAddingAdmin": "Error adding administrator",
       "errorRemovingAdmin": "Error removing administrator",
       "removeAdminTitle": "Remove Administrator",
-      "removeAdminConfirm": "Remove \"{{username}}\" from administrators?",
+      "removeAdminConfirm": "Remove \"{{email}}\" from administrators?",
       "removeAdminTooltip": "Remove administrator"
     },
     "calendarTasks": {

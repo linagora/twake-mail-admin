@@ -106,7 +106,7 @@ export default function MailRepositoriesList() {
       header: t("mailRepositories.runTaskHeader"),
       message: (
         <ConfirmTaskContent
-          message={<p>{t("mailRepositories.reprocessRepoConfirm")}</p>}
+          message={<p>{t("mailRepositories.reprocessRepoConfirm", { path })}</p>}
           command={command}
           params={params}
           getParamValues={(key, value) => {

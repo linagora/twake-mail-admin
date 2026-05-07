@@ -76,7 +76,7 @@ export default function CalendarResourceDetail() {
     if (!resource) return;
     const confirmed = await confirm({
       header: t("domains.calendarResources.removeAdminTitle"),
-      message: t("domains.calendarResources.removeAdminConfirm", { email, name: resource.name }),
+      message: t("domains.calendarResources.removeAdminConfirm", { email }),
     });
     if (!confirmed) return;
     try {
@@ -120,7 +120,7 @@ export default function CalendarResourceDetail() {
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">{t("domains.calendarResources.detailTitle")}</h3>
+        <h3 className="text-lg font-semibold">{t("domains.calendarResources.detailTitle", { name: resource?.name })}</h3>
         {resource && !editing && canEdit && (
           <button onClick={startEdit}
             className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition">
