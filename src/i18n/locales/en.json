@@ -743,6 +743,7 @@
     "blobGarbageCollection": "Blob garbage collection",
     "reindexContacts": "Reindex contacts from sent mailbox",
     "purgeDeletedMessages": "Purge Deleted Messages",
+    "populateEmailQueryView": "Populate Email Query View",
     "importLdapUsers": "Import LDAP users",
     "domainMemberSync": "Domain member synchronization",
     "calendarEventReindex": "Calendar event reindexing",

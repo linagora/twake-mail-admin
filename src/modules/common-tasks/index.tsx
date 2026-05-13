@@ -120,6 +120,16 @@ const TASKS: TaskProps[] = [
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_purging_expired_deleted_messages',
     allowanceCheck: { verb: 'DELETE', pattern: '/deletedMessages' },
   },
+  {
+    nameKey: 'commonTasks.populateEmailQueryView',
+    taskKey: TaskKey.POPULATE_EMAIL_QUERY_VIEW,
+    command: 'curl -XPOST /mailboxes?task=populateEmailQueryView',
+    params: [
+      { key: 'messagesPerSecond', defaultValue: '10', type: 'input' },
+    ],
+    doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_populate_email_query_view',
+    allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
+  },
 ];
 
 const CLEANUP_PARAMS: TaskParam[] = [

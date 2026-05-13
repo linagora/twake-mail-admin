@@ -75,6 +75,11 @@ export const runPurgeDeletedMessagesTask = async (): Promise<any> => {
   return response;
 }
 
+export const runPopulateEmailQueryViewTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams({ task: 'populateEmailQueryView', ...payload });
+  return apiClient.post<any, any>(`/mailboxes?${params}`);
+}
+
 export const reloadCertificates = async (port?: string): Promise<void> => {
   const query = new URLSearchParams({ "reload-certificate": "" });
   if (port) query.set("port", port);
