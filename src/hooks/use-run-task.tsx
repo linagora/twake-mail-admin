@@ -12,6 +12,7 @@ import {
   runCalendarEventArchivalTask,
   runAlarmReschedulingTask,
   runAddMissingFieldsTask,
+  runPopulateEmailQueryViewTask,
 } from "@/modules/common-tasks/api-client";
 import { AdditionalParams, ReIndexMode, Task, TaskKey } from "@/modules/common-tasks/types";
 
@@ -80,6 +81,9 @@ export function useRunTask() {
         break;
       case TaskKey.PURGE_DELETED_MESSAGES:
         data = await runPurgeDeletedMessagesTask();
+        break;
+      case TaskKey.POPULATE_EMAIL_QUERY_VIEW:
+        data = await runPopulateEmailQueryViewTask(taskParamValues);
         break;
       case TaskKey.IMPORT_LDAP_USERS:
         data = await runImportLdapUsersTask(taskParamValues);

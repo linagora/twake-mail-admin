@@ -22,6 +22,7 @@ export enum TaskKey {
   BLOB_GARBAGE_COLLECTION = 'BlobGCTask',
   CONTACT_INDEXING = 'ContactIndexing',
   PURGE_DELETED_MESSAGES = 'DeletedMessageVaultDeleteExpiredMessagesTask',
+  POPULATE_EMAIL_QUERY_VIEW = 'PopulateEmailQueryViewTask',
   // Calendar-specific tasks
   IMPORT_LDAP_USERS = 'importFromLDAP',
   DOMAIN_MEMBER_SYNC = 'domainMemberSync',
