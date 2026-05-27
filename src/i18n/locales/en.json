@@ -836,7 +836,6 @@
     "sectionTitle": "JMAP Settings Report",
     "value": "Value",
     "users": "Users",
-    "share": "Share",
     "empty": "No data — no users have JMAP settings configured."
   },
   "globalQuota": {
@@ -1082,6 +1081,11 @@
     "errorUpdating": "Error updating user",
     "updated": "User updated",
     "editTooltip": "Edit user",
+    "deleteTooltip": "Delete user",
+    "deleteTitle": "Delete registered user",
+    "deleteConfirm": "Delete registered user \"{{email}}\"?",
+    "deleted": "User \"{{email}}\" deleted",
+    "errorDeleting": "Error deleting user",
     "id": "ID:",
     "subtitle": "Manage users registered on the DAV server."
   },

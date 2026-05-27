@@ -1081,6 +1081,11 @@
     "errorUpdating": "Erreur lors de la mise à jour",
     "updated": "Utilisateur mis à jour",
     "editTooltip": "Modifier l'utilisateur",
+    "deleteTooltip": "Supprimer l'utilisateur",
+    "deleteTitle": "Supprimer l'utilisateur enregistré",
+    "deleteConfirm": "Supprimer l'utilisateur enregistré « {{email}} » ?",
+    "deleted": "Utilisateur « {{email}} » supprimé",
+    "errorDeleting": "Erreur lors de la suppression de l'utilisateur",
     "id": "ID :",
     "subtitle": "Gérer les utilisateurs enregistrés sur le serveur DAV."
   },
