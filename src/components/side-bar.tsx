@@ -1,4 +1,4 @@
-import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages, BarChart2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -65,6 +65,7 @@ export function AppSidebar() {
   const canNetworkChannels = useIsAllowed("GET", "/servers/channels");
   const canCassandra = useIsAllowed("GET", "/cassandra/version");
   const canLiveMetrics = useIsAllowed("GET", "/metrics");
+  const canJmapReport = useIsAllowed("GET", "/jmap/settings/reports");
 
   const MAIL_ITEMS = [
     { title: t("sidebar.healthCheck"), url: "/health-check", icon: Heart },
@@ -79,6 +80,7 @@ export function AppSidebar() {
     { title: t("sidebar.tasks"), url: "/tasks", icon: ListChecks },
     { title: t("sidebar.commonTasks"), url: "/common-tasks", icon: ClipboardList },
     { title: t("sidebar.resourceLocator"), url: "/resource-locator", icon: MapPin },
+    { title: t("sidebar.jmapSettingsReport"), url: "/jmap-settings-report", icon: BarChart2 },
     { title: t("sidebar.liveMetrics"), url: "/live-metrics", icon: Activity },
   ];
 
@@ -106,6 +108,7 @@ export function AppSidebar() {
     "/network-channels": canNetworkChannels,
     "/cassandra": canCassandra,
     "/live-metrics": canLiveMetrics,
+    "/jmap-settings-report": canJmapReport,
   };
 
   const allItems = appConfig.application === 'CALENDAR' ? CALENDAR_ITEMS : MAIL_ITEMS;

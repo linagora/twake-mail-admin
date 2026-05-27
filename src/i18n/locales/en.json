@@ -75,7 +75,8 @@
     "liveMetrics": "Live Metrics",
     "registeredUsers": "Registered Users",
     "logout": "Logout",
-    "language": "Language"
+    "language": "Language",
+    "jmapSettingsReport": "JMAP Settings Report"
   },
   "domains": {
     "title": "Domain Details",
@@ -828,6 +829,15 @@
     "umbrella": "Umbrella",
     "video": "Video",
     "wifi": "Wi-Fi"
+  },
+  "jmapReport": {
+    "title": "JMAP Settings Report",
+    "subtitle": "Aggregated view of JMAP settings adoption across users.",
+    "sectionTitle": "JMAP Settings Report",
+    "value": "Value",
+    "users": "Users",
+    "share": "Share",
+    "empty": "No data — no users have JMAP settings configured."
   },
   "globalQuota": {
     "title": "Global Quota",

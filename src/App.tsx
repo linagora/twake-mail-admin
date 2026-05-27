@@ -40,6 +40,7 @@ import TasksList from "./modules/tasks";
 import CommonTasks from "./modules/common-tasks/index";
 import LiveMetrics from "./modules/live-metrics";
 import ResourceLocator from "./modules/resource-locator";
+import JmapSettingsReport from "./modules/jmap-settings-report";
 import TaskDetail from "./modules/common-tasks/task-detail";
 import { ConfirmProvider } from "./components/custom/confirm-provider";
 import { AuthProvider } from "./components/custom/auth-provider";
@@ -91,6 +92,7 @@ function GlobalLayout() {
                 </Route>
                 <Route path="/cassandra" element={<Cassandra />} />
                 <Route path="/resource-locator" element={<ResourceLocator />} />
+                <Route path="/jmap-settings-report" element={<JmapSettingsReport />} />
               </>
             )}
 

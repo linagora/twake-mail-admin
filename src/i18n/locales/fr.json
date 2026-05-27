@@ -75,7 +75,8 @@
     "liveMetrics": "Métriques en direct",
     "registeredUsers": "Utilisateurs enregistrés",
     "logout": "Déconnexion",
-    "language": "Langue"
+    "language": "Langue",
+    "jmapSettingsReport": "Rapport paramètres JMAP"
   },
   "domains": {
     "title": "Détails du domaine",
@@ -828,6 +829,14 @@
     "umbrella": "Parapluie",
     "video": "Vidéo",
     "wifi": "Wi-Fi"
+  },
+  "jmapReport": {
+    "title": "Rapport paramètres JMAP",
+    "subtitle": "Vue agrégée de l'adoption des paramètres JMAP par les utilisateurs.",
+    "sectionTitle": "Rapport paramètres JMAP",
+    "value": "Valeur",
+    "users": "Utilisateurs",
+    "empty": "Aucune donnée — aucun utilisateur n'a de paramètres JMAP configurés."
   },
   "globalQuota": {
     "title": "Quota global",
