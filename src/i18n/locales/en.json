@@ -514,6 +514,21 @@
       "colorEdit": "#ff0000 (empty to clear)",
       "descriptionEdit": "(empty to clear)"
     },
+    "jmapSettings": {
+      "title": "JMAP Settings",
+      "key": "Key",
+      "value": "Value",
+      "empty": "No JMAP settings configured.",
+      "keyPlaceholder": "e.g. language",
+      "valuePlaceholder": "Value",
+      "invalidKeyDesc": "Key must be non-empty, at most 255 characters, and contain only alphanumeric characters, ., -, _, or #.",
+      "keyRequired": "Key is required",
+      "keyAlreadyExists": "Duplicate key",
+      "addRow": "Add setting",
+      "removeRow": "Remove this entry",
+      "saved": "JMAP settings saved",
+      "errorSaving": "Error saving JMAP settings"
+    },
     "deletedVault": {
       "title": "Deleted Message Vault",
       "search": "Search",

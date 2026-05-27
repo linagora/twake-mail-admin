@@ -514,6 +514,21 @@
       "colorEdit": "#ff0000 (vide pour effacer)",
       "descriptionEdit": "(vide pour effacer)"
     },
+    "jmapSettings": {
+      "title": "Paramètres JMAP",
+      "key": "Clé",
+      "value": "Valeur",
+      "empty": "Aucun paramètre JMAP configuré.",
+      "keyPlaceholder": "ex. language",
+      "valuePlaceholder": "Valeur",
+      "invalidKeyDesc": "La clé doit être non vide, au plus 255 caractères, et ne contenir que des caractères alphanumériques, ., -, _ ou #.",
+      "keyRequired": "La clé est obligatoire",
+      "keyAlreadyExists": "Cette clé est en doublon",
+      "addRow": "Ajouter un paramètre",
+      "removeRow": "Supprimer cette ligne",
+      "saved": "Paramètres JMAP enregistrés",
+      "errorSaving": "Erreur lors de l'enregistrement des paramètres JMAP"
+    },
     "deletedVault": {
       "title": "Coffre des messages supprimés",
       "search": "Rechercher",
