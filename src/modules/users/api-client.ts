@@ -346,6 +346,16 @@ export const deleteUserLabel = async (username: string, labelId: string): Promis
   await apiClient.delete(`/users/${encodeURIComponent(username)}/labels/${encodeURIComponent(labelId)}`);
 };
 
+export const getUserJmapSettings = async (username: string): Promise<Record<string, string>> => {
+  return apiClient.get(`/users/${encodeURIComponent(username)}/jmap/settings`);
+};
+
+export const updateUserJmapSettings = async (username: string, settings: Record<string, string>): Promise<void> => {
+  await apiClient.put(`/users/${encodeURIComponent(username)}/jmap/settings`, settings, {
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
 export const cleanupUserMailbox = async (
   username: string,
   mailbox: "Trash" | "Spam",

@@ -15,9 +15,11 @@ import UserChannels from "./user-channels";
 import UserMappings from "./user-mappings";
 import UserDeletedMessageVault from "./user-deleted-message-vault";
 import UserLabels from "./user-labels";
+import UserJmapSettings from "./user-jmap-settings";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getUserRateLimits, updateUserRateLimits, searchDeletedMessages, restoreDeletedMessages } from "../api-client";
+import { appConfig } from "@/lib/config";
 
 export default function UserDetail() {
   const { t } = useTranslation();
@@ -45,6 +47,7 @@ export default function UserDetail() {
       <UserAllowedFrom username={username!} />
       <UserIdentities username={username!} />
       <UserLabels username={username!} />
+      {appConfig.application === 'MAIL' && <UserJmapSettings username={username!} />}
       <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} canUpdate={canUpdateRateLimits} />
       {(canSearchDeleted || canRestoreDeleted) && (
         <UserDeletedMessageVault

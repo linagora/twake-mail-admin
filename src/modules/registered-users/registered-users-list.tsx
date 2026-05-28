@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
-import { getRegisteredUsers, createRegisteredUser, updateRegisteredUser } from "./api-client";
+import { getRegisteredUsers, createRegisteredUser, updateRegisteredUser, deleteRegisteredUser } from "./api-client";
 import { RegisteredUser } from "./types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useDomain } from "@/modules/domain-admin/domain-context";
@@ -66,6 +66,7 @@ export default function RegisteredUsersList() {
 
   const canCreate = useIsAllowed("POST", "/registeredUsers");
   const canEdit = useIsAllowed("PATCH", "/registeredUsers");
+  const canDelete = useIsAllowed("DELETE", "/registeredUsers");
 
   const fetchUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
   const {
@@ -101,6 +102,21 @@ export default function RegisteredUsersList() {
         title: t("registeredUsers.errorRegistering"),
         description: <ErrorDisplayer error={err} />,
       });
+    }
+  };
+
+  const handleDelete = async (user: RegisteredUser) => {
+    const confirmed = await confirm({
+      header: t("registeredUsers.deleteTitle"),
+      message: t("registeredUsers.deleteConfirm", { email: user.email }),
+    });
+    if (!confirmed) return;
+    try {
+      await deleteRegisteredUser(user.email!, domain);
+      toast({ title: t("registeredUsers.deleted", { email: user.email }) });
+      refresh();
+    } catch (err) {
+      toast({ title: t("registeredUsers.errorDeleting"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
@@ -254,15 +270,26 @@ export default function RegisteredUsersList() {
                 {t("registeredUsers.id")} {user.id}
               </p>
             </div>
-            {canEdit && (
-              <button
-                onClick={() => handleEdit(user)}
-                className="p-2 rounded-md hover:bg-gray-200"
-                title={t("registeredUsers.editTooltip")}
-              >
-                <Pencil className="w-4 h-4 text-blue-600" />
-              </button>
-            )}
+            <div className="flex gap-1">
+              {canEdit && (
+                <button
+                  onClick={() => handleEdit(user)}
+                  className="p-2 rounded-md hover:bg-gray-200"
+                  title={t("registeredUsers.editTooltip")}
+                >
+                  <Pencil className="w-4 h-4 text-blue-600" />
+                </button>
+              )}
+              {canDelete && (
+                <button
+                  onClick={() => handleDelete(user)}
+                  className="p-2 rounded-md hover:bg-gray-200"
+                  title={t("registeredUsers.deleteTooltip")}
+                >
+                  <Trash2 className="w-4 h-4 text-red-600" />
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>

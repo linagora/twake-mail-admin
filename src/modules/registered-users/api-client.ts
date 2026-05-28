@@ -60,3 +60,9 @@ export const updateRegisteredUser = async (
     () => apiClient.patch(`/domains/${encodeURIComponent(domain!)}/registeredUsers?id=${encodeURIComponent(id)}`, data),
     () => apiClient.patch(`/registeredUsers?id=${encodeURIComponent(id)}`, data),
   );
+
+export const deleteRegisteredUser = async (email: string, domain?: string): Promise<void> =>
+  withRegisteredUsersApiFallback(
+    () => apiClient.delete(`/domains/${encodeURIComponent(domain!)}/registeredUsers?email=${encodeURIComponent(email)}`),
+    () => apiClient.delete(`/registeredUsers?email=${encodeURIComponent(email)}`),
+  );

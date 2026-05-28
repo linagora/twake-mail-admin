@@ -75,7 +75,8 @@
     "liveMetrics": "Live Metrics",
     "registeredUsers": "Registered Users",
     "logout": "Logout",
-    "language": "Language"
+    "language": "Language",
+    "jmapSettingsReport": "JMAP Settings Report"
   },
   "domains": {
     "title": "Domain Details",
@@ -514,6 +515,21 @@
       "colorEdit": "#ff0000 (empty to clear)",
       "descriptionEdit": "(empty to clear)"
     },
+    "jmapSettings": {
+      "title": "JMAP Settings",
+      "key": "Key",
+      "value": "Value",
+      "empty": "No JMAP settings configured.",
+      "keyPlaceholder": "e.g. language",
+      "valuePlaceholder": "Value",
+      "invalidKeyDesc": "Key must be non-empty, at most 255 characters, and contain only alphanumeric characters, ., -, _, or #.",
+      "keyRequired": "Key is required",
+      "keyAlreadyExists": "Duplicate key",
+      "addRow": "Add setting",
+      "removeRow": "Remove this entry",
+      "saved": "JMAP settings saved",
+      "errorSaving": "Error saving JMAP settings"
+    },
     "deletedVault": {
       "title": "Deleted Message Vault",
       "search": "Search",
@@ -814,6 +830,14 @@
     "video": "Video",
     "wifi": "Wi-Fi"
   },
+  "jmapReport": {
+    "title": "JMAP Settings Report",
+    "subtitle": "Aggregated view of JMAP settings adoption across users.",
+    "sectionTitle": "JMAP Settings Report",
+    "value": "Value",
+    "users": "Users",
+    "empty": "No data — no users have JMAP settings configured."
+  },
   "globalQuota": {
     "title": "Global Quota",
     "subtitle": "Global quota applied to all users by default.",
@@ -1057,6 +1081,11 @@
     "errorUpdating": "Error updating user",
     "updated": "User updated",
     "editTooltip": "Edit user",
+    "deleteTooltip": "Delete user",
+    "deleteTitle": "Delete registered user",
+    "deleteConfirm": "Delete registered user \"{{email}}\"?",
+    "deleted": "User \"{{email}}\" deleted",
+    "errorDeleting": "Error deleting user",
     "id": "ID:",
     "subtitle": "Manage users registered on the DAV server."
   },

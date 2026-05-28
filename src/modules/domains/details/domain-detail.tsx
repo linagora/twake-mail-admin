@@ -7,6 +7,7 @@ import DomainTeamMailboxes from "./domain-team-mailboxes";
 import DomainContacts from "./domain-contacts";
 import DomainTasks from "./domain-tasks";
 import DomainSignatureTemplates from "./domain-signature-templates";
+import DomainJmapReport from "./domain-jmap-report";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
 import { getDomainRateLimits, updateDomainRateLimits } from "../api-client";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -31,6 +32,7 @@ export default function DomainDetail() {
       <DomainContacts domain={domain!} />
       {appConfig.application === 'MAIL' && <DomainSignatureTemplates domain={domain!} />}
       <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} canUpdate={canUpdateRateLimits} />
+      <DomainJmapReport domain={domain!} />
       <DomainTasks domain={domain!} />
     </div>
   );

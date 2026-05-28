@@ -75,7 +75,8 @@
     "liveMetrics": "Métriques en direct",
     "registeredUsers": "Utilisateurs enregistrés",
     "logout": "Déconnexion",
-    "language": "Langue"
+    "language": "Langue",
+    "jmapSettingsReport": "Rapport paramètres JMAP"
   },
   "domains": {
     "title": "Détails du domaine",
@@ -514,6 +515,21 @@
       "colorEdit": "#ff0000 (vide pour effacer)",
       "descriptionEdit": "(vide pour effacer)"
     },
+    "jmapSettings": {
+      "title": "Paramètres JMAP",
+      "key": "Clé",
+      "value": "Valeur",
+      "empty": "Aucun paramètre JMAP configuré.",
+      "keyPlaceholder": "ex. language",
+      "valuePlaceholder": "Valeur",
+      "invalidKeyDesc": "La clé doit être non vide, au plus 255 caractères, et ne contenir que des caractères alphanumériques, ., -, _ ou #.",
+      "keyRequired": "La clé est obligatoire",
+      "keyAlreadyExists": "Cette clé est en doublon",
+      "addRow": "Ajouter un paramètre",
+      "removeRow": "Supprimer cette ligne",
+      "saved": "Paramètres JMAP enregistrés",
+      "errorSaving": "Erreur lors de l'enregistrement des paramètres JMAP"
+    },
     "deletedVault": {
       "title": "Coffre des messages supprimés",
       "search": "Rechercher",
@@ -814,6 +830,14 @@
     "video": "Vidéo",
     "wifi": "Wi-Fi"
   },
+  "jmapReport": {
+    "title": "Rapport paramètres JMAP",
+    "subtitle": "Vue agrégée de l'adoption des paramètres JMAP par les utilisateurs.",
+    "sectionTitle": "Rapport paramètres JMAP",
+    "value": "Valeur",
+    "users": "Utilisateurs",
+    "empty": "Aucune donnée — aucun utilisateur n'a de paramètres JMAP configurés."
+  },
   "globalQuota": {
     "title": "Quota global",
     "subtitle": "Quota global appliqué à tous les utilisateurs par défaut.",
@@ -1057,6 +1081,11 @@
     "errorUpdating": "Erreur lors de la mise à jour",
     "updated": "Utilisateur mis à jour",
     "editTooltip": "Modifier l'utilisateur",
+    "deleteTooltip": "Supprimer l'utilisateur",
+    "deleteTitle": "Supprimer l'utilisateur enregistré",
+    "deleteConfirm": "Supprimer l'utilisateur enregistré « {{email}} » ?",
+    "deleted": "Utilisateur « {{email}} » supprimé",
+    "errorDeleting": "Erreur lors de la suppression de l'utilisateur",
     "id": "ID :",
     "subtitle": "Gérer les utilisateurs enregistrés sur le serveur DAV."
   },
