@@ -280,6 +280,29 @@
       "title": "Calendar Domain Details",
       "domain": "Domain: {{domain}}"
     },
+    "domainSettings": {
+      "title": "Domain settings",
+      "useDefault": "Use system default",
+      "effective": "Effective values",
+      "userSearchMode": "User search mode",
+      "userSearchModeOptions": {
+        "enabled": "Enabled",
+        "limited": "Limited",
+        "disabled": "Disabled"
+      },
+      "resourceSearchEnabled": "Resource search",
+      "booleanOptions": {
+        "true": "Enabled",
+        "false": "Disabled"
+      },
+      "defaultCalendarPublicVisibility": "Default calendar public visibility",
+      "visibilityOptions": {
+        "read": "Read",
+        "private": "Private"
+      },
+      "saved": "Domain settings saved",
+      "errorSaving": "Error saving domain settings"
+    },
     "calendarAdmins": {
       "title": "Domain Admins",
       "addPlaceholder": "admin@domain.tld",
@@ -1098,6 +1121,7 @@
     "calendarTasks": "Tasks",
     "calendarAdmins": "Calendar Admins",
     "calendarResources": "Resource Calendars",
+    "calendarSettings": "Settings",
     "domainAliases": "Domain Aliases",
     "resources": "Resources",
     "administration": "Administration",

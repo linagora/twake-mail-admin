@@ -70,6 +70,24 @@ export interface DomainQuota {
   computed: DomainQuotaValues;
 }
 
+// Domain settings (calendar)
+export type UserSearchMode = "enabled" | "limited" | "disabled";
+export type CalendarPublicVisibility = "read" | "private";
+
+export interface DomainSettingsValues {
+  userSearchMode: UserSearchMode | null;
+  resourceSearchEnabled: boolean | null;
+  defaultCalendarPublicVisibility: CalendarPublicVisibility | null;
+}
+
+export interface DomainSettings extends DomainSettingsValues {
+  resolved: {
+    userSearchMode: UserSearchMode;
+    resourceSearchEnabled: boolean;
+    defaultCalendarPublicVisibility: CalendarPublicVisibility;
+  };
+}
+
 // Calendar-specific types
 export interface ResourceAdmin {
   email: string;

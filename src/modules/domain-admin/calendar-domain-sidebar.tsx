@@ -1,4 +1,4 @@
-import { ShieldCheck, Box, Users, UserCheck, ListChecks, Globe, LogOut, Languages } from "lucide-react";
+import { ShieldCheck, Box, Users, UserCheck, ListChecks, Settings, Globe, LogOut, Languages } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -54,6 +54,7 @@ export function CalendarDomainSidebar() {
   const canResources = useIsAllowed("GET", "/domains/{domain}/resources");
   const canUsers = useIsAllowed("GET", "/domains/{domain}/users");
   const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const canSettings = useIsAllowed("GET", "/domains/{domain}/settings");
   const canTasks = useIsAllowed("GET", "/tasks");
 
   const ALL_ITEMS = [
@@ -61,6 +62,7 @@ export function CalendarDomainSidebar() {
     { title: t("domainAdminPages.resources"),         url: "/resources",        icon: Box },
     { title: t("domainAdminPages.users"),             url: "/users",            icon: Users },
     { title: t("domainAdminPages.registeredUsers"),   url: "/registered-users", icon: UserCheck },
+    { title: t("domainAdminPages.calendarSettings"),  url: "/settings",         icon: Settings },
     { title: t("domainAdminPages.tasks"),             url: "/tasks",            icon: ListChecks },
   ];
 
@@ -69,6 +71,7 @@ export function CalendarDomainSidebar() {
     "/resources": canResources,
     "/users": canUsers,
     "/registered-users": canRegisteredUsers,
+    "/settings": canSettings,
     "/tasks": canTasks,
   };
 
