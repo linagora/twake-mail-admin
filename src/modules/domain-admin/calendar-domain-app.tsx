@@ -9,6 +9,7 @@ import { DomainProvider } from "./domain-context";
 import { CalendarDomainSidebar } from "./calendar-domain-sidebar";
 import CalendarDomainAdminsPage from "./pages/calendar-domain-admins-page";
 import CalendarResourcesPage from "./pages/calendar-resources-page";
+import CalendarSettingsPage from "./pages/calendar-settings-page";
 import CalendarTasksPage from "./pages/calendar-tasks-page";
 import CalendarDomainUsersList from "./calendar-domain-users-list";
 
@@ -50,6 +51,8 @@ export default function CalendarDomainApp({ domain }: Props) {
                 <Route path="/registered-users" element={<RegisteredUsers />}>
                   <Route index element={<RegisteredUsersList />} />
                 </Route>
+
+                <Route path="/settings" element={<CalendarSettingsPage />} />
 
                 <Route path="/tasks" element={<CalendarTasksPage />} />
 

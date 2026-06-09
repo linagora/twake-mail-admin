@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource } from "./types";
+import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
 
@@ -244,6 +244,20 @@ export const applyDomainSignatureTemplates = async (domain: string): Promise<App
   return apiClient.post(
     `/domains/${encodeURIComponent(domain)}/signature-templates?action=apply`
   );
+};
+
+// ---------------------------------------------------------------------------
+// Domain settings (calendar)
+// ---------------------------------------------------------------------------
+
+export const getDomainSettings = async (domain: string): Promise<DomainSettings> => {
+  return apiClient.get(`/domains/${encodeURIComponent(domain)}/settings`);
+};
+
+export const updateDomainSettings = async (domain: string, settings: DomainSettingsValues): Promise<void> => {
+  await apiClient.put(`/domains/${encodeURIComponent(domain)}/settings`, settings, {
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 // ---------------------------------------------------------------------------

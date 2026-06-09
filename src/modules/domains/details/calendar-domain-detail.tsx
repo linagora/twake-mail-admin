@@ -1,6 +1,7 @@
 import { useParams } from "react-router";
 import CalendarDomainAdmins from "./calendar-domain-admins";
 import CalendarDomainResources from "./calendar-domain-resources";
+import CalendarDomainSettings from "./calendar-domain-settings";
 import CalendarDomainTasks from "./calendar-domain-tasks";
 import { useTranslation } from "react-i18next";
 
@@ -15,6 +16,7 @@ export default function CalendarDomainDetail() {
 
       <CalendarDomainAdmins domain={domain!} />
       <CalendarDomainResources domain={domain!} />
+      <CalendarDomainSettings domain={domain!} />
       <CalendarDomainTasks domain={domain!} />
     </div>
   );
