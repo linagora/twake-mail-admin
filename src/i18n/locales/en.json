@@ -1098,6 +1098,7 @@
     "registered": "User \"{{username}}\" registered",
     "searchPlaceholder": "Search registered users...",
     "editTitle": "Edit Registered User",
+    "ldapWarning": "Your deployment may include a periodic LDAP import: if this is the case, changes done here will eventually be overridden.",
     "email": "Email",
     "firstname": "Firstname",
     "lastname": "Lastname",

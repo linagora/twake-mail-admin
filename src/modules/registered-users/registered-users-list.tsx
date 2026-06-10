@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, AlertTriangle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { appConfig } from "@/lib/config";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useToast } from "@/hooks/use-toast";
@@ -26,6 +27,12 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
 
   return (
     <div className="space-y-3">
+      {appConfig.application === "CALENDAR" && (
+        <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md text-sm text-amber-800">
+          <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+          <span>{t("registeredUsers.ldapWarning")}</span>
+        </div>
+      )}
       <div>
         <label className="text-sm font-medium">{t("registeredUsers.email")}</label>
         <input

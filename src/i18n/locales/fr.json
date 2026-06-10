@@ -1098,6 +1098,7 @@
     "registered": "Utilisateur « {{username}} » enregistré",
     "searchPlaceholder": "Rechercher des utilisateurs enregistrés…",
     "editTitle": "Modifier l'utilisateur enregistré",
+    "ldapWarning": "Votre déploiement peut inclure un import LDAP périodique : si c'est le cas, les modifications effectuées ici finiront par être écrasées.",
     "email": "Email",
     "firstname": "Prénom",
     "lastname": "Nom",
