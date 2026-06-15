@@ -708,6 +708,17 @@
       "editTitle": "Edit calendar",
       "updated": "Calendar updated",
       "errorUpdate": "Error updating calendar",
+      "publicRight": {
+        "title": "Public visibility",
+        "publicTitle": "Public calendar (read)",
+        "privateTitle": "Private calendar",
+        "public": "Public",
+        "publicDesc": "Anyone authenticated can read this calendar.",
+        "private": "Private",
+        "privateDesc": "Removes public rights on this calendar.",
+        "updated": "Visibility updated",
+        "errorUpdate": "Error updating visibility"
+      },
       "categories": {
         "owner": "Owner",
         "delegated": "Delegated",

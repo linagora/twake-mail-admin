@@ -425,6 +425,17 @@ export const deleteUserCalendar = async (username: string, calendarId: string): 
   );
 };
 
+export const setUserCalendarPublicRight = async (
+  username: string,
+  calendarId: string,
+  publicRight: string
+): Promise<void> => {
+  await apiClient.post(
+    `/users/${encodeURIComponent(username)}/calendars/${encodeURIComponent(calendarId)}/publicRight`,
+    { public_right: publicRight }
+  );
+};
+
 export const archiveUserCalendarEvents = async (
   username: string,
   params: {

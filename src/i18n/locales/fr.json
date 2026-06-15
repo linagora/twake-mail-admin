@@ -708,6 +708,17 @@
       "editTitle": "Modifier le calendrier",
       "updated": "Calendrier modifié",
       "errorUpdate": "Erreur lors de la modification du calendrier",
+      "publicRight": {
+        "title": "Visibilité publique",
+        "publicTitle": "Calendrier public (lecture)",
+        "privateTitle": "Calendrier privé",
+        "public": "Public",
+        "publicDesc": "Tout utilisateur authentifié peut lire ce calendrier.",
+        "private": "Privé",
+        "privateDesc": "Retire les droits publics sur ce calendrier.",
+        "updated": "Visibilité mise à jour",
+        "errorUpdate": "Erreur lors de la mise à jour de la visibilité"
+      },
       "categories": {
         "owner": "Propriétaire",
         "delegated": "Délégués",

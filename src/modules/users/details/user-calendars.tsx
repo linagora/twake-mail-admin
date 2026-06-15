@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Pencil, Trash2, Save, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Pencil, Trash2, Save, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { createUserCalendar, deleteUserCalendar, getUserCalendars, updateUserCalendar } from "../api-client";
+import { createUserCalendar, deleteUserCalendar, getUserCalendars, setUserCalendarPublicRight, updateUserCalendar } from "../api-client";
 import { CreateUserCalendarPayload, GetUserCalendarsResponseType, UpdateUserCalendarPayload, UserCalendar } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -41,6 +41,16 @@ function categorize(calendar: UserCalendar): CalendarCategory {
   return "owner";
 }
 
+const PUBLIC_READ = "{DAV:}read";
+
+function isPublic(calendar: UserCalendar): boolean {
+  return (calendar.acl ?? []).some(
+    (a) =>
+      a.principal === "{DAV:}authenticated" &&
+      (a.privilege === "{DAV:}read" || a.privilege === "{DAV:}write" || a.privilege === "{DAV:}all")
+  );
+}
+
 function calendarId(calendar: UserCalendar): string {
   const href = calendar._links?.self?.href ?? "";
   const last = href.split("/").pop() ?? "";
@@ -51,19 +61,24 @@ function CalendarRow({
   calendar,
   canEdit,
   canDelete,
+  canPublicRight,
   onEdit,
   onDelete,
+  onPublicRight,
 }: {
   calendar: UserCalendar;
   canEdit: boolean;
   canDelete: boolean;
+  canPublicRight: boolean;
   onEdit: (calendar: UserCalendar) => void;
   onDelete: (calendar: UserCalendar) => void;
+  onPublicRight: (calendar: UserCalendar) => void;
 }) {
   const { t } = useTranslation();
   const name = calendar["dav:name"];
   const color = calendar["apple:color"];
   const description = calendar["caldav:description"];
+  const isPublicCalendar = isPublic(calendar);
 
   return (
     <div className="group flex items-start gap-3 py-1">
@@ -78,6 +93,17 @@ function CalendarRow({
           <p className="text-xs text-gray-400">{description}</p>
         )}
       </div>
+      {canPublicRight && (
+        <button
+          onClick={() => onPublicRight(calendar)}
+          className="p-1.5 rounded-md hover:bg-gray-200 transition"
+          title={isPublicCalendar ? t("users.calendars.publicRight.publicTitle") : t("users.calendars.publicRight.privateTitle")}
+        >
+          {isPublicCalendar
+            ? <Eye className="w-3.5 h-3.5 text-green-600" />
+            : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
+        </button>
+      )}
       {canEdit && (
         <button
           onClick={() => onEdit(calendar)}
@@ -108,6 +134,7 @@ export default function UserCalendars({ username }: Props) {
   const canCreate = useIsAllowed("POST", "/users/{username}/calendars");
   const canEdit = useIsAllowed("PATCH", "/users/{username}/calendars/{calendarId}");
   const canDelete = useIsAllowed("DELETE", "/users/{username}/calendars/{calendarId}");
+  const canPublicRight = useIsAllowed("POST", "/users/{username}/calendars/{calendarId}/publicRight");
 
   const fetchCalendars = useCallback(() => getUserCalendars(username), [username]);
   const { data, isLoading, error, refresh } = useFetchData<GetUserCalendarsResponseType>(
@@ -122,6 +149,10 @@ export default function UserCalendars({ username }: Props) {
   const [editCalendar, setEditCalendar] = useState<UserCalendar | null>(null);
   const [editForm, setEditForm] = useState<UpdateUserCalendarPayload>({});
   const [saving, setSaving] = useState(false);
+
+  const [publicRightCalendar, setPublicRightCalendar] = useState<UserCalendar | null>(null);
+  const [publicRightValue, setPublicRightValue] = useState("");
+  const [savingPublicRight, setSavingPublicRight] = useState(false);
 
   if (!canView) return null;
 
@@ -179,6 +210,26 @@ export default function UserCalendars({ username }: Props) {
       toast({ title: t("users.calendars.errorUpdate"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const openPublicRight = (calendar: UserCalendar) => {
+    setPublicRightCalendar(calendar);
+    setPublicRightValue(isPublic(calendar) ? PUBLIC_READ : "");
+  };
+
+  const handleSavePublicRight = async () => {
+    if (!publicRightCalendar) return;
+    setSavingPublicRight(true);
+    try {
+      await setUserCalendarPublicRight(username, calendarId(publicRightCalendar), publicRightValue);
+      toast({ title: t("users.calendars.publicRight.updated") });
+      setPublicRightCalendar(null);
+      await refresh();
+    } catch (err) {
+      toast({ title: t("users.calendars.publicRight.errorUpdate"), description: <ErrorDisplayer error={err} /> });
+    } finally {
+      setSavingPublicRight(false);
     }
   };
 
@@ -245,8 +296,10 @@ export default function UserCalendars({ username }: Props) {
                     calendar={calendar}
                     canEdit={canEdit}
                     canDelete={canDelete}
+                    canPublicRight={canPublicRight}
                     onEdit={openEdit}
                     onDelete={handleDelete}
+                    onPublicRight={openPublicRight}
                   />
                 ))}
               </div>
@@ -369,6 +422,54 @@ export default function UserCalendars({ username }: Props) {
                   disabled={saving || !editForm["dav:name"]?.trim()}
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
+                  {t("common.save")}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Public visibility modal */}
+      <Dialog open={!!publicRightCalendar} onOpenChange={(v) => { if (!v) setPublicRightCalendar(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("users.calendars.publicRight.title")} — {publicRightCalendar?.["dav:name"]}</DialogTitle>
+          </DialogHeader>
+          {publicRightCalendar && (
+            <div className="space-y-3">
+              <label className="flex items-start gap-2 p-2 rounded-md hover:bg-gray-50 cursor-pointer">
+                <input
+                  type="radio"
+                  name="public-right"
+                  className="mt-1"
+                  checked={publicRightValue === ""}
+                  onChange={() => setPublicRightValue("")}
+                />
+                <div>
+                  <p className="text-sm font-medium">{t("users.calendars.publicRight.private")}</p>
+                  <p className="text-xs text-gray-400">{t("users.calendars.publicRight.privateDesc")}</p>
+                </div>
+              </label>
+              <label className="flex items-start gap-2 p-2 rounded-md hover:bg-gray-50 cursor-pointer">
+                <input
+                  type="radio"
+                  name="public-right"
+                  className="mt-1"
+                  checked={publicRightValue === PUBLIC_READ}
+                  onChange={() => setPublicRightValue(PUBLIC_READ)}
+                />
+                <div>
+                  <p className="text-sm font-medium">{t("users.calendars.publicRight.public")}</p>
+                  <p className="text-xs text-gray-400">{t("users.calendars.publicRight.publicDesc")}</p>
+                </div>
+              </label>
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="outline" size="sm" onClick={() => setPublicRightCalendar(null)}>
+                  {t("common.cancel")}
+                </Button>
+                <Button size="sm" onClick={handleSavePublicRight} disabled={savingPublicRight}>
+                  {savingPublicRight ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                   {t("common.save")}
                 </Button>
               </div>
