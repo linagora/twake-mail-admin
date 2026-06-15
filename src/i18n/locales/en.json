@@ -705,6 +705,9 @@
       "deleteConfirm": "Do you really want to delete the calendar \"{{name}}\"?",
       "deleted": "Calendar deleted",
       "errorDelete": "Error deleting calendar",
+      "editTitle": "Edit calendar",
+      "updated": "Calendar updated",
+      "errorUpdate": "Error updating calendar",
       "categories": {
         "owner": "Owner",
         "delegated": "Delegated",

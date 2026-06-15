@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -404,6 +404,17 @@ export const createUserCalendar = async (
 ): Promise<{ id: string }> => {
   return apiClient.post<any, { id: string }>(
     `/users/${encodeURIComponent(username)}/calendars`,
+    payload
+  );
+};
+
+export const updateUserCalendar = async (
+  username: string,
+  calendarId: string,
+  payload: UpdateUserCalendarPayload
+): Promise<void> => {
+  await apiClient.patch(
+    `/users/${encodeURIComponent(username)}/calendars/${encodeURIComponent(calendarId)}`,
     payload
   );
 };

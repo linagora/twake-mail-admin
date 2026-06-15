@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Trash2, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Pencil, Trash2, Save, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { createUserCalendar, deleteUserCalendar, getUserCalendars } from "../api-client";
-import { CreateUserCalendarPayload, GetUserCalendarsResponseType, UserCalendar } from "../types";
+import { createUserCalendar, deleteUserCalendar, getUserCalendars, updateUserCalendar } from "../api-client";
+import { CreateUserCalendarPayload, GetUserCalendarsResponseType, UpdateUserCalendarPayload, UserCalendar } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -49,11 +49,15 @@ function calendarId(calendar: UserCalendar): string {
 
 function CalendarRow({
   calendar,
+  canEdit,
   canDelete,
+  onEdit,
   onDelete,
 }: {
   calendar: UserCalendar;
+  canEdit: boolean;
   canDelete: boolean;
+  onEdit: (calendar: UserCalendar) => void;
   onDelete: (calendar: UserCalendar) => void;
 }) {
   const { t } = useTranslation();
@@ -74,6 +78,15 @@ function CalendarRow({
           <p className="text-xs text-gray-400">{description}</p>
         )}
       </div>
+      {canEdit && (
+        <button
+          onClick={() => onEdit(calendar)}
+          className="p-1.5 rounded-md hover:bg-gray-200 transition"
+          title={t("users.calendars.editTitle")}
+        >
+          <Pencil className="w-3.5 h-3.5 text-blue-600" />
+        </button>
+      )}
       {canDelete && (
         <button
           onClick={() => onDelete(calendar)}
@@ -93,6 +106,7 @@ export default function UserCalendars({ username }: Props) {
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/calendars");
   const canCreate = useIsAllowed("POST", "/users/{username}/calendars");
+  const canEdit = useIsAllowed("PATCH", "/users/{username}/calendars/{calendarId}");
   const canDelete = useIsAllowed("DELETE", "/users/{username}/calendars/{calendarId}");
 
   const fetchCalendars = useCallback(() => getUserCalendars(username), [username]);
@@ -104,6 +118,10 @@ export default function UserCalendars({ username }: Props) {
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState<CreateUserCalendarPayload>({ ...EMPTY_CREATE });
   const [creating, setCreating] = useState(false);
+
+  const [editCalendar, setEditCalendar] = useState<UserCalendar | null>(null);
+  const [editForm, setEditForm] = useState<UpdateUserCalendarPayload>({});
+  const [saving, setSaving] = useState(false);
 
   if (!canView) return null;
 
@@ -130,6 +148,37 @@ export default function UserCalendars({ username }: Props) {
       toast({ title: t("users.calendars.errorCreate"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setCreating(false);
+    }
+  };
+
+  const openEdit = (calendar: UserCalendar) => {
+    setEditCalendar(calendar);
+    setEditForm({
+      "dav:name": calendar["dav:name"] ?? "",
+      "apple:color": calendar["apple:color"] ?? "",
+      "caldav:description": calendar["caldav:description"] ?? "",
+    });
+  };
+
+  const handleUpdate = async () => {
+    if (!editCalendar) return;
+    const name = editForm["dav:name"]?.trim();
+    if (!name) return;
+    setSaving(true);
+    try {
+      const payload: UpdateUserCalendarPayload = {
+        "dav:name": name,
+        "apple:color": editForm["apple:color"]?.trim() || "",
+        "caldav:description": editForm["caldav:description"]?.trim() || "",
+      };
+      await updateUserCalendar(username, calendarId(editCalendar), payload);
+      toast({ title: t("users.calendars.updated") });
+      setEditCalendar(null);
+      await refresh();
+    } catch (err) {
+      toast({ title: t("users.calendars.errorUpdate"), description: <ErrorDisplayer error={err} /> });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -194,7 +243,9 @@ export default function UserCalendars({ username }: Props) {
                   <CalendarRow
                     key={calendarId(calendar)}
                     calendar={calendar}
+                    canEdit={canEdit}
                     canDelete={canDelete}
+                    onEdit={openEdit}
                     onDelete={handleDelete}
                   />
                 ))}
@@ -261,6 +312,68 @@ export default function UserCalendars({ username }: Props) {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit modal */}
+      <Dialog open={!!editCalendar} onOpenChange={(v) => { if (!v) setEditCalendar(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("users.calendars.editTitle")} — {editCalendar?.["dav:name"]}</DialogTitle>
+          </DialogHeader>
+          {editCalendar && (
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium">{t("users.calendars.name")} *</label>
+                <input
+                  type="text"
+                  value={editForm["dav:name"] ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, "dav:name": e.target.value }))}
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">{t("users.calendars.color")}</label>
+                <div className="flex gap-2 mt-1 items-center">
+                  <input
+                    type="color"
+                    value={editForm["apple:color"]?.trim() || "#007fd8"}
+                    onChange={(e) => setEditForm((f) => ({ ...f, "apple:color": e.target.value }))}
+                    className="h-9 w-12 cursor-pointer border rounded-md"
+                  />
+                  <input
+                    type="text"
+                    value={editForm["apple:color"] ?? ""}
+                    onChange={(e) => setEditForm((f) => ({ ...f, "apple:color": e.target.value }))}
+                    placeholder="#007fd8"
+                    className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium">{t("users.calendars.description")}</label>
+                <input
+                  type="text"
+                  value={editForm["caldav:description"] ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, "caldav:description": e.target.value }))}
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="outline" size="sm" onClick={() => setEditCalendar(null)}>
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleUpdate}
+                  disabled={saving || !editForm["dav:name"]?.trim()}
+                >
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
+                  {t("common.save")}
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

@@ -705,6 +705,9 @@
       "deleteConfirm": "Voulez-vous vraiment supprimer le calendrier « {{name}} » ?",
       "deleted": "Calendrier supprimé",
       "errorDelete": "Erreur lors de la suppression du calendrier",
+      "editTitle": "Modifier le calendrier",
+      "updated": "Calendrier modifié",
+      "errorUpdate": "Erreur lors de la modification du calendrier",
       "categories": {
         "owner": "Propriétaire",
         "delegated": "Délégués",
