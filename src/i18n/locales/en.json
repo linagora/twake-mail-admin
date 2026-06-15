@@ -695,6 +695,7 @@
     "calendars": {
       "title": "Calendars",
       "empty": "No calendar.",
+      "ownerLabel": "owner:",
       "createTitle": "Create calendar",
       "name": "Name",
       "color": "Color",

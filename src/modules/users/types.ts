@@ -146,6 +146,7 @@ export interface CalendarAcl {
 }
 
 export interface CalendarSource {
+  _links?: { self?: { href?: string } };
   invite?: CalendarInvite[];
   acl?: CalendarAcl[];
 }

@@ -330,6 +330,7 @@ Same than for team mailbox: if both are missing do not display the section...
 | "Public visibility" button (eye) | POST | `/users/{username}/calendars/{calendarId}/publicRight` | MAY (do not show the eye icon if missing) |
 | "Invitees / delegation" button (users) | POST | `/users/{username}/calendars/{calendarId}/invitee` | MAY (do not show the users icon if missing) |
 | Invitee email existence check | HEAD | `/users/{username}` | MAY |
+| Owner email resolution (delegated/subscription) | GET | `/registeredUsers` | MAY (owner line hidden if missing) |
 | "Delete calendar" button (trash) | DELETE | `/users/{username}/calendars/{calendarId}` | MAY (do not show the trash icon if missing) |
 
 ### User quota explorer (inline component)
