@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -422,6 +422,17 @@ export const updateUserCalendar = async (
 export const deleteUserCalendar = async (username: string, calendarId: string): Promise<void> => {
   await apiClient.delete(
     `/users/${encodeURIComponent(username)}/calendars/${encodeURIComponent(calendarId)}`
+  );
+};
+
+export const updateUserCalendarInvitees = async (
+  username: string,
+  calendarId: string,
+  share: CalendarShareUpdate
+): Promise<void> => {
+  await apiClient.post(
+    `/users/${encodeURIComponent(username)}/calendars/${encodeURIComponent(calendarId)}/invitee`,
+    { share }
   );
 };
 

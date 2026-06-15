@@ -180,6 +180,18 @@ export interface UpdateUserCalendarPayload {
   "caldav:description"?: string;
 }
 
+export interface CalendarShareSetEntry {
+  "dav:href": string;
+  "dav:read"?: boolean;
+  "dav:read-write"?: boolean;
+  "dav:administration"?: boolean;
+}
+
+export interface CalendarShareUpdate {
+  set?: CalendarShareSetEntry[];
+  remove?: { "dav:href": string }[];
+}
+
 export interface DeletedMessage {
   messageId: string;
   originMailboxes: string[];

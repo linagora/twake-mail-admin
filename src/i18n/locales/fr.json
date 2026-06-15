@@ -719,6 +719,22 @@
         "updated": "Visibilité mise à jour",
         "errorUpdate": "Erreur lors de la mise à jour de la visibilité"
       },
+      "invitees": {
+        "title": "Délégation (invités)",
+        "empty": "Aucun invité.",
+        "placeholder": "utilisateur@domaine.com",
+        "apply": "Appliquer",
+        "remove": "Retirer",
+        "undoRemove": "Annuler le retrait",
+        "alreadyInvited": "Déjà invité",
+        "updated": "Invités mis à jour",
+        "errorUpdate": "Erreur lors de la mise à jour des invités",
+        "rights": {
+          "read": "Lecture",
+          "read-write": "Lecture/écriture",
+          "administration": "Administration"
+        }
+      },
       "categories": {
         "owner": "Propriétaire",
         "delegated": "Délégués",

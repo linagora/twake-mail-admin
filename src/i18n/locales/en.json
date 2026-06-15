@@ -719,6 +719,22 @@
         "updated": "Visibility updated",
         "errorUpdate": "Error updating visibility"
       },
+      "invitees": {
+        "title": "Delegation (invitees)",
+        "empty": "No invitee.",
+        "placeholder": "user@domain.com",
+        "apply": "Apply",
+        "remove": "Remove",
+        "undoRemove": "Undo removal",
+        "alreadyInvited": "Already invited",
+        "updated": "Invitees updated",
+        "errorUpdate": "Error updating invitees",
+        "rights": {
+          "read": "Read",
+          "read-write": "Read/write",
+          "administration": "Administration"
+        }
+      },
       "categories": {
         "owner": "Owner",
         "delegated": "Delegated",
