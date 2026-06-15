@@ -701,6 +701,10 @@
       "description": "Description",
       "created": "Calendrier créé",
       "errorCreate": "Erreur lors de la création du calendrier",
+      "deleteTitle": "Supprimer le calendrier",
+      "deleteConfirm": "Voulez-vous vraiment supprimer le calendrier « {{name}} » ?",
+      "deleted": "Calendrier supprimé",
+      "errorDelete": "Erreur lors de la suppression du calendrier",
       "categories": {
         "owner": "Propriétaire",
         "delegated": "Délégués",

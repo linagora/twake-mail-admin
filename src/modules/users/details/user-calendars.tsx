@@ -1,11 +1,12 @@
 import { useCallback, useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Trash2, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { createUserCalendar, getUserCalendars } from "../api-client";
+import { createUserCalendar, deleteUserCalendar, getUserCalendars } from "../api-client";
 import { CreateUserCalendarPayload, GetUserCalendarsResponseType, UserCalendar } from "../types";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -46,24 +47,42 @@ function calendarId(calendar: UserCalendar): string {
   return last.replace(/\.json$/, "") || href;
 }
 
-function CalendarRow({ calendar }: { calendar: UserCalendar }) {
+function CalendarRow({
+  calendar,
+  canDelete,
+  onDelete,
+}: {
+  calendar: UserCalendar;
+  canDelete: boolean;
+  onDelete: (calendar: UserCalendar) => void;
+}) {
+  const { t } = useTranslation();
   const name = calendar["dav:name"];
   const color = calendar["apple:color"];
   const description = calendar["caldav:description"];
 
   return (
-    <div className="flex items-start gap-3 py-1">
+    <div className="group flex items-start gap-3 py-1">
       <span
         className="inline-block w-4 h-4 rounded-full border border-gray-200 flex-shrink-0 mt-0.5"
         style={{ backgroundColor: color || "#cccccc" }}
         title={color}
       />
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="font-medium">{name}</p>
         {description && (
           <p className="text-xs text-gray-400">{description}</p>
         )}
       </div>
+      {canDelete && (
+        <button
+          onClick={() => onDelete(calendar)}
+          className="p-1.5 rounded-md hover:bg-gray-200 transition"
+          title={t("users.calendars.deleteTitle")}
+        >
+          <Trash2 className="w-3.5 h-3.5 text-red-600" />
+        </button>
+      )}
     </div>
   );
 }
@@ -71,8 +90,10 @@ function CalendarRow({ calendar }: { calendar: UserCalendar }) {
 export default function UserCalendars({ username }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/calendars");
   const canCreate = useIsAllowed("POST", "/users/{username}/calendars");
+  const canDelete = useIsAllowed("DELETE", "/users/{username}/calendars/{calendarId}");
 
   const fetchCalendars = useCallback(() => getUserCalendars(username), [username]);
   const { data, isLoading, error, refresh } = useFetchData<GetUserCalendarsResponseType>(
@@ -109,6 +130,21 @@ export default function UserCalendars({ username }: Props) {
       toast({ title: t("users.calendars.errorCreate"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleDelete = async (calendar: UserCalendar) => {
+    const confirmed = await confirm({
+      header: t("users.calendars.deleteTitle"),
+      message: t("users.calendars.deleteConfirm", { name: calendar["dav:name"] }),
+    });
+    if (!confirmed) return;
+    try {
+      await deleteUserCalendar(username, calendarId(calendar));
+      toast({ title: t("users.calendars.deleted") });
+      await refresh();
+    } catch (err) {
+      toast({ title: t("users.calendars.errorDelete"), description: <ErrorDisplayer error={err} /> });
     }
   };
 
@@ -155,7 +191,12 @@ export default function UserCalendars({ username }: Props) {
               </div>
               <div className="space-y-1">
                 {group.items.map((calendar) => (
-                  <CalendarRow key={calendarId(calendar)} calendar={calendar} />
+                  <CalendarRow
+                    key={calendarId(calendar)}
+                    calendar={calendar}
+                    canDelete={canDelete}
+                    onDelete={handleDelete}
+                  />
                 ))}
               </div>
             </div>

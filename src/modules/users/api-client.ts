@@ -408,6 +408,12 @@ export const createUserCalendar = async (
   );
 };
 
+export const deleteUserCalendar = async (username: string, calendarId: string): Promise<void> => {
+  await apiClient.delete(
+    `/users/${encodeURIComponent(username)}/calendars/${encodeURIComponent(calendarId)}`
+  );
+};
+
 export const archiveUserCalendarEvents = async (
   username: string,
   params: {

@@ -701,6 +701,10 @@
       "description": "Description",
       "created": "Calendar created",
       "errorCreate": "Error creating calendar",
+      "deleteTitle": "Delete calendar",
+      "deleteConfirm": "Do you really want to delete the calendar \"{{name}}\"?",
+      "deleted": "Calendar deleted",
+      "errorDelete": "Error deleting calendar",
       "categories": {
         "owner": "Owner",
         "delegated": "Delegated",
