@@ -692,6 +692,56 @@
       "archiveDesc": "Archive calendar events for {{username}}.",
       "errorArchive": "Error running archive task"
     },
+    "calendars": {
+      "title": "Calendars",
+      "empty": "No calendar.",
+      "createTitle": "Create calendar",
+      "name": "Name",
+      "color": "Color",
+      "description": "Description",
+      "created": "Calendar created",
+      "errorCreate": "Error creating calendar",
+      "deleteTitle": "Delete calendar",
+      "deleteConfirm": "Do you really want to delete the calendar \"{{name}}\"?",
+      "deleted": "Calendar deleted",
+      "errorDelete": "Error deleting calendar",
+      "editTitle": "Edit calendar",
+      "updated": "Calendar updated",
+      "errorUpdate": "Error updating calendar",
+      "publicRight": {
+        "title": "Public visibility",
+        "publicTitle": "Public calendar (read)",
+        "privateTitle": "Private calendar",
+        "public": "Public",
+        "publicDesc": "Anyone authenticated can read this calendar.",
+        "private": "Private",
+        "privateDesc": "Removes public rights on this calendar.",
+        "updated": "Visibility updated",
+        "errorUpdate": "Error updating visibility"
+      },
+      "invitees": {
+        "title": "Delegation (invitees)",
+        "empty": "No invitee.",
+        "placeholder": "user@domain.com",
+        "apply": "Apply",
+        "remove": "Remove",
+        "undoRemove": "Undo removal",
+        "alreadyInvited": "Already invited",
+        "updated": "Invitees updated",
+        "errorUpdate": "Error updating invitees",
+        "rights": {
+          "read": "Read",
+          "read-write": "Read/write",
+          "administration": "Administration"
+        }
+      },
+      "categories": {
+        "owner": "Owner",
+        "delegated": "Delegated",
+        "subscription": "Subscriptions",
+        "resource": "Resources"
+      }
+    },
     "subtitle": "Manage users registered on the mail server.",
     "subtitleCalendar": "Manage users registered on the calendar server."
   },

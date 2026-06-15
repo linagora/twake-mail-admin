@@ -131,6 +131,67 @@ export interface UserLabelUpdatePayload {
   readOnly?: boolean;
 }
 
+export interface CalendarInvite {
+  href: string;
+  principal: string;
+  access: number;
+  comment: string | null;
+  inviteStatus: number;
+}
+
+export interface CalendarAcl {
+  privilege: string;
+  principal: string;
+  protected?: boolean;
+}
+
+export interface CalendarSource {
+  invite?: CalendarInvite[];
+  acl?: CalendarAcl[];
+}
+
+export interface UserCalendar {
+  _links?: { self?: { href?: string } };
+  "dav:name"?: string;
+  "caldav:description"?: string;
+  "apple:color"?: string;
+  "calendarserver:delegatedsource"?: string;
+  "calendarserver:source"?: CalendarSource;
+  invite?: CalendarInvite[];
+  acl?: CalendarAcl[];
+}
+
+export interface GetUserCalendarsResponseType {
+  _embedded?: {
+    "dav:calendar"?: UserCalendar[];
+  };
+}
+
+export interface CreateUserCalendarPayload {
+  id?: string;
+  "dav:name": string;
+  "apple:color"?: string;
+  "caldav:description"?: string;
+}
+
+export interface UpdateUserCalendarPayload {
+  "dav:name"?: string;
+  "apple:color"?: string;
+  "caldav:description"?: string;
+}
+
+export interface CalendarShareSetEntry {
+  "dav:href": string;
+  "dav:read"?: boolean;
+  "dav:read-write"?: boolean;
+  "dav:administration"?: boolean;
+}
+
+export interface CalendarShareUpdate {
+  set?: CalendarShareSetEntry[];
+  remove?: { "dav:href": string }[];
+}
+
 export interface DeletedMessage {
   messageId: string;
   originMailboxes: string[];

@@ -692,6 +692,56 @@
       "archiveDesc": "Archiver les événements calendrier de {{username}}.",
       "errorArchive": "Erreur lors de l'archivage"
     },
+    "calendars": {
+      "title": "Calendriers",
+      "empty": "Aucun calendrier.",
+      "createTitle": "Créer un calendrier",
+      "name": "Nom",
+      "color": "Couleur",
+      "description": "Description",
+      "created": "Calendrier créé",
+      "errorCreate": "Erreur lors de la création du calendrier",
+      "deleteTitle": "Supprimer le calendrier",
+      "deleteConfirm": "Voulez-vous vraiment supprimer le calendrier « {{name}} » ?",
+      "deleted": "Calendrier supprimé",
+      "errorDelete": "Erreur lors de la suppression du calendrier",
+      "editTitle": "Modifier le calendrier",
+      "updated": "Calendrier modifié",
+      "errorUpdate": "Erreur lors de la modification du calendrier",
+      "publicRight": {
+        "title": "Visibilité publique",
+        "publicTitle": "Calendrier public (lecture)",
+        "privateTitle": "Calendrier privé",
+        "public": "Public",
+        "publicDesc": "Tout utilisateur authentifié peut lire ce calendrier.",
+        "private": "Privé",
+        "privateDesc": "Retire les droits publics sur ce calendrier.",
+        "updated": "Visibilité mise à jour",
+        "errorUpdate": "Erreur lors de la mise à jour de la visibilité"
+      },
+      "invitees": {
+        "title": "Délégation (invités)",
+        "empty": "Aucun invité.",
+        "placeholder": "utilisateur@domaine.com",
+        "apply": "Appliquer",
+        "remove": "Retirer",
+        "undoRemove": "Annuler le retrait",
+        "alreadyInvited": "Déjà invité",
+        "updated": "Invités mis à jour",
+        "errorUpdate": "Erreur lors de la mise à jour des invités",
+        "rights": {
+          "read": "Lecture",
+          "read-write": "Lecture/écriture",
+          "administration": "Administration"
+        }
+      },
+      "categories": {
+        "owner": "Propriétaire",
+        "delegated": "Délégués",
+        "subscription": "Abonnements",
+        "resource": "Ressources"
+      }
+    },
     "subtitle": "Gérer les utilisateurs enregistrés sur le serveur mail.",
     "subtitleCalendar": "Gérer les utilisateurs enregistrés sur le serveur calendrier."
   },
