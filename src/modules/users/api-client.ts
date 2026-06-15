@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -389,6 +389,12 @@ export const tierUserData = async (
   if (params.messagesPerSecond) query.set("messagesPerSecond", params.messagesPerSecond);
   return apiClient.post(
     `/users/${encodeURIComponent(username)}/data?${query.toString()}`
+  );
+};
+
+export const getUserCalendars = async (username: string): Promise<GetUserCalendarsResponseType> => {
+  return apiClient.get<any, GetUserCalendarsResponseType>(
+    `/users/${encodeURIComponent(username)}/calendars`
   );
 };
 

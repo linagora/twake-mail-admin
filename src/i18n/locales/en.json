@@ -692,6 +692,16 @@
       "archiveDesc": "Archive calendar events for {{username}}.",
       "errorArchive": "Error running archive task"
     },
+    "calendars": {
+      "title": "Calendars",
+      "empty": "No calendar.",
+      "categories": {
+        "owner": "Owner",
+        "delegated": "Delegated",
+        "subscription": "Subscriptions",
+        "resource": "Resources"
+      }
+    },
     "subtitle": "Manage users registered on the mail server.",
     "subtitleCalendar": "Manage users registered on the calendar server."
   },

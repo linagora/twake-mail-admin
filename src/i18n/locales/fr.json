@@ -692,6 +692,16 @@
       "archiveDesc": "Archiver les événements calendrier de {{username}}.",
       "errorArchive": "Erreur lors de l'archivage"
     },
+    "calendars": {
+      "title": "Calendriers",
+      "empty": "Aucun calendrier.",
+      "categories": {
+        "owner": "Propriétaire",
+        "delegated": "Délégués",
+        "subscription": "Abonnements",
+        "resource": "Ressources"
+      }
+    },
     "subtitle": "Gérer les utilisateurs enregistrés sur le serveur mail.",
     "subtitleCalendar": "Gérer les utilisateurs enregistrés sur le serveur calendrier."
   },
