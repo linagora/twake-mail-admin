@@ -695,6 +695,12 @@
     "calendars": {
       "title": "Calendriers",
       "empty": "Aucun calendrier.",
+      "createTitle": "Créer un calendrier",
+      "name": "Nom",
+      "color": "Couleur",
+      "description": "Description",
+      "created": "Calendrier créé",
+      "errorCreate": "Erreur lors de la création du calendrier",
       "categories": {
         "owner": "Propriétaire",
         "delegated": "Délégués",

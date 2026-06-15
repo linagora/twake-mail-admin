@@ -167,6 +167,13 @@ export interface GetUserCalendarsResponseType {
   };
 }
 
+export interface CreateUserCalendarPayload {
+  id?: string;
+  "dav:name": string;
+  "apple:color"?: string;
+  "caldav:description"?: string;
+}
+
 export interface DeletedMessage {
   messageId: string;
   originMailboxes: string[];

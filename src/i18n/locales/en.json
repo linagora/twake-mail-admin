@@ -695,6 +695,12 @@
     "calendars": {
       "title": "Calendars",
       "empty": "No calendar.",
+      "createTitle": "Create calendar",
+      "name": "Name",
+      "color": "Color",
+      "description": "Description",
+      "created": "Calendar created",
+      "errorCreate": "Error creating calendar",
       "categories": {
         "owner": "Owner",
         "delegated": "Delegated",
