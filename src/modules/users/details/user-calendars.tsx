@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -8,6 +9,9 @@ import { CalendarShareUpdate, CreateUserCalendarPayload, GetUserCalendarsRespons
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
+import { useDomain } from "@/modules/domain-admin/domain-context";
+import { getRegisteredUsers } from "@/modules/registered-users/api-client";
+import { RegisteredUser } from "@/modules/registered-users/types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -96,8 +100,44 @@ function calendarId(calendar: UserCalendar): string {
   return last.replace(/\.json$/, "") || href;
 }
 
+// The owner of a delegated/subscribed calendar is referenced by its technical
+// user id (the segment after /calendars/ in the source href), never by email.
+// We resolve it via the registered users list (authoritative, full coverage),
+// completed by the mailto invites found in the listing itself.
+function buildOwnerEmailMap(
+  calendars: UserCalendar[],
+  registeredUsers: RegisteredUser[] | null,
+): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const cal of calendars) {
+    const invites = [...(cal.invite ?? []), ...(cal["calendarserver:source"]?.invite ?? [])];
+    for (const inv of invites) {
+      if (inv.href?.startsWith("mailto:") && inv.principal?.startsWith("principals/users/")) {
+        map[inv.principal.slice("principals/users/".length)] = inv.href.replace(/^mailto:/, "");
+      }
+    }
+  }
+  // Registered users take precedence — they cover owners absent from any invite.
+  for (const u of registeredUsers ?? []) {
+    if (u.id && u.email) map[u.id] = u.email;
+  }
+  return map;
+}
+
+function ownerEmail(calendar: UserCalendar, ownerEmails: Record<string, string>): string | null {
+  const sourceHref =
+    calendar["calendarserver:delegatedsource"] ?? calendar["calendarserver:source"]?._links?.self?.href;
+  if (!sourceHref) return null;
+  // href looks like /calendars/{ownerId}/{calendarId}.json
+  const ownerId = sourceHref.split("/").filter(Boolean)[1];
+  if (!ownerId) return null;
+  return ownerEmails[ownerId] ?? null;
+}
+
 function CalendarRow({
   calendar,
+  owner,
+  isOwned,
   canEdit,
   canDelete,
   canPublicRight,
@@ -108,6 +148,8 @@ function CalendarRow({
   onInvitees,
 }: {
   calendar: UserCalendar;
+  owner?: string | null;
+  isOwned: boolean;
   canEdit: boolean;
   canDelete: boolean;
   canPublicRight: boolean;
@@ -135,8 +177,19 @@ function CalendarRow({
         {description && (
           <p className="text-xs text-gray-400">{description}</p>
         )}
+        {owner && (
+          <p className="text-xs text-gray-400">
+            {t("users.calendars.ownerLabel")}{" "}
+            <Link
+              to={`/users/user/${encodeURIComponent(owner)}`}
+              className="text-blue-600 hover:underline"
+            >
+              {owner}
+            </Link>
+          </p>
+        )}
       </div>
-      {canInvitees && (
+      {isOwned && canInvitees && (
         <button
           onClick={() => onInvitees(calendar)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -145,7 +198,7 @@ function CalendarRow({
           <Users className="w-3.5 h-3.5 text-gray-600" />
         </button>
       )}
-      {canPublicRight && (
+      {isOwned && canPublicRight && (
         <button
           onClick={() => onPublicRight(calendar)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -194,6 +247,14 @@ export default function UserCalendars({ username }: Props) {
     canView ? fetchCalendars : null
   );
 
+  // Resolve owner emails of delegated/subscribed calendars via the registered users list.
+  const domain = useDomain() || undefined;
+  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const fetchRegisteredUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
+  const { data: registeredUsers } = useFetchData<RegisteredUser[]>(
+    canView && canRegisteredUsers ? fetchRegisteredUsers : null
+  );
+
   const [open, setOpen] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState<CreateUserCalendarPayload>({ ...EMPTY_CREATE });
@@ -212,6 +273,7 @@ export default function UserCalendars({ username }: Props) {
   if (!canView) return null;
 
   const calendars = data?._embedded?.["dav:calendar"] ?? [];
+  const ownerEmails = buildOwnerEmailMap(calendars, registeredUsers);
   const grouped = CATEGORY_ORDER.map((category) => ({
     category,
     items: calendars.filter((c) => categorize(c) === category),
@@ -349,6 +411,12 @@ export default function UserCalendars({ username }: Props) {
                   <CalendarRow
                     key={calendarId(calendar)}
                     calendar={calendar}
+                    owner={
+                      group.category === "delegated" || group.category === "subscription"
+                        ? ownerEmail(calendar, ownerEmails)
+                        : undefined
+                    }
+                    isOwned={group.category === "owner"}
                     canEdit={canEdit}
                     canDelete={canDelete}
                     canPublicRight={canPublicRight}
