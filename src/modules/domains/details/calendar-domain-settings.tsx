@@ -35,6 +35,7 @@ function toValues(s: DomainSettings): DomainSettingsValues {
     userSearchMode: s.userSearchMode,
     resourceSearchEnabled: s.resourceSearchEnabled,
     defaultCalendarPublicVisibility: s.defaultCalendarPublicVisibility,
+    calendarPublicVisibilitySettingEnabled: s.calendarPublicVisibilitySettingEnabled,
   };
 }
 
@@ -213,6 +214,24 @@ export default function CalendarDomainSettings({ domain, defaultOpen = false }: 
                 }
               />
 
+              <SettingRow
+                label={t("domains.domainSettings.calendarPublicVisibilitySettingEnabled")}
+                defaultLabel={defaultLabel}
+                value={
+                  values.calendarPublicVisibilitySettingEnabled === null
+                    ? DEFAULT_SENTINEL
+                    : String(values.calendarPublicVisibilitySettingEnabled)
+                }
+                options={booleanOptions}
+                disabled={!canUpdate}
+                onChange={(v) =>
+                  updateField(
+                    "calendarPublicVisibilitySettingEnabled",
+                    v === DEFAULT_SENTINEL ? null : v === "true"
+                  )
+                }
+              />
+
               <div className="rounded-md border bg-gray-50 p-3 text-sm">
                 <p className="font-medium text-gray-700 mb-1">
                   {t("domains.domainSettings.effective")}
@@ -234,6 +253,12 @@ export default function CalendarDomainSettings({ domain, defaultOpen = false }: 
                     <span>{t("domains.domainSettings.defaultCalendarPublicVisibility")}</span>
                     <span className="font-medium">
                       {t(`domains.domainSettings.visibilityOptions.${settings.resolved.defaultCalendarPublicVisibility}`)}
+                    </span>
+                  </li>
+                  <li className="flex justify-between gap-4">
+                    <span>{t("domains.domainSettings.calendarPublicVisibilitySettingEnabled")}</span>
+                    <span className="font-medium">
+                      {t(`domains.domainSettings.booleanOptions.${String(settings.resolved.calendarPublicVisibilitySettingEnabled)}`)}
                     </span>
                   </li>
                 </ul>

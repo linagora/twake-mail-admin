@@ -78,6 +78,7 @@ export interface DomainSettingsValues {
   userSearchMode: UserSearchMode | null;
   resourceSearchEnabled: boolean | null;
   defaultCalendarPublicVisibility: CalendarPublicVisibility | null;
+  calendarPublicVisibilitySettingEnabled: boolean | null;
 }
 
 export interface DomainSettings extends DomainSettingsValues {
@@ -85,6 +86,7 @@ export interface DomainSettings extends DomainSettingsValues {
     userSearchMode: UserSearchMode;
     resourceSearchEnabled: boolean;
     defaultCalendarPublicVisibility: CalendarPublicVisibility;
+    calendarPublicVisibilitySettingEnabled: boolean;
   };
 }
 

@@ -300,6 +300,7 @@
         "read": "Lecture",
         "private": "Privé"
       },
+      "calendarPublicVisibilitySettingEnabled": "Autoriser les utilisateurs à gérer le réglage de visibilité publique du calendrier",
       "saved": "Réglages du domaine enregistrés",
       "errorSaving": "Erreur lors de l'enregistrement des réglages du domaine"
     },

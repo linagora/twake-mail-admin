@@ -300,6 +300,7 @@
         "read": "Read",
         "private": "Private"
       },
+      "calendarPublicVisibilitySettingEnabled": "Allow users to manage Calendar public visibility setting",
       "saved": "Domain settings saved",
       "errorSaving": "Error saving domain settings"
     },
