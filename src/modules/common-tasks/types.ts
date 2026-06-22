@@ -30,6 +30,7 @@ export enum TaskKey {
   CALENDAR_EVENT_REINDEX = 'calendarEventReindex',
   ALARM_RESCHEDULING = 'alarmRescheduling',
   CALENDAR_EVENT_ARCHIVAL = 'calendarEventArchival',
+  CLEAR_DOMAIN_MEMBERS_CONTACTS = 'clear-domain-members-contacts-dav',
 };
 
 export type TaskRequest = {
@@ -46,6 +47,7 @@ export type AdditionalParams = {
   expectedBlobCount?: string;
   // Calendar-specific params
   ignoredDomains?: string;
+  ldapFilter?: string;
   eventsPerSecond?: string;
   createdBefore?: string;
   lastModifiedBefore?: string;
@@ -62,6 +64,7 @@ export type TaskProps = {
   doc: string;
   params?: TaskParam[];
   allowanceCheck?: { verb: import("@/lib/proxy-resolver").HttpVerb; pattern: string };
+  danger?: boolean;
 }
 
 export enum TaskStatus {

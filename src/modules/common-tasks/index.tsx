@@ -154,6 +154,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     command: 'curl -XPOST /addressbook/domain-members?task=sync',
     params: [
       { key: 'ignoredDomains', defaultValue: '', type: 'input' },
+      { key: 'ldapFilter', defaultValue: '', type: 'input' },
     ],
     doc: '',
   },
@@ -195,6 +196,16 @@ const CALENDAR_TASKS: TaskProps[] = [
     command: 'curl -XPOST /registeredUsers?action=addMissingFields',
     params: [],
     doc: '',
+  },
+  {
+    nameKey: 'commonTasks.clearDomainMembersContacts',
+    taskKey: TaskKey.CLEAR_DOMAIN_MEMBERS_CONTACTS,
+    command: 'curl -XDELETE /addressbook/domain-members',
+    params: [
+      { key: 'ignoredDomains', defaultValue: '', type: 'input' },
+    ],
+    doc: '',
+    danger: true,
   },
 ];
 

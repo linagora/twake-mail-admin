@@ -135,6 +135,11 @@ export const runAddMissingFieldsTask = async (): Promise<any> => {
   return apiClient.post<any, any>(`/registeredUsers?action=addMissingFields`);
 };
 
+export const runClearDomainMembersContactsTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams(payload);
+  return apiClient.delete<any, any>(`/addressbook/domain-members${params ? `?${params}` : ''}`);
+};
+
 // In DOMAIN mode, try domain-scoped task route first; fall back to global on 404.
 // No session cache — 404 here means "task not owned by this domain", not a backend capability gap.
 async function callTaskRoute<T>(
