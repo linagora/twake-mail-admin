@@ -841,6 +841,7 @@
     "calendarEventArchival": "Calendar event archival",
     "alarmRescheduling": "Alarm rescheduling",
     "addMissingFields": "Add missing fields to registered users",
+    "clearDomainMembersContacts": "Delete domain members contacts of all domains",
     "reloadCertificates": "Reload certificates",
     "portOptional": "port (optional)",
     "reloadCertTitle": "Reload Certificates",

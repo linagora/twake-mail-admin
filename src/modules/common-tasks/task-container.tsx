@@ -12,7 +12,7 @@ import ConfirmTaskContent from "./components/confirm-task-content";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
-export default function TaskContainer({ nameKey, taskKey, mode, command, doc, params, allowanceCheck }: TaskProps) {
+export default function TaskContainer({ nameKey, taskKey, mode, command, doc, params, allowanceCheck, danger }: TaskProps) {
   const { t } = useTranslation();
   const name = t(nameKey);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -66,7 +66,7 @@ additionParams[key] = value
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRunTask}>
+              <Button className={`${danger ? "bg-red-500 hover:bg-red-600" : "bg-green-400 hover:bg-green-500"} rounded-sm`} onClick={handleRunTask}>
                 {isLoading && <Loader2 className="animate-spin" />}
                 {t("common.run")}
               </Button>
