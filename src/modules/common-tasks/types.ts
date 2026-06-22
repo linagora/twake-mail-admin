@@ -47,6 +47,7 @@ export type AdditionalParams = {
   expectedBlobCount?: string;
   // Calendar-specific params
   ignoredDomains?: string;
+  ldapFilter?: string;
   eventsPerSecond?: string;
   createdBefore?: string;
   lastModifiedBefore?: string;

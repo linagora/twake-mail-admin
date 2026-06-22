@@ -154,6 +154,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     command: 'curl -XPOST /addressbook/domain-members?task=sync',
     params: [
       { key: 'ignoredDomains', defaultValue: '', type: 'input' },
+      { key: 'ldapFilter', defaultValue: '', type: 'input' },
     ],
     doc: '',
   },
