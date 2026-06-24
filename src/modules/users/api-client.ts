@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -444,6 +444,43 @@ export const setUserCalendarPublicRight = async (
   await apiClient.post(
     `/users/${encodeURIComponent(username)}/calendars/${encodeURIComponent(calendarId)}/publicRight`,
     { public_right: publicRight }
+  );
+};
+
+export const getUserBookingLinks = async (username: string): Promise<BookingLink[]> => {
+  return apiClient.get(`/users/${encodeURIComponent(username)}/booking-links`);
+};
+
+export const createUserBookingLink = async (
+  username: string,
+  payload: CreateBookingLinkPayload
+): Promise<{ bookingLinkPublicId: string }> => {
+  return apiClient.post(`/users/${encodeURIComponent(username)}/booking-links`, payload);
+};
+
+export const updateUserBookingLink = async (
+  username: string,
+  publicId: string,
+  payload: UpdateBookingLinkPayload
+): Promise<void> => {
+  await apiClient.patch(
+    `/users/${encodeURIComponent(username)}/booking-links/${encodeURIComponent(publicId)}`,
+    payload
+  );
+};
+
+export const deleteUserBookingLink = async (username: string, publicId: string): Promise<void> => {
+  await apiClient.delete(
+    `/users/${encodeURIComponent(username)}/booking-links/${encodeURIComponent(publicId)}`
+  );
+};
+
+export const resetUserBookingLinkPublicId = async (
+  username: string,
+  publicId: string
+): Promise<{ bookingLinkPublicId: string }> => {
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}/booking-links/${encodeURIComponent(publicId)}/reset`
   );
 };
 
