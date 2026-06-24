@@ -193,6 +193,36 @@ export interface CalendarShareUpdate {
   remove?: { "dav:href": string }[];
 }
 
+export interface AvailabilityRule {
+  type: string;
+  dayOfWeek?: string;
+  start?: string;
+  end?: string;
+  timeZone?: string;
+}
+
+export interface BookingLink {
+  publicId: string;
+  calendarUrl: string;
+  durationMinutes: number;
+  active: boolean;
+  availabilityRules?: AvailabilityRule[];
+}
+
+export interface CreateBookingLinkPayload {
+  calendarUrl: string;
+  durationMinutes: number;
+  active: boolean;
+  availabilityRules?: AvailabilityRule[];
+}
+
+export interface UpdateBookingLinkPayload {
+  calendarUrl?: string;
+  durationMinutes?: number;
+  active?: boolean;
+  availabilityRules?: AvailabilityRule[] | null;
+}
+
 export interface DeletedMessage {
   messageId: string;
   originMailboxes: string[];
