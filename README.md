@@ -1,3 +1,5 @@
+> Why do JavaScript developers wear glasses? Because they can't C#!
+
 # Twake Mail Admin
 
 Welcome to Twake Mail Administration (version `0.0.0`)
