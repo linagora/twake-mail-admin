@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import CalendarUserTasks from "./calendar-user-tasks";
 import UserCalendars from "./user-calendars";
 import UserBookingLinks from "./user-booking-links";
+import UserAddressBooks from "./user-address-books";
 
 export default function CalendarUserDetail() {
   const { username } = useParams();
@@ -14,6 +15,7 @@ export default function CalendarUserDetail() {
       <p>{t("users.label", { username })}</p>
 
       <UserCalendars username={username!} />
+      <UserAddressBooks username={username!} />
       <UserBookingLinks username={username!} />
       <CalendarUserTasks username={username!} />
     </div>

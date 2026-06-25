@@ -223,6 +223,35 @@ export interface UpdateBookingLinkPayload {
   availabilityRules?: AvailabilityRule[] | null;
 }
 
+export interface UserAddressBook {
+  _links?: { self?: { href?: string } };
+  "dav:name"?: string;
+  "carddav:description"?: string;
+  invite?: CalendarInvite[];
+  acl?: CalendarAcl[];
+}
+
+export interface GetUserAddressBooksResponseType {
+  _embedded?: {
+    "dav:addressbook"?: UserAddressBook[];
+  };
+}
+
+export interface CreateUserAddressBookPayload {
+  id?: string;
+  "dav:name": string;
+  "carddav:description"?: string;
+}
+
+export interface AddressBookShareEntry {
+  "dav:href": string;
+  "dav:share-access": number;
+}
+
+export interface AddressBookShareUpdate {
+  "dav:sharee": AddressBookShareEntry[];
+}
+
 export interface DeletedMessage {
   messageId: string;
   originMailboxes: string[];

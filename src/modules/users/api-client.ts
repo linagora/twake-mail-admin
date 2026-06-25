@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserAddressBooksResponseType, CreateUserAddressBookPayload, AddressBookShareUpdate } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -481,6 +481,50 @@ export const resetUserBookingLinkPublicId = async (
 ): Promise<{ bookingLinkPublicId: string }> => {
   return apiClient.post(
     `/users/${encodeURIComponent(username)}/booking-links/${encodeURIComponent(publicId)}/reset`
+  );
+};
+
+export const getUserAddressBooks = async (username: string): Promise<GetUserAddressBooksResponseType> => {
+  return apiClient.get<any, GetUserAddressBooksResponseType>(
+    `/users/${encodeURIComponent(username)}/addressbooks`
+  );
+};
+
+export const createUserAddressBook = async (
+  username: string,
+  payload: CreateUserAddressBookPayload
+): Promise<{ id: string }> => {
+  return apiClient.post<any, { id: string }>(
+    `/users/${encodeURIComponent(username)}/addressbooks`,
+    payload
+  );
+};
+
+export const deleteUserAddressBook = async (username: string, addressBookId: string): Promise<void> => {
+  await apiClient.delete(
+    `/users/${encodeURIComponent(username)}/addressbooks/${encodeURIComponent(addressBookId)}`
+  );
+};
+
+export const setUserAddressBookPublicRight = async (
+  username: string,
+  addressBookId: string,
+  publicRight: string
+): Promise<void> => {
+  await apiClient.post(
+    `/users/${encodeURIComponent(username)}/addressbooks/${encodeURIComponent(addressBookId)}/publicRight`,
+    { public_right: publicRight }
+  );
+};
+
+export const updateUserAddressBookInvitees = async (
+  username: string,
+  addressBookId: string,
+  share: AddressBookShareUpdate
+): Promise<void> => {
+  await apiClient.post(
+    `/users/${encodeURIComponent(username)}/addressbooks/${encodeURIComponent(addressBookId)}/invitee`,
+    share
   );
 };
 
