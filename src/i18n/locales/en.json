@@ -744,6 +744,46 @@
         "resource": "Resources"
       }
     },
+    "addressBooks": {
+      "title": "Address Books",
+      "empty": "No address book.",
+      "createTitle": "Create address book",
+      "name": "Name",
+      "description": "Description",
+      "created": "Address book created",
+      "errorCreate": "Error creating address book",
+      "deleteTitle": "Delete address book",
+      "deleteConfirm": "Do you really want to delete the address book \"{{name}}\"?",
+      "deleted": "Address book deleted",
+      "errorDelete": "Error deleting address book",
+      "publicRight": {
+        "title": "Public visibility",
+        "publicTitle": "Public address book (read)",
+        "privateTitle": "Private address book",
+        "public": "Public",
+        "publicDesc": "Anyone authenticated can read this address book.",
+        "private": "Private",
+        "privateDesc": "Removes public rights on this address book.",
+        "updated": "Visibility updated",
+        "errorUpdate": "Error updating visibility"
+      },
+      "invitees": {
+        "title": "Sharing",
+        "empty": "No sharee.",
+        "placeholder": "user@domain.com",
+        "apply": "Apply",
+        "remove": "Remove",
+        "undoRemove": "Undo removal",
+        "alreadyShared": "Already shared with this user",
+        "updated": "Sharing updated",
+        "errorUpdate": "Error updating sharing",
+        "rights": {
+          "read": "Read",
+          "read-write": "Read/write",
+          "administration": "Administration"
+        }
+      }
+    },
     "bookingLinks": {
       "title": "Booking Links",
       "empty": "No booking link.",

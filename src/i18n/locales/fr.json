@@ -744,6 +744,46 @@
         "resource": "Ressources"
       }
     },
+    "addressBooks": {
+      "title": "Carnets d'adresses",
+      "empty": "Aucun carnet d'adresses.",
+      "createTitle": "Créer un carnet d'adresses",
+      "name": "Nom",
+      "description": "Description",
+      "created": "Carnet d'adresses créé",
+      "errorCreate": "Erreur lors de la création du carnet d'adresses",
+      "deleteTitle": "Supprimer le carnet d'adresses",
+      "deleteConfirm": "Voulez-vous vraiment supprimer le carnet d'adresses « {{name}} » ?",
+      "deleted": "Carnet d'adresses supprimé",
+      "errorDelete": "Erreur lors de la suppression du carnet d'adresses",
+      "publicRight": {
+        "title": "Visibilité publique",
+        "publicTitle": "Carnet d'adresses public (lecture)",
+        "privateTitle": "Carnet d'adresses privé",
+        "public": "Public",
+        "publicDesc": "Tout utilisateur authentifié peut lire ce carnet d'adresses.",
+        "private": "Privé",
+        "privateDesc": "Retire les droits publics sur ce carnet d'adresses.",
+        "updated": "Visibilité mise à jour",
+        "errorUpdate": "Erreur lors de la mise à jour de la visibilité"
+      },
+      "invitees": {
+        "title": "Partage",
+        "empty": "Aucun destinataire.",
+        "placeholder": "utilisateur@domaine.com",
+        "apply": "Appliquer",
+        "remove": "Retirer",
+        "undoRemove": "Annuler le retrait",
+        "alreadyShared": "Déjà partagé avec cet utilisateur",
+        "updated": "Partage mis à jour",
+        "errorUpdate": "Erreur lors de la mise à jour du partage",
+        "rights": {
+          "read": "Lecture",
+          "read-write": "Lecture/écriture",
+          "administration": "Administration"
+        }
+      }
+    },
     "bookingLinks": {
       "title": "Liens de réservation",
       "empty": "Aucun lien de réservation.",
