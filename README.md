@@ -1,4 +1,4 @@
-> Why do JavaScript developers wear glasses? Because they can't C#!
+> Why do programmers prefer dark mode? Because light attracts bugs!
 
 # Twake Mail Admin
 
