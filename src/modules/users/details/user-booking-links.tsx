@@ -3,8 +3,8 @@ import { ChevronDown, ChevronRight, Plus, Minus, Pencil, Trash2, RefreshCw, Load
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getUserBookingLinks, createUserBookingLink, updateUserBookingLink, deleteUserBookingLink, resetUserBookingLinkPublicId } from "../api-client";
-import { BookingLink, AvailabilityRule, CreateBookingLinkPayload, UpdateBookingLinkPayload } from "../types";
+import { getUserBookingLinks, createUserBookingLink, updateUserBookingLink, deleteUserBookingLink, resetUserBookingLinkPublicId, getUserCalendars } from "../api-client";
+import { BookingLink, AvailabilityRule, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserCalendarsResponseType, UserCalendar } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -16,6 +16,64 @@ interface Props {
 }
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] as const;
+
+interface CalendarOption {
+  value: string;
+  label: string;
+}
+
+function calendarHref(calendar: UserCalendar): string {
+  // The booking-links API expects the CalDAV collection path without the
+  // .json suffix used by the calendar listing's self href.
+  return (calendar._links?.self?.href ?? "").replace(/\.json$/, "");
+}
+
+function calendarLabel(calendar: UserCalendar): string {
+  return calendar["dav:name"]?.trim() || calendarHref(calendar);
+}
+
+// A dropdown of the user's calendars (by name) instead of a raw URL field.
+// The stored value is the calendar's self href, which is exactly what the
+// booking-links API expects as calendarUrl. Falls back to a free-text input
+// when no calendar can be listed, and preserves an unknown existing value.
+function CalendarSelect({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: CalendarOption[];
+}) {
+  const { t } = useTranslation();
+
+  if (options.length === 0) {
+    return (
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="/calendars/..."
+        className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    );
+  }
+
+  const known = options.some((o) => o.value === value);
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="">{t("users.bookingLinks.selectCalendar")}</option>
+      {!known && value && <option value={value}>{value}</option>}
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>{o.label}</option>
+      ))}
+    </select>
+  );
+}
 
 const EMPTY_RULE: AvailabilityRule = { type: "weekly", dayOfWeek: "MON", start: "09:00", end: "17:00", timeZone: "UTC" };
 
@@ -94,6 +152,7 @@ function RulesEditor({
 
 function BookingLinkRow({
   link,
+  calendarOptions,
   canEdit,
   canDelete,
   canReset,
@@ -102,6 +161,7 @@ function BookingLinkRow({
   onReset,
 }: {
   link: BookingLink;
+  calendarOptions: CalendarOption[];
   canEdit: boolean;
   canDelete: boolean;
   canReset: boolean;
@@ -111,6 +171,7 @@ function BookingLinkRow({
 }) {
   const { t } = useTranslation();
   const rulesCount = link.availabilityRules?.length ?? 0;
+  const calendarName = calendarOptions.find((o) => o.value === link.calendarUrl)?.label;
 
   return (
     <div className="flex items-start gap-3 py-1">
@@ -120,7 +181,7 @@ function BookingLinkRow({
       />
       <div className="min-w-0 flex-1">
         <p className="font-medium text-sm font-mono truncate" title={link.publicId}>{link.publicId}</p>
-        <p className="text-xs text-gray-400 truncate">{link.calendarUrl}</p>
+        <p className="text-xs text-gray-400 truncate" title={link.calendarUrl}>{calendarName ?? link.calendarUrl}</p>
         <p className="text-xs text-gray-400">
           {link.durationMinutes} min
           {rulesCount > 0 && (
@@ -178,8 +239,18 @@ export default function UserBookingLinks({ username }: Props) {
   const canDelete = useIsAllowed("DELETE", "/users/{username}/booking-links/{publicId}");
   const canReset = useIsAllowed("POST", "/users/{username}/booking-links/{publicId}/reset");
 
+  const canViewCalendars = useIsAllowed("GET", "/users/{username}/calendars");
+
   const fetchLinks = useCallback(() => getUserBookingLinks(username), [username]);
   const { data, isLoading, error, refresh } = useFetchData<BookingLink[]>(canView ? fetchLinks : null);
+
+  const fetchCalendars = useCallback(() => getUserCalendars(username), [username]);
+  const { data: calendarsData } = useFetchData<GetUserCalendarsResponseType>(
+    canView && canViewCalendars ? fetchCalendars : null
+  );
+  const calendarOptions: CalendarOption[] = (calendarsData?._embedded?.["dav:calendar"] ?? [])
+    .map((c) => ({ value: calendarHref(c), label: calendarLabel(c) }))
+    .filter((o) => o.value);
 
   const [open, setOpen] = useState(false);
 
@@ -313,6 +384,7 @@ export default function UserBookingLinks({ username }: Props) {
             <BookingLinkRow
               key={link.publicId}
               link={link}
+              calendarOptions={calendarOptions}
               canEdit={canEdit}
               canDelete={canDelete}
               canReset={canReset}
@@ -336,12 +408,10 @@ export default function UserBookingLinks({ username }: Props) {
           <div className="space-y-3">
             <div>
               <label className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} *</label>
-              <input
-                type="text"
+              <CalendarSelect
                 value={createForm.calendarUrl}
-                onChange={(e) => setCreateForm((f) => ({ ...f, calendarUrl: e.target.value }))}
-                placeholder="/calendars/..."
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(value) => setCreateForm((f) => ({ ...f, calendarUrl: value }))}
+                options={calendarOptions}
               />
             </div>
             <div>
@@ -395,11 +465,10 @@ export default function UserBookingLinks({ username }: Props) {
             <div className="space-y-3">
               <div>
                 <label className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")}</label>
-                <input
-                  type="text"
+                <CalendarSelect
                   value={editForm.calendarUrl ?? ""}
-                  onChange={(e) => setEditForm((f) => ({ ...f, calendarUrl: e.target.value }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(value) => setEditForm((f) => ({ ...f, calendarUrl: value }))}
+                  options={calendarOptions}
                 />
               </div>
               <div>
