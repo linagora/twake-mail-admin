@@ -47,6 +47,10 @@ function addressBookId(addressBook: UserAddressBook): string {
   return last.replace(/\.json$/, "") || href;
 }
 
+function addressBookName(addressBook: UserAddressBook): string {
+  return addressBook["dav:name"]?.trim() || addressBookId(addressBook);
+}
+
 function isPublic(addressBook: UserAddressBook): boolean {
   return (addressBook.acl ?? []).some(
     (a) =>
@@ -143,7 +147,7 @@ export default function UserAddressBooks({ username }: Props) {
   const handleDelete = async (addressBook: UserAddressBook) => {
     const confirmed = await confirm({
       header: t("users.addressBooks.deleteTitle"),
-      message: t("users.addressBooks.deleteConfirm", { name: addressBook["dav:name"] }),
+      message: t("users.addressBooks.deleteConfirm", { name: addressBookName(addressBook) }),
     });
     if (!confirmed) return;
     try {
@@ -198,7 +202,7 @@ export default function UserAddressBooks({ username }: Props) {
                   return (
                     <div key={addressBookId(ab)} className="group flex items-start gap-3 py-1">
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium">{ab["dav:name"]}</p>
+                        <p className="font-medium">{addressBookName(ab)}</p>
                         {ab["carddav:description"] && (
                           <p className="text-xs text-gray-400">{ab["carddav:description"]}</p>
                         )}
@@ -287,7 +291,7 @@ export default function UserAddressBooks({ username }: Props) {
       <Dialog open={!!publicRightAddressBook} onOpenChange={(v) => { if (!v) setPublicRightAddressBook(null); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{t("users.addressBooks.publicRight.title")} — {publicRightAddressBook?.["dav:name"]}</DialogTitle>
+            <DialogTitle>{t("users.addressBooks.publicRight.title")} — {publicRightAddressBook ? addressBookName(publicRightAddressBook) : ""}</DialogTitle>
           </DialogHeader>
           {publicRightAddressBook && (
             <div className="space-y-3">
@@ -431,7 +435,7 @@ function InviteesModal({
     <Dialog open onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>{t("users.addressBooks.invitees.title")} — {addressBook["dav:name"]}</DialogTitle>
+          <DialogTitle>{t("users.addressBooks.invitees.title")} — {addressBookName(addressBook)}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1">
