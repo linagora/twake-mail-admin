@@ -20,21 +20,29 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { appConfig } from "@/lib/config";
 import { useOIDC } from "@/components/custom/oidc-provider";
 import { supportedLanguages } from "@/i18n";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function LanguageSelector() {
   const { i18n, t } = useTranslation();
-  const currentIndex = Math.max(
-    0,
-    supportedLanguages.findIndex((l) => i18n.language?.startsWith(l.code)),
-  );
-  const currentLang = supportedLanguages[currentIndex];
-  const nextLang = supportedLanguages[(currentIndex + 1) % supportedLanguages.length];
+  const currentLang =
+    supportedLanguages.find((l) => i18n.language?.startsWith(l.code)) ?? supportedLanguages[0];
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton onClick={() => i18n.changeLanguage(nextLang.code)} title={t("sidebar.language")}>
-        <Languages />
-        <span>{currentLang.label}</span>
-      </SidebarMenuButton>
+      <Select value={currentLang.code} onValueChange={(code) => i18n.changeLanguage(code)}>
+        <SelectTrigger title={t("sidebar.language")}>
+          <span className="flex items-center gap-2">
+            <Languages className="h-4 w-4 shrink-0" />
+            <SelectValue />
+          </span>
+        </SelectTrigger>
+        <SelectContent>
+          {supportedLanguages.map((l) => (
+            <SelectItem key={l.code} value={l.code}>
+              {l.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </SidebarMenuItem>
   );
 }
