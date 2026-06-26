@@ -27,21 +27,21 @@ function LanguageSelector() {
     supportedLanguages.find((l) => i18n.language?.startsWith(l.code)) ?? supportedLanguages[0];
   return (
     <SidebarMenuItem>
-      <Select value={currentLang.code} onValueChange={(code) => i18n.changeLanguage(code)}>
-        <SelectTrigger title={t("sidebar.language")}>
-          <span className="flex items-center gap-2">
-            <Languages className="h-4 w-4 shrink-0" />
+      <div className="flex items-center gap-2 px-2">
+        <Languages className="h-4 w-4 shrink-0" />
+        <Select value={currentLang.code} onValueChange={(code) => i18n.changeLanguage(code)}>
+          <SelectTrigger title={t("sidebar.language")}>
             <SelectValue />
-          </span>
-        </SelectTrigger>
-        <SelectContent>
-          {supportedLanguages.map((l) => (
-            <SelectItem key={l.code} value={l.code}>
-              {l.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+          </SelectTrigger>
+          <SelectContent>
+            {supportedLanguages.map((l) => (
+              <SelectItem key={l.code} value={l.code}>
+                {l.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </SidebarMenuItem>
   );
 }
