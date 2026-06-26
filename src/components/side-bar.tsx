@@ -19,16 +19,21 @@ import { Link, useLocation } from "react-router";
 import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useOIDC } from "@/components/custom/oidc-provider";
+import { supportedLanguages } from "@/i18n";
 
 function LanguageSelector() {
   const { i18n, t } = useTranslation();
-  const current = i18n.language?.startsWith("fr") ? "fr" : "en";
-  const next = current === "fr" ? "en" : "fr";
+  const currentIndex = Math.max(
+    0,
+    supportedLanguages.findIndex((l) => i18n.language?.startsWith(l.code)),
+  );
+  const currentLang = supportedLanguages[currentIndex];
+  const nextLang = supportedLanguages[(currentIndex + 1) % supportedLanguages.length];
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton onClick={() => i18n.changeLanguage(next)} title={t("sidebar.language")}>
+      <SidebarMenuButton onClick={() => i18n.changeLanguage(nextLang.code)} title={t("sidebar.language")}>
         <Languages />
-        <span>{current === "fr" ? "Français" : "English"}</span>
+        <span>{currentLang.label}</span>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
