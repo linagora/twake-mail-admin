@@ -207,6 +207,8 @@ export interface BookingLink {
   durationMinutes: number;
   active: boolean;
   availabilityRules?: AvailabilityRule[];
+  name?: string;
+  description?: string;
 }
 
 export interface CreateBookingLinkPayload {
@@ -214,6 +216,8 @@ export interface CreateBookingLinkPayload {
   durationMinutes: number;
   active: boolean;
   availabilityRules?: AvailabilityRule[];
+  name?: string;
+  description?: string;
 }
 
 export interface UpdateBookingLinkPayload {
@@ -221,6 +225,8 @@ export interface UpdateBookingLinkPayload {
   durationMinutes?: number;
   active?: boolean;
   availabilityRules?: AvailabilityRule[] | null;
+  name?: string | null;
+  description?: string | null;
 }
 
 export interface UserAddressBook {
