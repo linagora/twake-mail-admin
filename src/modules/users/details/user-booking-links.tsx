@@ -197,6 +197,9 @@ function BookingLinkRow({
               · {t("users.bookingLinks.rulesCount", { count: rulesCount })}
             </span>
           )}
+          {link.autoAccept && (
+            <span className="ml-2">· {t("users.bookingLinks.autoAccept")}</span>
+          )}
         </p>
       </div>
       {canReset && (
@@ -286,6 +289,7 @@ export default function UserBookingLinks({ username }: Props) {
       if (name) payload.name = name; else delete payload.name;
       if (description) payload.description = description; else delete payload.description;
       if (createRules.length > 0) payload.availabilityRules = createRules;
+      payload.autoAccept = createForm.autoAccept ?? false;
       await createUserBookingLink(username, payload);
       toast({ title: t("users.bookingLinks.created") });
       setCreateForm({ ...EMPTY_CREATE });
@@ -307,6 +311,7 @@ export default function UserBookingLinks({ username }: Props) {
       active: link.active,
       name: link.name,
       description: link.description,
+      autoAccept: link.autoAccept ?? false,
     });
     setEditRules(link.availabilityRules ? [...link.availabilityRules] : []);
     setEditClearRules(false);
@@ -471,6 +476,19 @@ export default function UserBookingLinks({ username }: Props) {
               />
               <label htmlFor="create-active" className="text-sm font-medium">{t("users.bookingLinks.active")}</label>
             </div>
+            <div className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                id="create-auto-accept"
+                checked={createForm.autoAccept ?? false}
+                onChange={(e) => setCreateForm((f) => ({ ...f, autoAccept: e.target.checked }))}
+                className="w-4 h-4 mt-0.5"
+              />
+              <label htmlFor="create-auto-accept" className="text-sm">
+                <span className="font-medium">{t("users.bookingLinks.autoAccept")}</span>
+                <span className="block text-xs text-gray-500">{t("users.bookingLinks.autoAcceptHint")}</span>
+              </label>
+            </div>
             <div>
               <label className="text-sm font-medium block mb-2">{t("users.bookingLinks.availabilityRules")}</label>
               <RulesEditor rules={createRules} onChange={setCreateRules} />
@@ -547,6 +565,19 @@ export default function UserBookingLinks({ username }: Props) {
                   className="w-4 h-4"
                 />
                 <label htmlFor="edit-active" className="text-sm font-medium">{t("users.bookingLinks.active")}</label>
+              </div>
+              <div className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  id="edit-auto-accept"
+                  checked={editForm.autoAccept ?? false}
+                  onChange={(e) => setEditForm((f) => ({ ...f, autoAccept: e.target.checked }))}
+                  className="w-4 h-4 mt-0.5"
+                />
+                <label htmlFor="edit-auto-accept" className="text-sm">
+                  <span className="font-medium">{t("users.bookingLinks.autoAccept")}</span>
+                  <span className="block text-xs text-gray-500">{t("users.bookingLinks.autoAcceptHint")}</span>
+                </label>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-2">

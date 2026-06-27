@@ -209,6 +209,7 @@ export interface BookingLink {
   availabilityRules?: AvailabilityRule[];
   name?: string;
   description?: string;
+  autoAccept?: boolean;
 }
 
 export interface CreateBookingLinkPayload {
@@ -218,6 +219,7 @@ export interface CreateBookingLinkPayload {
   availabilityRules?: AvailabilityRule[];
   name?: string;
   description?: string;
+  autoAccept?: boolean;
 }
 
 export interface UpdateBookingLinkPayload {
@@ -227,6 +229,8 @@ export interface UpdateBookingLinkPayload {
   availabilityRules?: AvailabilityRule[] | null;
   name?: string | null;
   description?: string | null;
+  // The patch API rejects removing autoAccept, so it can only be set to a boolean.
+  autoAccept?: boolean;
 }
 
 export interface UserAddressBook {

@@ -811,6 +811,8 @@
       "namePlaceholder": "e.g. Intro call",
       "description": "Description",
       "descriptionPlaceholder": "e.g. Book a 30-minute introduction call",
+      "autoAccept": "Auto-accept bookings",
+      "autoAcceptHint": "Bookings are accepted immediately, without a confirmation request or notification e-mails.",
       "availabilityRules": "Availability rules",
       "addRule": "Add rule",
       "removeRule": "Remove rule",
