@@ -1,4 +1,13 @@
 {
+  "provisionTemplates": {
+    "sourceUser": "Người dùng nguồn",
+    "sourceUserHint": "Tài khoản có thư mục mẫu sẽ được dùng làm tham chiếu.",
+    "sourceUserRequired": "Bắt buộc nhập người dùng nguồn",
+    "folderName": "Tên thư mục",
+    "overwriteExisting": "Ghi đè các mẫu hiện có",
+    "prune": "Xóa các mẫu không còn trong nguồn",
+    "usersPerSecond": "Số người dùng mỗi giây"
+  },
   "common": {
     "save": "Lưu",
     "cancel": "Hủy",
@@ -256,7 +265,11 @@
       "deleteAllDataDesc": "Xóa dữ liệu của mọi người dùng thuộc tên miền này. Một tác vụ sẽ được tạo để theo dõi tiến trình.",
       "deleteAllDataTitle": "Xóa dữ liệu của tất cả người dùng",
       "deleteAllDataConfirm": "Thao tác này sẽ xóa dữ liệu của TẤT CẢ người dùng thuộc \"{{domain}}\". Không thể hoàn tác. Bạn có chắc không?",
-      "errorDeletingData": "Lỗi khi xóa dữ liệu người dùng"
+      "errorDeletingData": "Lỗi khi xóa dữ liệu người dùng",
+      "provisionTemplates": "Cung cấp mẫu",
+      "provisionTemplatesDesc": "Sao chép thư mục mẫu của người dùng nguồn vào mọi người dùng của miền này.",
+      "provisionTemplatesTitle": "Cung cấp mẫu",
+      "errorProvisionTemplates": "Lỗi khi cung cấp mẫu"
     },
     "signatureTemplates": {
       "title": "Mẫu chữ ký",
@@ -684,7 +697,10 @@
       "tierDataTitle": "Phân tầng dữ liệu người dùng",
       "tierDataDesc": "Xóa dữ liệu đã lưu đệm (xem nhanh, tiêu đề, phép chiếu tệp đính kèm) cho các thư cũ hơn thời gian lưu giữ của {{username}}.",
       "tieringRequired": "Cần có thời gian lưu giữ",
-      "errorTierData": "Lỗi khi chạy tác vụ phân tầng"
+      "errorTierData": "Lỗi khi chạy tác vụ phân tầng",
+      "provisionTemplates": "Cung cấp mẫu",
+      "provisionTemplatesTitle": "Cung cấp mẫu",
+      "errorProvisionTemplates": "Lỗi khi cung cấp mẫu"
     },
     "calendarTasks": {
       "title": "Tác vụ",

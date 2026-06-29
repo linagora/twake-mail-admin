@@ -377,6 +377,19 @@ export const recomputeFastViewProjection = async (
   return response;
 };
 
+export const provisionUserTemplates = async (
+  username: string,
+  params: { from: string; folderName?: string; overwriteExisting?: boolean; prune?: boolean }
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ action: "provision", from: params.from });
+  if (params.folderName) query.set("folderName", params.folderName);
+  if (params.overwriteExisting) query.set("overwriteExisting", "true");
+  if (params.prune) query.set("prune", "true");
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}/templates?${query.toString()}`
+  );
+};
+
 // ---------------------------------------------------------------------------
 // Calendar-specific user functions
 // ---------------------------------------------------------------------------

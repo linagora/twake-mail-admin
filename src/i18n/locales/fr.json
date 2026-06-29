@@ -1,4 +1,13 @@
 {
+  "provisionTemplates": {
+    "sourceUser": "Utilisateur source",
+    "sourceUserHint": "Le compte dont le dossier de modèles servira de référence.",
+    "sourceUserRequired": "L'utilisateur source est obligatoire",
+    "folderName": "Nom du dossier",
+    "overwriteExisting": "Écraser les modèles existants",
+    "prune": "Supprimer les modèles absents de la source",
+    "usersPerSecond": "Utilisateurs par seconde"
+  },
   "common": {
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -256,7 +265,11 @@
       "deleteAllDataDesc": "Supprime les données de tous les utilisateurs de ce domaine. Une tâche sera créée pour suivre la progression.",
       "deleteAllDataTitle": "Supprimer toutes les données utilisateurs",
       "deleteAllDataConfirm": "Les données de TOUS les utilisateurs du domaine « {{domain}} » seront supprimées. Cette action est irréversible. Confirmer ?",
-      "errorDeletingData": "Erreur lors de la suppression des données"
+      "errorDeletingData": "Erreur lors de la suppression des données",
+      "provisionTemplates": "Provisionner les modèles",
+      "provisionTemplatesDesc": "Copier le dossier de modèles de l'utilisateur source vers tous les utilisateurs de ce domaine.",
+      "provisionTemplatesTitle": "Provisionner les modèles",
+      "errorProvisionTemplates": "Erreur lors du provisionnement des modèles"
     },
     "signatureTemplates": {
       "title": "Modèles de signature",
@@ -684,7 +697,10 @@
       "tierDataTitle": "Hiérarchiser les données utilisateur",
       "tierDataDesc": "Évincer les données en cache (fast view, en-têtes, projections des pièces jointes) pour les messages plus anciens que la période de rétention pour {{username}}.",
       "tieringRequired": "La période de rétention est obligatoire",
-      "errorTierData": "Erreur lors de l'exécution de la tâche"
+      "errorTierData": "Erreur lors de l'exécution de la tâche",
+      "provisionTemplates": "Provisionner les modèles",
+      "provisionTemplatesTitle": "Provisionner les modèles",
+      "errorProvisionTemplates": "Erreur lors du provisionnement des modèles"
     },
     "calendarTasks": {
       "title": "Tâches",

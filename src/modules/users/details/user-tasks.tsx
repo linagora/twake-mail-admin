@@ -3,11 +3,12 @@ import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
-import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData, cleanupUserMailbox, tierUserData } from "../api-client";
+import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData, cleanupUserMailbox, tierUserData, provisionUserTemplates } from "../api-client";
 import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import RenameUserForm from "../components/rename-user-form";
 import DeleteUserDataForm from "../components/delete-user-data-form";
+import ProvisionTemplatesForm, { ProvisionTemplatesValues } from "@/components/custom/provision-templates-form";
 import { appConfig } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -53,6 +54,7 @@ export default function UserTasks({ username }: Props) {
   const canDeleteAllMailboxes = useIsAllowed("DELETE", "/users/{username}/mailboxes");
   const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
   const canTierData = useIsAllowed("POST", "/users/{username}/data?tiering={tiering}");
+  const canProvisionTemplates = useIsAllowed("POST", "/users/{username}/templates");
   const [open, setOpen] = useState(false);
   const [reindexLoading, setReindexLoading] = useState(false);
   const [subscribeLoading, setSubscribeLoading] = useState(false);
@@ -63,6 +65,45 @@ export default function UserTasks({ username }: Props) {
   const [renameLoading, setRenameLoading] = useState(false);
   const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);
   const [tierDataLoading, setTierDataLoading] = useState(false);
+  const [provisionLoading, setProvisionLoading] = useState(false);
+
+  const handleProvisionTemplates = async () => {
+    let values: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
+
+    try {
+      const result = await confirm({
+        header: t("users.tasks.provisionTemplatesTitle"),
+        message: (
+          <ProvisionTemplatesForm onChange={(v) => { values = v; }} />
+        ),
+      });
+      if (!result) return;
+
+      if (!values.sourceUser.trim()) {
+        toast({ title: t("provisionTemplates.sourceUserRequired") });
+        return;
+      }
+
+      setProvisionLoading(true);
+      const data = await provisionUserTemplates(username, {
+        from: values.sourceUser.trim(),
+        folderName: values.folderName.trim() || undefined,
+        overwriteExisting: values.overwriteExisting,
+        prune: values.prune,
+      });
+      toast({
+        title: t("common.taskRunning"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
+      });
+    } catch (err) {
+      toast({
+        title: t("users.tasks.errorProvisionTemplates"),
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setProvisionLoading(false);
+    }
+  };
 
   const handleReindex = async () => {
     try {
@@ -513,6 +554,24 @@ export default function UserTasks({ username }: Props) {
                   </TooltipTrigger>
                   <TooltipContent>
                     curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;user={username}&amp;useSavedDate
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canProvisionTemplates && appConfig.application === 'MAIL' && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>{t("users.tasks.provisionTemplates")}</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleProvisionTemplates}>
+                      {provisionLoading && <Loader2 className="animate-spin" />}
+                      {t("common.run")}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}/templates?action=provision&amp;from=&#123;sourceUser&#125;
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
