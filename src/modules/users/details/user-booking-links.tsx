@@ -180,7 +180,15 @@ function BookingLinkRow({
         title={link.active ? t("users.bookingLinks.active") : t("users.bookingLinks.inactive")}
       />
       <div className="min-w-0 flex-1">
-        <p className="font-medium text-sm font-mono truncate" title={link.publicId}>{link.publicId}</p>
+        <p className="font-medium text-sm truncate" title={link.name || link.publicId}>
+          {link.name || <span className="font-mono">{link.publicId}</span>}
+        </p>
+        {link.name && (
+          <p className="text-xs text-gray-400 font-mono truncate" title={link.publicId}>{link.publicId}</p>
+        )}
+        {link.description && (
+          <p className="text-xs text-gray-500 truncate" title={link.description}>{link.description}</p>
+        )}
         <p className="text-xs text-gray-400 truncate" title={link.calendarUrl}>{calendarName ?? link.calendarUrl}</p>
         <p className="text-xs text-gray-400">
           {link.durationMinutes} min
@@ -188,6 +196,9 @@ function BookingLinkRow({
             <span className="ml-2">
               · {t("users.bookingLinks.rulesCount", { count: rulesCount })}
             </span>
+          )}
+          {link.autoAccept && (
+            <span className="ml-2">· {t("users.bookingLinks.autoAccept")}</span>
           )}
         </p>
       </div>
@@ -273,7 +284,12 @@ export default function UserBookingLinks({ username }: Props) {
     setCreating(true);
     try {
       const payload: CreateBookingLinkPayload = { ...createForm };
+      const name = createForm.name?.trim();
+      const description = createForm.description?.trim();
+      if (name) payload.name = name; else delete payload.name;
+      if (description) payload.description = description; else delete payload.description;
       if (createRules.length > 0) payload.availabilityRules = createRules;
+      payload.autoAccept = createForm.autoAccept ?? false;
       await createUserBookingLink(username, payload);
       toast({ title: t("users.bookingLinks.created") });
       setCreateForm({ ...EMPTY_CREATE });
@@ -293,6 +309,9 @@ export default function UserBookingLinks({ username }: Props) {
       calendarUrl: link.calendarUrl,
       durationMinutes: link.durationMinutes,
       active: link.active,
+      name: link.name,
+      description: link.description,
+      autoAccept: link.autoAccept ?? false,
     });
     setEditRules(link.availabilityRules ? [...link.availabilityRules] : []);
     setEditClearRules(false);
@@ -303,6 +322,9 @@ export default function UserBookingLinks({ username }: Props) {
     setSaving(true);
     try {
       const payload: UpdateBookingLinkPayload = { ...editForm };
+      // Blank name/description map to removal (null) on the backend.
+      if (editForm.name !== undefined) payload.name = editForm.name?.trim() || null;
+      if (editForm.description !== undefined) payload.description = editForm.description?.trim() || null;
       if (editClearRules) {
         payload.availabilityRules = null;
       } else if (editRules !== null) {
@@ -415,6 +437,26 @@ export default function UserBookingLinks({ username }: Props) {
               />
             </div>
             <div>
+              <label className="text-sm font-medium">{t("users.bookingLinks.name")}</label>
+              <input
+                type="text"
+                value={createForm.name ?? ""}
+                onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
+                placeholder={t("users.bookingLinks.namePlaceholder")}
+                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">{t("users.bookingLinks.description")}</label>
+              <textarea
+                value={createForm.description ?? ""}
+                onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
+                placeholder={t("users.bookingLinks.descriptionPlaceholder")}
+                rows={2}
+                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
               <label className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")} *</label>
               <input
                 type="number"
@@ -433,6 +475,19 @@ export default function UserBookingLinks({ username }: Props) {
                 className="w-4 h-4"
               />
               <label htmlFor="create-active" className="text-sm font-medium">{t("users.bookingLinks.active")}</label>
+            </div>
+            <div className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                id="create-auto-accept"
+                checked={createForm.autoAccept ?? false}
+                onChange={(e) => setCreateForm((f) => ({ ...f, autoAccept: e.target.checked }))}
+                className="w-4 h-4 mt-0.5"
+              />
+              <label htmlFor="create-auto-accept" className="text-sm">
+                <span className="font-medium">{t("users.bookingLinks.autoAccept")}</span>
+                <span className="block text-xs text-gray-500">{t("users.bookingLinks.autoAcceptHint")}</span>
+              </label>
             </div>
             <div>
               <label className="text-sm font-medium block mb-2">{t("users.bookingLinks.availabilityRules")}</label>
@@ -472,6 +527,26 @@ export default function UserBookingLinks({ username }: Props) {
                 />
               </div>
               <div>
+                <label className="text-sm font-medium">{t("users.bookingLinks.name")}</label>
+                <input
+                  type="text"
+                  value={editForm.name ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                  placeholder={t("users.bookingLinks.namePlaceholder")}
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">{t("users.bookingLinks.description")}</label>
+                <textarea
+                  value={editForm.description ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
+                  placeholder={t("users.bookingLinks.descriptionPlaceholder")}
+                  rows={2}
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
                 <label className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")}</label>
                 <input
                   type="number"
@@ -490,6 +565,19 @@ export default function UserBookingLinks({ username }: Props) {
                   className="w-4 h-4"
                 />
                 <label htmlFor="edit-active" className="text-sm font-medium">{t("users.bookingLinks.active")}</label>
+              </div>
+              <div className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  id="edit-auto-accept"
+                  checked={editForm.autoAccept ?? false}
+                  onChange={(e) => setEditForm((f) => ({ ...f, autoAccept: e.target.checked }))}
+                  className="w-4 h-4 mt-0.5"
+                />
+                <label htmlFor="edit-auto-accept" className="text-sm">
+                  <span className="font-medium">{t("users.bookingLinks.autoAccept")}</span>
+                  <span className="block text-xs text-gray-500">{t("users.bookingLinks.autoAcceptHint")}</span>
+                </label>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-2">
