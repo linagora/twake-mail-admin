@@ -50,9 +50,12 @@ const fetchMailData = async (
     if (acceptType === "application/json") {
       const jsonWindow = window.open("", "_blank");
       if (jsonWindow) {
-        jsonWindow.document.write(
-          "<pre>" + JSON.stringify(response, null, 2) + "</pre>"
-        );
+        // Build the DOM via the API so the (untrusted) mail data is treated as
+        // text, never parsed as HTML. Concatenating into document.write would
+        // be an XSS sink: JSON.stringify does not escape <, > or &.
+        const pre = jsonWindow.document.createElement("pre");
+        pre.textContent = JSON.stringify(response, null, 2);
+        jsonWindow.document.body.appendChild(pre);
         jsonWindow.document.close();
       }
     } else if (acceptType === "message/rfc822") {
