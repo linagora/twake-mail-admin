@@ -14,7 +14,7 @@ export const getBearerToken = (): string | null => {
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=');
     if (name === BEARER_TOKEN_COOKIE) {
-      return value;
+      return decodeURIComponent(value);
     }
   }
   return null;
