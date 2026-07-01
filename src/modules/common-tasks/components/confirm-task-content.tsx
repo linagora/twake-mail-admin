@@ -10,6 +10,28 @@ interface Props {
   getParamValues: (key: string, value: string | boolean) => void;
 }
 
+// Builds the command preview by reflecting the user's custom parameters into the
+// base command: a parameter already present in the command URL is overridden in
+// place (avoiding duplicates like `eventsPerSecond=100eventsPerSecond=100`),
+// otherwise it is appended to the query string. Falsy values are dropped to match
+// what is actually sent to the backend.
+const buildCommandPreview = (
+  command: string,
+  customParams: Record<string, string | boolean>
+): string => {
+  return Object.entries(customParams).reduce((result, [key, value]) => {
+    if (!value) {
+      return result;
+    }
+    const existing = new RegExp(`([?&]${key}=)[^&"']*`);
+    if (existing.test(result)) {
+      return result.replace(existing, (_match, prefix) => `${prefix}${value}`);
+    }
+    const separator = result.includes("?") ? "&" : "?";
+    return `${result}${separator}${key}=${value}`;
+  }, command);
+};
+
 const ConfirmTaskContent = ({
   message,
   command,
@@ -17,7 +39,7 @@ const ConfirmTaskContent = ({
   getParamValues,
 }: Props) => {
   const { t } = useTranslation();
-  const [customParams, setCustomParams] = useState({});
+  const [customParams, setCustomParams] = useState<Record<string, string | boolean>>({});
 
   const handleChangeParam = (key: string, value: string | boolean) => {
     setCustomParams((prev) => ({ ...prev, [key]: value }));
@@ -44,9 +66,7 @@ const ConfirmTaskContent = ({
       )}
       <p className="break-words">
         {t("confirmTask.command", "Command:")}:{" "}
-        {customParams
-          ? `&${command}${new URLSearchParams(customParams)}`
-          : command}
+        {buildCommandPreview(command, customParams)}
       </p>
     </div>
   );
