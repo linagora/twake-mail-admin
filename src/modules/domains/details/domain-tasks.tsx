@@ -147,7 +147,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button
-                      className="bg-green-400 hover:bg-green-500 rounded-sm"
+                      className="bg-yellow-500 hover:bg-yellow-600 rounded-sm"
                       onClick={handleProvisionTemplates}
                       disabled={provisionLoading}
                     >
