@@ -565,7 +565,7 @@ export default function UserTasks({ username }: Props) {
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleProvisionTemplates}>
+                    <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleProvisionTemplates}>
                       {provisionLoading && <Loader2 className="animate-spin" />}
                       {t("common.run")}
                     </Button>

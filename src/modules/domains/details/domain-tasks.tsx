@@ -135,34 +135,6 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
 
       {open && (
         <div className="mt-2 space-y-2">
-          {showApply && (
-            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
-              <div>
-                <p className="text-sm font-medium">{t("domains.tasks.applySignatures")}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {t("domains.tasks.applySignaturesDesc")}
-                </p>
-              </div>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      className="bg-orange-500 hover:bg-orange-600 rounded-sm"
-                      onClick={handleApplySignatureTemplates}
-                      disabled={applyLoading}
-                    >
-                      {applyLoading && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-                      {t("common.run")}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    curl -XPOST /domains/{domain}/signature-templates?action=apply
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          )}
-
           {showProvision && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
               <div>
@@ -185,6 +157,34 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
                   </TooltipTrigger>
                   <TooltipContent>
                     curl -XPOST /domains/{domain}/templates?action=provision&amp;from=&#123;sourceUser&#125;
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+
+          {showApply && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <div>
+                <p className="text-sm font-medium">{t("domains.tasks.applySignatures")}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {t("domains.tasks.applySignaturesDesc")}
+                </p>
+              </div>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      className="bg-orange-500 hover:bg-orange-600 rounded-sm"
+                      onClick={handleApplySignatureTemplates}
+                      disabled={applyLoading}
+                    >
+                      {applyLoading && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+                      {t("common.run")}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /domains/{domain}/signature-templates?action=apply
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
