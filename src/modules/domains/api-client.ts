@@ -280,6 +280,20 @@ export const syncDomainMembers = async (domain: string): Promise<RunTaskResponse
   return apiClient.post(`/addressbook/domain-members/${encodeURIComponent(domain)}?task=sync`);
 };
 
+export const provisionDomainTemplates = async (
+  domain: string,
+  params: { from: string; folderName?: string; overwriteExisting?: boolean; prune?: boolean; usersPerSecond?: string }
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ action: "provision", from: params.from });
+  if (params.folderName) query.set("folderName", params.folderName);
+  if (params.overwriteExisting) query.set("overwriteExisting", "true");
+  if (params.prune) query.set("prune", "true");
+  if (params.usersPerSecond) query.set("usersPerSecond", params.usersPerSecond);
+  return apiClient.post(
+    `/domains/${encodeURIComponent(domain)}/templates?${query.toString()}`
+  );
+};
+
 // ---------------------------------------------------------------------------
 // Resource API — domain-scoped routes with fallback to legacy routes
 //

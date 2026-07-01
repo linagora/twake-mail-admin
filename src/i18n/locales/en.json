@@ -1,4 +1,13 @@
 {
+  "provisionTemplates": {
+    "sourceUser": "Source user",
+    "sourceUserHint": "The account whose templates folder will be used as the reference.",
+    "sourceUserRequired": "Source user is required",
+    "folderName": "Folder name",
+    "overwriteExisting": "Overwrite existing templates",
+    "prune": "Prune templates no longer present in the source",
+    "usersPerSecond": "Users per second"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
@@ -256,7 +265,11 @@
       "deleteAllDataDesc": "Deletes the data of every user belonging to this domain. A task will be created to track progress.",
       "deleteAllDataTitle": "Delete All Users Data",
       "deleteAllDataConfirm": "This will delete the data of ALL users belonging to \"{{domain}}\". This action cannot be undone. Are you sure?",
-      "errorDeletingData": "Error deleting users data"
+      "errorDeletingData": "Error deleting users data",
+      "provisionTemplates": "Provision templates",
+      "provisionTemplatesDesc": "Copy the source user's templates folder into every user of this domain.",
+      "provisionTemplatesTitle": "Provision templates",
+      "errorProvisionTemplates": "Error provisioning templates"
     },
     "signatureTemplates": {
       "title": "Signature Templates",
@@ -684,7 +697,10 @@
       "tierDataTitle": "Tier user data",
       "tierDataDesc": "Evict cached data (fast view, headers, attachments projection) for messages older than the retention period for {{username}}.",
       "tieringRequired": "Retention period is required",
-      "errorTierData": "Error running tiering task"
+      "errorTierData": "Error running tiering task",
+      "provisionTemplates": "Provision templates",
+      "provisionTemplatesTitle": "Provision templates",
+      "errorProvisionTemplates": "Error provisioning templates"
     },
     "calendarTasks": {
       "title": "Tasks",

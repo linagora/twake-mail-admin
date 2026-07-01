@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { deleteAllUsersData, applyDomainSignatureTemplates } from "../api-client";
+import { deleteAllUsersData, applyDomainSignatureTemplates, provisionDomainTemplates } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import ProvisionTemplatesForm, { ProvisionTemplatesValues } from "@/components/custom/provision-templates-form";
 import { Button } from "@/components/ui/button";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -22,13 +23,16 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
   const confirm = useConfirm();
   const canApplySignatures = useIsAllowed("POST", "/domains/{domain}/signature-templates?action=apply");
   const canDeleteData = useIsAllowed("POST", "/domains/{domain}?action=deleteData");
+  const canProvisionTemplates = useIsAllowed("POST", "/domains/{domain}/templates");
 
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [applyLoading, setApplyLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [provisionLoading, setProvisionLoading] = useState(false);
 
   const showApply = appConfig.application === 'MAIL' && canApplySignatures;
-  const hasAnyTask = showApply || canDeleteData;
+  const showProvision = appConfig.application === 'MAIL' && canProvisionTemplates;
+  const hasAnyTask = showApply || showProvision || canDeleteData;
 
   const handleApplySignatureTemplates = async () => {
     const confirmed = await confirm({
@@ -51,6 +55,45 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
       });
     } finally {
       setApplyLoading(false);
+    }
+  };
+
+  const handleProvisionTemplates = async () => {
+    let values: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
+
+    try {
+      const result = await confirm({
+        header: t("domains.tasks.provisionTemplatesTitle"),
+        message: (
+          <ProvisionTemplatesForm showUsersPerSecond onChange={(v) => { values = v; }} />
+        ),
+      });
+      if (!result) return;
+
+      if (!values.sourceUser.trim()) {
+        toast({ title: t("provisionTemplates.sourceUserRequired") });
+        return;
+      }
+
+      setProvisionLoading(true);
+      const { taskId } = await provisionDomainTemplates(domain, {
+        from: values.sourceUser.trim(),
+        folderName: values.folderName.trim() || undefined,
+        overwriteExisting: values.overwriteExisting,
+        prune: values.prune,
+        usersPerSecond: values.usersPerSecond.trim() || undefined,
+      });
+      toast({
+        title: t("common.taskStarted"),
+        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{t("common.taskLink", { taskId })}</Link></p>,
+      });
+    } catch (err) {
+      toast({
+        title: t("domains.tasks.errorProvisionTemplates"),
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setProvisionLoading(false);
     }
   };
 
@@ -92,6 +135,34 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
 
       {open && (
         <div className="mt-2 space-y-2">
+          {showProvision && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <div>
+                <p className="text-sm font-medium">{t("domains.tasks.provisionTemplates")}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {t("domains.tasks.provisionTemplatesDesc")}
+                </p>
+              </div>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      className="bg-yellow-500 hover:bg-yellow-600 rounded-sm"
+                      onClick={handleProvisionTemplates}
+                      disabled={provisionLoading}
+                    >
+                      {provisionLoading && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+                      {t("common.run")}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /domains/{domain}/templates?action=provision&amp;from=&#123;sourceUser&#125;
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+
           {showApply && (
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
               <div>
