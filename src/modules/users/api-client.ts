@@ -497,6 +497,17 @@ export const resetUserBookingLinkPublicId = async (
   );
 };
 
+// Schedules an asynchronous task that deletes every calendar event created
+// through the given booking link. Returns the id of the task to monitor.
+export const deleteUserBookingLinkEvents = async (
+  username: string,
+  publicId: string
+): Promise<{ taskId: string }> => {
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}/booking-links/${encodeURIComponent(publicId)}?action=deleteEvents`
+  );
+};
+
 export const getUserAddressBooks = async (username: string): Promise<GetUserAddressBooksResponseType> => {
   return apiClient.get<any, GetUserAddressBooksResponseType>(
     `/users/${encodeURIComponent(username)}/addressbooks`

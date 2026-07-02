@@ -837,6 +837,9 @@
       "rulesCount_plural": "{{count}} quy tắc",
       "clearRules": "Xóa tất cả quy tắc",
       "clearRulesWarning": "Tất cả quy tắc sẽ bị xóa khi lưu.",
+      "deleteEventsTitle": "Xóa các sự kiện liên quan",
+      "deleteEventsConfirm": "Xóa tất cả sự kiện lịch được tạo qua liên kết đặt lịch này? Một tác vụ không đồng bộ sẽ được lên lịch và không thể hoàn tác.",
+      "errorDeleteEvents": "Lỗi khi xóa các sự kiện liên quan",
       "days": {
         "MON": "T2",
         "TUE": "T3",
