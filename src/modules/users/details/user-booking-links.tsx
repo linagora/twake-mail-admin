@@ -1,9 +1,10 @@
 import { useCallback, useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Minus, Pencil, Trash2, RefreshCw, Loader2, Save } from "lucide-react";
+import { Link } from "react-router";
+import { ChevronDown, ChevronRight, Plus, Minus, Pencil, Trash2, RefreshCw, Loader2, Save, CalendarX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getUserBookingLinks, createUserBookingLink, updateUserBookingLink, deleteUserBookingLink, resetUserBookingLinkPublicId, getUserCalendars } from "../api-client";
+import { getUserBookingLinks, createUserBookingLink, updateUserBookingLink, deleteUserBookingLink, resetUserBookingLinkPublicId, deleteUserBookingLinkEvents, getUserCalendars } from "../api-client";
 import { BookingLink, AvailabilityRule, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserCalendarsResponseType, UserCalendar } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -156,18 +157,22 @@ function BookingLinkRow({
   canEdit,
   canDelete,
   canReset,
+  canDeleteEvents,
   onEdit,
   onDelete,
   onReset,
+  onDeleteEvents,
 }: {
   link: BookingLink;
   calendarOptions: CalendarOption[];
   canEdit: boolean;
   canDelete: boolean;
   canReset: boolean;
+  canDeleteEvents: boolean;
   onEdit: (link: BookingLink) => void;
   onDelete: (link: BookingLink) => void;
   onReset: (link: BookingLink) => void;
+  onDeleteEvents: (link: BookingLink) => void;
 }) {
   const { t } = useTranslation();
   const rulesCount = link.availabilityRules?.length ?? 0;
@@ -202,6 +207,15 @@ function BookingLinkRow({
           )}
         </p>
       </div>
+      {canDeleteEvents && (
+        <button
+          onClick={() => onDeleteEvents(link)}
+          className="p-1.5 rounded-md hover:bg-gray-200 transition"
+          title={t("users.bookingLinks.deleteEventsTitle")}
+        >
+          <CalendarX className="w-3.5 h-3.5 text-orange-600" />
+        </button>
+      )}
       {canReset && (
         <button
           onClick={() => onReset(link)}
@@ -249,6 +263,7 @@ export default function UserBookingLinks({ username }: Props) {
   const canEdit = useIsAllowed("PATCH", "/users/{username}/booking-links/{publicId}");
   const canDelete = useIsAllowed("DELETE", "/users/{username}/booking-links/{publicId}");
   const canReset = useIsAllowed("POST", "/users/{username}/booking-links/{publicId}/reset");
+  const canDeleteEvents = useIsAllowed("POST", "/users/{username}/booking-links/{publicId}?action=deleteEvents");
 
   const canViewCalendars = useIsAllowed("GET", "/users/{username}/calendars");
 
@@ -371,6 +386,29 @@ export default function UserBookingLinks({ username }: Props) {
     }
   };
 
+  const handleDeleteEvents = async (link: BookingLink) => {
+    const confirmed = await confirm({
+      header: t("users.bookingLinks.deleteEventsTitle"),
+      message: t("users.bookingLinks.deleteEventsConfirm"),
+    });
+    if (!confirmed) return;
+    try {
+      const { taskId } = await deleteUserBookingLinkEvents(username, link.publicId);
+      toast({
+        title: t("common.taskStarted"),
+        description: (
+          <p>
+            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
+              {t("common.taskLink", { taskId })}
+            </Link>
+          </p>
+        ),
+      });
+    } catch (err) {
+      toast({ title: t("users.bookingLinks.errorDeleteEvents"), description: <ErrorDisplayer error={err} /> });
+    }
+  };
+
   return (
     <div className="mt-6">
       <button
@@ -410,9 +448,11 @@ export default function UserBookingLinks({ username }: Props) {
               canEdit={canEdit}
               canDelete={canDelete}
               canReset={canReset}
+              canDeleteEvents={canDeleteEvents}
               onEdit={openEdit}
               onDelete={handleDelete}
               onReset={handleReset}
+              onDeleteEvents={handleDeleteEvents}
             />
           ))}
         </div>

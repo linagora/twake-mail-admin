@@ -837,6 +837,9 @@
       "rulesCount_plural": "{{count}} rules",
       "clearRules": "Remove all rules",
       "clearRulesWarning": "All rules will be removed on save.",
+      "deleteEventsTitle": "Delete associated events",
+      "deleteEventsConfirm": "Delete every calendar event created through this booking link? An asynchronous task will be scheduled and this cannot be undone.",
+      "errorDeleteEvents": "Error deleting associated events",
       "days": {
         "MON": "Mon",
         "TUE": "Tue",

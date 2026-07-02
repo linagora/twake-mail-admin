@@ -837,6 +837,9 @@
       "rulesCount_plural": "{{count}} règles",
       "clearRules": "Supprimer toutes les règles",
       "clearRulesWarning": "Toutes les règles seront supprimées à la sauvegarde.",
+      "deleteEventsTitle": "Supprimer les événements associés",
+      "deleteEventsConfirm": "Supprimer tous les événements de calendrier créés via ce lien de réservation ? Une tâche asynchrone sera planifiée et cette action est irréversible.",
+      "errorDeleteEvents": "Erreur lors de la suppression des événements associés",
       "days": {
         "MON": "Lun",
         "TUE": "Mar",
