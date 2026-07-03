@@ -366,6 +366,26 @@
       "removeAdminConfirm": "Retirer « {{email}} » des administrateurs ?",
       "removeAdminTooltip": "Retirer l'administrateur"
     },
+    "teamCalendars": {
+      "title": "Calendriers d'équipe",
+      "addTooltip": "Ajouter un calendrier d'équipe",
+      "newTitle": "Nouveau calendrier d'équipe",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Nom du calendrier d'équipe",
+      "displayNameLabel": "Nom d'affichage",
+      "displayNamePlaceholder": "Nom d'affichage (par défaut : le nom)",
+      "created": "Calendrier d'équipe créé",
+      "errorCreating": "Erreur lors de la création du calendrier d'équipe",
+      "updated": "Calendrier d'équipe mis à jour",
+      "errorUpdating": "Erreur lors de la mise à jour du calendrier d'équipe",
+      "editTooltip": "Modifier le nom d'affichage",
+      "deleteTitle": "Supprimer le calendrier d'équipe",
+      "deleteConfirm": "Supprimer le calendrier d'équipe « {{name}} » ?",
+      "deleted": "Calendrier d'équipe supprimé",
+      "errorDeleting": "Erreur lors de la suppression du calendrier d'équipe",
+      "deleteTooltip": "Supprimer le calendrier d'équipe",
+      "empty": "Aucun calendrier d'équipe."
+    },
     "calendarTasks": {
       "title": "Tâches",
       "taskLabel": "Tâche :",

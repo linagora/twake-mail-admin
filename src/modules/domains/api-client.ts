@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues } from "./types";
+import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues, TeamCalendar } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
 
@@ -371,3 +371,29 @@ export const repositionResourceWriteRights = async (domain: string): Promise<Run
     () => apiClient.post(`/domains/${encodeURIComponent(domain)}/resources?task=repositionWriteRights`),
     () => apiClient.post(`/resources?task=repositionWriteRights`),
   );
+
+// ---------------------------------------------------------------------------
+// Team calendar API — domain-scoped routes (CALENDAR application only)
+// ---------------------------------------------------------------------------
+
+export const getTeamCalendars = async (domain: string): Promise<TeamCalendar[]> =>
+  apiClient.get(`/domains/${encodeURIComponent(domain)}/team-calendars`);
+
+export const getTeamCalendar = async (domain: string, id: string): Promise<TeamCalendar> =>
+  apiClient.get(`/domains/${encodeURIComponent(domain)}/team-calendars/${encodeURIComponent(id)}`);
+
+export const createTeamCalendar = async (
+  domain: string,
+  payload: { name: string; displayName: string },
+): Promise<TeamCalendar> =>
+  apiClient.post(`/domains/${encodeURIComponent(domain)}/team-calendars`, payload);
+
+export const updateTeamCalendar = async (
+  domain: string,
+  id: string,
+  payload: { displayName: string },
+): Promise<void> =>
+  apiClient.patch(`/domains/${encodeURIComponent(domain)}/team-calendars/${encodeURIComponent(id)}`, payload);
+
+export const deleteTeamCalendar = async (domain: string, id: string): Promise<void> =>
+  apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-calendars/${encodeURIComponent(id)}`);

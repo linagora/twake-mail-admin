@@ -105,3 +105,13 @@ export interface Resource {
   creator: string;
   administrators: ResourceAdmin[];
 }
+
+export interface TeamCalendar {
+  id: string;
+  domainId: string;
+  domainName: string;
+  name: string;
+  displayName: string;
+  creation: string;
+  updated: string;
+}
