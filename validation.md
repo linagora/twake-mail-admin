@@ -159,6 +159,15 @@ Note: if none are present hide dleted message vault.
 | "Edit resource" form | PATCH | `/domains/{domain}/resources/{resourceId}` | MAY (do not show the button if missing) |
 | "Reposition write rights" button | POST | `/domains/{domain}/resources?task=repositionWriteRights` | MAY (do not show the button if missing) |
 
+### Domain detail — Calendar: Team calendars section *(APPLICATION:"CALENDAR" only)*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Section load | GET | `/domains/{domain}/team-calendars` | MUST (hide the whole section if forbidden) |
+| "Create team calendar" button | POST | `/domains/{domain}/team-calendars` | MAY (do not show the button if missing) |
+| "Edit team calendar" button | PATCH | `/domains/{domain}/team-calendars/{teamCalendarId}` | MAY (do not show the button if missing) |
+| "Delete team calendar" button | DELETE | `/domains/{domain}/team-calendars/{teamCalendarId}` | MAY (do not show the button if missing) |
+
 ### Domain detail — Calendar: Sync members *(APPLICATION:"CALENDAR" only)*
 
 | Trigger | Verb | Pattern | MUST/MAY |

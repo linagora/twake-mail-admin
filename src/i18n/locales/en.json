@@ -366,6 +366,26 @@
       "removeAdminConfirm": "Remove \"{{email}}\" from administrators?",
       "removeAdminTooltip": "Remove administrator"
     },
+    "teamCalendars": {
+      "title": "Team Calendars",
+      "addTooltip": "Add team calendar",
+      "newTitle": "New Team Calendar",
+      "nameLabel": "Name",
+      "namePlaceholder": "Team calendar name",
+      "displayNameLabel": "Display name",
+      "displayNamePlaceholder": "Display name (defaults to name)",
+      "created": "Team calendar created",
+      "errorCreating": "Error creating team calendar",
+      "updated": "Team calendar updated",
+      "errorUpdating": "Error updating team calendar",
+      "editTooltip": "Edit display name",
+      "deleteTitle": "Delete Team Calendar",
+      "deleteConfirm": "Delete team calendar \"{{name}}\"?",
+      "deleted": "Team calendar deleted",
+      "errorDeleting": "Error deleting team calendar",
+      "deleteTooltip": "Delete team calendar",
+      "empty": "No team calendars."
+    },
     "calendarTasks": {
       "title": "Tasks",
       "taskLabel": "Task:",
