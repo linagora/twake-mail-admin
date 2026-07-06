@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
-import { ChevronDown, ChevronRight, Plus, Minus, Pencil, Trash2, RefreshCw, Loader2, Save, CalendarX } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Minus, Copy, Pencil, Trash2, RefreshCw, Loader2, Save, CalendarX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -95,49 +95,71 @@ function RulesEditor({
     onChange(rules.filter((_, i) => i !== index));
   };
 
+  const duplicate = (index: number) => {
+    onChange([
+      ...rules.slice(0, index + 1),
+      { ...rules[index] },
+      ...rules.slice(index + 1),
+    ]);
+  };
+
   return (
     <div className="space-y-2">
-      {rules.map((rule, i) => (
-        <div key={i} className="flex flex-wrap items-center gap-2 p-2 border rounded-md bg-gray-50">
-          <select
-            value={rule.dayOfWeek ?? "MON"}
-            onChange={(e) => update(i, { dayOfWeek: e.target.value })}
-            className="px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {DAYS.map((d) => (
-              <option key={d} value={d}>{t(`users.bookingLinks.days.${d}`)}</option>
-            ))}
-          </select>
-          <input
-            type="time"
-            value={rule.start ?? "09:00"}
-            onChange={(e) => update(i, { start: e.target.value })}
-            className="px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <span className="text-xs text-gray-400">→</span>
-          <input
-            type="time"
-            value={rule.end ?? "17:00"}
-            onChange={(e) => update(i, { end: e.target.value })}
-            className="px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="text"
-            value={rule.timeZone ?? ""}
-            onChange={(e) => update(i, { timeZone: e.target.value })}
-            placeholder={t("users.bookingLinks.timeZone")}
-            className="flex-1 min-w-[120px] px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={() => remove(i)}
-            className="p-1 rounded-md hover:bg-gray-200 transition"
-            title={t("users.bookingLinks.removeRule")}
-            type="button"
-          >
-            <Minus className="w-3.5 h-3.5 text-red-600" />
-          </button>
+      {rules.length > 0 && (
+        // Bound the rule list height so a long availability set (10+ rules)
+        // scrolls on its own instead of pushing the dialog past the screen.
+        <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+          {rules.map((rule, i) => (
+            <div key={i} className="flex items-center gap-2 p-2 border rounded-md bg-gray-50">
+              <select
+                value={rule.dayOfWeek ?? "MON"}
+                onChange={(e) => update(i, { dayOfWeek: e.target.value })}
+                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {DAYS.map((d) => (
+                  <option key={d} value={d}>{t(`users.bookingLinks.days.${d}`)}</option>
+                ))}
+              </select>
+              <input
+                type="time"
+                value={rule.start ?? "09:00"}
+                onChange={(e) => update(i, { start: e.target.value })}
+                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <span className="shrink-0 text-xs text-gray-400">→</span>
+              <input
+                type="time"
+                value={rule.end ?? "17:00"}
+                onChange={(e) => update(i, { end: e.target.value })}
+                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="text"
+                value={rule.timeZone ?? ""}
+                onChange={(e) => update(i, { timeZone: e.target.value })}
+                placeholder={t("users.bookingLinks.timeZone")}
+                className="flex-1 min-w-[80px] px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={() => duplicate(i)}
+                className="shrink-0 p-1 rounded-md hover:bg-gray-200 transition"
+                title={t("users.bookingLinks.duplicateRule")}
+                type="button"
+              >
+                <Copy className="w-3.5 h-3.5 text-blue-600" />
+              </button>
+              <button
+                onClick={() => remove(i)}
+                className="shrink-0 p-1 rounded-md hover:bg-gray-200 transition"
+                title={t("users.bookingLinks.removeRule")}
+                type="button"
+              >
+                <Minus className="w-3.5 h-3.5 text-red-600" />
+              </button>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
       <Button
         type="button"
         variant="outline"
@@ -158,10 +180,12 @@ function BookingLinkRow({
   canDelete,
   canReset,
   canDeleteEvents,
+  canDuplicate,
   onEdit,
   onDelete,
   onReset,
   onDeleteEvents,
+  onDuplicate,
 }: {
   link: BookingLink;
   calendarOptions: CalendarOption[];
@@ -169,10 +193,12 @@ function BookingLinkRow({
   canDelete: boolean;
   canReset: boolean;
   canDeleteEvents: boolean;
+  canDuplicate: boolean;
   onEdit: (link: BookingLink) => void;
   onDelete: (link: BookingLink) => void;
   onReset: (link: BookingLink) => void;
   onDeleteEvents: (link: BookingLink) => void;
+  onDuplicate: (link: BookingLink) => void;
 }) {
   const { t } = useTranslation();
   const rulesCount = link.availabilityRules?.length ?? 0;
@@ -223,6 +249,15 @@ function BookingLinkRow({
           title={t("users.bookingLinks.resetTitle")}
         >
           <RefreshCw className="w-3.5 h-3.5 text-gray-600" />
+        </button>
+      )}
+      {canDuplicate && (
+        <button
+          onClick={() => onDuplicate(link)}
+          className="p-1.5 rounded-md hover:bg-gray-200 transition"
+          title={t("users.bookingLinks.duplicateTitle")}
+        >
+          <Copy className="w-3.5 h-3.5 text-blue-600" />
         </button>
       )}
       {canEdit && (
@@ -316,6 +351,21 @@ export default function UserBookingLinks({ username }: Props) {
     } finally {
       setCreating(false);
     }
+  };
+
+  // Prefill the create dialog from an existing link. The backend assigns a
+  // fresh publicId, so this yields an independent copy.
+  const handleDuplicate = (link: BookingLink) => {
+    setCreateForm({
+      calendarUrl: link.calendarUrl,
+      durationMinutes: link.durationMinutes,
+      active: link.active,
+      name: t("users.bookingLinks.copyName", { name: link.name || link.publicId }),
+      description: link.description,
+      autoAccept: link.autoAccept ?? false,
+    });
+    setCreateRules(link.availabilityRules ? link.availabilityRules.map((r) => ({ ...r })) : []);
+    setShowCreate(true);
   };
 
   const openEdit = (link: BookingLink) => {
@@ -449,10 +499,12 @@ export default function UserBookingLinks({ username }: Props) {
               canDelete={canDelete}
               canReset={canReset}
               canDeleteEvents={canDeleteEvents}
+              canDuplicate={canCreate}
               onEdit={openEdit}
               onDelete={handleDelete}
               onReset={handleReset}
               onDeleteEvents={handleDeleteEvents}
+              onDuplicate={handleDuplicate}
             />
           ))}
         </div>
@@ -463,7 +515,7 @@ export default function UserBookingLinks({ username }: Props) {
         open={showCreate}
         onOpenChange={(v) => { if (!v) { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); setCreateRules([]); } }}
       >
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t("users.bookingLinks.create")}</DialogTitle>
           </DialogHeader>
@@ -552,7 +604,7 @@ export default function UserBookingLinks({ username }: Props) {
 
       {/* Edit dialog */}
       <Dialog open={!!editLink} onOpenChange={(v) => { if (!v) setEditLink(null); }}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t("users.bookingLinks.editTitle")}</DialogTitle>
           </DialogHeader>
