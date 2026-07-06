@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "react-router";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
 
-import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights, cleanupMailbox } from "./api-client";
+import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights, cleanupMailbox, runAllUsersReindexTask } from "./api-client";
 import ConfirmTaskContent from "./components/confirm-task-content";
 import { TaskParam } from "./types";
 import TaskContainer from "./task-container";
@@ -235,6 +235,8 @@ function MailCommonTasks() {
   const canRepositionRights = useIsAllowed("POST", "/team-mailboxes");
   const canCleanupMailbox = useIsAllowed("DELETE", "/messages");
   const canCleanupOldTasks = useIsAllowed("DELETE", "/tasks");
+  const canReindexUsers = useIsAllowed("POST", "/users");
+  const [perUserReindexLoading, setPerUserReindexLoading] = useState(false);
   const [reloadLoading, setReloadLoading] = useState(false);
   const [reloadPort, setReloadPort] = useState("");
   const [cleanupLoading, setCleanupLoading] = useState(false);
@@ -349,6 +351,40 @@ function MailCommonTasks() {
     }
   };
 
+  const handlePerUserReindex = async () => {
+    let messagesPerSecond = "50";
+    const confirmed = await confirm({
+      header: t("commonTasks.perUserReindex"),
+      message: (
+        <ConfirmTaskContent
+          message={<p>{t("commonTasks.runConfirm", { name: t("commonTasks.perUserReindex") })}</p>}
+          command={`curl -XPOST /users?action=reindex&mode=rebuildAll&messagesPerSecond=50`}
+          params={[{ key: "messagesPerSecond", defaultValue: "50", type: "input" }]}
+          getParamValues={(key, value) => {
+            if (key === "messagesPerSecond") messagesPerSecond = value as string;
+          }}
+        />
+      ),
+    });
+    if (!confirmed) return;
+
+    setPerUserReindexLoading(true);
+    try {
+      const data = await runAllUsersReindexTask({ messagesPerSecond });
+      const taskIds = Object.values(data ?? {});
+      const errors = taskIds.filter((taskId) => !taskId).length;
+      const planned = taskIds.length - errors;
+      toast({ title: t("commonTasks.perUserReindexSuccess", { planned, errors }) });
+    } catch (err) {
+      toast({
+        title: t("commonTasks.errorPerUserReindex"),
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setPerUserReindexLoading(false);
+    }
+  };
+
   const handleRepositionSystemRights = async () => {
     const confirmed = await confirm({
       header: t("commonTasks.repositionTitle"),
@@ -380,7 +416,27 @@ function MailCommonTasks() {
 
       <div className="grid grid-cols-1 gap-4 mt-4">
         {TASKS.map((task) => (
-          <TaskContainer {...task} key={task.nameKey} />
+          <Fragment key={task.nameKey}>
+            <TaskContainer {...task} />
+            {task.nameKey === "commonTasks.reindexRebuildAll" && canReindexUsers && (
+              <div className="flex justify-between items-center gap-4">
+                <p>{t("commonTasks.perUserReindex")}</p>
+                <TooltipProvider>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handlePerUserReindex}>
+                        {perUserReindexLoading && <Loader2 className="animate-spin" />}
+                        {t("common.run")}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      curl -XPOST /users?action=reindex&amp;mode=rebuildAll&amp;messagesPerSecond=50
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            )}
+          </Fragment>
         ))}
         {canReloadCerts && (
           <div className="flex justify-between items-center gap-4">
