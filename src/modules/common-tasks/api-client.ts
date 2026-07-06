@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
-import { AdditionalParams, TaskDetailResponse, TaskRequest } from "./types";
+import { AdditionalParams, ReIndexMode, TaskDetailResponse, TaskRequest } from "./types";
 import { appConfig } from "@/lib/config";
 
 const parsePayloadToSearchParams = (payload: any) => {
@@ -78,6 +78,14 @@ export const runPurgeDeletedMessagesTask = async (): Promise<any> => {
 export const runPopulateEmailQueryViewTask = async (payload?: AdditionalParams): Promise<any> => {
   const params = parsePayloadToSearchParams({ task: 'populateEmailQueryView', ...payload });
   return apiClient.post<any, any>(`/mailboxes?${params}`);
+}
+
+// Schedules one reindexing task per user. Unlike other tasks, the backend returns
+// synchronously a map of `username -> taskId` rather than a single task id.
+// Mode is fixed to rebuildAll (reindex all, not fix outdated).
+export const runAllUsersReindexTask = async (payload?: AdditionalParams): Promise<Record<string, string>> => {
+  const params = parsePayloadToSearchParams({ action: 'reindex', mode: ReIndexMode.REBUILD_ALL, ...payload });
+  return apiClient.post<any, any>(`/users?${params}`);
 }
 
 export const reloadCertificates = async (port?: string): Promise<void> => {
