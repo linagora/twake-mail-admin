@@ -2,6 +2,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import {
   getMappings,
   createAddressMapping,
+  createDomainMapping,
   deleteAddressMapping,
   deleteAliasMapping,
   deleteForwardMapping,
@@ -18,6 +19,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { appConfig } from "@/lib/config";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -25,6 +27,8 @@ export default function MappingsList() {
   const { t } = useTranslation();
   const canAddAddress = useIsAllowed("POST", "/mappings/address/{source}/targets/{destination}");
   const canAddRegex = useIsAllowed("POST", "/mappings/regex/{source}/targets/{regex}");
+  const isDomainMappingAllowed = useIsAllowed("PUT", "/domainMappings/{fromDomain}");
+  const canAddDomain = appConfig.application === "MAIL" && isDomainMappingAllowed;
   const canDelete = useIsAllowed("DELETE", "/mappings/address/{source}/targets/{destination}");
 
   const {
@@ -46,6 +50,11 @@ export default function MappingsList() {
   const [regexSource, setRegexSource] = useState("");
   const [regexValue, setRegexValue] = useState("");
   const [creatingRegex, setCreatingRegex] = useState(false);
+
+  const [showCreateDomain, setShowCreateDomain] = useState(false);
+  const [domainSource, setDomainSource] = useState("");
+  const [domainDestination, setDomainDestination] = useState("");
+  const [creatingDomain, setCreatingDomain] = useState(false);
   const { toast } = useToast();
   const confirm = useConfirm();
 
@@ -131,6 +140,28 @@ export default function MappingsList() {
     }
   };
 
+  const handleCreateDomain = async () => {
+    const src = domainSource.trim();
+    const dest = domainDestination.trim();
+    if (!src || !dest) return;
+    setCreatingDomain(true);
+    try {
+      await createDomainMapping(src, dest);
+      toast({ title: t("mappings.domainCreated") });
+      setDomainSource("");
+      setDomainDestination("");
+      setShowCreateDomain(false);
+      await refresh();
+    } catch (err) {
+      toast({
+        title: t("mappings.errorCreatingDomain"),
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setCreatingDomain(false);
+    }
+  };
+
   const flatMappings = useMemo<FlatMapping[]>(() => {
     if (!mappingsResult) return [];
     const rows: FlatMapping[] = [];
@@ -174,7 +205,7 @@ export default function MappingsList() {
       <div className="mt-4 flex items-center gap-2">
         {canAddAddress && (
           <button
-            onClick={() => { setShowCreate(!showCreate); setShowCreateRegex(false); }}
+            onClick={() => { setShowCreate(!showCreate); setShowCreateRegex(false); setShowCreateDomain(false); }}
             className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
           >
             <Plus className="w-4 h-4" />
@@ -183,11 +214,20 @@ export default function MappingsList() {
         )}
         {canAddRegex && (
           <button
-            onClick={() => { setShowCreateRegex(!showCreateRegex); setShowCreate(false); }}
+            onClick={() => { setShowCreateRegex(!showCreateRegex); setShowCreate(false); setShowCreateDomain(false); }}
             className="flex items-center gap-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition text-sm"
           >
             <Plus className="w-4 h-4" />
             {t("mappings.addRegex")}
+          </button>
+        )}
+        {canAddDomain && (
+          <button
+            onClick={() => { setShowCreateDomain(!showCreateDomain); setShowCreate(false); setShowCreateRegex(false); }}
+            className="flex items-center gap-1 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            {t("mappings.addDomain")}
           </button>
         )}
       </div>
@@ -260,6 +300,45 @@ export default function MappingsList() {
             </button>
             <button
               onClick={() => { setShowCreateRegex(false); setRegexSource(""); setRegexValue(""); }}
+              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition text-sm"
+            >
+              {t("common.cancel")}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showCreateDomain && (
+        <div className="mt-3 p-4 border rounded-md bg-gray-50 flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={domainSource}
+              onChange={(e) => setDomainSource(e.target.value)}
+              placeholder={t("mappings.domainSourcePlaceholder")}
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <span className="text-gray-400 text-sm">→</span>
+            <input
+              type="text"
+              value={domainDestination}
+              onChange={(e) => setDomainDestination(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleCreateDomain()}
+              placeholder={t("mappings.domainDestinationPlaceholder")}
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          <p className="text-xs text-gray-500">{t("mappings.domainHint")}</p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCreateDomain}
+              disabled={creatingDomain || !domainSource.trim() || !domainDestination.trim()}
+              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {creatingDomain ? t("mappings.creating") : t("common.create")}
+            </button>
+            <button
+              onClick={() => { setShowCreateDomain(false); setDomainSource(""); setDomainDestination(""); }}
               className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition text-sm"
             >
               {t("common.cancel")}

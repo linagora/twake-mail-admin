@@ -1187,6 +1187,12 @@
   "mappings": {
     "addAddress": "Add Address Mapping",
     "addRegex": "Add Regex Mapping",
+    "addDomain": "Add Domain Mapping",
+    "domainSourcePlaceholder": "Source domain (e.g. sourceDomain.tld)",
+    "domainDestinationPlaceholder": "Destination domain (e.g. destination.tld)",
+    "domainHint": "No check for loops is performed when creating a domain mapping.",
+    "domainCreated": "Domain mapping created successfully",
+    "errorCreatingDomain": "Error creating domain mapping",
     "sourcePlaceholder": "Source (e.g. user@domain.com)",
     "destinationPlaceholder": "Destination (e.g. alias@domain.com)",
     "creating": "Creating...",

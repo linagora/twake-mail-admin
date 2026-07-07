@@ -1167,6 +1167,12 @@
   "mappings": {
     "addAddress": "Хаягийн зураглал нэмэх",
     "addRegex": "Regex зураглал нэмэх",
+    "addDomain": "Домэйн зураглал нэмэх",
+    "domainSourcePlaceholder": "Эх домэйн (жнь sourceDomain.tld)",
+    "domainDestinationPlaceholder": "Зорилтот домэйн (жнь destination.tld)",
+    "domainHint": "Домэйн зураглал үүсгэхэд гогцоо шалгах шалгалт хийгдэхгүй.",
+    "domainCreated": "Домэйн зураглал амжилттай үүслээ",
+    "errorCreatingDomain": "Домэйн зураглал үүсгэхэд алдаа гарлаа",
     "sourcePlaceholder": "Эх (жнь user@domain.com)",
     "destinationPlaceholder": "Хүрэх газар (жнь alias@domain.com)",
     "creating": "Үүсгэж байна...",

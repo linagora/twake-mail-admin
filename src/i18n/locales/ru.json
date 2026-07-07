@@ -1167,6 +1167,12 @@
   "mappings": {
     "addAddress": "Добавить адресное сопоставление",
     "addRegex": "Добавить регулярное сопоставление",
+    "addDomain": "Добавить сопоставление домена",
+    "domainSourcePlaceholder": "Исходный домен (напр. sourceDomain.tld)",
+    "domainDestinationPlaceholder": "Целевой домен (напр. destination.tld)",
+    "domainHint": "При создании сопоставления домена проверка на циклы не выполняется.",
+    "domainCreated": "Сопоставление домена успешно создано",
+    "errorCreatingDomain": "Ошибка при создании сопоставления домена",
     "sourcePlaceholder": "Источник (напр. user@domain.com)",
     "destinationPlaceholder": "Назначение (напр. alias@domain.com)",
     "creating": "Создание...",

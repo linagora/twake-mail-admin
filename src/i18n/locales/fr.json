@@ -1187,6 +1187,12 @@
   "mappings": {
     "addAddress": "Ajouter une correspondance d'adresse",
     "addRegex": "Ajouter une correspondance regex",
+    "addDomain": "Ajouter une correspondance de domaine",
+    "domainSourcePlaceholder": "Domaine source (ex. sourceDomain.tld)",
+    "domainDestinationPlaceholder": "Domaine de destination (ex. destination.tld)",
+    "domainHint": "Aucune vérification de boucle n'est effectuée lors de la création d'une correspondance de domaine.",
+    "domainCreated": "Correspondance de domaine créée",
+    "errorCreatingDomain": "Erreur lors de la création de la correspondance de domaine",
     "sourcePlaceholder": "Source (ex. utilisateur@domaine.com)",
     "destinationPlaceholder": "Destination (ex. alias@domaine.com)",
     "creating": "Création…",

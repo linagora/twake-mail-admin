@@ -1167,6 +1167,12 @@
   "mappings": {
     "addAddress": "Thêm ánh xạ địa chỉ",
     "addRegex": "Thêm ánh xạ biểu thức chính quy",
+    "addDomain": "Thêm ánh xạ tên miền",
+    "domainSourcePlaceholder": "Tên miền nguồn (vd. sourceDomain.tld)",
+    "domainDestinationPlaceholder": "Tên miền đích (vd. destination.tld)",
+    "domainHint": "Không kiểm tra vòng lặp khi tạo ánh xạ tên miền.",
+    "domainCreated": "Đã tạo ánh xạ tên miền thành công",
+    "errorCreatingDomain": "Lỗi khi tạo ánh xạ tên miền",
     "sourcePlaceholder": "Nguồn (vd. user@domain.com)",
     "destinationPlaceholder": "Đích (vd. alias@domain.com)",
     "creating": "Đang tạo...",
