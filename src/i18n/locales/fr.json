@@ -76,6 +76,7 @@
     "globalQuota": "Quota global",
     "users": "Utilisateurs",
     "mappings": "Correspondances",
+    "mailingLists": "Listes de diffusion",
     "networkChannels": "Canaux réseau",
     "cassandra": "Cassandra",
     "tasks": "Tâches",
@@ -1208,6 +1209,21 @@
     "empty": "Aucune correspondance trouvée.",
     "subtitle": "Voir toutes les correspondances de réécriture des destinataires (alias, groupes, domaines, redirections)."
   },
+  "mailingLists": {
+    "subtitle": "Parcourez les listes de diffusion LDAP ainsi que leurs membres et propriétaires.",
+    "searchPlaceholder": "Rechercher des listes de diffusion…",
+    "address": "Adresse",
+    "details": "Détails",
+    "showDetails": "Afficher les détails",
+    "hideDetails": "Masquer les détails",
+    "businessCategory": "Catégorie",
+    "members": "Membres",
+    "owners": "Propriétaires",
+    "noMembers": "Aucun membre.",
+    "noOwners": "Aucun propriétaire.",
+    "detailEmpty": "Aucun détail disponible.",
+    "empty": "Aucune liste de diffusion trouvée."
+  },
   "networkChannels": {
     "disconnectAll": "Déconnecter tout",
     "disconnectUser": "Déconnecter les canaux de {{username}}",
@@ -1302,6 +1318,7 @@
     "quota": "Quota",
     "tasks": "Tâches",
     "rateLimiting": "Limitation de débit",
+    "mailingLists": "Listes de diffusion",
     "aliases": "Alias",
     "teamMailboxes": "Boîtes partagées",
     "calendarTasks": "Tâches",

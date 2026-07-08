@@ -76,6 +76,7 @@
     "globalQuota": "Глобальная квота",
     "users": "Пользователи",
     "mappings": "Сопоставления",
+    "mailingLists": "Списки рассылки",
     "networkChannels": "Сетевые каналы",
     "cassandra": "Cassandra",
     "tasks": "Задачи",
@@ -1188,6 +1189,21 @@
     "empty": "Сопоставления не найдены.",
     "subtitle": "Просмотр всех сопоставлений перезаписи получателей (псевдонимы, группы, домены, пересылки)."
   },
+  "mailingLists": {
+    "subtitle": "Просмотр списков рассылки LDAP, их участников и владельцев.",
+    "searchPlaceholder": "Поиск списков рассылки…",
+    "address": "Адрес",
+    "details": "Подробности",
+    "showDetails": "Показать подробности",
+    "hideDetails": "Скрыть подробности",
+    "businessCategory": "Категория",
+    "members": "Участники",
+    "owners": "Владельцы",
+    "noMembers": "Нет участников.",
+    "noOwners": "Нет владельцев.",
+    "detailEmpty": "Нет данных.",
+    "empty": "Списки рассылки не найдены."
+  },
   "networkChannels": {
     "disconnectAll": "Отключить все",
     "disconnectUser": "Отключить каналы для {{username}}",
@@ -1282,6 +1298,7 @@
     "quota": "Квота",
     "tasks": "Задачи",
     "rateLimiting": "Ограничение частоты",
+    "mailingLists": "Списки рассылки",
     "aliases": "Псевдонимы",
     "teamMailboxes": "Командные почтовые ящики",
     "calendarTasks": "Задачи",

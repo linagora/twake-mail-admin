@@ -12,6 +12,7 @@ import AliasesPage from "./pages/aliases";
 import TeamMailboxesPage from "./pages/team-mailboxes";
 import QuotaPage from "./pages/quota";
 import RateLimitingPage from "./pages/rate-limiting";
+import MailingListsPage from "./pages/mailing-lists";
 import TasksPage from "./pages/tasks";
 
 // Reuse the per-user and team-mailbox detail pages from global mode
@@ -50,6 +51,7 @@ export default function DomainAdminApp({ domain }: Props) {
                 <Route path="/team-mailboxes" element={<TeamMailboxesPage />} />
                 <Route path="/quota" element={<QuotaPage />} />
                 <Route path="/rate-limiting" element={<RateLimitingPage />} />
+                <Route path="/mailing-lists" element={<MailingListsPage />} />
                 <Route path="/tasks" element={<TasksPage />} />
 
                 {/* Team mailbox detail — reuse global routes so existing links work */}

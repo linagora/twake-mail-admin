@@ -76,6 +76,7 @@
     "globalQuota": "Глобал квота",
     "users": "Хэрэглэгчид",
     "mappings": "Зураглал",
+    "mailingLists": "Мэйл жагсаалт",
     "networkChannels": "Сүлжээний сувгууд",
     "cassandra": "Cassandra",
     "tasks": "Даалгаврууд",
@@ -1188,6 +1189,21 @@
     "empty": "Зураглал олдсонгүй.",
     "subtitle": "Хүлээн авагчийг дахин бичих бүх зураглалыг харах (өөр нэр, бүлэг, домэйн, дамжуулалт)."
   },
+  "mailingLists": {
+    "subtitle": "LDAP мэйл жагсаалт болон гишүүд, эзэмшигчдийг үзэх.",
+    "searchPlaceholder": "Мэйл жагсаалт хайх…",
+    "address": "Хаяг",
+    "details": "Дэлгэрэнгүй",
+    "showDetails": "Дэлгэрэнгүй харах",
+    "hideDetails": "Дэлгэрэнгүй нуух",
+    "businessCategory": "Ангилал",
+    "members": "Гишүүд",
+    "owners": "Эзэмшигчид",
+    "noMembers": "Гишүүн байхгүй.",
+    "noOwners": "Эзэмшигч байхгүй.",
+    "detailEmpty": "Мэдээлэл байхгүй.",
+    "empty": "Мэйл жагсаалт олдсонгүй."
+  },
   "networkChannels": {
     "disconnectAll": "Бүгдийг салгах",
     "disconnectUser": "{{username}}-ийн сувгуудыг салгах",
@@ -1282,6 +1298,7 @@
     "quota": "Квота",
     "tasks": "Даалгаврууд",
     "rateLimiting": "Хурдны хязгаарлалт",
+    "mailingLists": "Мэйл жагсаалт",
     "aliases": "Өөр нэрс",
     "teamMailboxes": "Багийн шуудангийн хайрцгууд",
     "calendarTasks": "Даалгаврууд",

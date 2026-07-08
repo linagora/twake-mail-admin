@@ -1,4 +1,4 @@
-import { Users, BookMarked, Mailbox, Gauge, Zap, ListChecks, Globe, LogOut, Languages } from "lucide-react";
+import { Users, BookMarked, Mailbox, Gauge, Zap, ListChecks, Globe, LogOut, Languages, Mails } from "lucide-react";
 import Logo from "@/assets/images/logo.svg";
 import {
   Sidebar,
@@ -69,6 +69,7 @@ export function DomainSidebar() {
   const canTeamMailboxes = useIsAllowed("GET", "/domains/{domain}/team-mailboxes");
   const canQuota = useIsAllowed("GET", "/quota/domains/{domain}");
   const canRateLimiting = useIsAllowed("GET", "/domains/{domain}/ratelimits");
+  const canMailingLists = useIsAllowed("GET", "/mailingLists");
   const canTasks = useIsAllowed("GET", "/tasks");
 
   const ALL_ITEMS = [
@@ -77,6 +78,7 @@ export function DomainSidebar() {
     { title: t("domainAdminPages.teamMailboxes"), url: "/team-mailboxes", icon: Mailbox },
     { title: t("domainAdminPages.quota"),         url: "/quota",          icon: Gauge },
     { title: t("domainAdminPages.rateLimiting"),  url: "/rate-limiting",  icon: Zap },
+    { title: t("domainAdminPages.mailingLists"),  url: "/mailing-lists",  icon: Mails },
     { title: t("domainAdminPages.tasks"),         url: "/tasks",          icon: ListChecks },
   ];
 
@@ -86,6 +88,7 @@ export function DomainSidebar() {
     "/team-mailboxes": canTeamMailboxes,
     "/quota": canQuota,
     "/rate-limiting": canRateLimiting,
+    "/mailing-lists": canMailingLists,
     "/tasks": canTasks,
   };
 
