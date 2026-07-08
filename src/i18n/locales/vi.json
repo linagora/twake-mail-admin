@@ -76,6 +76,7 @@
     "globalQuota": "Hạn ngạch toàn cục",
     "users": "Người dùng",
     "mappings": "Ánh xạ",
+    "mailingLists": "Danh sách gửi thư",
     "networkChannels": "Kênh mạng",
     "cassandra": "Cassandra",
     "tasks": "Tác vụ",
@@ -1194,6 +1195,21 @@
     "empty": "Không tìm thấy ánh xạ.",
     "subtitle": "Xem tất cả ánh xạ viết lại người nhận (bí danh, nhóm, tên miền, chuyển tiếp)."
   },
+  "mailingLists": {
+    "subtitle": "Duyệt các danh sách gửi thư LDAP cùng thành viên và chủ sở hữu.",
+    "searchPlaceholder": "Tìm kiếm danh sách gửi thư…",
+    "address": "Địa chỉ",
+    "details": "Chi tiết",
+    "showDetails": "Hiện chi tiết",
+    "hideDetails": "Ẩn chi tiết",
+    "businessCategory": "Danh mục",
+    "members": "Thành viên",
+    "owners": "Chủ sở hữu",
+    "noMembers": "Không có thành viên.",
+    "noOwners": "Không có chủ sở hữu.",
+    "detailEmpty": "Không có chi tiết.",
+    "empty": "Không tìm thấy danh sách gửi thư."
+  },
   "networkChannels": {
     "disconnectAll": "Ngắt kết nối tất cả",
     "disconnectUser": "Ngắt kết nối các kênh cho {{username}}",
@@ -1288,6 +1304,7 @@
     "quota": "Hạn ngạch",
     "tasks": "Tác vụ",
     "rateLimiting": "Giới hạn tốc độ",
+    "mailingLists": "Danh sách gửi thư",
     "aliases": "Bí danh",
     "teamMailboxes": "Hộp thư nhóm",
     "calendarTasks": "Tác vụ",

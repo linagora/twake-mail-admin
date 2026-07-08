@@ -31,6 +31,8 @@ import RegisteredUsers from "./modules/registered-users";
 import RegisteredUsersList from "./modules/registered-users/registered-users-list";
 import Mappings from "./modules/mappings";
 import MappingsList from "./modules/mappings/mappings-list";
+import MailingLists from "./modules/mailing-lists";
+import MailingListsList from "./modules/mailing-lists/mailing-lists-list";
 import NetworkChannels from "./modules/network-channels";
 import ChannelsList from "./modules/network-channels/channels-list";
 import ChannelsMap from "./modules/network-channels/channels-map";
@@ -84,6 +86,9 @@ function GlobalLayout() {
                 <Route path="/global-quota" element={<GlobalQuota />} />
                 <Route path="/mappings" element={<Mappings />}>
                   <Route index element={<MappingsList />} />
+                </Route>
+                <Route path="/mailing-lists" element={<MailingLists />}>
+                  <Route index element={<MailingListsList />} />
                 </Route>
                 <Route path="/network-channels" element={<NetworkChannels />}>
                   <Route index element={<ChannelsList />} />

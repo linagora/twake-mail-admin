@@ -76,6 +76,7 @@
     "globalQuota": "Global Quota",
     "users": "Users",
     "mappings": "Mappings",
+    "mailingLists": "Mailing Lists",
     "networkChannels": "Network Channels",
     "cassandra": "Cassandra",
     "tasks": "Tasks",
@@ -1214,6 +1215,21 @@
     "empty": "No mappings found.",
     "subtitle": "View all recipients rewrite mappings (aliases, groups, domains, forwards)."
   },
+  "mailingLists": {
+    "subtitle": "Browse LDAP-backed mailing lists and their members and owners.",
+    "searchPlaceholder": "Search mailing lists...",
+    "address": "Address",
+    "details": "Details",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "businessCategory": "Business category",
+    "members": "Members",
+    "owners": "Owners",
+    "noMembers": "No members.",
+    "noOwners": "No owners.",
+    "detailEmpty": "No details available.",
+    "empty": "No mailing lists found."
+  },
   "networkChannels": {
     "disconnectAll": "Disconnect all",
     "disconnectUser": "Disconnect channels for {{username}}",
@@ -1308,6 +1324,7 @@
     "quota": "Quota",
     "tasks": "Tasks",
     "rateLimiting": "Rate Limiting",
+    "mailingLists": "Mailing Lists",
     "aliases": "Aliases",
     "teamMailboxes": "Team Mailboxes",
     "calendarTasks": "Tasks",

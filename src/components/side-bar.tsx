@@ -1,4 +1,4 @@
-import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages, BarChart2 } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages, BarChart2, Mails } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -75,6 +75,7 @@ export function AppSidebar() {
   const canEventDeadletter = useIsAllowed("GET", "/events/deadLetter/groups");
   const canGlobalQuota = useIsAllowed("GET", "/quota");
   const canMappings = useIsAllowed("GET", "/mappings");
+  const canMailingLists = useIsAllowed("GET", "/mailingLists");
   const canNetworkChannels = useIsAllowed("GET", "/servers/channels");
   const canCassandra = useIsAllowed("GET", "/cassandra/version");
   const canLiveMetrics = useIsAllowed("GET", "/metrics");
@@ -88,6 +89,7 @@ export function AppSidebar() {
     { title: t("sidebar.globalQuota"), url: "/global-quota", icon: Gauge },
     { title: t("sidebar.users"), url: "/users", icon: Users },
     { title: t("sidebar.mappings"), url: "/mappings", icon: ArrowRightLeft },
+    { title: t("sidebar.mailingLists"), url: "/mailing-lists", icon: Mails },
     { title: t("sidebar.networkChannels"), url: "/network-channels", icon: Network },
     { title: t("sidebar.cassandra"), url: "/cassandra", icon: Database },
     { title: t("sidebar.tasks"), url: "/tasks", icon: ListChecks },
@@ -118,6 +120,7 @@ export function AppSidebar() {
     "/event-dead-letter": canEventDeadletter,
     "/global-quota": canGlobalQuota,
     "/mappings": canMappings,
+    "/mailing-lists": canMailingLists,
     "/network-channels": canNetworkChannels,
     "/cassandra": canCassandra,
     "/live-metrics": canLiveMetrics,
