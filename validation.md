@@ -167,6 +167,8 @@ Note: if none are present hide dleted message vault.
 | "Create team calendar" button | POST | `/domains/{domain}/team-calendars` | MAY (do not show the button if missing) |
 | "Edit team calendar" button | PATCH | `/domains/{domain}/team-calendars/{teamCalendarId}` | MAY (do not show the button if missing) |
 | "Delete team calendar" button | DELETE | `/domains/{domain}/team-calendars/{teamCalendarId}` | MAY (do not show the button if missing) |
+| "Manage members" button | GET | `/domains/{domain}/team-calendars/{teamCalendarId}/members` | MAY (do not show the button if missing) |
+| "Add/change/remove member" apply | POST | `/domains/{domain}/team-calendars/{teamCalendarId}/members/invitee` | MAY (read-only members view if missing) |
 
 ### Domain detail — Calendar: Sync members *(APPLICATION:"CALENDAR" only)*
 

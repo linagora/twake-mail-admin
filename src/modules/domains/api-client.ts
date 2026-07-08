@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues, TeamCalendar } from "./types";
+import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues, TeamCalendar, TeamCalendarMember, TeamCalendarShareUpdate } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
 
@@ -397,3 +397,13 @@ export const updateTeamCalendar = async (
 
 export const deleteTeamCalendar = async (domain: string, id: string): Promise<void> =>
   apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-calendars/${encodeURIComponent(id)}`);
+
+export const getTeamCalendarMembers = async (domain: string, id: string): Promise<TeamCalendarMember[]> =>
+  apiClient.get(`/domains/${encodeURIComponent(domain)}/team-calendars/${encodeURIComponent(id)}/members`);
+
+export const updateTeamCalendarMembers = async (
+  domain: string,
+  id: string,
+  share: TeamCalendarShareUpdate,
+): Promise<void> =>
+  apiClient.post(`/domains/${encodeURIComponent(domain)}/team-calendars/${encodeURIComponent(id)}/members/invitee`, { share });
