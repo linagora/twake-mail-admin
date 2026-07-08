@@ -850,6 +850,7 @@
       "descriptionPlaceholder": "ex. Réservez un appel de présentation de 30 minutes",
       "autoAccept": "Accepter automatiquement les réservations",
       "autoAcceptHint": "Les réservations sont acceptées immédiatement, sans demande de confirmation ni e-mails de notification.",
+      "color": "Couleur",
       "availabilityRules": "Règles de disponibilité",
       "addRule": "Ajouter une règle",
       "removeRule": "Supprimer la règle",

@@ -250,7 +250,12 @@ function BookingLinkRow({
         title={link.active ? t("users.bookingLinks.active") : t("users.bookingLinks.inactive")}
       />
       <div className="min-w-0 flex-1">
-        <p className="font-medium text-sm truncate" title={link.name || link.publicId}>
+        <p className="font-medium text-sm truncate flex items-center gap-1.5" title={link.name || link.publicId}>
+          <span
+            className="inline-block w-3 h-3 rounded-sm border flex-shrink-0"
+            style={{ backgroundColor: link.color || "#6B4ECC" }}
+            title={link.color || "#6B4ECC"}
+          />
           {link.name || <span className="font-mono">{link.publicId}</span>}
         </p>
         {link.name && (
@@ -321,10 +326,15 @@ function BookingLinkRow({
   );
 }
 
+// Booking links always carry a color; the backend defaults to this value when
+// none is stored, so the create form starts from the same default (see issue #31).
+const DEFAULT_COLOR = "#6B4ECC";
+
 const EMPTY_CREATE: CreateBookingLinkPayload = {
   calendarUrl: "",
   durationMinutes: 30,
   active: true,
+  color: DEFAULT_COLOR,
 };
 
 export default function UserBookingLinks({ username }: Props) {
@@ -411,6 +421,7 @@ export default function UserBookingLinks({ username }: Props) {
       name: t("users.bookingLinks.copyName", { name: link.name || link.publicId }),
       description: link.description,
       autoAccept: link.autoAccept ?? false,
+      color: link.color ?? DEFAULT_COLOR,
     });
     setCreateRules(link.availabilityRules ? link.availabilityRules.map((r) => ({ ...r })) : []);
     setShowCreate(true);
@@ -425,6 +436,7 @@ export default function UserBookingLinks({ username }: Props) {
       name: link.name,
       description: link.description,
       autoAccept: link.autoAccept ?? false,
+      color: link.color ?? DEFAULT_COLOR,
     });
     setEditRules(link.availabilityRules ? [...link.availabilityRules] : []);
     setEditClearRules(false);
@@ -630,6 +642,18 @@ export default function UserBookingLinks({ username }: Props) {
               </label>
             </div>
             <div>
+              <label className="text-sm font-medium block mb-1">{t("users.bookingLinks.color")}</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={createForm.color ?? DEFAULT_COLOR}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, color: e.target.value }))}
+                  className="h-9 w-14 p-1 border rounded-md cursor-pointer"
+                />
+                <span className="text-xs font-mono text-gray-500">{createForm.color ?? DEFAULT_COLOR}</span>
+              </div>
+            </div>
+            <div>
               <label className="text-sm font-medium block mb-2">{t("users.bookingLinks.availabilityRules")}</label>
               <RulesEditor rules={createRules} onChange={setCreateRules} />
             </div>
@@ -718,6 +742,18 @@ export default function UserBookingLinks({ username }: Props) {
                   <span className="font-medium">{t("users.bookingLinks.autoAccept")}</span>
                   <span className="block text-xs text-gray-500">{t("users.bookingLinks.autoAcceptHint")}</span>
                 </label>
+              </div>
+              <div>
+                <label className="text-sm font-medium block mb-1">{t("users.bookingLinks.color")}</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={editForm.color ?? DEFAULT_COLOR}
+                    onChange={(e) => setEditForm((f) => ({ ...f, color: e.target.value }))}
+                    className="h-9 w-14 p-1 border rounded-md cursor-pointer"
+                  />
+                  <span className="text-xs font-mono text-gray-500">{editForm.color ?? DEFAULT_COLOR}</span>
+                </div>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-2">
