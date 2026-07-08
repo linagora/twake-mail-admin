@@ -42,6 +42,17 @@ export const deleteForwardMapping = async (
   );
 };
 
+export const createDomainMapping = async (
+  sourceDomain: string,
+  destinationDomain: string
+): Promise<void> => {
+  await apiClient.put(
+    `/domainMappings/${encodeURIComponent(sourceDomain)}`,
+    destinationDomain,
+    { headers: { "Content-Type": "text/plain" } }
+  );
+};
+
 export const deleteDomainMapping = async (
   sourceDomain: string,
   destinationDomain: string
