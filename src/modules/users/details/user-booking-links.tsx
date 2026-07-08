@@ -33,6 +33,45 @@ function calendarLabel(calendar: UserCalendar): string {
   return calendar["dav:name"]?.trim() || calendarHref(calendar);
 }
 
+// esn-sabre sharee access codes: 2 = read, 3 = read-write, 5 = administration.
+const WRITE_ACCESS = new Set([3, 5]);
+
+// A calendar backed by a resource (meeting room, equipment…) is exposed as a
+// subscription whose source is shared with a `principals/resources/…` principal.
+function isResourceCalendar(calendar: UserCalendar): boolean {
+  const source = calendar["calendarserver:source"];
+  if (!source) return false;
+  const principals = [
+    ...(source.invite ?? []).map((i) => i.principal),
+    ...(source.acl ?? []).map((a) => a.principal),
+  ];
+  return principals.some((p) => p?.startsWith("principals/resources/"));
+}
+
+// True when the viewed user (identified by their e-mail address, which is the
+// username here) is an explicit sharee of this calendar with read-write or
+// administration access. The sharing invites live on the calendar itself or on
+// its subscription source.
+function hasWriteDelegation(calendar: UserCalendar, username: string): boolean {
+  const mine = `mailto:${username.toLowerCase()}`;
+  const invites = [
+    ...(calendar.invite ?? []),
+    ...(calendar["calendarserver:source"]?.invite ?? []),
+  ];
+  return invites.some((i) => i.href?.toLowerCase() === mine && WRITE_ACCESS.has(i.access));
+}
+
+// A booking link may only target a calendar the user can write to: their own
+// calendars, or calendars explicitly shared to them with write delegation.
+// Resource calendars and read-only shares are never bookable (see issue #27).
+function isBookableCalendar(calendar: UserCalendar, username: string): boolean {
+  if (isResourceCalendar(calendar)) return false;
+  // Owned calendars have neither a subscription source nor a delegated source.
+  const isOwned = !calendar["calendarserver:source"] && !calendar["calendarserver:delegatedsource"];
+  if (isOwned) return true;
+  return hasWriteDelegation(calendar, username);
+}
+
 // A dropdown of the user's calendars (by name) instead of a raw URL field.
 // The stored value is the calendar's self href, which is exactly what the
 // booking-links API expects as calendarUrl. Falls back to a free-text input
@@ -309,7 +348,16 @@ export default function UserBookingLinks({ username }: Props) {
   const { data: calendarsData } = useFetchData<GetUserCalendarsResponseType>(
     canView && canViewCalendars ? fetchCalendars : null
   );
-  const calendarOptions: CalendarOption[] = (calendarsData?._embedded?.["dav:calendar"] ?? [])
+  const allCalendars = calendarsData?._embedded?.["dav:calendar"] ?? [];
+  // Full list, used only to resolve calendar names for display (a link may
+  // point to a calendar the user can no longer book on).
+  const calendarOptions: CalendarOption[] = allCalendars
+    .map((c) => ({ value: calendarHref(c), label: calendarLabel(c) }))
+    .filter((o) => o.value);
+  // Restricted list offered in the create/edit dropdowns: only calendars the
+  // user can write to (owned or write-delegated), never resources.
+  const bookableCalendarOptions: CalendarOption[] = allCalendars
+    .filter((c) => isBookableCalendar(c, username))
     .map((c) => ({ value: calendarHref(c), label: calendarLabel(c) }))
     .filter((o) => o.value);
 
@@ -525,7 +573,7 @@ export default function UserBookingLinks({ username }: Props) {
               <CalendarSelect
                 value={createForm.calendarUrl}
                 onChange={(value) => setCreateForm((f) => ({ ...f, calendarUrl: value }))}
-                options={calendarOptions}
+                options={bookableCalendarOptions}
               />
             </div>
             <div>
@@ -615,7 +663,7 @@ export default function UserBookingLinks({ username }: Props) {
                 <CalendarSelect
                   value={editForm.calendarUrl ?? ""}
                   onChange={(value) => setEditForm((f) => ({ ...f, calendarUrl: value }))}
-                  options={calendarOptions}
+                  options={bookableCalendarOptions}
                 />
               </div>
               <div>
