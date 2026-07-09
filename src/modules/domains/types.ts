@@ -115,3 +115,23 @@ export interface TeamCalendar {
   creation: string;
   updated: string;
 }
+
+export type TeamCalendarMemberRole = "viewer" | "member" | "manager";
+
+export interface TeamCalendarMember {
+  username: string;
+  role: TeamCalendarMemberRole;
+  davRight: string;
+}
+
+export interface TeamCalendarShareSetEntry {
+  "dav:href": string;
+  "dav:read"?: boolean;
+  "dav:read-write"?: boolean;
+  "dav:administration"?: boolean;
+}
+
+export interface TeamCalendarShareUpdate {
+  set?: TeamCalendarShareSetEntry[];
+  remove?: { "dav:href": string }[];
+}

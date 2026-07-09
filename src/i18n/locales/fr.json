@@ -385,7 +385,24 @@
       "deleted": "Calendrier d'équipe supprimé",
       "errorDeleting": "Erreur lors de la suppression du calendrier d'équipe",
       "deleteTooltip": "Supprimer le calendrier d'équipe",
-      "empty": "Aucun calendrier d'équipe."
+      "empty": "Aucun calendrier d'équipe.",
+      "members": {
+        "title": "Membres",
+        "tooltip": "Gérer les membres",
+        "empty": "Aucun membre.",
+        "placeholder": "utilisateur@domaine.com",
+        "apply": "Appliquer",
+        "remove": "Retirer",
+        "undoRemove": "Annuler le retrait",
+        "alreadyMember": "Déjà membre",
+        "updated": "Membres mis à jour",
+        "errorUpdate": "Erreur lors de la mise à jour des membres",
+        "roles": {
+          "viewer": "Lecteur",
+          "member": "Membre",
+          "manager": "Gestionnaire"
+        }
+      }
     },
     "calendarTasks": {
       "title": "Tâches",
