@@ -41,6 +41,8 @@ export type TaskRequest = {
 export type AdditionalParams = {
   messagesPerSecond?: string;
   trustMessageProjection?: boolean;
+  maxIterations?: string;
+  autoMerge?: boolean;
   usersPerSecond?: string;
   quotaComponent?: string;
   associatedProbability?: string;
