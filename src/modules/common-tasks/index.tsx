@@ -44,6 +44,10 @@ const TASKS: TaskProps[] = [
     nameKey: 'commonTasks.fixMailboxInconsistencies',
     taskKey: TaskKey.FIX_MAILBOX_INCONSISTENCIES,
     command: 'curl -XPOST /mailboxes?task=SolveInconsistencies',
+    params: [
+      { key: 'maxIterations', defaultValue: '5', type: 'input' },
+      { key: 'autoMerge', defaultValue: false, type: 'checkbox' },
+    ],
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_fixing_mailboxes_inconsistencies',
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
