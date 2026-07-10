@@ -830,6 +830,7 @@
       "descriptionPlaceholder": "ví dụ: Đặt một cuộc gọi giới thiệu 30 phút",
       "autoAccept": "Tự động chấp nhận đặt lịch",
       "autoAcceptHint": "Các lượt đặt lịch được chấp nhận ngay lập tức, không cần yêu cầu xác nhận hay e-mail thông báo.",
+      "color": "Màu sắc",
       "availabilityRules": "Quy tắc khả dụng",
       "addRule": "Thêm quy tắc",
       "removeRule": "Xóa quy tắc",

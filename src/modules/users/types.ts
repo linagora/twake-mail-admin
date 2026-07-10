@@ -210,6 +210,8 @@ export interface BookingLink {
   name?: string;
   description?: string;
   autoAccept?: boolean;
+  // A #RRGGBB hex color, always present in responses (defaults to #6B4ECC).
+  color?: string;
 }
 
 export interface CreateBookingLinkPayload {
@@ -220,6 +222,7 @@ export interface CreateBookingLinkPayload {
   name?: string;
   description?: string;
   autoAccept?: boolean;
+  color?: string;
 }
 
 export interface UpdateBookingLinkPayload {
@@ -231,6 +234,8 @@ export interface UpdateBookingLinkPayload {
   description?: string | null;
   // The patch API rejects removing autoAccept, so it can only be set to a boolean.
   autoAccept?: boolean;
+  // A #RRGGBB hex color; null/blank removes the stored color (default then applies).
+  color?: string | null;
 }
 
 export interface UserAddressBook {
