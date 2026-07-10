@@ -383,6 +383,15 @@
     "title": "Chi tiết người dùng",
     "label": "Tên người dùng: {{username}}",
     "searchPlaceholder": "Tìm người dùng...",
+    "registration": {
+      "notRegistered": "Người dùng này chưa được đăng ký",
+      "notRegisteredHint": "Người dùng tồn tại trong thư mục nhưng chưa được đăng ký trên máy chủ DAV. Lịch, sổ địa chỉ và liên kết đặt lịch sẽ không khả dụng cho đến khi người dùng được đăng ký.",
+      "register": "Đăng ký người dùng này",
+      "registerTitle": "Đăng ký người dùng",
+      "registerHint": "Đăng ký \"{{username}}\" trên máy chủ DAV. Họ và tên không được đọc từ thư mục, vui lòng xác nhận.",
+      "registered": "Đã đăng ký người dùng \"{{username}}\"",
+      "errorRegistering": "Lỗi khi đăng ký người dùng"
+    },
     "aliases": {
       "title": "Bí danh",
       "placeholder": "alias@domain.com",
