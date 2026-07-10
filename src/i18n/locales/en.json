@@ -420,6 +420,15 @@
     "title": "User Details",
     "label": "Username: {{username}}",
     "searchPlaceholder": "Search users...",
+    "registration": {
+      "notRegistered": "This user is not registered",
+      "notRegisteredHint": "The user exists in the directory but is not registered on the DAV server yet. Calendars, address books and booking links are unavailable until the user is registered.",
+      "register": "Register this user",
+      "registerTitle": "Register user",
+      "registerHint": "Registering \"{{username}}\" on the DAV server. Firstname and lastname are not read from the directory, please confirm them.",
+      "registered": "User \"{{username}}\" registered",
+      "errorRegistering": "Error registering user"
+    },
     "aliases": {
       "title": "Aliases",
       "placeholder": "alias@domain.com",

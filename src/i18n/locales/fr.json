@@ -420,6 +420,15 @@
     "title": "Détails de l'utilisateur",
     "label": "Utilisateur : {{username}}",
     "searchPlaceholder": "Rechercher des utilisateurs…",
+    "registration": {
+      "notRegistered": "Cet utilisateur n'est pas enregistré",
+      "notRegisteredHint": "L'utilisateur existe dans l'annuaire mais n'est pas encore enregistré sur le serveur DAV. Les calendriers, carnets d'adresses et liens de réservation sont indisponibles tant que l'utilisateur n'est pas enregistré.",
+      "register": "Enregistrer cet utilisateur",
+      "registerTitle": "Enregistrer l'utilisateur",
+      "registerHint": "Enregistrement de « {{username}} » sur le serveur DAV. Le prénom et le nom ne sont pas lus depuis l'annuaire, merci de les confirmer.",
+      "registered": "Utilisateur « {{username}} » enregistré",
+      "errorRegistering": "Erreur lors de l'enregistrement de l'utilisateur"
+    },
     "aliases": {
       "title": "Alias",
       "placeholder": "alias@domaine.com",
