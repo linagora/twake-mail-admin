@@ -352,6 +352,33 @@ Same than for team mailbox: if both are missing do not display the section...
 
 ---
 
+## Mailing lists
+
+### Mailing list list
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Page load | GET | `/mailingLists` | MUST |
+| "Create mailing list" form | PUT | `/mailingLists/{address}` | MAY (do not show the form if missing) |
+| "Delete mailing list" button | DELETE | `/mailingLists/{address}` | MAY (do not show the button if missing) |
+
+### Mailing list detail *("Show details" row)*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Detail load | GET | `/mailingLists/{address}` | MUST |
+| "Add member" button | PUT | `/mailingLists/{address}/members/{member}` | MAY (do not show the button if missing) |
+| "Remove member" button | DELETE | `/mailingLists/{address}/members/{member}` | MAY (do not show the button if missing) |
+| "Add owner" button | PUT | `/mailingLists/{address}/owners/{owner}` | MAY (do not show the button if missing) |
+| "Remove owner" button | DELETE | `/mailingLists/{address}/owners/{owner}` | MAY (do not show the button if missing) |
+
+Note: the sidebar entry (both GLOBAL and DOMAIN mode) is gated on `GET /mailingLists`.
+In DOMAIN mode the actual call carries a `?domain={domain}` query string, which the
+"query strings included" resolver rule would make a distinct pattern — to be confirmed
+against what the proxy actually declares.
+
+---
+
 ## Mail repositories *(APPLICATION:"MAIL", GLOBAL mode)*
 
 ### Repository list

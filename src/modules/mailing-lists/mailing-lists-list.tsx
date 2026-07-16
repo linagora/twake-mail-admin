@@ -375,12 +375,14 @@ function MailingListDetailRow({ address }: { address: string }) {
 
   return (
     <div className="flex flex-col gap-3 text-sm">
-      {data.businessCategory && (
-        <div>
-          <span className="font-medium">{t("mailingLists.businessCategory")}: </span>
+      <div>
+        <span className="font-medium">{t("mailingLists.businessCategory")}: </span>
+        {data.businessCategory ? (
           <span>{data.businessCategory}</span>
-        </div>
-      )}
+        ) : (
+          <span className="text-gray-500">{t("mailingLists.noBusinessCategory")}</span>
+        )}
+      </div>
       <EditableAddresses
         title={t("mailingLists.members")}
         addresses={members}
