@@ -1202,6 +1202,12 @@
     "removeConfirm": "Xóa ánh xạ {{typeLabel}} \"{{source}}\" → \"{{destination}}\"?",
     "removed": "Đã xóa ánh xạ {{type}} thành công",
     "errorRemoving": "Lỗi khi xóa ánh xạ {{typeLabel}}",
+    "removePage": "Xóa trang ({{total}})",
+    "removingPage": "Đang xóa...",
+    "removePageTitle": "Xóa các ánh xạ đang hiển thị",
+    "removePageConfirm": "{{total}} ánh xạ hiển thị trên trang này sẽ bị xóa vĩnh viễn:",
+    "removedPage": "Đã xóa {{total}} ánh xạ thành công",
+    "errorRemovingPage": "Không thể xóa {{failed}} ánh xạ (đã xóa {{removed}})",
     "empty": "Không tìm thấy ánh xạ.",
     "subtitle": "Xem tất cả ánh xạ viết lại người nhận (bí danh, nhóm, tên miền, chuyển tiếp)."
   },

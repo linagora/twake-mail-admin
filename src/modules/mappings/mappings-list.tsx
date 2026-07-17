@@ -12,7 +12,7 @@ import {
   deleteRegexMapping,
 } from "./api-client";
 import { GetMappingsResponseType, FlatMapping } from "./types";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -62,8 +62,29 @@ export default function MappingsList() {
   const [domainSource, setDomainSource] = useState("");
   const [domainDestination, setDomainDestination] = useState("");
   const [creatingDomain, setCreatingDomain] = useState(false);
+  const [deletingPage, setDeletingPage] = useState(false);
   const { toast } = useToast();
   const confirm = useConfirm();
+
+  const deleteMapping = async (mapping: FlatMapping) => {
+    switch (mapping.type) {
+      case "Address":
+        return deleteAddressMapping(mapping.source, mapping.destination);
+      case "Alias":
+        return deleteAliasMapping(mapping.source, mapping.destination);
+      case "Forward":
+        return deleteForwardMapping(mapping.source, mapping.destination);
+      case "Group":
+        return deleteGroupMapping(mapping.source, mapping.destination);
+      case "Domain":
+      case "DomainAlias":
+        return deleteDomainMapping(mapping.source, mapping.destination);
+      case "Regex":
+        return deleteRegexMapping(mapping.source, mapping.destination);
+      default:
+        throw new Error(`Unsupported mapping type: ${mapping.type}`);
+    }
+  };
 
   const handleDelete = async (mapping: FlatMapping) => {
     const typeLabel = mapping.type.toLowerCase();
@@ -73,29 +94,7 @@ export default function MappingsList() {
     });
     if (!confirmed) return;
     try {
-      switch (mapping.type) {
-        case "Address":
-          await deleteAddressMapping(mapping.source, mapping.destination);
-          break;
-        case "Alias":
-          await deleteAliasMapping(mapping.source, mapping.destination);
-          break;
-        case "Forward":
-          await deleteForwardMapping(mapping.source, mapping.destination);
-          break;
-        case "Group":
-          await deleteGroupMapping(mapping.source, mapping.destination);
-          break;
-        case "Domain":
-        case "DomainAlias":
-          await deleteDomainMapping(mapping.source, mapping.destination);
-          break;
-        case "Regex":
-          await deleteRegexMapping(mapping.source, mapping.destination);
-          break;
-        default:
-          return;
-      }
+      await deleteMapping(mapping);
       toast({ title: t("mappings.removed", { type: mapping.type }) });
       await refresh();
     } catch (err) {
@@ -103,6 +102,56 @@ export default function MappingsList() {
         title: t("mappings.errorRemoving", { typeLabel }),
         description: <ErrorDisplayer error={err} />,
       });
+    }
+  };
+
+  const handleDeletePage = async () => {
+    if (deletablePageMappings.length === 0) return;
+    const confirmed = await confirm({
+      header: t("mappings.removePageTitle"),
+      className: "max-w-2xl",
+      message: (
+        <div className="flex flex-col gap-3">
+          <p>{t("mappings.removePageConfirm", { total: deletablePageMappings.length })}</p>
+          <ul className="max-h-72 overflow-y-auto border rounded-md divide-y">
+            {deletablePageMappings.map((mapping, index) => (
+              <li
+                key={`${mapping.source}-${mapping.type}-${mapping.destination}-${index}`}
+                className="px-3 py-2 text-sm flex items-center gap-2"
+              >
+                <span className="text-gray-500 shrink-0">{mapping.type}</span>
+                <span className="truncate">{mapping.source}</span>
+                <span className="text-gray-400 shrink-0">→</span>
+                <span className="truncate">{mapping.destination}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ),
+    });
+    if (!confirmed) return;
+    setDeletingPage(true);
+    try {
+      const failures: unknown[] = [];
+      for (const mapping of deletablePageMappings) {
+        try {
+          await deleteMapping(mapping);
+        } catch (err) {
+          failures.push(err);
+        }
+      }
+      const removed = deletablePageMappings.length - failures.length;
+      if (failures.length > 0) {
+        toast({
+          title: t("mappings.errorRemovingPage", { failed: failures.length, removed }),
+          description: <ErrorDisplayer error={failures[0]} />,
+        });
+      } else {
+        toast({ title: t("mappings.removedPage", { total: removed }) });
+      }
+      await refresh();
+    } finally {
+      setDeletingPage(false);
     }
   };
 
@@ -205,6 +254,12 @@ export default function MappingsList() {
     page * PAGE_LIMIT
   );
 
+  const deletablePageMappings = paginatedMappings.filter((m) => canDeleteMapping(m.type));
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
   const goToPage = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages) return;
     setPage(newPage);
@@ -238,6 +293,18 @@ export default function MappingsList() {
           >
             <Plus className="w-4 h-4" />
             {t("mappings.addDomain")}
+          </button>
+        )}
+        {deletablePageMappings.length > 0 && (
+          <button
+            onClick={handleDeletePage}
+            disabled={deletingPage}
+            className="ml-auto flex items-center gap-1 px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Trash2 className="w-4 h-4" />
+            {deletingPage
+              ? t("mappings.removingPage")
+              : t("mappings.removePage", { total: deletablePageMappings.length })}
           </button>
         )}
       </div>

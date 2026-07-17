@@ -1239,6 +1239,12 @@
     "removeConfirm": "Supprimer la correspondance {{typeLabel}} « {{source}} » → « {{destination}} » ?",
     "removed": "Correspondance {{type}} supprimée",
     "errorRemoving": "Erreur lors de la suppression",
+    "removePage": "Supprimer la page ({{total}})",
+    "removingPage": "Suppression...",
+    "removePageTitle": "Supprimer les correspondances affichées",
+    "removePageConfirm": "Les {{total}} correspondance(s) affichées sur cette page seront définitivement supprimées :",
+    "removedPage": "{{total}} correspondance(s) supprimée(s)",
+    "errorRemovingPage": "{{failed}} correspondance(s) n'ont pas pu être supprimées ({{removed}} supprimée(s))",
     "empty": "Aucune correspondance trouvée.",
     "subtitle": "Voir toutes les correspondances de réécriture des destinataires (alias, groupes, domaines, redirections)."
   },
