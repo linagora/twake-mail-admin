@@ -5,6 +5,7 @@ import {
   deleteAddressMapping,
   deleteAliasMapping,
   deleteForwardMapping,
+  deleteGroupMapping,
   deleteDomainMapping,
   createDomainMapping,
   createRegexMapping,
@@ -30,6 +31,12 @@ export default function MappingsList() {
   const canAddDomainMapping = useIsAllowed("PUT", "/domainMappings/{fromDomain}");
   const canAddDomain = appConfig.application === "MAIL" && canAddDomainMapping;
   const canDelete = useIsAllowed("DELETE", "/mappings/address/{source}/targets/{destination}");
+  const canDeleteGroupMember = useIsAllowed("DELETE", "/address/groups/{groupAddress}/{memberAddress}");
+
+  const canDeleteMapping = (type: string) => {
+    if (type === "Group") return canDeleteGroupMember;
+    return canDelete && ["Address", "Alias", "Forward", "Domain", "DomainAlias", "Regex"].includes(type);
+  };
 
   const {
     data: mappingsResult,
@@ -75,6 +82,9 @@ export default function MappingsList() {
           break;
         case "Forward":
           await deleteForwardMapping(mapping.source, mapping.destination);
+          break;
+        case "Group":
+          await deleteGroupMapping(mapping.source, mapping.destination);
           break;
         case "Domain":
         case "DomainAlias":
@@ -396,7 +406,7 @@ export default function MappingsList() {
               <td className="px-4 py-2 text-sm">{mapping.type}</td>
               <td className="px-4 py-2 text-sm">{mapping.destination}</td>
               <td className="px-4 py-2 text-sm">
-                {canDelete && ["Address", "Alias", "Forward", "Domain", "DomainAlias", "Regex"].includes(mapping.type) && (
+                {canDeleteMapping(mapping.type) && (
                   <button
                     onClick={() => handleDelete(mapping)}
                     className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
