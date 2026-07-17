@@ -1239,6 +1239,12 @@
     "removeConfirm": "Remove {{typeLabel}} mapping \"{{source}}\" → \"{{destination}}\"?",
     "removed": "{{type}} mapping removed successfully",
     "errorRemoving": "Error removing {{typeLabel}} mapping",
+    "removePage": "Delete page ({{total}})",
+    "removingPage": "Deleting...",
+    "removePageTitle": "Delete Displayed Mappings",
+    "removePageConfirm": "The following {{total}} mapping(s) displayed on this page will be permanently removed:",
+    "removedPage": "{{total}} mapping(s) removed successfully",
+    "errorRemovingPage": "{{failed}} mapping(s) could not be removed ({{removed}} removed)",
     "empty": "No mappings found.",
     "subtitle": "View all recipients rewrite mappings (aliases, groups, domains, forwards)."
   },
