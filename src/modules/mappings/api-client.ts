@@ -42,6 +42,15 @@ export const deleteForwardMapping = async (
   );
 };
 
+export const deleteGroupMapping = async (
+  groupAddress: string,
+  memberAddress: string
+): Promise<void> => {
+  await apiClient.delete(
+    `/address/groups/${encodeURIComponent(groupAddress)}/${encodeURIComponent(memberAddress)}`
+  );
+};
+
 export const createDomainMapping = async (
   sourceDomain: string,
   destinationDomain: string

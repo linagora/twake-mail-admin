@@ -487,9 +487,12 @@ against what the proxy actually declares.
 | "Remove mapping" button | DELETE | `/mappings/address/{source}/targets/{destination}` | MAY (do not show the button if missing)|
 | "Remove alias mapping" button | DELETE | `/address/aliases/{userAddress}/sources/{aliasSource}` | MAY (do not show the button if missing)|
 | "Remove forward mapping" button | DELETE | `/address/forwards/{userAddress}/targets/{targetAddress}` | MAY (do not show the button if missing)|
+| "Remove group member" button | DELETE | `/address/groups/{groupAddress}/{memberAddress}` | MAY (do not show the button if missing)|
 | "Remove domain alias mapping" button | DELETE | `/domainAliases/{destinationDomain}/sources/{sourceDomain}` | MAY (do not show the button if missing)|
 | "Add regex mapping" button | POST | `/mappings/regex/{mappingSource}/targets/{regex}` | MAY (do not show the button if missing)|
 | "Remove regex mapping" button | DELETE | `/mappings/regex/{mappingSource}/targets/{regex}` | MAY (do not show the button if missing)|
+
+Group members are removed one at a time: `DELETE /address/groups/{groupAddress}` (without a member) returns 400, and `DELETE /address/groups` (with nothing) would wipe every Group mapping across all groups. Neither is used here. This is the recipient rewrite table only — the LDAP-backed TMail mailing lists are a distinct feature and are unaffected by this button.
 
 ---
 
