@@ -27,8 +27,6 @@ function uuidV1ToDate(uuid: string): string | null {
     return null;
   }
 }
-const INVALID_MAILBOX_PATTERN = /[%*]|^#/;
-
 interface Props {
   username: string;
 }
@@ -86,13 +84,6 @@ export default function UserMailboxes({ username }: Props) {
   const handleCreate = async () => {
     const name = newMailbox.trim();
     if (!name) return;
-    if (INVALID_MAILBOX_PATTERN.test(name)) {
-      toast({
-        title: t("users.mailboxes.invalidName"),
-        description: t("users.mailboxes.invalidNameDesc"),
-      });
-      return;
-    }
     try {
       await createUserMailbox(username, name);
       toast({ title: t("users.mailboxes.created") });

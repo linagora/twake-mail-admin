@@ -13,8 +13,6 @@ import TeamMailboxFolderCounts from "./team-mailbox-folder-counts";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
-const INVALID_FOLDER_PATTERN = /[%*]|^#/;
-
 interface Props {
   domain: string;
   mailbox: string;
@@ -58,13 +56,6 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
   const handleCreate = async () => {
     const name = newFolder.trim();
     if (!name) return;
-    if (INVALID_FOLDER_PATTERN.test(name)) {
-      toast({
-        title: t("domains.folders.invalidName"),
-        description: t("domains.folders.invalidNameDesc"),
-      });
-      return;
-    }
     try {
       await createTeamMailboxFolder(domain, mailbox, name);
       toast({ title: t("domains.folders.created") });
