@@ -626,6 +626,8 @@
       "empty": "Aucun message ne correspond aux critères.",
       "restoreTitle": "Restaurer les messages supprimés",
       "restoreConfirm": "Restaurer {{count}} message(s) pour {{label}} ? Une tâche en arrière-plan sera créée.",
+      "restoreOneConfirm": "Restaurer ce message pour {{label}} ? Une tâche en arrière-plan sera créée.",
+      "actions": "Actions",
       "restoreStarted": "Tâche de restauration démarrée",
       "errorRestoring": "Erreur lors de la restauration des messages",
       "errorSearch": "Erreur lors de la recherche des messages supprimés",
