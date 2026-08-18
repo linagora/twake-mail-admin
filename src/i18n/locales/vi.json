@@ -589,6 +589,8 @@
       "empty": "Không có thư nào khớp tiêu chí.",
       "restoreTitle": "Khôi phục thư đã xóa",
       "restoreConfirm": "Khôi phục {{count}} thư cho {{label}}? Thao tác này sẽ xếp hàng một tác vụ chạy nền.",
+      "restoreOneConfirm": "Khôi phục thư này cho {{label}}? Thao tác này sẽ xếp hàng một tác vụ chạy nền.",
+      "actions": "Hành động",
       "restoreStarted": "Đã bắt đầu tác vụ khôi phục",
       "errorRestoring": "Lỗi khi khôi phục thư đã xóa",
       "errorSearch": "Lỗi khi tìm thư đã xóa",

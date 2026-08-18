@@ -626,6 +626,8 @@
       "empty": "No messages match the criteria.",
       "restoreTitle": "Restore deleted messages",
       "restoreConfirm": "Restore {{count}} message(s) for {{label}}? This will enqueue a background task.",
+      "restoreOneConfirm": "Restore this message for {{label}}? This will enqueue a background task.",
+      "actions": "Actions",
       "restoreStarted": "Restore task started",
       "errorRestoring": "Error restoring deleted messages",
       "errorSearch": "Error searching deleted messages",

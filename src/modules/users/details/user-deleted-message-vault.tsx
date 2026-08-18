@@ -45,6 +45,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
   const [restoreLoading, setRestoreLoading] = useState(false);
   const [results, setResults] = useState<DeletedMessage[] | null>(null);
   const [page, setPage] = useState(1);
+  const [restoringId, setRestoringId] = useState<string | null>(null);
 
   const handleSearch = async () => {
     setLoading(true);
@@ -102,6 +103,47 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
       });
     } finally {
       setRestoreLoading(false);
+    }
+  };
+
+  const handleRestoreOne = async (msg: DeletedMessage) => {
+    const confirmed = await confirm({
+      header: t("users.deletedVault.restoreTitle"),
+      message: t("users.deletedVault.restoreOneConfirm", { label }),
+    });
+    if (!confirmed) return;
+
+    setRestoringId(msg.messageId);
+    try {
+      const body: RestoreDeletedMessagesRequest = {
+        combinator: "and",
+        criteria: [
+          {
+            fieldName: "messageId",
+            operator: "equals",
+            value: msg.messageId,
+          },
+        ],
+      };
+      const data = await onRestore(body);
+      toast({
+        title: t("users.deletedVault.restoreStarted"),
+        description: (
+          <p>
+            Task{" "}
+            <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>
+              {data.taskId}
+            </Link>
+          </p>
+        ),
+      });
+    } catch (err) {
+      toast({
+        title: t("users.deletedVault.errorRestoring"),
+        description: <ErrorDisplayer error={err} />,
+      });
+    } finally {
+      setRestoringId(null);
     }
   };
 
@@ -175,12 +217,15 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.attachment")}</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.size")}</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">{t("users.deletedVault.messageId")}</th>
+                      {canRestore && (
+                        <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground w-10">{t("users.deletedVault.actions")}</th>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
                     {pageItems.length === 0 ? (
-                      <tr>
-                        <td colSpan={9} className="px-3 py-4 text-center text-muted-foreground">
+                       <tr>
+                        <td colSpan={canRestore ? 10 : 9} className="px-3 py-4 text-center text-muted-foreground">
                           {t("users.deletedVault.empty")}
                         </td>
                       </tr>
@@ -206,6 +251,25 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                             <td className="px-3 py-2 font-mono text-xs text-muted-foreground whitespace-nowrap">
                               {msg.messageId}
                             </td>
+                            {canRestore && (
+                              <td className="px-3 py-2">
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="rounded-sm text-green-700 border-green-600 hover:bg-green-50"
+                                  onClick={() => handleRestoreOne(msg)}
+                                  disabled={restoringId === msg.messageId || restoreLoading}
+                                  title={t("users.deletedVault.restore")}
+                                  aria-label={t("users.deletedVault.restore")}
+                                >
+                                  {restoringId === msg.messageId ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                  ) : (
+                                    <RotateCcw className="w-4 h-4" />
+                                  )}
+                                </Button>
+                              </td>
+                            )}
                           </tr>
                         );
                       })
