@@ -104,6 +104,7 @@ export default function UserDelegation({ username }: Props) {
 
       {open && (
         <div className="mt-2">
+          <p className="text-sm text-gray-500 mb-2">{t("users.delegation.description", { username })}</p>
           {showCreateInput && (
             <div className="flex gap-2 mt-2 mb-2">
               <input

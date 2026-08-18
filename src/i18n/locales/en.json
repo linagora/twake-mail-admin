@@ -506,6 +506,7 @@
     },
     "delegation": {
       "title": "Delegated Users",
+      "description": "Users listed here can access {{username}}'s data through delegation.",
       "placeholder": "user@domain.tld",
       "errorAdding": "Error adding delegated user",
       "added": "Delegated user added",
