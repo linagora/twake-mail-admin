@@ -224,7 +224,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                   </thead>
                   <tbody>
                     {pageItems.length === 0 ? (
-                       <tr>
+                      <tr>
                         <td colSpan={canRestore ? 10 : 9} className="px-3 py-4 text-center text-muted-foreground">
                           {t("users.deletedVault.empty")}
                         </td>
