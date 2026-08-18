@@ -51,6 +51,7 @@
     "size": "Kích thước:",
     "occupation": "Mức sử dụng",
     "limits": "Giới hạn",
+    "perUserLimit": "Giới hạn mỗi người dùng",
     "computedEffective": "Tính toán (hiệu lực)",
     "domain": "Tên miền",
     "global": "Toàn cục",

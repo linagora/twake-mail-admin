@@ -51,6 +51,7 @@
     "size": "Хэмжээ:",
     "occupation": "Эзэлхүүн",
     "limits": "Хязгаар",
+    "perUserLimit": "Хэрэглэгч бүрийн хязгаар",
     "computedEffective": "Тооцоолсон (бодит)",
     "domain": "Домэйн",
     "global": "Глобал",

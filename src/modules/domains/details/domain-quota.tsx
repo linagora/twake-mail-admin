@@ -122,7 +122,7 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
           ) : quota ? (
             <div className="p-4 bg-gray-50 rounded-2 space-y-3">
               <div>
-                <h4 className="text-sm font-semibold mb-1">{t("common.limits")}</h4>
+                <h4 className="text-sm font-semibold mb-1">{t("common.perUserLimit")}</h4>
                 <QuotaRow label={t("common.computedEffective")} values={quota.computed} countLabel={t("common.count")} sizeLabel={t("common.size")} />
                 <QuotaRow label={t("common.domain")} values={quota.domain} countLabel={t("common.count")} sizeLabel={t("common.size")} />
                 <QuotaRow label={t("common.global")} values={quota.global} countLabel={t("common.count")} sizeLabel={t("common.size")} />
