@@ -51,6 +51,7 @@
     "size": "Размер:",
     "occupation": "Заполнение",
     "limits": "Ограничения",
+    "perUserLimit": "Лимит на пользователя",
     "computedEffective": "Вычислено (фактически)",
     "domain": "Домен",
     "global": "Глобально",

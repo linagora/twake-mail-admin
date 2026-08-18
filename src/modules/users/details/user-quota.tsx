@@ -157,7 +157,7 @@ export default function UserQuota({ username }: Props) {
               <hr className="border-gray-200" />
 
               <div>
-                <h4 className="text-sm font-semibold mb-1">{t("common.limits")}</h4>
+                <h4 className="text-sm font-semibold mb-1">{t("common.perUserLimit")}</h4>
                 <QuotaRow label={t("common.computedEffective")} values={quota.computed} countLabel={t("common.count")} sizeLabel={t("common.size")} />
                 <QuotaRow label={t("users.quota.user")} values={quota.user} countLabel={t("common.count")} sizeLabel={t("common.size")} />
                 <QuotaRow label={t("common.domain")} values={quota.domain} countLabel={t("common.count")} sizeLabel={t("common.size")} />

@@ -51,6 +51,7 @@
     "size": "Size:",
     "occupation": "Occupation",
     "limits": "Limits",
+    "perUserLimit": "Per user limit",
     "computedEffective": "Computed (effective)",
     "domain": "Domain",
     "global": "Global",
