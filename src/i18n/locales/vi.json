@@ -470,6 +470,7 @@
     },
     "delegation": {
       "title": "Người dùng được ủy quyền",
+      "description": "Những người dùng được liệt kê ở đây có thể truy cập dữ liệu của {{username}} thông qua ủy quyền.",
       "placeholder": "user@domain.tld",
       "errorAdding": "Lỗi khi thêm người dùng được ủy quyền",
       "added": "Đã thêm người dùng được ủy quyền",
