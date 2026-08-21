@@ -57,6 +57,7 @@
 |---------|------|---------|----------|
 | Tab load | GET | `/quota/domains/{domain}` | MUST |
 | Save quota form | PUT | `/quota/domains/{domain}` | MAY (do not show quota update options) |
+| Domain quota usage section open | GET | `/quota/domains/{domain}` | MUST (do not show the section if forbidden) |
 
 ### Domain detail — Rate limits tab
 
@@ -434,6 +435,7 @@ against what the proxy actually declares.
 | Save quota form | PUT | `/quota` | MAY (do not show the button if missing) |
 | Report: users with specific quotas | GET | `/reports/quota/users?hasSpecificQuota` | MAY (do not show the section if missing)|
 | Report: quota summary | GET | `/reports/quota/users/sum?hasSpecificQuota` | MAY (do not show the button if missing) |
+| Global quota usage section open | GET | `/quota/sum` | MUST (do not show the section if forbidden) |
 
 ---
 

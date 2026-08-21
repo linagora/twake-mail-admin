@@ -10,6 +10,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
+import QuotaUsageSumSection from "@/components/custom/quota-usage-sum";
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_administrating_quotas";
 
@@ -198,6 +199,7 @@ export default function GlobalQuota() {
           </div>
         )}
 
+        <QuotaUsageSumSection />
         <ExploreUserQuota />
       </div>
     </div>

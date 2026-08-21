@@ -1053,6 +1053,11 @@
     "usersSpecificTitle": "Người dùng có hạn ngạch riêng ({{count}})",
     "noSpecificQuotas": "Không có người dùng nào có hạn ngạch riêng."
   },
+  "quotaUsage": {
+    "globalTitle": "Mức sử dụng tài nguyên toàn cục",
+    "domainTitle": "Mức sử dụng tài nguyên miền",
+    "couldNotLoad": "Không thể tải mức sử dụng hạn ngạch."
+  },
   "exploreQuota": {
     "title": "Khám phá hạn ngạch người dùng",
     "minOccupation": "Mức sử dụng tối thiểu (%)",

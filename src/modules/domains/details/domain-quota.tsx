@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
+import QuotaUsageSumSection from "@/components/custom/quota-usage-sum";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 interface Props {
@@ -177,6 +178,7 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
         </div>
       )}
 
+      {open && <QuotaUsageSumSection domain={domain} />}
       {open && <ExploreUserQuota domain={domain} />}
     </div>
   );
