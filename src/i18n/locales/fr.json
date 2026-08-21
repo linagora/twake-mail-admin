@@ -1092,7 +1092,7 @@
   },
   "quotaUsage": {
     "globalTitle": "Utilisation des ressources globales",
-    "domainTitle": "Utilisation des ressources du domaine",
+    "domainTitle": "Utilisation des ressources par le domaine",
     "couldNotLoad": "Impossible de charger l'utilisation du quota."
   },
   "exploreQuota": {
