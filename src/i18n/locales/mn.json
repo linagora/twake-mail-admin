@@ -1053,6 +1053,11 @@
     "usersSpecificTitle": "Тусгай квототой хэрэглэгчид ({{count}})",
     "noSpecificQuotas": "Ямар ч хэрэглэгч тусгай квотагүй."
   },
+  "quotaUsage": {
+    "globalTitle": "Глобаль квотын хэрэглээ",
+    "domainTitle": "Домэйн квотын хэрэглээ",
+    "couldNotLoad": "Квотын хэрэглээг ачаалж чадсангүй."
+  },
   "exploreQuota": {
     "title": "Хэрэглэгчийн квота судлах",
     "minOccupation": "Хамгийн бага эзэлхүүн (%)",

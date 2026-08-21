@@ -1090,6 +1090,11 @@
     "usersSpecificTitle": "Utilisateurs avec quotas spécifiques ({{count}})",
     "noSpecificQuotas": "Aucun utilisateur avec quota spécifique."
   },
+  "quotaUsage": {
+    "globalTitle": "Utilisation du quota global",
+    "domainTitle": "Utilisation du quota du domaine",
+    "couldNotLoad": "Impossible de charger l'utilisation du quota."
+  },
   "exploreQuota": {
     "title": "Explorer les quotas utilisateurs",
     "minOccupation": "Occupation min (%)",
