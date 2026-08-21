@@ -1054,8 +1054,8 @@
     "noSpecificQuotas": "Không có người dùng nào có hạn ngạch riêng."
   },
   "quotaUsage": {
-    "globalTitle": "Mức sử dụng hạn ngạch toàn cục",
-    "domainTitle": "Mức sử dụng hạn ngạch miền",
+    "globalTitle": "Mức sử dụng tài nguyên toàn cục",
+    "domainTitle": "Mức sử dụng tài nguyên miền",
     "couldNotLoad": "Không thể tải mức sử dụng hạn ngạch."
   },
   "exploreQuota": {

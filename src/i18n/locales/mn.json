@@ -1054,8 +1054,8 @@
     "noSpecificQuotas": "Ямар ч хэрэглэгч тусгай квотагүй."
   },
   "quotaUsage": {
-    "globalTitle": "Глобаль квотын хэрэглээ",
-    "domainTitle": "Домэйн квотын хэрэглээ",
+    "globalTitle": "Глобаль нөөцийн хэрэглээ",
+    "domainTitle": "Домэйн нөөцийн хэрэглээ",
     "couldNotLoad": "Квотын хэрэглээг ачаалж чадсангүй."
   },
   "exploreQuota": {

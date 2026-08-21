@@ -1091,8 +1091,8 @@
     "noSpecificQuotas": "No users have specific quotas."
   },
   "quotaUsage": {
-    "globalTitle": "Global quota usage",
-    "domainTitle": "Domain quota usage",
+    "globalTitle": "Global resource usage",
+    "domainTitle": "Domain resource usage",
     "couldNotLoad": "Could not load quota usage."
   },
   "exploreQuota": {
