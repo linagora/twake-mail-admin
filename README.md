@@ -93,3 +93,38 @@ Alternatively, you can run the project using **Docker Compose**.
 ### Dependencies
 
 This project is built with [Vite](https://vitejs.dev/)!
+
+## Profile editor
+
+What this frontend shows depends entirely on the `allowed.urls` profile
+configured for the operator's OIDC client in
+[webadmin-proxy](https://github.com/linagora/webadmin-proxy). Writing one by hand
+means knowing the WebAdmin API endpoint by endpoint.
+
+[`profile-editor/`](profile-editor/README.md) generates one by asking questions —
+which pages, which sections, which actions — and writes a rule file the proxy can
+`include` as-is. It also runs backwards: `--check` takes an existing profile and
+reports, page by page, what it makes visible.
+
+From this checkout — standard library only, nothing to install:
+
+```sh
+cd profile-editor
+python3 -m twake_profile_editor --name domain-support        # ask, then generate
+python3 -m twake_profile_editor --name domain-support --fr   # ...in French
+python3 -m twake_profile_editor --check domain-support.json  # what does it show?
+```
+
+Or from the image published alongside this one, **at the tag matching the
+deployment you are writing the profile for** — the endpoint inventory is baked in,
+so the tag is the version pin:
+
+```sh
+docker run --rm -it -v "$PWD:/work" --user "$(id -u):$(id -g)" \
+    linagora/twake-mail-admin-profile-editor:1.2.3 --name domain-support --fr
+```
+
+It reads [`validation.md`](validation.md), `src/lib/proxy-resolver.ts` and every
+`useIsAllowed` call site straight out of this repository, and its test suite
+fails when they disagree — which is why it lives here rather than in a repository
+of its own. See [`profile-editor/UPSTREAM.md`](profile-editor/UPSTREAM.md).

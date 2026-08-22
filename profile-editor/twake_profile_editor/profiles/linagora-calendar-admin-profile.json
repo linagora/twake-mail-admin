@@ -1,0 +1,8 @@
+[
+  {"denied":true, "verb":["POST"], "endpoint": "/users/{user}?action=deleteData"},
+  {"denied": true, "verb":["POST"], "endpoint": "/domains/{domain}?action=deleteData"},
+  {"verb": ["DELETE"], "endpoint": "/users/%@{domain}/addressbooks/*"},
+  {"verb": ["DELETE"], "endpoint": "/users/%@{domain}/booking-links/*"},
+  {"denied": true, "verb":["DELETE"], "endpoint": "/users/%@{domain}/*"},
+  {"endpoint": "/*"}
+]
