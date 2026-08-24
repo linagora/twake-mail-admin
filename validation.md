@@ -10,6 +10,96 @@
 - **DOMAIN mode — tasks**: only `/domains/{domain}/tasks/{id}` is evaluated (the global `/tasks/{id}` pattern is ignored in DOMAIN mode).
 - **`.proxy/` calls**: never blocked, not subject to evaluation.
 - **`Accept` header**: ignored by the resolver (download and regular GET share the same pattern).
+- **Gate ≠ call**: a number of components ask the resolver about one pattern and then call another — almost always the bare path while the call carries a query string. Because query strings are compared, **both must be granted** or the control never renders. They are all listed under [Permission gates that differ from the call](#permission-gates-that-differ-from-the-call).
+- **Two left bars**: GLOBAL and DOMAIN mode do not share a page tree. See [DOMAIN mode left bar](#domain-mode-left-bar).
+- **Application scope**: MAIL and CALENDAR mount different components. Every section below is annotated `MAIL`, `CALENDAR`, or both.
+
+---
+
+## Permission gates that differ from the call
+
+A component asks the resolver about one pattern and then calls another. Since the
+resolver compares the query string, the two are unrelated rules: **grant only the
+call and the control is never rendered; grant only the gate and pressing it
+fails**. Both belong in a profile.
+
+Almost every case is the same shape — the gate is the bare path, the call carries
+a task or action parameter.
+
+| Gate the component evaluates | Call it actually makes |
+|---|---|
+| `DELETE /blobs` | `DELETE /blobs?scope=unreferenced&{params}` |
+| `DELETE /deletedMessages` | `DELETE /deletedMessages?scope=expired` |
+| `DELETE /jmap/uploads` | `DELETE /jmap/uploads?scope=expired&{params}` |
+| `DELETE /mappings/sources/{username}` | `DELETE /mappings/sources/{username}?type={type}` |
+| `DELETE /messages` | `DELETE /messages?mailbox={mailbox}&olderThan={date}&useSavedDate` |
+| `DELETE /messages?mailbox=Spam` | `DELETE /messages?mailbox={mailbox}&olderThan={date}&useSavedDate` |
+| `DELETE /messages?mailbox=Trash` | `DELETE /messages?mailbox={mailbox}&olderThan={date}&useSavedDate` |
+| `DELETE /registeredUsers` | `DELETE /registeredUsers?email={email}` |
+| `DELETE /tasks` | `DELETE /tasks?olderThan={days}day` |
+| `GET /quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}&domain={domain}` | `GET /quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}` |
+| `GET /tasks` | `GET /tasks?{query_params}` |
+| `PATCH /registeredUsers` | `PATCH /registeredUsers?id={id}` |
+| `POST /addressbook/domain-members/{domain}` | `POST /addressbook/domain-members/{domain}?task=sync` |
+| `POST /calendars/{username}` | `POST /calendars/{username}?task=archive` |
+| `POST /cassandra/mappings` | `POST /cassandra/mappings?action=SolveInconsistencies&{params}` |
+| `POST /deletedMessages/users/{username}` | `POST /deletedMessages/users/{username}?action=restore` |
+| `POST /domains/{domain}/templates` | `POST /domains/{domain}/templates?action=provision&{params}` |
+| `POST /events/deadLetter/groups/{group}` | `POST /events/deadLetter/groups/{group}?action=reDeliver` |
+| `POST /mailboxes` | `POST /mailboxes?{params}` |
+| `POST /messages` | `POST /messages?{params}` |
+| `POST /quota/users` | `POST /quota/users?{params}` |
+| `POST /servers` | `POST /servers?reload-certificate` |
+| `POST /team-mailboxes` | `POST /team-mailboxes?action=repositionSystemRights` |
+| `POST /users` | `POST /users?{params}` |
+| `POST /users/{username}/mailboxes` | `POST /users/{username}/mailboxes?task=reIndex`<br>`POST /users/{username}/mailboxes?task=subscribeAll`<br>`POST /users/{username}/mailboxes?task=recomputeFastViewProjectionItems` |
+| `POST /users/{username}/mails` | `POST /users/{username}/mails?limit={limit}&offset={offset}` |
+| `POST /users/{username}/rename/{newUser}` | `POST /users/{username}/rename/{newUsername}?action=rename` |
+| `POST /users/{username}/templates` | `POST /users/{username}/templates?action=provision&{params}` |
+| `PUT /mailRepositories/{encodedPath}` | `PUT /mailRepositories/{encodedPath}?protocol={protocol}` |
+
+The gate patterns are also the reason a rule cannot simply be written against the
+documented call. They are kept in step by
+`profile-editor/twake_profile_editor/inventory.py` (the `gates=` field) and
+checked by `profile-editor/tests/test_frontend_crosscheck.py`, which fails when a
+component starts gating on something no rule grants.
+
+---
+
+## DOMAIN mode left bar
+
+GLOBAL and DOMAIN mode do **not** share a page tree. In DOMAIN mode the frontend
+mounts a different sidebar and a different route table
+(`modules/domain-admin/`): there is no domain list, no global user list and no
+health check page, and what are sections of a domain in GLOBAL mode become
+top-level entries.
+
+### APPLICATION:"MAIL" — `domain-admin/domain-sidebar.tsx`
+
+| Left bar entry | Gated on |
+|---|---|
+| Users | `GET /domains/{domain}/users` |
+| Domain aliases | `GET /domains/{domain}/aliases` |
+| Team mailboxes | `GET /domains/{domain}/team-mailboxes` |
+| Quota | `GET /quota/domains/{domain}` |
+| Rate limiting | `GET /domains/{domain}/ratelimits` |
+| Mailing lists | `GET /mailingLists` |
+| Tasks | `GET /tasks` |
+
+### APPLICATION:"CALENDAR" — `domain-admin/calendar-domain-sidebar.tsx`
+
+| Left bar entry | Gated on |
+|---|---|
+| Calendar admins | `GET /domains/{domain}/admins` |
+| Resources | `GET /domains/{domain}/resources` |
+| Users | `GET /domains/{domain}/users` |
+| Registered users | `GET /registeredUsers` |
+| Calendar settings | `GET /domains/{domain}/settings` |
+| Tasks | `GET /tasks` |
+
+The user detail page is reachable from the Users entry in both applications
+(`user/:username`), so every *User detail* section below applies in DOMAIN mode
+too — gated by the domain Users page rather than by `GET /users`.
 
 ---
 
@@ -37,7 +127,7 @@
 |---------|------|---------|----------|
 | Page load | GET | `/domains` | MUST |
 
-### Domain detail — Aliases tab
+### Domain detail — Aliases tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -45,28 +135,29 @@
 | "Add alias" button | PUT | `/domains/{domain}/aliases/{source}` | MAY (do not show the button) |
 | "Delete alias" button | DELETE | `/domains/{domain}/aliases/{source}` | MAY (do not show the button) |
 
-### Domain detail — Users tab
+### Domain detail — Users tab *(DOMAIN mode: this is the domain admin Users page)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Tab load | GET | `/domains/{domain}/users` | MUST |
 
-### Domain detail — Quota tab
+### Domain detail — Quota tab *(APPLICATION:"MAIL")*
+
+The usage figures come from the same call as the tab load; there is no second endpoint.
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
-| Tab load | GET | `/quota/domains/{domain}` | MUST |
+| Tab load, and domain quota usage section | GET | `/quota/domains/{domain}` | MUST |
 | Save quota form | PUT | `/quota/domains/{domain}` | MAY (do not show quota update options) |
-| Domain quota usage section open | GET | `/quota/domains/{domain}` | MUST (do not show the section if forbidden) |
 
-### Domain detail — Rate limits tab
+### Domain detail — Rate limits tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Tab load | GET | `/domains/{domain}/ratelimits` | MUST |
 | Save button | PUT | `/domains/{domain}/ratelimits` | MAY (do not show update options) |
 
-### Domain detail — Contacts tab
+### Domain detail — Contacts tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -76,7 +167,7 @@
 | "Edit contact" form | PUT | `/domains/{domain}/contacts/{username}` | MAY (do not show the button if missing)|
 | "Delete contact" button | DELETE | `/domains/{domain}/contacts/{username}` | MAY (do not show the button if missing) |
 
-### Domain detail — Team mailboxes tab
+### Domain detail — Team mailboxes tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -119,10 +210,31 @@
 | "Delete folder" button | DELETE | `/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}` | MAY (do not show the button if missing) |
 | Subaddressing status | GET | `/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/subaddressing` | MAY |
 | Toggle subaddressing | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/subaddressing` | MAY (do not show the button if missing) |
-| Extra ACL tab load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl` | MAY (do not show the button if missing)|
+| Extra ACL tab load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl` | MUST |
 | "Add ACL entry" button | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl/{username}` | MAY (do not show the button if missing) |
 | "Remove ACL entry" button | DELETE | `/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl/{username}` | MAY (do not show the button if missing) |
 | "Clear all ACL" button | DELETE | `/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/extraAcl` | MAY (do not show the button if missing) |
+
+### Domain detail — Signature templates section *(APPLICATION:"MAIL")*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Section load | GET | `/domains/{domain}/signature-templates` | MUST (do not show the section if forbidden) |
+| "Save signatures" form | PUT | `/domains/{domain}/signature-templates` | MAY (do not show the form controls if missing) |
+| "Delete signatures" button | DELETE | `/domains/{domain}/signature-templates` | MAY (do not show the button if missing) |
+
+### Domain detail — JMAP settings report section *(APPLICATION:"MAIL")*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Section load | GET | `/jmap/settings/reports` | MUST (do not show the section if forbidden) |
+
+### Domain detail — Tasks section *(APPLICATION:"MAIL")*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| "Apply signature templates" button | POST | `/domains/{domain}/signature-templates?action=apply` | MAY (do not show the button if missing) |
+| "Provision templates" button | POST | `/domains/{domain}/templates?action=provision&{params}` | MAY (do not show the button if missing) |
 
 ### Domain actions
 
@@ -132,14 +244,16 @@
 | "Delete domain" button | DELETE | `/domains/{domain}` | MAY (do not show the button if missing) |
 | "Delete all data" button | POST | `/domains/{domain}?action=deleteData` | MAY (do not show the button if missing) |
 
-### Domain detail — Deleted messages tab
+#### Team mailbox detail — Deleted messages sub-tab
+
+Rendered by `team-mailbox-detail.tsx`, not by the domain detail page.
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | "Search deleted messages" button | POST | `/deletedMessages/users/{mailbox@domain}/messages?force=true` | MAY (disable search button if missing) |
 | "Restore messages" button | POST | `/deletedMessages/teamMailbox/{mailbox@domain}?action=restore` | MAY (disable restore button if missing) |
 
-Note: if none are present hide dleted message vault.
+Note: if none are present, hide the deleted message vault.
 
 ### Domain detail — Calendar: Admins tab *(APPLICATION:"CALENDAR" only)*
 
@@ -194,7 +308,7 @@ Note: if none are present hide dleted message vault.
 |---------|------|---------|----------|
 | Page load | GET | `/users` | MUST |
 
-### User detail — Mailboxes tab
+### User detail — Mailboxes tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -209,7 +323,7 @@ Note: if none are present hide dleted message vault.
 | "Subscribe all" button | POST | `/users/{username}/mailboxes?task=subscribeAll` | MAY (do not show the button if missing) |
 | "Recompute projection" button | POST | `/users/{username}/mailboxes?task=recomputeFastViewProjectionItems` | MAY (do not show the button if missing) |
 
-### User detail — Quota tab
+### User detail — Quota tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -217,7 +331,7 @@ Note: if none are present hide dleted message vault.
 | Save quota form | PUT | `/quota/users/{username}/size` | MAY (do not show the button if missing) |
 | "Clear quota" button | DELETE | `/quota/users/{username}/size` | MAY (do not show the button if missing) |
 
-### User detail — Aliases tab
+### User detail — Aliases tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -225,7 +339,7 @@ Note: if none are present hide dleted message vault.
 | "Add alias" button | PUT | `/address/aliases/{username}/sources/{alias}` | MAY (do not show the button if missing) |
 | "Remove alias" button | DELETE | `/address/aliases/{username}/sources/{alias}` | MAY (do not show the button if missing)|
 
-### User detail — Forwards tab
+### User detail — Forwards tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -233,7 +347,7 @@ Note: if none are present hide dleted message vault.
 | "Add forward" button | PUT | `/address/forwards/{username}/targets/{destination}` | MAY (do not show the button if missing) |
 | "Remove forward" button | DELETE | `/address/forwards/{username}/targets/{destination}` | MAY (do not show the button if missing) |
 
-### User detail — Vacation tab
+### User detail — Vacation tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -241,7 +355,7 @@ Note: if none are present hide dleted message vault.
 | "Save vacation" button | POST | `/vacation/{username}` | MAY (do not show the button if missing) |
 | "Delete vacation" button | DELETE | `/vacation/{username}` | MAY (do not show the button if missing) |
 
-### User detail — Identities tab
+### User detail — Identities tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -250,11 +364,11 @@ Note: if none are present hide dleted message vault.
 | "Edit identity" form | PUT | `/users/{username}/identities/{identityId}` | MAY (do not show the button if missing) |
 | "Delete identity" button | DELETE | `/users/{username}/identities/{identityId}` | MAY (do not show the button if missing) |
 
-### User detail - allowed from header section
+### User detail - allowed from header section *(APPLICATION:"MAIL")*
 
 | Allowed from headers (detail load) | GET | `/users/{username}/allowedFromHeaders` | MUST |
 
-### User detail — Delegated users tab
+### User detail — Delegated users tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -262,21 +376,21 @@ Note: if none are present hide dleted message vault.
 | "Add delegated user" button | PUT | `/users/{username}/authorizedUsers/{delegated}` | MAY (do not show the button if missing) |
 | "Remove delegated user" button | DELETE | `/users/{username}/authorizedUsers/{delegated}` | MAY (do not show the button if missing) |
 
-### User detail — Channels tab
+### User detail — Channels tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Tab load | GET | `/servers/channels/{username}` | MUST |
 | "Disconnect channels" button | DELETE | `/servers/channels/{username}` | MAY (do not show the button if missing) |
 
-### User detail — Rate limits tab
+### User detail — Rate limits tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Tab load | GET | `/users/{username}/ratelimits` | MUST |
 | Save button | PUT | `/users/{username}/ratelimits` | MAY (do not show the button if missing) |
 
-### User detail — Mappings tab
+### User detail — Mappings tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -284,7 +398,7 @@ Note: if none are present hide dleted message vault.
 | Mapping sources | GET | `/mappings/sources/{username}?type={type}` | MUST |
 | "Delete mapping sources" button | DELETE | `/mappings/sources/{username}?type={type}` | MAY (do not show the button if missing) |
 
-### User detail — Labels tab
+### User detail — Labels tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -293,7 +407,7 @@ Note: if none are present hide dleted message vault.
 | "Edit label" form | PATCH | `/users/{username}/labels/{labelId}` | MAY (do not show the button if missing) |
 | "Delete label" button | DELETE | `/users/{username}/labels/{labelId}` | MAY (do not show the button if missing) |
 
-### User detail — Deleted messages tab
+### User detail — Deleted messages tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -302,22 +416,36 @@ Note: if none are present hide dleted message vault.
 
 Same than for team mailbox: if both are missing do not display the section...
 
-### User detail — Team mailboxes tab
+### User detail — Team mailboxes tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Tab load | GET | `/users/{username}/team-mailboxes` | MUST |
 | "Leave" button | DELETE | `/domains/{domain}/team-mailboxes/{mailbox}/members/{username}` | MAY (do not show the button if missing) |
 
-### User detail — Message search tab
+### User detail — Message search tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | "Search messages" button | POST | `/users/{username}/mails?limit={limit}&offset={offset}` | MUST |
 
-### User detail - tasks
+### User detail — Tasks section *(APPLICATION:"MAIL")*
 
+Rendered by `user-tasks.tsx`. Every button of the panel gates on a pattern that
+differs from the call it makes — see [Permission gates that differ from the call](#permission-gates-that-differ-from-the-call).
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
 | "Cleanup mailbox" button | DELETE | `/messages?mailbox={mailbox}&olderThan={date}&useSavedDate` | MAY (do not show the button if missing) |
+| "Tier user data" button | POST | `/users/{username}/data?tiering={tiering}` | MAY (do not show the button if missing) |
+| "Provision templates" button | POST | `/users/{username}/templates?action=provision&{params}` | MAY (do not show the button if missing) |
+
+### User detail — JMAP settings section *(APPLICATION:"MAIL")*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Section load | GET | `/users/{username}/jmap/settings` | MUST (do not show the section if forbidden) |
+| "Save settings" form | PUT | `/users/{username}/jmap/settings` | MAY (do not show the form controls if missing) |
 
 ### User actions
 
@@ -345,7 +473,37 @@ Same than for team mailbox: if both are missing do not display the section...
 | Owner email resolution (delegated/subscription) | GET | `/registeredUsers` | MAY (owner line hidden if missing) |
 | "Delete calendar" button (trash) | DELETE | `/users/{username}/calendars/{calendarId}` | MAY (do not show the trash icon if missing) |
 
-### User quota explorer (inline component)
+### User detail — Calendar: Address books section *(APPLICATION:"CALENDAR" only)*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Section load | GET | `/users/{username}/addressbooks` | MUST (hide the whole section if missing) |
+| "Create address book" button | POST | `/users/{username}/addressbooks` | MAY (do not show the button if missing) |
+| "Delete address book" button | DELETE | `/users/{username}/addressbooks/{addressBookId}` | MAY (do not show the button if missing) |
+| "Public visibility" button | POST | `/users/{username}/addressbooks/{addressBookId}/publicRight` | MAY (do not show the button if missing) |
+| "Invitees / delegation" button | POST | `/users/{username}/addressbooks/{addressBookId}/invitee` | MAY (do not show the button if missing) |
+
+### User detail — Calendar: Booking links section *(APPLICATION:"CALENDAR" only)*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Section load | GET | `/users/{username}/booking-links` | MUST (hide the whole section if missing) |
+| "Create booking link" button | POST | `/users/{username}/booking-links` | MAY (do not show the button if missing) |
+| "Edit booking link" form | PATCH | `/users/{username}/booking-links/{publicId}` | MAY (do not show the button if missing) |
+| "Delete booking link" button | DELETE | `/users/{username}/booking-links/{publicId}` | MAY (do not show the button if missing) |
+| "Regenerate link" button | POST | `/users/{username}/booking-links/{publicId}/reset` | MAY (do not show the button if missing) |
+| "Delete booked events" button | POST | `/users/{username}/booking-links/{publicId}?action=deleteEvents` | MAY (do not show the button if missing) |
+
+### User detail — Calendar: registration *(APPLICATION:"CALENDAR" only)*
+
+Shown when the user exists in Twake Mail but is not yet a registered calendar user.
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Registration status load | GET | `/registeredUsers` | MUST (hide the whole detail page if missing) |
+| "Register user" button | POST | `/registeredUsers` | MAY (do not show the button if missing) |
+
+### User quota explorer (inline component) *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -353,7 +511,7 @@ Same than for team mailbox: if both are missing do not display the section...
 
 ---
 
-## Mailing lists
+## Mailing lists *(APPLICATION:"MAIL")*
 
 ### Mailing list list
 
@@ -406,7 +564,7 @@ against what the proxy actually declares.
 
 ---
 
-## Event dead-letter *(GLOBAL mode)*
+## Event dead-letter *(APPLICATION:"MAIL", GLOBAL mode)*
 
 ### Group list
 
@@ -433,7 +591,7 @@ against what the proxy actually declares.
 
 ---
 
-## Global quota *(GLOBAL mode)*
+## Global quota *(APPLICATION:"MAIL", GLOBAL mode)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -445,7 +603,9 @@ against what the proxy actually declares.
 
 ---
 
-## Tasks *(GLOBAL mode)*
+## Tasks
+
+A left bar entry in both modes; the detail pattern differs, see the two snackbar sections below.
 
 | Trigger | Verb | Pattern | MUST/MAY | Mode |
 |---------|------|---------|----------|------|
@@ -457,8 +617,8 @@ against what the proxy actually declares.
 
 | Trigger | Verb | Pattern | MUST/MAY | Mode |
 |---------|------|---------|----------|------|
-| Task detail load | GET | `/tasks/{id}` | MUST | DOMAIN |
-| "Cancel task" button | DELETE | `/tasks/{id}` | MAY (do not show the button if missing) | DOMAIN |
+| Task detail load | GET | `/tasks/{id}` | MUST | GLOBAL |
+| "Cancel task" button | DELETE | `/tasks/{id}` | MAY (do not show the button if missing) | GLOBAL |
 
 ## Tasks snackbar *(DOMAIN mode)*
 
@@ -469,7 +629,7 @@ against what the proxy actually declares.
 
 ---
 
-## Live metrics *(GLOBAL mode)*
+## Live metrics *(APPLICATION:"MAIL", GLOBAL mode)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -477,7 +637,7 @@ against what the proxy actually declares.
 
 ---
 
-## Network channels *(GLOBAL mode)*
+## Network channels *(APPLICATION:"MAIL", GLOBAL mode)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -486,7 +646,7 @@ against what the proxy actually declares.
 
 ---
 
-## Mappings *(GLOBAL mode)*
+## Mappings *(APPLICATION:"MAIL", GLOBAL mode)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -496,6 +656,7 @@ against what the proxy actually declares.
 | "Remove alias mapping" button | DELETE | `/address/aliases/{userAddress}/sources/{aliasSource}` | MAY (do not show the button if missing)|
 | "Remove forward mapping" button | DELETE | `/address/forwards/{userAddress}/targets/{targetAddress}` | MAY (do not show the button if missing)|
 | "Remove group member" button | DELETE | `/address/groups/{groupAddress}/{memberAddress}` | MAY (do not show the button if missing)|
+| "Add domain mapping" button | PUT | `/domainMappings/{fromDomain}` | MAY (do not show the button if missing)|
 | "Remove domain alias mapping" button | DELETE | `/domainAliases/{destinationDomain}/sources/{sourceDomain}` | MAY (do not show the button if missing)|
 | "Add regex mapping" button | POST | `/mappings/regex/{mappingSource}/targets/{regex}` | MAY (do not show the button if missing)|
 | "Remove regex mapping" button | DELETE | `/mappings/regex/{mappingSource}/targets/{regex}` | MAY (do not show the button if missing)|
@@ -504,7 +665,7 @@ Group members are removed one at a time: `DELETE /address/groups/{groupAddress}`
 
 ---
 
-## Cassandra *(GLOBAL mode)*
+## Cassandra *(APPLICATION:"MAIL", GLOBAL mode)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -514,7 +675,7 @@ Group members are removed one at a time: `DELETE /address/groups/{groupAddress}`
 
 ---
 
-## Resource locator *(GLOBAL mode)*
+## Resource locator *(APPLICATION:"MAIL", GLOBAL mode)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
@@ -535,6 +696,16 @@ If both are missing hide the page
 | "Create user" button | POST | `/registeredUsers` | MAY (do not show the button if missing) | GLOBAL |
 | "Edit user" form | PATCH | `/domains/{domain}/registeredUsers?id={id}` | MAY (do not show the button if missing) | DOMAIN |
 | "Edit user" form | PATCH | `/registeredUsers?id={id}` | MAY (do not show the button if missing) | GLOBAL |
+| "Delete user" button | DELETE | `/domains/{domain}/registeredUsers?email={email}` | MAY (do not show the button if missing) | DOMAIN |
+| "Delete user" button | DELETE | `/registeredUsers?email={email}` | MAY (do not show the button if missing) | GLOBAL |
+
+---
+
+## JMAP settings report *(APPLICATION:"MAIL", GLOBAL mode)*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Page load | GET | `/jmap/settings/reports` | MUST |
 
 ---
 
@@ -547,14 +718,15 @@ If both are missing hide the page
 | "Run mailbox task" button | POST | `/mailboxes?{params}` | MAY |
 | "Run message task" button | POST | `/messages?{params}` | MAY |
 | "Run quota task" button | POST | `/quota/users?{params}` | MAY |
-| "Fix cassandra mappings" button | POST | `/cassandra/mappings?action=SolveInconsistencies?{params}` | MAY |
-| "Cleanup JMAP uploads" button | DELETE | `/jmap/uploads?scope=expired?{params}` | MAY |
-| "Blob garbage collection" button | DELETE | `/blobs?scope=unreferenced?{params}` | MAY |
+| "Fix cassandra mappings" button | POST | `/cassandra/mappings?action=SolveInconsistencies&{params}` | MAY |
+| "Cleanup JMAP uploads" button | DELETE | `/jmap/uploads?scope=expired&{params}` | MAY |
+| "Blob garbage collection" button | DELETE | `/blobs?scope=unreferenced&{params}` | MAY |
 | "Purge deleted messages" button | DELETE | `/deletedMessages?scope=expired` | MAY |
 | "Reload certificates" button | POST | `/servers?reload-certificate` | MAY |
 | "Cleanup old messages" button | DELETE | `/messages?mailbox={mailbox}&olderThan={date}&useSavedDate` | MAY |
 | "Delete old tasks" button | DELETE | `/tasks?olderThan={days}day` | MAY |
 | "Reposition system rights" button | POST | `/team-mailboxes?action=repositionSystemRights` | MAY |
+| "Reindex users" button | POST | `/users?{params}` | MAY |
 
 Note: Hide tasks button that are not allowed
 

@@ -1,0 +1,16 @@
+[
+        {"endpoint": "/healthcheck"},
+        {"endpoint": "/metrics"},
+        {"endpoint": "/tasks"},
+        {"endpoint": "/tasks/*"},
+        {"denied":true, "verb":["POST"], "endpoint": "/users/{user}?action=deleteData"},
+        {"denied": true, "verb":["POST"], "endpoint": "/domains/{domain}?action=deleteData"},
+        {"verb": ["DELETE"], "endpoint": "/users/%@{domain}/addressbooks/*"},
+        {"verb": ["DELETE"], "endpoint": "/users/%@{domain}/booking-links/*"},
+        {"denied": true, "verb":["DELETE"], "endpoint": "/users/%@{domain}/*"},
+        {"verb": ["GET"], "endpoint": "/mailingLists"},
+        {"verb": ["GET"], "endpoint": "/mailingLists/*"},
+        {"verb": ["PUT", "DELETE"], "endpoint": "/mailingLists/*/members/*"},
+        {"verb": ["PUT", "DELETE"], "endpoint": "/mailingLists/*/owners/*"},
+        {"include": "classpath://functional-admin-calendar-baseline.json"}
+]
