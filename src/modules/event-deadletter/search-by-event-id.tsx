@@ -11,8 +11,13 @@ export default function SearchByEventId() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const canSearch = useIsAllowed("GET", "/events/deadLetter?eventId={eventId}");
+  const canNarrowByGroup = useIsAllowed(
+    "GET",
+    "/events/deadLetter?eventId={eventId}&group={group}"
+  );
 
   const [eventId, setEventId] = useState("");
+  const [group, setGroup] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{
     group: string;
@@ -30,7 +35,10 @@ export default function SearchByEventId() {
     setIsLoading(true);
     setResult(null);
     try {
-      const found = await searchDeadLetterEventByEventId(trimmed);
+      const found = await searchDeadLetterEventByEventId(
+        trimmed,
+        canNarrowByGroup ? group : undefined
+      );
       setResult(found);
     } catch (error) {
       toast({
@@ -51,23 +59,39 @@ export default function SearchByEventId() {
         {t("eventDeadletter.searchByEventIdSubtitle")}
       </p>
 
-      <form onSubmit={handleSearch} className="flex gap-2">
-        <input
-          type="text"
-          value={eventId}
-          onChange={(e) => setEventId(e.target.value)}
-          placeholder={t("eventDeadletter.searchByEventIdPlaceholder")}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          autoFocus
-        />
-        <button
-          type="submit"
-          disabled={isLoading || !eventId.trim()}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-        >
-          <Search className="w-4 h-4" />
-          {t("common.search")}
-        </button>
+      <form onSubmit={handleSearch} className="flex flex-col gap-2">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={eventId}
+            onChange={(e) => setEventId(e.target.value)}
+            placeholder={t("eventDeadletter.searchByEventIdPlaceholder")}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            autoFocus
+          />
+          {canNarrowByGroup && (
+            <input
+              type="text"
+              value={group}
+              onChange={(e) => setGroup(e.target.value)}
+              placeholder={t("eventDeadletter.searchByGroupPlaceholder")}
+              className="w-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          )}
+          <button
+            type="submit"
+            disabled={isLoading || !eventId.trim()}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            <Search className="w-4 h-4" />
+            {t("common.search")}
+          </button>
+        </div>
+        {canNarrowByGroup && (
+          <p className="text-xs text-gray-400">
+            {t("eventDeadletter.searchByGroupHint")}
+          </p>
+        )}
       </form>
 
       {isLoading && <p className="mt-3">{t("common.loading")}</p>}

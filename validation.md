@@ -588,6 +588,7 @@ against what the proxy actually declares.
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | "Search by event ID" subsection | GET | `/events/deadLetter?eventId={eventId}` | MAY (do not show the subsection if missing) |
+| "Group" narrowing input | GET | `/events/deadLetter?eventId={eventId}&group={group}` | MAY (do not show the input if missing) |
 
 ---
 

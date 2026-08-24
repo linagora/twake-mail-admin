@@ -15,16 +15,23 @@ export interface DeadLetterEventSearchResult {
 /**
  * Locates a dead-lettered event by its eventId.
  *
- * API: `GET /events/deadLetter?eventId={eventId}`
+ * API: `GET /events/deadLetter?eventId={eventId}[&group={group}]`
+ *
+ * The optional `group` narrows the search to a single listener group, which is
+ * significantly cheaper when the group holding the event is known.
  *
  * The response body is the event JSON; the response headers `X-Group` and
  * `X-Insertion-Id` identify the group / insertion the event lives in.
  */
 export const searchDeadLetterEventByEventId = async (
-  eventId: string
+  eventId: string,
+  group?: string
 ): Promise<DeadLetterEventSearchResult> => {
+  const params = new URLSearchParams({ eventId });
+  const trimmedGroup = group?.trim();
+  if (trimmedGroup) params.append("group", trimmedGroup);
   const response = await getRaw<any>(
-    `/events/deadLetter?eventId=${encodeURIComponent(eventId)}`
+    `/events/deadLetter?${params.toString()}`
   );
   return {
     group: (response.headers["x-group"] as string) ?? "",

@@ -1471,6 +1471,15 @@ EVENT_DEAD_LETTER = page(
                 ),
             ],
         ),
+        action(
+            "search-by-event-id",
+            "Search by event ID",
+            "Recherche par identifiant d'événement",
+            endpoints=[
+                may("GET", "/events/deadLetter?eventId={eventId}"),
+                may("GET", "/events/deadLetter?eventId={eventId}&group={group}"),
+            ],
+        ),
     ],
 )
 

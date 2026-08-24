@@ -1108,6 +1108,8 @@
     "searchByEventIdTitle": "Tìm kiếm theo ID sự kiện",
     "searchByEventIdSubtitle": "Định vị sự kiện thất bại trong mọi nhóm bằng ID sự kiện của nó.",
     "searchByEventIdPlaceholder": "Nhập ID sự kiện",
+    "searchByGroupPlaceholder": "Nhóm (tùy chọn)",
+    "searchByGroupHint": "Thu hẹp tìm kiếm vào một nhóm listener duy nhất, nhanh hơn đáng kể khi đã biết nhóm.",
     "searchError": "Lỗi khi tìm sự kiện",
     "groupLabel": "Nhóm",
     "insertionIdLabel": "ID chèn"

@@ -433,6 +433,41 @@ class ResolverTest(unittest.TestCase):
 
 
 
+    def test_event_dead_letter_search_by_event_id(self):
+        rules = [
+            Rule("/events/deadLetter?action=reDeliver"),
+            Rule("/events/deadLetter/groups/{group}?action=reDeliver"),
+            Rule("/events/deadLetter?eventId={eventId}"),
+        ]
+        # eventId query matches its own rule
+        assert resolve(rules, "GET", "/events/deadLetter?eventId=abc-123") is True
+        # The reDeliver rule must not match an eventId query (different key)
+        assert (
+            resolve(rules, "GET", "/events/deadLetter?eventId=abc-123&extra=1") is False
+        )
+        # The eventId rule must not match a reDeliver query (different key)
+        assert resolve(rules, "GET", "/events/deadLetter?action=reDeliver") is True
+        # eventId rule alone does not cover a different query key
+        assert (
+            resolve(
+                [Rule("/events/deadLetter?eventId={eventId}")],
+                "GET",
+                "/events/deadLetter?action=reDeliver",
+            )
+            is False
+        )
+        # reDeliver rule alone does not cover an eventId query
+        assert (
+            resolve(
+                [Rule("/events/deadLetter?action=reDeliver")],
+                "GET",
+                "/events/deadLetter?eventId=abc-123",
+            )
+            is False
+        )
+
+
+
     def test_calendar_archive_has_distinct_query_from_other_calendar_ops(self):
         rules = [Rule("/calendars?task=archive"), Rule("/calendars?task=reindex")]
         assert resolve(rules, "POST", "/calendars?task=archive") is True

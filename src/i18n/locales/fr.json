@@ -1145,6 +1145,8 @@
     "searchByEventIdTitle": "Recherche par ID d'événement",
     "searchByEventIdSubtitle": "Localiser un événement en lettre morte dans tous les groupes à l'aide de son ID d'événement.",
     "searchByEventIdPlaceholder": "Saisir l'ID d'événement",
+    "searchByGroupPlaceholder": "Groupe (optionnel)",
+    "searchByGroupHint": "Restreint la recherche à un seul groupe de listeners, ce qui est nettement plus rapide lorsque le groupe est connu.",
     "searchError": "Erreur lors de la recherche d'événement",
     "groupLabel": "Groupe",
     "insertionIdLabel": "ID d'insertion"

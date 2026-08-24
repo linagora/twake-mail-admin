@@ -1144,6 +1144,8 @@
     "searchByEventIdTitle": "Search by event ID",
     "searchByEventIdSubtitle": "Locate a dead-lettered event across all groups using its event ID.",
     "searchByEventIdPlaceholder": "Enter event ID",
+    "searchByGroupPlaceholder": "Group (optional)",
+    "searchByGroupHint": "Narrows the search to a single listener group, which is significantly faster when the group is known.",
     "searchError": "Error searching for event",
     "groupLabel": "Group",
     "insertionIdLabel": "Insertion ID",
