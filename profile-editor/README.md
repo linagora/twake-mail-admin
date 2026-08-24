@@ -56,21 +56,18 @@ $ cd profile-editor
 $ python3 -m twake_profile_editor --name domain-support --fr
 ```
 
-That is the whole setup. The tool and its test suite run on the standard library
-alone.
+That is the whole setup — arrow keys and checkboxes included. The interactive
+prompts are built on `termios` (see `twake_profile_editor/terminal.py`), so they
+work wherever python does, with no virtualenv and no dependency. Piping input
+instead of typing it falls back to numbered prompts, which is what an unattended
+script wants anyway.
 
-Two optional upgrades:
-
-```console
-$ pip install questionary   # arrow keys and checkboxes instead of numbered prompts
-$ pip install -e .          # a `twake-profile-editor` command on your PATH
-```
-
-The Docker image ships questionary already, so it always has the good interview.
+`pip install -e .` is optional and only adds a `twake-profile-editor` command to
+your `PATH`.
 
 **Examples below are written as `twake-profile-editor`.** If you get
-`command not found`, you have not run `pip install -e .` — use
-`python3 -m twake_profile_editor` instead, which is always equivalent.
+`command not found`, use `python3 -m twake_profile_editor` instead — always
+equivalent.
 
 ---
 
@@ -265,15 +262,14 @@ stays. Questions the file never covered are asked normally and counted at the en
 
 ## Building, running, testing
 
-Python 3.10 or later, and nothing else. There is no required dependency, at
-runtime or for the tests — the CI agent has neither `pip` nor `ensurepip`, so
-needing either was not an option.
+Python 3.10 or later, and nothing else — not for the tool, not for its tests.
+That is a deliberate constraint rather than a coincidence: the CI agent has
+neither `pip` nor `ensurepip`, so anything that needed either could not run at
+all. It is also why the interactive prompts are written against `termios` rather
+than pulled from a package: the good interview has to be available where there is
+no way to install one.
 
-[questionary](https://github.com/tmbo/questionary) is optional and only affects
-the interview: with it you get arrow keys and checkboxes, without it numbered
-prompts on stdin. The same fallback covers running without a terminal at all.
-
-Two equivalent ways to invoke it:
+Two equivalent ways to invoke the tool:
 
 ```console
 $ python3 -m twake_profile_editor --name support   # always works
@@ -286,8 +282,8 @@ $ twake-profile-editor --name support              # after pip install -e .
 $ docker build -t twake-mail-admin-profile-editor:dev profile-editor
 ```
 
-Built from `profile-editor/` alone: the package, and questionary for the
-interview. It does **not** carry `validation.md` or `src/` — the inventory is
+Built from `profile-editor/` alone: just the package, since it has no
+dependencies. It does **not** carry `validation.md` or `src/` — the inventory is
 Python code inside the package, which is what makes the tag a version pin. The
 tests are excluded for the same reason: they read the repository, so they run in
 CI before the image is built, not inside it.
@@ -302,7 +298,7 @@ and `.revision` record the tag and the commit.
 $ python3 -m unittest discover -s tests -t .
 ```
 
-169 tests, under a second, no network, no fixtures to regenerate and nothing
+183 tests, under a second, no network, no fixtures to regenerate and nothing
 installed. The suite is written against `unittest` for exactly that reason;
 `pytest` collects `unittest.TestCase` natively, so `python3 -m pytest` also works
 wherever it happens to be available and gives nicer failure output.
@@ -315,6 +311,7 @@ They are worth reading as documentation:
 | `test_inventory.py` | The inventory is exactly `validation.md`, plus structural invariants. |
 | `test_frontend_crosscheck.py` | A fully-granting profile satisfies every gate the frontend evaluates. |
 | `test_upstream.py` | The resolver files the port mirrors have not moved unreviewed. |
+| `test_terminal.py` | Scrolling, defaults and echo of the stdlib prompter. |
 | `test_generator.py` | Closure, domain scoping, verb merging, include emission, deny carving. |
 | `test_check.py` | Grant everything → everything visible, in all four scopes. Grant nothing → nothing visible. |
 | `test_interview.py` | Short-circuiting, all/none/detail, resuming. |

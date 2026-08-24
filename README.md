@@ -106,7 +106,8 @@ which pages, which sections, which actions — and writes a rule file the proxy 
 `include` as-is. It also runs backwards: `--check` takes an existing profile and
 reports, page by page, what it makes visible.
 
-From this checkout — standard library only, nothing to install:
+From this checkout — standard library only, nothing to install, arrow keys and
+checkboxes included:
 
 ```sh
 cd profile-editor

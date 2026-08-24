@@ -24,12 +24,9 @@ LABEL org.opencontainers.image.title="Twake Mail Admin profile editor" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.revision="${REVISION}"
 
-# The interview is far better with questionary — arrow keys and checkboxes
-# instead of numbered prompts — and an image is the one place where paying for a
-# dependency costs the user nothing.
 COPY pyproject.toml README.md UPSTREAM.md ./
 COPY twake_profile_editor ./twake_profile_editor
-RUN pip install --no-cache-dir --root-user-action=ignore . questionary \
+RUN pip install --no-cache-dir --root-user-action=ignore . \
     && rm -rf /root/.cache
 
 # Answers and profiles are written here; mount the operator's directory over it.

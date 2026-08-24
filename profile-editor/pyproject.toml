@@ -9,12 +9,10 @@ description = "Interactive generator for webadmin-proxy allowed.urls profiles"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "AGPL-3.0-or-later" }
-# Nothing is required to run the tool or its tests. questionary only upgrades
-# the interview from numbered prompts to arrow keys and checkboxes.
+# None, and none wanted. The interactive interview is built on termios in
+# twake_profile_editor/terminal.py, so arrow keys and checkboxes work wherever
+# python does — including the CI agent, which has neither pip nor ensurepip.
 dependencies = []
-
-[project.optional-dependencies]
-interview = ["questionary>=2.0"]
 
 
 [project.scripts]

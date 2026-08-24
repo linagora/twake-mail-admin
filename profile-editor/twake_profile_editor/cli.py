@@ -109,7 +109,7 @@ def _run_interview(args, lang: str) -> int:
 
     result = run_interview(
         INVENTORY,
-        default_prompter(),
+        default_prompter(lang),
         lang=lang,
         name=args.name or (prefill.name if prefill else None),
         prefill=prefill,
@@ -265,7 +265,7 @@ def _resolve_scope(args, lang: str) -> tuple[Application, Mode]:
             f"{sibling.name} and there is no terminal to ask on"
         )
 
-    prompter = default_prompter()
+    prompter = default_prompter(lang)
     if application is None:
         application = Application(
             prompter.select(

@@ -1,8 +1,12 @@
 """Prompt back-ends.
 
-The interview is written against :class:`Prompter`, so it can run over
-questionary in a terminal, over plain stdin when there is none, or over a
-scripted stub in tests. None of the interview logic knows which.
+The interview is written against :class:`Prompter`, so it can run over a real
+terminal, over plain stdin when there is none, or over a scripted stub in tests.
+None of the interview logic knows which.
+
+The terminal implementation lives in :mod:`twake_profile_editor.terminal` and uses
+nothing but the standard library, so arrow keys and checkboxes are available
+wherever python is -- no install, no virtualenv, no pip.
 """
 
 from __future__ import annotations
@@ -39,70 +43,15 @@ class PrompterError(RuntimeError):
 
 
 # ---------------------------------------------------------------------------
-# questionary
-# ---------------------------------------------------------------------------
-
-
-class QuestionaryPrompter:
-    """Arrow keys, checkboxes and defaults -- the interview this tool is built for."""
-
-    def __init__(self) -> None:
-        import questionary  # imported lazily so the package stays optional
-
-        self._q = questionary
-
-    def text(self, message: str, default: str = "") -> str:
-        return self._answer(self._q.text(message, default=default))
-
-    def select(
-        self, message: str, choices: Sequence[Choice], default: str | None = None
-    ) -> str:
-        options = [self._q.Choice(title=c.label, value=c.value) for c in choices]
-        return self._answer(
-            self._q.select(message, choices=options, default=_default_of(choices, default))
-        )
-
-    def checkbox(
-        self,
-        message: str,
-        choices: Sequence[Choice],
-        preselected: Sequence[str] = (),
-    ) -> list[str]:
-        chosen = set(preselected)
-        options = [
-            self._q.Choice(title=c.label, value=c.value, checked=c.value in chosen)
-            for c in choices
-        ]
-        return self._answer(self._q.checkbox(message, choices=options))
-
-    @staticmethod
-    def _answer(question):
-        answer = question.ask()
-        if answer is None:  # Ctrl-C / Ctrl-D
-            raise PrompterError("interview interrupted")
-        return answer
-
-
-def _default_of(choices: Sequence[Choice], default: str | None):
-    """questionary matches its default against the Choice value."""
-    if default is None:
-        return None
-    for choice in choices:
-        if choice.value == default:
-            return choice.value
-    return None
-
-
-# ---------------------------------------------------------------------------
 # plain stdin
 # ---------------------------------------------------------------------------
 
 
 class PlainPrompter:
-    """Fallback for a pipe or a terminal questionary cannot drive.
+    """Fallback for a pipe, a log, or a platform without ``termios``.
 
-    Deliberately terse: it exists so the tool still runs, not so the interview is
-    pleasant. Install questionary for that.
+    Deliberately terse: it exists so the tool still runs unattended, not so the
+    interview is pleasant. On a real terminal you get the other one.
     """
 
     def __init__(self, stream=None, output=None) -> None:
@@ -168,13 +117,12 @@ class PlainPrompter:
         self._out.flush()
 
 
-def default_prompter() -> Prompter:
-    """questionary when it can drive the terminal, plain stdin otherwise."""
-    import sys
+def default_prompter(lang: str = "en") -> Prompter:
+    """The real thing on a terminal, numbered prompts when piped.
 
-    if sys.stdin.isatty() and sys.stdout.isatty():
-        try:
-            return QuestionaryPrompter()
-        except ImportError:
-            pass
-    return PlainPrompter()
+    Imported here rather than at module scope: ``terminal`` imports this module
+    for :class:`Choice`, and it is the only platform-dependent part of the tool.
+    """
+    from .terminal import TerminalPrompter, is_usable
+
+    return TerminalPrompter(lang) if is_usable() else PlainPrompter()

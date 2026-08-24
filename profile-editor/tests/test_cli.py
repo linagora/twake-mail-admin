@@ -74,7 +74,7 @@ class GenerateFromTest(CliTestCase):
         """No prompt may be reached: this has to work from cron."""
         recorded = self.record_domains_only()
 
-        def refuse():
+        def refuse(lang="en"):
             raise AssertionError("--generate-from must not prompt")
 
         with patch("twake_profile_editor.cli.default_prompter", refuse):
@@ -253,7 +253,7 @@ class FullCycleTest(CliTestCase):
         }
         with patch(
             "twake_profile_editor.cli.default_prompter",
-            lambda: ScriptedPrompter(script=dict(script)),
+            lambda lang="en": ScriptedPrompter(script=dict(script)),
         ):
             code, _, _ = self.run_cli(["--name", "svc", "--out-dir", str(self.tmp_path)])
         assert code == 0
@@ -263,7 +263,7 @@ class FullCycleTest(CliTestCase):
         # scripted prompter falls back to the offered default when a question has
         # no scripted answer, which is exactly "accept what was recorded".
         with patch(
-            "twake_profile_editor.cli.default_prompter", lambda: ScriptedPrompter(script={})
+            "twake_profile_editor.cli.default_prompter", lambda lang="en": ScriptedPrompter(script={})
         ):
             code, _, _ = self.run_cli(
                 [

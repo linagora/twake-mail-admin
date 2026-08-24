@@ -29,8 +29,8 @@ STRINGS: dict[str, dict[str, str]] = {
         "fr": "Réutiliser un profil webadmin-proxy existant comme base ?",
     },
     "ask.pages": {
-        "en": "Which pages may this profile see? (space to toggle, enter to confirm)",
-        "fr": "Quelles pages ce profil peut-il voir ? (espace pour cocher, entrée pour valider)",
+        "en": "Which pages may this profile see?",
+        "fr": "Quelles pages ce profil peut-il voir ?",
     },
     "ask.subtree": {
         "en": "{name} — what may be seen or done inside?",
