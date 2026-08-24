@@ -1,10 +1,37 @@
-import { apiClient } from "@/lib/apiClient";
+import { apiClient, getRaw } from "@/lib/apiClient";
 import {
   ListenerGroupsResponseType,
   InsertionIdsResponseType,
   EventDetails,
   TaskResponse,
 } from "./types";
+
+export interface DeadLetterEventSearchResult {
+  group: string;
+  insertionId: string;
+  json: Record<string, any>;
+}
+
+/**
+ * Locates a dead-lettered event by its eventId.
+ *
+ * API: `GET /events/deadLetter?eventId={eventId}`
+ *
+ * The response body is the event JSON; the response headers `X-Group` and
+ * `X-Insertion-Id` identify the group / insertion the event lives in.
+ */
+export const searchDeadLetterEventByEventId = async (
+  eventId: string
+): Promise<DeadLetterEventSearchResult> => {
+  const response = await getRaw<any>(
+    `/events/deadLetter?eventId=${encodeURIComponent(eventId)}`
+  );
+  return {
+    group: (response.headers["x-group"] as string) ?? "",
+    insertionId: (response.headers["x-insertion-id"] as string) ?? "",
+    json: response.data ?? {},
+  };
+};
 
 /**
  * Fetches the list of mailbox listener groups.

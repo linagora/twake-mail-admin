@@ -21,7 +21,12 @@ export function installOIDCAuth(config: SSOConfig): void {
   );
 
   apiClient.interceptors.response.use(
-    (response: AxiosResponse) => response.data,
+    (response: AxiosResponse) => {
+      if ((response.config as InternalAxiosRequestConfig).__rawResponse) {
+        return response;
+      }
+      return response.data;
+    },
     async (error: AxiosError) => {
       const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 

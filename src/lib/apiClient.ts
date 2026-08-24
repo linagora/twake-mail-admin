@@ -1,9 +1,29 @@
-import axios, { AxiosResponse, AxiosError, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosResponse, AxiosError, InternalAxiosRequestConfig, AxiosRequestConfig } from "axios";
 import { getBearerToken, removeBearerToken } from "./auth";
 
 export interface APIError {
   response?: AxiosResponse;
   message?: string;
+}
+
+// ponytail: marker so a caller can opt into receiving the full AxiosResponse
+// (headers + body) instead of just `response.data`. Read by the response
+// interceptors in apiClient and oidc-interceptors.
+declare module "axios" {
+  interface AxiosRequestConfig {
+    __rawResponse?: boolean;
+  }
+}
+
+/**
+ * Performs a GET that resolves to the full AxiosResponse (headers + body).
+ * Use for endpoints where response headers carry information.
+ */
+export async function getRaw<T = any>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> {
+  return apiClient.get(url, { ...config, __rawResponse: true }) as unknown as Promise<AxiosResponse<T>>;
 }
 
 // Injected by AuthProvider (static token mode only)
@@ -42,7 +62,12 @@ export function installStaticTokenAuth(): void {
   );
 
   apiClient.interceptors.response.use(
-    (response: AxiosResponse) => response.data,
+    (response: AxiosResponse) => {
+      if ((response.config as InternalAxiosRequestConfig).__rawResponse) {
+        return response;
+      }
+      return response.data;
+    },
     async (error: AxiosError) => {
       const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 

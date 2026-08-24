@@ -425,6 +425,12 @@ against what the proxy actually declares.
 | Event detail load | GET | `/events/deadLetter/groups/{group}/{insertionId}` | MUST - disable link if not supported|
 | "Delete event" button | DELETE | `/events/deadLetter/groups/{group}/{insertionId}` | MAY (do not show the button if missing) |
 
+### Search by event ID
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| "Search by event ID" subsection | GET | `/events/deadLetter?eventId={eventId}` | MAY (do not show the subsection if missing) |
+
 ---
 
 ## Global quota *(GLOBAL mode)*

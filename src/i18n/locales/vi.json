@@ -40,6 +40,7 @@
     "taskStarted": "Tác vụ đã bắt đầu",
     "taskLink": "Tác vụ {{taskId}}",
     "errorPrefix": "Lỗi: {{message}}",
+    "notAvailable": "N/A",
     "page": "Trang {{page}} / {{totalPages}} — Tổng: {{total}}",
     "pageOf": "Trang {{page}} — {{count}} kết quả",
     "pageSimple": "Trang {{page}}",
@@ -1103,7 +1104,13 @@
     "pageInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang — Tổng: {{size}}",
     "copiedToClipboard": "Đã sao chép khóa sự kiện vào bộ nhớ tạm!",
     "deleteEventError": "Lỗi khi xóa sự kiện",
-    "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}"
+    "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}",
+    "searchByEventIdTitle": "Tìm kiếm theo ID sự kiện",
+    "searchByEventIdSubtitle": "Định vị sự kiện thất bại trong mọi nhóm bằng ID sự kiện của nó.",
+    "searchByEventIdPlaceholder": "Nhập ID sự kiện",
+    "searchError": "Lỗi khi tìm sự kiện",
+    "groupLabel": "Nhóm",
+    "insertionIdLabel": "ID chèn"
   },
   "mailRepositories": {
     "pathLabel": "Đường dẫn kho *",

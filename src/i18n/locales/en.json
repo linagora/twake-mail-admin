@@ -40,6 +40,7 @@
     "taskStarted": "Task started",
     "taskLink": "Task {{taskId}}",
     "errorPrefix": "Error: {{message}}",
+    "notAvailable": "N/A",
     "page": "Page {{page}} / {{totalPages}} — Total: {{total}}",
     "pageOf": "Page {{page}} — {{count}} result(s)",
     "pageSimple": "Page {{page}}",
@@ -1140,6 +1141,12 @@
     "pageInfo": "Page {{page}} — {{limit}} events per page — Total: {{size}}",
     "copiedToClipboard": "Event key copied to clipboard!",
     "deleteEventError": "Error deleting event",
+    "searchByEventIdTitle": "Search by event ID",
+    "searchByEventIdSubtitle": "Locate a dead-lettered event across all groups using its event ID.",
+    "searchByEventIdPlaceholder": "Enter event ID",
+    "searchError": "Error searching for event",
+    "groupLabel": "Group",
+    "insertionIdLabel": "Insertion ID",
     "paginationInfo": "Page {{page}} — {{limit}} events per page / Total: {{total}}"
   },
   "mailRepositories": {

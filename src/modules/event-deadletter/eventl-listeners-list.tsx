@@ -8,6 +8,7 @@ import {
   redeliverGroupEvents,
   getFailedEvents, // Import the existing function
 } from "./api-client";
+import SearchByEventId from "./search-by-event-id";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useState, useEffect } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -101,6 +102,7 @@ export default function EventListenersList() {
   return (
     <>
       <div>
+        <SearchByEventId />
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
             <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
