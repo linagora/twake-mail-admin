@@ -40,6 +40,7 @@
     "taskStarted": "Задача запущена",
     "taskLink": "Задача {{taskId}}",
     "errorPrefix": "Ошибка: {{message}}",
+    "notAvailable": "Н/Д",
     "page": "Страница {{page}} / {{totalPages}} — Всего: {{total}}",
     "pageOf": "Страница {{page}} — результатов: {{count}}",
     "pageSimple": "Страница {{page}}",
@@ -1103,7 +1104,13 @@
     "pageInfo": "Страница {{page}} — {{limit}} событий на странице — Всего: {{size}}",
     "copiedToClipboard": "Ключ события скопирован в буфер обмена!",
     "deleteEventError": "Ошибка при удалении события",
-    "paginationInfo": "Страница {{page}} — {{limit}} событий на странице / Всего: {{total}}"
+    "paginationInfo": "Страница {{page}} — {{limit}} событий на странице / Всего: {{total}}",
+    "searchByEventIdTitle": "Поиск по ID события",
+    "searchByEventIdSubtitle": "Найти недоставленное событие во всех группах по его ID.",
+    "searchByEventIdPlaceholder": "Введите ID события",
+    "searchError": "Ошибка поиска события",
+    "groupLabel": "Группа",
+    "insertionIdLabel": "ID вставки"
   },
   "mailRepositories": {
     "pathLabel": "Путь хранилища *",

@@ -40,6 +40,7 @@
     "taskStarted": "Даалгавар эхэллээ",
     "taskLink": "Даалгавар {{taskId}}",
     "errorPrefix": "Алдаа: {{message}}",
+    "notAvailable": "Байхгүй",
     "page": "Хуудас {{page}} / {{totalPages}} — Нийт: {{total}}",
     "pageOf": "Хуудас {{page}} — {{count}} үр дүн",
     "pageSimple": "Хуудас {{page}}",
@@ -1103,7 +1104,13 @@
     "pageInfo": "Хуудас {{page}} — хуудсанд {{limit}} үйл явдал — Нийт: {{size}}",
     "copiedToClipboard": "Үйл явдлын түлхүүр санах ойд хуулагдлаа!",
     "deleteEventError": "Үйл явдал устгахад алдаа гарлаа",
-    "paginationInfo": "Хуудас {{page}} — хуудсанд {{limit}} үйл явдал / Нийт: {{total}}"
+    "paginationInfo": "Хуудас {{page}} — хуудсанд {{limit}} үйл явдал / Нийт: {{total}}",
+    "searchByEventIdTitle": "Үйл явдлын ID-аар хайх",
+    "searchByEventIdSubtitle": "Үйл явдлын ID ашиглан бүх груп дахь хүргэгдээгүй үйл явдлыг олох.",
+    "searchByEventIdPlaceholder": "Үйл явдлын ID оруулах",
+    "searchError": "Үйл явдал хайх үед алдаа гарлаа",
+    "groupLabel": "Бүлэг",
+    "insertionIdLabel": "Оруулах ID"
   },
   "mailRepositories": {
     "pathLabel": "Агуулахын зам *",

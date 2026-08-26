@@ -40,6 +40,7 @@
     "taskStarted": "Tâche démarrée",
     "taskLink": "Tâche {{taskId}}",
     "errorPrefix": "Erreur : {{message}}",
+    "notAvailable": "N/A",
     "page": "Page {{page}} / {{totalPages}} — Total : {{total}}",
     "pageOf": "Page {{page}} — {{count}} résultat(s)",
     "pageSimple": "Page {{page}}",
@@ -1140,7 +1141,15 @@
     "pageInfo": "Page {{page}} — {{limit}} événements par page — Total : {{size}}",
     "copiedToClipboard": "Clé d'événement copiée !",
     "deleteEventError": "Erreur lors de la suppression de l'événement",
-    "paginationInfo": "Page {{page}} — {{limit}} événements par page / Total: {{total}}"
+    "paginationInfo": "Page {{page}} — {{limit}} événements par page / Total: {{total}}",
+    "searchByEventIdTitle": "Recherche par ID d'événement",
+    "searchByEventIdSubtitle": "Localiser un événement en lettre morte dans tous les groupes à l'aide de son ID d'événement.",
+    "searchByEventIdPlaceholder": "Saisir l'ID d'événement",
+    "searchByGroupPlaceholder": "Groupe (optionnel)",
+    "searchByGroupHint": "Restreint la recherche à un seul groupe de listeners, ce qui est nettement plus rapide lorsque le groupe est connu.",
+    "searchError": "Erreur lors de la recherche d'événement",
+    "groupLabel": "Groupe",
+    "insertionIdLabel": "ID d'insertion"
   },
   "mailRepositories": {
     "pathLabel": "Chemin du dépôt *",

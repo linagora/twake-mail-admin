@@ -491,6 +491,47 @@ describe("real patterns from validation.md", () => {
     expect(resolve(rules, "GET", "/events/deadLetter")).toBe(false);
   });
 
+  // --- event dead-letter: search by event ID ---
+  it("event dead-letter search by event ID", () => {
+    const rules: ProxyRule[] = [
+      { endpoint: "/events/deadLetter?action=reDeliver" },
+      { endpoint: "/events/deadLetter/groups/{group}?action=reDeliver" },
+      { endpoint: "/events/deadLetter?eventId={eventId}" },
+    ];
+    // eventId query matches its own rule
+    expect(
+      resolve(rules, "GET", "/events/deadLetter?eventId=abc-123")
+    ).toBe(true);
+    // The reDeliver rule must not match an eventId query (different key)
+    expect(
+      resolve(
+        rules,
+        "GET",
+        "/events/deadLetter?eventId=abc-123&extra=1"
+      )
+    ).toBe(false);
+    // The eventId rule must not match a reDeliver query (different key)
+    expect(
+      resolve(rules, "GET", "/events/deadLetter?action=reDeliver")
+    ).toBe(true);
+    // eventId rule alone does not cover a different query key
+    expect(
+      resolve(
+        [{ endpoint: "/events/deadLetter?eventId={eventId}" }],
+        "GET",
+        "/events/deadLetter?action=reDeliver"
+      )
+    ).toBe(false);
+    // reDeliver rule alone does not cover an eventId query
+    expect(
+      resolve(
+        [{ endpoint: "/events/deadLetter?action=reDeliver" }],
+        "GET",
+        "/events/deadLetter?eventId=abc-123"
+      )
+    ).toBe(false);
+  });
+
   // --- calendar-only endpoints ---
   it("calendar: archive events has distinct path and query from other calendar ops", () => {
     const rules: ProxyRule[] = [
