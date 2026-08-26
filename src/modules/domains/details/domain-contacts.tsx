@@ -16,6 +16,9 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { PaginationControls } from "@/components/custom/pagination-controls";
+
+const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 interface Props {
   domain: string;
@@ -39,6 +42,8 @@ export default function DomainContacts({ domain }: Props) {
   const [createFirstname, setCreateFirstname] = useState("");
   const [createSurname, setCreateSurname] = useState("");
   const [creating, setCreating] = useState(false);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
 
   // View modal
   const [viewContact, setViewContact] = useState<DomainContact | null>(null);
@@ -50,10 +55,21 @@ export default function DomainContacts({ domain }: Props) {
   const [editSurname, setEditSurname] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const sorted = useMemo(() => {
+  const filtered = useMemo(() => {
     if (!contacts) return [];
-    return [...contacts].sort((a, b) => a.localeCompare(b));
-  }, [contacts]);
+    const sorted = [...contacts].sort((a, b) => a.localeCompare(b));
+    if (!search) return sorted;
+    const lower = search.toLowerCase();
+    return sorted.filter((c) => c.toLowerCase().includes(lower));
+  }, [contacts, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_LIMIT));
+  const paginated = filtered.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
+
+  const goToPage = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    setPage(newPage);
+  };
 
   if (!canView) return null;
 
@@ -246,14 +262,34 @@ export default function DomainContacts({ domain }: Props) {
 
           {contacts && (
             <div>
-              {sorted.map((email, index) => (
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                placeholder={t("domains.contacts.searchPlaceholder")}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+              {filtered.length > 0 && (
+                <PaginationControls
+                  onFirst={() => goToPage(1)}
+                  onPrev={() => goToPage(page - 1)}
+                  onNext={() => goToPage(page + 1)}
+                  onLast={() => goToPage(totalPages)}
+                  disabledPrev={page <= 1}
+                  disabledNext={page >= totalPages}
+                  label={t("common.page", { page, totalPages, total: filtered.length })}
+                />
+              )}
+
+              {paginated.map((email, index) => (
                 <div
                   key={email}
                   className="p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center cursor-pointer hover:bg-gray-100 transition"
                   onClick={() => openView(email)}
                 >
                   <h4 className="text-sm font-medium leading-none">
-                    <span className="text-gray-500 mr-2">{index + 1}/</span>
+                    <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
                     {email}
                   </h4>
                   <div className="flex gap-1">
@@ -280,6 +316,9 @@ export default function DomainContacts({ domain }: Props) {
               ))}
               {contacts.length === 0 && (
                 <p className="mt-2 text-sm text-gray-500">{t("domains.contacts.empty")}</p>
+              )}
+              {contacts.length > 0 && filtered.length === 0 && (
+                <p className="mt-2 text-sm text-gray-500">{t("domains.contacts.noResults")}</p>
               )}
             </div>
           )}
