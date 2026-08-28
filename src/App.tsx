@@ -29,6 +29,9 @@ import CalendarUserDetail from "./modules/users/details/calendar-user-detail";
 import UserMessageSearch from "./modules/users/details/user-message-search";
 import RegisteredUsers from "./modules/registered-users";
 import RegisteredUsersList from "./modules/registered-users/registered-users-list";
+import UnsentMails from "./modules/unsent-mails";
+import UnsentMailsList from "./modules/unsent-mails/unsent-mails-list";
+import UnsentMailDetail from "./modules/unsent-mails/details/unsent-mail-detail";
 import Mappings from "./modules/mappings";
 import MappingsList from "./modules/mappings/mappings-list";
 import MailingLists from "./modules/mailing-lists";
@@ -133,9 +136,15 @@ function GlobalLayout() {
 
             {/* Calendar-only routes */}
             {isCalendar && (
-              <Route path="/registered-users" element={<RegisteredUsers />}>
-                <Route index element={<RegisteredUsersList />} />
-              </Route>
+              <>
+                <Route path="/registered-users" element={<RegisteredUsers />}>
+                  <Route index element={<RegisteredUsersList />} />
+                </Route>
+                <Route path="/unsent-mails" element={<UnsentMails />}>
+                  <Route index element={<UnsentMailsList />} />
+                  <Route path="mail/:id" element={<UnsentMailDetail />} />
+                </Route>
+              </>
             )}
 
             {/* Common routes */}

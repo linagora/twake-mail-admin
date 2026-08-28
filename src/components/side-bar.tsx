@@ -1,4 +1,4 @@
-import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages, BarChart2, Mails } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages, BarChart2, Mails, Send } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -68,6 +68,7 @@ export function AppSidebar() {
   const canDomains = useIsAllowed("GET", "/domains");
   const canUsers = useIsAllowed("GET", "/users");
   const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const canUnsentMails = useIsAllowed("GET", "/unsentMails");
   const canTasks = useIsAllowed("GET", "/tasks");
   const canCommonTasks = useIsAllowed("GET", "/tasks/{id}");
   const canResourceLocator = useIsAllowed("GET", "/mailboxes/{mailboxId}");
@@ -104,6 +105,7 @@ export function AppSidebar() {
     { title: t("sidebar.domains"), url: "/domains", icon: Globe },
     { title: t("sidebar.users"), url: "/users", icon: Users },
     { title: t("sidebar.registeredUsers"), url: "/registered-users", icon: UserCheck },
+    { title: t("sidebar.unsentMails"), url: "/unsent-mails", icon: Send },
     { title: t("sidebar.tasks"), url: "/tasks", icon: ListChecks },
     { title: t("sidebar.commonTasks"), url: "/common-tasks", icon: ClipboardList },
   ];
@@ -113,6 +115,7 @@ export function AppSidebar() {
     "/domains": canDomains,
     "/users": canUsers,
     "/registered-users": canRegisteredUsers,
+    "/unsent-mails": canUnsentMails,
     "/tasks": canTasks,
     "/common-tasks": canCommonTasks,
     "/resource-locator": canResourceLocator,

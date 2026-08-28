@@ -51,6 +51,8 @@ a task or action parameter.
 | `POST /quota/users` | `POST /quota/users?{params}` |
 | `POST /servers` | `POST /servers?reload-certificate` |
 | `POST /team-mailboxes` | `POST /team-mailboxes?action=repositionSystemRights` |
+| `POST /unsentMails` | `POST /unsentMails?action=resend` |
+| `POST /unsentMails/{id}` | `POST /unsentMails/{id}?action=resend` |
 | `POST /users` | `POST /users?{params}` |
 | `POST /users/{username}/mailboxes` | `POST /users/{username}/mailboxes?task=reIndex`<br>`POST /users/{username}/mailboxes?task=subscribeAll`<br>`POST /users/{username}/mailboxes?task=recomputeFastViewProjectionItems` |
 | `POST /users/{username}/mails` | `POST /users/{username}/mails?limit={limit}&offset={offset}` |
@@ -699,6 +701,27 @@ If both are missing hide the page
 | "Edit user" form | PATCH | `/registeredUsers?id={id}` | MAY (do not show the button if missing) | GLOBAL |
 | "Delete user" button | DELETE | `/domains/{domain}/registeredUsers?email={email}` | MAY (do not show the button if missing) | DOMAIN |
 | "Delete user" button | DELETE | `/registeredUsers?email={email}` | MAY (do not show the button if missing) | GLOBAL |
+
+---
+
+## Unsent mails *(APPLICATION:"CALENDAR", GLOBAL mode)*
+
+### Unsent mail list
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Page load | GET | `/unsentMails` | MUST |
+| Mail detail (for list display) | GET | `/unsentMails/{id}` | MUST |
+| "Resend all" button | POST | `/unsentMails?action=resend` | MAY (do not show the button if missing) |
+
+### Unsent mail detail
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Detail load | GET | `/unsentMails/{id}` | MUST |
+| "Resend mail" button | POST | `/unsentMails/{id}?action=resend` | MAY (do not show the button if missing) |
+| "Delete mail" button | DELETE | `/unsentMails/{id}` | MAY (do not show the button if missing) |
+| "Download mail" button | GET | `/unsentMails/{id}` (Accept: message/rfc822) | MAY |
 
 ---
 
