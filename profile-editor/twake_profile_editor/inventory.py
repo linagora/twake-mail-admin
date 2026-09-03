@@ -1799,6 +1799,73 @@ REGISTERED_USERS = page(
 
 
 # ---------------------------------------------------------------------------
+# Unsent mails (CALENDAR, GLOBAL)
+# ---------------------------------------------------------------------------
+
+UNSENT_MAILS = page(
+    "unsent-mails",
+    "Unsent mails",
+    "Mails non envoyés",
+    applications=CALENDAR,
+    modes=GLOBAL,
+    endpoints=[
+        must("GET", "/unsentMails"),
+        must("GET", "/unsentMails/{id}"),
+    ],
+    children=[
+        action(
+            "resend-all",
+            "Resend every mail",
+            "Renvoyer tous les mails",
+            endpoints=[
+                may(
+                    "POST",
+                    "/unsentMails?action=resend",
+                    gates=("/unsentMails",),
+                )
+            ],
+        ),
+        section(
+            "detail",
+            "Mail details",
+            "Détail d'un mail",
+            endpoints=[must("GET", "/unsentMails/{id}")],
+            children=[
+                action(
+                    "resend",
+                    "Resend a mail",
+                    "Renvoyer un mail",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/unsentMails/{id}?action=resend",
+                            gates=("/unsentMails/{id}",),
+                        )
+                    ],
+                ),
+                action(
+                    "delete",
+                    "Delete a mail",
+                    "Supprimer un mail",
+                    endpoints=[may("DELETE", "/unsentMails/{id}")],
+                ),
+                action(
+                    "download",
+                    "Download a mail",
+                    "Télécharger un mail",
+                    note=(
+                        "Same endpoint as the detail load once the Accept "
+                        "header is ignored."
+                    ),
+                    endpoints=[may("GET", "/unsentMails/{id}")],
+                ),
+            ],
+        ),
+    ],
+)
+
+
+# ---------------------------------------------------------------------------
 # Common tasks (admin operations panel)
 # ---------------------------------------------------------------------------
 
@@ -2048,6 +2115,7 @@ INVENTORY = Inventory(
         CASSANDRA,
         RESOURCE_LOCATOR,
         REGISTERED_USERS,
+        UNSENT_MAILS,
         JMAP_SETTINGS_REPORT,
         COMMON_TASKS,
     ),
