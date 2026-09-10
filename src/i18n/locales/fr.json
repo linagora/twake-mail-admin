@@ -98,6 +98,8 @@
     "newDomainPlaceholder": "Nouveau nom de domaine",
     "errorCreating": "Erreur lors de la création du domaine",
     "created": "Domaine « {{name}} » créé",
+    "createConfirmTitle": "Créer un domaine",
+    "createConfirm": "Créer « {{name}} » ? Veuillez vérifier qu'il s'agit bien du domaine que vous souhaitez créer.",
     "deleteDomain": "Supprimer le domaine",
     "deleteConfirm": "Supprimer « {{domain}} » ? Le domaine pourra être recréé et les données utilisateurs existantes ne seront pas affectées.",
     "deleted": "Domaine « {{domain}} » supprimé",

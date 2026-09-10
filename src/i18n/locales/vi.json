@@ -98,6 +98,8 @@
     "newDomainPlaceholder": "Tên miền mới",
     "errorCreating": "Lỗi khi tạo tên miền",
     "created": "Đã tạo tên miền \"{{name}}\"",
+    "createConfirmTitle": "Tạo tên miền",
+    "createConfirm": "Tạo \"{{name}}\"? Vui lòng đảm bảo đây là tên miền bạn muốn tạo.",
     "deleteDomain": "Xóa tên miền",
     "deleteConfirm": "Xóa \"{{domain}}\"? Tên miền có thể được tạo lại sau đó và dữ liệu người dùng hiện có sẽ không bị ảnh hưởng.",
     "deleted": "Đã xóa tên miền \"{{domain}}\"",

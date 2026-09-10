@@ -98,6 +98,8 @@
     "newDomainPlaceholder": "New domain name",
     "errorCreating": "Error creating domain",
     "created": "Domain \"{{name}}\" created",
+    "createConfirmTitle": "Create Domain",
+    "createConfirm": "Create \"{{name}}\"? Please make sure this is the domain you intend to create.",
     "deleteDomain": "Delete Domain",
     "deleteConfirm": "Delete \"{{domain}}\"? The domain can be re-created afterwards and existing user data will not be affected.",
     "deleted": "Domain \"{{domain}}\" deleted",

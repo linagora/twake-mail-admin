@@ -34,6 +34,11 @@ export default function DomainsList() {
   const handleCreate = async () => {
     const name = newDomain.trim();
     if (!name) return;
+    const confirmed = await confirm({
+      header: t("domains.createConfirmTitle"),
+      message: t("domains.createConfirm", { name }),
+    });
+    if (!confirmed) return;
     try {
       await createDomain(name);
       toast({ title: t("domains.created", { name }) });
