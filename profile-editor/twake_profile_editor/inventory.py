@@ -636,11 +636,11 @@ USERS = page(
             endpoints=[
                 may(
                     "DELETE",
-                    "/messages?mailbox={mailbox}&olderThan={date}&useSavedDate",
+                    # Always names the user: without it the task expires every user's messages
+                    "/messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate",
                     gates=(
-                        "/messages",
-                        "/messages?mailbox=Spam",
-                        "/messages?mailbox=Trash",
+                        "/messages?user={username}&mailbox=Spam",
+                        "/messages?user={username}&mailbox=Trash",
                     ),
                 )
             ],
@@ -1971,11 +1971,7 @@ COMMON_TASKS = page(
                 may(
                     "DELETE",
                     "/messages?mailbox={mailbox}&olderThan={date}&useSavedDate",
-                    gates=(
-                        "/messages",
-                        "/messages?mailbox=Spam",
-                        "/messages?mailbox=Trash",
-                    ),
+                    gates=("/messages",),
                 )
             ],
         ),

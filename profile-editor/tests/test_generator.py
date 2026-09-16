@@ -240,10 +240,15 @@ class GeneratorTest(unittest.TestCase):
 
 
     def test_an_endpoint_the_baseline_misses_is_emitted_explicitly(self):
-        """The mail baseline grants /mappings/sources/%@{domain} with no query string."""
+        """The mail baseline has no rule for /mappings/user/{username}.
+
+        It grants /mappings/sources/%@{domain} with no query string, which the proxy
+        applies to every query: the ?type= variant is covered, not repeated.
+        """
         baseline = find_profile("classpath://functional-admin-mail-baseline.json")
         generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline)
-        assert ("GET", "/mappings/sources/%@{domain}?type={type}") in endpoints_of(generated)
+        assert ("GET", "/mappings/user/%@{domain}") in endpoints_of(generated)
+        assert ("GET", "/mappings/sources/%@{domain}?type={type}") not in endpoints_of(generated)
 
     def test_domain_scope_rewrites_only_user_address_segments(self):
         cases = [
@@ -259,6 +264,12 @@ class GeneratorTest(unittest.TestCase):
                 "/messages?mailbox={mailbox}&olderThan={date}&useSavedDate",
             ),
             ("/domains/{domain}/aliases", "/domains/{domain}/aliases"),
+            # ...but the value of a user parameter is.
+            (
+                "/messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate",
+                "/messages?user=%@{domain}&mailbox={mailbox}&olderThan={date}&useSavedDate",
+            ),
+            ("/messages?user={username}&mailbox=Trash", "/messages?user=%@{domain}&mailbox=Trash"),
         ]
         for pattern, expected in cases:
             with self.subTest(pattern=pattern):

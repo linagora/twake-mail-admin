@@ -122,9 +122,9 @@ the corrections down so they cannot come back.
   list, and what are sections of a domain in GLOBAL mode are top-level entries.
   Now documented under *DOMAIN mode left bar*, and modelled as its own tree.
 - **Twenty-nine components gate on a different pattern than they call** — almost
-  always the bare path while the call carries a query string, which the resolver
-  treats as an unrelated rule. Grant only what was documented and the button
-  never appears. Now listed under *Permission gates that differ from the call*,
+  always the bare path while the call carries a query string. A rule written
+  against the documented call requires a parameter the gate does not carry: grant
+  only that and the button never appears. Now listed under *Permission gates that differ from the call*,
   and carried in the tree's `gates=` field.
 - **Twenty-four permission gates had no counterpart at all**: domain signature
   templates, domain and user mailbox templates, per-user address books, booking

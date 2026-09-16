@@ -38,6 +38,10 @@ USER_ADDRESS_VARS = ("{username}", "{mailbox@domain}")
 
 DOMAIN_PLACEHOLDER = "%@{domain}"
 
+#: Query parameters whose value is the administered user's address, scoped like
+#: a path segment.
+USER_QUERY_PARAMS = ("user",)
+
 #: Patterns whose domain scoping cannot be derived mechanically, mapped to the
 #: message explaining why. Emitting them unchanged is the safe default, but the
 #: operator has to be told.
@@ -218,17 +222,26 @@ def _label(key: str, **fmt: object) -> Label:
 
 
 def domain_scope(pattern: str) -> str:
-    """Rewrite the user-address segment of a path for DOMAIN mode.
+    """Rewrite the user address of a pattern for DOMAIN mode.
 
-    Only whole path segments are rewritten -- a ``{mailbox}`` sitting in a query
-    string is a parameter value, not an address.
+    Whole path segments are rewritten, and the value of a ``user`` query
+    parameter (``DELETE /messages?user={username}``). Any other query value is
+    left alone -- a ``{mailbox}`` there is a folder name, not an address.
     """
     path, sep, query = pattern.partition("?")
     segments = [
         DOMAIN_PLACEHOLDER if segment in USER_ADDRESS_VARS else segment
         for segment in path.split("/")
     ]
-    return "/".join(segments) + (sep + query if sep else "")
+    params = [_domain_scope_param(chunk) for chunk in query.split("&")] if sep else []
+    return "/".join(segments) + (sep + "&".join(params) if sep else "")
+
+
+def _domain_scope_param(chunk: str) -> str:
+    name, sep, value = chunk.partition("=")
+    if sep and name in USER_QUERY_PARAMS and value in USER_ADDRESS_VARS:
+        return f"{name}={DOMAIN_PLACEHOLDER}"
+    return chunk
 
 
 def _restrictions(keys: Sequence[tuple[str, str]], scope: Scope) -> dict:

@@ -10,7 +10,7 @@
 - **DOMAIN mode — tasks**: only `/domains/{domain}/tasks/{id}` is evaluated (the global `/tasks/{id}` pattern is ignored in DOMAIN mode).
 - **`.proxy/` calls**: never blocked, not subject to evaluation.
 - **`Accept` header**: ignored by the resolver (download and regular GET share the same pattern).
-- **Gate ≠ call**: a number of components ask the resolver about one pattern and then call another — almost always the bare path while the call carries a query string. Because query strings are compared, **both must be granted** or the control never renders. They are all listed under [Permission gates that differ from the call](#permission-gates-that-differ-from-the-call).
+- **Gate ≠ call**: a number of components ask the resolver about one pattern and then call another — almost always the bare path while the call carries a query string. A query-less rule on the path grants both (the proxy applies it to every query); a rule written against the call alone does not match the bare gate, and the control never renders. They are all listed under [Permission gates that differ from the call](#permission-gates-that-differ-from-the-call).
 - **Two left bars**: GLOBAL and DOMAIN mode do not share a page tree. See [DOMAIN mode left bar](#domain-mode-left-bar).
 - **Application scope**: MAIL and CALENDAR mount different components. Every section below is annotated `MAIL`, `CALENDAR`, or both.
 
@@ -18,10 +18,12 @@
 
 ## Permission gates that differ from the call
 
-A component asks the resolver about one pattern and then calls another. Since the
-resolver compares the query string, the two are unrelated rules: **grant only the
-call and the control is never rendered; grant only the gate and pressing it
-fails**. Both belong in a profile.
+A component asks the resolver about one pattern and then calls another. Like the
+proxy, the resolver lets a rule without query match any query, and ignores
+parameters a rule does not list. So a query-less rule on the gate's path (`POST
+/servers`) grants both the gate and the call; but a rule written against the call
+(`POST /servers?reload-certificate`) requires a parameter the gate does not carry:
+**grant only the call and the control is never rendered**.
 
 Almost every case is the same shape — the gate is the bare path, the call carries
 a task or action parameter.
@@ -33,8 +35,8 @@ a task or action parameter.
 | `DELETE /jmap/uploads` | `DELETE /jmap/uploads?scope=expired&{params}` |
 | `DELETE /mappings/sources/{username}` | `DELETE /mappings/sources/{username}?type={type}` |
 | `DELETE /messages` | `DELETE /messages?mailbox={mailbox}&olderThan={date}&useSavedDate` |
-| `DELETE /messages?mailbox=Spam` | `DELETE /messages?mailbox={mailbox}&olderThan={date}&useSavedDate` |
-| `DELETE /messages?mailbox=Trash` | `DELETE /messages?mailbox={mailbox}&olderThan={date}&useSavedDate` |
+| `DELETE /messages?user={username}&mailbox=Spam` | `DELETE /messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` |
+| `DELETE /messages?user={username}&mailbox=Trash` | `DELETE /messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` |
 | `DELETE /registeredUsers` | `DELETE /registeredUsers?email={email}` |
 | `DELETE /tasks` | `DELETE /tasks?olderThan={days}day` |
 | `GET /quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}&domain={domain}` | `GET /quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}` |
@@ -438,7 +440,7 @@ differs from the call it makes — see [Permission gates that differ from the ca
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
-| "Cleanup mailbox" button | DELETE | `/messages?mailbox={mailbox}&olderThan={date}&useSavedDate` | MAY (do not show the button if missing) |
+| "Cleanup mailbox" button | DELETE | `/messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` | MAY (do not show the button if missing) |
 | "Tier user data" button | POST | `/users/{username}/data?tiering={tiering}` | MAY (do not show the button if missing) |
 | "Provision templates" button | POST | `/users/{username}/templates?action=provision&{params}` | MAY (do not show the button if missing) |
 
