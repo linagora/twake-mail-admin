@@ -93,3 +93,65 @@ Generate a README with:
  - Cross project reference check on github.com/linagora
  - What this project actually does
  - Building, running, testing
+
+# Deny rules must hold against the proxy, not only the frontend
+
+The first generated profiles (`linagora-mail-functional-{admin,baseline,support}.json`) had holes
+found by running them through webadmin-proxy's real matcher. `--check` is right to follow the
+frontend resolver, but **deciding what to deny** must follow the proxy
+(`~/Documents/webadmin-proxy/docs/02-configuration.md`, *Endpoint pattern syntax*), because the proxy
+is what lets a request through:
+
+ - **A rule without query matches every query.** The baseline's `/users/%@{domain}` allows
+   `POST /users/{username}?action=deleteData`, and `/users/%@{domain}/*` allows
+   `POST /users/{username}/data?tiering=…`. The frontend resolver calls these unrelated, so no deny
+   was emitted. When reusing a baseline, a candidate endpoint is "already allowed" if **either**
+   resolver allows it; emit the deny in both cases. Parameters the rule does not list are ignored by
+   the proxy too.
+ - **Never domain-scope a deny rule.** `%@{domain}` narrows what a rule matches, so on a deny it
+   narrows what is refused: a deny on `…/team-mailboxes/{mailbox}/members/%@{domain}` does not stop
+   adding `eve@other.com`, and the baseline's `/domains/{domain}/*` then allows it. Apply
+   `domain_scope` to allow rules only; deny rules keep free variables (`{username}`, `{user}`).
+ - **Mailing lists: authorise both `lists.{domain}` and `{domain}`.** Lists usually live under
+   `lists.<domain>` (`sales@lists.linagora.com`), but some tenants address them under the domain
+   itself; `%@{domain}` alone captures `lists.linagora.com` and the `HAS_DOMAIN` restriction refuses
+   it. In DOMAIN mode every mailing-list rule is therefore emitted twice:
+   `GET /mailingLists?domain=lists.{domain}` **and** `?domain={domain}`;
+   `/mailingLists/%@lists.{domain}…` **and** `/mailingLists/%@{domain}…` (list itself, `/members/{member}`,
+   `/owners/{owner}`), with the same verbs — as in `functional-admin-calendar-baseline.json`. Never emit
+   bare `/mailingLists` or `/mailingLists/{address}` in DOMAIN mode; that grants every tenant's lists.
+ - **Message cleanup must name the user.** `DELETE /messages` without `user` expires messages of
+   **every user of the platform** (James `ExpireMailboxTask`). The user page call already sends
+   `user={username}`: in the inventory, `users.cleanup-mailbox` is
+   `DELETE /messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` with gates
+   `/messages?user={username}&mailbox=Trash` and `…&mailbox=Spam`. `domain_scope` must rewrite a
+   `user={username}` query value into `user=%@{domain}`, not only path segments. In DOMAIN mode never
+   emit `/messages`, `/messages?mailbox=…` or any `/messages` rule without `user=%@{domain}`. The
+   shipped `functional-admin-mail-baseline.json` already grants `/messages?user=%@{domain}`. The
+   frontend gates are being changed accordingly (see
+   `~/Documents/webadmin-proxy/prompt-twake-mail-admin-messages-cleanup.md`).
+ - **Unscoped endpoints in DOMAIN mode are cross-tenant.** A rule capturing no `{domain}` escapes
+   `url.patterns.restrictions`. Warn loudly for each one emitted (`GET /tasks`,
+   `GET /quota/users` without `domain`). When the same call exists with and without a `domain`
+   parameter, emit only the scoped one — otherwise the unscoped rule, listed first, matches
+   `?domain=other.com` too.
+ - **In DOMAIN mode, the call is the scoped variant — never also the unscoped one.** The quota
+   explorer is the example: `inventory.py` declares `users.quota-explorer` in DOMAIN mode as the
+   unscoped call `GET /quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}`
+   plus a gate `…&domain={domain}`, so both rules were emitted, unscoped first. Since the proxy
+   ignores parameters a rule does not list, the unscoped rule matched `…&domain=other.com` (and no
+   `domain` at all), captured nothing and escaped the restriction: every tenant's quotas were
+   readable. Yet the frontend (`explore-user-quota.tsx`) in DOMAIN mode only gates on, and only
+   calls, the `&domain={domain}` form. Declare the DOMAIN endpoint as
+   `must("GET", f"{_QUOTA_EXPLORER}&domain={{domain}}", modes=DOMAIN)` with no gate, and generalise:
+   in DOMAIN mode, a call that has a `{domain}`-carrying variant (path or query) is emitted **only** in
+   that variant. Add a generator check that fails when a DOMAIN profile contains an allow rule
+   capturing no `{domain}` whose path is also granted by a rule that does — the unscoped one always
+   shadows the scoped one.
+ - **Write query flags explicitly.** The proxy now accepts `?useSavedDate` (present, any value) and
+   `&{params}` (no constraint), but emit `useSavedDate=` / drop `{params}` when that is what you mean.
+
+Add a conformance test: port the proxy matcher (or shell out to it) and, for every node of every
+`.questions` file in this directory, assert that the concrete calls of refused nodes are refused and
+those of granted nodes allowed, for a caller of `example.com` — and that the same calls on
+`other.com` are refused in DOMAIN mode.

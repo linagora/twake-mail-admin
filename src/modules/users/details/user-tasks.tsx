@@ -48,8 +48,9 @@ export default function UserTasks({ username }: Props) {
   const canSubscribeAll = useIsAllowed("POST", "/users/{username}/mailboxes");
   const canRecomputeFastView = useIsAllowed("POST", "/users/{username}/mailboxes");
   const canRestoreDeleted = useIsAllowed("POST", "/deletedMessages/users/{username}");
-  const canCleanupTrash = useIsAllowed("DELETE", "/messages?mailbox=Trash");
-  const canCleanupSpam = useIsAllowed("DELETE", "/messages?mailbox=Spam");
+  // Gate on the user-scoped call: without `user`, DELETE /messages expires every user's messages
+  const canCleanupTrash = useIsAllowed("DELETE", "/messages?user={username}&mailbox=Trash");
+  const canCleanupSpam = useIsAllowed("DELETE", "/messages?user={username}&mailbox=Spam");
   const canRename = useIsAllowed("POST", "/users/{username}/rename/{newUser}");
   const canDeleteAllMailboxes = useIsAllowed("DELETE", "/users/{username}/mailboxes");
   const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");

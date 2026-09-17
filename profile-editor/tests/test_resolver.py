@@ -89,6 +89,44 @@ SPEC_EXAMPLE_CASES = [
 
 
 # ---------------------------------------------------------------------------
+# 11. Proxy conformance: rule without query (AllowedUrlTest.java)
+# ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# 12. Proxy conformance: parameters the rule does not list (AllowedUrlTest.java)
+# ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# 13. Proxy conformance: flag-style parameters (AllowedUrlTest.java)
+# ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# 14. Proxy conformance: {params} placeholder (AllowedUrlTest.java)
+# ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# 15. Proxy conformance: wildcard * (AllowedUrlTest.java)
+# ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# 16. Proxy conformance: % email local part (AllowedUrlTest.java)
+# ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# 17. Proxy conformance: repeated variables (AllowedUrlTest.java)
+# ---------------------------------------------------------------------------
+
+MEMBERS = "/domains/{domain}/team-mailboxes/{mailbox}/members/%@{domain}"
+SCOPED_USERS = "/domains/{domain}/users?domain={domain}"
+
+
+# ---------------------------------------------------------------------------
 # Port-specific: JSON round-trip
 # ---------------------------------------------------------------------------
 
@@ -228,9 +266,10 @@ class ResolverTest(unittest.TestCase):
 
 
 
-    def test_trailing_wildcard_does_not_match_a_path_with_a_query_string(self):
+    def test_trailing_wildcard_matches_a_path_with_a_query_string(self):
+        # A rule without query imposes no query constraint
         rules = [Rule("/domains/*")]
-        assert resolve(rules, "POST", "/domains/{domain}?action=deleteData") is False
+        assert resolve(rules, "POST", "/domains/{domain}?action=deleteData") is True
 
 
 
@@ -247,9 +286,9 @@ class ResolverTest(unittest.TestCase):
 
 
 
-    def test_rule_has_no_query_component_has_query_no_match(self):
+    def test_rule_has_no_query_component_has_query_match(self):
         rules = [Rule("/users/{username}/mailboxes")]
-        assert resolve(rules, "POST", "/users/{username}/mailboxes?task=reIndex") is False
+        assert resolve(rules, "POST", "/users/{username}/mailboxes?task=reIndex") is True
 
 
 
@@ -309,10 +348,10 @@ class ResolverTest(unittest.TestCase):
 
 
 
-    def test_different_number_of_query_params_no_match(self):
+    def test_missing_query_param_no_match_extra_query_param_ignored(self):
         rules = [Rule("/foo?a=1&b=2")]
         assert resolve(rules, "GET", "/foo?a=1") is False
-        assert resolve(rules, "GET", "/foo?a=1&b=2&c=3") is False
+        assert resolve(rules, "GET", "/foo?a=1&b=2&c=3") is True
 
 
 
@@ -328,9 +367,10 @@ class ResolverTest(unittest.TestCase):
 
 
 
-    def test_query_flag_param_does_not_match_keyed_param_with_same_name(self):
+    def test_query_flag_param_in_rule_accepts_any_value(self):
         rules = [Rule("/reports/quota/users?hasSpecificQuota")]
-        assert resolve(rules, "GET", "/reports/quota/users?hasSpecificQuota=true") is False
+        assert resolve(rules, "GET", "/reports/quota/users?hasSpecificQuota=true") is True
+        assert resolve(rules, "GET", "/reports/quota/users") is False
 
 
 
@@ -338,8 +378,8 @@ class ResolverTest(unittest.TestCase):
         rules = [Rule("/tasks?olderThan={value}", verb=("DELETE",)), Rule("/tasks")]
         assert resolve(rules, "DELETE", "/tasks?olderThan={days}day") is True
         assert resolve(rules, "GET", "/tasks") is True
-        # verb mismatch on rule 1, rule 2 carries no query
-        assert resolve(rules, "GET", "/tasks?olderThan={days}day") is False
+        # verb mismatch on rule 1, rule 2 imposes no query constraint
+        assert resolve(rules, "GET", "/tasks?olderThan={days}day") is True
 
 
 
@@ -411,10 +451,10 @@ class ResolverTest(unittest.TestCase):
         assert (
             resolve(rules, "PATCH", "/mailRepositories/{encodedPath}/mails/{mailKey}") is True
         )
-        # Query strings are not covered by the wildcard alone
+        # Query strings are covered too: the rule has no query constraint
         assert (
             resolve(rules, "PATCH", "/mailRepositories/{encodedPath}/mails?action=reprocess")
-            is False
+            is True
         )
 
 
@@ -441,11 +481,11 @@ class ResolverTest(unittest.TestCase):
         ]
         # eventId query matches its own rule
         assert resolve(rules, "GET", "/events/deadLetter?eventId=abc-123") is True
-        # The reDeliver rule must not match an eventId query (different key)
+        # Extra parameters are ignored
         assert (
-            resolve(rules, "GET", "/events/deadLetter?eventId=abc-123&extra=1") is False
+            resolve(rules, "GET", "/events/deadLetter?eventId=abc-123&extra=1") is True
         )
-        # The eventId rule must not match a reDeliver query (different key)
+        # A reDeliver query matches the reDeliver rule, whatever the verb
         assert resolve(rules, "GET", "/events/deadLetter?action=reDeliver") is True
         # eventId rule alone does not cover a different query key
         assert (
@@ -587,6 +627,285 @@ class ResolverTest(unittest.TestCase):
         assert resolve(rules, "GET", "/domains/{d}/users") is True
 
 
+
+    # --- 11. Proxy conformance: rule without query ---
+
+    def test_pattern_without_query_should_match_path_with_query_params(self):
+        assert resolve([Rule("/users")], "GET", "/users?limit=10") is True
+
+    def test_a_deny_without_query_denies_every_query(self):
+        rules = [Rule("/users/%@{domain}", denied=True), Rule("/users/*")]
+        assert resolve(rules, "POST", "/users/{username}?action=deleteData") is False
+
+    def test_an_allow_without_query_allows_every_query(self):
+        rules = [Rule("/users/%@{domain}")]
+        assert resolve(rules, "POST", "/users/{username}?action=deleteData") is True
+
+    # --- 12. Proxy conformance: extra query parameters ---
+
+    def test_should_match_when_required_query_param_present(self):
+        assert resolve([Rule("/users?domain={domain}")], "GET", "/users?domain=example.com") is True
+
+    def test_should_not_match_when_required_query_param_missing(self):
+        assert resolve([Rule("/users?domain={domain}")], "GET", "/users") is False
+
+    def test_should_not_match_when_required_query_param_has_different_name(self):
+        assert resolve([Rule("/users?domain={domain}")], "GET", "/users?tenant=example.com") is False
+
+    def test_should_match_with_extra_query_params(self):
+        rules = [Rule("/users?domain={domain}")]
+        assert resolve(rules, "GET", "/users?domain=example.com&limit=10") is True
+
+    def test_should_match_literal_query_param_value(self):
+        rules = [Rule("/users?active=true")]
+        assert resolve(rules, "GET", "/users?active=true") is True
+        assert resolve(rules, "GET", "/users?active=false") is False
+
+    def test_should_match_when_multiple_required_params_present_in_same_or_reverse_order(self):
+        rules = [Rule("/users?domain={domain}&active=true")]
+        assert resolve(rules, "GET", "/users?domain=example.com&active=true") is True
+        assert resolve(rules, "GET", "/users?active=true&domain=example.com") is True
+
+    def test_should_not_match_when_one_or_all_required_params_missing(self):
+        rules = [Rule("/users?domain={domain}&active=true")]
+        assert resolve(rules, "GET", "/users?domain=example.com") is False
+        assert resolve(rules, "GET", "/users") is False
+
+    def test_should_match_with_extra_params_alongside_multiple_required_params(self):
+        rules = [Rule("/users?domain={domain}&active=true")]
+        assert resolve(rules, "GET", "/users?limit=10&domain=example.com&active=true") is True
+
+    def test_should_not_match_when_literal_param_value_wrong_among_multiple(self):
+        rules = [Rule("/users?domain={domain}&active=true")]
+        assert resolve(rules, "GET", "/users?domain=example.com&active=false") is False
+
+    def test_percent_at_domain_in_query_param_should_match_with_extra_params(self):
+        rules = [Rule("/messages?user=%@{domain}")]
+        assert (
+            resolve(
+                rules,
+                "DELETE",
+                "/messages?olderThan=1d&mailbox=Trash&user=btellier@linagora.com&useSavedDate=",
+            )
+            is True
+        )
+        assert resolve(rules, "DELETE", "/messages?user=btellier") is False
+
+    def test_the_unscoped_quota_explorer_rule_also_matches_the_domain_filtered_call(self):
+        rules = [
+            Rule(
+                "/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}"
+                "&limit={limit}&offset={offset}"
+            )
+        ]
+        assert (
+            resolve(
+                rules,
+                "GET",
+                "/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}"
+                "&limit={limit}&offset={offset}&domain={domain}",
+            )
+            is True
+        )
+
+    # --- 13. Proxy conformance: flag-style parameters ---
+
+    def test_valueless_query_param_pattern_should_require_param_present_with_any_value(self):
+        rules = [Rule("/quota/users?hasSpecificQuota")]
+        assert resolve(rules, "GET", "/quota/users?hasSpecificQuota") is True
+        assert resolve(rules, "GET", "/quota/users?hasSpecificQuota=") is True
+        assert resolve(rules, "GET", "/quota/users?hasSpecificQuota=true") is True
+        assert resolve(rules, "GET", "/quota/users") is False
+
+    def test_valueless_query_param_pattern_should_be_supported_among_valued_ones(self):
+        rules = [Rule("/messages?user={user}&useSavedDate")]
+        assert resolve(rules, "DELETE", "/messages?user=bob@example.com&useSavedDate") is True
+        assert resolve(rules, "DELETE", "/messages?user=bob@example.com") is False
+
+    def test_empty_value_pattern_should_require_flag_param_present(self):
+        rules = [Rule("/quota/users?hasSpecificQuota=")]
+        assert resolve(rules, "GET", "/quota/users?hasSpecificQuota") is True
+        assert resolve(rules, "GET", "/quota/users?hasSpecificQuota=") is True
+        assert resolve(rules, "GET", "/quota/users") is False
+        assert resolve(rules, "GET", "/quota/users?hasSpecificQuota=true") is False
+
+    def test_star_value_pattern_should_require_flag_param_present_with_any_value(self):
+        rules = [Rule("/quota/users?hasSpecificQuota=*")]
+        assert resolve(rules, "GET", "/quota/users?hasSpecificQuota") is True
+        assert resolve(rules, "GET", "/quota/users?hasSpecificQuota=true") is True
+        assert resolve(rules, "GET", "/quota/users") is False
+
+    def test_a_valueless_rule_does_not_match_a_component_sending_a_variable_value(self):
+        rules = [Rule("/servers?reload-certificate=")]
+        assert resolve(rules, "POST", "/servers?reload-certificate") is True
+        assert resolve(rules, "POST", "/servers?reload-certificate={value}") is False
+
+    # --- 14. Proxy conformance: {params} placeholder ---
+
+    def test_other_params_placeholder_should_impose_no_constraint(self):
+        rules = [Rule("/users/%@{domain}/templates?action=provision&{params}")]
+        assert resolve(rules, "POST", "/users/bob@example.com/templates?action=provision") is True
+        assert (
+            resolve(rules, "POST", "/users/bob@example.com/templates?action=provision&from=a&to=b")
+            is True
+        )
+        assert resolve(rules, "POST", "/users/bob@example.com/templates?from=a") is False
+
+    def test_other_params_placeholder_should_be_the_whole_query(self):
+        rules = [Rule("/tasks?{query_params}")]
+        assert resolve(rules, "GET", "/tasks") is True
+        assert resolve(rules, "GET", "/tasks?status=failed") is True
+
+    def test_other_params_placeholder_should_not_capture_any_variable(self):
+        rules = [Rule("/domains/{domain}/tasks?{domain}")]
+        assert resolve(rules, "GET", "/domains/a.com/tasks?domain=other.com") is True
+
+    def test_a_component_params_chunk_may_supply_an_allow_requirement_never_a_deny_one(self):
+        assert resolve([Rule("/users?domain={domain}")], "POST", "/users?{params}") is True
+        deny = [Rule("/users?force=true", denied=True), Rule("/users")]
+        assert resolve(deny, "POST", "/users?{params}") is True
+        assert resolve(deny, "POST", "/users?force=true&{params}") is False
+
+    # --- 15. Proxy conformance: wildcard * ---
+
+    def test_wildcard_should_match_anything_multiple_segments_and_empty_suffix(self):
+        assert (
+            resolve(
+                [Rule("/domains/{domain}/aliases/*")],
+                "GET",
+                "/domains/example.com/aliases/bob@example.com",
+            )
+            is True
+        )
+        rules = [Rule("/prefix/*")]
+        assert resolve(rules, "GET", "/prefix/a/b/c") is True
+        assert resolve(rules, "GET", "/prefix/") is True
+        assert resolve(rules, "GET", "/prefix") is False
+
+    def test_wildcard_should_not_match_unrelated_prefix(self):
+        assert resolve([Rule("/prefix/*")], "GET", "/other/foo") is False
+
+    def test_exact_pattern_should_not_match_prefix_or_longer_path(self):
+        assert resolve([Rule("/domains")], "GET", "/domains/example.com") is False
+        assert resolve([Rule("/abc")], "GET", "/abcdef") is False
+
+    def test_non_trailing_wildcard_spans_any_number_of_segments(self):
+        rules = [Rule("/a/*/b")]
+        assert resolve(rules, "GET", "/a/x/y/b") is True
+        assert resolve(rules, "GET", "/a/{x}/{y}/b") is True
+
+    def test_wildcard_inside_a_segment_is_a_wildcard(self):
+        rules = [Rule("/tasks*")]
+        assert resolve(rules, "GET", "/tasks") is True
+        assert resolve(rules, "GET", "/tasks/{id}") is True
+        assert resolve([Rule("/users/*@linagora.com")], "GET", "/users/{username}") is True
+        assert resolve([Rule("/users/*@linagora.com")], "GET", "/users/bob@other.com") is False
+
+    def test_wildcard_in_a_query_value_is_a_wildcard(self):
+        rules = [Rule("/messages?mailbox=*")]
+        assert resolve(rules, "DELETE", "/messages?mailbox=Trash") is True
+        assert resolve(rules, "DELETE", "/messages?mailbox={mailbox}") is True
+        assert resolve(rules, "DELETE", "/messages") is False
+
+    # --- 16. Proxy conformance: % email local part ---
+
+    def test_percent_should_match_local_part_of_email_and_any_local_part(self):
+        rules = [Rule("/users/%@{domain}/*")]
+        assert resolve(rules, "GET", "/users/bob@example.com/mailboxes") is True
+        assert resolve(rules, "GET", "/users/charlie.d@example.com/mailboxes/INBOX") is True
+
+    def test_percent_should_not_match_across_at_sign_slash_or_missing_local_part(self):
+        rules = [Rule("/users/%@{domain}/*")]
+        assert resolve(rules, "GET", "/users/bob/mailboxes") is False
+        assert resolve(rules, "GET", "/users/bob/extra@example.com/mailboxes") is False
+        assert resolve(rules, "GET", "/users/@example.com/mailboxes") is False
+
+    def test_lists_sub_domain_pattern_is_a_variable_segment(self):
+        rules = [Rule("/mailingLists/%@lists.{domain}", verb=("GET",))]
+        assert resolve(rules, "GET", "/mailingLists/sales@lists.linagora.com") is True
+        assert resolve(rules, "GET", "/mailingLists/{address}") is True
+        assert resolve(rules, "GET", "/mailingLists/sales@linagora.com") is False
+
+    def test_member_pattern_should_capture_list_domain_rather_than_member_domain(self):
+        rules = [Rule("/mailingLists/%@lists.{domain}/members/*", verb=("PUT", "DELETE"))]
+        assert (
+            resolve(rules, "PUT", "/mailingLists/sales@lists.linagora.com/members/bob@linagora.com")
+            is True
+        )
+        assert resolve(rules, "PUT", "/mailingLists/{address}/members/{member}") is True
+
+    def test_member_pattern_should_not_match_owner_management_or_list_deletion(self):
+        rules = [Rule("/mailingLists/%@lists.{domain}/members/*", verb=("PUT", "DELETE"))]
+        assert (
+            resolve(rules, "PUT", "/mailingLists/sales@lists.linagora.com/owners/bob@linagora.com")
+            is False
+        )
+        assert resolve(rules, "DELETE", "/mailingLists/sales@lists.linagora.com") is False
+
+    def test_domain_query_param_pattern_should_capture_tenant_domain_not_unfiltered_listing(self):
+        rules = [Rule("/mailingLists?domain=lists.{domain}", verb=("GET",))]
+        assert resolve(rules, "GET", "/mailingLists?domain=lists.linagora.com") is True
+        assert resolve(rules, "GET", "/mailingLists?domain={domain}") is True
+        assert resolve(rules, "GET", "/mailingLists?domain=linagora.com") is False
+        assert resolve(rules, "GET", "/mailingLists") is False
+
+    # --- 17. Proxy conformance: repeated variables ---
+
+    def test_same_variable_twice_in_path_should_match_consistent_values_only(self):
+        rules = [Rule(MEMBERS)]
+        assert (
+            resolve(rules, "PUT", "/domains/example.com/team-mailboxes/sales/members/bob@example.com")
+            is True
+        )
+        assert (
+            resolve(rules, "PUT", "/domains/example.com/team-mailboxes/sales/members/bob@other.com")
+            is False
+        )
+
+    def test_same_variable_in_path_and_query_should_match_consistent_values_only(self):
+        rules = [Rule(SCOPED_USERS)]
+        assert resolve(rules, "GET", "/domains/example.com/users?domain=example.com") is True
+        assert resolve(rules, "GET", "/domains/example.com/users?domain=other.com") is False
+
+    def test_allow_rule_a_component_variable_may_satisfy_the_equality(self):
+        rules = [Rule(MEMBERS)]
+        assert (
+            resolve(rules, "PUT", "/domains/{domain}/team-mailboxes/{mailbox}/members/{username}")
+            is True
+        )
+        assert (
+            resolve(rules, "PUT", "/domains/example.com/team-mailboxes/{mailbox}/members/{username}")
+            is True
+        )
+        assert resolve([Rule(SCOPED_USERS)], "GET", "/domains/{domain}/users?domain={other}") is True
+
+    def test_deny_rule_only_applies_when_the_equality_holds_for_every_call(self):
+        rules = [Rule(MEMBERS, denied=True), Rule("/domains/{domain}/*")]
+        # eve@other.com is not denied by the proxy: the deny must not hide the control
+        assert (
+            resolve(rules, "PUT", "/domains/{domain}/team-mailboxes/{mailbox}/members/{username}")
+            is True
+        )
+        # Literal occurrences that are equal, or different
+        assert (
+            resolve(rules, "PUT", "/domains/a.com/team-mailboxes/{mailbox}/members/bob@a.com")
+            is False
+        )
+        assert (
+            resolve(rules, "PUT", "/domains/a.com/team-mailboxes/{mailbox}/members/bob@b.com")
+            is True
+        )
+
+    def test_deny_rule_the_same_whole_component_variable_proves_the_equality(self):
+        rules = [Rule(SCOPED_USERS, denied=True), Rule("/*")]
+        assert resolve(rules, "GET", "/domains/{domain}/users?domain={domain}") is False
+        assert resolve(rules, "GET", "/domains/{domain}/users?domain={other}") is True
+        # Part of a component variable proves nothing
+        partial = [Rule("/a/{d}/b/%@{d}", denied=True), Rule("/*")]
+        assert resolve(partial, "GET", "/a/{x}/b/{x}") is True
+
+    def test_variable_names_with_underscore_should_be_accepted(self):
+        assert resolve([Rule("/tasks/{task_id}")], "GET", "/tasks/abc") is True
 
     def test_rule_round_trips_through_json(self):
         raw = {"denied": True, "verb": ["GET", "PUT"], "endpoint": "/domains/{domain}"}
