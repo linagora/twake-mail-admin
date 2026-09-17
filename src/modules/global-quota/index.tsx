@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -11,6 +10,7 @@ import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
 import QuotaUsageSumSection from "@/components/custom/quota-usage-sum";
+import UsersWithSpecificQuotas from "./users-with-specific-quotas";
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_administrating_quotas";
 
@@ -170,32 +170,7 @@ export default function GlobalQuota() {
             </div>
 
             {/* Users with specific quotas */}
-            <div className="p-4 bg-gray-50 rounded-2 space-y-3">
-              <h4 className="text-sm font-semibold">{t("globalQuota.usersSpecificTitle", { count: data.users.length })}</h4>
-              {data.users.length === 0 ? (
-                <p className="text-sm text-muted-foreground">{t("globalQuota.noSpecificQuotas")}</p>
-              ) : (
-                <div className="space-y-1">
-                  {data.users.map((u, i) => (
-                    <div key={u.user} className="flex justify-between items-center py-1 text-sm">
-                      <span>
-                        <span className="text-gray-500 mr-2">{i + 1}/</span>
-                        <Link
-                          to={`/users/user/${encodeURIComponent(u.user)}`}
-                          className="text-blue-600 hover:underline"
-                        >
-                          {u.user}
-                        </Link>
-                      </span>
-                      <span>
-                        <span className="mr-4">Count: <strong>{formatCount(u.countLimit)}</strong></span>
-                        Size: <strong>{formatSize(u.storageLimit)}</strong>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <UsersWithSpecificQuotas users={data.users} formatCount={formatCount} formatSize={formatSize} />
           </div>
         )}
 
