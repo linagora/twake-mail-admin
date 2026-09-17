@@ -250,7 +250,7 @@ function oneOrMore(cls: CharClass, variable: string | undefined): Atom[] {
 type Capture = string[];
 type Captures = Record<string, Capture[]>;
 
-const MARKER = " ";
+const MARKER = "\u0000";
 const PARTIAL = `${MARKER}partial`;
 
 interface State {
