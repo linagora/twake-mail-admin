@@ -5,6 +5,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserAddressBook, deleteUserAddressBook, getUserAddressBooks, setUserAddressBookPublicRight, updateUserAddressBookInvitees } from "../api-client";
 import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBooksResponseType, UserAddressBook } from "../types";
+import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess, shareAccessToRight } from "./address-book-share-access";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -23,23 +24,7 @@ const EMPTY_CREATE: CreateUserAddressBookPayload = {
 
 const PUBLIC_READ = "{DAV:}read";
 
-type AddressBookRight = "read" | "read-write" | "administration";
-
-const RIGHT_OPTIONS: AddressBookRight[] = ["read", "read-write", "administration"];
-
-// dav:share-access values per WebDAV sharing spec
-function rightToShareAccess(right: AddressBookRight): number {
-  if (right === "read") return 2;
-  if (right === "read-write") return 3;
-  return 4;
-}
-
-function shareAccessToRight(access: number): AddressBookRight | null {
-  if (access === 2) return "read";
-  if (access === 3) return "read-write";
-  if (access === 4) return "administration";
-  return null;
-}
+const RIGHT_OPTIONS = ADDRESS_BOOK_RIGHTS;
 
 function addressBookId(addressBook: UserAddressBook): string {
   const href = addressBook._links?.self?.href ?? "";
@@ -407,11 +392,10 @@ function InviteesModal({
   };
 
   const handleApply = async () => {
-    // access code 5 = no access (revoke)
     const sharees: AddressBookShareUpdate["dav:sharee"] = [
       ...additions.map((a) => ({ "dav:href": `mailto:${a.email}`, "dav:share-access": rightToShareAccess(a.right) })),
       ...changedHrefs.map((href) => ({ "dav:href": href, "dav:share-access": rightToShareAccess(changes[href]) })),
-      ...[...removals].map((href) => ({ "dav:href": href, "dav:share-access": 5 })),
+      ...[...removals].map((href) => ({ "dav:href": href, "dav:share-access": SHARE_ACCESS_NO_ACCESS })),
     ];
 
     if (!sharees.length) {
