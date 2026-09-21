@@ -1,16 +1,27 @@
 import { apiClient, getRaw } from "@/lib/apiClient";
-import { UnsentMailId, UnsentMail, TaskResponse } from "./types";
+import {
+  UnsentMailId,
+  UnsentMail,
+  UnsentMailSelection,
+  TaskResponse,
+} from "./types";
 
-export const getUnsentMailIds = async (
-  sender?: string,
-  recipient?: string,
-  limit?: number
-): Promise<UnsentMailId[]> => {
-  const params = new URLSearchParams();
+/** The selection the listing, resend and delete routes all share. */
+export const unsentMailSelectionParams = (
+  { sender, recipient, limit }: UnsentMailSelection = {},
+  base?: Record<string, string>
+): URLSearchParams => {
+  const params = new URLSearchParams(base);
   if (sender) params.append("sender", sender);
   if (recipient) params.append("recipient", recipient);
   if (limit) params.append("limit", String(limit));
-  const query = params.toString();
+  return params;
+};
+
+export const getUnsentMailIds = async (
+  selection?: UnsentMailSelection
+): Promise<UnsentMailId[]> => {
+  const query = unsentMailSelectionParams(selection).toString();
   return apiClient.get<any, UnsentMailId[]>(
     `/unsentMails${query ? `?${query}` : ""}`
   );
@@ -24,14 +35,16 @@ export const deleteUnsentMail = async (id: string): Promise<void> => {
 };
 
 export const resendAllUnsentMails = async (
-  sender?: string,
-  recipient?: string,
-  limit?: number
+  selection?: UnsentMailSelection
 ): Promise<TaskResponse> => {
-  const params = new URLSearchParams({ action: "resend" });
-  if (sender) params.append("sender", sender);
-  if (recipient) params.append("recipient", recipient);
-  if (limit) params.append("limit", String(limit));
+  const params = unsentMailSelectionParams(selection, { action: "resend" });
+  return apiClient.post<any, TaskResponse>(`/unsentMails?${params.toString()}`);
+};
+
+export const deleteAllUnsentMails = async (
+  selection?: UnsentMailSelection
+): Promise<TaskResponse> => {
+  const params = unsentMailSelectionParams(selection, { action: "delete" });
   return apiClient.post<any, TaskResponse>(`/unsentMails?${params.toString()}`);
 };
 

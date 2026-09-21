@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type MouseEvent } from "react";
 import { Link } from "react-router";
-import { RefreshCw, Trash2, Download, Search, Send } from "lucide-react";
+import { RefreshCw, Trash2, Download, Search, Send, Eraser } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useToast } from "@/hooks/use-toast";
@@ -12,11 +12,12 @@ import {
   getUnsentMailIds,
   getUnsentMail,
   deleteUnsentMail,
+  deleteAllUnsentMails,
   resendAllUnsentMails,
   resendUnsentMail,
   downloadUnsentMail,
 } from "./api-client";
-import type { UnsentMailId, UnsentMail } from "./types";
+import type { UnsentMailId, UnsentMail, UnsentMailSelection } from "./types";
 
 const PAGE_SIZE = 50;
 
@@ -25,7 +26,8 @@ export default function UnsentMailsList() {
   const { toast } = useToast();
   const confirm = useConfirm();
 
-  const canResendAll = useIsAllowed("POST", "/unsentMails");
+  // Both bulk actions are the very same route, so they share a single gate.
+  const canRunBulkTask = useIsAllowed("POST", "/unsentMails");
   const canResendOne = useIsAllowed("POST", "/unsentMails/{id}");
   const canDelete = useIsAllowed("DELETE", "/unsentMails/{id}");
 
@@ -70,25 +72,74 @@ export default function UnsentMailsList() {
   const pageStart = (page - 1) * PAGE_SIZE;
   const pageItems = filtered.slice(pageStart, pageStart + PAGE_SIZE);
 
+  // The bulk tasks are filtered server side by the very same criteria the page
+  // exposes, so that "all" never means more than what the admin is looking at.
+  const selection = useMemo<UnsentMailSelection>(
+    () => ({
+      sender: senderFilter.trim() || undefined,
+      recipient: recipientFilter.trim() || undefined,
+    }),
+    [senderFilter, recipientFilter]
+  );
+
+  const selectionSummary = useMemo(
+    () =>
+      [
+        selection.sender ? `${t("unsentMails.sender")}: ${selection.sender}` : null,
+        selection.recipient
+          ? `${t("unsentMails.recipient")}: ${selection.recipient}`
+          : null,
+      ]
+        .filter(Boolean)
+        .join(", "),
+    [selection, t]
+  );
+
+  const taskLink = (taskId: string) => (
+    <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
+      {t("common.taskLink", { taskId })}
+    </Link>
+  );
+
   const handleResendAll = async () => {
     const confirmed = await confirm({
       header: t("unsentMails.resendAllTitle"),
-      message: t("unsentMails.resendAllConfirm"),
+      message: selectionSummary
+        ? t("unsentMails.resendAllFilteredConfirm", { filters: selectionSummary })
+        : t("unsentMails.resendAllConfirm"),
     });
     if (!confirmed) return;
     try {
-      const { taskId } = await resendAllUnsentMails();
+      const { taskId } = await resendAllUnsentMails(selection);
       toast({
         title: t("unsentMails.taskSubmitted"),
-        description: (
-          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-            {t("common.taskLink", { taskId })}
-          </Link>
-        ),
+        description: taskLink(taskId),
       });
     } catch (err) {
       toast({
         title: t("unsentMails.errorResending"),
+        description: <ErrorDisplayer error={err} />,
+      });
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    const confirmed = await confirm({
+      header: t("unsentMails.deleteAllTitle"),
+      message: selectionSummary
+        ? t("unsentMails.deleteAllFilteredConfirm", { filters: selectionSummary })
+        : t("unsentMails.deleteAllConfirm"),
+    });
+    if (!confirmed) return;
+    try {
+      const { taskId } = await deleteAllUnsentMails(selection);
+      toast({
+        title: t("unsentMails.deleteTaskSubmitted"),
+        description: taskLink(taskId),
+      });
+    } catch (err) {
+      toast({
+        title: t("unsentMails.errorDeleting"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -106,11 +157,7 @@ export default function UnsentMailsList() {
       const { taskId } = await resendUnsentMail(id);
       toast({
         title: t("unsentMails.taskSubmitted"),
-        description: (
-          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-            {t("common.taskLink", { taskId })}
-          </Link>
-        ),
+        description: taskLink(taskId),
       });
       refresh();
     } catch (err) {
@@ -163,14 +210,23 @@ export default function UnsentMailsList() {
 
   return (
     <div>
-      {canResendAll && (
-        <button
-          onClick={handleResendAll}
-          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition flex items-center gap-2"
-        >
-          <Send className="w-4 h-4" />
-          {t("unsentMails.resendAll")}
-        </button>
+      {canRunBulkTask && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          <button
+            onClick={handleResendAll}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition flex items-center gap-2"
+          >
+            <Send className="w-4 h-4" />
+            {t("unsentMails.resendAll")}
+          </button>
+          <button
+            onClick={handleDeleteAll}
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition flex items-center gap-2"
+          >
+            <Eraser className="w-4 h-4" />
+            {t("unsentMails.deleteAll")}
+          </button>
+        </div>
       )}
 
       <div className="flex flex-col sm:flex-row gap-2 mb-4">
