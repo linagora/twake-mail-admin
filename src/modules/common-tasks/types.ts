@@ -31,6 +31,7 @@ export enum TaskKey {
   ALARM_RESCHEDULING = 'alarmRescheduling',
   CALENDAR_EVENT_ARCHIVAL = 'calendarEventArchival',
   CLEAR_DOMAIN_MEMBERS_CONTACTS = 'clear-domain-members-contacts-dav',
+  REPUBLISH_COMMON_CONTACTS = 'republish-common-contacts',
 };
 
 export type TaskRequest = {
@@ -56,6 +57,8 @@ export type AdditionalParams = {
   masterDtStartBefore?: string;
   isRejected?: string;
   isNotRecurring?: string;
+  contactsPerSecond?: string;
+  scope?: string;
 }
 
 export type TaskProps = {

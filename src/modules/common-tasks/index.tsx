@@ -202,6 +202,17 @@ const CALENDAR_TASKS: TaskProps[] = [
     doc: '',
   },
   {
+    nameKey: 'commonTasks.republishCommonContacts',
+    taskKey: TaskKey.REPUBLISH_COMMON_CONTACTS,
+    command: 'curl -XPOST /contacts?action=republish&contactsPerSecond=100',
+    params: [
+      { key: 'contactsPerSecond', defaultValue: '100', type: 'input' },
+      { key: 'scope', defaultValue: '', type: 'select', values: ['', 'domain', 'user'] },
+    ],
+    doc: '',
+    allowanceCheck: { verb: 'POST', pattern: '/contacts?action=republish' },
+  },
+  {
     nameKey: 'commonTasks.clearDomainMembersContacts',
     taskKey: TaskKey.CLEAR_DOMAIN_MEMBERS_CONTACTS,
     command: 'curl -XDELETE /addressbook/domain-members',

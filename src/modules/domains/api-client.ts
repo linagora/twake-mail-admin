@@ -276,6 +276,17 @@ export const removeDomainAdmin = async (domain: string, username: string): Promi
   await apiClient.delete(`/domains/${encodeURIComponent(domain)}/admins/${encodeURIComponent(username)}`);
 };
 
+export const republishDomainContacts = async (
+  domain: string,
+  params: { contactsPerSecond?: string; scope?: string }
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ action: "republish" });
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) query.set(key, value);
+  });
+  return apiClient.post(`/domains/${encodeURIComponent(domain)}/contacts?${query.toString()}`);
+};
+
 export const syncDomainMembers = async (domain: string): Promise<RunTaskResponse> => {
   return apiClient.post(`/addressbook/domain-members/${encodeURIComponent(domain)}?task=sync`);
 };

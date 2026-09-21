@@ -379,7 +379,12 @@
       "syncConfirm": "Đồng bộ thành viên tên miền cho \"{{domain}}\" từ sổ địa chỉ?",
       "syncButton": "Đồng bộ thành viên tên miền",
       "syncDesc": "Đồng bộ danh sách thành viên tên miền từ sổ địa chỉ.",
-      "errorSyncing": "Lỗi khi đồng bộ thành viên tên miền"
+      "errorSyncing": "Lỗi khi đồng bộ thành viên tên miền",
+      "republishContactsTitle": "Đăng lại liên hệ chung",
+      "republishContactsConfirm": "Đăng lại liên hệ chung của tên miền \"{{domain}}\" và của người dùng thuộc tên miền?",
+      "republishContactsButton": "Đăng lại liên hệ chung",
+      "republishContactsDesc": "Đăng lại liên hệ của tên miền và của người dùng thuộc tên miền lên bus liên hệ chung.",
+      "errorRepublishingContacts": "Lỗi khi đăng lại liên hệ chung"
     },
     "subtitleMail": "Quản lý các tên miền đã đăng ký trên máy chủ thư.",
     "subtitleCalendar": "Quản lý các tên miền đã đăng ký trên máy chủ lịch."
@@ -723,7 +728,11 @@
       "archiveTitle": "Lưu trữ sự kiện lịch",
       "archiveButton": "Lưu trữ sự kiện lịch",
       "archiveDesc": "Lưu trữ sự kiện lịch cho {{username}}.",
-      "errorArchive": "Lỗi khi chạy tác vụ lưu trữ"
+      "errorArchive": "Lỗi khi chạy tác vụ lưu trữ",
+      "republishContactsTitle": "Đăng lại liên hệ chung",
+      "republishContactsButton": "Đăng lại liên hệ chung",
+      "republishContactsDesc": "Đăng lại liên hệ của {{username}} lên bus liên hệ chung.",
+      "errorRepublishContacts": "Lỗi khi đăng lại liên hệ chung"
     },
     "calendars": {
       "title": "Lịch",
@@ -971,6 +980,7 @@
     "alarmRescheduling": "Lên lịch lại nhắc nhở",
     "addMissingFields": "Thêm các trường còn thiếu cho người dùng đã đăng ký",
     "clearDomainMembersContacts": "Xóa liên hệ thành viên của tất cả tên miền",
+    "republishCommonContacts": "Đăng lại tất cả liên hệ chung",
     "reloadCertificates": "Tải lại chứng chỉ",
     "portOptional": "cổng (tùy chọn)",
     "reloadCertTitle": "Tải lại chứng chỉ",

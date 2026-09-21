@@ -443,6 +443,13 @@ DOMAINS = page(
                 )
             ],
         ),
+        action(
+            "republish-contacts",
+            "Calendar: republish the common contacts of the domain",
+            "Agenda : republier les contacts communs du domaine",
+            applications=CALENDAR,
+            endpoints=[may("POST", "/domains/{domain}/contacts?action=republish")],
+        ),
         section(
             "admins",
             "Calendar: Admins tab",
@@ -1194,6 +1201,13 @@ USERS = page(
                     gates=("/calendars/{username}",),
                 )
             ],
+        ),
+        action(
+            "republish-contacts",
+            "Calendar: republish a user's common contacts",
+            "Agenda : republier les contacts communs d'un utilisateur",
+            applications=CALENDAR,
+            endpoints=[may("POST", f"{_U}/contacts?action=republish")],
         ),
         section(
             "calendars",
@@ -2029,6 +2043,13 @@ COMMON_TASKS = page(
             "Planifier les alarmes",
             applications=CALENDAR,
             endpoints=[may("POST", "/calendars?task=scheduleAlarms")],
+        ),
+        action(
+            "republish-common-contacts",
+            "Republish all common contacts",
+            "Republier tous les contacts communs",
+            applications=CALENDAR,
+            endpoints=[may("POST", "/contacts?action=republish")],
         ),
         action(
             "add-missing-user-fields",

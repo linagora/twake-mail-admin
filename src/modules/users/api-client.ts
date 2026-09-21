@@ -552,6 +552,19 @@ export const updateUserAddressBookInvitees = async (
   );
 };
 
+export const republishUserContacts = async (
+  username: string,
+  params: { contactsPerSecond?: string }
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ action: "republish" });
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) query.set(key, value);
+  });
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}/contacts?${query.toString()}`
+  );
+};
+
 export const archiveUserCalendarEvents = async (
   username: string,
   params: {

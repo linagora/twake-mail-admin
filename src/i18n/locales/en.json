@@ -416,7 +416,12 @@
       "syncConfirm": "Synchronize domain members for \"{{domain}}\" from the address book?",
       "syncButton": "Sync domain members",
       "syncDesc": "Synchronize the domain member list from the address book.",
-      "errorSyncing": "Error syncing domain members"
+      "errorSyncing": "Error syncing domain members",
+      "republishContactsTitle": "Republish Common Contacts",
+      "republishContactsConfirm": "Republish the common contacts of \"{{domain}}\" and of its users?",
+      "republishContactsButton": "Republish common contacts",
+      "republishContactsDesc": "Republish the contacts of the domain and of its users on the common contacts bus.",
+      "errorRepublishingContacts": "Error republishing common contacts"
     },
     "subtitleMail": "Manage domains registered on the mail server.",
     "subtitleCalendar": "Manage domains registered on the calendar server."
@@ -760,7 +765,11 @@
       "archiveTitle": "Archive Calendar Events",
       "archiveButton": "Archive calendar events",
       "archiveDesc": "Archive calendar events for {{username}}.",
-      "errorArchive": "Error running archive task"
+      "errorArchive": "Error running archive task",
+      "republishContactsTitle": "Republish Common Contacts",
+      "republishContactsButton": "Republish common contacts",
+      "republishContactsDesc": "Republish the contacts of {{username}} on the common contacts bus.",
+      "errorRepublishContacts": "Error republishing common contacts"
     },
     "calendars": {
       "title": "Calendars",
@@ -1008,6 +1017,7 @@
     "alarmRescheduling": "Alarm rescheduling",
     "addMissingFields": "Add missing fields to registered users",
     "clearDomainMembersContacts": "Delete domain members contacts of all domains",
+    "republishCommonContacts": "Republish all common contacts",
     "reloadCertificates": "Reload certificates",
     "portOptional": "port (optional)",
     "reloadCertTitle": "Reload Certificates",
