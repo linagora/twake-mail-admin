@@ -96,6 +96,8 @@ function AddressBookRow({
   const name = addressBookName(addressBook);
   const owned = isOwned(addressBook);
   const isPublicAb = isPublic(addressBook);
+  // Bumped once an import task is over: a new key re-reads the contact counter.
+  const [countKey, setCountKey] = useState(0);
 
   return (
     <div className="group flex items-start gap-3 py-1">
@@ -104,6 +106,7 @@ function AddressBookRow({
           <p className="font-medium">{name}</p>
           {permissions.count && (
             <CollectionCountBadge
+              key={countKey}
               username={username}
               collectionId={id}
               count={getUserAddressBookContactCount}
@@ -135,6 +138,7 @@ function AddressBookRow({
           importCollection={importUserAddressBook}
           title={t("users.addressBooks.importTitle")}
           errorTitle={t("users.addressBooks.errorImport")}
+          onImported={() => setCountKey((key) => key + 1)}
         />
       )}
       {permissions.invitees && (

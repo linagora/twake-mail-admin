@@ -3,17 +3,25 @@
  * detail page. Both are DAV collections, counted, exported and imported through
  * routes that differ only by their path and their media type.
  */
-import { useCallback, useRef, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Link } from "react-router";
 import { Download, Loader2, Upload, type LucideIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
-import type { RunTaskResponse } from "@/modules/common-tasks/types";
+import { getTaskDetail } from "@/modules/common-tasks/api-client";
+import { TaskStatus, type RunTaskResponse } from "@/modules/common-tasks/types";
+import { useDomain } from "@/modules/domain-admin/domain-context";
 import type { CollectionCount } from "../types";
 
 const BUTTON_CLASS = "p-1.5 rounded-md hover:bg-gray-200 transition disabled:opacity-50";
+
+// An import lands asynchronously, so the counter is read again once its task has
+// run. Long enough for the imports an operator triggers by hand, and bounded:
+// past that the counter simply waits for the next time the section is opened.
+const TASK_POLL_INTERVAL_MS = 2000;
+const TASK_POLL_ATTEMPTS = 30;
 
 interface CollectionProps {
   username: string;
@@ -99,6 +107,7 @@ export function ImportCollectionButton({
   importCollection,
   title,
   errorTitle,
+  onImported,
 }: CollectionProps & {
   accept: string;
   importCollection: (
@@ -108,11 +117,20 @@ export function ImportCollectionButton({
   ) => Promise<RunTaskResponse>;
   title: string;
   errorTitle: string;
+  // Called once the import task is over, so the row can re-read its counter.
+  onImported: () => void;
 }) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const domain = useDomain() || undefined;
   const inputRef = useRef<HTMLInputElement>(null);
   const [importing, setImporting] = useState(false);
+  // The task outlives a collapsed section: nothing is polled or set afterwards.
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   const handleFile = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -132,10 +150,12 @@ export function ImportCollectionButton({
           </p>
         ),
       });
+      await waitForTask(taskId, domain, () => mounted.current);
+      if (mounted.current) onImported();
     } catch (err) {
       toast({ title: errorTitle, description: <ErrorDisplayer error={err} /> });
     } finally {
-      setImporting(false);
+      if (mounted.current) setImporting(false);
     }
   };
 
@@ -154,6 +174,29 @@ export function ImportCollectionButton({
       </button>
     </>
   );
+}
+
+/**
+ * Waits for an import task to leave its running state. Reading the task is best
+ * effort: a client whose permissions do not cover the task routes, or a task
+ * still running after the last attempt, simply stops being waited for.
+ */
+async function waitForTask(
+  taskId: string,
+  domain: string | undefined,
+  keepWaiting: () => boolean
+): Promise<void> {
+  for (let attempt = 0; attempt < TASK_POLL_ATTEMPTS; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, TASK_POLL_INTERVAL_MS));
+    if (!keepWaiting()) return;
+    try {
+      const { status } = await getTaskDetail(taskId, domain);
+      if (status !== TaskStatus.WAITING && status !== TaskStatus.IN_PROGRESS) return;
+    } catch {
+      // Not readable: the import was accepted all the same, stop waiting.
+      return;
+    }
+  }
 }
 
 function fileName(name: string, extension: string): string {

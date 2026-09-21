@@ -172,6 +172,8 @@ function CalendarRow({
   const description = calendar["caldav:description"];
   const isPublicCalendar = isPublic(calendar);
   const id = calendarId(calendar);
+  // Bumped once an import task is over: a new key re-reads the event counter.
+  const [countKey, setCountKey] = useState(0);
 
   return (
     <div className="group flex items-start gap-3 py-1">
@@ -185,6 +187,7 @@ function CalendarRow({
           <p className="font-medium">{name}</p>
           {permissions.count && (
             <CollectionCountBadge
+              key={countKey}
               username={username}
               collectionId={id}
               count={getUserCalendarEventCount}
@@ -227,6 +230,7 @@ function CalendarRow({
           importCollection={importUserCalendar}
           title={t("users.calendars.importTitle")}
           errorTitle={t("users.calendars.errorImport")}
+          onImported={() => setCountKey((key) => key + 1)}
         />
       )}
       {isOwned && permissions.invitees && (

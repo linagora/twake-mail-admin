@@ -476,6 +476,7 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | "Invitees / delegation" button (users) | POST | `/users/{username}/calendars/{calendarId}/invitee` | MAY (do not show the users icon if missing) |
 | "Export calendar" button (download, owned calendars) | POST | `/users/{username}/calendars/{calendarId}?action=export` | MAY (do not show the download icon if missing) |
 | "Import events" button (upload, owned calendars) | POST | `/users/{username}/calendars/{calendarId}?action=import` | MAY (do not show the upload icon if missing) |
+| Event counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the section is reopened) |
 | Invitee email existence check | HEAD | `/users/{username}` | MAY |
 | Owner email resolution (delegated/subscription) | GET | `/registeredUsers` | MAY (owner line hidden if missing) |
 | "Delete calendar" button (trash) | DELETE | `/users/{username}/calendars/{calendarId}` | MAY (do not show the trash icon if missing) |
@@ -492,6 +493,7 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | "Invitees / delegation" button | POST | `/users/{username}/addressbooks/{addressBookId}/invitee` | MAY (do not show the button if missing) |
 | "Export address book" button (owned address books) | POST | `/users/{username}/addressbooks/{addressBookId}?action=export` | MAY (do not show the button if missing) |
 | "Import contacts" button (owned address books) | POST | `/users/{username}/addressbooks/{addressBookId}?action=import` | MAY (do not show the button if missing) |
+| Contact counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the section is reopened) |
 
 ### User detail — Calendar: Booking links section *(APPLICATION:"CALENDAR" only)*
 
