@@ -1,16 +1,29 @@
 import { apiClient, getRaw } from "@/lib/apiClient";
-import { UnsentMailId, UnsentMail, TaskResponse } from "./types";
+import { UnsentMailId, UnsentMail, UnsentMailFilters, TaskResponse } from "./types";
 
-export const getUnsentMailIds = async (
-  sender?: string,
-  recipient?: string,
-  limit?: number
-): Promise<UnsentMailId[]> => {
-  const params = new URLSearchParams();
+/** The listing, the resend task and the delete task share the same selection. */
+const withFilters = (
+  params: URLSearchParams,
+  { sender, recipient, limit }: UnsentMailFilters
+): URLSearchParams => {
   if (sender) params.append("sender", sender);
   if (recipient) params.append("recipient", recipient);
   if (limit) params.append("limit", String(limit));
-  const query = params.toString();
+  return params;
+};
+
+const planUnsentMailsTask = async (
+  action: "resend" | "delete",
+  filters: UnsentMailFilters
+): Promise<TaskResponse> => {
+  const params = withFilters(new URLSearchParams({ action }), filters);
+  return apiClient.post<any, TaskResponse>(`/unsentMails?${params.toString()}`);
+};
+
+export const getUnsentMailIds = async (
+  filters: UnsentMailFilters = {}
+): Promise<UnsentMailId[]> => {
+  const query = withFilters(new URLSearchParams(), filters).toString();
   return apiClient.get<any, UnsentMailId[]>(
     `/unsentMails${query ? `?${query}` : ""}`
   );
@@ -24,16 +37,12 @@ export const deleteUnsentMail = async (id: string): Promise<void> => {
 };
 
 export const resendAllUnsentMails = async (
-  sender?: string,
-  recipient?: string,
-  limit?: number
-): Promise<TaskResponse> => {
-  const params = new URLSearchParams({ action: "resend" });
-  if (sender) params.append("sender", sender);
-  if (recipient) params.append("recipient", recipient);
-  if (limit) params.append("limit", String(limit));
-  return apiClient.post<any, TaskResponse>(`/unsentMails?${params.toString()}`);
-};
+  filters: UnsentMailFilters = {}
+): Promise<TaskResponse> => planUnsentMailsTask("resend", filters);
+
+export const deleteAllUnsentMails = async (
+  filters: UnsentMailFilters = {}
+): Promise<TaskResponse> => planUnsentMailsTask("delete", filters);
 
 export const resendUnsentMail = async (id: string): Promise<TaskResponse> => {
   return apiClient.post<any, TaskResponse>(

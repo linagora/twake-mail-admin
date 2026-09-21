@@ -715,6 +715,7 @@ If both are missing hide the page
 | Page load | GET | `/unsentMails` | MUST |
 | Mail detail (for list display) | GET | `/unsentMails/{id}` | MUST |
 | "Resend all" button | POST | `/unsentMails?action=resend` | MAY (do not show the button if missing) |
+| "Delete all" button (honours the sender and recipient filters of the page) | POST | `/unsentMails?action=delete` | MAY (do not show the button if missing) |
 
 ### Unsent mail detail
 

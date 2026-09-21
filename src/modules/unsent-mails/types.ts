@@ -16,6 +16,13 @@ export interface UnsentMail {
   sendingTrials: SendingTrial[];
 }
 
+/** Selection shared by the listing, the resend task and the delete task. */
+export interface UnsentMailFilters {
+  sender?: string;
+  recipient?: string;
+  limit?: number;
+}
+
 export interface TaskResponse {
   taskId: string;
 }

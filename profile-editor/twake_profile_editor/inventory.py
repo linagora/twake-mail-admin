@@ -1825,6 +1825,12 @@ UNSENT_MAILS = page(
                 )
             ],
         ),
+        action(
+            "delete-all",
+            "Delete every mail matching the filters",
+            "Supprimer tous les mails correspondant aux filtres",
+            endpoints=[may("POST", "/unsentMails?action=delete")],
+        ),
         section(
             "detail",
             "Mail details",

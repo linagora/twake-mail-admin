@@ -11,14 +11,25 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 import {
   getUnsentMailIds,
   getUnsentMail,
+  deleteAllUnsentMails,
   deleteUnsentMail,
   resendAllUnsentMails,
   resendUnsentMail,
   downloadUnsentMail,
 } from "./api-client";
-import type { UnsentMailId, UnsentMail } from "./types";
+import type { UnsentMailId, UnsentMail, UnsentMailFilters } from "./types";
 
 const PAGE_SIZE = 50;
+
+/**
+ * The list filters on a substring of the loaded mails, the tasks on a mail address the
+ * backend parses: half an address selects rows here but is rejected there, and would
+ * silently widen a deletion if it were dropped.
+ */
+const MAIL_ADDRESS = /^[^\s@]+@[^\s@]+$/;
+
+const usableAsTaskFilter = (filter: string) =>
+  filter === "" || MAIL_ADDRESS.test(filter);
 
 export default function UnsentMailsList() {
   const { t } = useTranslation();
@@ -26,6 +37,7 @@ export default function UnsentMailsList() {
   const confirm = useConfirm();
 
   const canResendAll = useIsAllowed("POST", "/unsentMails");
+  const canDeleteAll = useIsAllowed("POST", "/unsentMails?action=delete");
   const canResendOne = useIsAllowed("POST", "/unsentMails/{id}");
   const canDelete = useIsAllowed("DELETE", "/unsentMails/{id}");
 
@@ -66,6 +78,15 @@ export default function UnsentMailsList() {
     });
   }, [ids, mails, senderFilter, recipientFilter]);
 
+  const taskFilters: UnsentMailFilters = {
+    sender: senderFilter.trim() || undefined,
+    recipient: recipientFilter.trim() || undefined,
+  };
+  const isFiltered = !!(taskFilters.sender || taskFilters.recipient);
+  const filtersFitTheTask =
+    usableAsTaskFilter(senderFilter.trim()) &&
+    usableAsTaskFilter(recipientFilter.trim());
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageStart = (page - 1) * PAGE_SIZE;
   const pageItems = filtered.slice(pageStart, pageStart + PAGE_SIZE);
@@ -89,6 +110,35 @@ export default function UnsentMailsList() {
     } catch (err) {
       toast({
         title: t("unsentMails.errorResending"),
+        description: <ErrorDisplayer error={err} />,
+      });
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    const confirmed = await confirm({
+      header: t("unsentMails.deleteAllTitle"),
+      message: isFiltered
+        ? t("unsentMails.deleteAllFilteredConfirm", {
+            sender: taskFilters.sender ?? t("unsentMails.anyAddress"),
+            recipient: taskFilters.recipient ?? t("unsentMails.anyAddress"),
+          })
+        : t("unsentMails.deleteAllConfirm"),
+    });
+    if (!confirmed) return;
+    try {
+      const { taskId } = await deleteAllUnsentMails(taskFilters);
+      toast({
+        title: t("unsentMails.deleteTaskSubmitted"),
+        description: (
+          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
+            {t("common.taskLink", { taskId })}
+          </Link>
+        ),
+      });
+    } catch (err) {
+      toast({
+        title: t("unsentMails.errorDeletingAll"),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -163,14 +213,35 @@ export default function UnsentMailsList() {
 
   return (
     <div>
-      {canResendAll && (
-        <button
-          onClick={handleResendAll}
-          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition flex items-center gap-2"
-        >
-          <Send className="w-4 h-4" />
-          {t("unsentMails.resendAll")}
-        </button>
+      {(canResendAll || canDeleteAll) && (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          {canResendAll && (
+            <button
+              onClick={handleResendAll}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition flex items-center gap-2"
+            >
+              <Send className="w-4 h-4" />
+              {t("unsentMails.resendAll")}
+            </button>
+          )}
+          {canDeleteAll && (
+            <button
+              onClick={handleDeleteAll}
+              disabled={!filtersFitTheTask}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-red-600"
+            >
+              <Trash2 className="w-4 h-4" />
+              {isFiltered
+                ? t("unsentMails.deleteAllFiltered")
+                : t("unsentMails.deleteAll")}
+            </button>
+          )}
+          {canDeleteAll && !filtersFitTheTask && (
+            <p className="text-xs text-amber-600">
+              {t("unsentMails.deleteAllFilterNotAnAddress")}
+            </p>
+          )}
+        </div>
       )}
 
       <div className="flex flex-col sm:flex-row gap-2 mb-4">
