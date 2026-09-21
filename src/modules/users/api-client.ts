@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserAddressBooksResponseType, CreateUserAddressBookPayload, AddressBookShareUpdate } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, CollectionCount, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserAddressBooksResponseType, CreateUserAddressBookPayload, AddressBookShareUpdate } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -394,6 +394,9 @@ export const provisionUserTemplates = async (
 // Calendar-specific user functions
 // ---------------------------------------------------------------------------
 
+const CONTENT_TYPE_ICS = "text/calendar";
+const CONTENT_TYPE_VCARD = "text/vcard";
+
 export const tierUserData = async (
   username: string,
   params: { tiering: string; messagesPerSecond?: string }
@@ -460,6 +463,39 @@ export const setUserCalendarPublicRight = async (
   );
 };
 
+// Number of calendar objects (.ics) held by the calendar, shared ones included.
+export const getUserCalendarEventCount = async (
+  username: string,
+  calendarId: string
+): Promise<CollectionCount> => {
+  return apiClient.get<any, CollectionCount>(
+    `/users/${encodeURIComponent(username)}/calendars/${encodeURIComponent(calendarId)}/eventCount`
+  );
+};
+
+// The whole calendar as a single ICS document.
+export const exportUserCalendar = async (username: string, calendarId: string): Promise<Blob> => {
+  return apiClient.post<any, Blob>(
+    `/users/${encodeURIComponent(username)}/calendars/${encodeURIComponent(calendarId)}?action=export`,
+    undefined,
+    { headers: { Accept: CONTENT_TYPE_ICS }, responseType: "blob" }
+  );
+};
+
+// Schedules an asynchronous task importing the events of an ICS document into
+// the calendar. Returns the id of the task to monitor.
+export const importUserCalendar = async (
+  username: string,
+  calendarId: string,
+  ics: string
+): Promise<RunTaskResponse> => {
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}/calendars/${encodeURIComponent(calendarId)}?action=import`,
+    ics,
+    { headers: { "Content-Type": CONTENT_TYPE_ICS } }
+  );
+};
+
 export const getUserBookingLinks = async (username: string): Promise<BookingLink[]> => {
   return apiClient.get(`/users/${encodeURIComponent(username)}/booking-links`);
 };
@@ -521,6 +557,43 @@ export const createUserAddressBook = async (
   return apiClient.post<any, { id: string }>(
     `/users/${encodeURIComponent(username)}/addressbooks`,
     payload
+  );
+};
+
+// Number of contacts held by the address book; for a shared one, the contacts
+// of its source address book.
+export const getUserAddressBookContactCount = async (
+  username: string,
+  addressBookId: string
+): Promise<CollectionCount> => {
+  return apiClient.get<any, CollectionCount>(
+    `/users/${encodeURIComponent(username)}/addressbooks/${encodeURIComponent(addressBookId)}/contactCount`
+  );
+};
+
+// The whole address book as a single vCard document.
+export const exportUserAddressBook = async (
+  username: string,
+  addressBookId: string
+): Promise<Blob> => {
+  return apiClient.post<any, Blob>(
+    `/users/${encodeURIComponent(username)}/addressbooks/${encodeURIComponent(addressBookId)}?action=export`,
+    undefined,
+    { headers: { Accept: CONTENT_TYPE_VCARD }, responseType: "blob" }
+  );
+};
+
+// Schedules an asynchronous task importing vCards into the address book.
+// Returns the id of the task to monitor.
+export const importUserAddressBook = async (
+  username: string,
+  addressBookId: string,
+  vcards: string
+): Promise<RunTaskResponse> => {
+  return apiClient.post(
+    `/users/${encodeURIComponent(username)}/addressbooks/${encodeURIComponent(addressBookId)}?action=import`,
+    vcards,
+    { headers: { "Content-Type": CONTENT_TYPE_VCARD } }
   );
 };
 

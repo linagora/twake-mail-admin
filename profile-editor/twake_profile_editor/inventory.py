@@ -1079,6 +1079,17 @@ USERS = page(
             endpoints=[must("GET", "/users/{username}/addressbooks")],
             children=[
                 action(
+                    "contact-count",
+                    "Count the contacts of an address book",
+                    "Compter les contacts d'un carnet d'adresses",
+                    endpoints=[
+                        may(
+                            "GET",
+                            "/users/{username}/addressbooks/{addressBookId}/contactCount",
+                        )
+                    ],
+                ),
+                action(
                     "create",
                     "Create an address book",
                     "Créer un carnet d'adresses",
@@ -1111,6 +1122,30 @@ USERS = page(
                         may(
                             "POST",
                             "/users/{username}/addressbooks/{addressBookId}/invitee",
+                        )
+                    ],
+                ),
+                action(
+                    "export",
+                    "Export the contacts of an address book",
+                    "Exporter les contacts d'un carnet d'adresses",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/users/{username}/addressbooks/{addressBookId}"
+                            "?action=export",
+                        )
+                    ],
+                ),
+                action(
+                    "import",
+                    "Import contacts into an address book",
+                    "Importer des contacts dans un carnet d'adresses",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/users/{username}/addressbooks/{addressBookId}"
+                            "?action=import",
                         )
                     ],
                 ),
@@ -1203,6 +1238,14 @@ USERS = page(
             endpoints=[must("GET", f"{_U}/calendars")],
             children=[
                 action(
+                    "event-count",
+                    "Count the events of a calendar",
+                    "Compter les événements d'un agenda",
+                    endpoints=[
+                        may("GET", f"{_U}/calendars/{{calendarId}}/eventCount")
+                    ],
+                ),
+                action(
                     "create",
                     "Create a calendar",
                     "Créer un agenda",
@@ -1241,6 +1284,22 @@ USERS = page(
                     "Resolve the owner of a shared calendar",
                     "Résoudre le propriétaire d'un agenda partagé",
                     endpoints=[may("GET", "/registeredUsers")],
+                ),
+                action(
+                    "export",
+                    "Export the events of a calendar",
+                    "Exporter les événements d'un agenda",
+                    endpoints=[
+                        may("POST", f"{_U}/calendars/{{calendarId}}?action=export")
+                    ],
+                ),
+                action(
+                    "import",
+                    "Import events into a calendar",
+                    "Importer des événements dans un agenda",
+                    endpoints=[
+                        may("POST", f"{_U}/calendars/{{calendarId}}?action=import")
+                    ],
                 ),
                 action(
                     "delete",

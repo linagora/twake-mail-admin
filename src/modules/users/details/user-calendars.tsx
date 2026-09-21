@@ -1,11 +1,12 @@
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
-import { ChevronDown, ChevronRight, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronRight, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { createUserCalendar, deleteUserCalendar, getUserCalendars, setUserCalendarPublicRight, updateUserCalendar, updateUserCalendarInvitees } from "../api-client";
+import { createUserCalendar, deleteUserCalendar, exportUserCalendar, getUserCalendarEventCount, getUserCalendars, importUserCalendar, setUserCalendarPublicRight, updateUserCalendar, updateUserCalendarInvitees } from "../api-client";
 import { CalendarShareUpdate, CreateUserCalendarPayload, GetUserCalendarsResponseType, UpdateUserCalendarPayload, UserCalendar } from "../types";
+import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "./dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -134,26 +135,32 @@ function ownerEmail(calendar: UserCalendar, ownerEmails: Record<string, string>)
   return ownerEmails[ownerId] ?? null;
 }
 
+interface CalendarPermissions {
+  edit: boolean;
+  remove: boolean;
+  publicRight: boolean;
+  invitees: boolean;
+  count: boolean;
+  export: boolean;
+  import: boolean;
+}
+
 function CalendarRow({
+  username,
   calendar,
   owner,
   isOwned,
-  canEdit,
-  canDelete,
-  canPublicRight,
-  canInvitees,
+  permissions,
   onEdit,
   onDelete,
   onPublicRight,
   onInvitees,
 }: {
+  username: string;
   calendar: UserCalendar;
   owner?: string | null;
   isOwned: boolean;
-  canEdit: boolean;
-  canDelete: boolean;
-  canPublicRight: boolean;
-  canInvitees: boolean;
+  permissions: CalendarPermissions;
   onEdit: (calendar: UserCalendar) => void;
   onDelete: (calendar: UserCalendar) => void;
   onPublicRight: (calendar: UserCalendar) => void;
@@ -164,6 +171,7 @@ function CalendarRow({
   const color = calendar["apple:color"];
   const description = calendar["caldav:description"];
   const isPublicCalendar = isPublic(calendar);
+  const id = calendarId(calendar);
 
   return (
     <div className="group flex items-start gap-3 py-1">
@@ -173,7 +181,18 @@ function CalendarRow({
         title={color}
       />
       <div className="min-w-0 flex-1">
-        <p className="font-medium">{name}</p>
+        <div className="flex items-center gap-2">
+          <p className="font-medium">{name}</p>
+          {permissions.count && (
+            <CollectionCountBadge
+              username={username}
+              collectionId={id}
+              count={getUserCalendarEventCount}
+              icon={CalendarDays}
+              title={t("users.calendars.eventCount")}
+            />
+          )}
+        </div>
         {description && (
           <p className="text-xs text-gray-400">{description}</p>
         )}
@@ -189,7 +208,28 @@ function CalendarRow({
           </p>
         )}
       </div>
-      {isOwned && canInvitees && (
+      {isOwned && permissions.export && (
+        <ExportCollectionButton
+          username={username}
+          collectionId={id}
+          name={name ?? id}
+          extension="ics"
+          exportCollection={exportUserCalendar}
+          title={t("users.calendars.exportTitle")}
+          errorTitle={t("users.calendars.errorExport")}
+        />
+      )}
+      {isOwned && permissions.import && (
+        <ImportCollectionButton
+          username={username}
+          collectionId={id}
+          accept=".ics,text/calendar"
+          importCollection={importUserCalendar}
+          title={t("users.calendars.importTitle")}
+          errorTitle={t("users.calendars.errorImport")}
+        />
+      )}
+      {isOwned && permissions.invitees && (
         <button
           onClick={() => onInvitees(calendar)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -198,7 +238,7 @@ function CalendarRow({
           <Users className="w-3.5 h-3.5 text-gray-600" />
         </button>
       )}
-      {isOwned && canPublicRight && (
+      {isOwned && permissions.publicRight && (
         <button
           onClick={() => onPublicRight(calendar)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -209,7 +249,7 @@ function CalendarRow({
             : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
         </button>
       )}
-      {canEdit && (
+      {permissions.edit && (
         <button
           onClick={() => onEdit(calendar)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -218,7 +258,7 @@ function CalendarRow({
           <Pencil className="w-3.5 h-3.5 text-blue-600" />
         </button>
       )}
-      {canDelete && (
+      {permissions.remove && (
         <button
           onClick={() => onDelete(calendar)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -237,10 +277,15 @@ export default function UserCalendars({ username }: Props) {
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/calendars");
   const canCreate = useIsAllowed("POST", "/users/{username}/calendars");
-  const canEdit = useIsAllowed("PATCH", "/users/{username}/calendars/{calendarId}");
-  const canDelete = useIsAllowed("DELETE", "/users/{username}/calendars/{calendarId}");
-  const canPublicRight = useIsAllowed("POST", "/users/{username}/calendars/{calendarId}/publicRight");
-  const canInvitees = useIsAllowed("POST", "/users/{username}/calendars/{calendarId}/invitee");
+  const permissions: CalendarPermissions = {
+    edit: useIsAllowed("PATCH", "/users/{username}/calendars/{calendarId}"),
+    remove: useIsAllowed("DELETE", "/users/{username}/calendars/{calendarId}"),
+    publicRight: useIsAllowed("POST", "/users/{username}/calendars/{calendarId}/publicRight"),
+    invitees: useIsAllowed("POST", "/users/{username}/calendars/{calendarId}/invitee"),
+    count: useIsAllowed("GET", "/users/{username}/calendars/{calendarId}/eventCount"),
+    export: useIsAllowed("POST", "/users/{username}/calendars/{calendarId}?action=export"),
+    import: useIsAllowed("POST", "/users/{username}/calendars/{calendarId}?action=import"),
+  };
 
   const fetchCalendars = useCallback(() => getUserCalendars(username), [username]);
   const { data, isLoading, error, refresh } = useFetchData<GetUserCalendarsResponseType>(
@@ -410,6 +455,7 @@ export default function UserCalendars({ username }: Props) {
                 {group.items.map((calendar) => (
                   <CalendarRow
                     key={calendarId(calendar)}
+                    username={username}
                     calendar={calendar}
                     owner={
                       group.category === "delegated" || group.category === "subscription"
@@ -417,10 +463,7 @@ export default function UserCalendars({ username }: Props) {
                         : undefined
                     }
                     isOwned={group.category === "owner"}
-                    canEdit={canEdit}
-                    canDelete={canDelete}
-                    canPublicRight={canPublicRight}
-                    canInvitees={canInvitees}
+                    permissions={permissions}
                     onEdit={openEdit}
                     onDelete={handleDelete}
                     onPublicRight={openPublicRight}

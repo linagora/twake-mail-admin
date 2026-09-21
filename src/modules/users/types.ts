@@ -168,6 +168,12 @@ export interface GetUserCalendarsResponseType {
   };
 }
 
+// Number of resources held by a DAV collection: events for a calendar,
+// contacts for an address book.
+export interface CollectionCount {
+  count: number;
+}
+
 export interface CreateUserCalendarPayload {
   id?: string;
   "dav:name": string;
@@ -242,6 +248,9 @@ export interface UserAddressBook {
   _links?: { self?: { href?: string } };
   "dav:name"?: string;
   "carddav:description"?: string;
+  // An address book shared with, or subscribed by, the user is listed as a
+  // mirror of its owner's one, and carries a source pointing at it.
+  "openpaas:source"?: unknown;
   invite?: CalendarInvite[];
   acl?: CalendarAcl[];
 }
