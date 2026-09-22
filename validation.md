@@ -53,7 +53,7 @@ a task or action parameter.
 | `POST /quota/users` | `POST /quota/users?{params}` |
 | `POST /servers` | `POST /servers?reload-certificate` |
 | `POST /team-mailboxes` | `POST /team-mailboxes?action=repositionSystemRights` |
-| `POST /unsentMails` | `POST /unsentMails?action=resend` |
+| `POST /unsentMails` | `POST /unsentMails?action=resend`<br>`POST /unsentMails?action=delete` |
 | `POST /unsentMails/{id}` | `POST /unsentMails/{id}?action=resend` |
 | `POST /users` | `POST /users?{params}` |
 | `POST /users/{username}/mailboxes` | `POST /users/{username}/mailboxes?task=reIndex`<br>`POST /users/{username}/mailboxes?task=subscribeAll`<br>`POST /users/{username}/mailboxes?task=recomputeFastViewProjectionItems` |
@@ -715,6 +715,10 @@ If both are missing hide the page
 | Page load | GET | `/unsentMails` | MUST |
 | Mail detail (for list display) | GET | `/unsentMails/{id}` | MUST |
 | "Resend all" button | POST | `/unsentMails?action=resend` | MAY (do not show the button if missing) |
+| "Delete all" button | POST | `/unsentMails?action=delete` | MAY (do not show the button if missing) |
+
+Both bulk buttons carry the sender and recipient filters typed in the page, so
+the task never covers more than what is being looked at.
 
 ### Unsent mail detail
 

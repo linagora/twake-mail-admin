@@ -16,6 +16,13 @@ export interface UnsentMail {
   sendingTrials: SendingTrial[];
 }
 
+/** Server side selection shared by the listing, resend and delete routes. */
+export interface UnsentMailSelection {
+  sender?: string;
+  recipient?: string;
+  limit?: number;
+}
+
 export interface TaskResponse {
   taskId: string;
 }

@@ -1825,6 +1825,21 @@ UNSENT_MAILS = page(
                 )
             ],
         ),
+        action(
+            "delete-all",
+            "Delete every mail",
+            "Supprimer tous les mails",
+            note=(
+                "Same route as the resend task: granting one grants the other."
+            ),
+            endpoints=[
+                may(
+                    "POST",
+                    "/unsentMails?action=delete",
+                    gates=("/unsentMails",),
+                )
+            ],
+        ),
         section(
             "detail",
             "Mail details",
