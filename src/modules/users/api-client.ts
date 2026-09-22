@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserAddressBooksResponseType, CreateUserAddressBookPayload, AddressBookShareUpdate } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserAddressBooksResponseType, CreateUserAddressBookPayload, UpdateUserAddressBookPayload, AddressBookShareUpdate } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
 import { CollectionCount } from "@/components/custom/dav-collection-actions";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
@@ -595,6 +595,19 @@ export const importUserAddressBook = async (
     `/users/${encodeURIComponent(username)}/addressbooks/${encodeURIComponent(addressBookId)}?action=import`,
     vcards,
     { headers: { "Content-Type": CONTENT_TYPE_VCARD } }
+  );
+};
+
+// Renames the address book and/or changes its description. System address
+// books (e.g. `contacts`) are rejected by the server.
+export const updateUserAddressBook = async (
+  username: string,
+  addressBookId: string,
+  payload: UpdateUserAddressBookPayload
+): Promise<void> => {
+  await apiClient.patch(
+    `/users/${encodeURIComponent(username)}/addressbooks/${encodeURIComponent(addressBookId)}`,
+    payload
   );
 };
 

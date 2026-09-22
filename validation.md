@@ -508,6 +508,7 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | Section load | GET | `/users/{username}/addressbooks` | MUST (hide the whole section if missing) |
 | Contact counter of each address book | GET | `/users/{username}/addressbooks/{addressBookId}/contactCount` | MAY (do not show the counters if missing) |
 | "Create address book" button | POST | `/users/{username}/addressbooks` | MAY (do not show the button if missing) |
+| "Edit address book" button (pencil, owned address books) | PATCH | `/users/{username}/addressbooks/{addressBookId}` | MAY (do not show the pencil icon if missing) |
 | "Delete address book" button | DELETE | `/users/{username}/addressbooks/{addressBookId}` | MAY (do not show the button if missing) |
 | "Public visibility" button | POST | `/users/{username}/addressbooks/{addressBookId}/publicRight` | MAY (do not show the button if missing) |
 | "Invitees / delegation" button | POST | `/users/{username}/addressbooks/{addressBookId}/invitee` | MAY (do not show the button if missing) |

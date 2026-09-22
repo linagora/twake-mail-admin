@@ -1174,6 +1174,14 @@ USERS = page(
                     endpoints=[may("POST", "/users/{username}/addressbooks")],
                 ),
                 action(
+                    "edit",
+                    "Edit an address book",
+                    "Modifier un carnet d'adresses",
+                    endpoints=[
+                        may("PATCH", "/users/{username}/addressbooks/{addressBookId}")
+                    ],
+                ),
+                action(
                     "delete",
                     "Delete an address book",
                     "Supprimer un carnet d'adresses",
