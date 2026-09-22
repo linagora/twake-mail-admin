@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
-import { ChevronDown, ChevronRight, Contact, Plus, Minus, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Contact, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { createUserAddressBook, deleteUserAddressBook, exportUserAddressBook, getUserAddressBookContactCount, getUserAddressBooks, importUserAddressBook, setUserAddressBookPublicRight, updateUserAddressBookInvitees } from "../api-client";
-import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBooksResponseType, UserAddressBook } from "../types";
+import { createUserAddressBook, deleteUserAddressBook, exportUserAddressBook, getUserAddressBookContactCount, getUserAddressBooks, importUserAddressBook, setUserAddressBookPublicRight, updateUserAddressBook, updateUserAddressBookInvitees } from "../api-client";
+import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBooksResponseType, UpdateUserAddressBookPayload, UserAddressBook } from "../types";
 import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess, shareAccessToRight } from "./address-book-share-access";
 import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
@@ -68,6 +68,7 @@ function currentSharees(addressBook: UserAddressBook): CurrentSharee[] {
 }
 
 interface AddressBookPermissions {
+  edit: boolean;
   remove: boolean;
   publicRight: boolean;
   invitees: boolean;
@@ -80,6 +81,7 @@ function AddressBookRow({
   username,
   addressBook,
   permissions,
+  onEdit,
   onDelete,
   onPublicRight,
   onInvitees,
@@ -87,6 +89,7 @@ function AddressBookRow({
   username: string;
   addressBook: UserAddressBook;
   permissions: AddressBookPermissions;
+  onEdit: (addressBook: UserAddressBook) => void;
   onDelete: (addressBook: UserAddressBook) => void;
   onPublicRight: (addressBook: UserAddressBook) => void;
   onInvitees: (addressBook: UserAddressBook) => void;
@@ -161,6 +164,15 @@ function AddressBookRow({
             : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
         </button>
       )}
+      {owned && permissions.edit && (
+        <button
+          onClick={() => onEdit(addressBook)}
+          className="p-1.5 rounded-md hover:bg-gray-200 transition"
+          title={t("users.addressBooks.editTitle")}
+        >
+          <Pencil className="w-3.5 h-3.5 text-blue-600" />
+        </button>
+      )}
       {permissions.remove && (
         <button
           onClick={() => onDelete(addressBook)}
@@ -181,6 +193,7 @@ export default function UserAddressBooks({ username }: Props) {
   const canView = useIsAllowed("GET", "/users/{username}/addressbooks");
   const canCreate = useIsAllowed("POST", "/users/{username}/addressbooks");
   const permissions: AddressBookPermissions = {
+    edit: useIsAllowed("PATCH", "/users/{username}/addressbooks/{addressBookId}"),
     remove: useIsAllowed("DELETE", "/users/{username}/addressbooks/{addressBookId}"),
     publicRight: useIsAllowed("POST", "/users/{username}/addressbooks/{addressBookId}/publicRight"),
     invitees: useIsAllowed("POST", "/users/{username}/addressbooks/{addressBookId}/invitee"),
@@ -198,6 +211,10 @@ export default function UserAddressBooks({ username }: Props) {
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState<CreateUserAddressBookPayload>({ ...EMPTY_CREATE });
   const [creating, setCreating] = useState(false);
+
+  const [editAddressBook, setEditAddressBook] = useState<UserAddressBook | null>(null);
+  const [editForm, setEditForm] = useState<UpdateUserAddressBookPayload>({});
+  const [saving, setSaving] = useState(false);
 
   const [publicRightAddressBook, setPublicRightAddressBook] = useState<UserAddressBook | null>(null);
   const [publicRightValue, setPublicRightValue] = useState("");
@@ -225,6 +242,35 @@ export default function UserAddressBooks({ username }: Props) {
       toast({ title: t("users.addressBooks.errorCreate"), description: <ErrorDisplayer error={err} /> });
     } finally {
       setCreating(false);
+    }
+  };
+
+  const openEdit = (addressBook: UserAddressBook) => {
+    setEditAddressBook(addressBook);
+    setEditForm({
+      "dav:name": addressBook["dav:name"] ?? "",
+      "carddav:description": addressBook["carddav:description"] ?? "",
+    });
+  };
+
+  const handleUpdate = async () => {
+    if (!editAddressBook) return;
+    const name = editForm["dav:name"]?.trim();
+    if (!name) return;
+    setSaving(true);
+    try {
+      const payload: UpdateUserAddressBookPayload = {
+        "dav:name": name,
+        "carddav:description": editForm["carddav:description"]?.trim() || "",
+      };
+      await updateUserAddressBook(username, addressBookId(editAddressBook), payload);
+      toast({ title: t("users.addressBooks.updated") });
+      setEditAddressBook(null);
+      await refresh();
+    } catch (err) {
+      toast({ title: t("users.addressBooks.errorUpdate"), description: <ErrorDisplayer error={err} /> });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -307,6 +353,7 @@ export default function UserAddressBooks({ username }: Props) {
                     username={username}
                     addressBook={ab}
                     permissions={permissions}
+                    onEdit={openEdit}
                     onDelete={handleDelete}
                     onPublicRight={openPublicRight}
                     onInvitees={setInviteesAddressBook}
@@ -357,6 +404,50 @@ export default function UserAddressBooks({ username }: Props) {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit modal */}
+      <Dialog open={!!editAddressBook} onOpenChange={(v) => { if (!v) setEditAddressBook(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("users.addressBooks.editTitle")} — {editAddressBook ? addressBookName(editAddressBook) : ""}</DialogTitle>
+          </DialogHeader>
+          {editAddressBook && (
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium">{t("users.addressBooks.name")} *</label>
+                <input
+                  type="text"
+                  value={editForm["dav:name"] ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, "dav:name": e.target.value }))}
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">{t("users.addressBooks.description")}</label>
+                <input
+                  type="text"
+                  value={editForm["carddav:description"] ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, "carddav:description": e.target.value }))}
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="outline" size="sm" onClick={() => setEditAddressBook(null)}>
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleUpdate}
+                  disabled={saving || !editForm["dav:name"]?.trim()}
+                >
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
+                  {t("common.save")}
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

@@ -261,6 +261,12 @@ export interface CreateUserAddressBookPayload {
   "carddav:description"?: string;
 }
 
+// Both fields are optional: an omitted one is left unchanged by the PATCH.
+export interface UpdateUserAddressBookPayload {
+  "dav:name"?: string;
+  "carddav:description"?: string;
+}
+
 export interface AddressBookShareEntry {
   "dav:href": string;
   "dav:share-access": number;
