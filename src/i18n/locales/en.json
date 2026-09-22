@@ -779,6 +779,11 @@
       "editTitle": "Edit calendar",
       "updated": "Calendar updated",
       "errorUpdate": "Error updating calendar",
+      "eventCount": "Events",
+      "exportTitle": "Export the calendar (ICS)",
+      "errorExport": "Error exporting calendar",
+      "importTitle": "Import events (ICS)",
+      "errorImport": "Error importing events",
       "publicRight": {
         "title": "Public visibility",
         "publicTitle": "Public calendar (read)",
@@ -825,6 +830,11 @@
       "deleteConfirm": "Do you really want to delete the address book \"{{name}}\"?",
       "deleted": "Address book deleted",
       "errorDelete": "Error deleting address book",
+      "contactCount": "Contacts",
+      "exportTitle": "Export the address book (vCard)",
+      "errorExport": "Error exporting address book",
+      "importTitle": "Import contacts (vCard)",
+      "errorImport": "Error importing contacts",
       "publicRight": {
         "title": "Public visibility",
         "publicTitle": "Public address book (read)",

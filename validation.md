@@ -469,10 +469,14 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Section load | GET | `/users/{username}/calendars` | MUST (hide the whole section if missing) |
+| Event counter of each calendar | GET | `/users/{username}/calendars/{calendarId}/eventCount` | MAY (do not show the counters if missing) |
 | "Create calendar" button (+) | POST | `/users/{username}/calendars` | MAY (do not show the + if missing) |
 | "Edit calendar" button (pencil) | PATCH | `/users/{username}/calendars/{calendarId}` | MAY (do not show the pencil icon if missing) |
 | "Public visibility" button (eye) | POST | `/users/{username}/calendars/{calendarId}/publicRight` | MAY (do not show the eye icon if missing) |
 | "Invitees / delegation" button (users) | POST | `/users/{username}/calendars/{calendarId}/invitee` | MAY (do not show the users icon if missing) |
+| "Export calendar" button (download, owned calendars) | POST | `/users/{username}/calendars/{calendarId}?action=export` | MAY (do not show the download icon if missing) |
+| "Import events" button (upload, owned calendars) | POST | `/users/{username}/calendars/{calendarId}?action=import` | MAY (do not show the upload icon if missing) |
+| Event counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the section is reopened) |
 | Invitee email existence check | HEAD | `/users/{username}` | MAY |
 | Owner email resolution (delegated/subscription) | GET | `/registeredUsers` | MAY (owner line hidden if missing) |
 | "Delete calendar" button (trash) | DELETE | `/users/{username}/calendars/{calendarId}` | MAY (do not show the trash icon if missing) |
@@ -482,10 +486,14 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Section load | GET | `/users/{username}/addressbooks` | MUST (hide the whole section if missing) |
+| Contact counter of each address book | GET | `/users/{username}/addressbooks/{addressBookId}/contactCount` | MAY (do not show the counters if missing) |
 | "Create address book" button | POST | `/users/{username}/addressbooks` | MAY (do not show the button if missing) |
 | "Delete address book" button | DELETE | `/users/{username}/addressbooks/{addressBookId}` | MAY (do not show the button if missing) |
 | "Public visibility" button | POST | `/users/{username}/addressbooks/{addressBookId}/publicRight` | MAY (do not show the button if missing) |
 | "Invitees / delegation" button | POST | `/users/{username}/addressbooks/{addressBookId}/invitee` | MAY (do not show the button if missing) |
+| "Export address book" button (owned address books) | POST | `/users/{username}/addressbooks/{addressBookId}?action=export` | MAY (do not show the button if missing) |
+| "Import contacts" button (owned address books) | POST | `/users/{username}/addressbooks/{addressBookId}?action=import` | MAY (do not show the button if missing) |
+| Contact counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the section is reopened) |
 
 ### User detail — Calendar: Booking links section *(APPLICATION:"CALENDAR" only)*
 

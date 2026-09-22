@@ -779,6 +779,11 @@
       "editTitle": "Modifier le calendrier",
       "updated": "Calendrier modifié",
       "errorUpdate": "Erreur lors de la modification du calendrier",
+      "eventCount": "Événements",
+      "exportTitle": "Exporter le calendrier (ICS)",
+      "errorExport": "Erreur lors de l'export du calendrier",
+      "importTitle": "Importer des événements (ICS)",
+      "errorImport": "Erreur lors de l'import des événements",
       "publicRight": {
         "title": "Visibilité publique",
         "publicTitle": "Calendrier public (lecture)",
@@ -825,6 +830,11 @@
       "deleteConfirm": "Voulez-vous vraiment supprimer le carnet d'adresses « {{name}} » ?",
       "deleted": "Carnet d'adresses supprimé",
       "errorDelete": "Erreur lors de la suppression du carnet d'adresses",
+      "contactCount": "Contacts",
+      "exportTitle": "Exporter le carnet d'adresses (vCard)",
+      "errorExport": "Erreur lors de l'export du carnet d'adresses",
+      "importTitle": "Importer des contacts (vCard)",
+      "errorImport": "Erreur lors de l'import des contacts",
       "publicRight": {
         "title": "Visibilité publique",
         "publicTitle": "Carnet d'adresses public (lecture)",

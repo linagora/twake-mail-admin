@@ -1,11 +1,12 @@
 import { useCallback, useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Minus, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Contact, Plus, Minus, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { createUserAddressBook, deleteUserAddressBook, getUserAddressBooks, setUserAddressBookPublicRight, updateUserAddressBookInvitees } from "../api-client";
+import { createUserAddressBook, deleteUserAddressBook, exportUserAddressBook, getUserAddressBookContactCount, getUserAddressBooks, importUserAddressBook, setUserAddressBookPublicRight, updateUserAddressBookInvitees } from "../api-client";
 import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBooksResponseType, UserAddressBook } from "../types";
 import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess, shareAccessToRight } from "./address-book-share-access";
+import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "./dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -36,6 +37,12 @@ function addressBookName(addressBook: UserAddressBook): string {
   return addressBook["dav:name"]?.trim() || addressBookId(addressBook);
 }
 
+// A shared or subscribed address book is a mirror of its owner's one: it can be
+// counted and read, but exporting or importing belongs to the owner.
+function isOwned(addressBook: UserAddressBook): boolean {
+  return addressBook["openpaas:source"] == null;
+}
+
 function isPublic(addressBook: UserAddressBook): boolean {
   return (addressBook.acl ?? []).some(
     (a) =>
@@ -60,15 +67,127 @@ function currentSharees(addressBook: UserAddressBook): CurrentSharee[] {
     }));
 }
 
+interface AddressBookPermissions {
+  remove: boolean;
+  publicRight: boolean;
+  invitees: boolean;
+  count: boolean;
+  export: boolean;
+  import: boolean;
+}
+
+function AddressBookRow({
+  username,
+  addressBook,
+  permissions,
+  onDelete,
+  onPublicRight,
+  onInvitees,
+}: {
+  username: string;
+  addressBook: UserAddressBook;
+  permissions: AddressBookPermissions;
+  onDelete: (addressBook: UserAddressBook) => void;
+  onPublicRight: (addressBook: UserAddressBook) => void;
+  onInvitees: (addressBook: UserAddressBook) => void;
+}) {
+  const { t } = useTranslation();
+  const id = addressBookId(addressBook);
+  const name = addressBookName(addressBook);
+  const owned = isOwned(addressBook);
+  const isPublicAb = isPublic(addressBook);
+  // Bumped once an import task is over: a new key re-reads the contact counter.
+  const [countKey, setCountKey] = useState(0);
+
+  return (
+    <div className="group flex items-start gap-3 py-1">
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <p className="font-medium">{name}</p>
+          {permissions.count && (
+            <CollectionCountBadge
+              key={countKey}
+              username={username}
+              collectionId={id}
+              count={getUserAddressBookContactCount}
+              icon={Contact}
+              title={t("users.addressBooks.contactCount")}
+            />
+          )}
+        </div>
+        {addressBook["carddav:description"] && (
+          <p className="text-xs text-gray-400">{addressBook["carddav:description"]}</p>
+        )}
+      </div>
+      {owned && permissions.export && (
+        <ExportCollectionButton
+          username={username}
+          collectionId={id}
+          name={name}
+          extension="vcf"
+          exportCollection={exportUserAddressBook}
+          title={t("users.addressBooks.exportTitle")}
+          errorTitle={t("users.addressBooks.errorExport")}
+        />
+      )}
+      {owned && permissions.import && (
+        <ImportCollectionButton
+          username={username}
+          collectionId={id}
+          accept=".vcf,text/vcard"
+          importCollection={importUserAddressBook}
+          title={t("users.addressBooks.importTitle")}
+          errorTitle={t("users.addressBooks.errorImport")}
+          onImported={() => setCountKey((key) => key + 1)}
+        />
+      )}
+      {permissions.invitees && (
+        <button
+          onClick={() => onInvitees(addressBook)}
+          className="p-1.5 rounded-md hover:bg-gray-200 transition"
+          title={t("users.addressBooks.invitees.title")}
+        >
+          <Users className="w-3.5 h-3.5 text-gray-600" />
+        </button>
+      )}
+      {permissions.publicRight && (
+        <button
+          onClick={() => onPublicRight(addressBook)}
+          className="p-1.5 rounded-md hover:bg-gray-200 transition"
+          title={isPublicAb ? t("users.addressBooks.publicRight.publicTitle") : t("users.addressBooks.publicRight.privateTitle")}
+        >
+          {isPublicAb
+            ? <Eye className="w-3.5 h-3.5 text-green-600" />
+            : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
+        </button>
+      )}
+      {permissions.remove && (
+        <button
+          onClick={() => onDelete(addressBook)}
+          className="p-1.5 rounded-md hover:bg-gray-200 transition"
+          title={t("users.addressBooks.deleteTitle")}
+        >
+          <Trash2 className="w-3.5 h-3.5 text-red-600" />
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function UserAddressBooks({ username }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/addressbooks");
   const canCreate = useIsAllowed("POST", "/users/{username}/addressbooks");
-  const canDelete = useIsAllowed("DELETE", "/users/{username}/addressbooks/{addressBookId}");
-  const canPublicRight = useIsAllowed("POST", "/users/{username}/addressbooks/{addressBookId}/publicRight");
-  const canInvitees = useIsAllowed("POST", "/users/{username}/addressbooks/{addressBookId}/invitee");
+  const permissions: AddressBookPermissions = {
+    remove: useIsAllowed("DELETE", "/users/{username}/addressbooks/{addressBookId}"),
+    publicRight: useIsAllowed("POST", "/users/{username}/addressbooks/{addressBookId}/publicRight"),
+    invitees: useIsAllowed("POST", "/users/{username}/addressbooks/{addressBookId}/invitee"),
+    count: useIsAllowed("GET", "/users/{username}/addressbooks/{addressBookId}/contactCount"),
+    export: useIsAllowed("POST", "/users/{username}/addressbooks/{addressBookId}?action=export"),
+    import: useIsAllowed("POST", "/users/{username}/addressbooks/{addressBookId}?action=import"),
+  };
 
   const fetchAddressBooks = useCallback(() => getUserAddressBooks(username), [username]);
   const { data, isLoading, error, refresh } = useFetchData<GetUserAddressBooksResponseType>(
@@ -182,48 +301,17 @@ export default function UserAddressBooks({ username }: Props) {
                 </div>
               )}
               <div className="space-y-1">
-                {addressBooks.map((ab) => {
-                  const isPublicAb = isPublic(ab);
-                  return (
-                    <div key={addressBookId(ab)} className="group flex items-start gap-3 py-1">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium">{addressBookName(ab)}</p>
-                        {ab["carddav:description"] && (
-                          <p className="text-xs text-gray-400">{ab["carddav:description"]}</p>
-                        )}
-                      </div>
-                      {canInvitees && (
-                        <button
-                          onClick={() => setInviteesAddressBook(ab)}
-                          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-                          title={t("users.addressBooks.invitees.title")}
-                        >
-                          <Users className="w-3.5 h-3.5 text-gray-600" />
-                        </button>
-                      )}
-                      {canPublicRight && (
-                        <button
-                          onClick={() => openPublicRight(ab)}
-                          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-                          title={isPublicAb ? t("users.addressBooks.publicRight.publicTitle") : t("users.addressBooks.publicRight.privateTitle")}
-                        >
-                          {isPublicAb
-                            ? <Eye className="w-3.5 h-3.5 text-green-600" />
-                            : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
-                        </button>
-                      )}
-                      {canDelete && (
-                        <button
-                          onClick={() => handleDelete(ab)}
-                          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-                          title={t("users.addressBooks.deleteTitle")}
-                        >
-                          <Trash2 className="w-3.5 h-3.5 text-red-600" />
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
+                {addressBooks.map((ab) => (
+                  <AddressBookRow
+                    key={addressBookId(ab)}
+                    username={username}
+                    addressBook={ab}
+                    permissions={permissions}
+                    onDelete={handleDelete}
+                    onPublicRight={openPublicRight}
+                    onInvitees={setInviteesAddressBook}
+                  />
+                ))}
               </div>
             </div>
           )}

@@ -742,6 +742,11 @@
       "editTitle": "Sửa lịch",
       "updated": "Đã cập nhật lịch",
       "errorUpdate": "Lỗi khi cập nhật lịch",
+      "eventCount": "Sự kiện",
+      "exportTitle": "Xuất lịch (ICS)",
+      "errorExport": "Lỗi khi xuất lịch",
+      "importTitle": "Nhập sự kiện (ICS)",
+      "errorImport": "Lỗi khi nhập sự kiện",
       "publicRight": {
         "title": "Mức hiển thị công khai",
         "publicTitle": "Lịch công khai (đọc)",
@@ -788,6 +793,11 @@
       "deleteConfirm": "Bạn có thực sự muốn xóa sổ địa chỉ \"{{name}}\"?",
       "deleted": "Đã xóa sổ địa chỉ",
       "errorDelete": "Lỗi khi xóa sổ địa chỉ",
+      "contactCount": "Liên hệ",
+      "exportTitle": "Xuất sổ địa chỉ (vCard)",
+      "errorExport": "Lỗi khi xuất sổ địa chỉ",
+      "importTitle": "Nhập liên hệ (vCard)",
+      "errorImport": "Lỗi khi nhập liên hệ",
       "publicRight": {
         "title": "Mức hiển thị công khai",
         "publicTitle": "Sổ địa chỉ công khai (đọc)",
