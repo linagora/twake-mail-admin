@@ -295,6 +295,12 @@ Note: if none are present, hide the deleted message vault.
 |---------|------|---------|----------|
 | "Sync members" button | POST | `/addressbook/domain-members/{domain}?task=sync` | MAY (do not show the button if missing) |
 
+### Domain detail — Calendar: Republish common contacts *(APPLICATION:"CALENDAR" only)*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| "Republish common contacts" button | POST | `/domains/{domain}/contacts?action=republish` | MAY (do not show the button if missing) |
+
 ### Domain detail — Calendar: Settings section *(APPLICATION:"CALENDAR" only)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
@@ -463,6 +469,12 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | "Archive events" button | POST | `/calendars/{username}?task=archive` | MAY (do not show the button if missing)|
+
+### User detail — Calendar: Republish common contacts *(APPLICATION:"CALENDAR" only)*
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| "Republish common contacts" button | POST | `/users/{username}/contacts?action=republish` | MAY (do not show the button if missing) |
 
 ### User detail — Calendar: Calendars section *(APPLICATION:"CALENDAR" only)*
 
@@ -778,5 +790,6 @@ Note: Hide tasks button that are not allowed
 | "Archive calendar events" button | POST | `/calendars?task=archive` | MAY |
 | "Schedule alarms" button | POST | `/calendars?task=scheduleAlarms` | MAY |
 | "Add missing user fields" button | POST | `/registeredUsers?action=addMissingFields` | MAY |
+| "Republish all common contacts" button | POST | `/contacts?action=republish` | MAY |
 
 Note: Hide tasks button that are not allowed

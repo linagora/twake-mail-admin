@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { deleteUserData, archiveUserCalendarEvents } from "../api-client";
+import { deleteUserData, archiveUserCalendarEvents, republishUserContacts } from "../api-client";
 import DeleteUserDataForm from "../components/delete-user-data-form";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -22,6 +22,10 @@ const ARCHIVE_CALENDAR_PARAMS: TaskParam[] = [
   { key: "eventsPerSecond", defaultValue: "100", type: "input" },
 ];
 
+const REPUBLISH_CONTACTS_PARAMS: TaskParam[] = [
+  { key: "contactsPerSecond", defaultValue: "100", type: "input" },
+];
+
 interface Props {
   username: string;
 }
@@ -32,9 +36,11 @@ export default function CalendarUserTasks({ username }: Props) {
   const confirm = useConfirm();
   const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
   const canArchiveCalendar = useIsAllowed("POST", "/calendars/{username}");
+  const canRepublishContacts = useIsAllowed("POST", "/users/{username}/contacts?action=republish");
   const [open, setOpen] = useState(false);
   const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);
   const [archiveCalendarLoading, setArchiveCalendarLoading] = useState(false);
+  const [republishContactsLoading, setRepublishContactsLoading] = useState(false);
 
   const handleDeleteUserData = async () => {
     let currentFromStep = "";
@@ -95,6 +101,37 @@ export default function CalendarUserTasks({ username }: Props) {
     }
   };
 
+  const handleRepublishContacts = async () => {
+    try {
+      const params: { contactsPerSecond?: string } = {};
+      const result = await confirm({
+        header: t("users.calendarTasks.republishContactsTitle"),
+        message: (
+          <ConfirmTaskContent
+            message={<p>{t("users.calendarTasks.republishContactsDesc", { username })}</p>}
+            command={`curl -XPOST /users/${username}/contacts?action=republish`}
+            params={REPUBLISH_CONTACTS_PARAMS}
+            getParamValues={(key, value) => {
+              params[key as keyof typeof params] = value as string;
+            }}
+          />
+        ),
+      });
+      if (!result) return;
+
+      setRepublishContactsLoading(true);
+      const data = await republishUserContacts(username, params);
+      toast({
+        title: t("common.taskRunning"),
+        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
+      });
+    } catch (err) {
+      toast({ title: t("users.calendarTasks.errorRepublishContacts"), description: <ErrorDisplayer error={err} /> });
+    } finally {
+      setRepublishContactsLoading(false);
+    }
+  };
+
   return (
     <div className="mt-6">
       <button
@@ -120,6 +157,24 @@ export default function CalendarUserTasks({ username }: Props) {
                   </TooltipTrigger>
                   <TooltipContent>
                     curl -XPOST /calendars/{username}?task=archive
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+          {canRepublishContacts && (
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-2">
+              <p>{t("users.calendarTasks.republishContactsButton")}</p>
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRepublishContacts}>
+                      {republishContactsLoading && <Loader2 className="animate-spin" />}
+                      {t("common.run")}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    curl -XPOST /users/{username}/contacts?action=republish
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

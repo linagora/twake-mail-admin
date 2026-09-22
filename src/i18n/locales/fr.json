@@ -416,7 +416,12 @@
       "syncConfirm": "Synchroniser les membres du domaine « {{domain}} » depuis le carnet d'adresses ?",
       "syncButton": "Synchroniser les membres",
       "syncDesc": "Synchronise la liste des membres du domaine depuis le carnet d'adresses.",
-      "errorSyncing": "Erreur lors de la synchronisation des membres"
+      "errorSyncing": "Erreur lors de la synchronisation des membres",
+      "republishContactsTitle": "Republier les contacts communs",
+      "republishContactsConfirm": "Republier les contacts communs du domaine « {{domain}} » et de ses utilisateurs ?",
+      "republishContactsButton": "Republier les contacts communs",
+      "republishContactsDesc": "Republie les contacts du domaine et de ses utilisateurs sur le bus des contacts communs.",
+      "errorRepublishingContacts": "Erreur lors de la republication des contacts communs"
     },
     "subtitleMail": "Gérer les domaines enregistrés sur le serveur mail.",
     "subtitleCalendar": "Gérer les domaines enregistrés sur le serveur calendrier."
@@ -760,7 +765,11 @@
       "archiveTitle": "Archiver les événements calendrier",
       "archiveButton": "Archiver les événements calendrier",
       "archiveDesc": "Archiver les événements calendrier de {{username}}.",
-      "errorArchive": "Erreur lors de l'archivage"
+      "errorArchive": "Erreur lors de l'archivage",
+      "republishContactsTitle": "Republier les contacts communs",
+      "republishContactsButton": "Republier les contacts communs",
+      "republishContactsDesc": "Republie les contacts de {{username}} sur le bus des contacts communs.",
+      "errorRepublishContacts": "Erreur lors de la republication des contacts communs"
     },
     "calendars": {
       "title": "Calendriers",
@@ -1018,6 +1027,7 @@
     "alarmRescheduling": "Replanifier les alarmes",
     "addMissingFields": "Ajouter les champs manquants aux utilisateurs enregistrés",
     "clearDomainMembersContacts": "Supprimer les contacts membres de tous les domaines",
+    "republishCommonContacts": "Republier tous les contacts communs",
     "reloadCertificates": "Recharger les certificats",
     "portOptional": "port (optionnel)",
     "reloadCertTitle": "Recharger les certificats",

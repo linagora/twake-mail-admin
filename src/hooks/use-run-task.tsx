@@ -14,6 +14,7 @@ import {
   runAddMissingFieldsTask,
   runPopulateEmailQueryViewTask,
   runClearDomainMembersContactsTask,
+  runRepublishCommonContactsTask,
 } from "@/modules/common-tasks/api-client";
 import { AdditionalParams, ReIndexMode, Task, TaskKey } from "@/modules/common-tasks/types";
 
@@ -106,6 +107,9 @@ export function useRunTask() {
         break;
       case TaskKey.CLEAR_DOMAIN_MEMBERS_CONTACTS:
         data = await runClearDomainMembersContactsTask(taskParamValues);
+        break;
+      case TaskKey.REPUBLISH_COMMON_CONTACTS:
+        data = await runRepublishCommonContactsTask(taskParamValues);
         break;
       default:
         break;

@@ -143,6 +143,11 @@ export const runAddMissingFieldsTask = async (): Promise<any> => {
   return apiClient.post<any, any>(`/registeredUsers?action=addMissingFields`);
 };
 
+export const runRepublishCommonContactsTask = async (payload?: AdditionalParams): Promise<any> => {
+  const params = parsePayloadToSearchParams({ action: 'republish', ...payload });
+  return apiClient.post<any, any>(`/contacts?${params}`);
+};
+
 export const runClearDomainMembersContactsTask = async (payload?: AdditionalParams): Promise<any> => {
   const params = parsePayloadToSearchParams(payload);
   return apiClient.delete<any, any>(`/addressbook/domain-members${params ? `?${params}` : ''}`);
