@@ -2,8 +2,9 @@ import { useCallback, useMemo, useState } from "react";
 import { Check, ChevronDown, ChevronRight, Loader2, Minus, Pencil, Plus, Save, Trash2, Users, X } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getTeamCalendars, createTeamCalendar, updateTeamCalendar, deleteTeamCalendar, getTeamCalendarMembers, updateTeamCalendarMembers } from "../api-client";
+import { getTeamCalendars, createTeamCalendar, updateTeamCalendar, deleteTeamCalendar, getTeamCalendarMembers, updateTeamCalendarMembers, getTeamCalendarEventCount, exportTeamCalendar, importTeamCalendar } from "../api-client";
 import { TeamCalendar, TeamCalendarMember, TeamCalendarMemberRole, TeamCalendarShareSetEntry, TeamCalendarShareUpdate } from "../types";
+import DomainCalendarControls, { DomainCalendarApi } from "./domain-calendar-controls";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -24,6 +25,12 @@ function roleToShareEntry(href: string, role: TeamCalendarMemberRole): TeamCalen
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
+const CONTENT_API: DomainCalendarApi = {
+  count: getTeamCalendarEventCount,
+  exportCalendar: exportTeamCalendar,
+  importCalendar: importTeamCalendar,
+};
+
 interface Props {
   domain: string;
   defaultOpen?: boolean;
@@ -39,6 +46,11 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
   const canDelete = useIsAllowed("DELETE", "/domains/{domain}/team-calendars/{teamCalendarId}");
   const canViewMembers = useIsAllowed("GET", "/domains/{domain}/team-calendars/{teamCalendarId}/members");
   const canManageMembers = useIsAllowed("POST", "/domains/{domain}/team-calendars/{teamCalendarId}/members/invitee");
+  const contentPermissions = {
+    count: useIsAllowed("GET", "/domains/{domain}/team-calendars/{teamCalendarId}/eventCount"),
+    export: useIsAllowed("POST", "/domains/{domain}/team-calendars/{teamCalendarId}?action=export"),
+    import: useIsAllowed("POST", "/domains/{domain}/team-calendars/{teamCalendarId}?action=import"),
+  };
 
   const fetchTeamCalendars = useCallback(() => getTeamCalendars(domain), [domain]);
   const { data: teamCalendars, isLoading, error, refresh } = useFetchData<TeamCalendar[]>(canView ? fetchTeamCalendars : null);
@@ -224,6 +236,14 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
                       </>
                     ) : (
                       <>
+                        <DomainCalendarControls
+                          domain={domain}
+                          calendarId={teamCalendar.id}
+                          name={teamCalendar.displayName || teamCalendar.name}
+                          permissions={contentPermissions}
+                          api={CONTENT_API}
+                          labels="domains.teamCalendars"
+                        />
                         {canViewMembers && (
                           <button onClick={() => setMembersCalendar(teamCalendar)} className="p-2 rounded-md hover:bg-gray-200" title={t("domains.teamCalendars.members.tooltip")}>
                             <Users className="w-4 h-4 text-gray-600" />

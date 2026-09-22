@@ -6,7 +6,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserCalendar, deleteUserCalendar, exportUserCalendar, getUserCalendarEventCount, getUserCalendars, importUserCalendar, setUserCalendarPublicRight, updateUserCalendar, updateUserCalendarInvitees } from "../api-client";
 import { CalendarShareUpdate, CreateUserCalendarPayload, GetUserCalendarsResponseType, UpdateUserCalendarPayload, UserCalendar } from "../types";
-import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "./dav-collection-actions";
+import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -188,7 +188,7 @@ function CalendarRow({
           {permissions.count && (
             <CollectionCountBadge
               key={countKey}
-              username={username}
+              owner={username}
               collectionId={id}
               count={getUserCalendarEventCount}
               icon={CalendarDays}
@@ -213,7 +213,7 @@ function CalendarRow({
       </div>
       {isOwned && permissions.export && (
         <ExportCollectionButton
-          username={username}
+          owner={username}
           collectionId={id}
           name={name ?? id}
           extension="ics"
@@ -224,7 +224,7 @@ function CalendarRow({
       )}
       {isOwned && permissions.import && (
         <ImportCollectionButton
-          username={username}
+          owner={username}
           collectionId={id}
           accept=".ics,text/calendar"
           importCollection={importUserCalendar}

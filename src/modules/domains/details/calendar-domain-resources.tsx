@@ -2,8 +2,9 @@ import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getResources, createResource, deleteResource } from "../api-client";
+import { getResources, createResource, deleteResource, getResourceEventCount, exportResource, importResource } from "../api-client";
 import { Resource } from "../types";
+import DomainCalendarControls, { DomainCalendarApi } from "./domain-calendar-controls";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -12,6 +13,12 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useTranslation } from "react-i18next";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
+
+const CONTENT_API: DomainCalendarApi = {
+  count: getResourceEventCount,
+  exportCalendar: exportResource,
+  importCalendar: importResource,
+};
 
 interface Props {
   domain: string;
@@ -26,6 +33,11 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
   const canView = useIsAllowed("GET", "/domains/{domain}/resources");
   const canCreate = useIsAllowed("POST", "/domains/{domain}/resources");
   const canDelete = useIsAllowed("DELETE", "/domains/{domain}/resources/{resourceId}");
+  const contentPermissions = {
+    count: useIsAllowed("GET", "/domains/{domain}/resources/{resourceId}/eventCount"),
+    export: useIsAllowed("POST", "/domains/{domain}/resources/{resourceId}?action=export"),
+    import: useIsAllowed("POST", "/domains/{domain}/resources/{resourceId}?action=import"),
+  };
 
   const fetchResources = useCallback(() => getResources(domain), [domain]);
   const { data: resources, isLoading, error, refresh } = useFetchData<Resource[]>(canView ? fetchResources : null);
@@ -223,12 +235,22 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                       <span className="text-xs text-muted-foreground ml-2">{resource.description}</span>
                     )}
                   </h4>
-                  {canDelete && (
-                    <button onClick={(e) => { e.preventDefault(); handleRemove(resource); }}
-                      className="p-2 rounded-md hover:bg-gray-200" title={t("domains.calendarResources.deleteTooltip")}>
-                      <Trash2 className="w-4 h-4 text-red-600" />
-                    </button>
-                  )}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <DomainCalendarControls
+                      domain={domain}
+                      calendarId={resource.id}
+                      name={resource.name}
+                      permissions={contentPermissions}
+                      api={CONTENT_API}
+                      labels="domains.calendarResources"
+                    />
+                    {canDelete && (
+                      <button onClick={(e) => { e.preventDefault(); handleRemove(resource); }}
+                        className="p-2 rounded-md hover:bg-gray-200" title={t("domains.calendarResources.deleteTooltip")}>
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
               {active.length === 0 && (

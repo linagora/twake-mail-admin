@@ -482,6 +482,17 @@ DOMAINS = page(
             ],
             children=[
                 action(
+                    "event-count",
+                    "Count the events of a resource",
+                    "Compter les événements d'une ressource",
+                    endpoints=[
+                        may(
+                            "GET",
+                            "/domains/{domain}/resources/{resourceId}/eventCount",
+                        )
+                    ],
+                ),
+                action(
                     "create",
                     "Create a resource",
                     "Créer une ressource",
@@ -501,6 +512,30 @@ DOMAINS = page(
                     "Supprimer une ressource",
                     endpoints=[
                         may("DELETE", "/domains/{domain}/resources/{resourceId}")
+                    ],
+                ),
+                action(
+                    "export",
+                    "Export the events of a resource",
+                    "Exporter les événements d'une ressource",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/resources/{resourceId}"
+                            "?action=export",
+                        )
+                    ],
+                ),
+                action(
+                    "import",
+                    "Import events into a resource",
+                    "Importer des événements dans une ressource",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/resources/{resourceId}"
+                            "?action=import",
+                        )
                     ],
                 ),
                 action(
@@ -524,6 +559,18 @@ DOMAINS = page(
             applications=CALENDAR,
             endpoints=[must("GET", "/domains/{domain}/team-calendars")],
             children=[
+                action(
+                    "event-count",
+                    "Count the events of a team calendar",
+                    "Compter les événements d'un agenda d'équipe",
+                    endpoints=[
+                        may(
+                            "GET",
+                            "/domains/{domain}/team-calendars/{teamCalendarId}"
+                            "/eventCount",
+                        )
+                    ],
+                ),
                 action(
                     "create",
                     "Create a team calendar",
@@ -572,6 +619,30 @@ DOMAINS = page(
                             "POST",
                             "/domains/{domain}/team-calendars/{teamCalendarId}"
                             "/members/invitee",
+                        )
+                    ],
+                ),
+                action(
+                    "export",
+                    "Export the events of a team calendar",
+                    "Exporter les événements d'un agenda d'équipe",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/team-calendars/{teamCalendarId}"
+                            "?action=export",
+                        )
+                    ],
+                ),
+                action(
+                    "import",
+                    "Import events into a team calendar",
+                    "Importer des événements dans un agenda d'équipe",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/team-calendars/{teamCalendarId}"
+                            "?action=import",
                         )
                     ],
                 ),

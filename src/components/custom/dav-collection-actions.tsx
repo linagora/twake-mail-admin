@@ -1,7 +1,8 @@
 /**
- * Controls shared by the calendars and the address books sections of the user
- * detail page. Both are DAV collections, counted, exported and imported through
- * routes that differ only by their path and their media type.
+ * Controls shared by every DAV collection section: the calendars and the address
+ * books of a user, the team calendars and the resources of a domain. All are DAV
+ * collections, counted, exported and imported through routes that differ only by
+ * their owner, their path and their media type.
  */
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Link } from "react-router";
@@ -13,7 +14,12 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import { getTaskDetail } from "@/modules/common-tasks/api-client";
 import { TaskStatus, type RunTaskResponse } from "@/modules/common-tasks/types";
 import { useDomain } from "@/modules/domain-admin/domain-context";
-import type { CollectionCount } from "../types";
+
+// Number of resources held by a DAV collection: events for a calendar,
+// contacts for an address book.
+export interface CollectionCount {
+  count: number;
+}
 
 const BUTTON_CLASS = "p-1.5 rounded-md hover:bg-gray-200 transition disabled:opacity-50";
 
@@ -24,7 +30,9 @@ const TASK_POLL_INTERVAL_MS = 2000;
 const TASK_POLL_ATTEMPTS = 30;
 
 interface CollectionProps {
-  username: string;
+  // Whoever the collection hangs from: a username, or a domain for the
+  // collections a domain owns.
+  owner: string;
   collectionId: string;
 }
 
@@ -34,19 +42,19 @@ interface CollectionProps {
  * independently of its siblings.
  */
 export function CollectionCountBadge({
-  username,
+  owner,
   collectionId,
   count,
   icon: Icon,
   title,
 }: CollectionProps & {
-  count: (username: string, collectionId: string) => Promise<CollectionCount>;
+  count: (owner: string, collectionId: string) => Promise<CollectionCount>;
   icon: LucideIcon;
   title: string;
 }) {
   const fetchCount = useCallback(
-    () => count(username, collectionId),
-    [count, username, collectionId]
+    () => count(owner, collectionId),
+    [count, owner, collectionId]
   );
   const { data, isLoading } = useFetchData<CollectionCount>(fetchCount);
 
@@ -63,7 +71,7 @@ export function CollectionCountBadge({
 }
 
 export function ExportCollectionButton({
-  username,
+  owner,
   collectionId,
   name,
   extension,
@@ -73,7 +81,7 @@ export function ExportCollectionButton({
 }: CollectionProps & {
   name: string;
   extension: string;
-  exportCollection: (username: string, collectionId: string) => Promise<Blob>;
+  exportCollection: (owner: string, collectionId: string) => Promise<Blob>;
   title: string;
   errorTitle: string;
 }) {
@@ -83,7 +91,7 @@ export function ExportCollectionButton({
   const handleExport = async () => {
     setExporting(true);
     try {
-      download(await exportCollection(username, collectionId), fileName(name, extension));
+      download(await exportCollection(owner, collectionId), fileName(name, extension));
     } catch (err) {
       toast({ title: errorTitle, description: <ErrorDisplayer error={err} /> });
     } finally {
@@ -101,7 +109,7 @@ export function ExportCollectionButton({
 }
 
 export function ImportCollectionButton({
-  username,
+  owner,
   collectionId,
   accept,
   importCollection,
@@ -111,7 +119,7 @@ export function ImportCollectionButton({
 }: CollectionProps & {
   accept: string;
   importCollection: (
-    username: string,
+    owner: string,
     collectionId: string,
     content: string
   ) => Promise<RunTaskResponse>;
@@ -139,7 +147,7 @@ export function ImportCollectionButton({
     if (!file) return;
     setImporting(true);
     try {
-      const { taskId } = await importCollection(username, collectionId, await file.text());
+      const { taskId } = await importCollection(owner, collectionId, await file.text());
       toast({
         title: t("common.taskStarted"),
         description: (

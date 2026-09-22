@@ -1,7 +1,8 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, CollectionCount, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserAddressBooksResponseType, CreateUserAddressBookPayload, AddressBookShareUpdate } from "./types";
+import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserAddressBooksResponseType, CreateUserAddressBookPayload, AddressBookShareUpdate } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
+import { CollectionCount } from "@/components/custom/dav-collection-actions";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
 export const getUsers = async (): Promise<GetUsersResponseType> => {
