@@ -273,9 +273,13 @@ Note: if none are present, hide the deleted message vault.
 |---------|------|---------|----------|
 | Tab load | GET | `/domains/{domain}/resources` | MUST |
 | Resource detail load | GET | `/domains/{domain}/resources/{resourceId}` | MUST |
+| Event counter of each resource | GET | `/domains/{domain}/resources/{resourceId}/eventCount` | MAY (do not show the counters if missing) |
 | "Create resource" button | POST | `/domains/{domain}/resources` | MAY (do not show the button if missing) |
 | "Delete resource" button | DELETE | `/domains/{domain}/resources/{resourceId}` | MAY (do not show the button if missing) |
 | "Edit resource" form | PATCH | `/domains/{domain}/resources/{resourceId}` | MAY (do not show the button if missing) |
+| "Export resource calendar" button (download) | POST | `/domains/{domain}/resources/{resourceId}?action=export` | MAY (do not show the download icon if missing) |
+| "Import events" button (upload) | POST | `/domains/{domain}/resources/{resourceId}?action=import` | MAY (do not show the upload icon if missing) |
+| Event counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the tab is reopened) |
 | "Reposition write rights" button | POST | `/domains/{domain}/resources?task=repositionWriteRights` | MAY (do not show the button if missing) |
 
 ### Domain detail — Calendar: Team calendars section *(APPLICATION:"CALENDAR" only)*
@@ -283,9 +287,13 @@ Note: if none are present, hide the deleted message vault.
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Section load | GET | `/domains/{domain}/team-calendars` | MUST (hide the whole section if forbidden) |
+| Event counter of each team calendar | GET | `/domains/{domain}/team-calendars/{teamCalendarId}/eventCount` | MAY (do not show the counters if missing) |
 | "Create team calendar" button | POST | `/domains/{domain}/team-calendars` | MAY (do not show the button if missing) |
 | "Edit team calendar" button | PATCH | `/domains/{domain}/team-calendars/{teamCalendarId}` | MAY (do not show the button if missing) |
 | "Delete team calendar" button | DELETE | `/domains/{domain}/team-calendars/{teamCalendarId}` | MAY (do not show the button if missing) |
+| "Export team calendar" button (download) | POST | `/domains/{domain}/team-calendars/{teamCalendarId}?action=export` | MAY (do not show the download icon if missing) |
+| "Import events" button (upload) | POST | `/domains/{domain}/team-calendars/{teamCalendarId}?action=import` | MAY (do not show the upload icon if missing) |
+| Event counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the section is reopened) |
 | "Manage members" button | GET | `/domains/{domain}/team-calendars/{teamCalendarId}/members` | MAY (do not show the button if missing) |
 | "Add/change/remove member" apply | POST | `/domains/{domain}/team-calendars/{teamCalendarId}/members/invitee` | MAY (read-only members view if missing) |
 

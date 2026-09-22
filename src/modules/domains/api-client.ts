@@ -2,6 +2,7 @@ import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues, TeamCalendar, TeamCalendarMember, TeamCalendarShareUpdate } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits-section";
+import { CollectionCount } from "@/components/custom/dav-collection-actions";
 import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
 
 export const getDomainUsers = async (domain: string): Promise<string[]> => {
@@ -418,3 +419,48 @@ export const updateTeamCalendarMembers = async (
   share: TeamCalendarShareUpdate,
 ): Promise<void> =>
   apiClient.post(`/domains/${encodeURIComponent(domain)}/team-calendars/${encodeURIComponent(id)}/members/invitee`, { share });
+
+// ---------------------------------------------------------------------------
+// Content of the calendars a domain owns (CALENDAR application only)
+//
+// Team calendars and resources are both plain DAV calendars that no user owns:
+// they are counted, exported and imported through routes that differ only by
+// the collection segment naming them.
+// ---------------------------------------------------------------------------
+
+const CONTENT_TYPE_ICS = "text/calendar";
+
+const domainCalendar = (domain: string, collection: string, id: string): string =>
+  `/domains/${encodeURIComponent(domain)}/${collection}/${encodeURIComponent(id)}`;
+
+// Number of calendar objects (.ics) held by the calendar.
+const countDomainCalendar = (collection: string) =>
+  (domain: string, id: string): Promise<CollectionCount> =>
+    apiClient.get<any, CollectionCount>(`${domainCalendar(domain, collection, id)}/eventCount`);
+
+// The whole calendar as a single ICS document.
+const exportDomainCalendar = (collection: string) =>
+  (domain: string, id: string): Promise<Blob> =>
+    apiClient.post<any, Blob>(
+      `${domainCalendar(domain, collection, id)}?action=export`,
+      undefined,
+      { headers: { Accept: CONTENT_TYPE_ICS }, responseType: "blob" },
+    );
+
+// Schedules an asynchronous task importing the events of an ICS document into
+// the calendar. Returns the id of the task to monitor.
+const importDomainCalendar = (collection: string) =>
+  (domain: string, id: string, ics: string): Promise<RunTaskResponse> =>
+    apiClient.post<any, RunTaskResponse>(
+      `${domainCalendar(domain, collection, id)}?action=import`,
+      ics,
+      { headers: { "Content-Type": CONTENT_TYPE_ICS } },
+    );
+
+export const getTeamCalendarEventCount = countDomainCalendar("team-calendars");
+export const exportTeamCalendar = exportDomainCalendar("team-calendars");
+export const importTeamCalendar = importDomainCalendar("team-calendars");
+
+export const getResourceEventCount = countDomainCalendar("resources");
+export const exportResource = exportDomainCalendar("resources");
+export const importResource = importDomainCalendar("resources");

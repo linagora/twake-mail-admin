@@ -6,7 +6,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserAddressBook, deleteUserAddressBook, exportUserAddressBook, getUserAddressBookContactCount, getUserAddressBooks, importUserAddressBook, setUserAddressBookPublicRight, updateUserAddressBookInvitees } from "../api-client";
 import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBooksResponseType, UserAddressBook } from "../types";
 import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess, shareAccessToRight } from "./address-book-share-access";
-import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "./dav-collection-actions";
+import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
@@ -107,7 +107,7 @@ function AddressBookRow({
           {permissions.count && (
             <CollectionCountBadge
               key={countKey}
-              username={username}
+              owner={username}
               collectionId={id}
               count={getUserAddressBookContactCount}
               icon={Contact}
@@ -121,7 +121,7 @@ function AddressBookRow({
       </div>
       {owned && permissions.export && (
         <ExportCollectionButton
-          username={username}
+          owner={username}
           collectionId={id}
           name={name}
           extension="vcf"
@@ -132,7 +132,7 @@ function AddressBookRow({
       )}
       {owned && permissions.import && (
         <ImportCollectionButton
-          username={username}
+          owner={username}
           collectionId={id}
           accept=".vcf,text/vcard"
           importCollection={importUserAddressBook}

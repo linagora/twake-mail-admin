@@ -168,12 +168,6 @@ export interface GetUserCalendarsResponseType {
   };
 }
 
-// Number of resources held by a DAV collection: events for a calendar,
-// contacts for an address book.
-export interface CollectionCount {
-  count: number;
-}
-
 export interface CreateUserCalendarPayload {
   id?: string;
   "dav:name": string;
