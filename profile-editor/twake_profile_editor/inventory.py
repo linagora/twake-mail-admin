@@ -86,8 +86,8 @@ DOMAINS = page(
     children=[
         action(
             "create",
-            "Create a domain",
-            "Créer un domaine",
+            "Create or import domains",
+            "Créer ou importer des domaines",
             endpoints=[may("PUT", "/domains/{domain}")],
         ),
         action(

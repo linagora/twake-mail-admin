@@ -104,6 +104,16 @@
     "deleteConfirm": "Supprimer « {{domain}} » ? Le domaine pourra être recréé et les données utilisateurs existantes ne seront pas affectées.",
     "deleted": "Domaine « {{domain}} » supprimé",
     "errorDeleting": "Erreur lors de la suppression du domaine",
+    "import": {
+      "button": "Importer",
+      "help": "Fichier texte, un domaine par ligne (fins de ligne LF ou CRLF).\nLes commentaires commencent par # ou // et peuvent suivre un domaine sur la même ligne.\nLes lignes vides et les lignes de commentaire sont ignorées.\nSeuls les domaines qui n'existent pas encore sont créés.",
+      "inProgress": "Import des domaines : {{processed}}/{{total}}",
+      "done": "Import des domaines terminé",
+      "counters": "Créés : {{created}}, Déjà existants : {{alreadyExisting}}, Erreurs : {{errors}}",
+      "moreDetails": "Plus de détails",
+      "failuresTitle": "Domaines non créés ({{count}})",
+      "error": "Erreur lors de l'import des domaines"
+    },
     "aliases": {
       "title": "Alias du domaine",
       "sourcePlaceholder": "source.domaine.tld",
