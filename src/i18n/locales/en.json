@@ -104,6 +104,16 @@
     "deleteConfirm": "Delete \"{{domain}}\"? The domain can be re-created afterwards and existing user data will not be affected.",
     "deleted": "Domain \"{{domain}}\" deleted",
     "errorDeleting": "Error deleting domain",
+    "import": {
+      "button": "Import",
+      "help": "Text file, one domain per line (LF or CRLF line endings).\nComments start with # or // and may follow a domain on the same line.\nBlank lines and comment-only lines are skipped.\nOnly the domains that do not exist yet are created.",
+      "inProgress": "Importing domains: {{processed}}/{{total}}",
+      "done": "Domain import finished",
+      "counters": "Created: {{created}}, Already exist: {{alreadyExisting}}, Errors: {{errors}}",
+      "moreDetails": "More details",
+      "failuresTitle": "Domains that could not be created ({{count}})",
+      "error": "Error importing domains"
+    },
     "aliases": {
       "title": "Domain Aliases",
       "sourcePlaceholder": "source.domain.tld",

@@ -10,6 +10,7 @@ import { GetDomainsResponseType } from "./types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import ImportDomainsButton from "./import-domains-button";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -105,6 +106,7 @@ export default function DomainsList() {
           >
             {t("common.create")}
           </button>
+          <ImportDomainsButton onImported={refresh} />
         </div>
       )}
       {isLoading && (

@@ -244,7 +244,7 @@ The usage figures come from the same call as the tab load; there is no second en
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
-| "Create domain" button | PUT | `/domains/{domain}` | MAY (do not show the button if missing) |
+| "Create domain" and "Import" buttons | PUT | `/domains/{domain}` | MAY (do not show the buttons if missing) |
 | "Delete domain" button | DELETE | `/domains/{domain}` | MAY (do not show the button if missing) |
 | "Delete all data" button | POST | `/domains/{domain}?action=deleteData` | MAY (do not show the button if missing) |
 
