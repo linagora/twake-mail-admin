@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Check, ChevronDown, ChevronRight, Loader2, Minus, Pencil, Plus, Save, Trash2, Users, X } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getTeamCalendars, createTeamCalendar, updateTeamCalendar, deleteTeamCalendar, getTeamCalendarMembers, updateTeamCalendarMembers, getTeamCalendarEventCount, exportTeamCalendar, importTeamCalendar } from "../api-client";
+import { getTeamCalendars, createTeamCalendar, updateTeamCalendar, deleteTeamCalendar, getTeamCalendarMembers, updateTeamCalendarMembers, getTeamCalendarEventCount, exportTeamCalendar, importTeamCalendar, setTeamCalendarPublicRight } from "../api-client";
 import { TeamCalendar, TeamCalendarMember, TeamCalendarMemberRole, TeamCalendarShareSetEntry, TeamCalendarShareUpdate } from "../types";
 import DomainCalendarControls, { DomainCalendarApi } from "./domain-calendar-controls";
 import { useToast } from "@/hooks/use-toast";
@@ -29,6 +29,7 @@ const CONTENT_API: DomainCalendarApi = {
   count: getTeamCalendarEventCount,
   exportCalendar: exportTeamCalendar,
   importCalendar: importTeamCalendar,
+  setPublicRight: setTeamCalendarPublicRight,
 };
 
 interface Props {
@@ -50,6 +51,7 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
     count: useIsAllowed("GET", "/domains/{domain}/team-calendars/{teamCalendarId}/eventCount"),
     export: useIsAllowed("POST", "/domains/{domain}/team-calendars/{teamCalendarId}?action=export"),
     import: useIsAllowed("POST", "/domains/{domain}/team-calendars/{teamCalendarId}?action=import"),
+    publicRight: useIsAllowed("POST", "/domains/{domain}/team-calendars/{teamCalendarId}/publicRight"),
   };
 
   const fetchTeamCalendars = useCallback(() => getTeamCalendars(domain), [domain]);

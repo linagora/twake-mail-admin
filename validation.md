@@ -279,6 +279,7 @@ Note: if none are present, hide the deleted message vault.
 | "Edit resource" form | PATCH | `/domains/{domain}/resources/{resourceId}` | MAY (do not show the button if missing) |
 | "Export resource calendar" button (download) | POST | `/domains/{domain}/resources/{resourceId}?action=export` | MAY (do not show the download icon if missing) |
 | "Import events" button (upload) | POST | `/domains/{domain}/resources/{resourceId}?action=import` | MAY (do not show the upload icon if missing) |
+| "Public visibility" button | POST | `/domains/{domain}/resources/{resourceId}/publicRight` | MAY (do not show the globe icon if missing) |
 | Event counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the tab is reopened) |
 | "Reposition write rights" button | POST | `/domains/{domain}/resources?task=repositionWriteRights` | MAY (do not show the button if missing) |
 
@@ -293,6 +294,7 @@ Note: if none are present, hide the deleted message vault.
 | "Delete team calendar" button | DELETE | `/domains/{domain}/team-calendars/{teamCalendarId}` | MAY (do not show the button if missing) |
 | "Export team calendar" button (download) | POST | `/domains/{domain}/team-calendars/{teamCalendarId}?action=export` | MAY (do not show the download icon if missing) |
 | "Import events" button (upload) | POST | `/domains/{domain}/team-calendars/{teamCalendarId}?action=import` | MAY (do not show the upload icon if missing) |
+| "Public visibility" button | POST | `/domains/{domain}/team-calendars/{teamCalendarId}/publicRight` | MAY (do not show the globe icon if missing) |
 | Event counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the section is reopened) |
 | "Manage members" button | GET | `/domains/{domain}/team-calendars/{teamCalendarId}/members` | MAY (do not show the button if missing) |
 | "Add/change/remove member" apply | POST | `/domains/{domain}/team-calendars/{teamCalendarId}/members/invitee` | MAY (read-only members view if missing) |

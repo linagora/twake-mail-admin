@@ -369,6 +369,17 @@
       "errorExport": "Erreur lors de l'export du calendrier",
       "importTitle": "Importer des événements (ICS)",
       "errorImport": "Erreur lors de l'import des événements",
+      "publicRight": {
+        "title": "Visibilité publique",
+        "tooltip": "Modifier la visibilité publique",
+        "hint": "La visibilité actuelle n'est pas affichée : choisissez celle à appliquer.",
+        "public": "Public",
+        "publicDesc": "Toute personne authentifiée peut lire ce calendrier.",
+        "private": "Privé",
+        "privateDesc": "Retire les droits publics sur ce calendrier.",
+        "updated": "Visibilité mise à jour",
+        "errorUpdate": "Erreur lors de la mise à jour de la visibilité"
+      },
       "detailTitle": "Ressource calendrier — {{name}}",
       "fieldName": "Nom",
       "fieldDescription": "Description",
@@ -411,6 +422,17 @@
       "errorExport": "Erreur lors de l'export du calendrier",
       "importTitle": "Importer des événements (ICS)",
       "errorImport": "Erreur lors de l'import des événements",
+      "publicRight": {
+        "title": "Visibilité publique",
+        "tooltip": "Modifier la visibilité publique",
+        "hint": "La visibilité actuelle n'est pas affichée : choisissez celle à appliquer.",
+        "public": "Public",
+        "publicDesc": "Toute personne authentifiée peut lire ce calendrier.",
+        "private": "Privé",
+        "privateDesc": "Retire les droits publics sur ce calendrier.",
+        "updated": "Visibilité mise à jour",
+        "errorUpdate": "Erreur lors de la mise à jour de la visibilité"
+      },
       "members": {
         "title": "Membres",
         "tooltip": "Gérer les membres",

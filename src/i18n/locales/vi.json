@@ -359,6 +359,17 @@
       "errorExport": "Lỗi khi xuất lịch",
       "importTitle": "Nhập sự kiện (ICS)",
       "errorImport": "Lỗi khi nhập sự kiện",
+      "publicRight": {
+        "title": "Mức hiển thị công khai",
+        "tooltip": "Thay đổi mức hiển thị công khai",
+        "hint": "Mức hiển thị hiện tại không được hiển thị: hãy chọn mức cần áp dụng.",
+        "public": "Công khai",
+        "publicDesc": "Bất kỳ ai đã xác thực đều có thể đọc lịch này.",
+        "private": "Riêng tư",
+        "privateDesc": "Loại bỏ quyền công khai trên lịch này.",
+        "updated": "Đã cập nhật mức hiển thị",
+        "errorUpdate": "Lỗi khi cập nhật mức hiển thị"
+      },
       "detailTitle": "Tài nguyên lịch — {{name}}",
       "fieldName": "Tên",
       "fieldDescription": "Mô tả",

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getResources, createResource, deleteResource, getResourceEventCount, exportResource, importResource } from "../api-client";
+import { getResources, createResource, deleteResource, getResourceEventCount, exportResource, importResource, setResourcePublicRight } from "../api-client";
 import { Resource } from "../types";
 import DomainCalendarControls, { DomainCalendarApi } from "./domain-calendar-controls";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +18,7 @@ const CONTENT_API: DomainCalendarApi = {
   count: getResourceEventCount,
   exportCalendar: exportResource,
   importCalendar: importResource,
+  setPublicRight: setResourcePublicRight,
 };
 
 interface Props {
@@ -37,6 +38,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
     count: useIsAllowed("GET", "/domains/{domain}/resources/{resourceId}/eventCount"),
     export: useIsAllowed("POST", "/domains/{domain}/resources/{resourceId}?action=export"),
     import: useIsAllowed("POST", "/domains/{domain}/resources/{resourceId}?action=import"),
+    publicRight: useIsAllowed("POST", "/domains/{domain}/resources/{resourceId}/publicRight"),
   };
 
   const fetchResources = useCallback(() => getResources(domain), [domain]);
