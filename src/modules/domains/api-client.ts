@@ -424,8 +424,8 @@ export const updateTeamCalendarMembers = async (
 // Content of the calendars a domain owns (CALENDAR application only)
 //
 // Team calendars and resources are both plain DAV calendars that no user owns:
-// they are counted, exported and imported through routes that differ only by
-// the collection segment naming them.
+// they are counted, exported, imported and made public or private through
+// routes that differ only by the collection segment naming them.
 // ---------------------------------------------------------------------------
 
 const CONTENT_TYPE_ICS = "text/calendar";
@@ -457,10 +457,18 @@ const importDomainCalendar = (collection: string) =>
       { headers: { "Content-Type": CONTENT_TYPE_ICS } },
     );
 
+// Changes the public visibility of the calendar: "{DAV:}read" lets anyone
+// authenticated read it, "" makes it private again.
+const setDomainCalendarPublicRight = (collection: string) =>
+  (domain: string, id: string, publicRight: string): Promise<void> =>
+    apiClient.post(`${domainCalendar(domain, collection, id)}/publicRight`, { public_right: publicRight });
+
 export const getTeamCalendarEventCount = countDomainCalendar("team-calendars");
 export const exportTeamCalendar = exportDomainCalendar("team-calendars");
 export const importTeamCalendar = importDomainCalendar("team-calendars");
+export const setTeamCalendarPublicRight = setDomainCalendarPublicRight("team-calendars");
 
 export const getResourceEventCount = countDomainCalendar("resources");
 export const exportResource = exportDomainCalendar("resources");
 export const importResource = importDomainCalendar("resources");
+export const setResourcePublicRight = setDomainCalendarPublicRight("resources");

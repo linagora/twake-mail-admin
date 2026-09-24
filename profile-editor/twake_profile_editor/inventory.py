@@ -539,6 +539,18 @@ DOMAINS = page(
                     ],
                 ),
                 action(
+                    "public-right",
+                    "Change the public visibility of a resource",
+                    "Modifier la visibilité publique d'une ressource",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/resources/{resourceId}"
+                            "/publicRight",
+                        )
+                    ],
+                ),
+                action(
                     "reposition-write-rights",
                     "Reposition write rights",
                     "Repositionner les droits d'écriture",
@@ -643,6 +655,18 @@ DOMAINS = page(
                             "POST",
                             "/domains/{domain}/team-calendars/{teamCalendarId}"
                             "?action=import",
+                        )
+                    ],
+                ),
+                action(
+                    "public-right",
+                    "Change the public visibility of a team calendar",
+                    "Modifier la visibilité publique d'un agenda d'équipe",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/team-calendars/{teamCalendarId}"
+                            "/publicRight",
                         )
                     ],
                 ),

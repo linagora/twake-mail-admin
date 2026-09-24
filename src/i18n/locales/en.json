@@ -359,6 +359,17 @@
       "errorExport": "Error exporting calendar",
       "importTitle": "Import events (ICS)",
       "errorImport": "Error importing events",
+      "publicRight": {
+        "title": "Public visibility",
+        "tooltip": "Change public visibility",
+        "hint": "The current visibility is not displayed: choose the one to apply.",
+        "public": "Public",
+        "publicDesc": "Anyone authenticated can read this calendar.",
+        "private": "Private",
+        "privateDesc": "Removes public rights on this calendar.",
+        "updated": "Visibility updated",
+        "errorUpdate": "Error updating visibility"
+      },
       "detailTitle": "Calendar Resource — {{name}}",
       "fieldName": "Name",
       "fieldDescription": "Description",
@@ -401,6 +412,17 @@
       "errorExport": "Error exporting calendar",
       "importTitle": "Import events (ICS)",
       "errorImport": "Error importing events",
+      "publicRight": {
+        "title": "Public visibility",
+        "tooltip": "Change public visibility",
+        "hint": "The current visibility is not displayed: choose the one to apply.",
+        "public": "Public",
+        "publicDesc": "Anyone authenticated can read this calendar.",
+        "private": "Private",
+        "privateDesc": "Removes public rights on this calendar.",
+        "updated": "Visibility updated",
+        "errorUpdate": "Error updating visibility"
+      },
       "members": {
         "title": "Members",
         "tooltip": "Manage members",
