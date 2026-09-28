@@ -63,6 +63,57 @@ pipeline {
             }
             steps {
                 script {
+                    // A fork owned by someone outside the linagora organization
+                    // only gets an image once a linagora member has commented
+                    // "Build this please" on the pull request.
+                    if (env.CHANGE_FORK) {
+                        def forkOwner = env.CHANGE_FORK.split('/')[0]
+                        def memberStatus = sh(
+                            script: """curl -s -o /dev/null -w "%{http_code}" \
+                              -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
+                              "https://api.github.com/orgs/linagora/members/${forkOwner}" """,
+                            returnStdout: true
+                        ).trim()
+                        echo "GitHub org membership check returned HTTP ${memberStatus} for '${forkOwner}'"
+                        if (memberStatus == '204') {
+                            echo "Fork owner '${forkOwner}' is a linagora org member, proceeding."
+                        } else if (memberStatus == '404') {
+                            echo "Fork owner '${forkOwner}' is not a member of the linagora organization."
+                            def approvedByMember = false
+                            def commentsJson = sh(
+                                script: """curl -s \
+                                  -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
+                                  "https://api.github.com/repos/linagora/twake-mail-admin/issues/\${CHANGE_ID}/comments?per_page=100" """,
+                                returnStdout: true
+                            ).trim()
+                            def comments = readJSON text: commentsJson
+                            for (comment in comments) {
+                                if (comment.body.trim().toLowerCase() == 'build this please') {
+                                    def commenter = comment.user.login
+                                    def commenterStatus = sh(
+                                        script: """curl -s -o /dev/null -w "%{http_code}" \
+                                          -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
+                                          "https://api.github.com/orgs/linagora/members/${commenter}" """,
+                                        returnStdout: true
+                                    ).trim()
+                                    if (commenterStatus == '204') {
+                                        echo "Build approved by linagora member '${commenter}', proceeding."
+                                        approvedByMember = true
+                                        break
+                                    }
+                                }
+                            }
+                            if (!approvedByMember) {
+                                echo "No linagora member approval found. Skipping PR image delivery."
+                                return
+                            }
+                        } else if (memberStatus == '401' || memberStatus == '403') {
+                            error("Authentication/permission error validating fork owner: ${memberStatus}")
+                        } else {
+                            error("GitHub API error ${memberStatus} while checking membership for '${forkOwner}'")
+                        }
+                    }
+
                     env.DOCKER_IMAGE = 'linagora/twake-mail-admin'
                     env.DOCKER_TAG = 'branch-master'
                     if (env.TAG_NAME) {
