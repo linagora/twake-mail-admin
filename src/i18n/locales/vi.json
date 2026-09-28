@@ -105,6 +105,16 @@
     "deleteConfirm": "Xóa \"{{domain}}\"? Tên miền có thể được tạo lại sau đó và dữ liệu người dùng hiện có sẽ không bị ảnh hưởng.",
     "deleted": "Đã xóa tên miền \"{{domain}}\"",
     "errorDeleting": "Lỗi khi xóa tên miền",
+    "import": {
+      "button": "Nhập",
+      "help": "Tệp văn bản, mỗi dòng một tên miền (kết thúc dòng LF hoặc CRLF).\nChú thích bắt đầu bằng # hoặc // và có thể đứng sau tên miền trên cùng một dòng.\nDòng trống và dòng chỉ có chú thích sẽ bị bỏ qua.\nChỉ các tên miền chưa tồn tại mới được tạo.",
+      "inProgress": "Đang nhập tên miền: {{processed}}/{{total}}",
+      "done": "Đã nhập xong tên miền",
+      "counters": "Đã tạo: {{created}}, đã tồn tại: {{alreadyExisting}}, lỗi: {{errors}}",
+      "moreDetails": "Xem chi tiết",
+      "failuresTitle": "Các tên miền không thể tạo ({{count}})",
+      "error": "Lỗi khi nhập tên miền"
+    },
     "aliases": {
       "title": "Bí danh tên miền",
       "sourcePlaceholder": "source.domain.tld",
@@ -391,6 +401,60 @@
       "removeAdminConfirm": "Xóa \"{{email}}\" khỏi danh sách quản trị viên?",
       "removeAdminTooltip": "Xóa quản trị viên",
       "searchPlaceholder": "Tìm tài nguyên..."
+    },
+    "teamCalendars": {
+      "title": "Lịch nhóm",
+      "addTooltip": "Thêm lịch nhóm",
+      "newTitle": "Lịch nhóm mới",
+      "nameLabel": "Tên",
+      "namePlaceholder": "Tên lịch nhóm",
+      "displayNameLabel": "Tên hiển thị",
+      "displayNamePlaceholder": "Tên hiển thị (mặc định là tên)",
+      "created": "Đã tạo lịch nhóm",
+      "errorCreating": "Lỗi khi tạo lịch nhóm",
+      "updated": "Đã cập nhật lịch nhóm",
+      "errorUpdating": "Lỗi khi cập nhật lịch nhóm",
+      "editTooltip": "Sửa tên hiển thị",
+      "deleteTitle": "Xóa lịch nhóm",
+      "deleteConfirm": "Xóa lịch nhóm \"{{name}}\"?",
+      "deleted": "Đã xóa lịch nhóm",
+      "errorDeleting": "Lỗi khi xóa lịch nhóm",
+      "deleteTooltip": "Xóa lịch nhóm",
+      "empty": "Không có lịch nhóm.",
+      "eventCount": "Sự kiện",
+      "exportTitle": "Xuất lịch (ICS)",
+      "errorExport": "Lỗi khi xuất lịch",
+      "importTitle": "Nhập sự kiện (ICS)",
+      "errorImport": "Lỗi khi nhập sự kiện",
+      "publicRight": {
+        "title": "Mức hiển thị công khai",
+        "tooltip": "Thay đổi mức hiển thị công khai",
+        "hint": "Mức hiển thị hiện tại không được hiển thị: hãy chọn mức cần áp dụng.",
+        "public": "Công khai",
+        "publicDesc": "Bất kỳ ai đã xác thực đều có thể đọc lịch này.",
+        "private": "Riêng tư",
+        "privateDesc": "Loại bỏ quyền công khai trên lịch này.",
+        "updated": "Đã cập nhật mức hiển thị",
+        "errorUpdate": "Lỗi khi cập nhật mức hiển thị"
+      },
+      "members": {
+        "title": "Thành viên",
+        "tooltip": "Quản lý thành viên",
+        "empty": "Không có thành viên.",
+        "placeholder": "user@domain.com",
+        "apply": "Áp dụng",
+        "remove": "Xóa",
+        "undoRemove": "Hoàn tác xóa",
+        "alreadyMember": "Đã là thành viên",
+        "updated": "Đã cập nhật thành viên",
+        "errorUpdate": "Lỗi khi cập nhật thành viên",
+        "roles": {
+          "viewer": "Người xem",
+          "member": "Thành viên",
+          "manager": "Người quản lý"
+        }
+      },
+      "searchPlaceholder": "Tìm lịch nhóm..."
     },
     "calendarTasks": {
       "title": "Tác vụ",
@@ -1152,7 +1216,6 @@
     "pageInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang — Tổng: {{size}}",
     "copiedToClipboard": "Đã sao chép khóa sự kiện vào bộ nhớ tạm!",
     "deleteEventError": "Lỗi khi xóa sự kiện",
-    "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}",
     "searchByEventIdTitle": "Tìm kiếm theo ID sự kiện",
     "searchByEventIdSubtitle": "Định vị sự kiện thất bại trong mọi nhóm bằng ID sự kiện của nó.",
     "searchByEventIdPlaceholder": "Nhập ID sự kiện",
@@ -1160,7 +1223,8 @@
     "searchByGroupHint": "Thu hẹp tìm kiếm vào một nhóm listener duy nhất, nhanh hơn đáng kể khi đã biết nhóm.",
     "searchError": "Lỗi khi tìm sự kiện",
     "groupLabel": "Nhóm",
-    "insertionIdLabel": "ID chèn"
+    "insertionIdLabel": "ID chèn",
+    "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}"
   },
   "mailRepositories": {
     "pathLabel": "Đường dẫn kho *",
