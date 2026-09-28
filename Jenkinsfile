@@ -59,6 +59,7 @@ pipeline {
             }
             environment {
                 DOCKER_HUB_CREDENTIAL = credentials('dockerHub')
+                GITHUB_CREDENTIAL = credentials('github')
             }
             steps {
                 script {
@@ -80,6 +81,22 @@ pipeline {
                     sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
                     sh 'echo "$DOCKER_HUB_CREDENTIAL_PSW" | docker login -u "$DOCKER_HUB_CREDENTIAL_USR" --password-stdin'
                     sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
+
+                    if (env.CHANGE_ID) {
+                        // A failed comment only warns: the image is already
+                        // published, the build should not go red over it.
+                        sh '''
+                            HTTP_STATUS=$(curl -s -o gh_comment_response.json -w "%{http_code}" -X POST \\
+                              -H "Authorization: token $GITHUB_CREDENTIAL_PSW" \\
+                              -H "Content-Type: application/json" \\
+                              -d "{\\"body\\": \\"Docker image published for this PR: $DOCKER_IMAGE:$DOCKER_TAG\\"}" \\
+                              "https://api.github.com/repos/linagora/twake-mail-admin/issues/$CHANGE_ID/comments")
+                            if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+                              echo "WARNING: GitHub API comment failed with HTTP $HTTP_STATUS"
+                              cat gh_comment_response.json
+                            fi
+                        '''
+                    }
 
                     // The profile editor, pinned alongside the frontend it
                     // describes: its endpoint inventory is baked into the image,
