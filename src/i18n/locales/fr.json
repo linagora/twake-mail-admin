@@ -175,7 +175,7 @@
       "addTooltip": "Ajouter une boîte partagée",
       "deleteTooltip": "Supprimer la boîte partagée",
       "empty": "Aucune boîte partagée configurée.",
-      "searchPlaceholder": "Rechercher des boîtes partagées..."
+      "searchPlaceholder": "Rechercher des boîtes partagées…"
     },
     "teamMailbox": {
       "detailTitle": "Détails de la boîte partagée",
@@ -348,7 +348,7 @@
       "removeTooltip": "Retirer l'administrateur",
       "addTooltip": "Ajouter un administrateur",
       "roleNote": "Les administrateurs du domaine peuvent gérer le carnet d'adresses du domaine.",
-      "searchPlaceholder": "Rechercher des administrateurs..."
+      "searchPlaceholder": "Rechercher des administrateurs…"
     },
     "calendarResources": {
       "title": "Ressources de calendrier",
@@ -400,7 +400,7 @@
       "removeAdminTitle": "Retirer l'administrateur",
       "removeAdminConfirm": "Retirer « {{email}} » des administrateurs ?",
       "removeAdminTooltip": "Retirer l'administrateur",
-      "searchPlaceholder": "Rechercher des ressources..."
+      "searchPlaceholder": "Rechercher des ressources…"
     },
     "teamCalendars": {
       "title": "Calendriers d'équipe",
@@ -454,7 +454,7 @@
           "manager": "Gestionnaire"
         }
       },
-      "searchPlaceholder": "Rechercher des agendas d’équipe..."
+      "searchPlaceholder": "Rechercher des calendriers d'équipe…"
     },
     "calendarTasks": {
       "title": "Tâches",
@@ -726,7 +726,7 @@
       "reasonPlaceholder": "ex. Ticket support #4242 — l'utilisateur signale des emails manquants",
       "filters": "Filtres",
       "fullText": "Recherche plein texte",
-      "fullTextPlaceholder": "Rechercher dans le sujet, le corps, les pièces jointes...",
+      "fullTextPlaceholder": "Rechercher dans le sujet, le corps, les pièces jointes…",
       "from": "De",
       "fromPlaceholder": "billing@vendor.com",
       "to": "À",
@@ -768,7 +768,7 @@
       "reindexAll": "Réindexer toutes les boîtes",
       "reindexTitle": "Réindexer les boîtes de l'utilisateur",
       "reindexDesc": "Réindexer toutes les boîtes de {{username}}.",
-      "errorReindex": "Erreur lors de la réindexation",
+      "errorReindex": "Erreur lors du lancement de la tâche de réindexation",
       "subscribeAll": "S'abonner à toutes les boîtes",
       "subscribeTitle": "Abonnement à toutes les boîtes",
       "subscribeDesc": "Abonner {{username}} à toutes ses boîtes ?",
@@ -778,7 +778,7 @@
       "fastViewDesc": "Recalculer la projection des messages rapides pour {{username}}.",
       "errorFastView": "Erreur lors du recalcul",
       "restoreDeleted": "Restaurer les messages supprimés",
-      "errorRestoreDeleted": "Erreur lors de la restauration",
+      "errorRestoreDeleted": "Erreur lors de la restauration des messages supprimés",
       "deleteAllMailboxes": "Supprimer toutes les boîtes",
       "deleteAllMailboxesTitle": "Supprimer toutes les boîtes",
       "deleteAllMailboxesConfirm": "Supprimer TOUTES les boîtes de « {{username}} » ? Cette action est irréversible.",
@@ -1216,7 +1216,7 @@
     "pageInfo": "Page {{page}} — {{limit}} événements par page — Total : {{size}}",
     "copiedToClipboard": "Clé d'événement copiée !",
     "deleteEventError": "Erreur lors de la suppression de l'événement",
-    "paginationInfo": "Page {{page}} — {{limit}} événements par page / Total: {{total}}",
+    "paginationInfo": "Page {{page}} — {{limit}} événements par page / Total : {{total}}",
     "searchByEventIdTitle": "Recherche par ID d'événement",
     "searchByEventIdSubtitle": "Localiser un événement en lettre morte dans tous les groupes à l'aide de son ID d'événement.",
     "searchByEventIdPlaceholder": "Saisir l'ID d'événement",
@@ -1293,7 +1293,7 @@
     "deleteMailHeader": "Supprimer l'email",
     "deleteMailConfirm": "Supprimer cet email du dépôt ?",
     "mailRemoved": "Email supprimé avec succès",
-    "errorRemovingMail": "Erreur lors de la suppression",
+    "errorRemovingMail": "Erreur lors de la suppression du mail",
     "removeMailHeader": "Retirer l'email",
     "removeMailConfirm": "Retirer cet email du dépôt ?",
     "removeMailSuccess": "Email retiré avec succès",
@@ -1315,9 +1315,9 @@
     "destination": "Destination",
     "action": "Action",
     "addressCreated": "Correspondance d'adresse créée",
-    "errorCreatingAddress": "Erreur lors de la création",
+    "errorCreatingAddress": "Erreur lors de la création de la correspondance d'adresse",
     "regexCreated": "Correspondance regex créée",
-    "errorCreatingRegex": "Erreur lors de la création",
+    "errorCreatingRegex": "Erreur lors de la création de la correspondance regex",
     "addDomain": "Ajouter une correspondance de domaine",
     "domainSourcePlaceholder": "Domaine source (ex. domaineSource.tld)",
     "domainDestinationPlaceholder": "Domaine de destination (ex. destination.tld)",
@@ -1327,9 +1327,9 @@
     "removeTitle": "Supprimer la correspondance {{type}}",
     "removeConfirm": "Supprimer la correspondance {{typeLabel}} « {{source}} » → « {{destination}} » ?",
     "removed": "Correspondance {{type}} supprimée",
-    "errorRemoving": "Erreur lors de la suppression",
+    "errorRemoving": "Erreur lors de la suppression de la correspondance {{typeLabel}}",
     "removePage": "Supprimer la page ({{total}})",
-    "removingPage": "Suppression...",
+    "removingPage": "Suppression…",
     "removePageTitle": "Supprimer les correspondances affichées",
     "removePageConfirm": "Les {{total}} correspondance(s) affichées sur cette page seront définitivement supprimées :",
     "removedPage": "{{total}} correspondance(s) supprimée(s)",
@@ -1382,7 +1382,7 @@
     "disconnectAllTitle": "Déconnecter tous les utilisateurs",
     "disconnectAllConfirm": "Déconnecter tous les canaux utilisateurs du serveur ? Toutes les connexions actives seront fermées.",
     "allDisconnected": "Tous les utilisateurs déconnectés",
-    "errorDisconnecting": "Erreur lors de la déconnexion",
+    "errorDisconnecting": "Erreur lors de la déconnexion de tous les utilisateurs",
     "userAgentButton": "Agent utilisateur",
     "mapButton": "Carte",
     "backButton": "Retour",
@@ -1545,6 +1545,6 @@
     "tokenPlaceholder": "Entrez votre token Bearer",
     "cancel": "Annuler",
     "authenticate": "S'authentifier",
-    "authenticating": "Authentification..."
+    "authenticating": "Authentification…"
   }
 }
