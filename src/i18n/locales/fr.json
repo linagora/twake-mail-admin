@@ -1521,11 +1521,14 @@
     "mailsSentPerMinute": "Mails envoyés / minute",
     "mailsSentPerHours": "Mails envoyés / heure",
     "mailsSentPerDays": "Mails envoyés / jour",
+    "recipientsSentPerMinute": "Destinataires / minute",
+    "recipientsSentPerHours": "Destinataires / heure",
+    "recipientsSentPerDays": "Destinataires / jour",
     "mailsReceivedPerMinute": "Mails reçus / minute",
     "mailsReceivedPerHours": "Mails reçus / heure",
     "mailsReceivedPerDays": "Mails reçus / jour",
-    "noLimit": "sans limite",
-    "noLimitHint": "Laisser vide pour aucune limite (null).",
+    "noLimit": "par défaut",
+    "noLimitHint": "Laisser vide pour appliquer la limite par défaut (null), -1 signifie illimité. Les limites de destinataires comptent chaque destinataire d'un mail envoyé, les limites de mails comptent le mail une seule fois.",
     "sectionTitle": "Limitation de débit"
   },
   "confirmTask": {

@@ -1456,11 +1456,14 @@
     "mailsSentPerMinute": "Илгээсэн захидал / минут",
     "mailsSentPerHours": "Илгээсэн захидал / цаг",
     "mailsSentPerDays": "Илгээсэн захидал / өдөр",
+    "recipientsSentPerMinute": "Илгээсэн хүлээн авагч / минут",
+    "recipientsSentPerHours": "Илгээсэн хүлээн авагч / цаг",
+    "recipientsSentPerDays": "Илгээсэн хүлээн авагч / өдөр",
     "mailsReceivedPerMinute": "Хүлээн авсан захидал / минут",
     "mailsReceivedPerHours": "Хүлээн авсан захидал / цаг",
     "mailsReceivedPerDays": "Хүлээн авсан захидал / өдөр",
-    "noLimit": "хязгааргүй",
-    "noLimitHint": "Хязгааргүй болгохын тулд хоосон орхино уу (null).",
+    "noLimit": "өгөгдмөл",
+    "noLimitHint": "Өгөгдмөл хязгаарыг хэрэглэхийн тулд хоосон орхино уу (null), -1 нь хязгааргүй гэсэн үг. Хүлээн авагчийн хязгаар нь илгээсэн захидлын хүлээн авагч бүрийг тоолдог бол захидлын хязгаар нь захидлыг нэг удаа тоолдог.",
     "sectionTitle": "Хурдны хязгаарлалт"
   },
   "confirmTask": {

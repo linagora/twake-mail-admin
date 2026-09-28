@@ -1458,11 +1458,14 @@
     "mailsSentPerMinute": "Thư gửi đi / phút",
     "mailsSentPerHours": "Thư gửi đi / giờ",
     "mailsSentPerDays": "Thư gửi đi / ngày",
+    "recipientsSentPerMinute": "Người nhận đã gửi / phút",
+    "recipientsSentPerHours": "Người nhận đã gửi / giờ",
+    "recipientsSentPerDays": "Người nhận đã gửi / ngày",
     "mailsReceivedPerMinute": "Thư nhận về / phút",
     "mailsReceivedPerHours": "Thư nhận về / giờ",
     "mailsReceivedPerDays": "Thư nhận về / ngày",
-    "noLimit": "không giới hạn",
-    "noLimitHint": "Để trống để không giới hạn (null).",
+    "noLimit": "mặc định",
+    "noLimitHint": "Để trống để áp dụng giới hạn mặc định (null), -1 nghĩa là không giới hạn. Giới hạn người nhận tính từng người nhận của thư đã gửi, giới hạn thư tính mỗi thư một lần.",
     "sectionTitle": "Giới hạn tốc độ"
   },
   "confirmTask": {
