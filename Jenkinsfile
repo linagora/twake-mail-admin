@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_HUB_CREDENTIAL = credentials('dockerHub')
-    }
-
     tools {
         nodejs 'nodejs_24'
     }
@@ -59,6 +55,9 @@ pipeline {
                     branch 'main'
                     buildingTag()
                 }
+            }
+            environment {
+                DOCKER_HUB_CREDENTIAL = credentials('dockerHub')
             }
             steps {
                 script {
