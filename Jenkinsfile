@@ -54,6 +54,7 @@ pipeline {
                 anyOf {
                     branch 'main'
                     buildingTag()
+                    changeRequest()
                 }
             }
             environment {
@@ -61,17 +62,24 @@ pipeline {
             }
             steps {
                 script {
+                    env.DOCKER_IMAGE = 'linagora/twake-mail-admin'
                     env.DOCKER_TAG = 'branch-master'
                     if (env.TAG_NAME) {
                         env.DOCKER_TAG = env.TAG_NAME
+                    } else if (env.CHANGE_ID) {
+                        // Pull requests land in a separate repository so that a
+                        // reviewer can run the change (e.g. twake-mail-admin-pr:86)
+                        // without polluting the release tags.
+                        env.DOCKER_IMAGE = 'linagora/twake-mail-admin-pr'
+                        env.DOCKER_TAG = env.CHANGE_ID
                     }
 
-                    echo "Docker tag: ${env.DOCKER_TAG}"
+                    echo "Docker image: ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                     env.GIT_REVISION = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
 
-                    sh 'docker build -t linagora/twake-mail-admin:$DOCKER_TAG .'
+                    sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
                     sh 'docker login -u $DOCKER_HUB_CREDENTIAL_USR -p $DOCKER_HUB_CREDENTIAL_PSW'
-                    sh 'docker push linagora/twake-mail-admin:$DOCKER_TAG'
+                    sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
 
                     // The profile editor, pinned alongside the frontend it
                     // describes: its endpoint inventory is baked into the image,
