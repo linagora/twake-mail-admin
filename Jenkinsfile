@@ -78,7 +78,7 @@ pipeline {
                     env.GIT_REVISION = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
 
                     sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
-                    sh 'docker login -u $DOCKER_HUB_CREDENTIAL_USR -p $DOCKER_HUB_CREDENTIAL_PSW'
+                    sh 'echo "$DOCKER_HUB_CREDENTIAL_PSW" | docker login -u "$DOCKER_HUB_CREDENTIAL_USR" --password-stdin'
                     sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
 
                     // The profile editor, pinned alongside the frontend it
