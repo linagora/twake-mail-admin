@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { Check, ChevronDown, ChevronRight, Loader2, Minus, Pencil, Plus, Save, Trash2, Users, X } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { useSearchPagination } from "@/hooks/use-search-pagination";
+import { ListSearchPagination } from "@/components/custom/list-search-pagination";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamCalendars, createTeamCalendar, updateTeamCalendar, deleteTeamCalendar, getTeamCalendarMembers, updateTeamCalendarMembers, getTeamCalendarEventCount, exportTeamCalendar, importTeamCalendar, setTeamCalendarPublicRight } from "../api-client";
 import { TeamCalendar, TeamCalendarMember, TeamCalendarMemberRole, TeamCalendarShareSetEntry, TeamCalendarShareUpdate } from "../types";
@@ -23,7 +25,7 @@ function roleToShareEntry(href: string, role: TeamCalendarMemberRole): TeamCalen
   return entry;
 }
 
-const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
+const searchable = (teamCalendar: TeamCalendar) => [teamCalendar.name, teamCalendar.displayName];
 
 const CONTENT_API: DomainCalendarApi = {
   count: getTeamCalendarEventCount,
@@ -64,22 +66,14 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDisplayName, setEditDisplayName] = useState("");
   const [membersCalendar, setMembersCalendar] = useState<TeamCalendar | null>(null);
-  const [page, setPage] = useState(1);
 
   const sorted = useMemo(() => {
     if (!teamCalendars) return [];
     return [...teamCalendars].sort((a, b) => a.name.localeCompare(b.name));
   }, [teamCalendars]);
+  const { search, setSearch, filtered, paginated, page, totalPages, offset, goToPage } = useSearchPagination(sorted, searchable);
 
   if (!canView) return null;
-
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_LIMIT));
-  const paginated = sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
-
-  const goToPage = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return;
-    setPage(newPage);
-  };
 
   const handleAdd = async () => {
     const name = newName.trim();
@@ -187,28 +181,23 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
           )}
           {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
-          {sorted.length > PAGE_LIMIT && (
-            <div className="mt-2 flex justify-between items-center">
-              <button onClick={() => goToPage(1)} disabled={page <= 1}
-                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">{t("common.first")}</button>
-              <button onClick={() => goToPage(page - 1)} disabled={page <= 1}
-                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">{t("common.previous")}</button>
-              <span className="text-sm font-medium text-center">{t("common.page", { page, totalPages, total: sorted.length })}</span>
-              <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.next")}</button>
-              <button onClick={() => goToPage(totalPages)} disabled={page >= totalPages}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.last")}</button>
-            </div>
-          )}
-
           {teamCalendars && (
             <div>
+              <ListSearchPagination
+                search={search}
+                onSearch={setSearch}
+                placeholder={t("domains.teamCalendars.searchPlaceholder")}
+                page={page}
+                totalPages={totalPages}
+                total={filtered.length}
+                goToPage={goToPage}
+              />
               {paginated.map((teamCalendar, index) => (
                 <div key={teamCalendar.id} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2">
                   <div className="flex-1 min-w-0">
                     {editingId === teamCalendar.id ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
+                        <span className="text-gray-500">{offset + index + 1}/</span>
                         <span className="text-sm font-medium">{teamCalendar.name}</span>
                         <input type="text" value={editDisplayName} onChange={(e) => setEditDisplayName(e.target.value)}
                           onKeyDown={(e) => { if (e.key === "Enter") handleUpdate(teamCalendar); if (e.key === "Escape") cancelEdit(); }}
@@ -217,7 +206,7 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
                       </div>
                     ) : (
                       <h4 className="text-sm font-medium leading-none truncate">
-                        <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
+                        <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                         {teamCalendar.name}
                         {teamCalendar.displayName && teamCalendar.displayName !== teamCalendar.name && (
                           <span className="text-xs text-muted-foreground ml-2">{teamCalendar.displayName}</span>
@@ -268,6 +257,9 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
               ))}
               {sorted.length === 0 && (
                 <p className="mt-2 text-sm text-gray-500">{t("domains.teamCalendars.empty")}</p>
+              )}
+              {sorted.length > 0 && filtered.length === 0 && (
+                <p className="mt-2 text-sm text-gray-500">{t("common.noSearchResults")}</p>
               )}
             </div>
           )}

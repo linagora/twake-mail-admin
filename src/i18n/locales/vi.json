@@ -67,7 +67,8 @@
     "ratio": "Tỷ lệ",
     "tasks": "Tác vụ",
     "list": "Danh sách",
-    "confirm": "Xác nhận"
+    "confirm": "Xác nhận",
+    "noSearchResults": "Không có kết quả phù hợp."
   },
   "sidebar": {
     "application": "Ứng dụng",
@@ -163,7 +164,8 @@
       "errorDeleting": "Lỗi khi xóa hộp thư nhóm",
       "addTooltip": "Thêm hộp thư nhóm",
       "deleteTooltip": "Xóa hộp thư nhóm",
-      "empty": "Chưa cấu hình hộp thư nhóm nào."
+      "empty": "Chưa cấu hình hộp thư nhóm nào.",
+      "searchPlaceholder": "Tìm hộp thư nhóm..."
     },
     "teamMailbox": {
       "detailTitle": "Chi tiết hộp thư nhóm",
@@ -335,7 +337,8 @@
       "empty": "Không có quản trị viên tên miền.",
       "removeTooltip": "Xóa quản trị viên",
       "addTooltip": "Thêm quản trị viên",
-      "roleNote": "Quản trị viên tên miền có thể quản lý sổ địa chỉ tên miền."
+      "roleNote": "Quản trị viên tên miền có thể quản lý sổ địa chỉ tên miền.",
+      "searchPlaceholder": "Tìm quản trị viên..."
     },
     "calendarResources": {
       "title": "Tài nguyên lịch",
@@ -386,7 +389,8 @@
       "errorRemovingAdmin": "Lỗi khi xóa quản trị viên",
       "removeAdminTitle": "Xóa quản trị viên",
       "removeAdminConfirm": "Xóa \"{{email}}\" khỏi danh sách quản trị viên?",
-      "removeAdminTooltip": "Xóa quản trị viên"
+      "removeAdminTooltip": "Xóa quản trị viên",
+      "searchPlaceholder": "Tìm tài nguyên..."
     },
     "calendarTasks": {
       "title": "Tác vụ",

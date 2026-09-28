@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { useSearchPagination } from "@/hooks/use-search-pagination";
+import { ListSearchPagination } from "@/components/custom/list-search-pagination";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getDomainAdmins, addDomainAdmin, removeDomainAdmin } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
@@ -9,7 +11,7 @@ import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useTranslation } from "react-i18next";
 
-const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
+const searchable = (admin: string) => [admin];
 
 interface Props {
   domain: string;
@@ -30,23 +32,15 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
   const [open, setOpen] = useState(defaultOpen);
   const [showAddInput, setShowAddInput] = useState(false);
   const [newAdmin, setNewAdmin] = useState("");
-  const [page, setPage] = useState(1);
   const adminStatus = useCheckUserExists(newAdmin);
 
   const sorted = useMemo(() => {
     if (!admins) return [];
     return [...admins].sort((a, b) => a.localeCompare(b));
   }, [admins]);
+  const { search, setSearch, filtered, paginated, page, totalPages, offset, goToPage } = useSearchPagination(sorted, searchable);
 
   if (!canView) return null;
-
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_LIMIT));
-  const paginated = sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
-
-  const goToPage = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return;
-    setPage(newPage);
-  };
 
   const handleAdd = async () => {
     const username = newAdmin.trim();
@@ -159,30 +153,25 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
           )}
           {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
-          {sorted.length > PAGE_LIMIT && (
-            <div className="mt-2 flex justify-between items-center">
-              <button onClick={() => goToPage(1)} disabled={page <= 1}
-                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">{t("common.first")}</button>
-              <button onClick={() => goToPage(page - 1)} disabled={page <= 1}
-                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">{t("common.previous")}</button>
-              <span className="text-sm font-medium text-center">{t("common.page", { page, totalPages, total: sorted.length })}</span>
-              <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.next")}</button>
-              <button onClick={() => goToPage(totalPages)} disabled={page >= totalPages}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.last")}</button>
-            </div>
-          )}
-
           <p className="mt-2 mb-2 text-sm text-gray-500 italic">
             {t("domains.calendarAdmins.roleNote")}
           </p>
 
           {admins && (
             <div>
+              <ListSearchPagination
+                search={search}
+                onSearch={setSearch}
+                placeholder={t("domains.calendarAdmins.searchPlaceholder")}
+                page={page}
+                totalPages={totalPages}
+                total={filtered.length}
+                goToPage={goToPage}
+              />
               {paginated.map((admin, index) => (
                 <div key={admin} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center">
                   <h4 className="text-sm font-medium leading-none">
-                    <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
+                    <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                     {admin}
                   </h4>
                   {canRemove && (
@@ -194,6 +183,9 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
               ))}
               {admins.length === 0 && (
                 <p className="mt-2 text-sm text-gray-500">{t("domains.calendarAdmins.empty")}</p>
+              )}
+              {admins.length > 0 && filtered.length === 0 && (
+                <p className="mt-2 text-sm text-gray-500">{t("common.noSearchResults")}</p>
               )}
             </div>
           )}

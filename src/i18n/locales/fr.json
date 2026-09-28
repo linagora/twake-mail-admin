@@ -67,7 +67,8 @@
     "ratio": "Ratio",
     "tasks": "Tâches",
     "list": "Liste",
-    "confirm": "Confirmer"
+    "confirm": "Confirmer",
+    "noSearchResults": "Aucun résultat ne correspond à votre recherche."
   },
   "sidebar": {
     "application": "Application",
@@ -173,7 +174,8 @@
       "errorDeleting": "Erreur lors de la suppression de la boîte partagée",
       "addTooltip": "Ajouter une boîte partagée",
       "deleteTooltip": "Supprimer la boîte partagée",
-      "empty": "Aucune boîte partagée configurée."
+      "empty": "Aucune boîte partagée configurée.",
+      "searchPlaceholder": "Rechercher des boîtes partagées..."
     },
     "teamMailbox": {
       "detailTitle": "Détails de la boîte partagée",
@@ -345,7 +347,8 @@
       "empty": "Aucun administrateur de domaine.",
       "removeTooltip": "Retirer l'administrateur",
       "addTooltip": "Ajouter un administrateur",
-      "roleNote": "Les administrateurs du domaine peuvent gérer le carnet d'adresses du domaine."
+      "roleNote": "Les administrateurs du domaine peuvent gérer le carnet d'adresses du domaine.",
+      "searchPlaceholder": "Rechercher des administrateurs..."
     },
     "calendarResources": {
       "title": "Ressources de calendrier",
@@ -396,7 +399,8 @@
       "errorRemovingAdmin": "Erreur lors du retrait de l'administrateur",
       "removeAdminTitle": "Retirer l'administrateur",
       "removeAdminConfirm": "Retirer « {{email}} » des administrateurs ?",
-      "removeAdminTooltip": "Retirer l'administrateur"
+      "removeAdminTooltip": "Retirer l'administrateur",
+      "searchPlaceholder": "Rechercher des ressources..."
     },
     "teamCalendars": {
       "title": "Calendriers d'équipe",
@@ -449,7 +453,8 @@
           "member": "Membre",
           "manager": "Gestionnaire"
         }
-      }
+      },
+      "searchPlaceholder": "Rechercher des agendas d’équipe..."
     },
     "calendarTasks": {
       "title": "Tâches",
