@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserAddressBooksResponseType, CreateUserAddressBookPayload, UpdateUserAddressBookPayload, AddressBookShareUpdate } from "./types";
-import { RateLimits } from "@/components/custom/rate-limits-section";
+import { RateLimits } from "@/components/custom/rate-limits";
 import { CollectionCount } from "@/components/custom/dav-collection-actions";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
@@ -288,7 +288,7 @@ export const getUserRateLimits = async (username: string): Promise<RateLimits> =
   return apiClient.get(`/users/${encodeURIComponent(username)}/ratelimits`);
 };
 
-export const updateUserRateLimits = async (username: string, limits: RateLimits): Promise<void> => {
+export const updateUserRateLimits = async (username: string, limits: Partial<RateLimits>): Promise<void> => {
   await apiClient.put(`/users/${encodeURIComponent(username)}/ratelimits`, limits, {
     headers: { "Content-Type": "application/json" },
   });

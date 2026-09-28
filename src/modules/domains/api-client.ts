@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues, TeamCalendar, TeamCalendarMember, TeamCalendarShareUpdate } from "./types";
-import { RateLimits } from "@/components/custom/rate-limits-section";
+import { RateLimits } from "@/components/custom/rate-limits";
 import { CollectionCount } from "@/components/custom/dav-collection-actions";
 import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
 
@@ -183,7 +183,7 @@ export const getDomainRateLimits = async (domain: string): Promise<RateLimits> =
   return apiClient.get(`/domains/${encodeURIComponent(domain)}/ratelimits`);
 };
 
-export const updateDomainRateLimits = async (domain: string, limits: RateLimits): Promise<void> => {
+export const updateDomainRateLimits = async (domain: string, limits: Partial<RateLimits>): Promise<void> => {
   await apiClient.put(`/domains/${encodeURIComponent(domain)}/ratelimits`, limits, {
     headers: { "Content-Type": "application/json" },
   });
