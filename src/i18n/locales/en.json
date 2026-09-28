@@ -67,7 +67,8 @@
     "ratio": "Ratio",
     "tasks": "Tasks",
     "list": "List",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "noSearchResults": "No results match your search."
   },
   "sidebar": {
     "application": "Application",
@@ -173,7 +174,8 @@
       "errorDeleting": "Error deleting team mailbox",
       "addTooltip": "Add team mailbox",
       "deleteTooltip": "Delete team mailbox",
-      "empty": "No team mailboxes configured."
+      "empty": "No team mailboxes configured.",
+      "searchPlaceholder": "Search team mailboxes..."
     },
     "teamMailbox": {
       "detailTitle": "Team Mailbox Details",
@@ -345,7 +347,8 @@
       "empty": "No domain admins.",
       "removeTooltip": "Remove admin",
       "addTooltip": "Add admin",
-      "roleNote": "Domain admins can manage the domain address book."
+      "roleNote": "Domain admins can manage the domain address book.",
+      "searchPlaceholder": "Search administrators..."
     },
     "calendarResources": {
       "title": "Calendar Resources",
@@ -396,7 +399,8 @@
       "errorRemovingAdmin": "Error removing administrator",
       "removeAdminTitle": "Remove Administrator",
       "removeAdminConfirm": "Remove \"{{email}}\" from administrators?",
-      "removeAdminTooltip": "Remove administrator"
+      "removeAdminTooltip": "Remove administrator",
+      "searchPlaceholder": "Search resources..."
     },
     "teamCalendars": {
       "title": "Team Calendars",
@@ -449,7 +453,8 @@
           "member": "Member",
           "manager": "Manager"
         }
-      }
+      },
+      "searchPlaceholder": "Search team calendars..."
     },
     "calendarTasks": {
       "title": "Tasks",

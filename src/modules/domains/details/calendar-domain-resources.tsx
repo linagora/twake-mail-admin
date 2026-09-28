@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { useSearchPagination } from "@/hooks/use-search-pagination";
+import { ListSearchPagination } from "@/components/custom/list-search-pagination";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getResources, createResource, deleteResource, getResourceEventCount, exportResource, importResource, setResourcePublicRight } from "../api-client";
 import { Resource } from "../types";
@@ -12,7 +14,7 @@ import ResourceIconPicker from "@/components/custom/resource-icon-picker";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useTranslation } from "react-i18next";
 
-const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
+const searchable = (resource: Resource) => [resource.name, resource.description];
 
 const CONTENT_API: DomainCalendarApi = {
   count: getResourceEventCount,
@@ -54,22 +56,14 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
   const [newAdminInput, setNewAdminInput] = useState("");
   const adminInputStatus = useCheckUserExists(newAdminInput);
   const [newAdministrators, setNewAdministrators] = useState<{ email: string }[]>([]);
-  const [page, setPage] = useState(1);
 
   const active = useMemo(() => {
     if (!resources) return [];
     return resources.filter((r) => !r.deleted).sort((a, b) => a.name.localeCompare(b.name));
   }, [resources]);
+  const { search, setSearch, filtered, paginated, page, totalPages, offset, goToPage } = useSearchPagination(active, searchable);
 
   if (!canView) return null;
-
-  const totalPages = Math.max(1, Math.ceil(active.length / PAGE_LIMIT));
-  const paginated = active.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
-
-  const goToPage = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return;
-    setPage(newPage);
-  };
 
   const handleAddAdmin = () => {
     const email = newAdminInput.trim();
@@ -211,26 +205,21 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
           )}
           {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
-          {active.length > PAGE_LIMIT && (
-            <div className="mt-2 flex justify-between items-center">
-              <button onClick={() => goToPage(1)} disabled={page <= 1}
-                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">{t("common.first")}</button>
-              <button onClick={() => goToPage(page - 1)} disabled={page <= 1}
-                className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">{t("common.previous")}</button>
-              <span className="text-sm font-medium text-center">{t("common.page", { page, totalPages, total: active.length })}</span>
-              <button onClick={() => goToPage(page + 1)} disabled={page >= totalPages}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.next")}</button>
-              <button onClick={() => goToPage(totalPages)} disabled={page >= totalPages}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed">{t("common.last")}</button>
-            </div>
-          )}
-
           {resources && (
             <div>
+              <ListSearchPagination
+                search={search}
+                onSearch={setSearch}
+                placeholder={t("domains.calendarResources.searchPlaceholder")}
+                page={page}
+                totalPages={totalPages}
+                total={filtered.length}
+                goToPage={goToPage}
+              />
               {paginated.map((resource, index) => (
                 <div key={resource.id} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center">
                   <h4 className="text-sm font-medium leading-none">
-                    <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
+                    <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                     <a href={resourceLink ? resourceLink(resource.id) : `/domains/domain/${encodeURIComponent(domain)}/resource/${encodeURIComponent(resource.id)}`}
                       className="text-blue-600 hover:underline">{resource.name}</a>
                     {resource.description && (
@@ -257,6 +246,9 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
               ))}
               {active.length === 0 && (
                 <p className="mt-2 text-sm text-gray-500">{t("domains.calendarResources.empty")}</p>
+              )}
+              {active.length > 0 && filtered.length === 0 && (
+                <p className="mt-2 text-sm text-gray-500">{t("common.noSearchResults")}</p>
               )}
             </div>
           )}

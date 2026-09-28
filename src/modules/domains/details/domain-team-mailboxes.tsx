@@ -4,11 +4,15 @@ import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxes, createTeamMailbox, deleteTeamMailbox } from "../api-client";
-import { GetTeamMailboxesResponseType } from "../types";
+import { GetTeamMailboxesResponseType, TeamMailbox } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { useSearchPagination } from "@/hooks/use-search-pagination";
+import { ListSearchPagination } from "@/components/custom/list-search-pagination";
+
+const searchable = (mb: TeamMailbox) => [mb.name, mb.emailAddress];
 
 interface Props {
   domain: string;
@@ -39,6 +43,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
     if (!mailboxes) return [];
     return [...mailboxes].sort((a, b) => a.name.localeCompare(b.name));
   }, [mailboxes]);
+  const { search, setSearch, filtered, paginated, page, totalPages, offset, goToPage } = useSearchPagination(sorted, searchable);
 
   if (!canView) return null;
 
@@ -134,13 +139,22 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
 
           {mailboxes && (
             <div>
-              {sorted.map((mb, index) => (
+              <ListSearchPagination
+                search={search}
+                onSearch={setSearch}
+                placeholder={t("domains.teamMailboxes.searchPlaceholder")}
+                page={page}
+                totalPages={totalPages}
+                total={filtered.length}
+                goToPage={goToPage}
+              />
+              {paginated.map((mb, index) => (
                 <div
                   key={mb.name}
                   className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center"
                 >
                   <h4 className="text-sm font-medium leading-none">
-                    <span className="text-gray-500 mr-2">{index + 1}/</span>
+                    <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                     <Link
                       to={`/domains/domain/${encodeURIComponent(domain)}/team-mailbox/${encodeURIComponent(mb.name)}`}
                       className="text-blue-600 hover:underline"
@@ -162,6 +176,9 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
               ))}
               {mailboxes.length === 0 && (
                 <p className="mt-2 text-sm text-gray-500">{t("domains.teamMailboxes.empty")}</p>
+              )}
+              {mailboxes.length > 0 && filtered.length === 0 && (
+                <p className="mt-2 text-sm text-gray-500">{t("common.noSearchResults")}</p>
               )}
             </div>
           )}
