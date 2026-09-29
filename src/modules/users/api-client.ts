@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetUsersResponseType, GetUserMailboxesResponseType, UserQuota, GetUserAliasesResponseType, GetUserForwardsResponseType, RestoreDeletedMessagesRequest, VacationSettings, DeletedMessage, MailSearchRequest, MailSearchResult, UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload, GetUserCalendarsResponseType, CreateUserCalendarPayload, UpdateUserCalendarPayload, CalendarShareUpdate, BookingLink, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserAddressBooksResponseType, CreateUserAddressBookPayload, UpdateUserAddressBookPayload, AddressBookShareUpdate } from "./types";
-import { RateLimits } from "@/components/custom/rate-limits-section";
+import { RateLimits } from "@/lib/rate-limits";
 import { CollectionCount } from "@/components/custom/dav-collection-actions";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 

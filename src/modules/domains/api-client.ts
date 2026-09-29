@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues, TeamCalendar, TeamCalendarMember, TeamCalendarShareUpdate } from "./types";
-import { RateLimits } from "@/components/custom/rate-limits-section";
+import { RateLimits } from "@/lib/rate-limits";
 import { CollectionCount } from "@/components/custom/dav-collection-actions";
 import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
 

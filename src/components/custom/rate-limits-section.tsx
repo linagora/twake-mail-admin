@@ -4,33 +4,14 @@ import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
-
-export interface RateLimits {
-  mailsSentPerMinute: number | null;
-  mailsSentPerHours: number | null;
-  mailsSentPerDays: number | null;
-  mailsReceivedPerMinute: number | null;
-  mailsReceivedPerHours: number | null;
-  mailsReceivedPerDays: number | null;
-}
-
-const EMPTY: RateLimits = {
-  mailsSentPerMinute: null,
-  mailsSentPerHours: null,
-  mailsSentPerDays: null,
-  mailsReceivedPerMinute: null,
-  mailsReceivedPerHours: null,
-  mailsReceivedPerDays: null,
-};
-
-const FIELD_KEYS: (keyof RateLimits)[] = [
-  "mailsSentPerMinute",
-  "mailsSentPerHours",
-  "mailsSentPerDays",
-  "mailsReceivedPerMinute",
-  "mailsReceivedPerHours",
-  "mailsReceivedPerDays",
-];
+import {
+  EMPTY_RATE_LIMITS_FORM,
+  RATE_LIMITS_FIELD_KEYS,
+  RateLimits,
+  RateLimitsForm,
+  toRateLimitsForm,
+  toRateLimitsPayload,
+} from "@/lib/rate-limits";
 
 interface Props {
   fetchRateLimits: () => Promise<RateLimits>;
@@ -45,22 +26,18 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState<RateLimits>({ ...EMPTY });
+  const [form, setForm] = useState<RateLimitsForm>({ ...EMPTY_RATE_LIMITS_FORM });
+  const [returnedKeys, setReturnedKeys] = useState<ReadonlySet<string>>(new Set());
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await fetchRateLimits();
-      setForm({
-        mailsSentPerMinute: data.mailsSentPerMinute ?? null,
-        mailsSentPerHours: data.mailsSentPerHours ?? null,
-        mailsSentPerDays: data.mailsSentPerDays ?? null,
-        mailsReceivedPerMinute: data.mailsReceivedPerMinute ?? null,
-        mailsReceivedPerHours: data.mailsReceivedPerHours ?? null,
-        mailsReceivedPerDays: data.mailsReceivedPerDays ?? null,
-      });
+      setForm(toRateLimitsForm(data));
+      setReturnedKeys(new Set(Object.keys(data ?? {})));
     } catch {
-      setForm({ ...EMPTY });
+      setForm({ ...EMPTY_RATE_LIMITS_FORM });
+      setReturnedKeys(new Set());
     } finally {
       setLoading(false);
     }
@@ -81,7 +58,7 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateRateLimits(form);
+      await updateRateLimits(toRateLimitsPayload(form, returnedKeys));
       toast({ title: t("rateLimits.updated") });
     } catch (err) {
       toast({
@@ -112,7 +89,7 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
           ) : (
             <div className="p-4 bg-gray-50 rounded-2 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                {FIELD_KEYS.map((key) => (
+                {RATE_LIMITS_FIELD_KEYS.map((key) => (
                   <div key={key} className="flex items-center justify-between gap-3">
                     <label className="text-sm text-gray-600 whitespace-nowrap">{t(`rateLimits.${key}`)}</label>
                     <input
