@@ -1529,8 +1529,12 @@
     "mailsReceivedPerMinute": "Thư nhận về / phút",
     "mailsReceivedPerHours": "Thư nhận về / giờ",
     "mailsReceivedPerDays": "Thư nhận về / ngày",
+    "recipientsSentPerMinute": "Người nhận thư gửi đi / phút",
+    "recipientsSentPerHours": "Người nhận thư gửi đi / giờ",
+    "recipientsSentPerDays": "Người nhận thư gửi đi / ngày",
     "noLimit": "không giới hạn",
     "noLimitHint": "Để trống để không giới hạn (null).",
+    "recipientsSentHint": "Giới hạn người nhận tính từng người nhận của thư gửi đi, còn giới hạn thư chỉ tính mỗi thư một lần.",
     "sectionTitle": "Giới hạn tốc độ"
   },
   "confirmTask": {

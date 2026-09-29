@@ -12,18 +12,13 @@ export interface RateLimits {
   mailsReceivedPerMinute: number | null;
   mailsReceivedPerHours: number | null;
   mailsReceivedPerDays: number | null;
+  // Only returned by backends supporting recipient based rate limiting
+  recipientsSentPerMinute?: number | null;
+  recipientsSentPerHours?: number | null;
+  recipientsSentPerDays?: number | null;
 }
 
-const EMPTY: RateLimits = {
-  mailsSentPerMinute: null,
-  mailsSentPerHours: null,
-  mailsSentPerDays: null,
-  mailsReceivedPerMinute: null,
-  mailsReceivedPerHours: null,
-  mailsReceivedPerDays: null,
-};
-
-const FIELD_KEYS: (keyof RateLimits)[] = [
+const MAIL_FIELD_KEYS: (keyof RateLimits)[] = [
   "mailsSentPerMinute",
   "mailsSentPerHours",
   "mailsSentPerDays",
@@ -31,6 +26,24 @@ const FIELD_KEYS: (keyof RateLimits)[] = [
   "mailsReceivedPerHours",
   "mailsReceivedPerDays",
 ];
+
+const RECIPIENT_FIELD_KEYS: (keyof RateLimits)[] = [
+  "recipientsSentPerMinute",
+  "recipientsSentPerHours",
+  "recipientsSentPerDays",
+];
+
+const emptyLimits = (keys: (keyof RateLimits)[]): RateLimits =>
+  Object.fromEntries(keys.map((key) => [key, null])) as unknown as RateLimits;
+
+const supportsRecipientLimits = (data: RateLimits): boolean =>
+  RECIPIENT_FIELD_KEYS.some((key) => key in data);
+
+const fieldKeys = (withRecipients: boolean): (keyof RateLimits)[] =>
+  withRecipients ? [...MAIL_FIELD_KEYS, ...RECIPIENT_FIELD_KEYS] : MAIL_FIELD_KEYS;
+
+const pickLimits = (data: RateLimits, keys: (keyof RateLimits)[]): RateLimits =>
+  Object.fromEntries(keys.map((key) => [key, data[key] ?? null])) as unknown as RateLimits;
 
 interface Props {
   fetchRateLimits: () => Promise<RateLimits>;
@@ -45,22 +58,20 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState<RateLimits>({ ...EMPTY });
+  const [withRecipients, setWithRecipients] = useState(false);
+  const [form, setForm] = useState<RateLimits>(emptyLimits(MAIL_FIELD_KEYS));
+  const keys = fieldKeys(withRecipients);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await fetchRateLimits();
-      setForm({
-        mailsSentPerMinute: data.mailsSentPerMinute ?? null,
-        mailsSentPerHours: data.mailsSentPerHours ?? null,
-        mailsSentPerDays: data.mailsSentPerDays ?? null,
-        mailsReceivedPerMinute: data.mailsReceivedPerMinute ?? null,
-        mailsReceivedPerHours: data.mailsReceivedPerHours ?? null,
-        mailsReceivedPerDays: data.mailsReceivedPerDays ?? null,
-      });
+      const recipientsSupported = supportsRecipientLimits(data);
+      setWithRecipients(recipientsSupported);
+      setForm(pickLimits(data, fieldKeys(recipientsSupported)));
     } catch {
-      setForm({ ...EMPTY });
+      setWithRecipients(false);
+      setForm(emptyLimits(MAIL_FIELD_KEYS));
     } finally {
       setLoading(false);
     }
@@ -112,12 +123,12 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
           ) : (
             <div className="p-4 bg-gray-50 rounded-2 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                {FIELD_KEYS.map((key) => (
+                {keys.map((key) => (
                   <div key={key} className="flex items-center justify-between gap-3">
                     <label className="text-sm text-gray-600 whitespace-nowrap">{t(`rateLimits.${key}`)}</label>
                     <input
                       type="number"
-                      value={form[key] === null ? "" : form[key]}
+                      value={form[key] ?? ""}
                       onChange={(e) => handleChange(key, e.target.value)}
                       placeholder={t("rateLimits.noLimit")}
                       className="w-28 px-3 py-1.5 border rounded-md text-sm text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -126,6 +137,7 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
                 ))}
               </div>
               <p className="text-xs text-gray-400">{t("rateLimits.noLimitHint")}</p>
+              {withRecipients && <p className="text-xs text-gray-400">{t("rateLimits.recipientsSentHint")}</p>}
               {canUpdate && (
                 <div className="flex justify-end">
                   <Button size="sm" onClick={handleSave} disabled={saving}>

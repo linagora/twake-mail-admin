@@ -1529,8 +1529,12 @@
     "mailsReceivedPerMinute": "Получено писем / минута",
     "mailsReceivedPerHours": "Получено писем / час",
     "mailsReceivedPerDays": "Получено писем / день",
+    "recipientsSentPerMinute": "Получателей отправлено / минута",
+    "recipientsSentPerHours": "Получателей отправлено / час",
+    "recipientsSentPerDays": "Получателей отправлено / день",
     "noLimit": "без ограничения",
     "noLimitHint": "Оставьте пустым для снятия ограничения (null).",
+    "recipientsSentHint": "Ограничения по получателям учитывают каждого получателя отправленного письма, а ограничения по письмам учитывают письмо один раз.",
     "sectionTitle": "Ограничение частоты"
   },
   "confirmTask": {

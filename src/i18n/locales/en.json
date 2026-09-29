@@ -1529,8 +1529,12 @@
     "mailsReceivedPerMinute": "Mails received / minute",
     "mailsReceivedPerHours": "Mails received / hour",
     "mailsReceivedPerDays": "Mails received / day",
+    "recipientsSentPerMinute": "Recipients sent / minute",
+    "recipientsSentPerHours": "Recipients sent / hour",
+    "recipientsSentPerDays": "Recipients sent / day",
     "noLimit": "no limit",
     "noLimitHint": "Leave empty for no limit (null).",
+    "recipientsSentHint": "Recipient limits count each recipient of a sent email, whereas mail limits count the email once.",
     "sectionTitle": "Rate Limiting"
   },
   "confirmTask": {
