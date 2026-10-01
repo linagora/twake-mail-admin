@@ -1107,7 +1107,13 @@
     "welcome": "Добро пожаловать в администрирование Twake Mail!",
     "description": "Этот инструмент упрощает управление Twake Mail через webadmin.",
     "welcomeCalendar": "Добро пожаловать в администрирование Twake Calendar!",
-    "descriptionCalendar": "Этот инструмент упрощает управление Twake Calendar через webadmin."
+    "descriptionCalendar": "Этот инструмент упрощает управление Twake Calendar через webadmin.",
+    "sections": {
+      "storage": "Зависимости хранилища",
+      "core": "Основные компоненты",
+      "rabbitmq": "Проверки RabbitMQ",
+      "other": "Прочее"
+    }
   },
   "resourceIcons": {
     "access-point": "Точка доступа",
