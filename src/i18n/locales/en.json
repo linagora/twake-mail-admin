@@ -1107,7 +1107,13 @@
     "welcome": "Welcome to Twake Mail administration!",
     "description": "This tool makes it easy to manage Twake Mail via webadmin.",
     "welcomeCalendar": "Welcome to Twake Calendar administration!",
-    "descriptionCalendar": "This tool makes it easy to manage Twake Calendar via webadmin."
+    "descriptionCalendar": "This tool makes it easy to manage Twake Calendar via webadmin.",
+    "sections": {
+      "storage": "Storage dependencies",
+      "core": "Core components",
+      "rabbitmq": "RabbitMQ specific checks",
+      "other": "Other"
+    }
   },
   "resourceIcons": {
     "access-point": "Access point",

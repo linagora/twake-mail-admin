@@ -1107,7 +1107,13 @@
     "welcome": "Twake Mail удирдлагад тавтай морил!",
     "description": "Энэ хэрэгсэл нь Twake Mail-г webadmin-аар удирдахад хялбар болгоно.",
     "welcomeCalendar": "Twake Calendar удирдлагад тавтай морил!",
-    "descriptionCalendar": "Энэ хэрэгсэл нь Twake Calendar-г webadmin-аар удирдахад хялбар болгоно."
+    "descriptionCalendar": "Энэ хэрэгсэл нь Twake Calendar-г webadmin-аар удирдахад хялбар болгоно.",
+    "sections": {
+      "storage": "Хадгалалтын хамаарлууд",
+      "core": "Үндсэн бүрэлдэхүүн",
+      "rabbitmq": "RabbitMQ-ийн тусгай шалгалтууд",
+      "other": "Бусад"
+    }
   },
   "resourceIcons": {
     "access-point": "Хандалтын цэг",
