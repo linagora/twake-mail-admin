@@ -474,9 +474,7 @@
       "title": "Liên hệ của tên miền",
       "dab": "Sổ địa chỉ của tên miền (dab)",
       "domainMembers": "Thành viên tên miền",
-      "unavailable": "Sổ địa chỉ không khả dụng",
-      "error": "Lỗi khi đọc số lượng liên hệ",
-      "refresh": "Làm mới số lượng liên hệ"
+      "contactCount": "Liên hệ"
     },
     "subtitleMail": "Quản lý các tên miền đã đăng ký trên máy chủ thư.",
     "subtitleCalendar": "Quản lý các tên miền đã đăng ký trên máy chủ lịch."
