@@ -470,6 +470,14 @@
       "republishContactsDesc": "Republish the contacts of the domain and of its users on the common contacts bus.",
       "errorRepublishingContacts": "Error republishing common contacts"
     },
+    "addressBookCounts": {
+      "title": "Domain contacts",
+      "dab": "Domain address book (dab)",
+      "domainMembers": "Domain members",
+      "unavailable": "Address book not available",
+      "error": "Error while reading the contact count",
+      "refresh": "Refresh the contact counts"
+    },
     "subtitleMail": "Manage domains registered on the mail server.",
     "subtitleCalendar": "Manage domains registered on the calendar server."
   },

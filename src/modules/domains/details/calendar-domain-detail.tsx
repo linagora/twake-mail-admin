@@ -4,6 +4,7 @@ import CalendarDomainResources from "./calendar-domain-resources";
 import CalendarDomainTeamCalendars from "./calendar-domain-team-calendars";
 import CalendarDomainSettings from "./calendar-domain-settings";
 import CalendarDomainTasks from "./calendar-domain-tasks";
+import DomainAddressBookCounts from "./domain-address-book-counts";
 import { useTranslation } from "react-i18next";
 
 export default function CalendarDomainDetail() {
@@ -19,6 +20,7 @@ export default function CalendarDomainDetail() {
       <CalendarDomainResources domain={domain!} />
       <CalendarDomainTeamCalendars domain={domain!} />
       <CalendarDomainSettings domain={domain!} />
+      <DomainAddressBookCounts domain={domain!} />
       <CalendarDomainTasks domain={domain!} />
     </div>
   );

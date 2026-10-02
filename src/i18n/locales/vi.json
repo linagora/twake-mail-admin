@@ -470,6 +470,14 @@
       "republishContactsDesc": "Đăng lại liên hệ của tên miền và của người dùng thuộc tên miền lên bus liên hệ chung.",
       "errorRepublishingContacts": "Lỗi khi đăng lại liên hệ chung"
     },
+    "addressBookCounts": {
+      "title": "Liên hệ của tên miền",
+      "dab": "Sổ địa chỉ của tên miền (dab)",
+      "domainMembers": "Thành viên tên miền",
+      "unavailable": "Sổ địa chỉ không khả dụng",
+      "error": "Lỗi khi đọc số lượng liên hệ",
+      "refresh": "Làm mới số lượng liên hệ"
+    },
     "subtitleMail": "Quản lý các tên miền đã đăng ký trên máy chủ thư.",
     "subtitleCalendar": "Quản lý các tên miền đã đăng ký trên máy chủ lịch."
   },

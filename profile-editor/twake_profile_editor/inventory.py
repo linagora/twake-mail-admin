@@ -443,6 +443,33 @@ DOMAINS = page(
                 )
             ],
         ),
+        section(
+            "contact-counts",
+            "Calendar: Domain contact counts",
+            "Agenda : nombre de contacts du domaine",
+            applications=CALENDAR,
+            children=[
+                action(
+                    "dab",
+                    "Count the contacts of the domain address book",
+                    "Compter les contacts du carnet d'adresses du domaine",
+                    endpoints=[
+                        may("GET", "/domains/{domain}/addressbooks/dab/contactCount")
+                    ],
+                ),
+                action(
+                    "domain-members",
+                    "Count the contacts of the domain members",
+                    "Compter les contacts des membres du domaine",
+                    endpoints=[
+                        may(
+                            "GET",
+                            "/domains/{domain}/addressbooks/domain-members/contactCount",
+                        )
+                    ],
+                ),
+            ],
+        ),
         action(
             "republish-contacts",
             "Calendar: republish the common contacts of the domain",

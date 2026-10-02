@@ -292,6 +292,19 @@ export const syncDomainMembers = async (domain: string): Promise<RunTaskResponse
   return apiClient.post(`/addressbook/domain-members/${encodeURIComponent(domain)}?task=sync`);
 };
 
+// "dab" holds the extra contacts every member of the domain sees, "domain-members"
+// the contacts of the members themselves (often extracted from LDAP).
+export type DomainAddressBookId = "dab" | "domain-members";
+
+export const getDomainAddressBookContactCount = async (
+  domain: string,
+  addressBookId: DomainAddressBookId
+): Promise<CollectionCount> => {
+  return apiClient.get<any, CollectionCount>(
+    `/domains/${encodeURIComponent(domain)}/addressbooks/${addressBookId}/contactCount`
+  );
+};
+
 export const provisionDomainTemplates = async (
   domain: string,
   params: { from: string; folderName?: string; overwriteExisting?: boolean; prune?: boolean; usersPerSecond?: string }
