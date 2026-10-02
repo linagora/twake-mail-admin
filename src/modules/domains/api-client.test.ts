@@ -7,7 +7,32 @@ vi.mock("@/lib/apiClient", () => ({
   getRaw: vi.fn(),
 }));
 
-import { getDomainAddressBookContactCount } from "./api-client";
+import { getDomainAddressBookContactCount, getDomainSignatureTemplates } from "./api-client";
+
+describe("domain signature templates", () => {
+  const template = { language: "en", textSignature: "Regards", htmlSignature: "<p>Regards</p>" };
+
+  beforeEach(() => {
+    http.get.mockReset();
+  });
+
+  it("reads the signature templates of the domain", async () => {
+    http.get.mockResolvedValue({ signatures: [template] });
+    await expect(getDomainSignatureTemplates("linagora.com")).resolves.toEqual([template]);
+    expect(http.get).toHaveBeenCalledWith("/domains/linagora.com/signature-templates");
+  });
+
+  it("reads no signature template when the domain has none", async () => {
+    http.get.mockRejectedValue({ response: { status: 404 } });
+    await expect(getDomainSignatureTemplates("linagora.com")).resolves.toEqual([]);
+  });
+
+  it("propagates other errors", async () => {
+    const error = { response: { status: 500 } };
+    http.get.mockRejectedValue(error);
+    await expect(getDomainSignatureTemplates("linagora.com")).rejects.toBe(error);
+  });
+});
 
 describe("domain address book contact count", () => {
   beforeEach(() => {
