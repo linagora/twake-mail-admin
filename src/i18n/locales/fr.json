@@ -470,6 +470,12 @@
       "republishContactsDesc": "Republie les contacts du domaine et de ses utilisateurs sur le bus des contacts communs.",
       "errorRepublishingContacts": "Erreur lors de la republication des contacts communs"
     },
+    "addressBookCounts": {
+      "title": "Contacts du domaine",
+      "dab": "Carnet d'adresses du domaine (dab)",
+      "domainMembers": "Membres du domaine",
+      "contactCount": "Contacts"
+    },
     "subtitleMail": "Gérer les domaines enregistrés sur le serveur mail.",
     "subtitleCalendar": "Gérer les domaines enregistrés sur le serveur calendrier."
   },

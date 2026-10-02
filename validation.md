@@ -305,6 +305,17 @@ Note: if none are present, hide the deleted message vault.
 |---------|------|---------|----------|
 | "Sync members" button | POST | `/addressbook/domain-members/{domain}?task=sync` | MAY (do not show the button if missing) |
 
+### Domain detail — Calendar: Domain contact counts *(APPLICATION:"CALENDAR" only)*
+
+Shown on the domain detail page and on the DOMAIN mode Tasks page.
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Contact counter of the domain address book | GET | `/domains/{domain}/addressbooks/dab/contactCount` | MAY (do not show the counter if missing) |
+| Contact counter of the domain members | GET | `/domains/{domain}/addressbooks/domain-members/contactCount` | MAY (do not show the counter if missing) |
+
+Note: if none are present, hide the whole block.
+
 ### Domain detail — Calendar: Republish common contacts *(APPLICATION:"CALENDAR" only)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
