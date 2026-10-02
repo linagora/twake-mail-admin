@@ -216,11 +216,17 @@ export interface SignatureTemplate {
   htmlSignature: string;
 }
 
+// A domain without signature templates answers 404: read it as an empty list.
 export const getDomainSignatureTemplates = async (domain: string): Promise<SignatureTemplate[]> => {
-  const response: { signatures: SignatureTemplate[] } = await apiClient.get(
-    `/domains/${encodeURIComponent(domain)}/signature-templates`
-  );
-  return response.signatures ?? [];
+  try {
+    const response: { signatures: SignatureTemplate[] } = await apiClient.get(
+      `/domains/${encodeURIComponent(domain)}/signature-templates`
+    );
+    return response.signatures ?? [];
+  } catch (err: any) {
+    if (err?.response?.status === 404) return [];
+    throw err;
+  }
 };
 
 export const updateDomainSignatureTemplates = async (domain: string, signatures: SignatureTemplate[]): Promise<void> => {
