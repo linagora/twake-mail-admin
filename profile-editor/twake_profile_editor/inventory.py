@@ -445,8 +445,8 @@ DOMAINS = page(
         ),
         section(
             "contact-counts",
-            "Calendar: Domain contact counts",
-            "Agenda : nombre de contacts du domaine",
+            "Calendar: Domain contacts",
+            "Agenda : contacts du domaine",
             applications=CALENDAR,
             children=[
                 action(
@@ -466,6 +466,34 @@ DOMAINS = page(
                             "GET",
                             "/domains/{domain}/addressbooks/domain-members/contactCount",
                         )
+                    ],
+                ),
+                action(
+                    "dab-export",
+                    "Export the domain address book",
+                    "Exporter le carnet d'adresses du domaine",
+                    endpoints=[
+                        may("POST", "/domains/{domain}/addressbooks/dab?action=export")
+                    ],
+                ),
+                action(
+                    "domain-members-export",
+                    "Export the contacts of the domain members",
+                    "Exporter les contacts des membres du domaine",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/addressbooks/domain-members"
+                            "?action=export",
+                        )
+                    ],
+                ),
+                action(
+                    "dab-import",
+                    "Import contacts into the domain address book",
+                    "Importer des contacts dans le carnet d'adresses du domaine",
+                    endpoints=[
+                        may("POST", "/domains/{domain}/addressbooks/dab?action=import")
                     ],
                 ),
             ],

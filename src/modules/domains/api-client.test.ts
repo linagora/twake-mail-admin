@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const http = vi.hoisted(() => ({ get: vi.fn() }));
+const http = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn() }));
 
 vi.mock("@/lib/apiClient", () => ({
-  apiClient: { get: http.get, post: vi.fn(), put: vi.fn(), patch: vi.fn(), delete: vi.fn() },
+  apiClient: { get: http.get, post: http.post, put: vi.fn(), patch: vi.fn(), delete: vi.fn() },
   getRaw: vi.fn(),
 }));
 
@@ -52,5 +52,34 @@ describe("domain address book contact count", () => {
   it("encodes the domain", async () => {
     await getDomainAddressBookContactCount("a/b", "dab");
     expect(http.get).toHaveBeenCalledWith("/domains/a%2Fb/addressbooks/dab/contactCount");
+  });
+});
+
+describe("domain address book export and import", () => {
+  beforeEach(() => {
+    http.post.mockReset();
+  });
+
+  it("exports the address book as a vCard blob", async () => {
+    const vcards = new Blob(["BEGIN:VCARD"]);
+    http.post.mockResolvedValue(vcards);
+
+    await expect(exportDomainAddressBook("linagora.com", "domain-members")).resolves.toBe(vcards);
+    expect(http.post).toHaveBeenCalledWith(
+      "/domains/linagora.com/addressbooks/domain-members?action=export",
+      undefined,
+      { headers: { Accept: "text/vcard" }, responseType: "blob" }
+    );
+  });
+
+  it("imports vCards as the raw body and returns the task", async () => {
+    http.post.mockResolvedValue({ taskId: "6d3bb34e" });
+
+    await expect(importDomainAddressBook("a/b", "dab", "BEGIN:VCARD")).resolves.toEqual({ taskId: "6d3bb34e" });
+    expect(http.post).toHaveBeenCalledWith(
+      "/domains/a%2Fb/addressbooks/dab?action=import",
+      "BEGIN:VCARD",
+      { headers: { "Content-Type": "text/vcard" } }
+    );
   });
 });

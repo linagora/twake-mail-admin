@@ -305,7 +305,7 @@ Note: if none are present, hide the deleted message vault.
 |---------|------|---------|----------|
 | "Sync members" button | POST | `/addressbook/domain-members/{domain}?task=sync` | MAY (do not show the button if missing) |
 
-### Domain detail — Calendar: Domain contact counts *(APPLICATION:"CALENDAR" only)*
+### Domain detail — Calendar: Domain contacts *(APPLICATION:"CALENDAR" only)*
 
 Shown on the domain detail page and on the DOMAIN mode Tasks page.
 
@@ -313,8 +313,11 @@ Shown on the domain detail page and on the DOMAIN mode Tasks page.
 |---------|------|---------|----------|
 | Contact counter of the domain address book | GET | `/domains/{domain}/addressbooks/dab/contactCount` | MAY (do not show the counter if missing) |
 | Contact counter of the domain members | GET | `/domains/{domain}/addressbooks/domain-members/contactCount` | MAY (do not show the counter if missing) |
+| "Export address book" button of the domain address book (vCard download) | POST | `/domains/{domain}/addressbooks/dab?action=export` | MAY (do not show the button if missing) |
+| "Export address book" button of the domain members (vCard download) | POST | `/domains/{domain}/addressbooks/domain-members?action=export` | MAY (do not show the button if missing) |
+| "Import contacts" button of the domain address book (vCard upload, creates a `domain-addressbook-import` task) | POST | `/domains/{domain}/addressbooks/dab?action=import` | MAY (do not show the button if missing) |
 
-Note: if none are present, hide the whole block.
+Note: an address book row is shown when at least one of its actions is allowed; if none are present, hide the whole block. Imports are never offered for the domain members address book: the LDAP synchronization feeds it and the server rejects them.
 
 ### Domain detail — Calendar: Republish common contacts *(APPLICATION:"CALENDAR" only)*
 
