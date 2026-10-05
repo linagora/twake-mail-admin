@@ -378,7 +378,7 @@ export default function UserAddressBooks({ username }: Props) {
                 type="text"
                 value={createForm["dav:name"]}
                 onChange={(e) => setCreateForm((f) => ({ ...f, "dav:name": e.target.value }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -387,7 +387,7 @@ export default function UserAddressBooks({ username }: Props) {
                 type="text"
                 value={createForm["carddav:description"] ?? ""}
                 onChange={(e) => setCreateForm((f) => ({ ...f, "carddav:description": e.target.value }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">
@@ -421,7 +421,7 @@ export default function UserAddressBooks({ username }: Props) {
                   type="text"
                   value={editForm["dav:name"] ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, "dav:name": e.target.value }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -430,7 +430,7 @@ export default function UserAddressBooks({ username }: Props) {
                   type="text"
                   value={editForm["carddav:description"] ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, "carddav:description": e.target.value }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex justify-end gap-2 pt-2">
@@ -618,7 +618,7 @@ function InviteesModal({
                     value={currentRight}
                     disabled={removed}
                     onChange={(e) => changeRight(sharee, e.target.value as AddressBookRight)}
-                    className={`px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
+                    className={`px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
                   >
                     {RIGHT_OPTIONS.map((r) => (
                       <option key={r} value={r}>{t(`users.addressBooks.invitees.rights.${r}`)}</option>
@@ -661,12 +661,12 @@ function InviteesModal({
                 onChange={(e) => setNewEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleStageAdd()}
                 placeholder={t("users.addressBooks.invitees.placeholder")}
-                className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <select
                 value={newRight}
                 onChange={(e) => setNewRight(e.target.value as AddressBookRight)}
-                className="px-2 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
                 {RIGHT_OPTIONS.map((r) => (
                   <option key={r} value={r}>{t(`users.addressBooks.invitees.rights.${r}`)}</option>

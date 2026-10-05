@@ -133,7 +133,7 @@ export default function ExploreUserQuota({ domain }: Props) {
                   step="1"
                   value={minPercent}
                   onChange={(e) => setMinPercent(e.target.value)}
-                  className="w-24 mt-1 block px-3 py-1.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-24 mt-1 block px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -145,7 +145,7 @@ export default function ExploreUserQuota({ domain }: Props) {
                   step="1"
                   value={maxPercent}
                   onChange={(e) => setMaxPercent(e.target.value)}
-                  className="w-24 mt-1 block px-3 py-1.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-24 mt-1 block px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <Button size="sm" onClick={handleSearch} disabled={loading}>

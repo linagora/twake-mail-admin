@@ -183,7 +183,7 @@ export default function UserMailboxes({ username }: Props) {
                 onChange={(e) => setNewMailbox(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleCreate()}
                 placeholder={t("users.mailboxes.namePlaceholder")}
-                className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <button
                 onClick={handleCreate}
@@ -213,7 +213,7 @@ export default function UserMailboxes({ username }: Props) {
                   setPage(1);
                 }}
                 placeholder={t("users.mailboxes.searchPlaceholder")}
-                className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
 
               {filtered.length > 0 && (

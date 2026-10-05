@@ -178,7 +178,7 @@ function CalendarRow({
   return (
     <div className="group flex items-start gap-3 py-1">
       <span
-        className="inline-block w-4 h-4 rounded-full border border-gray-200 flex-shrink-0 mt-0.5"
+        className="inline-block w-4 h-4 rounded-full border border-gray-200 shrink-0 mt-0.5"
         style={{ backgroundColor: color || "#cccccc" }}
         title={color}
       />
@@ -493,7 +493,7 @@ export default function UserCalendars({ username }: Props) {
                 type="text"
                 value={createForm["dav:name"]}
                 onChange={(e) => setCreateForm((f) => ({ ...f, "dav:name": e.target.value }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -510,7 +510,7 @@ export default function UserCalendars({ username }: Props) {
                   value={createForm["apple:color"] ?? ""}
                   onChange={(e) => setCreateForm((f) => ({ ...f, "apple:color": e.target.value }))}
                   placeholder="#007fd8"
-                  className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -520,7 +520,7 @@ export default function UserCalendars({ username }: Props) {
                 type="text"
                 value={createForm["caldav:description"] ?? ""}
                 onChange={(e) => setCreateForm((f) => ({ ...f, "caldav:description": e.target.value }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">
@@ -554,7 +554,7 @@ export default function UserCalendars({ username }: Props) {
                   type="text"
                   value={editForm["dav:name"] ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, "dav:name": e.target.value }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -571,7 +571,7 @@ export default function UserCalendars({ username }: Props) {
                     value={editForm["apple:color"] ?? ""}
                     onChange={(e) => setEditForm((f) => ({ ...f, "apple:color": e.target.value }))}
                     placeholder="#007fd8"
-                    className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -581,7 +581,7 @@ export default function UserCalendars({ username }: Props) {
                   type="text"
                   value={editForm["caldav:description"] ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, "caldav:description": e.target.value }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex justify-end gap-2 pt-2">
@@ -774,7 +774,7 @@ function InviteesModal({
                     value={currentRight}
                     disabled={removed}
                     onChange={(e) => changeRight(invitee, e.target.value as CalendarRight)}
-                    className={`px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
+                    className={`px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
                   >
                     {RIGHT_OPTIONS.map((r) => (
                       <option key={r} value={r}>{t(`users.calendars.invitees.rights.${r}`)}</option>
@@ -818,12 +818,12 @@ function InviteesModal({
                 onChange={(e) => setNewEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleStageAdd()}
                 placeholder={t("users.calendars.invitees.placeholder")}
-                className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <select
                 value={newRight}
                 onChange={(e) => setNewRight(e.target.value as CalendarRight)}
-                className="px-2 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
                 {RIGHT_OPTIONS.map((r) => (
                   <option key={r} value={r}>{t(`users.calendars.invitees.rights.${r}`)}</option>

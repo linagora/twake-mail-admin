@@ -78,7 +78,7 @@ export default function MailFiltersPanel({ filters, onApply }: Props) {
                   value={draft[key]}
                   onChange={set(key)}
                   placeholder={placeholder}
-                  className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") onApply(draft);
                   }}

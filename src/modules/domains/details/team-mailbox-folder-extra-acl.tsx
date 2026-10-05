@@ -189,7 +189,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
                   onChange={(e) => setNewUser(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAdd()}
                   placeholder="user@domain.tld"
-                  className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
                 {userStatus === "checking" && (
                   <span className="text-xs text-gray-400 whitespace-nowrap">Checking...</span>

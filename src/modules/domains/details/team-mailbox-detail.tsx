@@ -109,7 +109,7 @@ export default function TeamMailboxDetail() {
             onChange={(e) => setNewMember(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             placeholder="user@domain.tld"
-            className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
           {memberStatus === "checking" && (
             <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>
@@ -135,7 +135,7 @@ export default function TeamMailboxDetail() {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as "member" | "manager")}
-            className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           >
             <option value="member">{t("domains.teamMailbox.member")}</option>
             <option value="manager">{t("domains.teamMailbox.manager")}</option>

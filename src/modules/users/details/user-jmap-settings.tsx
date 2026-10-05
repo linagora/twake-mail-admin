@@ -170,7 +170,7 @@ export default function UserJmapSettings({ username }: Props) {
                       onChange={(e) => updateRow(row.id, "key", e.target.value)}
                       placeholder={t("users.jmapSettings.keyPlaceholder")}
                       disabled={!canUpdate}
-                      className={`w-full px-3 py-1.5 border rounded-md text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-600 ${
+                      className={`w-full px-3 py-1.5 border rounded-md text-sm font-mono focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-600 ${
                         validationErrors[row.id] ? "border-red-400" : ""
                       }`}
                     />
@@ -185,13 +185,13 @@ export default function UserJmapSettings({ username }: Props) {
                       onChange={(e) => updateRow(row.id, "value", e.target.value)}
                       placeholder={t("users.jmapSettings.valuePlaceholder")}
                       disabled={!canUpdate}
-                      className="w-full px-3 py-1.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-600"
+                      className="w-full px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-600"
                     />
                   </div>
                   {canUpdate && (
                     <button
                       onClick={() => removeRow(row.id)}
-                      className="mt-0.5 p-1.5 rounded-md hover:bg-gray-200 flex-shrink-0"
+                      className="mt-0.5 p-1.5 rounded-md hover:bg-gray-200 shrink-0"
                       title={t("users.jmapSettings.removeRow")}
                     >
                       <Trash2 className="w-3.5 h-3.5 text-red-500" />

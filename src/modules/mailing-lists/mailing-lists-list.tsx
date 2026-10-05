@@ -69,7 +69,7 @@ function AddressAdder({
           }
         }}
         placeholder={placeholder}
-        className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
       />
       <button
         onClick={onAdd}
@@ -187,7 +187,7 @@ function CreateMailingListForm({ onCreated }: { onCreated: () => void }) {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="sales@lists.domain.tld"
-              className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -514,7 +514,7 @@ export default function MailingListsList({ domain }: Props) {
         value={search}
         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
         placeholder={t("mailingLists.searchPlaceholder")}
-        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
       />
       {filtered.length > 0 && (
         <PaginationControls

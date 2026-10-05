@@ -173,7 +173,7 @@ export default function DomainSignatureTemplates({ domain }: Props) {
                       onChange={e => handleChange(index, "language", e.target.value)}
                       placeholder={t("domains.signatureTemplates.languagePlaceholder")}
                       disabled={!canEdit}
-                      className="w-40 px-3 py-1.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                      className="w-40 px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                     />
                   </div>
                   <div>
@@ -183,7 +183,7 @@ export default function DomainSignatureTemplates({ domain }: Props) {
                       onChange={e => handleChange(index, "textSignature", e.target.value)}
                       rows={4}
                       disabled={!canEdit}
-                      className="w-full px-3 py-2 border rounded-md text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                      className="w-full px-3 py-2 border rounded-md text-sm font-mono focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                     />
                   </div>
                   <div>
@@ -193,7 +193,7 @@ export default function DomainSignatureTemplates({ domain }: Props) {
                       onChange={e => handleChange(index, "htmlSignature", e.target.value)}
                       rows={6}
                       disabled={!canEdit}
-                      className="w-full px-3 py-2 border rounded-md text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                      className="w-full px-3 py-2 border rounded-md text-sm font-mono focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                     />
                   </div>
                 </div>

@@ -97,7 +97,7 @@ export default function DomainsList() {
             onChange={(e) => setNewDomain(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
             placeholder={t("domains.newDomainPlaceholder")}
-            className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
           <button
             onClick={handleCreate}
@@ -122,7 +122,7 @@ export default function DomainsList() {
         value={search}
         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
         placeholder={t("domains.searchPlaceholder")}
-        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
       />
 
       {filtered.length > 0 && (

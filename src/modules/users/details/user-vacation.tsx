@@ -134,7 +134,7 @@ export default function UserVacation({ username }: Props) {
                     type="datetime-local"
                     value={form.fromDate ? form.fromDate.slice(0, 16) : ""}
                     onChange={(e) => update("fromDate", e.target.value ? new Date(e.target.value).toISOString() : "")}
-                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -143,7 +143,7 @@ export default function UserVacation({ username }: Props) {
                     type="datetime-local"
                     value={form.toDate ? form.toDate.slice(0, 16) : ""}
                     onChange={(e) => update("toDate", e.target.value ? new Date(e.target.value).toISOString() : "")}
-                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -155,7 +155,7 @@ export default function UserVacation({ username }: Props) {
                   value={form.subject ?? ""}
                   onChange={(e) => update("subject", e.target.value)}
                   placeholder={t("users.vacation.subjectPlaceholder")}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -166,7 +166,7 @@ export default function UserVacation({ username }: Props) {
                   onChange={(e) => update("textBody", e.target.value)}
                   rows={3}
                   placeholder={t("users.vacation.textPlaceholder")}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -177,7 +177,7 @@ export default function UserVacation({ username }: Props) {
                   onChange={(e) => update("htmlBody", e.target.value)}
                   rows={3}
                   placeholder={t("users.vacation.htmlPlaceholder")}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 

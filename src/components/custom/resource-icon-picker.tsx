@@ -35,7 +35,7 @@ export default function ResourceIconPicker({ value, onChange }: Props) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center gap-2 px-3 py-2 border rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-gray-50"
+        className="w-full flex items-center gap-2 px-3 py-2 border rounded-md text-sm bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 hover:bg-gray-50"
       >
         <img src={`/icons/resources/${value}.svg`} alt={t(`resourceIcons.${value}`)} className="w-5 h-5 shrink-0" />
         <span className="flex-1 text-left">{t(`resourceIcons.${value}`)}</span>

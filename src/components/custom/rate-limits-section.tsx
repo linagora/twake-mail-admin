@@ -93,7 +93,7 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
                       value={form[key] === null ? "" : form[key]}
                       onChange={(e) => handleChange(key, e.target.value)}
                       placeholder={t("rateLimits.noLimit")}
-                      className="w-28 px-3 py-1.5 border rounded-md text-sm text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-28 px-3 py-1.5 border rounded-md text-sm text-right focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 ))}

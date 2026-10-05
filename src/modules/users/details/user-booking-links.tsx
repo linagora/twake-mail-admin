@@ -94,7 +94,7 @@ function CalendarSelect({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="/calendars/..."
-        className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
       />
     );
   }
@@ -104,7 +104,7 @@ function CalendarSelect({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
     >
       <option value="">{t("users.bookingLinks.selectCalendar")}</option>
       {!known && value && <option value={value}>{value}</option>}
@@ -153,7 +153,7 @@ function RulesEditor({
               <select
                 value={rule.dayOfWeek ?? "MON"}
                 onChange={(e) => update(i, { dayOfWeek: e.target.value })}
-                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
                 {DAYS.map((d) => (
                   <option key={d} value={d}>{t(`users.bookingLinks.days.${d}`)}</option>
@@ -163,21 +163,21 @@ function RulesEditor({
                 type="time"
                 value={rule.start ?? "09:00"}
                 onChange={(e) => update(i, { start: e.target.value })}
-                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <span className="shrink-0 text-xs text-gray-400">→</span>
               <input
                 type="time"
                 value={rule.end ?? "17:00"}
                 onChange={(e) => update(i, { end: e.target.value })}
-                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <input
                 type="text"
                 value={rule.timeZone ?? ""}
                 onChange={(e) => update(i, { timeZone: e.target.value })}
                 placeholder={t("users.bookingLinks.timeZone")}
-                className="flex-1 min-w-[80px] px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 min-w-[80px] px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <button
                 onClick={() => duplicate(i)}
@@ -246,13 +246,13 @@ function BookingLinkRow({
   return (
     <div className="flex items-start gap-3 py-1">
       <span
-        className={`inline-block w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${link.active ? "bg-green-500" : "bg-gray-400"}`}
+        className={`inline-block w-2 h-2 rounded-full shrink-0 mt-1.5 ${link.active ? "bg-green-500" : "bg-gray-400"}`}
         title={link.active ? t("users.bookingLinks.active") : t("users.bookingLinks.inactive")}
       />
       <div className="min-w-0 flex-1">
         <p className="font-medium text-sm truncate flex items-center gap-1.5" title={link.name || link.publicId}>
           <span
-            className="inline-block w-3 h-3 rounded-sm border flex-shrink-0"
+            className="inline-block w-3 h-3 rounded-sm border shrink-0"
             style={{ backgroundColor: link.color || "#6B4ECC" }}
             title={link.color || "#6B4ECC"}
           />
@@ -595,7 +595,7 @@ export default function UserBookingLinks({ username }: Props) {
                 value={createForm.name ?? ""}
                 onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder={t("users.bookingLinks.namePlaceholder")}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -605,7 +605,7 @@ export default function UserBookingLinks({ username }: Props) {
                 onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
                 placeholder={t("users.bookingLinks.descriptionPlaceholder")}
                 rows={2}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -615,7 +615,7 @@ export default function UserBookingLinks({ username }: Props) {
                 min={1}
                 value={createForm.durationMinutes}
                 onChange={(e) => setCreateForm((f) => ({ ...f, durationMinutes: parseInt(e.target.value, 10) || 1 }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -697,7 +697,7 @@ export default function UserBookingLinks({ username }: Props) {
                   value={editForm.name ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder={t("users.bookingLinks.namePlaceholder")}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -707,7 +707,7 @@ export default function UserBookingLinks({ username }: Props) {
                   onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
                   placeholder={t("users.bookingLinks.descriptionPlaceholder")}
                   rows={2}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -717,7 +717,7 @@ export default function UserBookingLinks({ username }: Props) {
                   min={1}
                   value={editForm.durationMinutes ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, durationMinutes: parseInt(e.target.value, 10) || undefined }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex items-center gap-2">

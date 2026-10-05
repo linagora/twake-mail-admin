@@ -55,7 +55,7 @@ export default function UsersList() {
         value={search}
         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
         placeholder={t("users.searchPlaceholder")}
-        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
       />
 
       {filteredUsers.length > 0 && (

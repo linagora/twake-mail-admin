@@ -317,7 +317,7 @@ export default function MappingsList() {
               value={source}
               onChange={(e) => setSource(e.target.value)}
               placeholder={t("mappings.sourcePlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
             <span className="text-gray-400 text-sm">→</span>
             <input
@@ -326,7 +326,7 @@ export default function MappingsList() {
               onChange={(e) => setDestination(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
               placeholder={t("mappings.destinationPlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -355,7 +355,7 @@ export default function MappingsList() {
               value={regexSource}
               onChange={(e) => setRegexSource(e.target.value)}
               placeholder={t("mappings.mappingSourcePlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-purple-500"
             />
             <span className="text-gray-400 text-sm">→</span>
             <input
@@ -364,7 +364,7 @@ export default function MappingsList() {
               onChange={(e) => setRegexValue(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreateRegex()}
               placeholder={t("mappings.regexPlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-purple-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -393,7 +393,7 @@ export default function MappingsList() {
               value={domainSource}
               onChange={(e) => setDomainSource(e.target.value)}
               placeholder={t("mappings.domainSourcePlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-green-600"
             />
             <span className="text-gray-400 text-sm">→</span>
             <input
@@ -402,7 +402,7 @@ export default function MappingsList() {
               onChange={(e) => setDomainDestination(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreateDomain()}
               placeholder={t("mappings.domainDestinationPlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-green-600"
             />
           </div>
           <p className="text-xs text-gray-500">{t("mappings.domainHint")}</p>
@@ -437,7 +437,7 @@ export default function MappingsList() {
         value={search}
         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
         placeholder={t("mappings.searchPlaceholder")}
-        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
       />
       {filteredMappings.length > 0 && (
         <PaginationControls

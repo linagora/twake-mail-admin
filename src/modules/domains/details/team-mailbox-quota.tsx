@@ -191,12 +191,12 @@ export default function TeamMailboxQuota({ domain, mailbox }: Props) {
                     onChange={(e) => setSizeInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleUpdateSize()}
                     placeholder={t("common.sizeUnlimited")}
-                    className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                   <select
                     value={sizeUnit}
                     onChange={(e) => setSizeUnit(e.target.value as "B" | "KB" | "MB" | "GB")}
-                    className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="B">B</option>
                     <option value="KB">KB</option>

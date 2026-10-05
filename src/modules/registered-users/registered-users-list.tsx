@@ -39,7 +39,7 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
           type="text"
           value={email}
           onChange={(e) => { setEmail(e.target.value); handleChange(e.target.value, firstname, lastname); }}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div>
@@ -48,7 +48,7 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
           type="text"
           value={firstname}
           onChange={(e) => { setFirstname(e.target.value); handleChange(email, e.target.value, lastname); }}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div>
@@ -57,7 +57,7 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
           type="text"
           value={lastname}
           onChange={(e) => { setLastname(e.target.value); handleChange(email, firstname, e.target.value); }}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
       </div>
     </div>
@@ -190,7 +190,7 @@ export default function RegisteredUsersList() {
             onChange={(e) => setNewUsername(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             placeholder={t("registeredUsers.placeholder")}
-            className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
           {userStatus === "checking" && (
             <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">
@@ -242,7 +242,7 @@ export default function RegisteredUsersList() {
           setPage(1);
         }}
         placeholder={t("registeredUsers.searchPlaceholder")}
-        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="mt-4 w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
       />
 
       {filtered.length > 0 && (

@@ -249,7 +249,7 @@ export default function MailRepositoryDetail() {
             {t("mailRepositories.moveMailConfirm", { mailKey })}
           </p>
           <select
-            className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             defaultValue={otherRepos[0].path}
             onChange={(e) => {
               targetRepo = e.target.value;

@@ -157,13 +157,13 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
                 <label className="text-xs font-medium text-gray-500">{t("domains.teamCalendars.nameLabel")} <span className="text-red-500">*</span></label>
                 <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAdd()} placeholder={t("domains.teamCalendars.namePlaceholder")}
-                  className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
                 <label className="text-xs font-medium text-gray-500">{t("domains.teamCalendars.displayNameLabel")}</label>
                 <input type="text" value={newDisplayName} onChange={(e) => setNewDisplayName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAdd()} placeholder={t("domains.teamCalendars.displayNamePlaceholder")}
-                  className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
               <div className="flex justify-end gap-2">
                 <button onClick={() => setShowCreate(false)}
@@ -202,7 +202,7 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
                         <input type="text" value={editDisplayName} onChange={(e) => setEditDisplayName(e.target.value)}
                           onKeyDown={(e) => { if (e.key === "Enter") handleUpdate(teamCalendar); if (e.key === "Escape") cancelEdit(); }}
                           autoFocus placeholder={t("domains.teamCalendars.displayNamePlaceholder")}
-                          className="flex-1 px-3 py-1.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                          className="flex-1 px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
                       </div>
                     ) : (
                       <h4 className="text-sm font-medium leading-none truncate">
@@ -397,7 +397,7 @@ function MembersModal({
                       value={currentRole}
                       disabled={removed || !canManage}
                       onChange={(e) => changeRole(member, e.target.value as TeamCalendarMemberRole)}
-                      className={`px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
+                      className={`px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
                     >
                       {ROLE_OPTIONS.map((r) => (
                         <option key={r} value={r}>{t(`domains.teamCalendars.members.roles.${r}`)}</option>
@@ -445,12 +445,12 @@ function MembersModal({
                   onChange={(e) => setNewUser(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleStageAdd()}
                   placeholder={t("domains.teamCalendars.members.placeholder")}
-                  className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
                 <select
                   value={newRole}
                   onChange={(e) => setNewRole(e.target.value as TeamCalendarMemberRole)}
-                  className="px-2 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 >
                   {ROLE_OPTIONS.map((r) => (
                     <option key={r} value={r}>{t(`domains.teamCalendars.members.roles.${r}`)}</option>
