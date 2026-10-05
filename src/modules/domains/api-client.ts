@@ -311,6 +311,35 @@ export const getDomainAddressBookContactCount = async (
   );
 };
 
+const CONTENT_TYPE_VCARD = "text/vcard";
+
+// The whole address book as a single vCard document, empty when it holds no contact.
+export const exportDomainAddressBook = async (
+  domain: string,
+  addressBookId: DomainAddressBookId
+): Promise<Blob> => {
+  return apiClient.post<any, Blob>(
+    `/domains/${encodeURIComponent(domain)}/addressbooks/${addressBookId}?action=export`,
+    undefined,
+    { headers: { Accept: CONTENT_TYPE_VCARD }, responseType: "blob" }
+  );
+};
+
+// Schedules an asynchronous task importing vCards into the address book. Only "dab"
+// accepts imports: "domain-members" is fed by the LDAP synchronization.
+// Returns the id of the task to monitor.
+export const importDomainAddressBook = async (
+  domain: string,
+  addressBookId: DomainAddressBookId,
+  vcards: string
+): Promise<RunTaskResponse> => {
+  return apiClient.post(
+    `/domains/${encodeURIComponent(domain)}/addressbooks/${addressBookId}?action=import`,
+    vcards,
+    { headers: { "Content-Type": CONTENT_TYPE_VCARD } }
+  );
+};
+
 export const provisionDomainTemplates = async (
   domain: string,
   params: { from: string; folderName?: string; overwriteExisting?: boolean; prune?: boolean; usersPerSecond?: string }

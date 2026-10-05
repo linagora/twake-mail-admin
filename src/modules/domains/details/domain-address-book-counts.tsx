@@ -2,33 +2,112 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight, Contact } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
-import { CollectionCount, CollectionCountBadge } from "@/components/custom/dav-collection-actions";
-import { DomainAddressBookId, getDomainAddressBookContactCount } from "../api-client";
+import { CollectionCount, CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
+import { RunTaskResponse } from "@/modules/common-tasks/types";
+import { DomainAddressBookId, exportDomainAddressBook, getDomainAddressBookContactCount, importDomainAddressBook } from "../api-client";
 
 const LABEL_KEYS: Record<DomainAddressBookId, string> = {
   dab: "domains.addressBookCounts.dab",
   "domain-members": "domains.addressBookCounts.domainMembers",
 };
 
-// Stable reference: the badge re-reads its counter whenever this function changes.
+// Stable references: the badge re-reads its counter whenever its function changes.
 const countContacts = (domain: string, addressBookId: string): Promise<CollectionCount> =>
   getDomainAddressBookContactCount(domain, addressBookId as DomainAddressBookId);
+
+const exportContacts = (domain: string, addressBookId: string): Promise<Blob> =>
+  exportDomainAddressBook(domain, addressBookId as DomainAddressBookId);
+
+const importContacts = (domain: string, addressBookId: string, vcards: string): Promise<RunTaskResponse> =>
+  importDomainAddressBook(domain, addressBookId as DomainAddressBookId, vcards);
+
+interface AddressBookPermissions {
+  count: boolean;
+  export: boolean;
+  import: boolean;
+}
+
+const isVisible = (permissions: AddressBookPermissions): boolean =>
+  permissions.count || permissions.export || permissions.import;
+
+function AddressBookRow({
+  domain,
+  addressBookId,
+  permissions,
+}: {
+  domain: string;
+  addressBookId: DomainAddressBookId;
+  permissions: AddressBookPermissions;
+}) {
+  const { t } = useTranslation();
+  // Bumped once an import task is over: a new key re-reads the contact counter.
+  const [countKey, setCountKey] = useState(0);
+
+  return (
+    <div className="flex items-center gap-2 py-1">
+      <p className="font-medium">{t(LABEL_KEYS[addressBookId])}</p>
+      {permissions.count && (
+        <CollectionCountBadge
+          key={countKey}
+          owner={domain}
+          collectionId={addressBookId}
+          count={countContacts}
+          icon={Contact}
+          title={t("domains.addressBookCounts.contactCount")}
+        />
+      )}
+      {permissions.export && (
+        <ExportCollectionButton
+          owner={domain}
+          collectionId={addressBookId}
+          name={`${domain}-${addressBookId}`}
+          extension="vcf"
+          exportCollection={exportContacts}
+          title={t("domains.addressBookCounts.exportTitle")}
+          errorTitle={t("domains.addressBookCounts.errorExport")}
+        />
+      )}
+      {permissions.import && (
+        <ImportCollectionButton
+          owner={domain}
+          collectionId={addressBookId}
+          accept=".vcf,text/vcard"
+          importCollection={importContacts}
+          title={t("domains.addressBookCounts.importTitle")}
+          errorTitle={t("domains.addressBookCounts.errorImport")}
+          onImported={() => setCountKey((key) => key + 1)}
+        />
+      )}
+    </div>
+  );
+}
 
 interface Props {
   domain: string;
 }
 
-// Number of contacts held by the domain address books, so that an admin can check
-// they were provisioned (after an LDAP sync or a republish task, for instance).
+// Contacts held by the domain address books, so that an admin can check they were
+// provisioned (after an LDAP sync or a republish task, for instance), export them,
+// and import vCards into the domain address book.
 export default function DomainAddressBookCounts({ domain }: Props) {
   const { t } = useTranslation();
-  const canCountDab = useIsAllowed("GET", "/domains/{domain}/addressbooks/dab/contactCount");
-  const canCountMembers = useIsAllowed("GET", "/domains/{domain}/addressbooks/domain-members/contactCount");
+  const permissions: Record<DomainAddressBookId, AddressBookPermissions> = {
+    dab: {
+      count: useIsAllowed("GET", "/domains/{domain}/addressbooks/dab/contactCount"),
+      export: useIsAllowed("POST", "/domains/{domain}/addressbooks/dab?action=export"),
+      import: useIsAllowed("POST", "/domains/{domain}/addressbooks/dab?action=import"),
+    },
+    // Fed by the LDAP synchronization of the domain members: the server rejects imports.
+    "domain-members": {
+      count: useIsAllowed("GET", "/domains/{domain}/addressbooks/domain-members/contactCount"),
+      export: useIsAllowed("POST", "/domains/{domain}/addressbooks/domain-members?action=export"),
+      import: false,
+    },
+  };
   const [open, setOpen] = useState(false);
 
-  const addressBookIds = ([] as DomainAddressBookId[])
-    .concat(canCountDab ? ["dab"] : [])
-    .concat(canCountMembers ? ["domain-members"] : []);
+  const addressBookIds = (Object.keys(permissions) as DomainAddressBookId[])
+    .filter((id) => isVisible(permissions[id]));
 
   if (addressBookIds.length === 0) return null;
 
@@ -45,16 +124,7 @@ export default function DomainAddressBookCounts({ domain }: Props) {
       {open && (
         <div className="mt-2 space-y-1">
           {addressBookIds.map((id) => (
-            <div key={id} className="flex items-center gap-2 py-1">
-              <p className="font-medium">{t(LABEL_KEYS[id])}</p>
-              <CollectionCountBadge
-                owner={domain}
-                collectionId={id}
-                count={countContacts}
-                icon={Contact}
-                title={t("domains.addressBookCounts.contactCount")}
-              />
-            </div>
+            <AddressBookRow key={id} domain={domain} addressBookId={id} permissions={permissions[id]} />
           ))}
         </div>
       )}

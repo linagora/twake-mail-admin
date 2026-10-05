@@ -474,7 +474,11 @@
       "title": "Liên hệ của tên miền",
       "dab": "Sổ địa chỉ của tên miền (dab)",
       "domainMembers": "Thành viên tên miền",
-      "contactCount": "Liên hệ"
+      "contactCount": "Liên hệ",
+      "exportTitle": "Xuất sổ địa chỉ (vCard)",
+      "errorExport": "Lỗi khi xuất sổ địa chỉ",
+      "importTitle": "Nhập liên hệ (vCard)",
+      "errorImport": "Lỗi khi nhập liên hệ"
     },
     "subtitleMail": "Quản lý các tên miền đã đăng ký trên máy chủ thư.",
     "subtitleCalendar": "Quản lý các tên miền đã đăng ký trên máy chủ lịch."
