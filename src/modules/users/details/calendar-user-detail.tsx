@@ -43,7 +43,7 @@ function RegisterUserForm({
           type="text"
           value={firstname}
           onChange={(e) => { setFirstname(e.target.value); onChange({ firstname: e.target.value, lastname }); }}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div>
@@ -52,7 +52,7 @@ function RegisterUserForm({
           type="text"
           value={lastname}
           onChange={(e) => { setLastname(e.target.value); onChange({ firstname, lastname: e.target.value }); }}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
       </div>
     </div>

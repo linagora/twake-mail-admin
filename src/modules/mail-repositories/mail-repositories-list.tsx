@@ -28,7 +28,7 @@ function CreateMailRepositoryForm({
       <div className="space-y-1">
         <label className="text-sm font-medium">{t("mailRepositories.pathLabel")} <span className="text-red-500">*</span></label>
         <input
-          className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           placeholder={t("mailRepositories.pathPlaceholder")}
           onChange={(e) => onChange("path", e.target.value)}
         />
@@ -36,7 +36,7 @@ function CreateMailRepositoryForm({
       <div className="space-y-1">
         <label className="text-sm font-medium">{t("mailRepositories.protocolLabel")} <span className="text-red-500">*</span></label>
         <input
-          className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           defaultValue="cassandra"
           onChange={(e) => onChange("protocol", e.target.value)}
         />
@@ -172,7 +172,7 @@ export default function MailRepositoriesList() {
             {t("mailRepositories.moveConfirm", { sourcePath })}
           </p>
           <select
-            className="w-full border rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             defaultValue={otherRepos[0].path}
             onChange={(e) => {
               targetRepo = e.target.value;

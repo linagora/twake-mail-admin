@@ -218,7 +218,7 @@ export default function DomainContacts({ domain }: Props) {
                 value={createEmail}
                 onChange={(e) => setCreateEmail(e.target.value)}
                 placeholder={t("domains.contacts.emailPlaceholder")}
-                className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <input
@@ -226,7 +226,7 @@ export default function DomainContacts({ domain }: Props) {
                   value={createFirstname}
                   onChange={(e) => setCreateFirstname(e.target.value)}
                   placeholder={t("domains.contacts.firstnamePlaceholder")}
-                  className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="text"
@@ -234,7 +234,7 @@ export default function DomainContacts({ domain }: Props) {
                   onChange={(e) => setCreateSurname(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleCreate()}
                   placeholder={t("domains.contacts.surnamePlaceholder")}
-                  className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex justify-end gap-2">
@@ -267,7 +267,7 @@ export default function DomainContacts({ domain }: Props) {
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 placeholder={t("domains.contacts.searchPlaceholder")}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
 
               {filtered.length > 0 && (
@@ -369,7 +369,7 @@ export default function DomainContacts({ domain }: Props) {
                   type="text"
                   value={editFirstname}
                   onChange={(e) => setEditFirstname(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -379,7 +379,7 @@ export default function DomainContacts({ domain }: Props) {
                   value={editSurname}
                   onChange={(e) => setEditSurname(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleUpdate()}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex justify-end gap-2 pt-2">

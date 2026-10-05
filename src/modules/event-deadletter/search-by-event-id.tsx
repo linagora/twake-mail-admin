@@ -66,7 +66,7 @@ export default function SearchByEventId() {
             value={eventId}
             onChange={(e) => setEventId(e.target.value)}
             placeholder={t("eventDeadletter.searchByEventIdPlaceholder")}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             autoFocus
           />
           {canNarrowByGroup && (
@@ -75,7 +75,7 @@ export default function SearchByEventId() {
               value={group}
               onChange={(e) => setGroup(e.target.value)}
               placeholder={t("eventDeadletter.searchByGroupPlaceholder")}
-              className="w-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
           )}
           <button

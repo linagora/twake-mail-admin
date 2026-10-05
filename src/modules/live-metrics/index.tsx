@@ -97,7 +97,7 @@ export default function LiveMetrics() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Filter metrics..."
-            className="w-full pl-9 pr-4 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 pr-4 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
         </div>
         {families.length > 0 && (

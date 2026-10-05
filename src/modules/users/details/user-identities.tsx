@@ -162,14 +162,14 @@ export default function UserIdentities({ username }: Props) {
                   value={createForm.name}
                   onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder={t("users.identities.namePlaceholder")}
-                  className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="email"
                   value={createForm.email}
                   onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder={t("users.identities.emailPlaceholder")}
-                  className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -179,7 +179,7 @@ export default function UserIdentities({ username }: Props) {
                     value={createForm.textSignature ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, textSignature: e.target.value }))}
                     rows={2}
-                    className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -188,7 +188,7 @@ export default function UserIdentities({ username }: Props) {
                     value={createForm.htmlSignature ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, htmlSignature: e.target.value }))}
                     rows={2}
-                    className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -198,7 +198,7 @@ export default function UserIdentities({ username }: Props) {
                   type="number"
                   value={createForm.sortOrder ?? 0}
                   onChange={(e) => setCreateForm((f) => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))}
-                  className="w-20 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-20 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex justify-end gap-2">
@@ -350,7 +350,7 @@ export default function UserIdentities({ username }: Props) {
                   type="text"
                   value={editForm.name ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -359,7 +359,7 @@ export default function UserIdentities({ username }: Props) {
                   type="number"
                   value={editForm.sortOrder ?? 0}
                   onChange={(e) => setEditForm((f) => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -368,7 +368,7 @@ export default function UserIdentities({ username }: Props) {
                   value={editForm.textSignature ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, textSignature: e.target.value }))}
                   rows={3}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -377,7 +377,7 @@ export default function UserIdentities({ username }: Props) {
                   value={editForm.htmlSignature ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, htmlSignature: e.target.value }))}
                   rows={3}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex justify-end gap-2 pt-2">

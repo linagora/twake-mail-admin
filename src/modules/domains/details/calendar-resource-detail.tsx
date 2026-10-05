@@ -145,12 +145,12 @@ export default function CalendarResourceDetail() {
               <div>
                 <label className="text-sm font-medium text-gray-500">{t("domains.calendarResources.fieldName")}</label>
                 <input type="text" value={editName} onChange={(e) => setEditName(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-500">{t("domains.calendarResources.fieldDescription")}</label>
                 <input type="text" value={editDescription} onChange={(e) => setEditDescription(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-500">{t("domains.calendarResources.iconLabel")}</label>
@@ -193,7 +193,7 @@ export default function CalendarResourceDetail() {
             <div className="flex gap-2 mt-3 mb-4">
               <input type="text" value={newAdmin} onChange={(e) => setNewAdmin(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddAdmin()} placeholder="admin@domain.tld"
-                className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               {adminStatus === "checking" && <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>}
               {adminStatus === "exists" && <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-green-500" />{t("common.userExists")}</span>}
               {adminStatus === "not_found" && <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap"><span className="inline-block w-2 h-2 rounded-full bg-orange-400" />{t("common.userNotFound")}</span>}

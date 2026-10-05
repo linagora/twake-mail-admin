@@ -122,9 +122,9 @@ export default function ChannelsUserAgent() {
             <p className="text-sm text-muted-foreground mb-1">{t("networkChannels.totalConnections", { count: total })}</p>
             {slices.map((s, i) => (
               <div key={i} className="flex items-center gap-2 text-sm">
-                <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: s.color }} />
+                <span className="inline-block w-3 h-3 rounded-full shrink-0" style={{ background: s.color }} />
                 <span className="truncate max-w-xs font-mono">{s.label}</span>
-                <span className="text-muted-foreground ml-auto pl-4 flex-shrink-0">
+                <span className="text-muted-foreground ml-auto pl-4 shrink-0">
                   {s.count} ({((s.count / total) * 100).toFixed(1)}%)
                 </span>
               </div>

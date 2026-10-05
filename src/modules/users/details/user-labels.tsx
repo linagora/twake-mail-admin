@@ -150,7 +150,7 @@ export default function UserLabels({ username }: Props) {
                     value={createForm.displayName}
                     onChange={(e) => setCreateForm((f) => ({ ...f, displayName: e.target.value }))}
                     placeholder="Work"
-                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -160,7 +160,7 @@ export default function UserLabels({ username }: Props) {
                     value={createForm.keyword ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, keyword: e.target.value }))}
                     placeholder="auto-generated if empty"
-                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -179,7 +179,7 @@ export default function UserLabels({ username }: Props) {
                       value={createForm.color ?? ""}
                       onChange={(e) => setCreateForm((f) => ({ ...f, color: e.target.value }))}
                       placeholder="#ff0000"
-                      className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -190,7 +190,7 @@ export default function UserLabels({ username }: Props) {
                     value={createForm.description ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
                     placeholder="Work emails"
-                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -242,7 +242,7 @@ export default function UserLabels({ username }: Props) {
                           {label.color ? (
                             <div className="flex items-center gap-2">
                               <span
-                                className="inline-block w-4 h-4 rounded-full border border-gray-200 flex-shrink-0"
+                                className="inline-block w-4 h-4 rounded-full border border-gray-200 shrink-0"
                                 style={{ backgroundColor: label.color }}
                               />
                               <span className="text-xs text-gray-600">{label.color}</span>
@@ -303,7 +303,7 @@ export default function UserLabels({ username }: Props) {
                   type="text"
                   value={editForm.displayName}
                   onChange={(e) => setEditForm((f) => ({ ...f, displayName: e.target.value }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -320,7 +320,7 @@ export default function UserLabels({ username }: Props) {
                     value={editForm.color ?? ""}
                     onChange={(e) => setEditForm((f) => ({ ...f, color: e.target.value }))}
                     placeholder="#ff0000 (vide pour effacer)"
-                    className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -331,7 +331,7 @@ export default function UserLabels({ username }: Props) {
                   value={editForm.description ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
                   placeholder="(vide pour effacer)"
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex items-center gap-2">

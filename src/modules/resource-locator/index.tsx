@@ -40,7 +40,7 @@ function SearchSection({ label, placeholder, onSearch, status, children }: Searc
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder={placeholder}
-            className="w-full pl-9 pr-4 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 pr-4 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <Button type="submit" size="sm" disabled={status === "loading" || !value.trim()}>

@@ -153,7 +153,7 @@ export default function UserMessageSearch() {
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder={t("users.messageSearch.reasonPlaceholder")}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -177,7 +177,7 @@ export default function UserMessageSearch() {
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
                   placeholder={t("users.messageSearch.fullTextPlaceholder")}
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -187,7 +187,7 @@ export default function UserMessageSearch() {
                   value={filterFrom}
                   onChange={(e) => setFilterFrom(e.target.value)}
                   placeholder={t("users.messageSearch.fromPlaceholder")}
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -197,7 +197,7 @@ export default function UserMessageSearch() {
                   value={filterTo}
                   onChange={(e) => setFilterTo(e.target.value)}
                   placeholder={t("users.messageSearch.toPlaceholder")}
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -207,7 +207,7 @@ export default function UserMessageSearch() {
                   value={filterSubject}
                   onChange={(e) => setFilterSubject(e.target.value)}
                   placeholder={t("users.messageSearch.subjectPlaceholder")}
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -215,7 +215,7 @@ export default function UserMessageSearch() {
                 <select
                   value={filterHasAttachment}
                   onChange={(e) => setFilterHasAttachment(e.target.value as "any" | "yes" | "no")}
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="any">{t("users.messageSearch.any")}</option>
                   <option value="yes">{t("common.yes")}</option>
@@ -231,7 +231,7 @@ export default function UserMessageSearch() {
                   value={filterHasKeywords}
                   onChange={(e) => setFilterHasKeywords(e.target.value)}
                   placeholder={t("users.messageSearch.hasKeywordsPlaceholder")}
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -243,7 +243,7 @@ export default function UserMessageSearch() {
                   value={filterInMailboxes}
                   onChange={(e) => setFilterInMailboxes(e.target.value)}
                   placeholder={t("users.messageSearch.inMailboxesPlaceholder")}
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -255,7 +255,7 @@ export default function UserMessageSearch() {
                   value={filterInMailboxOtherThan}
                   onChange={(e) => setFilterInMailboxOtherThan(e.target.value)}
                   placeholder={t("users.messageSearch.excludeMailboxesPlaceholder")}
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -265,7 +265,7 @@ export default function UserMessageSearch() {
                   value={filterAfter}
                   onChange={(e) => setFilterAfter(e.target.value)}
                   placeholder="2024-01-01T00:00:00Z"
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -275,7 +275,7 @@ export default function UserMessageSearch() {
                   value={filterBefore}
                   onChange={(e) => setFilterBefore(e.target.value)}
                   placeholder="2024-01-31T23:59:59Z"
-                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -302,7 +302,7 @@ export default function UserMessageSearch() {
                 <select
                   value={s.property}
                   onChange={(e) => updateSort(idx, { property: e.target.value as SortEntry["property"] })}
-                  className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 >
                   {SORT_PROPERTIES.map((p) => (
                     <option key={p} value={p}>{t(`users.messageSearch.sortProperty.${p}`)}</option>
@@ -311,7 +311,7 @@ export default function UserMessageSearch() {
                 <select
                   value={s.isAscending ? "asc" : "desc"}
                   onChange={(e) => updateSort(idx, { isAscending: e.target.value === "asc" })}
-                  className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="desc">{t("users.messageSearch.descending")}</option>
                   <option value="asc">{t("users.messageSearch.ascending")}</option>

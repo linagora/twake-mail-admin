@@ -7,7 +7,12 @@ vi.mock("@/lib/apiClient", () => ({
   getRaw: vi.fn(),
 }));
 
-import { getDomainAddressBookContactCount, getDomainSignatureTemplates } from "./api-client";
+import {
+  exportDomainAddressBook,
+  getDomainAddressBookContactCount,
+  getDomainSignatureTemplates,
+  importDomainAddressBook,
+} from "./api-client";
 
 describe("domain signature templates", () => {
   const template = { language: "en", textSignature: "Regards", htmlSignature: "<p>Regards</p>" };
