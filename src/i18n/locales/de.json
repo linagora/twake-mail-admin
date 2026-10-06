@@ -479,7 +479,20 @@
       "exportTitle": "Adressbuch exportieren (vCard)",
       "errorExport": "Fehler beim Exportieren des Adressbuchs",
       "importTitle": "Kontakte importieren (vCard)",
-      "errorImport": "Fehler beim Importieren der Kontakte"
+      "errorImport": "Fehler beim Importieren der Kontakte",
+      "clear": {
+        "title": "Kontakte leeren",
+        "warning": "Dadurch werden die Kontakte des Adressbuchs endgültig gelöscht. Dies kann nicht rückgängig gemacht werden.",
+        "sourceDomain": "Nur Kontakte mit einer E-Mail-Adresse in der Domain (optional)",
+        "invalidSourceDomain": "Ungültige Domain",
+        "confirmation": "Geben Sie {{addressBookId}} zur Bestätigung ein",
+        "submit": "Kontakte leeren",
+        "error": "Fehler beim Leeren der Kontakte",
+        "error400": "Die Domain, die Quelldomain oder das Adressbuch ist ungültig.",
+        "error404": "Die Domain oder das Adressbuch existiert nicht.",
+        "error500": "Der Kalenderserver konnte seinen Kontaktspeicher nicht erreichen.",
+        "errorUnknown": "Ein unerwarteter Fehler ist aufgetreten."
+      }
     },
     "subtitleMail": "Auf dem Mailserver registrierte Domains verwalten.",
     "subtitleCalendar": "Auf dem Kalenderserver registrierte Domains verwalten."
