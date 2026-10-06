@@ -15,7 +15,7 @@ export default function DeleteUserDataForm({ username, onChange }: Props) {
         <label className="text-sm font-medium whitespace-nowrap">{t("deleteUserDataForm.fromStep")}:</label>
         <Input
           type="text"
-          placeholder="e.g. MailboxUserDeletionTaskStep"
+          placeholder={t("deleteUserDataForm.fromStepPlaceholder")}
           onChange={(e) => onChange(e.target.value)}
         />
       </div>

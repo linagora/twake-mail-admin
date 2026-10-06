@@ -9,10 +9,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Button } from "@/components/ui/button";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import i18n from "i18next";
+import { currentLocale } from "@/i18n/locale";
 
 function formatSize(bytes: number | null): string {
-  if (bytes === null) return "not set";
-  if (bytes === -1) return "unlimited";
+  if (bytes === null) return i18n.t("common.notSet");
+  if (bytes === -1) return i18n.t("common.unlimited");
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -20,9 +22,9 @@ function formatSize(bytes: number | null): string {
 }
 
 function formatCount(count: number | null): string {
-  if (count === null) return "not set";
-  if (count === -1) return "unlimited";
-  return count.toLocaleString();
+  if (count === null) return i18n.t("common.notSet");
+  if (count === -1) return i18n.t("common.unlimited");
+  return count.toLocaleString(currentLocale());
 }
 
 function QuotaRow({ label, values, countLabel, sizeLabel }: { label: string; values: QuotaValues | null; countLabel: string; sizeLabel: string }) {

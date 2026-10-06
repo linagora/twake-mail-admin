@@ -14,6 +14,7 @@ import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { currentLocale } from "@/i18n/locale";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -34,7 +35,7 @@ function formatDate(d: string | null | undefined): string {
   if (!d) return "—";
   try {
     const dt = new Date(d);
-    return `${dt.toLocaleDateString()} ${dt.toLocaleTimeString()}`;
+    return `${dt.toLocaleDateString(currentLocale())} ${dt.toLocaleTimeString(currentLocale())}`;
   } catch {
     return d;
   }

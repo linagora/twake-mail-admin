@@ -90,7 +90,8 @@
     "unsentMails": "Неотправленные письма",
     "logout": "Выйти",
     "language": "Язык",
-    "jmapSettingsReport": "Отчёт по настройкам JMAP"
+    "jmapSettingsReport": "Отчёт по настройкам JMAP",
+    "toggle": "Toggle Sidebar"
   },
   "domains": {
     "title": "Сведения о домене",
@@ -663,7 +664,14 @@
       "deleteTooltip": "Удалить метку",
       "editTitle": "Изменить метку — {{displayName}}",
       "colorEdit": "#ff0000 (пусто для очистки)",
-      "descriptionEdit": "(пусто для очистки)"
+      "descriptionEdit": "(пусто для очистки)",
+      "keywordLabel": "Keyword",
+      "colorLabel": "Color",
+      "descriptionLabel": "Description",
+      "updated": "Label updated",
+      "errorUpdating": "Error updating label",
+      "deleted": "Label deleted",
+      "errorDeleting": "Error deleting label"
     },
     "jmapSettings": {
       "title": "Настройки JMAP",
@@ -728,7 +736,8 @@
       "left": "Командный почтовый ящик «{{emailAddress}}» покинут",
       "errorLeaving": "Ошибка при выходе из командного почтового ящика",
       "leave": "Покинуть",
-      "empty": "Не состоит ни в одном командном почтовом ящике."
+      "empty": "Не состоит ни в одном командном почтовом ящике.",
+      "leaveTooltip": "Leave team mailbox"
     },
     "messageSearch": {
       "title": "Поиск сообщений",
@@ -996,10 +1005,12 @@
   "renameUserForm": {
     "newUsername": "Новое имя пользователя",
     "force": "Принудительно",
-    "fromStep": "Возобновить с шага"
+    "fromStep": "Возобновить с шага",
+    "fromStepPlaceholder": "e.g. MailboxUsernameChangeTaskStep"
   },
   "deleteUserDataForm": {
-    "fromStep": "Возобновить с шага"
+    "fromStep": "Возобновить с шага",
+    "fromStepPlaceholder": "e.g. MailboxUserDeletionTaskStep"
   },
   "restoreCriteria": {
     "addCriteria": "Добавить критерий",
@@ -1458,7 +1469,8 @@
   },
   "liveMetrics": {
     "title": "Метрики в реальном времени",
-    "subtitle": "Метрики Prometheus с сервера в реальном времени."
+    "subtitle": "Метрики Prometheus с сервера в реальном времени.",
+    "filterPlaceholder": "Filter metrics..."
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",

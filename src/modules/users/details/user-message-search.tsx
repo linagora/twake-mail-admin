@@ -379,7 +379,7 @@ export default function UserMessageSearch() {
                     </h4>
                     <span className="flex items-center gap-1 shrink-0">
                       {msg.hasAttachment && (
-                        <Paperclip className="w-3.5 h-3.5 text-gray-400" aria-label="Has attachment" />
+                        <Paperclip className="w-3.5 h-3.5 text-gray-400" aria-label={t("users.messageSearch.hasAttachment")} />
                       )}
                       {msg.receivedAt && (
                         <span className="text-xs text-gray-400">{msg.receivedAt}</span>

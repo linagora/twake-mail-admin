@@ -5,6 +5,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getMetrics } from "./api-client";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
+import { currentLocale } from "@/i18n/locale";
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/metrics.html";
 
 interface MetricFamily {
@@ -52,8 +53,8 @@ function parseMetrics(raw: string): MetricFamily[] {
 function formatValue(val: string): string {
   const num = Number(val);
   if (isNaN(num)) return val;
-  if (Number.isInteger(num)) return num.toLocaleString();
-  return num.toLocaleString(undefined, { maximumFractionDigits: 4 });
+  if (Number.isInteger(num)) return num.toLocaleString(currentLocale());
+  return num.toLocaleString(currentLocale(), { maximumFractionDigits: 4 });
 }
 
 export default function LiveMetrics() {
@@ -96,7 +97,7 @@ export default function LiveMetrics() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Filter metrics..."
+            placeholder={t("liveMetrics.filterPlaceholder")}
             className="w-full pl-9 pr-4 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
         </div>

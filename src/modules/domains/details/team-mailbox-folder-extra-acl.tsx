@@ -158,7 +158,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
               <button
                 onClick={() => setShowAddForm(!showAddForm)}
                 className="p-1 rounded-md hover:bg-gray-200 transition"
-                title="Add ACL entry"
+                title={t("domains.extraAcl.addEntry")}
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -167,7 +167,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
               <button
                 onClick={handleClearAll}
                 className="p-1 rounded-md hover:bg-gray-200 transition"
-                title="Clear all extra ACL entries"
+                title={t("domains.extraAcl.clearAll")}
               >
                 <Trash2 className="w-4 h-4 text-red-500" />
               </button>
@@ -327,7 +327,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
                       <button
                         onClick={() => handleRemove(username)}
                         className="p-2 rounded-md hover:bg-gray-200 shrink-0"
-                        title="Remove ACL entry"
+                        title={t("domains.extraAcl.removeTooltip")}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>

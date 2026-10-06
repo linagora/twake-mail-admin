@@ -18,6 +18,7 @@ import {
   downloadUnsentMail,
 } from "./api-client";
 import type { UnsentMailId, UnsentMail, UnsentMailSelection } from "./types";
+import { currentLocale } from "@/i18n/locale";
 
 const PAGE_SIZE = 50;
 
@@ -297,7 +298,7 @@ export default function UnsentMailsList() {
                   <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-x-4">
                     <span>
                       <span className="font-medium">{t("unsentMails.date")}:</span>{" "}
-                      {mail ? new Date(mail.createdAt).toLocaleString() : t("common.loading")}
+                      {mail ? new Date(mail.createdAt).toLocaleString(currentLocale()) : t("common.loading")}
                     </span>
                     <span>
                       <span className="font-medium">{t("unsentMails.sender")}:</span>{" "}

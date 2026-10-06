@@ -37,7 +37,7 @@ export default function RenameUserForm({ username, onChange }: Props) {
         <label className="text-sm font-medium whitespace-nowrap">{t("renameUserForm.fromStep")}:</label>
         <Input
           type="text"
-          placeholder="e.g. MailboxUsernameChangeTaskStep"
+          placeholder={t("renameUserForm.fromStepPlaceholder")}
           onChange={(e) => { fromStep = e.target.value; notify(); }}
         />
       </div>

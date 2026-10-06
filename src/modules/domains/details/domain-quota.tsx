@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
 import QuotaUsageSumSection from "@/components/custom/quota-usage-sum";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import i18n from "i18next";
+import { currentLocale } from "@/i18n/locale";
 
 interface Props {
   domain: string;
@@ -16,8 +18,8 @@ interface Props {
 }
 
 function formatSize(bytes: number | null): string {
-  if (bytes === null) return "not set";
-  if (bytes === -1) return "unlimited";
+  if (bytes === null) return i18n.t("common.notSet");
+  if (bytes === -1) return i18n.t("common.unlimited");
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -25,9 +27,9 @@ function formatSize(bytes: number | null): string {
 }
 
 function formatCount(count: number | null): string {
-  if (count === null) return "not set";
-  if (count === -1) return "unlimited";
-  return count.toLocaleString();
+  if (count === null) return i18n.t("common.notSet");
+  if (count === -1) return i18n.t("common.unlimited");
+  return count.toLocaleString(currentLocale());
 }
 
 function QuotaRow({ label, values, countLabel, sizeLabel }: { label: string; values: DomainQuotaValues | null; countLabel?: string; sizeLabel?: string }) {
