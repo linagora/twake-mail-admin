@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TaskStatus } from "../types";
 import Header from "@/components/custom/header";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { currentLocale } from "@/i18n/locale";
 
 export default function TaskDetail() {
   const { t } = useTranslation();
@@ -48,7 +49,7 @@ export default function TaskDetail() {
       return null;
     }
     const dateTimeValue = new Date(dateTime);
-    return `${dateTimeValue.toLocaleDateString()} ${dateTimeValue.toLocaleTimeString()}`;
+    return `${dateTimeValue.toLocaleDateString(currentLocale())} ${dateTimeValue.toLocaleTimeString(currentLocale())}`;
   }
 
   return (

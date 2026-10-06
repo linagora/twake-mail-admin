@@ -95,7 +95,7 @@ export default function UserTeamMailboxes({ username }: Props) {
                     <button
                       onClick={() => handleLeave(mb)}
                       className="flex items-center gap-1 px-2 py-1 text-sm text-red-600 rounded-md hover:bg-gray-200"
-                      title="Leave team mailbox"
+                      title={t("users.teamMailboxes.leaveTooltip")}
                     >
                       <LogOut className="w-4 h-4" />
                       {t("users.teamMailboxes.leave")}

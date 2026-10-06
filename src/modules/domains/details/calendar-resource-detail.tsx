@@ -225,7 +225,7 @@ export default function CalendarResourceDetail() {
                     {admin.email}
                   </h4>
                   {canEdit && (
-                    <button onClick={() => handleRemoveAdmin(admin.email)} className="p-2 rounded-md hover:bg-gray-200" title="Remove administrator">
+                    <button onClick={() => handleRemoveAdmin(admin.email)} className="p-2 rounded-md hover:bg-gray-200" title={t("domains.calendarResources.removeAdminTooltip")}>
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   )}

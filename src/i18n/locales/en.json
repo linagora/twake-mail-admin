@@ -90,7 +90,8 @@
     "unsentMails": "Unsent Mails",
     "logout": "Logout",
     "language": "Language",
-    "jmapSettingsReport": "JMAP Settings Report"
+    "jmapSettingsReport": "JMAP Settings Report",
+    "toggle": "Toggle Sidebar"
   },
   "domains": {
     "title": "Domain Details",
@@ -663,7 +664,14 @@
       "deleteTooltip": "Delete label",
       "editTitle": "Edit Label — {{displayName}}",
       "colorEdit": "#ff0000 (empty to clear)",
-      "descriptionEdit": "(empty to clear)"
+      "descriptionEdit": "(empty to clear)",
+      "keywordLabel": "Keyword",
+      "colorLabel": "Color",
+      "descriptionLabel": "Description",
+      "updated": "Label updated",
+      "errorUpdating": "Error updating label",
+      "deleted": "Label deleted",
+      "errorDeleting": "Error deleting label"
     },
     "jmapSettings": {
       "title": "JMAP Settings",
@@ -728,7 +736,8 @@
       "left": "Left team mailbox \"{{emailAddress}}\"",
       "errorLeaving": "Error leaving team mailbox",
       "leave": "Leave",
-      "empty": "Not a member of any team mailbox."
+      "empty": "Not a member of any team mailbox.",
+      "leaveTooltip": "Leave team mailbox"
     },
     "messageSearch": {
       "title": "Message Search",
@@ -996,10 +1005,12 @@
   "renameUserForm": {
     "newUsername": "New username",
     "force": "Force",
-    "fromStep": "Resume from step"
+    "fromStep": "Resume from step",
+    "fromStepPlaceholder": "e.g. MailboxUsernameChangeTaskStep"
   },
   "deleteUserDataForm": {
-    "fromStep": "Resume from step"
+    "fromStep": "Resume from step",
+    "fromStepPlaceholder": "e.g. MailboxUserDeletionTaskStep"
   },
   "restoreCriteria": {
     "addCriteria": "Add criterion",
@@ -1458,7 +1469,8 @@
   },
   "liveMetrics": {
     "title": "Live Metrics",
-    "subtitle": "Live Prometheus metrics from the server."
+    "subtitle": "Live Prometheus metrics from the server.",
+    "filterPlaceholder": "Filter metrics..."
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",

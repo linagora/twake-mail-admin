@@ -9,6 +9,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { getUnsentMail, deleteUnsentMail, resendUnsentMail, downloadUnsentMail } from "../api-client";
 import type { UnsentMail } from "../types";
+import { currentLocale } from "@/i18n/locale";
 
 export default function UnsentMailDetail() {
   const { t } = useTranslation();
@@ -113,7 +114,7 @@ export default function UnsentMailDetail() {
         </div>
         <div>
           <dt className="font-medium text-gray-600">{t("unsentMails.date")}</dt>
-          <dd>{new Date(mail.createdAt).toLocaleString()}</dd>
+          <dd>{new Date(mail.createdAt).toLocaleString(currentLocale())}</dd>
         </div>
       </dl>
 
@@ -133,7 +134,7 @@ export default function UnsentMailDetail() {
                 </div>
                 <div>
                   <p className="text-gray-600">
-                    {new Date(trial.date).toLocaleString()}
+                    {new Date(trial.date).toLocaleString(currentLocale())}
                   </p>
                   <p className="text-red-600 flex items-start gap-1">
                     <AlertCircle className="w-3 h-3 mt-0.5 shrink-0" />

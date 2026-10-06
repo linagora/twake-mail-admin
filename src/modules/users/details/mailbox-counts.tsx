@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getMailboxMessageCount, getMailboxUnseenCount } from "../api-client";
 import { Mail, MailOpen } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   username: string;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function MailboxCounts({ username, mailboxName }: Props) {
+  const { t } = useTranslation();
   const fetchTotal = useCallback(
     () => getMailboxMessageCount(username, mailboxName),
     [username, mailboxName]
@@ -27,11 +29,11 @@ export default function MailboxCounts({ username, mailboxName }: Props) {
 
   return (
     <span className="flex items-center gap-3 text-xs text-gray-500">
-      <span className="flex items-center gap-1" title="Total messages">
+      <span className="flex items-center gap-1" title={t("mailboxCounts.totalMessages")}>
         <Mail className="w-3 h-3" />
         {total ?? "-"}
       </span>
-      <span className="flex items-center gap-1" title="Unseen messages">
+      <span className="flex items-center gap-1" title={t("mailboxCounts.unseenMessages")}>
         <MailOpen className="w-3 h-3" />
         {unseen ?? "-"}
       </span>

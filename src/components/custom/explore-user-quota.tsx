@@ -6,6 +6,8 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { apiClient } from "@/lib/apiClient";
 import { appConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
+import i18n from "i18next";
+import { currentLocale } from "@/i18n/locale";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -41,7 +43,7 @@ interface UserQuotaEntry {
 
 function formatSize(bytes: number | null): string {
   if (bytes === null) return "—";
-  if (bytes === -1) return "unlimited";
+  if (bytes === -1) return i18n.t("common.unlimited");
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -50,8 +52,8 @@ function formatSize(bytes: number | null): string {
 
 function formatCount(count: number | null): string {
   if (count === null) return "—";
-  if (count === -1) return "unlimited";
-  return count.toLocaleString();
+  if (count === -1) return i18n.t("common.unlimited");
+  return count.toLocaleString(currentLocale());
 }
 
 function formatPercent(ratio: number): string {

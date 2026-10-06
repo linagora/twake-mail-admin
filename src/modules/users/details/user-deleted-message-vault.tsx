@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
+import { currentLocale } from "@/i18n/locale";
 
 const PAGE_SIZE = 10;
 
@@ -22,7 +23,7 @@ interface Props {
 
 function formatDate(iso: string): string {
   try {
-    return new Date(iso).toLocaleString();
+    return new Date(iso).toLocaleString(currentLocale());
   } catch {
     return iso;
   }

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { apiClient } from "@/lib/apiClient";
 import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { currentLocale } from "@/i18n/locale";
 
 interface QuotaUsageSum {
   count: number;
@@ -18,7 +19,7 @@ function formatSize(bytes: number): string {
 }
 
 function formatCount(count: number): string {
-  return count.toLocaleString();
+  return count.toLocaleString(currentLocale());
 }
 
 interface Props {

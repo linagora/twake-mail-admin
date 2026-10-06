@@ -11,12 +11,14 @@ import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
 import QuotaUsageSumSection from "@/components/custom/quota-usage-sum";
 import UsersWithSpecificQuotas from "./users-with-specific-quotas";
+import i18n from "i18next";
+import { currentLocale } from "@/i18n/locale";
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_administrating_quotas";
 
 function formatSize(bytes: number | null): string {
-  if (bytes === null) return "not set";
-  if (bytes === -1) return "unlimited";
+  if (bytes === null) return i18n.t("common.notSet");
+  if (bytes === -1) return i18n.t("common.unlimited");
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -24,9 +26,9 @@ function formatSize(bytes: number | null): string {
 }
 
 function formatCount(count: number | null): string {
-  if (count === null) return "not set";
-  if (count === -1) return "unlimited";
-  return count.toLocaleString();
+  if (count === null) return i18n.t("common.notSet");
+  if (count === -1) return i18n.t("common.unlimited");
+  return count.toLocaleString(currentLocale());
 }
 
 function toBytes(value: number, unit: string): number {
