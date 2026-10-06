@@ -479,7 +479,20 @@
       "exportTitle": "Xuất sổ địa chỉ (vCard)",
       "errorExport": "Lỗi khi xuất sổ địa chỉ",
       "importTitle": "Nhập liên hệ (vCard)",
-      "errorImport": "Lỗi khi nhập liên hệ"
+      "errorImport": "Lỗi khi nhập liên hệ",
+      "clear": {
+        "title": "Xóa danh bạ",
+        "warning": "Thao tác này xóa vĩnh viễn các liên hệ của sổ địa chỉ. Không thể hoàn tác.",
+        "sourceDomain": "Chỉ các liên hệ có địa chỉ thư trong miền (tùy chọn)",
+        "invalidSourceDomain": "Miền không hợp lệ",
+        "confirmation": "Nhập {{addressBookId}} để xác nhận",
+        "submit": "Xóa danh bạ",
+        "error": "Lỗi khi xóa danh bạ",
+        "error400": "Miền, miền nguồn hoặc sổ địa chỉ không hợp lệ.",
+        "error404": "Miền hoặc sổ địa chỉ không tồn tại.",
+        "error500": "Máy chủ lịch không thể kết nối tới kho danh bạ.",
+        "errorUnknown": "Đã xảy ra lỗi không mong muốn."
+      }
     },
     "subtitleMail": "Quản lý các tên miền đã đăng ký trên máy chủ thư.",
     "subtitleCalendar": "Quản lý các tên miền đã đăng ký trên máy chủ lịch."

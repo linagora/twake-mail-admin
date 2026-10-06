@@ -479,7 +479,20 @@
       "exportTitle": "Esporta la rubrica (vCard)",
       "errorExport": "Errore durante l'esportazione della rubrica",
       "importTitle": "Importa contatti (vCard)",
-      "errorImport": "Errore durante l'importazione dei contatti"
+      "errorImport": "Errore durante l'importazione dei contatti",
+      "clear": {
+        "title": "Svuota i contatti",
+        "warning": "Questa azione elimina definitivamente i contatti della rubrica. Non può essere annullata.",
+        "sourceDomain": "Solo i contatti con un indirizzo email nel dominio (facoltativo)",
+        "invalidSourceDomain": "Dominio non valido",
+        "confirmation": "Digita {{addressBookId}} per confermare",
+        "submit": "Svuota i contatti",
+        "error": "Errore durante lo svuotamento dei contatti",
+        "error400": "Il dominio, il dominio di origine o la rubrica non è valido.",
+        "error404": "Il dominio o la rubrica non esiste.",
+        "error500": "Il server del calendario non è riuscito a raggiungere l'archivio dei contatti.",
+        "errorUnknown": "Si è verificato un errore imprevisto."
+      }
     },
     "subtitleMail": "Gestisci i domini registrati sul server di posta.",
     "subtitleCalendar": "Gestisci i domini registrati sul server del calendario."

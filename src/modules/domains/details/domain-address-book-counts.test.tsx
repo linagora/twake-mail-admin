@@ -8,6 +8,7 @@ const api = vi.hoisted(() => ({
   getDomainAddressBookContactCount: vi.fn(),
   exportDomainAddressBook: vi.fn(),
   importDomainAddressBook: vi.fn(),
+  clearDomainAddressBook: vi.fn(),
 }));
 
 vi.mock("@/lib/proxy-resolver-context", () => ({
@@ -31,6 +32,7 @@ beforeEach(() => {
   api.getDomainAddressBookContactCount.mockReset();
   api.exportDomainAddressBook.mockReset();
   api.importDomainAddressBook.mockReset();
+  api.clearDomainAddressBook.mockReset();
 });
 
 afterEach(cleanup);
@@ -103,5 +105,40 @@ describe("domain address book contact counts", () => {
 
     await waitFor(() => expect(window.URL.revokeObjectURL).toHaveBeenCalled());
     expect(api.exportDomainAddressBook).toHaveBeenCalledWith("linagora.com", "dab");
+  });
+
+  it("offers to clear the domain address book only", () => {
+    api.getDomainAddressBookContactCount.mockResolvedValue({ count: 3 });
+    renderWith(ALL);
+    unfold();
+
+    expect(screen.getAllByTitle("domains.addressBookCounts.clear.title")).toHaveLength(1);
+  });
+
+  it("clears only once the address book id is typed", async () => {
+    api.clearDomainAddressBook.mockResolvedValue({ taskId: "6d3bb34e" });
+    renderWith([{ endpoint: "/domains/{domain}/addressbooks/dab/contacts" }]);
+    unfold();
+    fireEvent.click(screen.getByTitle("domains.addressBookCounts.clear.title"));
+    const submit = screen.getByRole("button", { name: "domains.addressBookCounts.clear.submit" }) as HTMLButtonElement;
+
+    expect(submit.disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.clear.sourceDomain"), { target: { value: " student.school.org " } });
+    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.clear.confirmation"), { target: { value: "dab" } });
+    expect(submit.disabled).toBe(false);
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(api.clearDomainAddressBook).toHaveBeenCalledWith("linagora.com", "dab", "student.school.org"));
+  });
+
+  it("refuses an invalid source domain", () => {
+    renderWith([{ endpoint: "/domains/{domain}/addressbooks/dab/contacts" }]);
+    unfold();
+    fireEvent.click(screen.getByTitle("domains.addressBookCounts.clear.title"));
+    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.clear.sourceDomain"), { target: { value: "not a domain" } });
+    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.clear.confirmation"), { target: { value: "dab" } });
+
+    expect(screen.getByText("domains.addressBookCounts.clear.invalidSourceDomain")).not.toBeNull();
+    expect((screen.getByRole("button", { name: "domains.addressBookCounts.clear.submit" }) as HTMLButtonElement).disabled).toBe(true);
   });
 });

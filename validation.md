@@ -316,8 +316,9 @@ Shown on the domain detail page and on the DOMAIN mode Tasks page.
 | "Export address book" button of the domain address book (vCard download) | POST | `/domains/{domain}/addressbooks/dab?action=export` | MAY (do not show the button if missing) |
 | "Export address book" button of the domain members (vCard download) | POST | `/domains/{domain}/addressbooks/domain-members?action=export` | MAY (do not show the button if missing) |
 | "Import contacts" button of the domain address book (vCard upload, creates a `domain-addressbook-import` task) | POST | `/domains/{domain}/addressbooks/dab?action=import` | MAY (do not show the button if missing) |
+| "Clear contacts" button of the domain address book (optional `sourceDomain` query parameter, creates a `domain-addressbook-clear` task) | DELETE | `/domains/{domain}/addressbooks/dab/contacts` | MAY (do not show the button if missing) |
 
-Note: an address book row is shown when at least one of its actions is allowed; if none are present, hide the whole block. Imports are never offered for the domain members address book: the LDAP synchronization feeds it and the server rejects them.
+Note: an address book row is shown when at least one of its actions is allowed; if none are present, hide the whole block. Imports and clears are never offered for the domain members address book: the LDAP synchronization feeds it and the server rejects them.
 
 ### Domain detail — Calendar: Republish common contacts *(APPLICATION:"CALENDAR" only)*
 

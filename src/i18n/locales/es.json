@@ -479,7 +479,20 @@
       "exportTitle": "Exportar la libreta de direcciones (vCard)",
       "errorExport": "Error al exportar la libreta de direcciones",
       "importTitle": "Importar contactos (vCard)",
-      "errorImport": "Error al importar los contactos"
+      "errorImport": "Error al importar los contactos",
+      "clear": {
+        "title": "Vaciar los contactos",
+        "warning": "Esta acción elimina definitivamente los contactos de la libreta de direcciones. No se puede deshacer.",
+        "sourceDomain": "Solo los contactos con una dirección de correo en el dominio (opcional)",
+        "invalidSourceDomain": "Dominio no válido",
+        "confirmation": "Escriba {{addressBookId}} para confirmar",
+        "submit": "Vaciar los contactos",
+        "error": "Error al vaciar los contactos",
+        "error400": "El dominio, el dominio de origen o la libreta de direcciones no es válido.",
+        "error404": "El dominio o la libreta de direcciones no existe.",
+        "error500": "El servidor de calendario no pudo acceder a su almacenamiento de contactos.",
+        "errorUnknown": "Se ha producido un error inesperado."
+      }
     },
     "subtitleMail": "Gestione los dominios registrados en el servidor de correo.",
     "subtitleCalendar": "Gestione los dominios registrados en el servidor de calendario."

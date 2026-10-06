@@ -5,6 +5,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { CollectionCount, CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { DomainAddressBookId, exportDomainAddressBook, getDomainAddressBookContactCount, importDomainAddressBook } from "../api-client";
+import ClearAddressBookButton from "./clear-address-book-button";
 
 const LABEL_KEYS: Record<DomainAddressBookId, string> = {
   dab: "domains.addressBookCounts.dab",
@@ -25,10 +26,11 @@ interface AddressBookPermissions {
   count: boolean;
   export: boolean;
   import: boolean;
+  clear: boolean;
 }
 
 const isVisible = (permissions: AddressBookPermissions): boolean =>
-  permissions.count || permissions.export || permissions.import;
+  permissions.count || permissions.export || permissions.import || permissions.clear;
 
 function AddressBookRow({
   domain,
@@ -40,8 +42,9 @@ function AddressBookRow({
   permissions: AddressBookPermissions;
 }) {
   const { t } = useTranslation();
-  // Bumped once an import task is over: a new key re-reads the contact counter.
+  // Bumped once an import or clear task is over: a new key re-reads the contact counter.
   const [countKey, setCountKey] = useState(0);
+  const refreshCount = () => setCountKey((key) => key + 1);
 
   return (
     <div className="flex items-center gap-2 py-1">
@@ -75,8 +78,11 @@ function AddressBookRow({
           importCollection={importContacts}
           title={t("domains.addressBookCounts.importTitle")}
           errorTitle={t("domains.addressBookCounts.errorImport")}
-          onImported={() => setCountKey((key) => key + 1)}
+          onImported={refreshCount}
         />
+      )}
+      {permissions.clear && (
+        <ClearAddressBookButton domain={domain} addressBookId={addressBookId} onCleared={refreshCount} />
       )}
     </div>
   );
@@ -88,7 +94,7 @@ interface Props {
 
 // Contacts held by the domain address books, so that an admin can check they were
 // provisioned (after an LDAP sync or a republish task, for instance), export them,
-// and import vCards into the domain address book.
+// and import vCards into, or clear the contacts of, the domain address book.
 export default function DomainAddressBookCounts({ domain }: Props) {
   const { t } = useTranslation();
   const permissions: Record<DomainAddressBookId, AddressBookPermissions> = {
@@ -96,12 +102,15 @@ export default function DomainAddressBookCounts({ domain }: Props) {
       count: useIsAllowed("GET", "/domains/{domain}/addressbooks/dab/contactCount"),
       export: useIsAllowed("POST", "/domains/{domain}/addressbooks/dab?action=export"),
       import: useIsAllowed("POST", "/domains/{domain}/addressbooks/dab?action=import"),
+      clear: useIsAllowed("DELETE", "/domains/{domain}/addressbooks/dab/contacts"),
     },
-    // Fed by the LDAP synchronization of the domain members: the server rejects imports.
+    // Fed by the LDAP synchronization of the domain members: the server rejects imports
+    // and clears.
     "domain-members": {
       count: useIsAllowed("GET", "/domains/{domain}/addressbooks/domain-members/contactCount"),
       export: useIsAllowed("POST", "/domains/{domain}/addressbooks/domain-members?action=export"),
       import: false,
+      clear: false,
     },
   };
   const [open, setOpen] = useState(false);
