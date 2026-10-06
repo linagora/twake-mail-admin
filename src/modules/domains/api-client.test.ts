@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const http = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn() }));
+const http = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), delete: vi.fn() }));
 
 vi.mock("@/lib/apiClient", () => ({
-  apiClient: { get: http.get, post: http.post, put: vi.fn(), patch: vi.fn(), delete: vi.fn() },
+  apiClient: { get: http.get, post: http.post, put: vi.fn(), patch: vi.fn(), delete: http.delete },
   getRaw: vi.fn(),
 }));
 
 import {
+  clearDomainAddressBook,
   exportDomainAddressBook,
   getDomainAddressBookContactCount,
   getDomainSignatureTemplates,
@@ -85,6 +86,25 @@ describe("domain address book export and import", () => {
       "/domains/a%2Fb/addressbooks/dab?action=import",
       "BEGIN:VCARD",
       { headers: { "Content-Type": "text/vcard" } }
+    );
+  });
+});
+
+describe("domain address book clear", () => {
+  beforeEach(() => {
+    http.delete.mockReset();
+    http.delete.mockResolvedValue({ taskId: "6d3bb34e" });
+  });
+
+  it("clears all the contacts and returns the task", async () => {
+    await expect(clearDomainAddressBook("a/b", "dab")).resolves.toEqual({ taskId: "6d3bb34e" });
+    expect(http.delete).toHaveBeenCalledWith("/domains/a%2Fb/addressbooks/dab/contacts");
+  });
+
+  it("restricts the clear to a source domain", async () => {
+    await clearDomainAddressBook("school.org", "dab", "student.school.org");
+    expect(http.delete).toHaveBeenCalledWith(
+      "/domains/school.org/addressbooks/dab/contacts?sourceDomain=student.school.org"
     );
   });
 });

@@ -479,7 +479,20 @@
       "exportTitle": "Export the address book (vCard)",
       "errorExport": "Error exporting address book",
       "importTitle": "Import contacts (vCard)",
-      "errorImport": "Error importing contacts"
+      "errorImport": "Error importing contacts",
+      "clear": {
+        "title": "Clear contacts",
+        "warning": "This permanently deletes the contacts of the address book. This cannot be undone.",
+        "sourceDomain": "Only contacts with a mail address in domain (optional)",
+        "invalidSourceDomain": "Invalid domain",
+        "confirmation": "Type {{addressBookId}} to confirm",
+        "submit": "Clear contacts",
+        "error": "Error clearing contacts",
+        "error400": "The domain, the source domain or the address book is invalid.",
+        "error404": "The domain or the address book does not exist.",
+        "error500": "The calendar server failed to reach its contacts storage.",
+        "errorUnknown": "An unexpected error occurred."
+      }
     },
     "subtitleMail": "Manage domains registered on the mail server.",
     "subtitleCalendar": "Manage domains registered on the calendar server."

@@ -496,6 +496,14 @@ DOMAINS = page(
                         may("POST", "/domains/{domain}/addressbooks/dab?action=import")
                     ],
                 ),
+                action(
+                    "dab-clear",
+                    "Clear the contacts of the domain address book",
+                    "Vider les contacts du carnet d'adresses du domaine",
+                    endpoints=[
+                        may("DELETE", "/domains/{domain}/addressbooks/dab/contacts")
+                    ],
+                ),
             ],
         ),
         action(

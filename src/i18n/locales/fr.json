@@ -479,7 +479,20 @@
       "exportTitle": "Exporter le carnet d'adresses (vCard)",
       "errorExport": "Erreur lors de l'export du carnet d'adresses",
       "importTitle": "Importer des contacts (vCard)",
-      "errorImport": "Erreur lors de l'import des contacts"
+      "errorImport": "Erreur lors de l'import des contacts",
+      "clear": {
+        "title": "Vider les contacts",
+        "warning": "Cette action supprime définitivement les contacts du carnet d'adresses. Elle est irréversible.",
+        "sourceDomain": "Uniquement les contacts ayant une adresse mail dans le domaine (facultatif)",
+        "invalidSourceDomain": "Domaine invalide",
+        "confirmation": "Saisissez {{addressBookId}} pour confirmer",
+        "submit": "Vider les contacts",
+        "error": "Erreur lors de la suppression des contacts",
+        "error400": "Le domaine, le domaine source ou le carnet d'adresses est invalide.",
+        "error404": "Le domaine ou le carnet d'adresses n'existe pas.",
+        "error500": "Le serveur calendrier n'a pas pu joindre le stockage des contacts.",
+        "errorUnknown": "Une erreur inattendue est survenue."
+      }
     },
     "subtitleMail": "Gérer les domaines enregistrés sur le serveur mail.",
     "subtitleCalendar": "Gérer les domaines enregistrés sur le serveur calendrier."

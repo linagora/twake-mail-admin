@@ -185,11 +185,11 @@ export function ImportCollectionButton({
 }
 
 /**
- * Waits for an import task to leave its running state. Reading the task is best
- * effort: a client whose permissions do not cover the task routes, or a task
- * still running after the last attempt, simply stops being waited for.
+ * Waits for a task altering a collection to leave its running state. Reading the
+ * task is best effort: a client whose permissions do not cover the task routes, or
+ * a task still running after the last attempt, simply stops being waited for.
  */
-async function waitForTask(
+export async function waitForTask(
   taskId: string,
   domain: string | undefined,
   keepWaiting: () => boolean
@@ -201,7 +201,7 @@ async function waitForTask(
       const { status } = await getTaskDetail(taskId, domain);
       if (status !== TaskStatus.WAITING && status !== TaskStatus.IN_PROGRESS) return;
     } catch {
-      // Not readable: the import was accepted all the same, stop waiting.
+      // Not readable: the task was accepted all the same, stop waiting.
       return;
     }
   }

@@ -340,6 +340,20 @@ export const importDomainAddressBook = async (
   );
 };
 
+// Schedules an asynchronous task deleting the contacts of the address book, or only
+// those having a mail address within sourceDomain when set. Only "dab" can be cleared:
+// "domain-members" is fed by the LDAP synchronization. Returns the id of the task to monitor.
+export const clearDomainAddressBook = async (
+  domain: string,
+  addressBookId: DomainAddressBookId,
+  sourceDomain?: string
+): Promise<RunTaskResponse> => {
+  const query = sourceDomain ? `?${new URLSearchParams({ sourceDomain }).toString()}` : "";
+  return apiClient.delete(
+    `/domains/${encodeURIComponent(domain)}/addressbooks/${addressBookId}/contacts${query}`
+  );
+};
+
 export const provisionDomainTemplates = async (
   domain: string,
   params: { from: string; folderName?: string; overwriteExisting?: boolean; prune?: boolean; usersPerSecond?: string }
