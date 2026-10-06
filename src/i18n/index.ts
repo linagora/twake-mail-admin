@@ -6,6 +6,9 @@ import fr from "./locales/fr.json";
 import ru from "./locales/ru.json";
 import vi from "./locales/vi.json";
 import mn from "./locales/mn.json";
+import es from "./locales/es.json";
+import de from "./locales/de.json";
+import it from "./locales/it.json";
 
 export const supportedLanguages = [
   { code: "en", label: "English" },
@@ -13,6 +16,9 @@ export const supportedLanguages = [
   { code: "ru", label: "Русский" },
   { code: "vi", label: "Tiếng Việt" },
   { code: "mn", label: "Монгол" },
+  { code: "es", label: "Español" },
+  { code: "de", label: "Deutsch" },
+  { code: "it", label: "Italiano" },
 ] as const;
 
 i18n
@@ -25,6 +31,9 @@ i18n
       ru: { translation: ru },
       vi: { translation: vi },
       mn: { translation: mn },
+      es: { translation: es },
+      de: { translation: de },
+      it: { translation: it },
     },
     fallbackLng: "en",
     supportedLngs: supportedLanguages.map((l) => l.code),
