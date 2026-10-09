@@ -500,7 +500,9 @@
   "users": {
     "title": "Chi tiết người dùng",
     "label": "Tên người dùng: {{username}}",
-    "searchPlaceholder": "Tìm người dùng...",
+    "searchPlaceholder": "Tìm người dùng theo phần đầu tên...",
+    "searchHint": "Khớp với phần đầu của tên người dùng",
+    "allDomains": "Tất cả tên miền",
     "registration": {
       "notRegistered": "Người dùng này chưa được đăng ký",
       "notRegisteredHint": "Người dùng tồn tại trong thư mục nhưng chưa được đăng ký trên máy chủ DAV. Lịch, sổ địa chỉ và liên kết đặt lịch sẽ không khả dụng cho đến khi người dùng được đăng ký.",

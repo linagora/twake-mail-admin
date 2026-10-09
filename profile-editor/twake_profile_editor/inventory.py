@@ -771,6 +771,7 @@ USERS = page(
     endpoints=[
         must("GET", "/users", modes=GLOBAL),
         must("GET", "/domains/{domain}/users", modes=DOMAIN),
+        may("GET", "/users?domain={domain}&{params}", modes=DOMAIN),
     ],
     children=[
         action(
