@@ -1,0 +1,87 @@
+# QA stack started by start.sh: the admin app in front of a distributed tmail-backend
+# (Cassandra, OpenSearch, RabbitMQ, S3, Redis, Tika), like tmail-backend/apps/distributed/docker-compose.yml
+# but under its own compose project, without fixed container names, and with no port published
+# except the admin app and WebAdmin (on 127.0.0.1).
+#
+# Memory: the JVMs size their heap after the host RAM by default (Cassandra alone takes a quarter
+# of it, up to 8 GB). Their heaps are capped so that the stack fits in about 3 GB.
+services:
+  tmail-backend:
+    image: ${TMAIL_BACKEND_IMAGE:?}
+    hostname: tmail-backend.local
+    depends_on:
+      cassandra:
+        condition: service_healthy
+      opensearch:
+        condition: service_started
+      tika:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      redis:
+        condition: service_started
+      s3:
+        condition: service_started
+    volumes:
+      - ./.generated/jwt_publickey:/root/conf/jwt_publickey
+      - ./.generated/jwt_privatekey:/root/conf/jwt_privatekey
+      - ./.generated/webadmin.properties:/root/conf/webadmin.properties
+      - ${TMAIL_BACKEND_DIR:?}/docker-configuration/redis.properties:/root/conf/redis.properties
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx1g
+    ports:
+      - "127.0.0.1:${QA_WEBADMIN_PORT:?}:8000"
+    restart: on-failure
+
+  admin:
+    image: twake-mail-admin-qa
+    volumes:
+      - ./.generated/env.js:/usr/share/nginx/html/env.js:ro
+    ports:
+      - "127.0.0.1:${QA_ADMIN_PORT:?}:80"
+
+  cassandra:
+    image: cassandra:4.1.9
+    healthcheck:
+      test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
+      interval: 3s
+      timeout: 20s
+      retries: 40
+    environment:
+      # cassandra-env.sh needs both, or it ignores them. Memtables, key and chunk caches are
+      # derived from the heap and shrink with it.
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=128M
+      - JVM_OPTS=-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=1
+
+  opensearch:
+    image: opensearchproject/opensearch:2.19.2
+    environment:
+      - discovery.type=single-node
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_JAVA_OPTS=-Xms384m -Xmx384m
+
+  tika:
+    image: apache/tika:3.2.0.0
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m
+
+  rabbitmq:
+    image: rabbitmq:4.0.9-management
+
+  s3:
+    image: ghcr.io/scality/cloudserver:c1ba296859690c1cbbec609aaae430f6b04b4745
+    environment:
+      - SCALITY_ACCESS_KEY_ID=accessKey1
+      - SCALITY_SECRET_ACCESS_KEY=secretKey1
+      - S3BACKEND=mem
+      - REMOTE_MANAGEMENT_DISABLE=1
+    networks:
+      default:
+        # blob.properties of the image: objectstorage.s3.endPoint=http://s3.docker.test:8000/
+        aliases:
+          - s3.docker.test
+
+  redis:
+    image: redis:8.0.2
