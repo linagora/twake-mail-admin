@@ -9,6 +9,7 @@ const api = vi.hoisted(() => ({
   exportDomainAddressBook: vi.fn(),
   importDomainAddressBook: vi.fn(),
   clearDomainAddressBook: vi.fn(),
+  copyIntoDomainAddressBook: vi.fn(),
 }));
 
 vi.mock("@/lib/proxy-resolver-context", () => ({
@@ -33,6 +34,7 @@ beforeEach(() => {
   api.exportDomainAddressBook.mockReset();
   api.importDomainAddressBook.mockReset();
   api.clearDomainAddressBook.mockReset();
+  api.copyIntoDomainAddressBook.mockReset();
 });
 
 afterEach(cleanup);
@@ -140,5 +142,64 @@ describe("domain address book contact counts", () => {
 
     expect(screen.getByText("domains.addressBookCounts.clear.invalidSourceDomain")).not.toBeNull();
     expect((screen.getByRole("button", { name: "domains.addressBookCounts.clear.submit" }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it("offers to copy users into the domain address book only", () => {
+    api.getDomainAddressBookContactCount.mockResolvedValue({ count: 3 });
+    renderWith(ALL);
+    unfold();
+
+    expect(screen.getAllByTitle("domains.addressBookCounts.copy.title")).toHaveLength(1);
+  });
+
+  it("hides the copy action the profile does not allow", () => {
+    renderWith([{ endpoint: "/domains/{domain}/addressbooks/dab?action=import" }]);
+    unfold();
+
+    expect(screen.queryByTitle("domains.addressBookCounts.copy.title")).toBeNull();
+  });
+
+  it("copies the users of the source domain with an LDAP filter", async () => {
+    api.copyIntoDomainAddressBook.mockResolvedValue({ taskId: "6d3bb34e" });
+    renderWith([{ endpoint: "/domains/{domain}/addressbooks/dab?action=copyFrom" }]);
+    unfold();
+    fireEvent.click(screen.getByTitle("domains.addressBookCounts.copy.title"));
+    const submit = screen.getByRole("button", { name: "domains.addressBookCounts.copy.submit" }) as HTMLButtonElement;
+
+    expect(submit.disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.copy.sourceDomain"), { target: { value: " students.school.org " } });
+    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.copy.ldapFilter"), { target: { value: " (employeeType=student) " } });
+    expect(submit.disabled).toBe(false);
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(api.copyIntoDomainAddressBook).toHaveBeenCalledWith(
+      "linagora.com", "dab", "students.school.org", "(employeeType=student)"
+    ));
+  });
+
+  it("copies without LDAP filter when none is given", async () => {
+    api.copyIntoDomainAddressBook.mockResolvedValue({ taskId: "6d3bb34e" });
+    renderWith([{ endpoint: "/domains/{domain}/addressbooks/dab?action=copyFrom" }]);
+    unfold();
+    fireEvent.click(screen.getByTitle("domains.addressBookCounts.copy.title"));
+    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.copy.sourceDomain"), { target: { value: "students.school.org" } });
+    fireEvent.click(screen.getByRole("button", { name: "domains.addressBookCounts.copy.submit" }));
+
+    await waitFor(() => expect(api.copyIntoDomainAddressBook).toHaveBeenCalledWith(
+      "linagora.com", "dab", "students.school.org", undefined
+    ));
+  });
+
+  it.each([
+    ["not a domain", "domains.addressBookCounts.copy.invalidSourceDomain"],
+    ["Linagora.com", "domains.addressBookCounts.copy.sameDomain"],
+  ])("refuses the source domain %s", (sourceDomain, problem) => {
+    renderWith([{ endpoint: "/domains/{domain}/addressbooks/dab?action=copyFrom" }]);
+    unfold();
+    fireEvent.click(screen.getByTitle("domains.addressBookCounts.copy.title"));
+    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.copy.sourceDomain"), { target: { value: sourceDomain } });
+
+    expect(screen.getByText(problem)).not.toBeNull();
+    expect((screen.getByRole("button", { name: "domains.addressBookCounts.copy.submit" }) as HTMLButtonElement).disabled).toBe(true);
   });
 });

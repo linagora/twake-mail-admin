@@ -492,6 +492,21 @@
         "error404": "El dominio o la libreta de direcciones no existe.",
         "error500": "El servidor de calendario no pudo acceder a su almacenamiento de contactos.",
         "errorUnknown": "Se ha producido un error inesperado."
+      },
+      "copy": {
+        "title": "Copiar los usuarios de otro dominio",
+        "sourceDomain": "Dominio de origen",
+        "invalidSourceDomain": "Dominio no válido",
+        "sameDomain": "El dominio de origen debe ser distinto del dominio actual",
+        "ldapFilter": "Filtro LDAP (opcional)",
+        "ldapFilterHelp": "Filtro RFC 4515, p. ej. (employeeType=student). Requiere el repositorio de usuarios LDAP.",
+        "note": "Copiar de nuevo actualiza los contactos existentes y nunca elimina ninguno. Para quitar los usuarios que dejaron el dominio de origen, utilice la acción «Vaciar los contactos» con este dominio de origen.",
+        "submit": "Copiar los usuarios",
+        "error": "Error al copiar los usuarios",
+        "error400": "El dominio, el dominio de origen o el filtro LDAP no es válido, o el filtro LDAP se usa sin el repositorio de usuarios LDAP.",
+        "error404": "El dominio o la libreta de direcciones no existe.",
+        "error500": "El servidor de calendario no pudo acceder a su almacenamiento de contactos.",
+        "errorUnknown": "Se ha producido un error inesperado."
       }
     },
     "subtitleMail": "Gestione los dominios registrados en el servidor de correo.",

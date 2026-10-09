@@ -492,6 +492,21 @@
         "error404": "Die Domain oder das Adressbuch existiert nicht.",
         "error500": "Der Kalenderserver konnte seinen Kontaktspeicher nicht erreichen.",
         "errorUnknown": "Ein unerwarteter Fehler ist aufgetreten."
+      },
+      "copy": {
+        "title": "Benutzer aus einer anderen Domain kopieren",
+        "sourceDomain": "Quelldomain",
+        "invalidSourceDomain": "Ungültige Domain",
+        "sameDomain": "Die Quelldomain muss sich von der aktuellen Domain unterscheiden",
+        "ldapFilter": "LDAP-Filter (optional)",
+        "ldapFilterHelp": "RFC-4515-Filter, z. B. (employeeType=student). Erfordert das LDAP-Benutzer-Repository.",
+        "note": "Ein erneutes Kopieren aktualisiert die vorhandenen Kontakte und löscht nie welche. Um Benutzer zu entfernen, die die Quelldomain verlassen haben, verwenden Sie die Aktion „Kontakte leeren“ mit dieser Quelldomain.",
+        "submit": "Benutzer kopieren",
+        "error": "Fehler beim Kopieren der Benutzer",
+        "error400": "Die Domain, die Quelldomain oder der LDAP-Filter ist ungültig, oder der LDAP-Filter wird ohne das LDAP-Benutzer-Repository verwendet.",
+        "error404": "Die Domain oder das Adressbuch existiert nicht.",
+        "error500": "Der Kalenderserver konnte seinen Kontaktspeicher nicht erreichen.",
+        "errorUnknown": "Ein unerwarteter Fehler ist aufgetreten."
       }
     },
     "subtitleMail": "Auf dem Mailserver registrierte Domains verwalten.",

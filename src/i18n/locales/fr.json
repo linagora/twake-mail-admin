@@ -492,6 +492,21 @@
         "error404": "Le domaine ou le carnet d'adresses n'existe pas.",
         "error500": "Le serveur calendrier n'a pas pu joindre le stockage des contacts.",
         "errorUnknown": "Une erreur inattendue est survenue."
+      },
+      "copy": {
+        "title": "Copier les utilisateurs d'un autre domaine",
+        "sourceDomain": "Domaine source",
+        "invalidSourceDomain": "Domaine invalide",
+        "sameDomain": "Le domaine source doit être différent du domaine courant",
+        "ldapFilter": "Filtre LDAP (facultatif)",
+        "ldapFilterHelp": "Filtre RFC 4515, par ex. (employeeType=student). Nécessite le référentiel d'utilisateurs LDAP.",
+        "note": "Une nouvelle copie met à jour les contacts existants et n'en supprime jamais. Pour retirer les utilisateurs ayant quitté le domaine source, utilisez l'action « Vider les contacts » avec ce domaine source.",
+        "submit": "Copier les utilisateurs",
+        "error": "Erreur lors de la copie des utilisateurs",
+        "error400": "Le domaine, le domaine source ou le filtre LDAP est invalide, ou le filtre LDAP est utilisé sans le référentiel d'utilisateurs LDAP.",
+        "error404": "Le domaine ou le carnet d'adresses n'existe pas.",
+        "error500": "Le serveur calendrier n'a pas pu joindre le stockage des contacts.",
+        "errorUnknown": "Une erreur inattendue est survenue."
       }
     },
     "subtitleMail": "Gérer les domaines enregistrés sur le serveur mail.",

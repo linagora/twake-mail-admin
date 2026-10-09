@@ -492,6 +492,21 @@
         "error404": "Il dominio o la rubrica non esiste.",
         "error500": "Il server del calendario non è riuscito a raggiungere l'archivio dei contatti.",
         "errorUnknown": "Si è verificato un errore imprevisto."
+      },
+      "copy": {
+        "title": "Copia gli utenti da un altro dominio",
+        "sourceDomain": "Dominio di origine",
+        "invalidSourceDomain": "Dominio non valido",
+        "sameDomain": "Il dominio di origine deve essere diverso dal dominio corrente",
+        "ldapFilter": "Filtro LDAP (facoltativo)",
+        "ldapFilterHelp": "Filtro RFC 4515, ad es. (employeeType=student). Richiede il repository utenti LDAP.",
+        "note": "Una nuova copia aggiorna i contatti esistenti e non ne elimina mai. Per rimuovere gli utenti che hanno lasciato il dominio di origine, usa l'azione «Svuota i contatti» con questo dominio di origine.",
+        "submit": "Copia gli utenti",
+        "error": "Errore durante la copia degli utenti",
+        "error400": "Il dominio, il dominio di origine o il filtro LDAP non è valido, oppure il filtro LDAP è usato senza il repository utenti LDAP.",
+        "error404": "Il dominio o la rubrica non esiste.",
+        "error500": "Il server del calendario non è riuscito a raggiungere l'archivio dei contatti.",
+        "errorUnknown": "Si è verificato un errore imprevisto."
       }
     },
     "subtitleMail": "Gestisci i domini registrati sul server di posta.",

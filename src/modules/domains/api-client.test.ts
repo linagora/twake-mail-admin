@@ -9,6 +9,7 @@ vi.mock("@/lib/apiClient", () => ({
 
 import {
   clearDomainAddressBook,
+  copyIntoDomainAddressBook,
   exportDomainAddressBook,
   getDomainAddressBookContactCount,
   getDomainSignatureTemplates,
@@ -105,6 +106,27 @@ describe("domain address book clear", () => {
     await clearDomainAddressBook("school.org", "dab", "student.school.org");
     expect(http.delete).toHaveBeenCalledWith(
       "/domains/school.org/addressbooks/dab/contacts?sourceDomain=student.school.org"
+    );
+  });
+});
+
+describe("domain address book copy", () => {
+  beforeEach(() => {
+    http.post.mockReset();
+    http.post.mockResolvedValue({ taskId: "6d3bb34e" });
+  });
+
+  it("copies the users of the source domain and returns the task", async () => {
+    await expect(copyIntoDomainAddressBook("a/b", "dab", "students.school.org")).resolves.toEqual({ taskId: "6d3bb34e" });
+    expect(http.post).toHaveBeenCalledWith(
+      "/domains/a%2Fb/addressbooks/dab?action=copyFrom&sourceDomain=students.school.org"
+    );
+  });
+
+  it("encodes the LDAP filter", async () => {
+    await copyIntoDomainAddressBook("teachers.school.org", "dab", "students.school.org", "(employeeType=student)");
+    expect(http.post).toHaveBeenCalledWith(
+      "/domains/teachers.school.org/addressbooks/dab?action=copyFrom&sourceDomain=students.school.org&ldapFilter=%28employeeType%3Dstudent%29"
     );
   });
 });
