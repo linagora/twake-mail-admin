@@ -354,6 +354,24 @@ export const clearDomainAddressBook = async (
   );
 };
 
+// Schedules an asynchronous task copying the users of sourceDomain into the address book
+// as contacts. Users come from the users repository, or from the LDAP when an RFC 4515
+// ldapFilter is set. Copying again updates the existing contacts and never deletes any.
+// Only "dab" accepts copies: "domain-members" is fed by the LDAP synchronization.
+// Returns the id of the task to monitor.
+export const copyIntoDomainAddressBook = async (
+  domain: string,
+  addressBookId: DomainAddressBookId,
+  sourceDomain: string,
+  ldapFilter?: string
+): Promise<RunTaskResponse> => {
+  const query = new URLSearchParams({ action: "copyFrom", sourceDomain });
+  if (ldapFilter) query.set("ldapFilter", ldapFilter);
+  return apiClient.post(
+    `/domains/${encodeURIComponent(domain)}/addressbooks/${addressBookId}?${query.toString()}`
+  );
+};
+
 export const provisionDomainTemplates = async (
   domain: string,
   params: { from: string; folderName?: string; overwriteExisting?: boolean; prune?: boolean; usersPerSecond?: string }

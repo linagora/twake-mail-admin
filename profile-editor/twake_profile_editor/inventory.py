@@ -504,6 +504,18 @@ DOMAINS = page(
                         may("DELETE", "/domains/{domain}/addressbooks/dab/contacts")
                     ],
                 ),
+                action(
+                    "dab-copy",
+                    "Copy the users of another domain into the domain address book",
+                    "Copier les utilisateurs d'un autre domaine dans le carnet d'adresses"
+                    " du domaine",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/addressbooks/dab?action=copyFrom",
+                        )
+                    ],
+                ),
             ],
         ),
         action(

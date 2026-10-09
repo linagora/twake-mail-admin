@@ -9,14 +9,12 @@ import { waitForTask } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { clearDomainAddressBook, DomainAddressBookId } from "../api-client";
+import { isValidDomainName } from "./domain-name";
 
 const INPUT_CLASS = "w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500";
 
-// Labels separated by dots, each made of letters, digits and inner hyphens.
-const DOMAIN_PATTERN = /^(?!-)[a-z0-9-]{1,63}(?<!-)(\.(?!-)[a-z0-9-]{1,63}(?<!-))*$/i;
-
 const isValidSourceDomain = (sourceDomain: string): boolean =>
-  sourceDomain === "" || DOMAIN_PATTERN.test(sourceDomain);
+  sourceDomain === "" || isValidDomainName(sourceDomain);
 
 const ERROR_KEYS: Record<number, string> = {
   400: "domains.addressBookCounts.clear.error400",

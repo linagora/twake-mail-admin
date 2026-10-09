@@ -492,6 +492,21 @@
         "error404": "The domain or the address book does not exist.",
         "error500": "The calendar server failed to reach its contacts storage.",
         "errorUnknown": "An unexpected error occurred."
+      },
+      "copy": {
+        "title": "Copy users from another domain",
+        "sourceDomain": "Source domain",
+        "invalidSourceDomain": "Invalid domain",
+        "sameDomain": "The source domain must differ from the current domain",
+        "ldapFilter": "LDAP filter (optional)",
+        "ldapFilterHelp": "RFC 4515 filter, e.g. (employeeType=student). Requires the LDAP users repository.",
+        "note": "Copying again updates the existing contacts and never deletes any. To remove the users who left the source domain, use the \"Clear contacts\" action with this source domain.",
+        "submit": "Copy users",
+        "error": "Error copying users",
+        "error400": "The domain, the source domain or the LDAP filter is invalid, or the LDAP filter is used without the LDAP users repository.",
+        "error404": "The domain or the address book does not exist.",
+        "error500": "The calendar server failed to reach its contacts storage.",
+        "errorUnknown": "An unexpected error occurred."
       }
     },
     "subtitleMail": "Manage domains registered on the mail server.",

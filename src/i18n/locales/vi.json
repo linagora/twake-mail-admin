@@ -492,6 +492,21 @@
         "error404": "Miền hoặc sổ địa chỉ không tồn tại.",
         "error500": "Máy chủ lịch không thể kết nối tới kho danh bạ.",
         "errorUnknown": "Đã xảy ra lỗi không mong muốn."
+      },
+      "copy": {
+        "title": "Sao chép người dùng từ miền khác",
+        "sourceDomain": "Miền nguồn",
+        "invalidSourceDomain": "Miền không hợp lệ",
+        "sameDomain": "Miền nguồn phải khác với miền hiện tại",
+        "ldapFilter": "Bộ lọc LDAP (tùy chọn)",
+        "ldapFilterHelp": "Bộ lọc RFC 4515, ví dụ (employeeType=student). Yêu cầu kho người dùng LDAP.",
+        "note": "Sao chép lại sẽ cập nhật các liên hệ hiện có và không bao giờ xóa liên hệ nào. Để loại bỏ người dùng đã rời miền nguồn, hãy dùng thao tác \"Xóa danh bạ\" với miền nguồn này.",
+        "submit": "Sao chép người dùng",
+        "error": "Lỗi khi sao chép người dùng",
+        "error400": "Miền, miền nguồn hoặc bộ lọc LDAP không hợp lệ, hoặc bộ lọc LDAP được dùng khi không có kho người dùng LDAP.",
+        "error404": "Miền hoặc sổ địa chỉ không tồn tại.",
+        "error500": "Máy chủ lịch không thể kết nối tới kho danh bạ.",
+        "errorUnknown": "Đã xảy ra lỗi không mong muốn."
       }
     },
     "subtitleMail": "Quản lý các tên miền đã đăng ký trên máy chủ thư.",
