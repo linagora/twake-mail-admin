@@ -41,6 +41,7 @@ a task or action parameter.
 | `DELETE /tasks` | `DELETE /tasks?olderThan={days}day` |
 | `GET /quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}&domain={domain}` | `GET /quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}` |
 | `GET /tasks` | `GET /tasks?{query_params}` |
+| `GET /users` | `GET /users?limit={limit}&anchor={anchor}&query={query}` |
 | `PATCH /registeredUsers` | `PATCH /registeredUsers?id={id}` |
 | `POST /addressbook/domain-members/{domain}` | `POST /addressbook/domain-members/{domain}?task=sync` |
 | `POST /calendars/{username}` | `POST /calendars/{username}?task=archive` |
@@ -341,7 +342,7 @@ Note: an address book row is shown when at least one of its actions is allowed; 
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
-| Page load | GET | `/users` | MUST |
+| Page load, search and pagination | GET | `/users?limit={limit}&anchor={anchor}&query={query}` | MUST |
 
 ### User detail — Mailboxes tab *(APPLICATION:"MAIL")*
 

@@ -5,8 +5,19 @@ import { RateLimits } from "@/components/custom/rate-limits";
 import { CollectionCount } from "@/components/custom/dav-collection-actions";
 import { GetUserChannelsResponseType } from "@/modules/network-channels/types";
 
-export const getUsers = async (): Promise<GetUsersResponseType> => {
-  const response = await apiClient.get<any, GetUsersResponseType>("/users");
+export interface GetUsersParams {
+  limit?: number;
+  anchor?: string;
+  query?: string;
+}
+
+export const getUsers = async (params: GetUsersParams = {}): Promise<GetUsersResponseType> => {
+  const query = new URLSearchParams();
+  if (params.limit !== undefined) query.set("limit", String(params.limit));
+  if (params.anchor) query.set("anchor", params.anchor);
+  if (params.query) query.set("query", params.query);
+  const suffix = query.toString();
+  const response = await apiClient.get<any, GetUsersResponseType>(suffix ? `/users?${suffix}` : "/users");
   return response;
 };
 

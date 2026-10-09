@@ -501,6 +501,7 @@
     "title": "User Details",
     "label": "Username: {{username}}",
     "searchPlaceholder": "Search users...",
+    "pageNumber": "Page {{page}}",
     "registration": {
       "notRegistered": "This user is not registered",
       "notRegisteredHint": "The user exists in the directory but is not registered on the DAV server yet. Calendars, address books and booking links are unavailable until the user is registered.",

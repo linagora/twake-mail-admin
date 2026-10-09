@@ -501,6 +501,7 @@
     "title": "Detalles del usuario",
     "label": "Nombre de usuario: {{username}}",
     "searchPlaceholder": "Buscar usuarios...",
+    "pageNumber": "Página {{page}}",
     "registration": {
       "notRegistered": "Este usuario no está registrado",
       "notRegisteredHint": "El usuario existe en el directorio pero aún no está registrado en el servidor DAV. Los calendarios, las libretas de direcciones y los enlaces de reserva no estarán disponibles hasta que se registre.",

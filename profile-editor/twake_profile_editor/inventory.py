@@ -769,7 +769,7 @@ USERS = page(
     "Users",
     "Utilisateurs",
     endpoints=[
-        must("GET", "/users", modes=GLOBAL),
+        must("GET", "/users?limit={limit}&anchor={anchor}&query={query}", modes=GLOBAL, gates=("/users",)),
         must("GET", "/domains/{domain}/users", modes=DOMAIN),
     ],
     children=[
