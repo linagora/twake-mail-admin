@@ -144,6 +144,7 @@ too — gated by the domain Users page rather than by `GET /users`.
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Tab load | GET | `/domains/{domain}/users` | MUST |
+| Tab load, paginated and searched by the server | GET | `/users?domain={domain}&{params}` | MAY (falls back to `/domains/{domain}/users`, paginated in the browser) |
 
 ### Domain detail — Quota tab *(APPLICATION:"MAIL")*
 
@@ -342,6 +343,7 @@ Note: an address book row is shown when at least one of its actions is allowed; 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Page load | GET | `/users` | MUST |
+| Domain filter selector | GET | `/domains` | MAY (do not show the selector if missing) |
 
 ### User detail — Mailboxes tab *(APPLICATION:"MAIL")*
 
