@@ -90,14 +90,14 @@ export default function DomainsList() {
   return (
     <div>
       {canCreate && (
-        <div className="flex gap-2 mt-4">
+        <div className="flex flex-wrap gap-2 mt-4">
           <input
             type="text"
             value={newDomain}
             onChange={(e) => setNewDomain(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
             placeholder={t("domains.newDomainPlaceholder")}
-            className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+            className="flex-1 min-w-48 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
           <button
             onClick={handleCreate}
@@ -140,10 +140,10 @@ export default function DomainsList() {
         {paginated.map((domain, index) => (
           <div
             key={domain}
-            className="space-y-1 p-4 bg-white rounded-2 my-4 p-4 flex justify-between items-center"
+            className="space-y-1 p-4 bg-white rounded-2 my-4 p-4 flex justify-between items-center gap-2"
           >
-            <div>
-              <h4 className="text-sm font-medium leading-none">
+            <div className="min-w-0">
+              <h4 className="text-sm font-medium leading-none break-all">
                 <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
                 <Link
                   to={`/domains/domain/${encodeURIComponent(domain)}`}
@@ -156,7 +156,7 @@ export default function DomainsList() {
             {canDelete && (
               <button
                 onClick={() => handleDelete(domain)}
-                className="p-2 rounded-md hover:bg-gray-200"
+                className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                 title={t("domains.deleteDomain")}
               >
                 <Trash2 className="w-4 h-4 text-red-600" />

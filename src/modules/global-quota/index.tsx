@@ -87,7 +87,7 @@ export default function GlobalQuota() {
   };
 
   return (
-    <div className="p-4 w-fit">
+    <div className="p-4 w-fit max-w-full">
       <Header headerTitle={t("globalQuota.title")} headerSubTitle={t("globalQuota.subtitle")} docuUrl={docuUrl} />
 
       <div className="mt-4">

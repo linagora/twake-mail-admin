@@ -8,7 +8,7 @@ const docuUrl =
 export default function NetworkChannels() {
   const { t } = useTranslation();
   return (
-    <div className="p-4 w-fit">
+    <div className="p-4 w-fit max-w-full">
       <Header
         headerTitle={t("sidebar.networkChannels")}
         headerSubTitle={t("networkChannels.subtitle")}

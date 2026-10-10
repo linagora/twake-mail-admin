@@ -12,7 +12,7 @@ export default function Domains() {
   const subtitleKey = appConfig.application === 'CALENDAR' ? "domains.subtitleCalendar" : "domains.subtitleMail";
 
   return (
-    <div className="p-4 w-fit">
+    <div className="p-4 w-fit max-w-full">
       <Header
         headerTitle={t("sidebar.domains")}
         headerSubTitle={t(subtitleKey)}

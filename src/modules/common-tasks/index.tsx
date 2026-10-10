@@ -228,7 +228,7 @@ export default function CommonTasks() {
   const { t } = useTranslation();
   if (appConfig.application === 'CALENDAR') {
     return (
-      <div className="p-4 relative w-fit">
+      <div className="p-4 relative w-fit max-w-full">
         <Header headerTitle={t("commonTasks.title")} headerSubTitle={t("commonTasks.subtitleCalendar")} docuUrl="" />
         <div className="grid grid-cols-1 gap-4 mt-4">
           {CALENDAR_TASKS.map((task) => (
@@ -422,7 +422,7 @@ function MailCommonTasks() {
   };
 
   return (
-    <div className="p-4 relative w-fit">
+    <div className="p-4 relative w-fit max-w-full">
       <Header
         headerTitle={t("commonTasks.title")}
         headerSubTitle={t("commonTasks.subtitleMail")}

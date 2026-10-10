@@ -8,7 +8,7 @@ const docuUrl =
 export default function MailingLists() {
   const { t } = useTranslation();
   return (
-    <div className="p-4 w-fit">
+    <div className="p-4 w-fit max-w-full">
       <Header
         headerTitle={t("sidebar.mailingLists")}
         headerSubTitle={t("mailingLists.subtitle")}

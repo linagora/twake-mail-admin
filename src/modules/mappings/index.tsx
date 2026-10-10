@@ -8,7 +8,7 @@ const docuUrl =
 export default function Mappings() {
   const { t } = useTranslation();
   return (
-    <div className="p-4 w-fit">
+    <div className="p-4 w-fit max-w-full">
       <Header
         headerTitle={t("sidebar.mappings")}
         headerSubTitle={t("mappings.subtitle")}

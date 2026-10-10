@@ -19,8 +19,8 @@ export function PaginationControls({
 }: PaginationControlsProps) {
   const { t } = useTranslation();
   return (
-    <div className="mt-6 flex items-center justify-between gap-4">
-      <div className="flex items-center gap-2">
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center gap-2">
         <Button variant="outline" size="sm" onClick={onFirst} disabled={disabledPrev}>
           <ChevronFirst className="w-4 h-4" />
           {t("common.first")}
@@ -31,7 +31,7 @@ export function PaginationControls({
         </Button>
       </div>
       <span className="text-sm text-muted-foreground font-medium">{label}</span>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" onClick={onNext} disabled={disabledNext}>
           {t("common.next")}
           <ChevronRight className="w-4 h-4" />

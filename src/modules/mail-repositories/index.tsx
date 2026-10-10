@@ -10,7 +10,7 @@ export default function MailRepositories() {
   const { id } = useParams();
 
   return (
-    <div className="p-4 w-fit">
+    <div className="p-4 w-fit max-w-full">
       <Header
         headerTitle={t("sidebar.mailRepositories")}
         headerSubTitle={t("mailRepositories.subtitle")}
