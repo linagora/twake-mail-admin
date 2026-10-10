@@ -70,7 +70,9 @@
     "tasks": "Aufgaben",
     "list": "Liste",
     "confirm": "Bestätigen",
-    "noSearchResults": "Keine Ergebnisse für Ihre Suche."
+    "noSearchResults": "Keine Ergebnisse für Ihre Suche.",
+    "back": "Zurück",
+    "refresh": "Aktualisieren"
   },
   "sidebar": {
     "application": "Anwendung",
@@ -756,7 +758,8 @@
         "valuePlaceholder": "Wert",
         "addCriterion": "Kriterium hinzufügen",
         "limitLabel": "Limit (optional):",
-        "noLimit": "Kein Limit"
+        "noLimit": "Kein Limit",
+        "removeCriterion": "Kriterium entfernen"
       },
       "operators": {
         "equals": "Gleich",
@@ -1292,7 +1295,10 @@
     "searchError": "Fehler bei der Suche nach dem Ereignis",
     "groupLabel": "Gruppe",
     "insertionIdLabel": "Einfüge-ID",
-    "paginationInfo": "Seite {{page}} — {{limit}} Ereignisse pro Seite / Gesamt: {{total}}"
+    "paginationInfo": "Seite {{page}} — {{limit}} Ereignisse pro Seite / Gesamt: {{total}}",
+    "redeliverGroupAction": "Ereignisse der Gruppe erneut zustellen",
+    "clearGroupAction": "Gruppe leeren",
+    "deleteEventAction": "Ereignis löschen"
   },
   "mailRepositories": {
     "pathLabel": "Repository-Pfad",

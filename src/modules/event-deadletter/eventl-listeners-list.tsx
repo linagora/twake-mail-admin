@@ -129,6 +129,8 @@ export default function EventListenersList() {
                 {canRedeliver && (
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"
+                    aria-label={t("eventDeadletter.redeliverGroupAction")}
+                    title={t("eventDeadletter.redeliverGroupAction")}
                     onClick={() => handleRedeliverGroup(group)}
                   >
                     <RefreshCw className="w-5 h-5 text-blue-600" />
@@ -138,6 +140,8 @@ export default function EventListenersList() {
                 {canDelete && (
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"
+                    aria-label={t("eventDeadletter.clearGroupAction")}
+                    title={t("eventDeadletter.clearGroupAction")}
                     onClick={() => handleClearGroup(group)}
                   >
                     <Trash2 className="w-5 h-5 text-red-600" />

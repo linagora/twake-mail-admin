@@ -122,7 +122,10 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
               value={criterion.fieldName}
               onValueChange={(v) => updateCriterion(index, "fieldName", v)}
             >
-              <SelectTrigger className="w-[160px] shrink-0">
+              <SelectTrigger
+                className="w-[160px] shrink-0"
+                aria-label={t("users.deletedVault.criteria.fieldPlaceholder")}
+              >
                 <SelectValue placeholder={t("users.deletedVault.criteria.fieldPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
@@ -139,7 +142,10 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
               onValueChange={(v) => updateCriterion(index, "operator", v)}
               disabled={!criterion.fieldName}
             >
-              <SelectTrigger className="w-[180px] shrink-0">
+              <SelectTrigger
+                className="w-[180px] shrink-0"
+                aria-label={t("users.deletedVault.criteria.operatorPlaceholder")}
+              >
                 <SelectValue placeholder={t("users.deletedVault.criteria.operatorPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
@@ -199,6 +205,8 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
               variant="ghost"
               size="icon"
               onClick={() => removeCriterion(index)}
+              aria-label={t("users.deletedVault.criteria.removeCriterion")}
+              title={t("users.deletedVault.criteria.removeCriterion")}
             >
               <Trash2 className="w-4 h-4 text-red-500" />
             </Button>

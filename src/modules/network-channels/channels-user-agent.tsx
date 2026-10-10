@@ -101,7 +101,7 @@ export default function ChannelsUserAgent() {
         <Button variant="outline" size="sm" onClick={() => navigate("/network-channels")}>
           <ArrowLeft className="w-4 h-4 mr-1" /> {t("networkChannels.backButton")}
         </Button>
-        <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>
+        <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading} aria-label={t("common.refresh")} title={t("common.refresh")}>
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
         </Button>
         {isLoading && (

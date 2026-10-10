@@ -70,7 +70,9 @@
     "tasks": "Tác vụ",
     "list": "Danh sách",
     "confirm": "Xác nhận",
-    "noSearchResults": "Không có kết quả phù hợp."
+    "noSearchResults": "Không có kết quả phù hợp.",
+    "back": "Quay lại",
+    "refresh": "Làm mới"
   },
   "sidebar": {
     "application": "Ứng dụng",
@@ -756,7 +758,8 @@
         "valuePlaceholder": "Giá trị",
         "addCriterion": "Thêm tiêu chí",
         "limitLabel": "Giới hạn (tùy chọn):",
-        "noLimit": "Không giới hạn"
+        "noLimit": "Không giới hạn",
+        "removeCriterion": "Xóa tiêu chí"
       },
       "operators": {
         "equals": "Bằng",
@@ -1292,7 +1295,10 @@
     "searchError": "Lỗi khi tìm sự kiện",
     "groupLabel": "Nhóm",
     "insertionIdLabel": "ID chèn",
-    "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}"
+    "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}",
+    "redeliverGroupAction": "Gửi lại các sự kiện của nhóm",
+    "clearGroupAction": "Xóa nhóm",
+    "deleteEventAction": "Xóa sự kiện"
   },
   "mailRepositories": {
     "pathLabel": "Đường dẫn kho",

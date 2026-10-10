@@ -187,6 +187,8 @@ export default function EventListenersDetail() {
                   {canDelete && (
                     <button
                       className="p-2 rounded-md hover:bg-gray-200"
+                      aria-label={t("eventDeadletter.deleteEventAction")}
+                      title={t("eventDeadletter.deleteEventAction")}
                       onClick={() => handleRemoveEvent(failedEventKey)}
                     >
                       <Trash2 className="w-5 h-5 text-red-600" />

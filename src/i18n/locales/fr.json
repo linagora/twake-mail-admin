@@ -70,7 +70,9 @@
     "tasks": "Tâches",
     "list": "Liste",
     "confirm": "Confirmer",
-    "noSearchResults": "Aucun résultat ne correspond à votre recherche."
+    "noSearchResults": "Aucun résultat ne correspond à votre recherche.",
+    "back": "Retour",
+    "refresh": "Rafraîchir"
   },
   "sidebar": {
     "application": "Application",
@@ -756,7 +758,8 @@
         "valuePlaceholder": "Valeur",
         "addCriterion": "Ajouter un critère",
         "limitLabel": "Limite (optionnel) :",
-        "noLimit": "Sans limite"
+        "noLimit": "Sans limite",
+        "removeCriterion": "Supprimer le critère"
       },
       "operators": {
         "equals": "Égal",
@@ -1292,7 +1295,10 @@
     "searchByGroupHint": "Restreint la recherche à un seul groupe de listeners, ce qui est nettement plus rapide lorsque le groupe est connu.",
     "searchError": "Erreur lors de la recherche d'événement",
     "groupLabel": "Groupe",
-    "insertionIdLabel": "ID d'insertion"
+    "insertionIdLabel": "ID d'insertion",
+    "redeliverGroupAction": "Relivrer les événements du groupe",
+    "clearGroupAction": "Vider le groupe",
+    "deleteEventAction": "Supprimer l'événement"
   },
   "mailRepositories": {
     "pathLabel": "Chemin du dépôt",
