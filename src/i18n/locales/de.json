@@ -1500,7 +1500,10 @@
   "liveMetrics": {
     "title": "Live-Metriken",
     "subtitle": "Prometheus-Metriken des Servers in Echtzeit.",
-    "filterPlaceholder": "Metriken filtern..."
+    "filterPlaceholder": "Metriken filtern...",
+    "refresh": "Metriken aktualisieren",
+    "empty": "Keine Metriken verfügbar.",
+    "noMatch": "Keine Metriken entsprechen \"{{search}}\"."
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",
