@@ -290,7 +290,14 @@ export default function Tasks() {
                 >
                   <span className="text-muted-foreground w-8">{globalIndex}.</span>
                   <div className="truncate">
-                    <span className="font-mono text-xs">{task.taskId}</span>
+                    {/* A real button (the row itself holds the cancel button) so the detail opens from the keyboard */}
+                    <button
+                      type="button"
+                      className="font-mono text-xs text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      onClick={() => setSelectedTask(task)}
+                    >
+                      {task.taskId}
+                    </button>
                     <br />
                     <span className="text-xs text-gray-500">{task.type}</span>
                   </div>
