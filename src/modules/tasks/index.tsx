@@ -170,7 +170,7 @@ export default function Tasks() {
   ];
 
   return (
-    <div className="p-4 w-fit">
+    <div className="p-4 w-fit max-w-full">
       <Header headerTitle={t("tasks.title")} headerSubTitle={t("tasks.subtitle")} docuUrl={docuUrl} />
 
       <div className="mt-4">
@@ -188,7 +188,7 @@ export default function Tasks() {
             {showFilters ? t("tasks.hideFilters") : t("tasks.filters")}
           </Button>
 
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex flex-wrap items-center gap-2 ml-auto">
             <label className="text-sm font-medium">{t("tasks.sort")}</label>
             <select
               className="border rounded px-2 py-1 text-sm"

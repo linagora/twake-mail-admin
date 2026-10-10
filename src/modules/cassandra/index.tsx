@@ -68,7 +68,7 @@ export default function Cassandra() {
   };
 
   return (
-    <div className="p-4 w-fit">
+    <div className="p-4 w-fit max-w-full">
       <Header headerTitle={t("cassandra.title")} headerSubTitle={t("cassandra.subtitle")} docuUrl={docuUrl} />
 
       <div className="mt-4">

@@ -5,7 +5,7 @@ import Header from "@/components/custom/header";
 export default function RegisteredUsers() {
   const { t } = useTranslation();
   return (
-    <div className="p-4 w-fit">
+    <div className="p-4 w-fit max-w-full">
       <Header headerTitle={t("sidebar.registeredUsers")} headerSubTitle={t("registeredUsers.subtitle")} docuUrl="" />
       <Outlet />
     </div>

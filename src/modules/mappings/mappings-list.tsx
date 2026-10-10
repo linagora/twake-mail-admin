@@ -267,7 +267,7 @@ export default function MappingsList() {
 
   return (
     <div>
-      <div className="mt-4 flex items-center gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         {canAddAddress && (
           <button
             onClick={() => { setShowCreate(!showCreate); setShowCreateRegex(false); setShowCreateDomain(false); }}
@@ -317,7 +317,7 @@ export default function MappingsList() {
               value={source}
               onChange={(e) => setSource(e.target.value)}
               placeholder={t("mappings.sourcePlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+              className="flex-1 min-w-0 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
             <span className="text-gray-400 text-sm">→</span>
             <input
@@ -326,7 +326,7 @@ export default function MappingsList() {
               onChange={(e) => setDestination(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
               placeholder={t("mappings.destinationPlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+              className="flex-1 min-w-0 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -355,7 +355,7 @@ export default function MappingsList() {
               value={regexSource}
               onChange={(e) => setRegexSource(e.target.value)}
               placeholder={t("mappings.mappingSourcePlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-purple-500"
+              className="flex-1 min-w-0 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-purple-500"
             />
             <span className="text-gray-400 text-sm">→</span>
             <input
@@ -364,7 +364,7 @@ export default function MappingsList() {
               onChange={(e) => setRegexValue(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreateRegex()}
               placeholder={t("mappings.regexPlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-purple-500"
+              className="flex-1 min-w-0 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-purple-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -393,7 +393,7 @@ export default function MappingsList() {
               value={domainSource}
               onChange={(e) => setDomainSource(e.target.value)}
               placeholder={t("mappings.domainSourcePlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-green-600"
+              className="flex-1 min-w-0 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-green-600"
             />
             <span className="text-gray-400 text-sm">→</span>
             <input
@@ -402,7 +402,7 @@ export default function MappingsList() {
               onChange={(e) => setDomainDestination(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreateDomain()}
               placeholder={t("mappings.domainDestinationPlaceholder")}
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-green-600"
+              className="flex-1 min-w-0 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-green-600"
             />
           </div>
           <p className="text-xs text-gray-500">{t("mappings.domainHint")}</p>
@@ -450,43 +450,45 @@ export default function MappingsList() {
           label={t("common.page", { page, totalPages, total: filteredMappings.length })}
         />
       )}
-      <table className="mt-4 w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="text-left px-4 py-2 text-sm font-medium">#</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.source")}</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.type")}</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.destination")}</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.action")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedMappings.map((mapping, index) => (
-            <tr
-              key={`${mapping.source}-${mapping.type}-${mapping.destination}-${index}`}
-              className="border-b hover:bg-gray-50"
-            >
-              <td className="px-4 py-2 text-sm text-gray-500">
-                {(page - 1) * PAGE_LIMIT + index + 1}
-              </td>
-              <td className="px-4 py-2 text-sm">{mapping.source}</td>
-              <td className="px-4 py-2 text-sm">{mapping.type}</td>
-              <td className="px-4 py-2 text-sm">{mapping.destination}</td>
-              <td className="px-4 py-2 text-sm">
-                {canDeleteMapping(mapping.type) && (
-                  <button
-                    onClick={() => handleDelete(mapping)}
-                    className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
-                    title={t("mappings.removeTitle", { type: mapping.type })}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
-              </td>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="text-left px-4 py-2 text-sm font-medium">#</th>
+              <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.source")}</th>
+              <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.type")}</th>
+              <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.destination")}</th>
+              <th className="text-left px-4 py-2 text-sm font-medium">{t("mappings.action")}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {paginatedMappings.map((mapping, index) => (
+              <tr
+                key={`${mapping.source}-${mapping.type}-${mapping.destination}-${index}`}
+                className="border-b hover:bg-gray-50"
+              >
+                <td className="px-4 py-2 text-sm text-gray-500">
+                  {(page - 1) * PAGE_LIMIT + index + 1}
+                </td>
+                <td className="px-4 py-2 text-sm">{mapping.source}</td>
+                <td className="px-4 py-2 text-sm">{mapping.type}</td>
+                <td className="px-4 py-2 text-sm">{mapping.destination}</td>
+                <td className="px-4 py-2 text-sm">
+                  {canDeleteMapping(mapping.type) && (
+                    <button
+                      onClick={() => handleDelete(mapping)}
+                      className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
+                      title={t("mappings.removeTitle", { type: mapping.type })}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {!isLoading && filteredMappings.length === 0 && (
         <p className="mt-4 text-gray-500 text-sm">{t("mappings.empty")}</p>
       )}

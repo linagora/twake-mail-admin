@@ -527,66 +527,68 @@ export default function MailingListsList({ domain }: Props) {
           label={t("common.page", { page, totalPages, total: filtered.length })}
         />
       )}
-      <table className="mt-4 w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="text-left px-4 py-2 text-sm font-medium">#</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">{t("mailingLists.address")}</th>
-            <th className="text-left px-4 py-2 text-sm font-medium">{t("mailingLists.details")}</th>
-            {canDelete && <th className="text-left px-4 py-2 text-sm font-medium" />}
-          </tr>
-        </thead>
-        <tbody>
-          {paginated.map((address, index) => {
-            const isOpen = expanded === address;
-            return (
-              <Fragment key={address}>
-                <tr
-                  className="border-b hover:bg-gray-50 cursor-pointer"
-                  onClick={() => toggle(address)}
-                >
-                  <td className="px-4 py-2 text-sm text-gray-500">
-                    {(page - 1) * PAGE_LIMIT + index + 1}
-                  </td>
-                  <td className="px-4 py-2 text-sm">{address}</td>
-                  <td className="px-4 py-2 text-sm">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); toggle(address); }}
-                      className="flex items-center gap-1 text-blue-500 hover:underline"
-                    >
-                      {isOpen ? (
-                        <ChevronDown className="w-4 h-4" />
-                      ) : (
-                        <ChevronRight className="w-4 h-4" />
-                      )}
-                      {isOpen ? t("mailingLists.hideDetails") : t("mailingLists.showDetails")}
-                    </button>
-                  </td>
-                  {canDelete && (
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="text-left px-4 py-2 text-sm font-medium">#</th>
+              <th className="text-left px-4 py-2 text-sm font-medium">{t("mailingLists.address")}</th>
+              <th className="text-left px-4 py-2 text-sm font-medium">{t("mailingLists.details")}</th>
+              {canDelete && <th className="text-left px-4 py-2 text-sm font-medium" />}
+            </tr>
+          </thead>
+          <tbody>
+            {paginated.map((address, index) => {
+              const isOpen = expanded === address;
+              return (
+                <Fragment key={address}>
+                  <tr
+                    className="border-b hover:bg-gray-50 cursor-pointer"
+                    onClick={() => toggle(address)}
+                  >
+                    <td className="px-4 py-2 text-sm text-gray-500">
+                      {(page - 1) * PAGE_LIMIT + index + 1}
+                    </td>
+                    <td className="px-4 py-2 text-sm">{address}</td>
                     <td className="px-4 py-2 text-sm">
                       <button
-                        onClick={(e) => { e.stopPropagation(); handleDelete(address); }}
-                        className="p-2 rounded-md hover:bg-gray-200"
-                        title={t("mailingLists.deleteTitle")}
+                        onClick={(e) => { e.stopPropagation(); toggle(address); }}
+                        className="flex items-center gap-1 text-blue-500 hover:underline"
                       >
-                        <Trash2 className="w-4 h-4 text-red-600" />
+                        {isOpen ? (
+                          <ChevronDown className="w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4" />
+                        )}
+                        {isOpen ? t("mailingLists.hideDetails") : t("mailingLists.showDetails")}
                       </button>
                     </td>
-                  )}
-                </tr>
-                {isOpen && (
-                  <tr className="border-b bg-gray-50">
-                    <td />
-                    <td colSpan={canDelete ? 3 : 2} className="px-4 py-3">
-                      <MailingListDetailRow address={address} />
-                    </td>
+                    {canDelete && (
+                      <td className="px-4 py-2 text-sm">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDelete(address); }}
+                          className="p-2 rounded-md hover:bg-gray-200"
+                          title={t("mailingLists.deleteTitle")}
+                        >
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
-                )}
-              </Fragment>
-            );
-          })}
-        </tbody>
-      </table>
+                  {isOpen && (
+                    <tr className="border-b bg-gray-50">
+                      <td />
+                      <td colSpan={canDelete ? 3 : 2} className="px-4 py-3">
+                        <MailingListDetailRow address={address} />
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       {!isLoading && filtered.length === 0 && (
         <p className="mt-4 text-gray-500 text-sm">{t("mailingLists.empty")}</p>
       )}

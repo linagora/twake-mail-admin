@@ -34,21 +34,21 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
         </div>
       )}
       {pages.error && <p className="text-red-500 mt-4">{t("common.errorPrefix", { message: pages.error })}</p>}
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("users.searchPlaceholder")}
           title={t("users.searchHint")}
-          className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+          className="flex-1 min-w-48 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
         {!domain && domainChoices.length > 0 && (
           <select
             value={selectedDomain}
             onChange={(e) => setSelectedDomain(e.target.value)}
             aria-label={t("common.domain")}
-            className="px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+            className="max-w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           >
             <option value="">{t("users.allDomains")}</option>
             {domainChoices.map((choice) => (
@@ -71,7 +71,7 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
       <div>
         {pages.usernames.map((username, index) => (
           <div key={username} className="space-y-1 p-4 bg-white rounded-2 my-4 flex justify-between items-center">
-            <h4 className="text-sm font-medium leading-none">
+            <h4 className="min-w-0 text-sm font-medium leading-none break-all">
               <span className="text-gray-500 mr-2">{pages.offset + index + 1}/</span>
               <Link to={`/users/user/${encodeURIComponent(username)}`} className="text-blue-600 hover:underline">
                 {username}
