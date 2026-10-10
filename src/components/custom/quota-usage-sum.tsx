@@ -5,11 +5,7 @@ import { apiClient } from "@/lib/apiClient";
 import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { currentLocale } from "@/i18n/locale";
-
-interface QuotaUsageSum {
-  count: number;
-  size: number;
-}
+import { parseQuotaUsageSum, type QuotaUsageSum } from "./quota-usage";
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -40,8 +36,9 @@ export default function QuotaUsageSumSection({ domain }: Props) {
     setError(false);
     try {
       const url = domain ? `/quota/domains/${encodeURIComponent(domain)}` : "/quota/sum";
-      const result: QuotaUsageSum = await apiClient.get(url);
+      const result = parseQuotaUsageSum(await apiClient.get(url));
       setData(result);
+      setError(result === null);
     } catch {
       setData(null);
       setError(true);
