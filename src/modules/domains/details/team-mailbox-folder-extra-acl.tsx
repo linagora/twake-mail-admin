@@ -219,15 +219,16 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
                 {RIGHTS.map(({ key, label }) => (
                   <label
                     key={key}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border cursor-pointer text-sm transition-colors select-none ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border cursor-pointer text-sm transition-colors select-none has-focus-visible:ring-2 has-focus-visible:ring-blue-500 ${
                       selectedRights.has(key)
                         ? "bg-blue-100 border-blue-400 text-blue-800"
                         : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
                     }`}
                   >
+                    {/* sr-only rather than hidden: keeps the checkbox focusable and announced */}
                     <input
                       type="checkbox"
-                      className="hidden"
+                      className="sr-only"
                       checked={selectedRights.has(key)}
                       onChange={() => toggleRight(key)}
                     />
