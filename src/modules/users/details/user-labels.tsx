@@ -5,6 +5,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserLabels, createUserLabel, updateUserLabel, deleteUserLabel } from "../api-client";
 import { UserLabel, UserLabelCreatePayload, UserLabelUpdatePayload } from "../types";
+import { buildLabelUpdatePayload, isColorClearAttempt } from "./user-label-update";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -81,13 +82,7 @@ export default function UserLabels({ username }: Props) {
     if (!editLabel) return;
     setSaving(true);
     try {
-      const payload: UserLabelUpdatePayload = {
-        displayName: editForm.displayName,
-        color: editForm.color?.trim() || null,
-        description: editForm.description?.trim() || null,
-        readOnly: editForm.readOnly,
-      };
-      await updateUserLabel(username, editLabel.id, payload);
+      await updateUserLabel(username, editLabel.id, buildLabelUpdatePayload(editForm));
       toast({ title: t("users.labels.updated") });
       setEditLabel(null);
       await refresh();
@@ -323,6 +318,11 @@ export default function UserLabels({ username }: Props) {
                     className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+                {isColorClearAttempt(editLabel, editForm) && (
+                  <p className="mt-1 text-xs text-orange-600">
+                    {t("users.labels.colorCannotBeCleared", { color: editLabel.color })}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium">{t("users.labels.descriptionLabel")}</label>
