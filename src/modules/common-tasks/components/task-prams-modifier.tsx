@@ -14,6 +14,18 @@ const DURATION_UNITS = [
   { value: "y", label: "Years" },
 ];
 
+const DEFAULT_DURATION_UNIT = "d";
+const DURATION_PATTERN = /^(\d+)([hdwmy])$/;
+
+// Splits a duration default such as "30d" into the amount and unit shown by the
+// duration field, so that the field and the command preview agree from the start.
+const parseDuration = (value: TaskParam["defaultValue"]): { amount: string; unit: string } => {
+  const match = typeof value === "string" ? DURATION_PATTERN.exec(value) : null;
+  return match
+    ? { amount: match[1], unit: match[2] }
+    : { amount: "", unit: DEFAULT_DURATION_UNIT };
+};
+
 interface Props {
   params: TaskParam[];
   handleChangeParam: (key: string, value: string | boolean) => void;
@@ -32,7 +44,7 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
     const initial: Record<string, { amount: string; unit: string }> = {};
     params?.forEach(param => {
       if (param.type === "duration") {
-        initial[param.key] = { amount: "", unit: "d" };
+        initial[param.key] = parseDuration(param.defaultValue);
       }
     });
     return initial;
@@ -59,7 +71,7 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
   };
 
   const handleRemoveDuration = (key: string) => {
-    setDurationParts(prev => ({ ...prev, [key]: { amount: "", unit: "d" } }));
+    setDurationParts(prev => ({ ...prev, [key]: { amount: "", unit: DEFAULT_DURATION_UNIT } }));
     setFormData(prev => ({ ...prev, [key]: "" }));
   };
 
