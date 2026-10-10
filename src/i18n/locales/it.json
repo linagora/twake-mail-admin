@@ -1162,6 +1162,7 @@
     "cleanupOldTasksSuccess": "Attività vecchie (>{{days}} giorni) eliminate",
     "errorCleanupOldTasks": "Errore durante la pulizia delle attività vecchie",
     "days": "giorni",
+    "invalidCleanupDays": "Inserisci un numero di giorni maggiore di 0",
     "cleaningUpOldTasks": "Pulizia delle attività vecchie",
     "runConfirm": "Vuoi eseguire l'attività {{name}}?"
   },

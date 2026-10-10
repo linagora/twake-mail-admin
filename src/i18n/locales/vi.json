@@ -1162,6 +1162,7 @@
     "cleanupOldTasksSuccess": "Đã dọn các tác vụ cũ (>{{days}} ngày)",
     "errorCleanupOldTasks": "Lỗi khi dọn các tác vụ cũ",
     "days": "ngày",
+    "invalidCleanupDays": "Nhập số ngày lớn hơn 0",
     "cleaningUpOldTasks": "Đang dọn các tác vụ cũ",
     "runConfirm": "Bạn có muốn chạy tác vụ {{name}} không?"
   },

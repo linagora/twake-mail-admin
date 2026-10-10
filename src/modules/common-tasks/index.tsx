@@ -6,6 +6,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
 
 import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights, cleanupMailbox, runAllUsersReindexTask, summarizeAllUsersReindex } from "./api-client";
+import { parseCleanupDays } from "./cleanup-days";
 import ConfirmTaskContent from "./components/confirm-task-content";
 import { TaskParam } from "./types";
 import TaskContainer from "./task-container";
@@ -343,9 +344,11 @@ function MailCommonTasks() {
     }
   };
 
+  const cleanupDaysValue = parseCleanupDays(cleanupDays);
+
   const handleCleanupOldTasks = async () => {
-    const days = parseInt(cleanupDays);
-    if (isNaN(days) || days <= 0) return;
+    const days = cleanupDaysValue;
+    if (days === null) return;
     const confirmed = await confirm({
       header: t("commonTasks.cleanupOldTasks"),
       message: t("commonTasks.cleanupOldTasksConfirm", { days }),
@@ -545,11 +548,14 @@ function MailCommonTasks() {
                 className="border rounded px-2 py-1 text-sm w-24"
               />
               <span className="text-sm text-gray-500">{t("commonTasks.days")}</span>
+              {cleanupDaysValue === null && (
+                <span role="alert" className="text-sm text-red-500">{t("commonTasks.invalidCleanupDays")}</span>
+              )}
             </div>
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
-                  <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleCleanupOldTasks}>
+                  <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleCleanupOldTasks} disabled={cleanupDaysValue === null || cleanupLoading}>
                     {cleanupLoading && <Loader2 className="animate-spin" />}
                     {t("common.run")}
                   </Button>

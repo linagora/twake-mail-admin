@@ -1162,6 +1162,7 @@
     "cleanupOldTasksSuccess": "Старые задачи (>{{days}} дн.) очищены",
     "errorCleanupOldTasks": "Ошибка при очистке старых задач",
     "days": "дней",
+    "invalidCleanupDays": "Введите количество дней больше 0",
     "cleaningUpOldTasks": "Очистка старых задач",
     "runConfirm": "Вы хотите запустить задачу {{name}}?"
   },
