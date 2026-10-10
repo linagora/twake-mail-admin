@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2, Pencil, AlertTriangle, Loader2, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -24,6 +24,30 @@ interface Props {
   domain: string;
 }
 
+// The contact listing is served by an eventually consistent search index: a refetch right after a
+// write still answers the previous state. Local writes are thus overlaid on top of the fetched list.
+interface LocalChanges {
+  added: string[];
+  removed: string[];
+}
+
+const NO_LOCAL_CHANGES: LocalChanges = { added: [], removed: [] };
+
+const withAdded = (changes: LocalChanges, email: string): LocalChanges => ({
+  added: [...changes.added.filter((e) => e !== email), email],
+  removed: changes.removed.filter((e) => e !== email),
+});
+
+const withRemoved = (changes: LocalChanges, email: string): LocalChanges => ({
+  added: changes.added.filter((e) => e !== email),
+  removed: [...changes.removed.filter((e) => e !== email), email],
+});
+
+const applyLocalChanges = (fetched: string[], changes: LocalChanges): string[] => {
+  const removed = new Set(changes.removed);
+  return [...new Set([...fetched, ...changes.added])].filter((email) => !removed.has(email));
+};
+
 export default function DomainContacts({ domain }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -34,7 +58,13 @@ export default function DomainContacts({ domain }: Props) {
   const canDelete = useIsAllowed("DELETE", "/domains/{domain}/contacts/{username}");
 
   const fetchContacts = useCallback(() => getDomainContacts(domain), [domain]);
-  const { data: contacts, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchContacts : null);
+  const { data: fetchedContacts, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchContacts : null);
+  const [localChanges, setLocalChanges] = useState<LocalChanges>(NO_LOCAL_CHANGES);
+  useEffect(() => setLocalChanges(NO_LOCAL_CHANGES), [domain]);
+  const contacts = useMemo(
+    () => fetchedContacts && applyLocalChanges(fetchedContacts, localChanges),
+    [fetchedContacts, localChanges]
+  );
 
   const [open, setOpen] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
@@ -90,7 +120,7 @@ export default function DomainContacts({ domain }: Props) {
       setCreateFirstname("");
       setCreateSurname("");
       setShowCreate(false);
-      await refresh();
+      setLocalChanges((changes) => withAdded(changes, email));
     } catch (err) {
       toast({
         title: t("domains.contacts.errorCreating"),
@@ -110,7 +140,7 @@ export default function DomainContacts({ domain }: Props) {
     try {
       await deleteDomainContact(domain, usernameFromEmail(email));
       toast({ title: t("domains.contacts.deleted") });
-      await refresh();
+      setLocalChanges((changes) => withRemoved(changes, email));
     } catch (err) {
       toast({
         title: t("domains.contacts.errorDeleting"),
