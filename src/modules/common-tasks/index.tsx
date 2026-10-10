@@ -85,7 +85,7 @@ const TASKS: TaskProps[] = [
   {
     nameKey: 'commonTasks.fixMappingDenormalization',
     taskKey: TaskKey.FIX_MAPPING_DENORMALIZATION,
-    command: 'curl -XPOST /cassandra/mappings?action=SolveInconsistenciescurl -XPOST /cassandra/mappings?action=SolveInconsistencies',
+    command: 'curl -XPOST /cassandra/mappings?action=SolveInconsistencies',
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_operations_on_mappings_sources',
     allowanceCheck: { verb: 'POST', pattern: '/cassandra/mappings' },
   },
@@ -102,7 +102,7 @@ const TASKS: TaskProps[] = [
     command: 'curl -XDELETE /blobs?scope=unreferenced',
     params: [
       { key: 'associatedProbability', defaultValue: '0.01', type: 'input' },
-      { key: 'expectedBlobCount', defaultValue: '1.000.000', type: 'input' },
+      { key: 'expectedBlobCount', defaultValue: '1000000', type: 'input' },
     ],
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_running_blob_garbage_collection',
     allowanceCheck: { verb: 'DELETE', pattern: '/blobs' },
