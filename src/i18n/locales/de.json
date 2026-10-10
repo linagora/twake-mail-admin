@@ -1162,6 +1162,7 @@
     "cleanupOldTasksSuccess": "Alte Aufgaben (>{{days}} Tage) bereinigt",
     "errorCleanupOldTasks": "Fehler beim Bereinigen alter Aufgaben",
     "days": "Tage",
+    "invalidCleanupDays": "Geben Sie eine Anzahl von Tagen größer als 0 ein",
     "cleaningUpOldTasks": "Alte Aufgaben werden bereinigt",
     "runConfirm": "Möchten Sie die Aufgabe {{name}} ausführen?"
   },

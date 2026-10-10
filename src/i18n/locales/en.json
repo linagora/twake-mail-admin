@@ -1162,6 +1162,7 @@
     "cleanupOldTasksSuccess": "Old tasks (>{{days}} days) cleaned up",
     "errorCleanupOldTasks": "Error cleaning up old tasks",
     "days": "days",
+    "invalidCleanupDays": "Enter a number of days greater than 0",
     "cleaningUpOldTasks": "Cleaning up old tasks",
     "runConfirm": "Do you want to run task {{name}}?"
   },
