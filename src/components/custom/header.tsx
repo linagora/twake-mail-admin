@@ -2,6 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router";
 import { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 interface HeaderProps {
   headerTitle?: string | ReactNode;
@@ -16,6 +17,7 @@ const Header: React.FC<HeaderProps> = ({
   docuUrl,
   enableBackBtn,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const backToPreviousPage = () => {
@@ -25,7 +27,14 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <div className="flex items-center">
       {enableBackBtn && (
-        <Button className="hover:bg-gray-300" variant="ghost" size="icon" onClick={backToPreviousPage}>
+        <Button
+          className="hover:bg-gray-300"
+          variant="ghost"
+          size="icon"
+          title={t("common.back")}
+          aria-label={t("common.back")}
+          onClick={backToPreviousPage}
+        >
           <ChevronLeft />
         </Button>
       )}
