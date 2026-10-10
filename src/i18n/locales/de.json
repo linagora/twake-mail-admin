@@ -60,6 +60,7 @@
     "global": "Global",
     "updateSizeLimit": "Größenbeschränkung ändern",
     "resetToDomainDefault": "Auf Domain-Standard zurücksetzen",
+    "resetToGlobalDefault": "Auf globalen Standard zurücksetzen",
     "quotaSizeUpdated": "Kontingentgröße aktualisiert",
     "errorUpdatingQuota": "Fehler beim Aktualisieren der Kontingentgröße",
     "resetQuotaSize": "Kontingentgröße zurücksetzen",
@@ -134,7 +135,8 @@
     "quota": {
       "title": "Kontingent",
       "couldNotLoad": "Kontingent konnte nicht geladen werden.",
-      "resetConfirm": "Kontingentgröße für „{{domain}}“ auf den Domain-Standard zurücksetzen?",
+      "resetConfirm": "Die Größenbegrenzung des Domain-Kontingents für \"{{domain}}\" entfernen? Danach gilt wieder die globale Begrenzung.",
+      "reset": "Domain-Kontingentgröße auf globalen Standard zurückgesetzt",
       "errorUpdating": "Fehler beim Aktualisieren der Kontingentgröße",
       "updated": "Domain-Kontingentgröße aktualisiert"
     },
@@ -1226,6 +1228,10 @@
     "size": "Größe",
     "updated": "Globale Kontingentgröße aktualisiert",
     "errorUpdating": "Fehler beim Aktualisieren des globalen Kontingents",
+    "removeSizeLimit": "Größenbegrenzung entfernen",
+    "removeConfirm": "Die globale Kontingent-Größenbegrenzung entfernen? Benutzer ohne domain- oder benutzerspezifische Begrenzung erhalten unbegrenzten Speicher.",
+    "removed": "Globale Kontingent-Größenbegrenzung entfernt",
+    "errorRemoving": "Fehler beim Entfernen der globalen Kontingent-Größenbegrenzung",
     "aggregatedExtra": "Zusätzliche Kontingente gesamt",
     "totalExtraStorage": "Zusätzlicher Speicher gesamt:",
     "totalExtraCount": "Zusätzliche Anzahl gesamt:",

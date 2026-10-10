@@ -60,6 +60,7 @@
     "global": "Toàn cục",
     "updateSizeLimit": "Cập nhật giới hạn kích thước",
     "resetToDomainDefault": "Đặt lại về mặc định của tên miền",
+    "resetToGlobalDefault": "Đặt lại về mặc định toàn cục",
     "quotaSizeUpdated": "Đã cập nhật kích thước hạn ngạch",
     "errorUpdatingQuota": "Lỗi khi cập nhật kích thước hạn ngạch",
     "resetQuotaSize": "Đặt lại kích thước hạn ngạch",
@@ -134,7 +135,8 @@
     "quota": {
       "title": "Hạn ngạch",
       "couldNotLoad": "Không thể tải hạn ngạch.",
-      "resetConfirm": "Đặt lại kích thước hạn ngạch cho \"{{domain}}\" về mặc định của tên miền?",
+      "resetConfirm": "Xóa giới hạn kích thước hạn ngạch của tên miền \"{{domain}}\"? Giới hạn toàn cục sẽ được áp dụng lại.",
+      "reset": "Đã đặt lại kích thước hạn ngạch tên miền về mặc định toàn cục",
       "errorUpdating": "Lỗi khi cập nhật kích thước hạn ngạch",
       "updated": "Đã cập nhật kích thước hạn ngạch tên miền"
     },
@@ -1226,6 +1228,10 @@
     "size": "Kích thước",
     "updated": "Đã cập nhật kích thước hạn ngạch toàn cục",
     "errorUpdating": "Lỗi khi cập nhật hạn ngạch toàn cục",
+    "removeSizeLimit": "Xóa giới hạn kích thước",
+    "removeConfirm": "Xóa giới hạn kích thước hạn ngạch toàn cục? Người dùng không có giới hạn riêng theo tên miền hoặc người dùng sẽ có dung lượng không giới hạn.",
+    "removed": "Đã xóa giới hạn kích thước hạn ngạch toàn cục",
+    "errorRemoving": "Lỗi khi xóa giới hạn kích thước hạn ngạch toàn cục",
     "aggregatedExtra": "Hạn ngạch bổ sung tổng hợp",
     "totalExtraStorage": "Tổng dung lượng bổ sung:",
     "totalExtraCount": "Tổng số lượng bổ sung:",

@@ -2,9 +2,10 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getGlobalQuota, updateGlobalQuota, getUsersWithSpecificQuotas, getQuotaExtraSummary } from "./api-client";
+import { getGlobalQuota, updateGlobalQuota, deleteGlobalQuotaSize, getUsersWithSpecificQuotas, getQuotaExtraSummary } from "./api-client";
 import { GlobalQuotaValues, UserSpecificQuota, QuotaExtraSummary } from "./types";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
@@ -44,7 +45,9 @@ function toBytes(value: number, unit: string): number {
 export default function GlobalQuota() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const confirm = useConfirm();
   const canUpdate = useIsAllowed("PUT", "/quota");
+  const canRemove = useIsAllowed("DELETE", "/quota/size");
 
   const fetchAll = useCallback(async () => {
     const [quota, users, summary] = await Promise.all([
@@ -86,6 +89,21 @@ export default function GlobalQuota() {
     }
   };
 
+  const handleRemoveSize = async () => {
+    const confirmed = await confirm({
+      header: t("globalQuota.removeSizeLimit"),
+      message: t("globalQuota.removeConfirm"),
+    });
+    if (!confirmed) return;
+    try {
+      await deleteGlobalQuotaSize();
+      toast({ title: t("globalQuota.removed") });
+      refresh();
+    } catch (err) {
+      toast({ title: t("globalQuota.errorRemoving"), description: <ErrorDisplayer error={err} /> });
+    }
+  };
+
   return (
     <div className="p-4 w-fit max-w-full">
       <Header headerTitle={t("globalQuota.title")} headerSubTitle={t("globalQuota.subtitle")} docuUrl={docuUrl} />
@@ -115,15 +133,26 @@ export default function GlobalQuota() {
 
               <hr className="border-gray-200" />
 
-              {canUpdate && (
-                <Button
-                  variant="outline"
-                  className="rounded-sm"
-                  onClick={() => setShowSizeEdit(!showSizeEdit)}
-                >
-                  {t("common.updateSizeLimit")}
-                </Button>
-              )}
+              <div className="flex items-center gap-2 flex-wrap">
+                {canUpdate && (
+                  <Button
+                    variant="outline"
+                    className="rounded-sm"
+                    onClick={() => setShowSizeEdit(!showSizeEdit)}
+                  >
+                    {t("common.updateSizeLimit")}
+                  </Button>
+                )}
+                {canRemove && data.quota.size != null && (
+                  <Button
+                    variant="outline"
+                    className="rounded-sm"
+                    onClick={handleRemoveSize}
+                  >
+                    {t("globalQuota.removeSizeLimit")}
+                  </Button>
+                )}
+              </div>
 
               {showSizeEdit && (
                 <div className="flex gap-2 mt-2">

@@ -42,6 +42,10 @@ export const updateDomainQuota = async (domain: string, quota: DomainQuotaValues
   await apiClient.put(`/quota/domains/${encodeURIComponent(domain)}`, quota);
 };
 
+export const deleteDomainQuotaSize = async (domain: string): Promise<void> => {
+  await apiClient.delete(`/quota/domains/${encodeURIComponent(domain)}/size`);
+};
+
 export const getTeamMailboxes = async (domain: string): Promise<GetTeamMailboxesResponseType> => {
   return apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes`);
 };
