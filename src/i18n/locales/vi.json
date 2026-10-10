@@ -604,7 +604,8 @@
       "updated": "Đã cập nhật cài đặt vắng mặt",
       "errorUpdating": "Lỗi khi cập nhật chế độ vắng mặt",
       "deleted": "Đã xóa cài đặt vắng mặt",
-      "errorDeleting": "Lỗi khi xóa chế độ vắng mặt"
+      "errorDeleting": "Lỗi khi xóa chế độ vắng mặt",
+      "invalidRange": "Ngày kết thúc phải sau ngày bắt đầu"
     },
     "delegation": {
       "title": "Người dùng được ủy quyền",
