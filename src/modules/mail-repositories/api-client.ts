@@ -4,6 +4,7 @@ import {
   MailKeysResponseType,
   RepositoryInfo,
   MailDetail,
+  MailRepository,
 } from "./types";
 
 /**
@@ -205,14 +206,17 @@ export const reprocessSingleMail = async (
  *
  * - HTTP 204: Mails moved.
  * - HTTP 400: Target repository does not exist.
+ *
+ * The source goes in the URL as its (already encoded) `path`, the target in the
+ * body as its plain `repository` name: WebAdmin does not decode the body.
  */
 export const moveAllMails = async (
-  encodedPathOfTheRepository: string,
-  targetRepository: string
+  source: MailRepository,
+  target: MailRepository
 ): Promise<void> => {
   await apiClient.patch(
-    `/mailRepositories/${encodedPathOfTheRepository}/mails`,
-    { mailRepository: targetRepository }
+    `/mailRepositories/${source.path}/mails`,
+    { mailRepository: target.repository }
   );
 };
 
@@ -224,15 +228,17 @@ export const moveAllMails = async (
  *
  * - HTTP 204: Mail moved.
  * - HTTP 400: Target repository does not exist.
+ *
+ * The target goes in the body as its plain `repository` name, not its encoded `path`.
  */
 export const moveSingleMail = async (
   encodedPathOfTheRepository: string,
   mailKey: string,
-  targetRepository: string
+  target: MailRepository
 ): Promise<void> => {
   await apiClient.patch(
     `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}`,
-    { mailRepository: targetRepository }
+    { mailRepository: target.repository }
   );
 };
 

@@ -11,7 +11,7 @@ import {
   removeSingleMailFromRepository,
   reprocessSingleMail,
 } from "../api-client";
-import { GetMailRepositoriesResponseType, MailDetail } from "../types";
+import { GetMailRepositoriesResponseType, MailDetail, MailRepository } from "../types";
 import { apiClient } from "@/lib/apiClient";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -275,12 +275,12 @@ export default function MailRepositoryExtended() {
   };
 
   const handleMove = async (mailKey: string) => {
-    const otherRepos = allRepos.filter((r) => r.path !== id);
+    const otherRepos = allRepos.filter((r) => r.repository !== id);
     if (otherRepos.length === 0) {
       toast({ title: t("mailRepositories.noOtherRepositoriesForMail") });
       return;
     }
-    let targetRepo = otherRepos[0].path;
+    let targetRepo: MailRepository = otherRepos[0];
     const confirmed = await confirm({
       header: t("mailRepositories.moveMailHeader"),
       message: (
@@ -292,12 +292,12 @@ export default function MailRepositoryExtended() {
             className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             defaultValue={otherRepos[0].path}
             onChange={(e) => {
-              targetRepo = e.target.value;
+              targetRepo = otherRepos.find((r) => r.path === e.target.value) ?? targetRepo;
             }}
           >
             {otherRepos.map((r) => (
               <option key={r.path} value={r.path}>
-                {r.repository} ({r.path})
+                {r.repository}
               </option>
             ))}
           </select>
