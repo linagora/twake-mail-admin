@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { ChevronDown, ChevronRight, Loader2, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
@@ -29,6 +29,7 @@ interface Props {
 export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, defaultOpen, canUpdate = true }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const idPrefix = useId();
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -99,8 +100,11 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-3">
                 {RATE_LIMIT_KEYS.map((key) => (
                   <div key={key} className="flex items-center justify-between gap-3">
-                    <label className="text-sm text-gray-600 whitespace-nowrap">{t(`rateLimits.${key}`)}</label>
+                    <label htmlFor={`${idPrefix}-${key}`} className="text-sm text-gray-600 whitespace-nowrap">
+                      {t(`rateLimits.${key}`)}
+                    </label>
                     <input
+                      id={`${idPrefix}-${key}`}
                       type="number"
                       min={-1}
                       step={1}
