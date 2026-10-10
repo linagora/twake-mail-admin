@@ -99,7 +99,7 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-3">
                 {RATE_LIMIT_KEYS.map((key) => (
                   <div key={key} className="flex items-center justify-between gap-3">
-                    <label className="text-sm text-gray-600 whitespace-nowrap">{t(`rateLimits.${key}`)}</label>
+                    <label className="min-w-0 text-sm text-gray-600">{t(`rateLimits.${key}`)}</label>
                     <input
                       type="number"
                       min={-1}
@@ -108,7 +108,7 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
                       onChange={(e) => handleChange(key, e.target.value)}
                       placeholder={t("rateLimits.noLimit")}
                       aria-invalid={!isValidRateLimitInput(form[key])}
-                      className="w-28 px-3 py-1.5 border aria-invalid:border-red-500 rounded-md text-sm text-right focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                      className="w-28 shrink-0 px-3 py-1.5 border aria-invalid:border-red-500 rounded-md text-sm text-right focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 ))}

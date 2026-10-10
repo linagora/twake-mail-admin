@@ -180,9 +180,9 @@ export default function UserForwards({ username }: Props) {
               {sorted.map((fwd, index) => (
                 <div
                   key={fwd.mailAddress}
-                  className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center"
+                  className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2"
                 >
-                  <h4 className="text-sm font-medium leading-none">
+                  <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{index + 1}/</span>
                     {fwd.mailAddress}
                     {fwd.mailAddress === username && (
@@ -192,7 +192,7 @@ export default function UserForwards({ username }: Props) {
                   {canRemove && (
                     <button
                       onClick={() => handleRemove(fwd.mailAddress)}
-                      className="p-2 rounded-md hover:bg-gray-200"
+                      className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                       title={t("users.forwards.removeTooltip")}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />

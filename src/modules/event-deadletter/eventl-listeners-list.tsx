@@ -115,17 +115,17 @@ export default function EventListenersList() {
           {listenerGroupsResult?.map((group) => (
             <div
               key={group}
-              className="space-y-1 p-4 bg-white rounded-2 my-4 p-4 flex justify-between items-center"
+              className="space-y-1 p-4 bg-white rounded-2 my-4 p-4 flex justify-between items-center gap-2"
             >
-              <div>
-                <h4 className="text-sm font-medium leading-none">
+              <div className="min-w-0">
+                <h4 className="text-sm font-medium leading-none break-all">
                   <Link to={`/event-dead-letter/group/${group}?&page=1&size=10`}>
                     {group} ({eventCounts[group] ?? t("common.loading")})
                   </Link>
                 </h4>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex shrink-0 gap-2">
                 {canRedeliver && (
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"

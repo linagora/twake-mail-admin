@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { apiClient } from "@/lib/apiClient";
 import { toast, useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { PaginationControls } from "@/components/custom/pagination-controls";
 import { Trash2 } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -99,55 +100,28 @@ export default function EventListenersDetail() {
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
       <h3 className="text-lg font-semibold">{t("eventDeadletter.groupDetails")}</h3>
-      <p>{t("eventDeadletter.groupId", { id })}</p>
+      <p className="break-all">{t("eventDeadletter.groupId", { id })}</p>
 
       {isLoading && <p>{t("eventDeadletter.loadingEvents")}</p>}
       {error && <p className="text-red-500">{t("common.errorPrefix", { message: error })}</p>}
-      {/* Pagination UI */}
-      <div className="mt-6 flex justify-between items-center">
-        {/** first page */}
-        <button
-          onClick={() => goToPage(1)}
-          disabled={page <= 1}
-          className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {t("common.first")}
-        </button>
-        <button
-          onClick={() => goToPage(page - 1)}
-          disabled={page <= 1}
-          className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {t("common.previous")}
-        </button>
-        <span className="text-sm font-medium">
-          {t("eventDeadletter.paginationInfo", { page, limit, total: size })}
-        </span>
-        <button
-          disabled={!hasMore}
-          onClick={() => goToPage(page + 1)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {t("common.next")}
-        </button>
-        {/** last page */}
-        <button
-          disabled={!hasMore}
-          onClick={() => goToPage(Math.ceil(size / limit))}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {t("common.last")}
-        </button>
-      </div>
+      <PaginationControls
+        onFirst={() => goToPage(1)}
+        onPrev={() => goToPage(page - 1)}
+        onNext={() => goToPage(page + 1)}
+        onLast={() => goToPage(Math.ceil(size / limit))}
+        disabledPrev={page <= 1}
+        disabledNext={!hasMore}
+        label={t("eventDeadletter.paginationInfo", { page, limit, total: size })}
+      />
       {failedEventKeys && (
         <div className="mt-8">
           <ul>
             {failedEventKeys.map((failedEventKey, index) => (
               <li
                 key={failedEventKey}
-                className="flex justify-between items-center border-b pb-1"
+                className="flex justify-between items-center gap-2 border-b pb-1"
               >
-                <span className="font-medium text-gray-800">
+                <span className="min-w-0 font-medium text-gray-800 break-all">
                   <span className="text-md text-gray-500 mr-2">
                     {index + offset + 1} /
                   </span>
@@ -171,7 +145,7 @@ export default function EventListenersDetail() {
                   </span>
                 </span>
 
-                <span className="flex items-center space-x-2 text-sm text-gray-500">
+                <span className="flex shrink-0 items-center space-x-2 text-sm text-gray-500">
                   {canViewJson && (
                     <a
                       href="#"

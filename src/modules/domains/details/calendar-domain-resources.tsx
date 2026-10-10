@@ -217,8 +217,8 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                 goToPage={goToPage}
               />
               {paginated.map((resource, index) => (
-                <div key={resource.id} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center">
-                  <h4 className="text-sm font-medium leading-none">
+                <div key={resource.id} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2">
+                  <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                     <a href={resourceLink ? resourceLink(resource.id) : `/domains/domain/${encodeURIComponent(domain)}/resource/${encodeURIComponent(resource.id)}`}
                       className="text-blue-600 hover:underline">{resource.name}</a>

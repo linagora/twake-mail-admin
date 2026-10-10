@@ -285,14 +285,14 @@ export default function DomainContacts({ domain }: Props) {
               {paginated.map((email, index) => (
                 <div
                   key={email}
-                  className="p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center cursor-pointer hover:bg-gray-100 transition"
+                  className="p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2 cursor-pointer hover:bg-gray-100 transition"
                   onClick={() => openView(email)}
                 >
-                  <h4 className="text-sm font-medium leading-none">
+                  <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
                     {email}
                   </h4>
-                  <div className="flex gap-1">
+                  <div className="flex shrink-0 gap-1">
                     {canEdit && (
                       <button
                         onClick={(e) => { e.stopPropagation(); openEditFromList(email); }}

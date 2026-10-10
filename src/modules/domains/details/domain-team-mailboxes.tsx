@@ -151,9 +151,9 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
               {paginated.map((mb, index) => (
                 <div
                   key={mb.name}
-                  className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center"
+                  className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2"
                 >
-                  <h4 className="text-sm font-medium leading-none">
+                  <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                     <Link
                       to={`/domains/domain/${encodeURIComponent(domain)}/team-mailbox/${encodeURIComponent(mb.name)}`}
@@ -166,7 +166,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
                   {canDelete && (
                     <button
                       onClick={(e) => { e.preventDefault(); handleRemove(mb.name); }}
-                      className="p-2 rounded-md hover:bg-gray-200"
+                      className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                       title={t("domains.teamMailboxes.deleteTooltip")}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />

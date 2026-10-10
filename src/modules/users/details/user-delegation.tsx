@@ -158,16 +158,16 @@ export default function UserDelegation({ username }: Props) {
               {sorted.map((user, index) => (
                 <div
                   key={user}
-                  className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center"
+                  className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2"
                 >
-                  <h4 className="text-sm font-medium leading-none">
+                  <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{index + 1}/</span>
                     {user}
                   </h4>
                   {canRemove && (
                     <button
                       onClick={() => handleRemove(user)}
-                      className="p-2 rounded-md hover:bg-gray-200"
+                      className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                       title={t("users.delegation.removeTooltip")}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />

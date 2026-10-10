@@ -35,7 +35,7 @@ function formatCount(count: number | null): string {
 function QuotaRow({ label, values, countLabel, sizeLabel }: { label: string; values: DomainQuotaValues | null; countLabel?: string; sizeLabel?: string }) {
   if (!values) return null;
   return (
-    <div className="flex justify-between items-center py-1">
+    <div className="flex flex-wrap justify-between items-center gap-x-4 py-1">
       <span className="text-sm text-gray-600 capitalize">{label}</span>
       <span className="text-sm">
         <span className="mr-4">{countLabel ?? "Count:"} <strong>{formatCount(values.count)}</strong></span>
@@ -144,14 +144,14 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
               )}
 
               {showSizeEdit && (
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-wrap gap-2 mt-2">
                   <input
                     type="number"
                     value={sizeInput}
                     onChange={(e) => setSizeInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleUpdateSize()}
                     placeholder={t("common.sizeUnlimited")}
-                    className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 min-w-32 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                   <select
                     value={sizeUnit}

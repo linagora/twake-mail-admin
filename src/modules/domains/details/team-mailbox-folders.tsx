@@ -9,6 +9,7 @@ import { GetTeamMailboxFoldersResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { PaginationControls } from "@/components/custom/pagination-controls";
 import TeamMailboxFolderCounts from "./team-mailbox-folder-counts";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
@@ -145,48 +146,24 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
           {folders && (
             <>
               {sorted.length > 0 && (
-                <div className="mt-2 flex justify-between items-center">
-                  <button
-                    onClick={() => goToPage(1)}
-                    disabled={page <= 1}
-                    className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {t("common.first")}
-                  </button>
-                  <button
-                    onClick={() => goToPage(page - 1)}
-                    disabled={page <= 1}
-                    className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {t("common.previous")}
-                  </button>
-                  <span className="text-sm font-medium text-center">
-                    {t("common.page", { page, totalPages, total: sorted.length })}
-                  </span>
-                  <button
-                    onClick={() => goToPage(page + 1)}
-                    disabled={page >= totalPages}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {t("common.next")}
-                  </button>
-                  <button
-                    onClick={() => goToPage(totalPages)}
-                    disabled={page >= totalPages}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {t("common.last")}
-                  </button>
-                </div>
+                <PaginationControls
+                  onFirst={() => goToPage(1)}
+                  onPrev={() => goToPage(page - 1)}
+                  onNext={() => goToPage(page + 1)}
+                  onLast={() => goToPage(totalPages)}
+                  disabledPrev={page <= 1}
+                  disabledNext={page >= totalPages}
+                  label={t("common.page", { page, totalPages, total: sorted.length })}
+                />
               )}
 
               <div className="mt-2">
                 {paginated.map((folder, index) => (
                   <div
                     key={folder.mailboxId}
-                    className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center"
+                    className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex flex-wrap justify-between items-center gap-2"
                   >
-                    <div>
+                    <div className="min-w-0 break-all">
                       <h4 className="text-sm font-medium leading-none">
                         <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
                         <Link
@@ -198,7 +175,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                       </h4>
                       <p className="text-xs text-gray-400 mt-1 ml-6">{folder.mailboxId}</p>
                     </div>
-                    <span className="flex items-center gap-2">
+                    <span className="flex shrink-0 items-center gap-2">
                       <TeamMailboxFolderCounts domain={domain} mailbox={mailbox} folderName={folder.mailboxName} />
                       {canDelete && (
                         <button

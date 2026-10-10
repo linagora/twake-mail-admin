@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { PaginationControls } from "@/components/custom/pagination-controls";
 import TeamMailboxFolders from "./team-mailbox-folders";
 import TeamMailboxQuota from "./team-mailbox-quota";
 import TeamMailboxExtraSenders from "./team-mailbox-extra-senders";
@@ -102,14 +103,14 @@ export default function TeamMailboxDetail() {
 
         {membersOpen && (<>
         {/* Add member */}
-        {canAddMember && (<div className="flex gap-2 mt-3 mb-4">
+        {canAddMember && (<div className="flex flex-wrap gap-2 mt-3 mb-4">
           <input
             type="text"
             value={newMember}
             onChange={(e) => setNewMember(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             placeholder="user@domain.tld"
-            className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+            className="flex-1 min-w-48 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
           {memberStatus === "checking" && (
             <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>
@@ -159,39 +160,15 @@ export default function TeamMailboxDetail() {
 
         {/* Pagination */}
         {sorted.length > 0 && (
-          <div className="mt-2 flex justify-between items-center">
-            <button
-              onClick={() => goToPage(1)}
-              disabled={page <= 1}
-              className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t("common.first")}
-            </button>
-            <button
-              onClick={() => goToPage(page - 1)}
-              disabled={page <= 1}
-              className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t("common.previous")}
-            </button>
-            <span className="text-sm font-medium text-center">
-              {t("common.page", { page, totalPages, total: sorted.length })}
-            </span>
-            <button
-              onClick={() => goToPage(page + 1)}
-              disabled={page >= totalPages}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t("common.next")}
-            </button>
-            <button
-              onClick={() => goToPage(totalPages)}
-              disabled={page >= totalPages}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t("common.last")}
-            </button>
-          </div>
+          <PaginationControls
+            onFirst={() => goToPage(1)}
+            onPrev={() => goToPage(page - 1)}
+            onNext={() => goToPage(page + 1)}
+            onLast={() => goToPage(totalPages)}
+            disabledPrev={page <= 1}
+            disabledNext={page >= totalPages}
+            label={t("common.page", { page, totalPages, total: sorted.length })}
+          />
         )}
 
         {/* Member list */}
@@ -199,9 +176,9 @@ export default function TeamMailboxDetail() {
           {paginated.map((member, index) => (
             <div
               key={member.username}
-              className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center"
+              className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2"
             >
-              <h4 className="text-sm font-medium leading-none">
+              <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                 <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
                 {member.username}
                 <span className="text-xs text-muted-foreground ml-2">({member.role})</span>
@@ -209,7 +186,7 @@ export default function TeamMailboxDetail() {
               {canRemoveMember && (
                 <button
                   onClick={() => handleRemove(member.username)}
-                  className="p-2 rounded-md hover:bg-gray-200"
+                  className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                   title={t("domains.teamMailbox.removeMemberTooltip")}
                 >
                   <Trash2 className="w-4 h-4 text-red-600" />
