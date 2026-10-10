@@ -232,9 +232,9 @@ export default function UserMailboxes({ username }: Props) {
                 {paginated.map((mailbox, index) => (
                   <div
                     key={mailbox.mailboxName}
-                    className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center"
+                    className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex flex-wrap justify-between items-center gap-2"
                   >
-                    <div>
+                    <div className="min-w-0 break-all">
                       <h4 className="text-sm font-medium leading-none">
                         <span className="text-gray-500 mr-2">
                           {(page - 1) * PAGE_LIMIT + index + 1}/
@@ -248,7 +248,7 @@ export default function UserMailboxes({ username }: Props) {
                         )}
                       </p>
                     </div>
-                    <span className="flex items-center gap-2">
+                    <span className="flex shrink-0 items-center gap-2">
                       <MailboxCounts username={username} mailboxName={mailbox.mailboxName} />
                       {canClear && (
                         <button

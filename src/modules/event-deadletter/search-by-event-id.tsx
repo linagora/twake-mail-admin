@@ -60,13 +60,13 @@ export default function SearchByEventId() {
       </p>
 
       <form onSubmit={handleSearch} className="flex flex-col gap-2">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <input
             type="text"
             value={eventId}
             onChange={(e) => setEventId(e.target.value)}
             placeholder={t("eventDeadletter.searchByEventIdPlaceholder")}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+            className="flex-1 min-w-48 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             autoFocus
           />
           {canNarrowByGroup && (
@@ -75,7 +75,7 @@ export default function SearchByEventId() {
               value={group}
               onChange={(e) => setGroup(e.target.value)}
               placeholder={t("eventDeadletter.searchByGroupPlaceholder")}
-              className="w-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+              className="w-64 max-w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             />
           )}
           <button
@@ -98,7 +98,7 @@ export default function SearchByEventId() {
 
       {result && (
         <div className="mt-4 space-y-2">
-          <div className="text-sm">
+          <div className="text-sm break-all">
             <span className="font-medium">{t("eventDeadletter.groupLabel")}: </span>
             {result.group ? (
               <Link
