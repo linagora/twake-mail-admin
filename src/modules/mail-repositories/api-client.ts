@@ -141,19 +141,10 @@ export const reprocessMailRepository = async (
     processor: "root",
   });
 
-  if (options?.queue) queryParams.append("queue", options.queue);
-  if (options?.processor) queryParams.append("processor", options.processor);
-  if (options?.consume !== undefined)
-    queryParams.append("consume", String(options.consume));
-  if (options?.limit !== undefined)
-    queryParams.append("limit", String(options.limit));
-  if (options?.maxRetries !== undefined)
-    queryParams.append("maxRetries", String(options.maxRetries));
-  if (options?.redeliver_group_events !== undefined)
-    queryParams.append(
-      "redeliver_group_events",
-      String(options.redeliver_group_events)
-    );
+  // `set` lets a custom processor override the default one; blank values are dropped.
+  Object.entries(options ?? {})
+    .filter(([, value]) => value !== undefined && value !== "")
+    .forEach(([key, value]) => queryParams.set(key, String(value)));
 
   const response = await apiClient.patch<any, { taskId: string }>(
     `/mailRepositories/${encodedPathOfTheRepository}/mails?${queryParams.toString()}`
