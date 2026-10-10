@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { datetimeLocalToIso, isoToDatetimeLocal } from "@/lib/datetime-local";
 import {
   Select,
   SelectContent,
@@ -105,24 +106,6 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
     return FIELD_CONFIG[fieldName]?.operators || [];
   };
 
-  const formatDateValue = (localValue: string): string => {
-    if (!localValue) return "";
-    const date = new Date(localValue);
-    return date.toISOString();
-  };
-
-  const toLocalDatetime = (isoValue: string): string => {
-    if (!isoValue) return "";
-    try {
-      const date = new Date(isoValue);
-      const offset = date.getTimezoneOffset();
-      const local = new Date(date.getTime() - offset * 60000);
-      return local.toISOString().slice(0, 16);
-    } catch {
-      return "";
-    }
-  };
-
   return (
     <div className="space-y-4 w-full">
       <p className="text-sm text-muted-foreground">
@@ -190,12 +173,12 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
                 type="datetime-local"
                 className="flex-1 min-w-0"
                 disabled={!criterion.operator}
-                value={toLocalDatetime(criterion.value)}
+                value={isoToDatetimeLocal(criterion.value)}
                 onChange={(e) =>
                   updateCriterion(
                     index,
                     "value",
-                    formatDateValue(e.target.value)
+                    datetimeLocalToIso(e.target.value)
                   )
                 }
               />

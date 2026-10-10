@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Loader2, Save, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { datetimeLocalToIso, isoToDatetimeLocal } from "@/lib/datetime-local";
 import { getUserVacation, updateUserVacation, deleteUserVacation } from "../api-client";
 import { VacationSettings } from "../types";
 import { useToast } from "@/hooks/use-toast";
@@ -132,8 +133,8 @@ export default function UserVacation({ username }: Props) {
                   <label className="text-sm font-medium">{t("users.vacation.from")}</label>
                   <input
                     type="datetime-local"
-                    value={form.fromDate ? form.fromDate.slice(0, 16) : ""}
-                    onChange={(e) => update("fromDate", e.target.value ? new Date(e.target.value).toISOString() : "")}
+                    value={isoToDatetimeLocal(form.fromDate)}
+                    onChange={(e) => update("fromDate", datetimeLocalToIso(e.target.value))}
                     className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -141,8 +142,8 @@ export default function UserVacation({ username }: Props) {
                   <label className="text-sm font-medium">{t("users.vacation.to")}</label>
                   <input
                     type="datetime-local"
-                    value={form.toDate ? form.toDate.slice(0, 16) : ""}
-                    onChange={(e) => update("toDate", e.target.value ? new Date(e.target.value).toISOString() : "")}
+                    value={isoToDatetimeLocal(form.toDate)}
+                    onChange={(e) => update("toDate", datetimeLocalToIso(e.target.value))}
                     className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
