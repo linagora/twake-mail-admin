@@ -3,7 +3,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 
-const TASK_ID = "30dcd0fb-0000-4000-8000-000000000001";
+// Hoisted: the vi.mock factories below run before the module's top-level declarations
+const TASK_ID = vi.hoisted(() => "30dcd0fb-0000-4000-8000-000000000001");
 
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => false }));
