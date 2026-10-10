@@ -145,7 +145,7 @@ export default function UserQuota({ username }: Props) {
                   <span className="text-sm">
                     <span className="mr-4">{t("common.count")} <strong>{(quota.occupation.ratio.count * 100).toFixed(1)}%</strong></span>
                     <span className="mr-4">{t("common.size")} <strong>{(quota.occupation.ratio.size * 100).toFixed(1)}%</strong></span>
-                    Max: <strong>{(quota.occupation.ratio.max * 100).toFixed(1)}%</strong>
+                    {t("common.max")} <strong>{(quota.occupation.ratio.max * 100).toFixed(1)}%</strong>
                   </span>
                 </div>
                 <div className="mt-1 w-full bg-gray-200 rounded-full h-2">

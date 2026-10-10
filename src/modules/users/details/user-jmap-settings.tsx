@@ -153,7 +153,7 @@ export default function UserJmapSettings({ username }: Props) {
           {isLoading && (
             <div className="h-[40px] rounded-2 animate-pulse bg-gray-200" />
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {settings && (
             <div className="mt-2 space-y-1">

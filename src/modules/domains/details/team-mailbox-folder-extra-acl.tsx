@@ -261,7 +261,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {acl && (
             <>

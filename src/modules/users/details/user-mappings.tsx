@@ -175,7 +175,7 @@ export default function UserMappings({ username }: Props) {
           )}
 
           {!isLoading && totalCount === 0 && (
-            <p className="mt-2 text-sm text-gray-500">No mappings found.</p>
+            <p className="mt-2 text-sm text-gray-500">{t("users.mappings.empty")}</p>
           )}
         </div>
       )}

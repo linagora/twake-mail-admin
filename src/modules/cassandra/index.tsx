@@ -78,7 +78,7 @@ export default function Cassandra() {
             <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
           </div>
         )}
-        {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+        {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
         {data && (
           <div className="p-4 bg-gray-50 rounded-2 space-y-4">

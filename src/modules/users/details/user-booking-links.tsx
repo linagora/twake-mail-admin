@@ -535,7 +535,7 @@ export default function UserBookingLinks({ username }: Props) {
       {open && (
         <div className="mt-2 space-y-1">
           {isLoading && <div className="h-[40px] rounded-2 animate-pulse bg-gray-200" />}
-          {error && <p className="text-red-500">Error: {error}</p>}
+          {error && <p className="text-red-500">{t("common.errorPrefix", { message: error })}</p>}
 
           {canCreate && (
             <div className="mb-2">

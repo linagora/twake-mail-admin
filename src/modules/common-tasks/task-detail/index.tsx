@@ -89,7 +89,7 @@ export default function TaskDetail() {
       </div>
 
       {isLoading && <p>{t("common.loading")}</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+      {error && <p className="text-red-500">{t("common.errorPrefix", { message: error })}</p>}
 
       {
         taskDetail && (

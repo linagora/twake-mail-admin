@@ -123,7 +123,7 @@ export default function TeamMailboxQuota({ domain, mailbox }: Props) {
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
             </div>
           )}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {quota && (
             <div className="p-4 bg-gray-50 rounded-2 space-y-3">
@@ -141,7 +141,7 @@ export default function TeamMailboxQuota({ domain, mailbox }: Props) {
                   <span className="text-sm">
                     <span className="mr-4">{t("common.count")} <strong>{(quota.occupation.ratio.count * 100).toFixed(1)}%</strong></span>
                     <span className="mr-4">{t("common.size")} <strong>{(quota.occupation.ratio.size * 100).toFixed(1)}%</strong></span>
-                    Max: <strong>{(quota.occupation.ratio.max * 100).toFixed(1)}%</strong>
+                    {t("common.max")} <strong>{(quota.occupation.ratio.max * 100).toFixed(1)}%</strong>
                   </span>
                 </div>
                 <div className="mt-1 w-full bg-gray-200 rounded-full h-2">

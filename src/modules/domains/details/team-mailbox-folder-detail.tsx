@@ -44,7 +44,7 @@ export default function TeamMailboxFolderDetail() {
         {isLoading && (
           <div className="h-16 w-full rounded-2 animate-pulse bg-gray-200" />
         )}
-        {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+        {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
         {data !== undefined && data !== null && !isLoading && (
           <button

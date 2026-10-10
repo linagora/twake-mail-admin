@@ -102,7 +102,7 @@ export default function EventListenersDetail() {
       <p>{t("eventDeadletter.groupId", { id })}</p>
 
       {isLoading && <p>{t("eventDeadletter.loadingEvents")}</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+      {error && <p className="text-red-500">{t("common.errorPrefix", { message: error })}</p>}
       {/* Pagination UI */}
       <div className="mt-6 flex justify-between items-center">
         {/** first page */}

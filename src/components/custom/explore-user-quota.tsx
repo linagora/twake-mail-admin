@@ -156,7 +156,7 @@ export default function ExploreUserQuota({ domain }: Props) {
               </Button>
             </div>
 
-            {error && <p className="text-red-500 text-sm mt-2">Error: {error}</p>}
+            {error && <p className="text-red-500 text-sm mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
             {searched && !loading && (
               <div className="mt-3">

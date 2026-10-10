@@ -432,7 +432,7 @@ export default function UserCalendars({ username }: Props) {
           {isLoading && (
             <div className="h-[40px] rounded-2 animate-pulse bg-gray-200" />
           )}
-          {error && <p className="text-red-500">Error: {error}</p>}
+          {error && <p className="text-red-500">{t("common.errorPrefix", { message: error })}</p>}
 
           {data && calendars.length === 0 && !canCreate && (
             <p className="text-sm text-gray-500">{t("users.calendars.empty")}</p>
