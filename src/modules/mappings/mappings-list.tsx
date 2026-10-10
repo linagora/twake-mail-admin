@@ -431,7 +431,7 @@ export default function MappingsList() {
           <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
         </div>
       )}
-      {error && <p className="text-red-500 mt-4">Error: {error}</p>}
+      {error && <p className="text-red-500 mt-4">{t("common.errorPrefix", { message: error })}</p>}
       <input
         type="text"
         value={search}

@@ -162,7 +162,7 @@ export default function CalendarDomainSettings({ domain, defaultOpen = false }: 
       {open && (
         <div className="mt-2">
           {isLoading && <div className="h-[40px] rounded-2 animate-pulse bg-gray-200" />}
-          {error && <p className="text-red-500 mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
           {settings && values && (
             <div className="mt-2 space-y-4 max-w-xl">

@@ -40,7 +40,7 @@ export default function DomainJmapReport({ domain }: Props) {
           {isLoading && (
             <div className="h-[40px] rounded-2 animate-pulse bg-gray-200" />
           )}
-          {error && <p className="text-red-500 text-sm mt-2">Error: {error}</p>}
+          {error && <p className="text-red-500 text-sm mt-2">{t("common.errorPrefix", { message: error })}</p>}
           {report && <ReportTable report={report} />}
         </div>
       )}

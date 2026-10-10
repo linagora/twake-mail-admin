@@ -1,7 +1,9 @@
 import { APIError } from "@/lib/apiClient";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export function useFetchData<T>(getter: (() => Promise<T>) | null) {
+  const { t } = useTranslation();
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +17,7 @@ export function useFetchData<T>(getter: (() => Promise<T>) | null) {
       setData(result);
     } catch (error: unknown) {
       const e = error as APIError;
-      setError(`Failed to fetch data: ${e.message}`);
+      setError(t("common.fetchFailed", { message: e.message }));
     } finally {
       setIsLoading(false);
     }

@@ -134,7 +134,7 @@ export default function DomainSignatureTemplates({ domain }: Props) {
           {loading && (
             <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
           )}
-          {error && <p className="text-red-500 text-sm">Error: {error}</p>}
+          {error && <p className="text-red-500 text-sm">{t("common.errorPrefix", { message: error })}</p>}
 
           {!loading && templates.length === 0 && (
             <p className="text-sm text-gray-500">{t("domains.signatureTemplates.empty")}</p>

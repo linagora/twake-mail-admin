@@ -54,8 +54,8 @@ export default function UsersWithSpecificQuotas({ users, formatCount, formatSize
                   </Link>
                 </span>
                 <span>
-                  <span className="mr-4">Count: <strong>{formatCount(u.countLimit)}</strong></span>
-                  Size: <strong>{formatSize(u.storageLimit)}</strong>
+                  <span className="mr-4">{t("common.count")} <strong>{formatCount(u.countLimit)}</strong></span>
+                  {t("common.size")} <strong>{formatSize(u.storageLimit)}</strong>
                 </span>
               </div>
             ))}
