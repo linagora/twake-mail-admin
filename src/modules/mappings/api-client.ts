@@ -66,9 +66,10 @@ export const deleteDomainMapping = async (
   sourceDomain: string,
   destinationDomain: string
 ): Promise<void> => {
-  await apiClient.delete(
-    `/domainAliases/${encodeURIComponent(destinationDomain)}/sources/${encodeURIComponent(sourceDomain)}`
-  );
+  await apiClient.delete(`/domainMappings/${encodeURIComponent(sourceDomain)}`, {
+    data: destinationDomain,
+    headers: { "Content-Type": "text/plain" },
+  });
 };
 
 export const createRegexMapping = async (
