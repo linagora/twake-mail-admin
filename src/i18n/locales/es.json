@@ -660,7 +660,9 @@
     },
     "channels": {
       "title": "Canales de red",
-      "disconnectAll": "Desconectar todos"
+      "disconnectAll": "Desconectar todos",
+      "disconnected": "{{username}} desconectado",
+      "errorDisconnecting": "Error al desconectar a {{username}}"
     },
     "mappings": {
       "title": "Asignaciones",
@@ -669,6 +671,9 @@
       "destination": "Destino",
       "sources": "Orígenes que apuntan a este usuario",
       "removeAllSources": "Quitar todos los orígenes de tipo {{type}}",
+      "removeAllSourcesConfirm": "¿Quitar todos los orígenes de tipo {{type}} de {{username}} ({{sources}})?",
+      "sourcesRemoved": "Orígenes de tipo {{type}} de {{username}} quitados",
+      "errorRemovingSources": "Error al quitar los orígenes de tipo {{type}} de {{username}}",
       "errorLoading": "Error al cargar las asignaciones:",
       "errorLoadingSources": "Error al cargar los orígenes:",
       "empty": "No se han encontrado asignaciones."

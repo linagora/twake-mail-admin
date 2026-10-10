@@ -660,7 +660,9 @@
     },
     "channels": {
       "title": "Canali di rete",
-      "disconnectAll": "Disconnetti tutti"
+      "disconnectAll": "Disconnetti tutti",
+      "disconnected": "{{username}} disconnesso",
+      "errorDisconnecting": "Errore durante la disconnessione di {{username}}"
     },
     "mappings": {
       "title": "Mappature",
@@ -669,6 +671,9 @@
       "destination": "Destinazione",
       "sources": "Origini che puntano a questo utente",
       "removeAllSources": "Rimuovi tutte le origini di tipo {{type}}",
+      "removeAllSourcesConfirm": "Rimuovere tutte le sorgenti di tipo {{type}} di {{username}} ({{sources}})?",
+      "sourcesRemoved": "Sorgenti di tipo {{type}} di {{username}} rimosse",
+      "errorRemovingSources": "Errore durante la rimozione delle sorgenti di tipo {{type}} di {{username}}",
       "errorLoading": "Errore durante il caricamento delle mappature:",
       "errorLoadingSources": "Errore durante il caricamento delle origini:",
       "empty": "Nessuna mappatura trovata."

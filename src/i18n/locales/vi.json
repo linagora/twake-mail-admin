@@ -660,7 +660,9 @@
     },
     "channels": {
       "title": "Kênh mạng",
-      "disconnectAll": "Ngắt kết nối tất cả"
+      "disconnectAll": "Ngắt kết nối tất cả",
+      "disconnected": "Đã ngắt kết nối {{username}}",
+      "errorDisconnecting": "Lỗi khi ngắt kết nối {{username}}"
     },
     "mappings": {
       "title": "Ánh xạ",
@@ -669,6 +671,9 @@
       "destination": "Đích",
       "sources": "Nguồn trỏ tới người dùng này",
       "removeAllSources": "Xóa tất cả nguồn {{type}}",
+      "removeAllSourcesConfirm": "Xóa tất cả nguồn {{type}} của {{username}} ({{sources}})?",
+      "sourcesRemoved": "Đã xóa các nguồn {{type}} của {{username}}",
+      "errorRemovingSources": "Lỗi khi xóa các nguồn {{type}} của {{username}}",
       "errorLoading": "Lỗi khi tải ánh xạ:",
       "errorLoadingSources": "Lỗi khi tải nguồn:",
       "empty": "Không tìm thấy ánh xạ."

@@ -660,7 +660,9 @@
     },
     "channels": {
       "title": "Netzwerkkanäle",
-      "disconnectAll": "Alle trennen"
+      "disconnectAll": "Alle trennen",
+      "disconnected": "{{username}} getrennt",
+      "errorDisconnecting": "Fehler beim Trennen von {{username}}"
     },
     "mappings": {
       "title": "Zuordnungen",
@@ -669,6 +671,9 @@
       "destination": "Ziel",
       "sources": "Quellen, die auf diesen Benutzer verweisen",
       "removeAllSources": "Alle Quellen vom Typ {{type}} entfernen",
+      "removeAllSourcesConfirm": "Alle Quellen vom Typ {{type}} von {{username}} ({{sources}}) entfernen?",
+      "sourcesRemoved": "Quellen vom Typ {{type}} von {{username}} entfernt",
+      "errorRemovingSources": "Fehler beim Entfernen der Quellen vom Typ {{type}} von {{username}}",
       "errorLoading": "Fehler beim Laden der Zuordnungen:",
       "errorLoadingSources": "Fehler beim Laden der Quellen:",
       "empty": "Keine Zuordnungen gefunden."

@@ -660,7 +660,9 @@
     },
     "channels": {
       "title": "Canaux réseau",
-      "disconnectAll": "Déconnecter tout"
+      "disconnectAll": "Déconnecter tout",
+      "disconnected": "{{username}} déconnecté",
+      "errorDisconnecting": "Erreur lors de la déconnexion de {{username}}"
     },
     "mappings": {
       "title": "Correspondances",
@@ -669,6 +671,9 @@
       "destination": "Destination",
       "sources": "Sources pointant vers cet utilisateur",
       "removeAllSources": "Supprimer toutes les sources {{type}}",
+      "removeAllSourcesConfirm": "Supprimer toutes les sources {{type}} de {{username}} ({{sources}}) ?",
+      "sourcesRemoved": "Sources {{type}} de {{username}} supprimées",
+      "errorRemovingSources": "Erreur lors de la suppression des sources {{type}} de {{username}}",
       "errorLoading": "Erreur lors du chargement des correspondances :",
       "errorLoadingSources": "Erreur lors du chargement des sources :",
       "empty": "Aucune correspondance trouvée."
