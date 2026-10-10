@@ -1314,6 +1314,7 @@
     "errorMoving": "Error moving mails",
     "clearConfirm": "Do you want to clear the mail repository: {{path}}.",
     "runTaskSuccess": "Run Task Successfully",
+    "runTaskError": "Failed to run the task",
     "colNameSender": "Name / Sender",
     "colRecipients": "Recipients",
     "colSize": "Size",

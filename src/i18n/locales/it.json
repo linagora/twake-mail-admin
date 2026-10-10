@@ -1314,6 +1314,7 @@
     "errorMoving": "Errore durante lo spostamento delle email",
     "clearConfirm": "Vuoi svuotare il repository di posta {{path}}?",
     "runTaskSuccess": "Attività eseguita correttamente",
+    "runTaskError": "Impossibile eseguire l'attività",
     "colNameSender": "Nome / Mittente",
     "colRecipients": "Destinatari",
     "colSize": "Dimensione",

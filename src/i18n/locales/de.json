@@ -1314,6 +1314,7 @@
     "errorMoving": "Fehler beim Verschieben der E-Mails",
     "clearConfirm": "Möchten Sie das Mail-Repository {{path}} leeren?",
     "runTaskSuccess": "Aufgabe erfolgreich ausgeführt",
+    "runTaskError": "Aufgabe konnte nicht gestartet werden",
     "colNameSender": "Name / Absender",
     "colRecipients": "Empfänger",
     "colSize": "Größe",

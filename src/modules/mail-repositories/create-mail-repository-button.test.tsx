@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { AxiosError, AxiosHeaders } from "axios";
 
 const api = vi.hoisted(() => ({ createMailRepository: vi.fn() }));
 const toast = vi.hoisted(() => vi.fn());
@@ -88,5 +89,27 @@ describe("create mail repository dialog", () => {
     })));
     expect(pathInput().value).toBe("var/mail/new");
     expect(onCreated).not.toHaveBeenCalled();
+  });
+
+  it("shows the WebAdmin reason of an unsupported protocol and lets it be fixed", async () => {
+    api.createMailRepository.mockRejectedValue(new AxiosError(
+      "Request failed with status code 400", "ERR_BAD_REQUEST", undefined, undefined, {
+        status: 400,
+        statusText: "Bad Request",
+        headers: {},
+        config: { headers: new AxiosHeaders() },
+        data: { type: "InvalidArgument", message: "'nosuchproto' is an unsupported protocol" },
+      }));
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/qa-bad" } });
+    fireEvent.change(protocolInput(), { target: { value: "nosuchproto" } });
+    confirm();
+
+    await waitFor(() => expect(toast).toHaveBeenCalledWith({
+      title: "mailRepositories.createError",
+      description: "'nosuchproto' is an unsupported protocol",
+      variant: "destructive",
+    }));
+    expect(protocolInput().value).toBe("nosuchproto");
   });
 });
