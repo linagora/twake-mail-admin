@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
@@ -23,6 +23,7 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
   const [selectedDomain, setSelectedDomain] = useState("");
   const query = useDebouncedValue(search, SEARCH_DEBOUNCE_MS);
   const pages = useUsersPages(source, { query, domain: domain ?? selectedDomain }, PAGE_LIMIT);
+  const sortedDomainChoices = useMemo(() => [...domainChoices].sort((a, b) => a.localeCompare(b)), [domainChoices]);
 
   return (
     <div>
@@ -51,7 +52,7 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
             className="max-w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           >
             <option value="">{t("users.allDomains")}</option>
-            {domainChoices.map((choice) => (
+            {sortedDomainChoices.map((choice) => (
               <option key={choice} value={choice}>{choice}</option>
             ))}
           </select>
