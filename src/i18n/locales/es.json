@@ -1314,6 +1314,7 @@
     "errorMoving": "Error al mover los correos",
     "clearConfirm": "¿Desea vaciar el repositorio de correo {{path}}?",
     "runTaskSuccess": "Tarea ejecutada correctamente",
+    "runTaskError": "No se pudo ejecutar la tarea",
     "colNameSender": "Nombre / Remitente",
     "colRecipients": "Destinatarios",
     "colSize": "Tamaño",

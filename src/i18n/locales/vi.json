@@ -1314,6 +1314,7 @@
     "errorMoving": "Lỗi khi chuyển thư",
     "clearConfirm": "Bạn có muốn xóa kho lưu trữ thư: {{path}}.",
     "runTaskSuccess": "Chạy tác vụ thành công",
+    "runTaskError": "Không thể chạy tác vụ",
     "colNameSender": "Tên / Người gửi",
     "colRecipients": "Người nhận",
     "colSize": "Kích thước",

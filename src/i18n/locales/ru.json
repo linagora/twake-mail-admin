@@ -1314,6 +1314,7 @@
     "errorMoving": "Ошибка при перемещении писем",
     "clearConfirm": "Вы хотите очистить хранилище почты: {{path}}.",
     "runTaskSuccess": "Задача успешно запущена",
+    "runTaskError": "Не удалось запустить задачу",
     "colNameSender": "Имя / Отправитель",
     "colRecipients": "Получатели",
     "colSize": "Размер",

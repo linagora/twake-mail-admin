@@ -16,6 +16,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 import { useTranslation } from "react-i18next";
 import CreateMailRepositoryButton from "./create-mail-repository-button";
+import { toErrorMessage } from "@/components/custom/error-message";
 
 export default function MailRepositoriesList() {
   const { t } = useTranslation();
@@ -63,6 +64,30 @@ export default function MailRepositoriesList() {
     }
   }, [mailRepositoriesResult, fetchRepositoryInfo]);
 
+  // A refused task (e.g. WebAdmin answering 400) is reported instead of escaping as an unhandled rejection.
+  const runTask = async (startTask: () => Promise<{ taskId: string }>) => {
+    try {
+      const { taskId } = await startTask();
+      toast({
+        title: t("mailRepositories.runTaskSuccess"),
+        description: (
+          <p>
+            {t("mailRepositories.taskLabel")}{" "}
+            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
+              {taskId}
+            </Link>
+          </p>
+        ),
+      });
+    } catch (err) {
+      toast({
+        title: t("mailRepositories.runTaskError"),
+        description: toErrorMessage(err).message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleReprocessTask = async (path: string) => {
     const params = [
       { key: "queue", defaultValue: "spool", type: "input" as const }, // Target mail queue
@@ -91,18 +116,7 @@ export default function MailRepositoriesList() {
     if (!result) {
       return;
     }
-    const { taskId } = await reprocessMailRepository(path, paramValues);
-    toast({
-      title: t("mailRepositories.runTaskSuccess"),
-      description: (
-        <p>
-          {t("mailRepositories.taskLabel")}{" "}
-          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-            {taskId}
-          </Link>
-        </p>
-      ),
-    });
+    await runTask(() => reprocessMailRepository(path, paramValues));
   };
   const handleMoveAll = async (sourcePath: string) => {
     const otherRepos = repositoriesWithSize.filter((r) => r.path !== sourcePath);
@@ -139,10 +153,11 @@ export default function MailRepositoriesList() {
       await moveAllMails(encodeURIComponent(sourcePath), targetRepo);
       toast({ title: t("mailRepositories.moveDone") });
       refresh();
-    } catch (err: any) {
+    } catch (err) {
       toast({
         title: t("mailRepositories.errorMoving"),
-        description: err?.response?.data?.message || err?.message || t("mailRepositories.errorMoving"),
+        description: toErrorMessage(err).message,
+        variant: "destructive",
       });
     }
   };
@@ -155,18 +170,7 @@ export default function MailRepositoriesList() {
     if (!result) {
       return;
     }
-    const { taskId } = await clearMailRepository(path);
-    toast({
-      title: t("mailRepositories.runTaskSuccess"),
-      description: (
-        <p>
-          {t("mailRepositories.taskLabel")}{" "}
-          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-            {taskId}
-          </Link>
-        </p>
-      ),
-    });
+    await runTask(() => clearMailRepository(path));
   };
   return (
     <>

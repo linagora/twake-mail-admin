@@ -1314,6 +1314,7 @@
     "errorMoving": "Erreur lors du déplacement",
     "clearConfirm": "Voulez-vous vider le dépôt : {{path}} ?",
     "runTaskSuccess": "Tâche exécutée avec succès",
+    "runTaskError": "Échec du lancement de la tâche",
     "colNameSender": "Nom / Expéditeur",
     "colRecipients": "Destinataires",
     "colSize": "Taille",
