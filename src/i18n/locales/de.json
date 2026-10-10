@@ -618,7 +618,10 @@
       "errorRemoving": "Fehler beim Entfernen des delegierten Benutzers",
       "empty": "Keine delegierten Benutzer.",
       "addTooltip": "Delegierten Benutzer hinzufügen",
-      "removeTooltip": "Delegierten Benutzer entfernen"
+      "removeTooltip": "Delegierten Benutzer entfernen",
+      "selfDelegation": "Ein Benutzer kann nicht an sich selbst delegiert werden",
+      "unknownUserTitle": "Unbekannter Benutzer",
+      "unknownUserConfirm": "\"{{delegatedUser}}\" existiert nicht und kann sich nicht anmelden. Trotzdem als delegierten Benutzer hinzufügen?"
     },
     "identities": {
       "title": "JMAP-Identitäten",

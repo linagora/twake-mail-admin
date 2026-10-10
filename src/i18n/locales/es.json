@@ -618,7 +618,10 @@
       "errorRemoving": "Error al quitar el usuario delegado",
       "empty": "No hay usuarios delegados.",
       "addTooltip": "Añadir usuario delegado",
-      "removeTooltip": "Quitar usuario delegado"
+      "removeTooltip": "Quitar usuario delegado",
+      "selfDelegation": "No se puede delegar un usuario a sí mismo",
+      "unknownUserTitle": "Usuario desconocido",
+      "unknownUserConfirm": "\"{{delegatedUser}}\" no existe y no podrá iniciar sesión. ¿Añadirlo de todos modos como usuario delegado?"
     },
     "identities": {
       "title": "Identidades JMAP",

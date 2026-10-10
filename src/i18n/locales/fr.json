@@ -618,7 +618,10 @@
       "errorRemoving": "Erreur lors du retrait de l'utilisateur délégué",
       "empty": "Aucun utilisateur délégué.",
       "addTooltip": "Ajouter un utilisateur délégué",
-      "removeTooltip": "Retirer l'utilisateur délégué"
+      "removeTooltip": "Retirer l'utilisateur délégué",
+      "selfDelegation": "Un utilisateur ne peut pas être délégué à lui-même",
+      "unknownUserTitle": "Utilisateur inconnu",
+      "unknownUserConfirm": "« {{delegatedUser}} » n'existe pas et ne pourra pas se connecter. L'ajouter quand même comme utilisateur délégué ?"
     },
     "identities": {
       "title": "Identités JMAP",

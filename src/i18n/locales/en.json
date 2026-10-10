@@ -618,7 +618,10 @@
       "errorRemoving": "Error removing delegated user",
       "empty": "No delegated users.",
       "addTooltip": "Add delegated user",
-      "removeTooltip": "Remove delegated user"
+      "removeTooltip": "Remove delegated user",
+      "selfDelegation": "You cannot delegate a user to themself",
+      "unknownUserTitle": "Unknown user",
+      "unknownUserConfirm": "\"{{delegatedUser}}\" does not exist and will not be able to log in. Add it as delegated user anyway?"
     },
     "identities": {
       "title": "JMAP Identities",
