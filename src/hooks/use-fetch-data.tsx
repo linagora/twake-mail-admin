@@ -2,7 +2,8 @@ import { APIError } from "@/lib/apiClient";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-export function useFetchData<T>(getter: (() => Promise<T>) | null) {
+// Data is fetched again whenever the getter or the refreshKey changes.
+export function useFetchData<T>(getter: (() => Promise<T>) | null, refreshKey?: unknown) {
   const { t } = useTranslation();
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,7 +27,7 @@ export function useFetchData<T>(getter: (() => Promise<T>) | null) {
   useEffect(() => {
     if (!getter) return;
     fetchData();
-  }, [getter]);
+  }, [getter, refreshKey]);
 
   return { data, isLoading, error, refresh: fetchData };
 }

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
+import { useUserMappingsRevision } from "./user-mappings-revision";
 import { getUserAliases, addUserAlias, removeUserAlias } from "../api-client";
 import { GetUserAliasesResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
@@ -21,13 +22,13 @@ export default function UserAliases({ username }: Props) {
   const canAdd = useIsAllowed("PUT", "/address/aliases/{username}/sources/{source}");
   const canRemove = useIsAllowed("DELETE", "/address/aliases/{username}/sources/{source}");
 
+  const { revision, notifyMappingsChanged } = useUserMappingsRevision();
   const fetchAliases = useCallback(() => getUserAliases(username), [username]);
   const {
     data: aliases,
     isLoading,
     error,
-    refresh,
-  } = useFetchData<GetUserAliasesResponseType>(canView ? fetchAliases : null);
+  } = useFetchData<GetUserAliasesResponseType>(canView ? fetchAliases : null, revision);
 
   const [open, setOpen] = useState(false);
   const [newAlias, setNewAlias] = useState("");
@@ -48,7 +49,7 @@ export default function UserAliases({ username }: Props) {
       toast({ title: t("users.aliases.added") });
       setNewAlias("");
       setShowCreateInput(false);
-      await refresh();
+      notifyMappingsChanged();
     } catch (err) {
       toast({
         title: t("users.aliases.errorAdding"),
@@ -66,7 +67,7 @@ export default function UserAliases({ username }: Props) {
     try {
       await removeUserAlias(username, alias);
       toast({ title: t("users.aliases.removed") });
-      await refresh();
+      notifyMappingsChanged();
     } catch (err) {
       toast({
         title: t("users.aliases.errorRemoving"),

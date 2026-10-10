@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
+import { useUserMappingsRevision } from "./user-mappings-revision";
 import {
   getUserMappings,
   getUserMappingSources,
@@ -28,6 +29,7 @@ export default function UserMappings({ username }: Props) {
   const canDeleteSources = useIsAllowed("DELETE", "/mappings/sources/{username}");
 
   const [open, setOpen] = useState(false);
+  const { revision, notifyMappingsChanged } = useUserMappingsRevision();
 
   // Mappings originating from user
   const fetchMappings = useCallback(() => getUserMappings(username), [username]);
@@ -35,7 +37,7 @@ export default function UserMappings({ username }: Props) {
     data: mappings,
     isLoading: loadingMappings,
     error: errorMappings,
-  } = useFetchData<UserMappingEntry[]>(canView ? fetchMappings : null);
+  } = useFetchData<UserMappingEntry[]>(canView ? fetchMappings : null, revision);
 
   // Sources pointing to user (one per type)
   const fetchSources = useCallback(async () => {
@@ -56,8 +58,7 @@ export default function UserMappings({ username }: Props) {
     data: sourcesData,
     isLoading: loadingSources,
     error: errorSources,
-    refresh: refreshSources,
-  } = useFetchData<{ type: SourceType; sources: string[] }[]>(canView ? fetchSources : null);
+  } = useFetchData<{ type: SourceType; sources: string[] }[]>(canView ? fetchSources : null, revision);
 
   const sortedMappings = useMemo(() => {
     if (!mappings) return [];
@@ -75,7 +76,7 @@ export default function UserMappings({ username }: Props) {
     try {
       await deleteUserMappingSources(username, type);
       toast({ title: t("users.mappings.sourcesRemoved", { type, username }) });
-      await refreshSources();
+      notifyMappingsChanged();
     } catch (err) {
       toast({
         title: t("users.mappings.errorRemovingSources", { type, username }),

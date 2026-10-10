@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
+import { useUserMappingsRevision } from "./user-mappings-revision";
 import { getAllowedFromHeaders } from "../api-client";
 
 interface Props {
@@ -12,8 +13,9 @@ interface Props {
 export default function UserAllowedFrom({ username }: Props) {
   const { t } = useTranslation();
   const canView = useIsAllowed("GET", "/users/{username}/allowedFromHeaders");
+  const { revision } = useUserMappingsRevision();
   const fetchHeaders = useCallback(() => getAllowedFromHeaders(username), [username]);
-  const { data: headers, isLoading, error } = useFetchData<string[]>(canView ? fetchHeaders : null);
+  const { data: headers, isLoading, error } = useFetchData<string[]>(canView ? fetchHeaders : null, revision);
 
   const [open, setOpen] = useState(false);
 
