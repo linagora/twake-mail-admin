@@ -18,6 +18,7 @@ export function useFetchData<T>(getter: (() => Promise<T>) | null, refreshKey?: 
       setData(result);
     } catch (error: unknown) {
       const e = error as APIError;
+      setData(null);
       setError(t("common.fetchFailed", { message: e.message }));
     } finally {
       setIsLoading(false);

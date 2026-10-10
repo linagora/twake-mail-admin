@@ -18,17 +18,25 @@ import { currentLocale } from "@/i18n/locale";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
-const STATUS_OPTIONS = ["", "waiting", "inProgress", "cancelledRequested", "completed", "cancelled", "failed"];
+const STATUS_OPTIONS = [
+  "",
+  TaskStatus.WAITING,
+  TaskStatus.IN_PROGRESS,
+  TaskStatus.CANCEL_REQUESTED,
+  TaskStatus.COMPLETED,
+  TaskStatus.CANCELLED,
+  TaskStatus.FAILED,
+];
 
 type SortField = "submitDate" | "startedDate" | "completedDate" | "status" | "type";
 
 const STATUS_COLORS: Record<string, string> = {
-  completed: "bg-green-100 text-green-800",
-  failed: "bg-red-100 text-red-800",
-  inProgress: "bg-primary/10 text-primary",
-  waiting: "bg-yellow-100 text-yellow-800",
-  cancelled: "bg-gray-100 text-gray-600",
-  cancelledRequested: "bg-orange-100 text-orange-800",
+  [TaskStatus.COMPLETED]: "bg-green-100 text-green-800",
+  [TaskStatus.FAILED]: "bg-red-100 text-red-800",
+  [TaskStatus.IN_PROGRESS]: "bg-primary/10 text-primary",
+  [TaskStatus.WAITING]: "bg-yellow-100 text-yellow-800",
+  [TaskStatus.CANCELLED]: "bg-gray-100 text-gray-600",
+  [TaskStatus.CANCEL_REQUESTED]: "bg-orange-100 text-orange-800",
 };
 
 function formatDate(d: string | null | undefined): string {
@@ -153,12 +161,12 @@ export default function Tasks() {
 
   const STATUS_LABELS: Record<string, string> = {
     "": t("tasks.all"),
-    waiting: t("tasks.waiting"),
-    inProgress: t("tasks.inProgress"),
-    cancelledRequested: t("tasks.cancelRequested"),
-    completed: t("tasks.completed"),
-    cancelled: t("tasks.cancelled"),
-    failed: t("tasks.failed"),
+    [TaskStatus.WAITING]: t("tasks.waiting"),
+    [TaskStatus.IN_PROGRESS]: t("tasks.inProgress"),
+    [TaskStatus.CANCEL_REQUESTED]: t("tasks.cancelRequested"),
+    [TaskStatus.COMPLETED]: t("tasks.completed"),
+    [TaskStatus.CANCELLED]: t("tasks.cancelled"),
+    [TaskStatus.FAILED]: t("tasks.failed"),
   };
 
   const SORT_FIELDS: { key: SortField; label: string }[] = [

@@ -76,7 +76,8 @@ export enum TaskStatus {
   COMPLETED = 'completed',
   WAITING = 'waiting',
   IN_PROGRESS = 'inProgress',
-  CANCELLED = 'cancelled',
+  CANCEL_REQUESTED = 'canceledRequested',
+  CANCELLED = 'canceled',
   FAILED = 'failed',
 };
 
