@@ -60,6 +60,7 @@
     "global": "Global",
     "updateSizeLimit": "Update size limit",
     "resetToDomainDefault": "Reset to domain default",
+    "resetToGlobalDefault": "Reset to global default",
     "quotaSizeUpdated": "Quota size updated",
     "errorUpdatingQuota": "Error updating quota size",
     "resetQuotaSize": "Reset Quota Size",
@@ -134,7 +135,8 @@
     "quota": {
       "title": "Quota",
       "couldNotLoad": "Could not load quota.",
-      "resetConfirm": "Reset the quota size for \"{{domain}}\" to domain default?",
+      "resetConfirm": "Remove the domain quota size limit for \"{{domain}}\"? The global limit will apply again.",
+      "reset": "Domain quota size reset to global default",
       "errorUpdating": "Error updating quota size",
       "updated": "Domain quota size updated"
     },
@@ -1226,6 +1228,10 @@
     "size": "Size",
     "updated": "Global quota size updated",
     "errorUpdating": "Error updating global quota",
+    "removeSizeLimit": "Remove size limit",
+    "removeConfirm": "Remove the global quota size limit? Users without a domain or user specific limit will have unlimited storage.",
+    "removed": "Global quota size limit removed",
+    "errorRemoving": "Error removing global quota size limit",
     "aggregatedExtra": "Aggregated extra quotas",
     "totalExtraStorage": "Total extra storage:",
     "totalExtraCount": "Total extra count:",

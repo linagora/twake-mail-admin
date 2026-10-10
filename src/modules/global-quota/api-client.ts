@@ -9,6 +9,10 @@ export const updateGlobalQuota = async (quota: GlobalQuotaValues): Promise<void>
   await apiClient.put("/quota", quota);
 };
 
+export const deleteGlobalQuotaSize = async (): Promise<void> => {
+  await apiClient.delete("/quota/size");
+};
+
 export const getUsersWithSpecificQuotas = async (): Promise<UserSpecificQuota[]> => {
   return apiClient.get("/reports/quota/users?hasSpecificQuota");
 };

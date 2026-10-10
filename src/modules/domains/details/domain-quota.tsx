@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { getDomainQuota, updateDomainQuota } from "../api-client";
+import { getDomainQuota, updateDomainQuota, deleteDomainQuotaSize } from "../api-client";
 import { DomainQuota, DomainQuotaValues } from "../types";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
@@ -58,8 +59,10 @@ function toBytes(value: number, unit: string): number {
 export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/quota/domains/{domain}");
   const canUpdate = useIsAllowed("PUT", "/quota/domains/{domain}");
+  const canReset = useIsAllowed("DELETE", "/quota/domains/{domain}/size");
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
   const [quota, setQuota] = useState<DomainQuota | null>(null);
@@ -106,6 +109,21 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
     }
   };
 
+  const handleResetSize = async () => {
+    const confirmed = await confirm({
+      header: t("common.resetQuotaSize"),
+      message: t("domains.quota.resetConfirm", { domain }),
+    });
+    if (!confirmed) return;
+    try {
+      await deleteDomainQuotaSize(domain);
+      toast({ title: t("domains.quota.reset") });
+      await fetchQuota();
+    } catch (err) {
+      toast({ title: t("common.errorResettingQuota"), description: <ErrorDisplayer error={err} /> });
+    }
+  };
+
   return (
     <div className="mt-6">
       <button
@@ -133,15 +151,26 @@ export default function DomainQuotaSection({ domain, defaultOpen }: Props) {
 
               <hr className="border-gray-200" />
 
-              {canUpdate && (
-                <Button
-                  variant="outline"
-                  className="rounded-sm"
-                  onClick={() => setShowSizeEdit(!showSizeEdit)}
-                >
-                  {t("common.updateSizeLimit")}
-                </Button>
-              )}
+              <div className="flex items-center gap-2 flex-wrap">
+                {canUpdate && (
+                  <Button
+                    variant="outline"
+                    className="rounded-sm"
+                    onClick={() => setShowSizeEdit(!showSizeEdit)}
+                  >
+                    {t("common.updateSizeLimit")}
+                  </Button>
+                )}
+                {canReset && quota.domain?.size != null && (
+                  <Button
+                    variant="outline"
+                    className="rounded-sm"
+                    onClick={handleResetSize}
+                  >
+                    {t("common.resetToGlobalDefault")}
+                  </Button>
+                )}
+              </div>
 
               {showSizeEdit && (
                 <div className="flex gap-2 mt-2">

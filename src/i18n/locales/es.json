@@ -60,6 +60,7 @@
     "global": "Global",
     "updateSizeLimit": "Modificar el límite de tamaño",
     "resetToDomainDefault": "Restablecer el valor predeterminado del dominio",
+    "resetToGlobalDefault": "Restablecer el valor global",
     "quotaSizeUpdated": "Tamaño de cuota actualizado",
     "errorUpdatingQuota": "Error al actualizar el tamaño de la cuota",
     "resetQuotaSize": "Restablecer el tamaño de la cuota",
@@ -134,7 +135,8 @@
     "quota": {
       "title": "Cuota",
       "couldNotLoad": "No se pudo cargar la cuota.",
-      "resetConfirm": "¿Restablecer el tamaño de la cuota de «{{domain}}» al valor predeterminado del dominio?",
+      "resetConfirm": "¿Eliminar el límite de tamaño de la cuota del dominio \"{{domain}}\"? Se volverá a aplicar el límite global.",
+      "reset": "Tamaño de cuota del dominio restablecido al valor global",
       "errorUpdating": "Error al actualizar el tamaño de la cuota",
       "updated": "Tamaño de la cuota del dominio actualizado"
     },
@@ -1226,6 +1228,10 @@
     "size": "Tamaño",
     "updated": "Tamaño de la cuota global actualizado",
     "errorUpdating": "Error al actualizar la cuota global",
+    "removeSizeLimit": "Eliminar límite de tamaño",
+    "removeConfirm": "¿Eliminar el límite de tamaño de la cuota global? Los usuarios sin un límite específico de dominio o de usuario tendrán almacenamiento ilimitado.",
+    "removed": "Límite de tamaño de la cuota global eliminado",
+    "errorRemoving": "Error al eliminar el límite de tamaño de la cuota global",
     "aggregatedExtra": "Cuotas adicionales agregadas",
     "totalExtraStorage": "Almacenamiento adicional total:",
     "totalExtraCount": "Número adicional total:",

@@ -60,6 +60,7 @@
     "global": "Globale",
     "updateSizeLimit": "Modifica il limite di dimensione",
     "resetToDomainDefault": "Ripristina il valore predefinito del dominio",
+    "resetToGlobalDefault": "Ripristina il valore globale",
     "quotaSizeUpdated": "Dimensione della quota aggiornata",
     "errorUpdatingQuota": "Errore durante l'aggiornamento della dimensione della quota",
     "resetQuotaSize": "Ripristina la dimensione della quota",
@@ -134,7 +135,8 @@
     "quota": {
       "title": "Quota",
       "couldNotLoad": "Impossibile caricare la quota.",
-      "resetConfirm": "Ripristinare la dimensione della quota di «{{domain}}» al valore predefinito del dominio?",
+      "resetConfirm": "Rimuovere il limite di dimensione della quota del dominio \"{{domain}}\"? Verrà applicato di nuovo il limite globale.",
+      "reset": "Dimensione della quota del dominio ripristinata al valore globale",
       "errorUpdating": "Errore durante l'aggiornamento della dimensione della quota",
       "updated": "Dimensione della quota del dominio aggiornata"
     },
@@ -1226,6 +1228,10 @@
     "size": "Dimensione",
     "updated": "Dimensione della quota globale aggiornata",
     "errorUpdating": "Errore durante l'aggiornamento della quota globale",
+    "removeSizeLimit": "Rimuovi limite di dimensione",
+    "removeConfirm": "Rimuovere il limite di dimensione della quota globale? Gli utenti senza un limite specifico per dominio o utente avranno spazio illimitato.",
+    "removed": "Limite di dimensione della quota globale rimosso",
+    "errorRemoving": "Errore durante la rimozione del limite di dimensione della quota globale",
     "aggregatedExtra": "Quote aggiuntive aggregate",
     "totalExtraStorage": "Spazio aggiuntivo totale:",
     "totalExtraCount": "Numero aggiuntivo totale:",

@@ -60,6 +60,7 @@
     "global": "Globale",
     "updateSizeLimit": "Modifier la limite de taille",
     "resetToDomainDefault": "Réinitialiser au défaut du domaine",
+    "resetToGlobalDefault": "Réinitialiser à la valeur globale",
     "quotaSizeUpdated": "Limite de quota mise à jour",
     "errorUpdatingQuota": "Erreur lors de la mise à jour du quota",
     "resetQuotaSize": "Réinitialiser le quota",
@@ -134,7 +135,8 @@
     "quota": {
       "title": "Quota",
       "couldNotLoad": "Impossible de charger le quota.",
-      "resetConfirm": "Réinitialiser le quota du domaine « {{domain}} » à la valeur par défaut ?",
+      "resetConfirm": "Supprimer la limite de taille du quota du domaine \"{{domain}}\" ? La limite globale s'appliquera de nouveau.",
+      "reset": "Taille du quota du domaine réinitialisée à la valeur globale",
       "errorUpdating": "Erreur lors de la mise à jour du quota",
       "updated": "Quota du domaine mis à jour"
     },
@@ -1226,6 +1228,10 @@
     "size": "Taille",
     "updated": "Quota global mis à jour",
     "errorUpdating": "Erreur lors de la mise à jour du quota global",
+    "removeSizeLimit": "Supprimer la limite de taille",
+    "removeConfirm": "Supprimer la limite de taille du quota global ? Les utilisateurs sans limite spécifique au domaine ou à l'utilisateur disposeront d'un stockage illimité.",
+    "removed": "Limite de taille du quota global supprimée",
+    "errorRemoving": "Erreur lors de la suppression de la limite de taille du quota global",
     "aggregatedExtra": "Quotas supplémentaires agrégés",
     "totalExtraStorage": "Stockage supplémentaire total :",
     "totalExtraCount": "Nombre supplémentaire total :",
