@@ -1,13 +1,43 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const http = vi.hoisted(() => ({ post: vi.fn() }));
+const http = vi.hoisted(() => ({ post: vi.fn(), delete: vi.fn() }));
 
 vi.mock("@/lib/apiClient", () => ({
-  apiClient: { get: vi.fn(), post: http.post, put: vi.fn(), patch: vi.fn(), delete: vi.fn() },
+  apiClient: { get: vi.fn(), post: http.post, put: vi.fn(), patch: vi.fn(), delete: http.delete },
 }));
 vi.mock("@/lib/config", () => ({ appConfig: {} }));
 
-import { runAllUsersReindexTask, summarizeAllUsersReindex } from "./api-client";
+import {
+  runAllUsersReindexTask,
+  runBlobGarbageCollectionTask,
+  runCleanupJmapUploadsTask,
+  runFixMappingTask,
+  summarizeAllUsersReindex,
+} from "./api-client";
+
+describe("tasks with a fixed query parameter", () => {
+  beforeEach(() => {
+    http.post.mockReset();
+    http.delete.mockReset();
+  });
+
+  it("fixes mapping denormalization", async () => {
+    await runFixMappingTask();
+    expect(http.post).toHaveBeenCalledWith("/cassandra/mappings?action=SolveInconsistencies");
+  });
+
+  it("cleans up expired JMAP uploads", async () => {
+    await runCleanupJmapUploadsTask();
+    expect(http.delete).toHaveBeenCalledWith("/jmap/uploads?scope=expired");
+  });
+
+  it("appends the blob garbage collection parameters with '&'", async () => {
+    await runBlobGarbageCollectionTask({ associatedProbability: "0.01", expectedBlobCount: "1000000" });
+    expect(http.delete).toHaveBeenCalledWith(
+      "/blobs?scope=unreferenced&associatedProbability=0.01&expectedBlobCount=1000000"
+    );
+  });
+});
 
 describe("per user reindexing", () => {
   beforeEach(() => {
