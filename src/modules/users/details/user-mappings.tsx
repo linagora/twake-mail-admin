@@ -66,19 +66,19 @@ export default function UserMappings({ username }: Props) {
 
   if (!canView) return null;
 
-  const handleDeleteSources = async (type: SourceType) => {
+  const handleDeleteSources = async (type: SourceType, sources: string[]) => {
     const confirmed = await confirm({
       header: t("users.mappings.removeAllSources", { type }),
-      message: t("users.mappings.removeAllSources", { type }),
+      message: t("users.mappings.removeAllSourcesConfirm", { type, username, sources: sources.join(", ") }),
     });
     if (!confirmed) return;
     try {
       await deleteUserMappingSources(username, type);
-      toast({ title: t("users.mappings.removeAllSources", { type }) });
+      toast({ title: t("users.mappings.sourcesRemoved", { type, username }) });
       await refreshSources();
     } catch (err) {
       toast({
-        title: t("users.mappings.removeAllSources", { type }),
+        title: t("users.mappings.errorRemovingSources", { type, username }),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -152,7 +152,7 @@ export default function UserMappings({ username }: Props) {
                     <span className="text-sm text-gray-500">({sources.length})</span>
                     {canDeleteSources && (
                       <button
-                        onClick={() => handleDeleteSources(type)}
+                        onClick={() => handleDeleteSources(type, sources)}
                         className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
                         title={t("users.mappings.removeAllSources", { type })}
                       >

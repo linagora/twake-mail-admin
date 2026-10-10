@@ -658,7 +658,9 @@
     },
     "channels": {
       "title": "Сүлжээний сувгууд",
-      "disconnectAll": "Бүгдийг салгах"
+      "disconnectAll": "Бүгдийг салгах",
+      "disconnected": "{{username}} салгагдлаа",
+      "errorDisconnecting": "{{username}}-г салгахад алдаа гарлаа"
     },
     "mappings": {
       "title": "Зураглал",
@@ -667,6 +669,9 @@
       "destination": "Хүрэх газар",
       "sources": "Энэ хэрэглэгч рүү чиглэсэн эх сурвалжууд",
       "removeAllSources": "Бүх {{type}} эх сурвалжийг устгах",
+      "removeAllSourcesConfirm": "{{username}}-ийн бүх {{type}} эх сурвалжийг ({{sources}}) устгах уу?",
+      "sourcesRemoved": "{{username}}-ийн {{type}} эх сурвалжууд устгагдлаа",
+      "errorRemovingSources": "{{username}}-ийн {{type}} эх сурвалжуудыг устгахад алдаа гарлаа",
       "errorLoading": "Зураглал ачаалахад алдаа гарлаа:",
       "errorLoadingSources": "Эх сурвалж ачаалахад алдаа гарлаа:",
       "empty": "Зураглал олдсонгүй."

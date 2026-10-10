@@ -658,7 +658,9 @@
     },
     "channels": {
       "title": "Сетевые каналы",
-      "disconnectAll": "Отключить все"
+      "disconnectAll": "Отключить все",
+      "disconnected": "{{username}} отключён",
+      "errorDisconnecting": "Ошибка при отключении {{username}}"
     },
     "mappings": {
       "title": "Сопоставления",
@@ -667,6 +669,9 @@
       "destination": "Назначение",
       "sources": "Источники, указывающие на этого пользователя",
       "removeAllSources": "Удалить все источники типа {{type}}",
+      "removeAllSourcesConfirm": "Удалить все источники типа {{type}} для {{username}} ({{sources}})?",
+      "sourcesRemoved": "Источники типа {{type}} для {{username}} удалены",
+      "errorRemovingSources": "Ошибка при удалении источников типа {{type}} для {{username}}",
       "errorLoading": "Ошибка при загрузке сопоставлений:",
       "errorLoadingSources": "Ошибка при загрузке источников:",
       "empty": "Сопоставления не найдены."

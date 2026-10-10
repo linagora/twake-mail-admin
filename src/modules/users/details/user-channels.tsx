@@ -47,11 +47,11 @@ export default function UserChannels({ username }: Props) {
     setDisconnecting(true);
     try {
       await disconnectUserChannels(username);
-      toast({ title: t("users.channels.disconnectAll") });
+      toast({ title: t("users.channels.disconnected", { username }) });
       await fetchChannels();
     } catch (err) {
       toast({
-        title: t("users.channels.title"),
+        title: t("users.channels.errorDisconnecting", { username }),
         description: <ErrorDisplayer error={err} />,
       });
     } finally {

@@ -658,7 +658,9 @@
     },
     "channels": {
       "title": "Network Channels",
-      "disconnectAll": "Disconnect all"
+      "disconnectAll": "Disconnect all",
+      "disconnected": "{{username}} disconnected",
+      "errorDisconnecting": "Error disconnecting {{username}}"
     },
     "mappings": {
       "title": "Mappings",
@@ -667,6 +669,9 @@
       "destination": "Destination",
       "sources": "Sources pointing to this user",
       "removeAllSources": "Remove all {{type}} sources",
+      "removeAllSourcesConfirm": "Remove all {{type}} sources of {{username}} ({{sources}})?",
+      "sourcesRemoved": "{{type}} sources of {{username}} removed",
+      "errorRemovingSources": "Error removing the {{type}} sources of {{username}}",
       "errorLoading": "Error loading mappings:",
       "errorLoadingSources": "Error loading sources:",
       "empty": "No mappings found."
