@@ -18,6 +18,7 @@ export default function ImportDomainsButton({ onImported }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [importing, setImporting] = useState(false);
   const [shownFailures, setShownFailures] = useState<ImportFailure[] | null>(null);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const describe = (progress: ImportProgress) => (
     <div className="space-y-2">
@@ -80,11 +81,23 @@ export default function ImportDomainsButton({ onImported }: Props) {
         {t("domains.import.button")}
       </button>
       <TooltipProvider>
-        <Tooltip delayDuration={0}>
-          <TooltipTrigger asChild>
-            <span className="self-center text-gray-500 cursor-help" aria-label={t("domains.import.help")}>
+        <Tooltip delayDuration={0} open={helpOpen} onOpenChange={setHelpOpen}>
+          {/* A button so that keyboard users can reach the help, which opens on focus. Radix closes the tooltip
+              on click: open it instead, so that it can be tapped on touch screens. */}
+          <TooltipTrigger
+            asChild
+            onClick={(event) => {
+              event.preventDefault();
+              setHelpOpen(true);
+            }}
+          >
+            <button
+              type="button"
+              className="self-center text-gray-500 cursor-help rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              aria-label={t("domains.import.help")}
+            >
               <CircleHelp className="w-4 h-4" />
-            </span>
+            </button>
           </TooltipTrigger>
           <TooltipContent className="max-w-xs whitespace-pre-line">
             {t("domains.import.help")}
