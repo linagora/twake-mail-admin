@@ -1035,7 +1035,10 @@
     "unseenMessages": "Unseen messages"
   },
   "renameUserForm": {
+    "currentUsername": "Current username",
     "newUsername": "New username",
+    "newUsernameRequired": "New username is required",
+    "targetMustExist": "The new username must be an existing account: renaming only migrates the data of the current user to it.",
     "force": "Force",
     "fromStep": "Resume from step",
     "fromStepPlaceholder": "e.g. MailboxUsernameChangeTaskStep"

@@ -1035,7 +1035,10 @@
     "unseenMessages": "Уншаагүй захидал"
   },
   "renameUserForm": {
+    "currentUsername": "Одоогийн хэрэглэгчийн нэр",
     "newUsername": "Шинэ хэрэглэгчийн нэр",
+    "newUsernameRequired": "Шинэ хэрэглэгчийн нэр шаардлагатай",
+    "targetMustExist": "Шинэ хэрэглэгчийн нэр нь бүртгэлтэй хэрэглэгч байх ёстой: нэр өөрчлөх нь зөвхөн одоогийн хэрэглэгчийн өгөгдлийг түүн рүү шилжүүлнэ.",
     "force": "Албадах",
     "fromStep": "Алхамаас үргэлжлүүлэх",
     "fromStepPlaceholder": "e.g. MailboxUsernameChangeTaskStep"

@@ -1035,7 +1035,10 @@
     "unseenMessages": "Messages non lus"
   },
   "renameUserForm": {
+    "currentUsername": "Nom d'utilisateur actuel",
     "newUsername": "Nouveau nom d'utilisateur",
+    "newUsernameRequired": "Le nouveau nom d'utilisateur est obligatoire",
+    "targetMustExist": "Le nouveau nom d'utilisateur doit être un compte existant : le renommage ne fait que migrer les données de l'utilisateur actuel vers ce compte.",
     "force": "Forcer",
     "fromStep": "Reprendre depuis l'étape",
     "fromStepPlaceholder": "ex. MailboxUsernameChangeTaskStep"

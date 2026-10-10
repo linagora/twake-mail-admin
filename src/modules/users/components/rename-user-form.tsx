@@ -17,7 +17,8 @@ export default function RenameUserForm({ username, onChange }: Props) {
 
   return (
     <div className="space-y-4">
-      <p>{t("renameUserForm.newUsername")}: <strong>{username}</strong></p>
+      <p>{t("renameUserForm.currentUsername")}: <strong>{username}</strong></p>
+      <p className="text-sm text-muted-foreground">{t("renameUserForm.targetMustExist")}</p>
       <div className="flex items-center gap-2">
         <label className="text-sm font-medium whitespace-nowrap">{t("renameUserForm.newUsername")}:</label>
         <Input
