@@ -1033,7 +1033,10 @@
     "unseenMessages": "Непрочитанные сообщения"
   },
   "renameUserForm": {
+    "currentUsername": "Текущее имя пользователя",
     "newUsername": "Новое имя пользователя",
+    "newUsernameRequired": "Новое имя пользователя обязательно",
+    "targetMustExist": "Новое имя пользователя должно быть существующей учётной записью: переименование лишь переносит в неё данные текущего пользователя.",
     "force": "Принудительно",
     "fromStep": "Возобновить с шага",
     "fromStepPlaceholder": "e.g. MailboxUsernameChangeTaskStep"

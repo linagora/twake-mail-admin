@@ -1033,7 +1033,10 @@
     "unseenMessages": "Ungelesene Nachrichten"
   },
   "renameUserForm": {
+    "currentUsername": "Aktueller Benutzername",
     "newUsername": "Neuer Benutzername",
+    "newUsernameRequired": "Der neue Benutzername ist erforderlich",
+    "targetMustExist": "Der neue Benutzername muss ein bestehendes Konto sein: Das Umbenennen migriert nur die Daten des aktuellen Benutzers dorthin.",
     "force": "Erzwingen",
     "fromStep": "Ab Schritt fortsetzen",
     "fromStepPlaceholder": "z. B. MailboxUsernameChangeTaskStep"

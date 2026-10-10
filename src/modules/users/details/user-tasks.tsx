@@ -343,7 +343,7 @@ export default function UserTasks({ username }: Props) {
       if (!result) return;
 
       if (!currentValues.newUsername.trim()) {
-        toast({ title: t("renameUserForm.newUsername") });
+        toast({ title: t("renameUserForm.newUsernameRequired") });
         return;
       }
 

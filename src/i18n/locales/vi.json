@@ -1033,7 +1033,10 @@
     "unseenMessages": "Thư chưa đọc"
   },
   "renameUserForm": {
+    "currentUsername": "Tên người dùng hiện tại",
     "newUsername": "Tên người dùng mới",
+    "newUsernameRequired": "Tên người dùng mới là bắt buộc",
+    "targetMustExist": "Tên người dùng mới phải là một tài khoản đã tồn tại: việc đổi tên chỉ chuyển dữ liệu của người dùng hiện tại sang tài khoản đó.",
     "force": "Bắt buộc",
     "fromStep": "Tiếp tục từ bước",
     "fromStepPlaceholder": "e.g. MailboxUsernameChangeTaskStep"
