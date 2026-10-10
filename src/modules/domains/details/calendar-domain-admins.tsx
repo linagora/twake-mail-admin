@@ -169,13 +169,13 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
                 goToPage={goToPage}
               />
               {paginated.map((admin, index) => (
-                <div key={admin} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center">
-                  <h4 className="text-sm font-medium leading-none">
+                <div key={admin} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2">
+                  <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                     {admin}
                   </h4>
                   {canRemove && (
-                    <button onClick={() => handleRemove(admin)} className="p-2 rounded-md hover:bg-gray-200" title={t("domains.calendarAdmins.removeTooltip")}>
+                    <button onClick={() => handleRemove(admin)} className="shrink-0 p-2 rounded-md hover:bg-gray-200" title={t("domains.calendarAdmins.removeTooltip")}>
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   )}

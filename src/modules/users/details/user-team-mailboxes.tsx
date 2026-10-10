@@ -85,16 +85,16 @@ export default function UserTeamMailboxes({ username }: Props) {
               {sorted.map((mb, index) => (
                 <div
                   key={mb.emailAddress}
-                  className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center"
+                  className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2"
                 >
-                  <h4 className="text-sm font-medium leading-none">
+                  <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{index + 1}/</span>
                     {mb.emailAddress}
                   </h4>
                   {canLeave && (
                     <button
                       onClick={() => handleLeave(mb)}
-                      className="flex items-center gap-1 px-2 py-1 text-sm text-red-600 rounded-md hover:bg-gray-200"
+                      className="flex shrink-0 items-center gap-1 px-2 py-1 text-sm text-red-600 rounded-md hover:bg-gray-200"
                       title={t("users.teamMailboxes.leaveTooltip")}
                     >
                       <LogOut className="w-4 h-4" />
