@@ -32,7 +32,7 @@ const CLEANUP_PARAMS: TaskParam[] = [
 ];
 
 const TIER_PARAMS: TaskParam[] = [
-  { key: "tiering", defaultValue: "", type: "duration" },
+  { key: "tiering", defaultValue: "30d", type: "duration" },
   { key: "messagesPerSecond", defaultValue: "50", type: "input" },
 ];
 
@@ -406,7 +406,7 @@ export default function UserTasks({ username }: Props) {
         message: (
           <ConfirmTaskContent
             message={<p>{t("users.tasks.tierDataDesc", { username })}</p>}
-            command={`curl -XPOST /users/${username}/data?tiering=30d`}
+            command={`curl -XPOST /users/${username}/data`}
             params={TIER_PARAMS}
             getParamValues={(key, value) => {
               additionalParams[key] = value;
