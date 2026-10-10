@@ -71,4 +71,14 @@ describe("event dead letter group detail", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(200);
     expect(screen.getByText("common.next").hasAttribute("disabled")).toBe(false);
   });
+
+  it("names the delete button of each event", async () => {
+    vi.mocked(getFailedEvents).mockResolvedValue(["event-1"]);
+
+    renderDetail("");
+
+    const deleteButton = await screen.findByRole("button", { name: "eventDeadletter.deleteEventAction" });
+
+    expect(deleteButton.getAttribute("title")).toBe("eventDeadletter.deleteEventAction");
+  });
 });
