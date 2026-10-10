@@ -27,7 +27,8 @@ export function useUsersPages(source: UsernamesSource, filter: UsersFilter, page
   const { query, domain } = filter;
   const [paging, setPaging] = useState<Paging>({ source, query, domain, anchors: FIRST_PAGE });
   const [page, setPage] = useState<UsersPage>(EMPTY_PAGE);
-  const [isLoading, setIsLoading] = useState(false);
+  // Loading from the start: the first page is fetched right after mounting.
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const isCurrent = paging.source === source && paging.query === query && paging.domain === domain;

@@ -23,6 +23,8 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
   const [selectedDomain, setSelectedDomain] = useState("");
   const query = useDebouncedValue(search, SEARCH_DEBOUNCE_MS);
   const pages = useUsersPages(source, { query, domain: domain ?? selectedDomain }, PAGE_LIMIT);
+  const prefix = query.trim();
+  const isEmpty = !pages.isLoading && !pages.error && pages.usernames.length === 0;
 
   return (
     <div>
@@ -67,6 +69,9 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
           disabledNext={!pages.hasNext || pages.isLoading}
           label={t("common.pageSimple", { page: pages.pageNumber })}
         />
+      )}
+      {isEmpty && (
+        <p className="text-gray-500 mt-4">{prefix ? t("users.noMatch", { query: prefix }) : t("users.empty")}</p>
       )}
       <div>
         {pages.usernames.map((username, index) => (
