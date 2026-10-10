@@ -4,9 +4,20 @@ import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
-import { RATE_LIMIT_KEYS, RateLimits, normalizeRateLimits, toRateLimitsPayload } from "./rate-limits";
+import {
+  RATE_LIMIT_KEYS,
+  RateLimitInputs,
+  RateLimits,
+  invalidRateLimitKeys,
+  isValidRateLimitInput,
+  normalizeRateLimits,
+  parseRateLimitInputs,
+  toRateLimitInputs,
+  toRateLimitsPayload,
+} from "./rate-limits";
 
 const EMPTY: RateLimits = normalizeRateLimits(null);
+const EMPTY_INPUTS: RateLimitInputs = toRateLimitInputs(EMPTY);
 
 interface Props {
   fetchRateLimits: () => Promise<RateLimits>;
@@ -21,17 +32,17 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState<RateLimits>({ ...EMPTY });
+  const [form, setForm] = useState<RateLimitInputs>({ ...EMPTY_INPUTS });
   const [loaded, setLoaded] = useState<RateLimits>({ ...EMPTY });
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = normalizeRateLimits(await fetchRateLimits());
-      setForm(data);
+      setForm(toRateLimitInputs(data));
       setLoaded(data);
     } catch {
-      setForm({ ...EMPTY });
+      setForm({ ...EMPTY_INPUTS });
       setLoaded({ ...EMPTY });
     } finally {
       setLoading(false);
@@ -43,18 +54,19 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
   }, [open, load]);
 
   const handleChange = (key: keyof RateLimits, value: string) => {
-    const trimmed = value.trim();
-    setForm((prev) => ({
-      ...prev,
-      [key]: trimmed === "" ? null : parseInt(trimmed),
-    }));
+    setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSave = async () => {
+    if (invalidRateLimitKeys(form).length > 0) {
+      toast({ title: t("rateLimits.invalid"), description: t("rateLimits.invalidDesc") });
+      return;
+    }
+    const limits = parseRateLimitInputs(form);
     setSaving(true);
     try {
-      await updateRateLimits(toRateLimitsPayload(form, loaded));
-      setLoaded(form);
+      await updateRateLimits(toRateLimitsPayload(limits, loaded));
+      setLoaded(limits);
       toast({ title: t("rateLimits.updated") });
     } catch (err) {
       toast({
@@ -90,10 +102,13 @@ export default function RateLimitsSection({ fetchRateLimits, updateRateLimits, d
                     <label className="text-sm text-gray-600 whitespace-nowrap">{t(`rateLimits.${key}`)}</label>
                     <input
                       type="number"
-                      value={form[key] === null ? "" : form[key]}
+                      min={-1}
+                      step={1}
+                      value={form[key]}
                       onChange={(e) => handleChange(key, e.target.value)}
                       placeholder={t("rateLimits.noLimit")}
-                      className="w-28 px-3 py-1.5 border rounded-md text-sm text-right focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                      aria-invalid={!isValidRateLimitInput(form[key])}
+                      className="w-28 px-3 py-1.5 border aria-invalid:border-red-500 rounded-md text-sm text-right focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 ))}

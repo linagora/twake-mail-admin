@@ -1592,7 +1592,9 @@
     "mailsReceivedPerDays": "Correos recibidos / día",
     "noLimit": "predeterminado",
     "noLimitHint": "Deje el campo vacío para usar el límite predeterminado (null); -1 significa ilimitado. Los límites de destinatarios cuentan cada destinatario de un correo enviado; los límites de correos cuentan el correo una sola vez.",
-    "sectionTitle": "Limitación de envío"
+    "sectionTitle": "Limitación de envío",
+    "invalid": "Límite no válido",
+    "invalidDesc": "Introduzca un número entero positivo, -1 para ilimitado, o déjelo vacío para el límite predeterminado."
   },
   "confirmTask": {
     "modifyThese": "Puede modificar estos parámetros:",

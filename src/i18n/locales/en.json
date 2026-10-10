@@ -1592,7 +1592,9 @@
     "mailsReceivedPerDays": "Mails received / day",
     "noLimit": "default",
     "noLimitHint": "Leave empty to fall back to the default limit (null), -1 means unlimited. Recipient limits count each recipient of a sent email, mail limits count the email once.",
-    "sectionTitle": "Rate Limiting"
+    "sectionTitle": "Rate Limiting",
+    "invalid": "Invalid rate limit",
+    "invalidDesc": "Enter a positive integer, -1 for unlimited, or leave empty for the default limit."
   },
   "confirmTask": {
     "modifyThese": "You can modify these parameters:",

@@ -37,3 +37,27 @@ export const toRateLimitsPayload = (form: RateLimits, loaded: RateLimits): Parti
       (key) => [key, form[key]],
     ),
   );
+
+export type RateLimitInputs = Record<keyof RateLimits, string>;
+
+// Accepted: empty (default limit), -1 (unlimited) or an integer >= 0.
+const RATE_LIMIT_INPUT = /^(-1|\d+)$/;
+
+export const toRateLimitInputs = (limits: RateLimits): RateLimitInputs =>
+  Object.fromEntries(
+    RATE_LIMIT_KEYS.map((key) => [key, limits[key] === null ? "" : String(limits[key])]),
+  ) as RateLimitInputs;
+
+export const isValidRateLimitInput = (input: string): boolean => {
+  const trimmed = input.trim();
+  return trimmed === "" || RATE_LIMIT_INPUT.test(trimmed);
+};
+
+export const invalidRateLimitKeys = (inputs: RateLimitInputs): (keyof RateLimits)[] =>
+  RATE_LIMIT_KEYS.filter((key) => !isValidRateLimitInput(inputs[key]));
+
+// Expects inputs without invalidRateLimitKeys.
+export const parseRateLimitInputs = (inputs: RateLimitInputs): RateLimits =>
+  Object.fromEntries(
+    RATE_LIMIT_KEYS.map((key) => [key, inputs[key].trim() === "" ? null : Number(inputs[key].trim())]),
+  ) as unknown as RateLimits;

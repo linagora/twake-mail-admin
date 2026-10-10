@@ -1592,7 +1592,9 @@
     "mailsReceivedPerDays": "Empfangene E-Mails / Tag",
     "noLimit": "Standard",
     "noLimitHint": "Leer lassen, um den Standardgrenzwert (null) zu verwenden, -1 bedeutet unbegrenzt. Empfängergrenzwerte zählen jeden Empfänger einer gesendeten E-Mail, E-Mail-Grenzwerte zählen die E-Mail einmal.",
-    "sectionTitle": "Ratenbegrenzung"
+    "sectionTitle": "Ratenbegrenzung",
+    "invalid": "Ungültiges Limit",
+    "invalidDesc": "Geben Sie eine positive ganze Zahl ein, -1 für unbegrenzt, oder lassen Sie das Feld für das Standardlimit leer."
   },
   "confirmTask": {
     "modifyThese": "Sie können diese Parameter ändern:",

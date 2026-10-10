@@ -1592,7 +1592,9 @@
     "mailsReceivedPerDays": "Thư nhận về / ngày",
     "noLimit": "mặc định",
     "noLimitHint": "Để trống để áp dụng giới hạn mặc định (null), -1 nghĩa là không giới hạn. Giới hạn người nhận tính từng người nhận của thư đã gửi, giới hạn thư tính mỗi thư một lần.",
-    "sectionTitle": "Giới hạn tốc độ"
+    "sectionTitle": "Giới hạn tốc độ",
+    "invalid": "Giới hạn không hợp lệ",
+    "invalidDesc": "Nhập một số nguyên dương, -1 cho không giới hạn, hoặc để trống để dùng giới hạn mặc định."
   },
   "confirmTask": {
     "modifyThese": "Bạn có thể sửa các tham số này:",

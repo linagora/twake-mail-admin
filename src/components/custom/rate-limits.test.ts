@@ -1,5 +1,45 @@
 import { describe, expect, it } from "vitest";
-import { normalizeRateLimits, toRateLimitsPayload } from "./rate-limits";
+import {
+  invalidRateLimitKeys,
+  isValidRateLimitInput,
+  normalizeRateLimits,
+  parseRateLimitInputs,
+  toRateLimitInputs,
+  toRateLimitsPayload,
+} from "./rate-limits";
+
+describe("isValidRateLimitInput", () => {
+  it.each(["", "  ", "-1", "0", "5", " 300 "])("accepts %j", (input) => {
+    expect(isValidRateLimitInput(input)).toBe(true);
+  });
+
+  it.each(["-5", "-7", "1.5", "-1.5", "1e3", "abc", "--1"])("rejects %j", (input) => {
+    expect(isValidRateLimitInput(input)).toBe(false);
+  });
+});
+
+describe("rate limit inputs", () => {
+  const unsetInputs = toRateLimitInputs(normalizeRateLimits(null));
+
+  it("lists the invalid limits", () => {
+    const inputs = { ...unsetInputs, mailsSentPerHours: "-5", mailsReceivedPerMinute: "1.5", mailsSentPerDays: "-1" };
+
+    expect(invalidRateLimitKeys(inputs)).toEqual(["mailsSentPerHours", "mailsReceivedPerMinute"]);
+  });
+
+  it("round trips limits", () => {
+    const limits = normalizeRateLimits({ mailsSentPerMinute: 10, mailsSentPerDays: -1, recipientsSentPerHours: 0 });
+
+    expect(parseRateLimitInputs(toRateLimitInputs(limits))).toEqual(limits);
+  });
+
+  it("parses empty inputs as null", () => {
+    const limits = parseRateLimitInputs({ ...unsetInputs, mailsSentPerHours: " 42 ", mailsSentPerDays: "  " });
+
+    expect(limits.mailsSentPerHours).toBe(42);
+    expect(limits.mailsSentPerDays).toBeNull();
+  });
+});
 
 describe("normalizeRateLimits", () => {
   it("fills limits missing from the response with null", () => {
