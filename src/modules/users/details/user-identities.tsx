@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Plus, Pencil, Save, Loader2, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -34,6 +34,7 @@ export default function UserIdentities({ username }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
+  const idPrefix = useId();
   const canView = useIsAllowed("GET", "/users/{username}/identities");
   const canCreate = useIsAllowed("POST", "/users/{username}/identities");
   const canEdit = useIsAllowed("PUT", "/users/{username}/identities/{id}");
@@ -162,6 +163,7 @@ export default function UserIdentities({ username }: Props) {
                   value={createForm.name}
                   onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder={t("users.identities.namePlaceholder")}
+                  aria-label={t("users.identities.name")}
                   className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
                 <input
@@ -169,13 +171,15 @@ export default function UserIdentities({ username }: Props) {
                   value={createForm.email}
                   onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder={t("users.identities.emailPlaceholder")}
+                  aria-label={t("users.identities.email")}
                   className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs text-gray-500">{t("users.identities.textSignature")}</label>
+                  <label htmlFor={`${idPrefix}-create-text-signature`} className="text-xs text-gray-500">{t("users.identities.textSignature")}</label>
                   <textarea
+                    id={`${idPrefix}-create-text-signature`}
                     value={createForm.textSignature ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, textSignature: e.target.value }))}
                     rows={2}
@@ -183,8 +187,9 @@ export default function UserIdentities({ username }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">{t("users.identities.htmlSignature")}</label>
+                  <label htmlFor={`${idPrefix}-create-html-signature`} className="text-xs text-gray-500">{t("users.identities.htmlSignature")}</label>
                   <textarea
+                    id={`${idPrefix}-create-html-signature`}
                     value={createForm.htmlSignature ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, htmlSignature: e.target.value }))}
                     rows={2}
@@ -193,8 +198,9 @@ export default function UserIdentities({ username }: Props) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-xs text-gray-500">{t("users.identities.sortOrder")}</label>
+                <label htmlFor={`${idPrefix}-create-sort-order`} className="text-xs text-gray-500">{t("users.identities.sortOrder")}</label>
                 <input
+                  id={`${idPrefix}-create-sort-order`}
                   type="number"
                   value={createForm.sortOrder ?? 0}
                   onChange={(e) => setCreateForm((f) => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))}
@@ -345,8 +351,9 @@ export default function UserIdentities({ username }: Props) {
           {editIdentity && (
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium">{t("users.identities.name")}</label>
+                <label htmlFor={`${idPrefix}-edit-name`} className="text-sm font-medium">{t("users.identities.name")}</label>
                 <input
+                  id={`${idPrefix}-edit-name`}
                   type="text"
                   value={editForm.name ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
@@ -354,8 +361,9 @@ export default function UserIdentities({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">{t("users.identities.sortOrder")}</label>
+                <label htmlFor={`${idPrefix}-edit-sort-order`} className="text-sm font-medium">{t("users.identities.sortOrder")}</label>
                 <input
+                  id={`${idPrefix}-edit-sort-order`}
                   type="number"
                   value={editForm.sortOrder ?? 0}
                   onChange={(e) => setEditForm((f) => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))}
@@ -363,8 +371,9 @@ export default function UserIdentities({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">{t("users.identities.textSignature")}</label>
+                <label htmlFor={`${idPrefix}-edit-text-signature`} className="text-sm font-medium">{t("users.identities.textSignature")}</label>
                 <textarea
+                  id={`${idPrefix}-edit-text-signature`}
                   value={editForm.textSignature ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, textSignature: e.target.value }))}
                   rows={3}
@@ -372,8 +381,9 @@ export default function UserIdentities({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">{t("users.identities.htmlSignature")}</label>
+                <label htmlFor={`${idPrefix}-edit-html-signature`} className="text-sm font-medium">{t("users.identities.htmlSignature")}</label>
                 <textarea
+                  id={`${idPrefix}-edit-html-signature`}
                   value={editForm.htmlSignature ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, htmlSignature: e.target.value }))}
                   rows={3}

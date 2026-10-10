@@ -130,8 +130,9 @@ export default function UserVacation({ username }: Props) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium">{t("users.vacation.from")}</label>
+                  <label htmlFor="vacation-from" className="text-sm font-medium">{t("users.vacation.from")}</label>
                   <input
+                    id="vacation-from"
                     type="datetime-local"
                     value={isoToDatetimeLocal(form.fromDate)}
                     onChange={(e) => update("fromDate", datetimeLocalToIso(e.target.value))}
@@ -139,8 +140,9 @@ export default function UserVacation({ username }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium">{t("users.vacation.to")}</label>
+                  <label htmlFor="vacation-to" className="text-sm font-medium">{t("users.vacation.to")}</label>
                   <input
+                    id="vacation-to"
                     type="datetime-local"
                     value={isoToDatetimeLocal(form.toDate)}
                     onChange={(e) => update("toDate", datetimeLocalToIso(e.target.value))}
@@ -150,8 +152,9 @@ export default function UserVacation({ username }: Props) {
               </div>
 
               <div>
-                <label className="text-sm font-medium">{t("users.vacation.subject")}</label>
+                <label htmlFor="vacation-subject" className="text-sm font-medium">{t("users.vacation.subject")}</label>
                 <input
+                  id="vacation-subject"
                   type="text"
                   value={form.subject ?? ""}
                   onChange={(e) => update("subject", e.target.value)}
@@ -161,8 +164,9 @@ export default function UserVacation({ username }: Props) {
               </div>
 
               <div>
-                <label className="text-sm font-medium">{t("users.vacation.textBody")}</label>
+                <label htmlFor="vacation-text-body" className="text-sm font-medium">{t("users.vacation.textBody")}</label>
                 <textarea
+                  id="vacation-text-body"
                   value={form.textBody ?? ""}
                   onChange={(e) => update("textBody", e.target.value)}
                   rows={3}
@@ -172,8 +176,9 @@ export default function UserVacation({ username }: Props) {
               </div>
 
               <div>
-                <label className="text-sm font-medium">{t("users.vacation.htmlBody")}</label>
+                <label htmlFor="vacation-html-body" className="text-sm font-medium">{t("users.vacation.htmlBody")}</label>
                 <textarea
+                  id="vacation-html-body"
                   value={form.htmlBody ?? ""}
                   onChange={(e) => update("htmlBody", e.target.value)}
                   rows={3}
