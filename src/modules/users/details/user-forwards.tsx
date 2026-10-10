@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
+import { useUserMappingsRevision } from "./user-mappings-revision";
 import { getUserForwards, addUserForward, removeUserForward } from "../api-client";
 import { GetUserForwardsResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
@@ -22,13 +23,13 @@ export default function UserForwards({ username }: Props) {
   const canAdd = useIsAllowed("PUT", "/address/forwards/{username}/targets/{destination}");
   const canRemove = useIsAllowed("DELETE", "/address/forwards/{username}/targets/{destination}");
 
+  const { revision, notifyMappingsChanged } = useUserMappingsRevision();
   const fetchForwards = useCallback(() => getUserForwards(username), [username]);
   const {
     data: forwards,
     isLoading,
     error,
-    refresh,
-  } = useFetchData<GetUserForwardsResponseType>(canView ? fetchForwards : null);
+  } = useFetchData<GetUserForwardsResponseType>(canView ? fetchForwards : null, revision);
 
   const [open, setOpen] = useState(false);
   const [newForward, setNewForward] = useState("");
@@ -64,7 +65,7 @@ export default function UserForwards({ username }: Props) {
         await addUserForward(username, username);
         toast({ title: t("users.forwards.addedToDestinations") });
       }
-      await refresh();
+      notifyMappingsChanged();
     } catch (err) {
       toast({
         title: t("users.forwards.errorUpdating"),
@@ -81,7 +82,7 @@ export default function UserForwards({ username }: Props) {
       toast({ title: t("users.forwards.added") });
       setNewForward("");
       setShowCreateInput(false);
-      await refresh();
+      notifyMappingsChanged();
     } catch (err) {
       toast({
         title: t("users.forwards.errorAdding"),
@@ -99,7 +100,7 @@ export default function UserForwards({ username }: Props) {
     try {
       await removeUserForward(username, destination);
       toast({ title: t("users.forwards.removed") });
-      await refresh();
+      notifyMappingsChanged();
     } catch (err) {
       toast({
         title: t("users.forwards.errorRemoving"),

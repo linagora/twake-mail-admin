@@ -16,6 +16,7 @@ import UserMappings from "./user-mappings";
 import UserDeletedMessageVault from "./user-deleted-message-vault";
 import UserLabels from "./user-labels";
 import UserJmapSettings from "./user-jmap-settings";
+import { UserMappingsRevisionContext, useUserMappingsRevisionState } from "./user-mappings-revision";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getUserRateLimits, updateUserRateLimits, searchDeletedMessages, restoreDeletedMessages } from "../api-client";
@@ -28,6 +29,7 @@ export default function UserDetail() {
   const canSearchDeleted = useIsAllowed("POST", "/deletedMessages/users/{username}/messages");
   const canRestoreDeleted = useIsAllowed("POST", "/deletedMessages/users/{username}");
 
+  const mappingsRevision = useUserMappingsRevisionState();
   const fetchRateLimits = useCallback(() => getUserRateLimits(username!), [username]);
   const updateRateLimits = useCallback((limits: any) => updateUserRateLimits(username!, limits), [username]);
 
@@ -38,14 +40,16 @@ export default function UserDetail() {
 
       <UserMailboxes username={username!} />
       <UserQuota username={username!} />
-      <UserAliases username={username!} />
-      <UserForwards username={username!} />
-      <UserMappings username={username!} />
-      <UserTeamMailboxes username={username!} />
-      <UserVacation username={username!} />
-      <UserDelegation username={username!} />
-      <UserAllowedFrom username={username!} />
-      <UserIdentities username={username!} />
+      <UserMappingsRevisionContext.Provider value={mappingsRevision}>
+        <UserAliases username={username!} />
+        <UserForwards username={username!} />
+        <UserMappings username={username!} />
+        <UserTeamMailboxes username={username!} />
+        <UserVacation username={username!} />
+        <UserDelegation username={username!} />
+        <UserAllowedFrom username={username!} />
+        <UserIdentities username={username!} />
+      </UserMappingsRevisionContext.Provider>
       <UserLabels username={username!} />
       {appConfig.application === 'MAIL' && <UserJmapSettings username={username!} />}
       <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} canUpdate={canUpdateRateLimits} />

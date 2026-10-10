@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Plus, Pencil, Save, Loader2, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
+import { useUserMappingsRevision } from "./user-mappings-revision";
 import {
   getUserIdentities,
   createUserIdentity,
@@ -39,8 +40,9 @@ export default function UserIdentities({ username }: Props) {
   const canEdit = useIsAllowed("PUT", "/users/{username}/identities/{id}");
   const canDelete = useIsAllowed("DELETE", "/users/{username}/identities/{id}");
 
+  const { revision } = useUserMappingsRevision();
   const fetchIdentities = useCallback(() => getUserIdentities(username), [username]);
-  const { data: identities, isLoading, error, refresh } = useFetchData<JmapIdentity[]>(canView ? fetchIdentities : null);
+  const { data: identities, isLoading, error, refresh } = useFetchData<JmapIdentity[]>(canView ? fetchIdentities : null, revision);
 
   const [open, setOpen] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
