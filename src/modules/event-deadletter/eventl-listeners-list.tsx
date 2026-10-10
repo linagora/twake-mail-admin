@@ -119,7 +119,7 @@ export default function EventListenersList() {
             >
               <div>
                 <h4 className="text-sm font-medium leading-none">
-                  <Link to={`/event-dead-letter/group/${group}?&page=1&size=10`}>
+                  <Link to={`/event-dead-letter/group/${group}?page=1`}>
                     {group} ({eventCounts[group] ?? t("common.loading")})
                   </Link>
                 </h4>

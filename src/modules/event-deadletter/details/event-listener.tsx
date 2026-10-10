@@ -10,6 +10,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Trash2 } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { searchAndPaginate } from "@/lib/search-pagination";
 
 interface EventResponse {
   [key: string]: any; // Represents the full JSON structure of the event
@@ -51,17 +52,10 @@ export default function EventListenersDetail() {
   const canViewJson = useIsAllowed("GET", "/events/deadLetter/groups/{group}/{insertionId}");
   const canDelete = useIsAllowed("DELETE", "/events/deadLetter/groups/{group}/{insertionId}");
 
-  const page = Number(searchParams.get("page")) || 1;
-  const size = Number(searchParams.get("size")) || 0;
+  const requestedPage = Number(searchParams.get("page")) || 1;
   const limit = Number(import.meta.env.VITE_PAGE_LIMIT) || 200;
-  const offset = (page - 1) * limit;
-  // check if we reached the end of the list
-  const hasMore = offset + limit < size;
 
-  const fetchFailedEvents = useCallback(
-    () => getFailedEvents(id!),
-    [id, limit, offset]
-  );
+  const fetchFailedEvents = useCallback(() => getFailedEvents(id!), [id]);
 
   const {
     data: failedEventKeys,
@@ -70,10 +64,17 @@ export default function EventListenersDetail() {
     refresh,
   } = useFetchData<InsertionIdsResponseType>(fetchFailedEvents);
 
+  // The API returns every insertion id of the group: the total is the size of
+  // that list, and pagination happens client side.
+  const total = failedEventKeys?.length ?? 0;
+  const { paginated: pageEventKeys, page, totalPages, offset } =
+    searchAndPaginate(failedEventKeys ?? [], "", requestedPage, (key) => [key], limit);
+  const hasMore = page < totalPages;
+
   // Handle pagination navigation
   const goToPage = (newPage: number) => {
     if (newPage < 1) return;
-    setSearchParams({ page: newPage.toString(), size: size.toString() });
+    setSearchParams({ page: newPage.toString() });
   };
 
   const handleRemoveEvent = async (insertionId: string) => {
@@ -121,7 +122,7 @@ export default function EventListenersDetail() {
           {t("common.previous")}
         </button>
         <span className="text-sm font-medium">
-          {t("eventDeadletter.paginationInfo", { page, limit, total: size })}
+          {t("eventDeadletter.paginationInfo", { page, limit, total })}
         </span>
         <button
           disabled={!hasMore}
@@ -133,7 +134,7 @@ export default function EventListenersDetail() {
         {/** last page */}
         <button
           disabled={!hasMore}
-          onClick={() => goToPage(Math.ceil(size / limit))}
+          onClick={() => goToPage(totalPages)}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {t("common.last")}
@@ -142,7 +143,7 @@ export default function EventListenersDetail() {
       {failedEventKeys && (
         <div className="mt-8">
           <ul>
-            {failedEventKeys.map((failedEventKey, index) => (
+            {pageEventKeys.map((failedEventKey, index) => (
               <li
                 key={failedEventKey}
                 className="flex justify-between items-center border-b pb-1"
