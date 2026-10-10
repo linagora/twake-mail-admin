@@ -1507,7 +1507,10 @@
   "liveMetrics": {
     "title": "Métricas en directo",
     "subtitle": "Métricas de Prometheus del servidor en directo.",
-    "filterPlaceholder": "Filtrar métricas..."
+    "filterPlaceholder": "Filtrar métricas...",
+    "refresh": "Actualizar métricas",
+    "empty": "No hay métricas disponibles.",
+    "noMatch": "Ninguna métrica coincide con \"{{search}}\"."
   },
   "registeredUsers": {
     "placeholder": "usuario@dominio.tld",

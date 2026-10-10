@@ -1507,7 +1507,10 @@
   "liveMetrics": {
     "title": "Live Metrics",
     "subtitle": "Live Prometheus metrics from the server.",
-    "filterPlaceholder": "Filter metrics..."
+    "filterPlaceholder": "Filter metrics...",
+    "refresh": "Refresh metrics",
+    "empty": "No metrics available.",
+    "noMatch": "No metrics match \"{{search}}\"."
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",

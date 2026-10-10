@@ -1507,7 +1507,10 @@
   "liveMetrics": {
     "title": "Метрики в реальном времени",
     "subtitle": "Метрики Prometheus с сервера в реальном времени.",
-    "filterPlaceholder": "Filter metrics..."
+    "filterPlaceholder": "Filter metrics...",
+    "refresh": "Обновить метрики",
+    "empty": "Нет доступных метрик.",
+    "noMatch": "Нет метрик, соответствующих \"{{search}}\"."
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",

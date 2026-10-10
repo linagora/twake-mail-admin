@@ -1507,7 +1507,10 @@
   "liveMetrics": {
     "title": "Số liệu trực tiếp",
     "subtitle": "Số liệu Prometheus trực tiếp từ máy chủ.",
-    "filterPlaceholder": "Filter metrics..."
+    "filterPlaceholder": "Filter metrics...",
+    "refresh": "Làm mới số liệu",
+    "empty": "Không có số liệu nào.",
+    "noMatch": "Không có số liệu nào khớp với \"{{search}}\"."
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",

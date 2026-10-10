@@ -1507,7 +1507,10 @@
   "liveMetrics": {
     "title": "Шууд хэмжүүр",
     "subtitle": "Серверээс шууд дамжуулагдах Prometheus хэмжүүр.",
-    "filterPlaceholder": "Filter metrics..."
+    "filterPlaceholder": "Filter metrics...",
+    "refresh": "Хэмжүүрийг шинэчлэх",
+    "empty": "Хэмжүүр алга.",
+    "noMatch": "\"{{search}}\"-д тохирох хэмжүүр алга."
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",

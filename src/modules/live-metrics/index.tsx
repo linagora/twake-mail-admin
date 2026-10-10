@@ -60,7 +60,7 @@ function formatValue(val: string): string {
 export default function LiveMetrics() {
   const { t } = useTranslation();
   const fetchMetrics = useCallback(() => getMetrics(), []);
-  const { data: raw, isLoading, refresh } = useFetchData<string>(fetchMetrics);
+  const { data: raw, isLoading, error, refresh } = useFetchData<string>(fetchMetrics);
   const [search, setSearch] = useState("");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
@@ -88,7 +88,14 @@ export default function LiveMetrics() {
       <Header headerTitle={t("sidebar.liveMetrics")} headerSubTitle={t("liveMetrics.subtitle")} docuUrl={docuUrl} />
 
       <div className="mt-4 flex items-center gap-2">
-        <Button variant="outline" size="sm" onClick={refresh} disabled={isLoading}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={refresh}
+          disabled={isLoading}
+          aria-label={t("liveMetrics.refresh")}
+          title={t("liveMetrics.refresh")}
+        >
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
         </Button>
         <div className="relative flex-1">
@@ -114,6 +121,16 @@ export default function LiveMetrics() {
           <div className="h-[80px] rounded-2 animate-pulse bg-gray-200" />
           <div className="h-[80px] rounded-2 animate-pulse bg-gray-200" />
         </div>
+      )}
+
+      {error && <p className="text-red-500 mt-4">{t("common.errorPrefix", { message: error })}</p>}
+
+      {raw !== null && !error && families.length === 0 && (
+        <p className="text-sm text-muted-foreground mt-4">{t("liveMetrics.empty")}</p>
+      )}
+
+      {families.length > 0 && filtered.length === 0 && (
+        <p className="text-sm text-muted-foreground mt-4">{t("liveMetrics.noMatch", { search })}</p>
       )}
 
       <div className="mt-4 space-y-2">
