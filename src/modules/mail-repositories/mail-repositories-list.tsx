@@ -1,9 +1,8 @@
 import { Link } from "react-router";
-import { MoveHorizontal, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { MoveHorizontal, RefreshCw, Trash2 } from "lucide-react";
 import { GetMailRepositoriesResponseType, MailRepository } from "./types";
 import {
   clearMailRepository,
-  createMailRepository,
   getMailRepositories,
   getRepositoryInfo,
   moveAllMails,
@@ -16,34 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 import { useTranslation } from "react-i18next";
-
-function CreateMailRepositoryForm({
-  onChange,
-}: {
-  onChange: (field: "path" | "protocol", value: string) => void;
-}) {
-  const { t } = useTranslation();
-  return (
-    <div className="space-y-3 py-2">
-      <div className="space-y-1">
-        <label className="text-sm font-medium">{t("mailRepositories.pathLabel")} <span className="text-red-500">*</span></label>
-        <input
-          className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-          placeholder={t("mailRepositories.pathPlaceholder")}
-          onChange={(e) => onChange("path", e.target.value)}
-        />
-      </div>
-      <div className="space-y-1">
-        <label className="text-sm font-medium">{t("mailRepositories.protocolLabel")} <span className="text-red-500">*</span></label>
-        <input
-          className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-          defaultValue="cassandra"
-          onChange={(e) => onChange("protocol", e.target.value)}
-        />
-      </div>
-    </div>
-  );
-}
+import CreateMailRepositoryButton from "./create-mail-repository-button";
 
 export default function MailRepositoriesList() {
   const { t } = useTranslation();
@@ -132,31 +104,6 @@ export default function MailRepositoriesList() {
       ),
     });
   };
-  const handleCreateRepository = async () => {
-    const values = { path: "", protocol: "cassandra" };
-    const result = await confirm({
-      header: t("mailRepositories.createTitle"),
-      message: (
-        <CreateMailRepositoryForm
-          onChange={(field, value) => {
-            values[field] = value;
-          }}
-        />
-      ),
-    });
-    if (!result) return;
-    if (!values.path || !values.protocol) {
-      toast({ title: t("mailRepositories.pathAndProtocolRequired"), variant: "destructive" });
-      return;
-    }
-    await createMailRepository(
-      encodeURIComponent(values.path),
-      values.protocol
-    );
-    toast({ title: t("mailRepositories.created") });
-    refresh();
-  };
-
   const handleMoveAll = async (sourcePath: string) => {
     const otherRepos = repositoriesWithSize.filter((r) => r.path !== sourcePath);
     if (otherRepos.length === 0) {
@@ -233,15 +180,7 @@ export default function MailRepositoriesList() {
         )}
         <div className="flex items-center justify-between mt-4">
           <p>{t("common.list")}</p>
-          {canCreate && (
-            <button
-              className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700"
-              onClick={handleCreateRepository}
-            >
-              <Plus className="w-4 h-4" />
-              {t("mailRepositories.newRepository")}
-            </button>
-          )}
+          {canCreate && <CreateMailRepositoryButton onCreated={refresh} />}
         </div>
         <div>
           {repositoriesWithSize?.map((result) => (
