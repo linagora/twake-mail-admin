@@ -48,6 +48,7 @@ import ResourceLocator from "./modules/resource-locator";
 import JmapSettingsReport from "./modules/jmap-settings-report";
 import TaskDetail from "./modules/common-tasks/task-detail";
 import { ConfirmProvider } from "./components/custom/confirm-provider";
+import { MobileSidebarBar } from "./components/custom/mobile-sidebar-bar";
 import { AuthProvider } from "./components/custom/auth-provider";
 import { OIDCProvider } from "./components/custom/oidc-provider";
 import { OIDCCallback } from "./components/custom/oidc-callback";
@@ -70,6 +71,7 @@ function GlobalLayout() {
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
+          <MobileSidebarBar />
           <Routes>
             <Route path="/" element={<Navigate to="/health-check" replace />} />
             <Route path="/health-check" element={<HealthCheck />} />

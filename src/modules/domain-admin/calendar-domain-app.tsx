@@ -4,6 +4,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { ConfirmProvider } from "@/components/custom/confirm-provider";
+import { MobileSidebarBar } from "@/components/custom/mobile-sidebar-bar";
 import type { SSOConfig } from "@/lib/env-config";
 import { DomainProvider } from "./domain-context";
 import { CalendarDomainSidebar } from "./calendar-domain-sidebar";
@@ -32,6 +33,7 @@ export default function CalendarDomainApp({ domain }: Props) {
         <SidebarProvider>
           <CalendarDomainSidebar />
           <SidebarInset>
+            <MobileSidebarBar />
             <div className="p-4">
               <Routes>
                 <Route path="/" element={<Navigate to="/domain-admins" replace />} />

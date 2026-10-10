@@ -4,6 +4,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { ConfirmProvider } from "@/components/custom/confirm-provider";
+import { MobileSidebarBar } from "@/components/custom/mobile-sidebar-bar";
 import type { SSOConfig } from "@/lib/env-config";
 import { DomainProvider } from "./domain-context";
 import { DomainSidebar } from "./domain-sidebar";
@@ -35,6 +36,7 @@ export default function DomainAdminApp({ domain }: Props) {
         <SidebarProvider>
           <DomainSidebar />
           <SidebarInset>
+            <MobileSidebarBar />
             <div className="p-4">
               <Routes>
                 <Route path="/" element={<Navigate to="/users" replace />} />
