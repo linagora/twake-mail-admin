@@ -104,30 +104,30 @@ export default function MailRepositoriesList() {
       ),
     });
   };
-  const handleMoveAll = async (sourcePath: string) => {
-    const otherRepos = repositoriesWithSize.filter((r) => r.path !== sourcePath);
+  const handleMoveAll = async (source: MailRepository) => {
+    const otherRepos = repositoriesWithSize.filter((r) => r.path !== source.path);
     if (otherRepos.length === 0) {
       toast({ title: t("mailRepositories.noOtherRepositories") });
       return;
     }
-    let targetRepo = otherRepos[0].path;
+    let targetRepo: MailRepository = otherRepos[0];
     const result = await confirm({
       header: t("mailRepositories.moveTitle"),
       message: (
         <div className="space-y-2 py-2">
           <p className="text-sm">
-            {t("mailRepositories.moveConfirm", { sourcePath })}
+            {t("mailRepositories.moveConfirm", { sourcePath: source.repository })}
           </p>
           <select
             className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             defaultValue={otherRepos[0].path}
             onChange={(e) => {
-              targetRepo = e.target.value;
+              targetRepo = otherRepos.find((r) => r.path === e.target.value) ?? targetRepo;
             }}
           >
             {otherRepos.map((r) => (
               <option key={r.path} value={r.path}>
-                {r.repository} ({r.path})
+                {r.repository}
               </option>
             ))}
           </select>
@@ -136,7 +136,7 @@ export default function MailRepositoriesList() {
     });
     if (!result) return;
     try {
-      await moveAllMails(encodeURIComponent(sourcePath), targetRepo);
+      await moveAllMails(source, targetRepo);
       toast({ title: t("mailRepositories.moveDone") });
       refresh();
     } catch (err: any) {
@@ -217,7 +217,7 @@ export default function MailRepositoriesList() {
                     className="p-2 rounded-md hover:bg-gray-200"
                     title={t("mailRepositories.moveAll")}
                     onClick={() => {
-                      handleMoveAll(result.path);
+                      handleMoveAll(result);
                     }}
                   >
                     <MoveHorizontal className="w-5 h-5 text-orange-500" />
