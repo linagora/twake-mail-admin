@@ -80,13 +80,24 @@ export const runPopulateEmailQueryViewTask = async (payload?: AdditionalParams):
   return apiClient.post<any, any>(`/mailboxes?${params}`);
 }
 
+export interface AllUsersReindexResponse {
+  taskIds?: Record<string, string>;
+  erroredUsers?: string[];
+}
+
 // Schedules one reindexing task per user. Unlike other tasks, the backend returns
-// synchronously a map of `username -> taskId` rather than a single task id.
+// synchronously a map of `username -> taskId` (taskIds) plus the users it could not
+// schedule (erroredUsers) rather than a single task id.
 // Mode is fixed to rebuildAll (reindex all, not fix outdated).
-export const runAllUsersReindexTask = async (payload?: AdditionalParams): Promise<Record<string, string>> => {
+export const runAllUsersReindexTask = async (payload?: AdditionalParams): Promise<AllUsersReindexResponse> => {
   const params = parsePayloadToSearchParams({ action: 'reindex', mode: ReIndexMode.REBUILD_ALL, ...payload });
   return apiClient.post<any, any>(`/users?${params}`);
 }
+
+export const summarizeAllUsersReindex = (response?: AllUsersReindexResponse): { planned: number; errors: number } => ({
+  planned: Object.keys(response?.taskIds ?? {}).length,
+  errors: response?.erroredUsers?.length ?? 0,
+});
 
 export const reloadCertificates = async (port?: string): Promise<void> => {
   const query = new URLSearchParams({ "reload-certificate": "" });

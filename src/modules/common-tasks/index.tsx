@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { ReIndexMode, TaskKey, TaskProps } from "./types";
 
-import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights, cleanupMailbox, runAllUsersReindexTask } from "./api-client";
+import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights, cleanupMailbox, runAllUsersReindexTask, summarizeAllUsersReindex } from "./api-client";
 import ConfirmTaskContent from "./components/confirm-task-content";
 import { TaskParam } from "./types";
 import TaskContainer from "./task-container";
@@ -386,9 +386,7 @@ function MailCommonTasks() {
     setPerUserReindexLoading(true);
     try {
       const data = await runAllUsersReindexTask({ messagesPerSecond });
-      const taskIds = Object.values(data ?? {});
-      const errors = taskIds.filter((taskId) => !taskId).length;
-      const planned = taskIds.length - errors;
+      const { planned, errors } = summarizeAllUsersReindex(data);
       toast({ title: t("commonTasks.perUserReindexSuccess", { planned, errors }) });
     } catch (err) {
       toast({
