@@ -1599,7 +1599,9 @@
     "mailsReceivedPerDays": "Mails reçus / jour",
     "noLimit": "par défaut",
     "noLimitHint": "Laisser vide pour appliquer la limite par défaut (null), -1 signifie illimité. Les limites de destinataires comptent chaque destinataire d'un mail envoyé, les limites de mails comptent le mail une seule fois.",
-    "sectionTitle": "Limitation de débit"
+    "sectionTitle": "Limitation de débit",
+    "invalid": "Limite invalide",
+    "invalidDesc": "Saisissez un entier positif, -1 pour illimité, ou laissez vide pour la limite par défaut."
   },
   "confirmTask": {
     "modifyThese": "Vous pouvez modifier ces paramètres :",
