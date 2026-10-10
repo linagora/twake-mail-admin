@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { PagedUsersList } from "./paged-users-list";
 import { UsernamesSource } from "./users-paging";
@@ -52,5 +52,24 @@ describe("paged users list: empty state", () => {
     renderList(failingSource);
     expect(await screen.findByText("common.errorPrefix")).not.toBeNull();
     expect(screen.queryByText("users.empty")).toBeNull();
+  });
+});
+
+describe("paged users list: domain filter", () => {
+  it("offers the domain choices in alphabetical order after all domains", () => {
+    renderList(sourceOf([]), ["example.org", "qa-imp1.test", "localhost", "qa-imp2.test", "example.com", "qa-wipe.test"]);
+
+    const options = within(screen.getByRole("combobox", { name: "common.domain" }))
+      .getAllByRole("option")
+      .map((option) => option.textContent);
+    expect(options).toEqual([
+      "users.allDomains",
+      "example.com",
+      "example.org",
+      "localhost",
+      "qa-imp1.test",
+      "qa-imp2.test",
+      "qa-wipe.test",
+    ]);
   });
 });
