@@ -135,7 +135,13 @@ DOMAINS = page(
                     "Update the domain quota",
                     "Modifier le quota du domaine",
                     endpoints=[may("PUT", "/quota/domains/{domain}")],
-                )
+                ),
+                action(
+                    "reset-size",
+                    "Reset the size limit to the global default",
+                    "Réinitialiser la limite de taille au défaut global",
+                    endpoints=[may("DELETE", "/quota/domains/{domain}/size")],
+                ),
             ],
         ),
         section(
@@ -1753,6 +1759,12 @@ GLOBAL_QUOTA = page(
             "Update the global quota",
             "Modifier le quota global",
             endpoints=[may("PUT", "/quota")],
+        ),
+        action(
+            "remove-size",
+            "Remove the global size limit",
+            "Supprimer la limite de taille globale",
+            endpoints=[may("DELETE", "/quota/size")],
         ),
         action(
             "specific-quota-report",

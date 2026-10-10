@@ -154,6 +154,7 @@ The usage figures come from the same call as the tab load; there is no second en
 |---------|------|---------|----------|
 | Tab load, and domain quota usage section | GET | `/quota/domains/{domain}` | MUST |
 | Save quota form | PUT | `/quota/domains/{domain}` | MAY (do not show quota update options) |
+| "Reset to global default" button | DELETE | `/quota/domains/{domain}/size` | MAY (do not show the button if missing) |
 
 ### Domain detail — Rate limits tab *(APPLICATION:"MAIL")*
 
@@ -651,6 +652,7 @@ against what the proxy actually declares.
 |---------|------|---------|----------|
 | Page load | GET | `/quota` | MUST |
 | Save quota form | PUT | `/quota` | MAY (do not show the button if missing) |
+| "Remove size limit" button | DELETE | `/quota/size` | MAY (do not show the button if missing) |
 | Report: users with specific quotas | GET | `/reports/quota/users?hasSpecificQuota` | MAY (do not show the section if missing)|
 | Report: quota summary | GET | `/reports/quota/users/sum?hasSpecificQuota` | MAY (do not show the button if missing) |
 | Global quota usage section open | GET | `/quota/sum` | MUST (do not show the section if forbidden) |
