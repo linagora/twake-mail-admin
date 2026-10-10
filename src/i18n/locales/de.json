@@ -604,7 +604,8 @@
       "updated": "Abwesenheitseinstellungen aktualisiert",
       "errorUpdating": "Fehler beim Aktualisieren der Abwesenheit",
       "deleted": "Abwesenheitseinstellungen gelöscht",
-      "errorDeleting": "Fehler beim Löschen der Abwesenheit"
+      "errorDeleting": "Fehler beim Löschen der Abwesenheit",
+      "invalidRange": "Das Enddatum muss nach dem Startdatum liegen"
     },
     "delegation": {
       "title": "Delegierte Benutzer",

@@ -5,6 +5,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { datetimeLocalToIso, isoToDatetimeLocal } from "@/lib/datetime-local";
 import { getUserVacation, updateUserVacation, deleteUserVacation } from "../api-client";
 import { VacationSettings } from "../types";
+import { isVacationRangeInvalid } from "./user-vacation-range";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -61,7 +62,10 @@ export default function UserVacation({ username }: Props) {
 
   if (!canView) return null;
 
+  const invalidRange = isVacationRangeInvalid(form);
+
   const handleSave = async () => {
+    if (invalidRange) return;
     setSaving(true);
     try {
       await updateUserVacation(username, form);
@@ -144,8 +148,15 @@ export default function UserVacation({ username }: Props) {
                     type="datetime-local"
                     value={isoToDatetimeLocal(form.toDate)}
                     onChange={(e) => update("toDate", datetimeLocalToIso(e.target.value))}
+                    aria-invalid={invalidRange}
+                    aria-describedby={invalidRange ? "vacation-range-error" : undefined}
                     className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
+                  {invalidRange && (
+                    <p id="vacation-range-error" role="alert" className="mt-1 text-xs text-red-600">
+                      {t("users.vacation.invalidRange")}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -195,7 +206,7 @@ export default function UserVacation({ username }: Props) {
                   </Button>
                 )}
                 {canSave && (
-                  <Button size="sm" onClick={handleSave} disabled={saving}>
+                  <Button size="sm" onClick={handleSave} disabled={saving || invalidRange}>
                     {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                     {t("common.save")}
                   </Button>

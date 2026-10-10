@@ -604,7 +604,8 @@
       "updated": "Vacation settings updated",
       "errorUpdating": "Error updating vacation",
       "deleted": "Vacation settings deleted",
-      "errorDeleting": "Error deleting vacation"
+      "errorDeleting": "Error deleting vacation",
+      "invalidRange": "The end date must be after the start date"
     },
     "delegation": {
       "title": "Delegated Users",

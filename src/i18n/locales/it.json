@@ -604,7 +604,8 @@
       "updated": "Impostazioni di assenza aggiornate",
       "errorUpdating": "Errore durante l'aggiornamento dell'assenza",
       "deleted": "Impostazioni di assenza eliminate",
-      "errorDeleting": "Errore durante l'eliminazione dell'assenza"
+      "errorDeleting": "Errore durante l'eliminazione dell'assenza",
+      "invalidRange": "La data di fine deve essere successiva alla data di inizio"
     },
     "delegation": {
       "title": "Utenti delegati",

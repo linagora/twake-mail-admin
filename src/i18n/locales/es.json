@@ -604,7 +604,8 @@
       "updated": "Ajustes de ausencia actualizados",
       "errorUpdating": "Error al actualizar la ausencia",
       "deleted": "Ajustes de ausencia eliminados",
-      "errorDeleting": "Error al eliminar la ausencia"
+      "errorDeleting": "Error al eliminar la ausencia",
+      "invalidRange": "La fecha de fin debe ser posterior a la fecha de inicio"
     },
     "delegation": {
       "title": "Usuarios delegados",

@@ -604,7 +604,8 @@
       "updated": "Paramètres d'absence mis à jour",
       "errorUpdating": "Erreur lors de la mise à jour de l'absence",
       "deleted": "Paramètres d'absence supprimés",
-      "errorDeleting": "Erreur lors de la suppression de l'absence"
+      "errorDeleting": "Erreur lors de la suppression de l'absence",
+      "invalidRange": "La date de fin doit être postérieure à la date de début"
     },
     "delegation": {
       "title": "Utilisateurs délégués",
