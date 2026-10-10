@@ -33,6 +33,9 @@ export default function UserDelegation({ username }: Props) {
   const [newUser, setNewUser] = useState("");
   const [showCreateInput, setShowCreateInput] = useState(false);
   const delegatedUserStatus = useCheckUserExists(newUser);
+  const isSelfDelegation = newUser.trim().toLowerCase() === username.toLowerCase();
+  const canSubmit =
+    !!newUser.trim() && !isSelfDelegation && delegatedUserStatus !== "checking" && delegatedUserStatus !== "invalid";
 
   const sorted = useMemo(() => {
     if (!delegated) return [];
@@ -41,9 +44,16 @@ export default function UserDelegation({ username }: Props) {
 
   if (!canView) return null;
 
+  const confirmUnknownUser = (user: string) =>
+    confirm({
+      header: t("users.delegation.unknownUserTitle"),
+      message: t("users.delegation.unknownUserConfirm", { delegatedUser: user }),
+    });
+
   const handleAdd = async () => {
+    if (!canSubmit) return;
     const user = newUser.trim();
-    if (!user) return;
+    if (delegatedUserStatus === "not_found" && !(await confirmUnknownUser(user))) return;
     try {
       await addDelegatedUser(username, user);
       toast({ title: t("users.delegation.added") });
@@ -115,10 +125,16 @@ export default function UserDelegation({ username }: Props) {
                 placeholder={t("users.delegation.placeholder")}
                 className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
-              {delegatedUserStatus === "checking" && (
+              {isSelfDelegation && (
+                <span className="flex items-center gap-1 text-xs text-red-600 whitespace-nowrap">
+                  <span className="inline-block w-2 h-2 rounded-full bg-red-500" />
+                  {t("users.delegation.selfDelegation")}
+                </span>
+              )}
+              {!isSelfDelegation && delegatedUserStatus === "checking" && (
                 <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>
               )}
-              {delegatedUserStatus === "exists" && (
+              {!isSelfDelegation && delegatedUserStatus === "exists" && (
                 <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
                   <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
                   {t("common.userExists")}
@@ -138,7 +154,7 @@ export default function UserDelegation({ username }: Props) {
               )}
               <button
                 onClick={handleAdd}
-                disabled={!newUser.trim()}
+                disabled={!canSubmit}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t("common.add")}

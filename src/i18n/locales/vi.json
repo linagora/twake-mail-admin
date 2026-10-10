@@ -618,7 +618,10 @@
       "errorRemoving": "Lỗi khi xóa người dùng được ủy quyền",
       "empty": "Không có người dùng được ủy quyền.",
       "addTooltip": "Thêm người dùng được ủy quyền",
-      "removeTooltip": "Xóa người dùng được ủy quyền"
+      "removeTooltip": "Xóa người dùng được ủy quyền",
+      "selfDelegation": "Không thể ủy quyền người dùng cho chính họ",
+      "unknownUserTitle": "Người dùng không xác định",
+      "unknownUserConfirm": "\"{{delegatedUser}}\" không tồn tại và sẽ không thể đăng nhập. Vẫn thêm làm người dùng được ủy quyền?"
     },
     "identities": {
       "title": "Danh tính JMAP",
