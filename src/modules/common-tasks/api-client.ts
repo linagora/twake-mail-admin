@@ -45,25 +45,25 @@ export const runQuotaTask = async (payload: TaskRequest & AdditionalParams): Pro
 };
 
 export const runFixMappingTask = async (payload?: AdditionalParams): Promise<any> => {
-  const params = parsePayloadToSearchParams(payload);
+  const params = parsePayloadToSearchParams({ action: 'SolveInconsistencies', ...payload });
   const response = await apiClient.post<any, any>(
-    `/cassandra/mappings?action=SolveInconsistencies?${params}`
+    `/cassandra/mappings?${params}`
   );
   return response;
 };
 
 export const runCleanupJmapUploadsTask = async (payload?: AdditionalParams): Promise<any> => {
-  const params = parsePayloadToSearchParams(payload);
+  const params = parsePayloadToSearchParams({ scope: 'expired', ...payload });
   const response = await apiClient.delete<any, any>(
-    `/jmap/uploads?scope=expired?${params}`
+    `/jmap/uploads?${params}`
   );
   return response;
 }
 
 export const runBlobGarbageCollectionTask = async (payload?: AdditionalParams): Promise<any> => {
-  const params = parsePayloadToSearchParams(payload);
+  const params = parsePayloadToSearchParams({ scope: 'unreferenced', ...payload });
   const response = await apiClient.delete<any, any>(
-    `/blobs?scope=unreferenced?${params}`
+    `/blobs?${params}`
   );
   return response;
 }
