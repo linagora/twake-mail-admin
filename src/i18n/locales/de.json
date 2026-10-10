@@ -520,6 +520,8 @@
     "searchPlaceholder": "Benutzer nach Namensanfang suchen...",
     "searchHint": "Sucht nach dem Anfang des Benutzernamens",
     "allDomains": "Alle Domains",
+    "empty": "Keine Benutzer gefunden.",
+    "noMatch": "Kein Benutzername beginnt mit „{{query}}“.",
     "registration": {
       "notRegistered": "Dieser Benutzer ist nicht registriert",
       "notRegisteredHint": "Der Benutzer existiert im Verzeichnis, ist aber noch nicht auf dem DAV-Server registriert. Kalender, Adressbücher und Buchungslinks sind erst nach der Registrierung verfügbar.",

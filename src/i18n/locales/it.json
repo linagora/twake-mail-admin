@@ -520,6 +520,8 @@
     "searchPlaceholder": "Cerca utenti per inizio del nome...",
     "searchHint": "Corrisponde all'inizio del nome utente",
     "allDomains": "Tutti i domini",
+    "empty": "Nessun utente trovato.",
+    "noMatch": "Nessun nome utente inizia con «{{query}}».",
     "registration": {
       "notRegistered": "Questo utente non è registrato",
       "notRegisteredHint": "L'utente esiste nella directory ma non è ancora registrato sul server DAV. Calendari, rubriche e link di prenotazione non sono disponibili finché l'utente non viene registrato.",
