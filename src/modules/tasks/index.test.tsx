@@ -62,7 +62,7 @@ describe("tasks: status filter", () => {
     api.listTasks.mockRejectedValue(new Error("Request failed with status code 400"));
     fireEvent.change(statusSelect(), { target: { value: "failed" } });
 
-    await screen.findByText(/Request failed with status code 400/);
+    await screen.findByText("common.errorPrefix");
     expect(screen.queryByText("previous-task")).toBeNull();
   });
 });
