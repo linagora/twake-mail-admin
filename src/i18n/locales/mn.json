@@ -70,7 +70,9 @@
     "tasks": "Даалгаврууд",
     "list": "Жагсаалт",
     "confirm": "Баталгаажуулах",
-    "noSearchResults": "Хайлтад тохирох үр дүн олдсонгүй."
+    "noSearchResults": "Хайлтад тохирох үр дүн олдсонгүй.",
+    "back": "Буцах",
+    "refresh": "Шинэчлэх"
   },
   "sidebar": {
     "application": "Програм",
@@ -756,7 +758,8 @@
         "valuePlaceholder": "Утга",
         "addCriterion": "Шалгуур нэмэх",
         "limitLabel": "Хязгаар (заавал биш):",
-        "noLimit": "Хязгааргүй"
+        "noLimit": "Хязгааргүй",
+        "removeCriterion": "Шалгуурыг хасах"
       },
       "operators": {
         "equals": "Тэнцүү",
@@ -1292,7 +1295,10 @@
     "searchError": "Үйл явдал хайх үед алдаа гарлаа",
     "groupLabel": "Бүлэг",
     "insertionIdLabel": "Оруулах ID",
-    "paginationInfo": "Хуудас {{page}} — хуудсанд {{limit}} үйл явдал / Нийт: {{total}}"
+    "paginationInfo": "Хуудас {{page}} — хуудсанд {{limit}} үйл явдал / Нийт: {{total}}",
+    "redeliverGroupAction": "Бүлгийн үйл явдлуудыг дахин хүргэх",
+    "clearGroupAction": "Бүлгийг цэвэрлэх",
+    "deleteEventAction": "Үйл явдлыг устгах"
   },
   "mailRepositories": {
     "pathLabel": "Агуулахын зам",

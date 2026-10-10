@@ -70,7 +70,9 @@
     "tasks": "Задачи",
     "list": "Список",
     "confirm": "Подтвердить",
-    "noSearchResults": "Ничего не найдено."
+    "noSearchResults": "Ничего не найдено.",
+    "back": "Назад",
+    "refresh": "Обновить"
   },
   "sidebar": {
     "application": "Приложение",
@@ -756,7 +758,8 @@
         "valuePlaceholder": "Значение",
         "addCriterion": "Добавить критерий",
         "limitLabel": "Ограничение (необязательно):",
-        "noLimit": "Без ограничения"
+        "noLimit": "Без ограничения",
+        "removeCriterion": "Удалить критерий"
       },
       "operators": {
         "equals": "Равно",
@@ -1292,7 +1295,10 @@
     "searchError": "Ошибка поиска события",
     "groupLabel": "Группа",
     "insertionIdLabel": "ID вставки",
-    "paginationInfo": "Страница {{page}} — {{limit}} событий на странице / Всего: {{total}}"
+    "paginationInfo": "Страница {{page}} — {{limit}} событий на странице / Всего: {{total}}",
+    "redeliverGroupAction": "Повторно доставить события группы",
+    "clearGroupAction": "Очистить группу",
+    "deleteEventAction": "Удалить событие"
   },
   "mailRepositories": {
     "pathLabel": "Путь хранилища",

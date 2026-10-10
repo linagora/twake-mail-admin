@@ -78,7 +78,7 @@ export default function UserChannels({ username }: Props) {
       {open && (
         <div className="mt-2">
           <div className="flex justify-end gap-2 mb-2">
-            <Button variant="outline" size="sm" onClick={fetchChannels} disabled={loading}>
+            <Button variant="outline" size="sm" onClick={fetchChannels} disabled={loading} aria-label={t("common.refresh")} title={t("common.refresh")}>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
             </Button>
             {canDisconnect && (
