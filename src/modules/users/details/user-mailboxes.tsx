@@ -11,24 +11,20 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import MailboxCounts from "./mailbox-counts";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { currentLocale } from "@/i18n/locale";
+import { formatMailboxCreationDate } from "./mailbox-creation-date";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
-const UUID_V1_EPOCH_OFFSET = 122192928000000000n;
-
-function uuidV1ToDate(uuid: string): string | null {
-  try {
-    const parts = uuid.split("-");
-    const timeHex = parts[2].slice(1) + parts[1] + parts[0];
-    const timestamp100ns = BigInt("0x" + timeHex);
-    const ms = Number((timestamp100ns - UUID_V1_EPOCH_OFFSET) / 10000n);
-    return new Date(ms).toUTCString();
-  } catch {
-    return null;
-  }
-}
 interface Props {
   username: string;
+}
+
+function MailboxCreationDate({ mailboxId }: { mailboxId: string }) {
+  const { t } = useTranslation();
+  const creationDate = formatMailboxCreationDate(mailboxId, currentLocale());
+  if (!creationDate) return null;
+  return <span className="ml-2">— {t("users.mailboxes.creationDate")} {creationDate}</span>;
 }
 
 export default function UserMailboxes({ username }: Props) {
@@ -243,9 +239,7 @@ export default function UserMailboxes({ username }: Props) {
                       </h4>
                       <p className="text-xs text-gray-400 mt-1 ml-6">
                         {mailbox.mailboxId}
-                        {uuidV1ToDate(mailbox.mailboxId) && (
-                          <span className="ml-2">— {t("users.mailboxes.creationDate")} {uuidV1ToDate(mailbox.mailboxId)}</span>
-                        )}
+                        <MailboxCreationDate mailboxId={mailbox.mailboxId} />
                       </p>
                     </div>
                     <span className="flex items-center gap-2">
