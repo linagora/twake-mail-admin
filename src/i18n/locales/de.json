@@ -1175,7 +1175,8 @@
     "days": "Tage",
     "invalidCleanupDays": "Geben Sie eine Anzahl von Tagen größer als 0 ein",
     "cleaningUpOldTasks": "Alte Aufgaben werden bereinigt",
-    "runConfirm": "Möchten Sie die Aufgabe {{name}} ausführen?"
+    "runConfirm": "Möchten Sie die Aufgabe {{name}} ausführen?",
+    "errorRunTask": "Fehler beim Ausführen von {{name}}"
   },
   "healthCheck": {
     "welcome": "Willkommen in der Twake Mail-Verwaltung!",

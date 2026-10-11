@@ -51,7 +51,7 @@ additionParams[key] = value
       });
     } catch (error) {
       toast({
-        title: t("common.run"),
+        title: t("commonTasks.errorRunTask", { name }),
         description: <ErrorDisplayer error={error} />,
       });
     } finally {

@@ -1175,7 +1175,8 @@
     "days": "дней",
     "invalidCleanupDays": "Введите количество дней больше 0",
     "cleaningUpOldTasks": "Очистка старых задач",
-    "runConfirm": "Вы хотите запустить задачу {{name}}?"
+    "runConfirm": "Вы хотите запустить задачу {{name}}?",
+    "errorRunTask": "Ошибка при запуске задачи {{name}}"
   },
   "healthCheck": {
     "welcome": "Добро пожаловать в администрирование Twake Mail!",

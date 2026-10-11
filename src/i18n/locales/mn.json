@@ -1175,7 +1175,8 @@
     "days": "өдөр",
     "invalidCleanupDays": "0-ээс их өдрийн тоо оруулна уу",
     "cleaningUpOldTasks": "Хуучин даалгавруудыг цэвэрлэж байна",
-    "runConfirm": "{{name}} даалгаврыг ажиллуулах уу?"
+    "runConfirm": "{{name}} даалгаврыг ажиллуулах уу?",
+    "errorRunTask": "{{name}} даалгаврыг ажиллуулахад алдаа гарлаа"
   },
   "healthCheck": {
     "welcome": "Twake Mail удирдлагад тавтай морил!",

@@ -1175,7 +1175,8 @@
     "days": "jours",
     "invalidCleanupDays": "Saisissez un nombre de jours supérieur à 0",
     "cleaningUpOldTasks": "Nettoyage des anciennes tâches",
-    "runConfirm": "Voulez-vous exécuter la tâche {{name}} ?"
+    "runConfirm": "Voulez-vous exécuter la tâche {{name}} ?",
+    "errorRunTask": "Erreur lors de l'exécution de {{name}}"
   },
   "healthCheck": {
     "welcome": "Bienvenue dans l'administration de Twake Mail !",
