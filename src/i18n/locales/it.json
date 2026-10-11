@@ -73,7 +73,8 @@
     "confirm": "Conferma",
     "noSearchResults": "Nessun risultato corrisponde alla tua ricerca.",
     "back": "Indietro",
-    "refresh": "Aggiorna"
+    "refresh": "Aggiorna",
+    "close": "Chiudi"
   },
   "sidebar": {
     "application": "Applicazione",

@@ -73,7 +73,8 @@
     "confirm": "Confirm",
     "noSearchResults": "No results match your search.",
     "back": "Back",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "close": "Close"
   },
   "sidebar": {
     "application": "Application",

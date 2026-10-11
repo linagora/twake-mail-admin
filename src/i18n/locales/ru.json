@@ -73,7 +73,8 @@
     "confirm": "Подтвердить",
     "noSearchResults": "Ничего не найдено.",
     "back": "Назад",
-    "refresh": "Обновить"
+    "refresh": "Обновить",
+    "close": "Закрыть"
   },
   "sidebar": {
     "application": "Приложение",

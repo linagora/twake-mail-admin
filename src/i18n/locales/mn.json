@@ -73,7 +73,8 @@
     "confirm": "Баталгаажуулах",
     "noSearchResults": "Хайлтад тохирох үр дүн олдсонгүй.",
     "back": "Буцах",
-    "refresh": "Шинэчлэх"
+    "refresh": "Шинэчлэх",
+    "close": "Хаах"
   },
   "sidebar": {
     "application": "Програм",

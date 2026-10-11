@@ -73,7 +73,8 @@
     "confirm": "Xác nhận",
     "noSearchResults": "Không có kết quả phù hợp.",
     "back": "Quay lại",
-    "refresh": "Làm mới"
+    "refresh": "Làm mới",
+    "close": "Đóng"
   },
   "sidebar": {
     "application": "Ứng dụng",
