@@ -97,8 +97,7 @@ export default function MailRepositoriesList() {
       { key: "maxRetries", defaultValue: "", type: "input" as const }, // Limit retries
     ];
     const paramValues: { [key: string]: string } = {};
-    const command =
-      "curl -XPATCH http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails?action=reprocess";
+    const command = `curl -XPATCH /mailRepositories/${path}/mails?action=reprocess`;
     const result = await confirm({
       header: t("mailRepositories.runTaskHeader"),
       message: (

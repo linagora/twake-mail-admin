@@ -59,3 +59,20 @@ describe("ConfirmTaskContent: duration parameters", () => {
     expect(values.createdBefore).toBe("");
   });
 });
+
+describe("ConfirmTaskContent: quoted commands", () => {
+  it("appends parameters inside the closing quote of the URL", () => {
+    render(
+      <ConfirmTaskContent
+        message="message"
+        command="curl -XPATCH '/mailRepositories/var%2Fmail%2Ferror/mails/key-1?action=reprocess'"
+        params={[{ key: "queue", defaultValue: "spool", type: "input" }]}
+        getParamValues={() => {}}
+      />
+    );
+
+    expect(screen.getByText(/curl -XPATCH/).textContent).toContain(
+      "curl -XPATCH '/mailRepositories/var%2Fmail%2Ferror/mails/key-1?action=reprocess&queue=spool'"
+    );
+  });
+});

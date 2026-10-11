@@ -58,10 +58,9 @@ export default function EventListenersList() {
       { key: "maxRetries", defaultValue: "", type: "input" as const },
     ];
     const paramValues: { [key: string]: string } = {};
-    const command =
-      "curl -XPOST http://ip:port/events/deadLetter/groups/{encodedPathOfTheGroup}?action=reDeliver&";
+    const command = `curl -XPOST /events/deadLetter/groups/${encodeURIComponent(path)}?action=reDeliver`;
     const result = await confirm({
-      header: t("common.run"),
+      header: t("eventDeadletter.redeliverGroupAction"),
       message: (
         <ConfirmTaskContent
           message={<p>{t("eventDeadletter.redeliverGroup", { path })}</p>}

@@ -179,7 +179,7 @@ export default function MailRepositoryDetail() {
       message: (
         <ConfirmTaskContent
           message={<p>{t("mailRepositories.reprocessMailConfirm", { mailKey })}</p>}
-          command={`curl -XPATCH 'http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails/${mailKey}?action=reprocess&'`}
+          command={`curl -XPATCH '/mailRepositories/${encodeURIComponent(id ?? "")}/mails/${mailKey}?action=reprocess'`}
           params={params}
           getParamValues={(key, value) => {
             paramValues[key] = typeof value === "boolean" ? value.toString() : value;

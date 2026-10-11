@@ -3,8 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { AxiosError, AxiosHeaders } from "axios";
+import { ReactNode } from "react";
 
-const REPOSITORIES = [{ repository: "error", path: "var/mail/error" }];
+const REPOSITORIES = [{ repository: "var/mail/error", path: "var%2Fmail%2Ferror" }];
 
 const api = vi.hoisted(() => ({
   getMailRepositories: vi.fn(),
@@ -18,7 +19,13 @@ const toast = vi.hoisted(() => vi.fn());
 vi.mock("./api-client", () => api);
 vi.mock("./create-mail-repository-button", () => ({ default: () => null }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
-vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => () => Promise.resolve(true) }));
+const confirmed = vi.hoisted(() => ({ message: undefined as ReactNode }));
+vi.mock("@/hooks/use-confirm", () => ({
+  useConfirm: () => (options: { message: ReactNode }) => {
+    confirmed.message = options.message;
+    return Promise.resolve(true);
+  },
+}));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-fetch-data", () => ({
   useFetchData: () => ({ data: REPOSITORIES, isLoading: false, refresh: vi.fn() }),
@@ -64,6 +71,19 @@ describe("mail repositories list tasks", () => {
     }));
   });
 
+  it("previews the reprocessing request actually sent for the repository", async () => {
+    api.reprocessMailRepository.mockResolvedValue({ taskId: "task-1" });
+    await clickAction("mailRepositories.reprocessAll");
+    await waitFor(() => expect(api.reprocessMailRepository).toHaveBeenCalled());
+    cleanup();
+
+    render(<>{confirmed.message}</>);
+
+    expect(screen.getByText(/curl -XPATCH/).textContent).toContain(
+      "curl -XPATCH /mailRepositories/var%2Fmail%2Ferror/mails?action=reprocess&queue=spool&processor=root&consume=true"
+    );
+  });
+
   it("reports a refused clear with the WebAdmin reason", async () => {
     api.clearMailRepository.mockRejectedValue(webAdminRefusal("repository not found"));
     await clickAction("mailRepositories.clearAll");
@@ -82,6 +102,6 @@ describe("mail repositories list tasks", () => {
     await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({
       title: "mailRepositories.runTaskSuccess",
     })));
-    expect(api.clearMailRepository).toHaveBeenCalledWith("var/mail/error");
+    expect(api.clearMailRepository).toHaveBeenCalledWith("var%2Fmail%2Ferror");
   });
 });

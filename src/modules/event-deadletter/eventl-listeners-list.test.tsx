@@ -4,6 +4,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { MemoryRouter } from "react-router";
 import { ReactElement } from "react";
 
+const GROUP = "org.apache.james.vault.DeletedMessageVaultDeletionListener$DeletedMessageVaultListenerGroup";
+
 const api = vi.hoisted(() => ({
   getMailboxListenerGroups: vi.fn(() => Promise.resolve(["org.apache.james.SomeGroup"])),
   getFailedEvents: vi.fn(() => Promise.resolve(["event-1"])),
@@ -13,9 +15,16 @@ const api = vi.hoisted(() => ({
 }));
 
 type ParamsCallback = (key: string, value: string | boolean) => void;
+
+interface ConfirmOptions {
+  header: string;
+  message: ReactElement<{ getParamValues: ParamsCallback }>;
+}
+
 const dialog = vi.hoisted(() => ({
   accepted: false,
   typedValues: {} as Record<string, string>,
+  options: undefined as ConfirmOptions | undefined,
 }));
 const toast = vi.hoisted(() => vi.fn());
 
@@ -24,8 +33,9 @@ vi.mock("./search-by-event-id", () => ({ default: () => null }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
 vi.mock("@/hooks/use-confirm", () => ({
-  useConfirm: () => async ({ message }: { message: ReactElement<{ getParamValues: ParamsCallback }> }) => {
-    Object.entries(dialog.typedValues).forEach(([key, value]) => message.props.getParamValues(key, value));
+  useConfirm: () => async (options: ConfirmOptions) => {
+    dialog.options = options;
+    Object.entries(dialog.typedValues).forEach(([key, value]) => options.message.props.getParamValues(key, value));
     return dialog.accepted;
   },
 }));
@@ -45,6 +55,7 @@ const clickRedeliver = async () =>
 beforeEach(() => {
   dialog.accepted = false;
   dialog.typedValues = {};
+  dialog.options = undefined;
 });
 
 afterEach(() => {
@@ -61,6 +72,23 @@ describe("event dead letter groups", () => {
 
     expect(redeliver.getAttribute("title")).toBe("eventDeadletter.redeliverGroupAction");
     expect(clear.getAttribute("title")).toBe("eventDeadletter.clearGroupAction");
+  });
+
+  it("previews the redeliver request actually sent for the group", async () => {
+    api.getMailboxListenerGroups.mockResolvedValueOnce([GROUP]);
+    renderList();
+    await clickRedeliver();
+    await waitFor(() => expect(dialog.options).toBeDefined());
+    cleanup();
+
+    render(<>{dialog.options?.message}</>);
+    fireEvent.change(screen.getAllByRole("textbox")[0], { target: { value: "1" } });
+
+    expect(dialog.options?.header).toBe("eventDeadletter.redeliverGroupAction");
+    expect(screen.getByText(/curl -XPOST/).textContent).toContain(
+      "curl -XPOST /events/deadLetter/groups/org.apache.james.vault.DeletedMessageVaultDeletionListener%24DeletedMessageVaultListenerGroup?action=reDeliver&limit=1"
+    );
+    expect(screen.queryByText(/redeliver_group_events/)).toBeNull();
   });
 
   it("sends the limit and maxRetries typed in the redeliver dialog", async () => {
