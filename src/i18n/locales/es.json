@@ -680,6 +680,12 @@
       "type": "Tipo",
       "destination": "Destino",
       "sources": "Orígenes que apuntan a este usuario",
+      "sourceTypes": {
+        "address": "Dirección",
+        "alias": "Alias",
+        "forward": "Reenvío",
+        "group": "Grupo"
+      },
       "removeAllSources": "Quitar todos los orígenes de tipo {{type}}",
       "removeAllSourcesConfirm": "¿Quitar todos los orígenes de tipo {{type}} de {{username}} ({{sources}})?",
       "sourcesRemoved": "Orígenes de tipo {{type}} de {{username}} quitados",

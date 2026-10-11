@@ -30,6 +30,7 @@ import UserChannels from "./user-channels";
 
 const ALICE = "alice@example.com";
 const BOB = "bob@example.com";
+const ALIAS_TYPE_LABEL = "users.mappings.sourceTypes.alias";
 
 const toastTitle = () => mocks.toast.mock.calls[0][0].title;
 
@@ -57,7 +58,7 @@ describe("user mappings: remove all sources", () => {
     await removeAliasSources();
     expect(mocks.confirm.mock.calls[0][0].message).toBe(
       `users.mappings.removeAllSourcesConfirm ${JSON.stringify({
-        type: "alias",
+        type: ALIAS_TYPE_LABEL,
         username: ALICE,
         sources: "alice.alias@example.com, a@example.com",
       })}`
@@ -67,13 +68,13 @@ describe("user mappings: remove all sources", () => {
   it("reports the result on success", async () => {
     mocks.api.deleteUserMappingSources.mockResolvedValue(undefined);
     await removeAliasSources();
-    expect(toastTitle()).toBe(`users.mappings.sourcesRemoved ${JSON.stringify({ type: "alias", username: ALICE })}`);
+    expect(toastTitle()).toBe(`users.mappings.sourcesRemoved ${JSON.stringify({ type: ALIAS_TYPE_LABEL, username: ALICE })}`);
   });
 
   it("uses a distinct title on failure", async () => {
     mocks.api.deleteUserMappingSources.mockRejectedValue(new Error("boom"));
     await removeAliasSources();
-    expect(toastTitle()).toBe(`users.mappings.errorRemovingSources ${JSON.stringify({ type: "alias", username: ALICE })}`);
+    expect(toastTitle()).toBe(`users.mappings.errorRemovingSources ${JSON.stringify({ type: ALIAS_TYPE_LABEL, username: ALICE })}`);
   });
 });
 

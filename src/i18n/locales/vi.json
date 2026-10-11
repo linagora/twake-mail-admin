@@ -680,6 +680,12 @@
       "type": "Loại",
       "destination": "Đích",
       "sources": "Nguồn trỏ tới người dùng này",
+      "sourceTypes": {
+        "address": "Địa chỉ",
+        "alias": "Bí danh",
+        "forward": "Chuyển tiếp",
+        "group": "Nhóm"
+      },
       "removeAllSources": "Xóa tất cả nguồn {{type}}",
       "removeAllSourcesConfirm": "Xóa tất cả nguồn {{type}} của {{username}} ({{sources}})?",
       "sourcesRemoved": "Đã xóa các nguồn {{type}} của {{username}}",

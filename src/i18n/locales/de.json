@@ -680,6 +680,12 @@
       "type": "Typ",
       "destination": "Ziel",
       "sources": "Quellen, die auf diesen Benutzer verweisen",
+      "sourceTypes": {
+        "address": "Adresse",
+        "alias": "Alias",
+        "forward": "Weiterleitung",
+        "group": "Gruppe"
+      },
       "removeAllSources": "Alle Quellen vom Typ {{type}} entfernen",
       "removeAllSourcesConfirm": "Alle Quellen vom Typ {{type}} von {{username}} ({{sources}}) entfernen?",
       "sourcesRemoved": "Quellen vom Typ {{type}} von {{username}} entfernt",

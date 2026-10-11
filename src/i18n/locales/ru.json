@@ -680,6 +680,12 @@
       "type": "Тип",
       "destination": "Назначение",
       "sources": "Источники, указывающие на этого пользователя",
+      "sourceTypes": {
+        "address": "Адрес",
+        "alias": "Псевдоним",
+        "forward": "Пересылка",
+        "group": "Группа"
+      },
       "removeAllSources": "Удалить все источники типа {{type}}",
       "removeAllSourcesConfirm": "Удалить все источники типа {{type}} для {{username}} ({{sources}})?",
       "sourcesRemoved": "Источники типа {{type}} для {{username}} удалены",

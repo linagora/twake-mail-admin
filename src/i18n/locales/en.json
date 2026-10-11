@@ -680,6 +680,12 @@
       "type": "Type",
       "destination": "Destination",
       "sources": "Sources pointing to this user",
+      "sourceTypes": {
+        "address": "Address",
+        "alias": "Alias",
+        "forward": "Forward",
+        "group": "Group"
+      },
       "removeAllSources": "Remove all {{type}} sources",
       "removeAllSourcesConfirm": "Remove all {{type}} sources of {{username}} ({{sources}})?",
       "sourcesRemoved": "{{type}} sources of {{username}} removed",

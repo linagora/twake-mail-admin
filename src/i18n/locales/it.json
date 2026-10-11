@@ -680,6 +680,12 @@
       "type": "Tipo",
       "destination": "Destinazione",
       "sources": "Origini che puntano a questo utente",
+      "sourceTypes": {
+        "address": "Indirizzo",
+        "alias": "Alias",
+        "forward": "Inoltro",
+        "group": "Gruppo"
+      },
       "removeAllSources": "Rimuovi tutte le origini di tipo {{type}}",
       "removeAllSourcesConfirm": "Rimuovere tutte le sorgenti di tipo {{type}} di {{username}} ({{sources}})?",
       "sourcesRemoved": "Sorgenti di tipo {{type}} di {{username}} rimosse",

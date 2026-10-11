@@ -67,19 +67,22 @@ export default function UserMappings({ username }: Props) {
 
   if (!canView) return null;
 
+  const typeLabel = (type: SourceType) => t(`users.mappings.sourceTypes.${type}`);
+
   const handleDeleteSources = async (type: SourceType, sources: string[]) => {
+    const label = typeLabel(type);
     const confirmed = await confirm({
-      header: t("users.mappings.removeAllSources", { type }),
-      message: t("users.mappings.removeAllSourcesConfirm", { type, username, sources: sources.join(", ") }),
+      header: t("users.mappings.removeAllSources", { type: label }),
+      message: t("users.mappings.removeAllSourcesConfirm", { type: label, username, sources: sources.join(", ") }),
     });
     if (!confirmed) return;
     try {
       await deleteUserMappingSources(username, type);
-      toast({ title: t("users.mappings.sourcesRemoved", { type, username }) });
+      toast({ title: t("users.mappings.sourcesRemoved", { type: label, username }) });
       notifyMappingsChanged();
     } catch (err) {
       toast({
-        title: t("users.mappings.errorRemovingSources", { type, username }),
+        title: t("users.mappings.errorRemovingSources", { type: label, username }),
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -149,13 +152,13 @@ export default function UserMappings({ username }: Props) {
               {sourcesData.map(({ type, sources }) => (
                 <div key={type} className="mt-2">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-medium capitalize">{type}</span>
+                    <span className="text-sm font-medium">{typeLabel(type)}</span>
                     <span className="text-sm text-gray-500">({sources.length})</span>
                     {canDeleteSources && (
                       <button
                         onClick={() => handleDeleteSources(type, sources)}
                         className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
-                        title={t("users.mappings.removeAllSources", { type })}
+                        title={t("users.mappings.removeAllSources", { type: typeLabel(type) })}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

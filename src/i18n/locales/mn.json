@@ -680,6 +680,12 @@
       "type": "Төрөл",
       "destination": "Хүрэх газар",
       "sources": "Энэ хэрэглэгч рүү чиглэсэн эх сурвалжууд",
+      "sourceTypes": {
+        "address": "Хаяг",
+        "alias": "Өөр нэр",
+        "forward": "Дамжуулалт",
+        "group": "Бүлэг"
+      },
       "removeAllSources": "Бүх {{type}} эх сурвалжийг устгах",
       "removeAllSourcesConfirm": "{{username}}-ийн бүх {{type}} эх сурвалжийг ({{sources}}) устгах уу?",
       "sourcesRemoved": "{{username}}-ийн {{type}} эх сурвалжууд устгагдлаа",
