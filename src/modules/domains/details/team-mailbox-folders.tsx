@@ -38,10 +38,13 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
   const [newFolder, setNewFolder] = useState("");
   const [showCreateInput, setShowCreateInput] = useState(false);
 
+  // WebAdmin lists the team mailbox root under its bare name, but folder routes are relative to that root
   const sorted = useMemo(() => {
     if (!folders) return [];
-    return [...folders].sort((a, b) => a.mailboxName.localeCompare(b.mailboxName));
-  }, [folders]);
+    return folders
+      .filter((folder) => folder.mailboxName !== mailbox)
+      .sort((a, b) => a.mailboxName.localeCompare(b.mailboxName));
+  }, [folders, mailbox]);
 
   if (!canView) return null;
 
@@ -98,7 +101,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           {t("domains.folders.title")}
           {folders && (
-            <span className="text-sm font-normal text-gray-500">({folders.length})</span>
+            <span className="text-sm font-normal text-gray-500">({sorted.length})</span>
           )}
         </button>
         {open && canCreate && (
