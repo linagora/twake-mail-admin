@@ -21,7 +21,7 @@ const errorMessage = (error: unknown): string => {
 /**
  * Keyset pagination over `GET /users`: each page is requested with the last username of
  * the previous one as anchor. Anchors are stacked to go back. Changing the source or
- * the filter restarts from the first page.
+ * the filter restarts from the first page, including when coming back to a previous filter.
  */
 export function useUsersPages(source: UsernamesSource, filter: UsersFilter, pageSize: number) {
   const { query, domain } = filter;
@@ -32,6 +32,8 @@ export function useUsersPages(source: UsernamesSource, filter: UsersFilter, page
   const [error, setError] = useState<string | null>(null);
 
   const isCurrent = paging.source === source && paging.query === query && paging.domain === domain;
+  // Forget the anchors of the previous filter, so that coming back to it restarts from its first page.
+  if (!isCurrent) setPaging({ source, query, domain, anchors: FIRST_PAGE });
   const anchors = isCurrent ? paging.anchors : FIRST_PAGE;
   const anchor = anchors[anchors.length - 1];
   const setAnchors = (anchorsOf: (current: Anchors) => Anchors) =>

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from "vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { PagedUsersList } from "./paged-users-list";
 import { UsernamesSource } from "./users-paging";
@@ -71,5 +71,45 @@ describe("paged users list: domain filter", () => {
       "qa-imp2.test",
       "qa-wipe.test",
     ]);
+  });
+});
+
+describe("paged users list: paging reset on filter change", () => {
+  const manyUsers = Array.from({ length: 60 }, (_, i) => `user${String(i).padStart(2, "0")}@example.com`);
+
+  async function openSecondPage() {
+    await screen.findByText("user00@example.com");
+    fireEvent.click(screen.getByRole("button", { name: "common.next" }));
+    await screen.findByText("user50@example.com");
+  }
+
+  async function expectFirstPage() {
+    expect(await screen.findByText("user00@example.com")).not.toBeNull();
+    expect(screen.queryByText("user50@example.com")).toBeNull();
+    expect((screen.getByRole("button", { name: "common.previous" }) as HTMLButtonElement).disabled).toBe(true);
+  }
+
+  it("restarts from the first page when the search is cleared", async () => {
+    renderList(sourceOf(manyUsers));
+    await openSecondPage();
+
+    const search = screen.getByPlaceholderText("users.searchPlaceholder");
+    fireEvent.change(search, { target: { value: "user5" } });
+    await waitFor(() => expect(screen.queryByRole("button", { name: "common.previous" })).toBeNull());
+    fireEvent.change(search, { target: { value: "" } });
+
+    await expectFirstPage();
+  });
+
+  it("restarts from the first page when all domains are selected again", async () => {
+    renderList(sourceOf([...manyUsers, "zed@example.org"]), ["example.com", "example.org"]);
+    await openSecondPage();
+
+    const domainSelect = screen.getByLabelText("common.domain");
+    fireEvent.change(domainSelect, { target: { value: "example.org" } });
+    await screen.findByText("zed@example.org");
+    fireEvent.change(domainSelect, { target: { value: "" } });
+
+    await expectFirstPage();
   });
 });
