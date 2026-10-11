@@ -55,6 +55,20 @@ describe("tasks list", () => {
 
     expect(await screen.findByRole("dialog")).not.toBeNull();
   });
+
+  it("lays the header and the rows out on the same column template", async () => {
+    api.listTasks.mockResolvedValue([
+      { taskId: TASK_ID, type: "full-reindexing", status: "completed", submitDate: "2026-10-10T06:00:00Z" },
+    ]);
+    renderTasks();
+
+    const row = await screen.findByTestId("task-row");
+    const columnClasses = (element: HTMLElement) =>
+      Array.from(element.classList).filter((name) => name.includes("grid-cols-"));
+
+    expect(columnClasses(row)).not.toEqual([]);
+    expect(columnClasses(screen.getByTestId("tasks-header"))).toEqual(columnClasses(row));
+  });
 });
 
 describe("tasks: status filter", () => {

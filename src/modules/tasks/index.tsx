@@ -18,6 +18,11 @@ import { currentLocale } from "@/i18n/locale";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
+// Shared by the header and every row: the tracks never depend on content, so they stay aligned.
+// Below md: index | ID / type (status and dates stacked under it) | action.
+const TASK_GRID_COLUMNS =
+  "grid-cols-[2rem_minmax(0,1fr)_auto] md:grid-cols-[2rem_minmax(0,3fr)_6rem_minmax(0,2fr)_minmax(0,3fr)_4rem]";
+
 const STATUS_OPTIONS = [
   "",
   TaskStatus.WAITING,
@@ -274,13 +279,16 @@ export default function Tasks() {
 
         {/* Legend */}
         {tasks && tasks.length > 0 && (
-          <div className="grid grid-cols-[auto_1fr_auto_1fr_1fr_auto] gap-2 text-xs font-semibold text-muted-foreground px-3 pb-2 border-b mb-1">
-            <span className="w-8">#</span>
-            <span>{t("tasks.idType")}</span>
-            <span className="w-24 text-center">{t("tasks.status")}</span>
-            <span>{t("tasks.submitted")}</span>
-            <span>{t("tasks.startedCompleted")}</span>
-            <span className="w-16 text-center">{t("tasks.actions")}</span>
+          <div
+            data-testid="tasks-header"
+            className={`hidden md:grid ${TASK_GRID_COLUMNS} gap-2 text-xs font-semibold text-muted-foreground px-3 pb-2 border-b mb-1`}
+          >
+            <span>#</span>
+            <span className="truncate">{t("tasks.idType")}</span>
+            <span className="text-center truncate">{t("tasks.status")}</span>
+            <span className="truncate">{t("tasks.submitted")}</span>
+            <span className="truncate">{t("tasks.startedCompleted")}</span>
+            <span className="text-center truncate">{t("tasks.actions")}</span>
           </div>
         )}
 
@@ -293,11 +301,12 @@ export default function Tasks() {
               return (
                 <div
                   key={task.taskId}
-                  className="grid grid-cols-[auto_1fr_auto_1fr_1fr_auto] gap-2 items-center p-3 bg-gray-50 rounded-2 cursor-pointer hover:bg-gray-100 transition text-sm"
+                  data-testid="task-row"
+                  className={`grid ${TASK_GRID_COLUMNS} gap-x-2 gap-y-1 items-center p-3 bg-gray-50 rounded-2 cursor-pointer hover:bg-gray-100 transition text-sm`}
                   onClick={() => setSelectedTask(task)}
                 >
-                  <span className="text-muted-foreground w-8">{globalIndex}.</span>
-                  <div className="truncate">
+                  <span className="text-muted-foreground">{globalIndex}.</span>
+                  <div className="min-w-0 truncate">
                     {/* A real button (the row itself holds the cancel button) so the detail opens from the keyboard */}
                     <button
                       type="button"
@@ -309,17 +318,27 @@ export default function Tasks() {
                     <br />
                     <span className="text-xs text-gray-500">{task.type}</span>
                   </div>
-                  <span className={`w-24 text-center text-xs px-2 py-0.5 rounded-full ${statusClass}`}>
-                    {task.status}
-                  </span>
-                  <span className="text-xs truncate">{formatDate(task.submitDate)}</span>
-                  <div className="text-xs truncate">
-                    <span>{formatDate(task.startedDate)}</span>
-                    {task.completedDate && (
-                      <span className="text-gray-400"> → {formatDate(task.completedDate)}</span>
-                    )}
+                  {/* Below md the header is hidden: status and labelled dates stack under the ID / type */}
+                  <div className="col-start-2 col-span-2 min-w-0 flex flex-col items-start gap-1 md:contents">
+                    <span className={`md:w-full text-center text-xs px-2 py-0.5 rounded-full ${statusClass}`}>
+                      {task.status}
+                    </span>
+                    <span className="text-xs max-w-full truncate">
+                      <span className="md:hidden text-gray-500">{t("tasks.submitted")}: </span>
+                      {formatDate(task.submitDate)}
+                    </span>
+                    <div className="text-xs max-w-full truncate">
+                      <span className="md:hidden text-gray-500">{t("tasks.startedCompleted")}: </span>
+                      <span>{formatDate(task.startedDate)}</span>
+                      {task.completedDate && (
+                        <span className="text-gray-400"> → {formatDate(task.completedDate)}</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="w-16 flex justify-center" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    className="row-start-1 col-start-3 md:row-auto md:col-auto flex justify-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     {canCancel && isCancellable(task.status) && (
                       <button
                         onClick={() => handleCancel(task)}
