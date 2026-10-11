@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { Link, MemoryRouter } from "react-router";
 import { Sidebar, SidebarProvider } from "../ui/sidebar";
 import { MobileSidebarBar } from "./mobile-sidebar-bar";
 
@@ -20,13 +21,19 @@ function setViewportWidth(width: number) {
 
 function renderLayout() {
   render(
-    <SidebarProvider>
-      <Sidebar>
-        <a href="/users">Users</a>
-      </Sidebar>
-      <MobileSidebarBar />
-    </SidebarProvider>
+    <MemoryRouter initialEntries={["/users"]}>
+      <SidebarProvider>
+        <Sidebar>
+          <Link to="/domains">Domains</Link>
+        </Sidebar>
+        <MobileSidebarBar />
+      </SidebarProvider>
+    </MemoryRouter>
   );
+}
+
+function openSidebar() {
+  fireEvent.click(screen.getByRole("button", { name: "sidebar.toggle" }));
 }
 
 afterEach(cleanup);
@@ -42,10 +49,19 @@ describe("mobile sidebar bar", () => {
 
   it("opens the mobile sidebar when the trigger is clicked", () => {
     renderLayout();
-    expect(screen.queryByText("Users")).toBeNull();
+    expect(screen.queryByText("Domains")).toBeNull();
 
-    fireEvent.click(screen.getByRole("button", { name: "sidebar.toggle" }));
+    openSidebar();
 
-    expect(screen.queryByText("Users")).not.toBeNull();
+    expect(screen.queryByText("Domains")).not.toBeNull();
+  });
+
+  it("closes the mobile sidebar when an entry is chosen", () => {
+    renderLayout();
+    openSidebar();
+
+    fireEvent.click(screen.getByText("Domains"));
+
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 });
