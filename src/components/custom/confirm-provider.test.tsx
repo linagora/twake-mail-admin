@@ -100,3 +100,21 @@ describe("confirm dialog validation", () => {
     expect(screen.queryByRole("alert")).toBeNull();
   });
 });
+
+describe("confirm dialog focus", () => {
+  it("returns the focus to the control that opened it once closed", async () => {
+    render(
+      <ConfirmProvider>
+        <Opener onResult={(result, name) => results.push({ result, name })} />
+      </ConfirmProvider>
+    );
+    const opener = screen.getByText("open");
+    opener.focus();
+    fireEvent.click(opener);
+    fireEvent.click(await screen.findByText("common.cancel"));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    // Radix moves the focus on close from a timeout
+    await waitFor(() => expect(document.activeElement).toBe(opener));
+  });
+});

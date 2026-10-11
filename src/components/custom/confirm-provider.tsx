@@ -2,6 +2,7 @@ import { createContext, useState, ReactNode } from "react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { useReturnFocus } from "@/hooks/use-return-focus";
 
 /**
  * Checks the dialog content when "Confirm" is clicked. Returns the error to show in the
@@ -37,8 +38,10 @@ interface ConfirmProviderProps {
 export function ConfirmProvider({ children }: ConfirmProviderProps) {
   const { t } = useTranslation();
   const [confirmState, setConfirmState] = useState<ConfirmState>(CLOSED_STATE);
+  const { rememberFocus, restoreFocus } = useReturnFocus();
 
   const confirm: ConfirmContextType = (options: ConfirmOptions) => {
+    rememberFocus();
     return new Promise<boolean>((resolve) => {
       setConfirmState({ ...options, isOpen: true, error: null, resolve });
     });
@@ -65,7 +68,7 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
     <ConfirmContext.Provider value={confirm}>
       {children}
       <Dialog open={confirmState.isOpen} onOpenChange={(open) => !open && handleClose(false)}>
-        <DialogContent className={confirmState.className}>
+        <DialogContent className={confirmState.className} onCloseAutoFocus={restoreFocus}>
           <DialogHeader>
             <DialogTitle>{confirmState.header}</DialogTitle>
           </DialogHeader>

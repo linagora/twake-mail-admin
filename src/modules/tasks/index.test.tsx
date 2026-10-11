@@ -56,6 +56,22 @@ describe("tasks list", () => {
     expect(await screen.findByRole("dialog")).not.toBeNull();
   });
 
+  it("returns the focus to the task ID that opened the details once they are closed", async () => {
+    api.listTasks.mockResolvedValue([
+      { taskId: TASK_ID, type: "full-reindexing", status: "completed", submitDate: "2026-10-10T06:00:00Z" },
+    ]);
+    renderTasks();
+
+    const taskButton = await screen.findByRole("button", { name: TASK_ID });
+    taskButton.focus();
+    fireEvent.click(taskButton);
+    fireEvent.keyDown(await screen.findByRole("dialog"), { key: "Escape" });
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    // Radix moves the focus on close from a timeout
+    await waitFor(() => expect(document.activeElement).toBe(taskButton));
+  });
+
   it("lays the header and the rows out on the same column template", async () => {
     api.listTasks.mockResolvedValue([
       { taskId: TASK_ID, type: "full-reindexing", status: "completed", submitDate: "2026-10-10T06:00:00Z" },

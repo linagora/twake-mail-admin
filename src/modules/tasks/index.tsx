@@ -9,6 +9,7 @@ import { cancelTask } from "@/modules/common-tasks/api-client";
 import { TaskDetailResponse, TaskStatus } from "@/modules/common-tasks/types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useReturnFocus } from "@/hooks/use-return-focus";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
@@ -84,6 +85,12 @@ export default function Tasks() {
 
   // Detail modal
   const [selectedTask, setSelectedTask] = useState<TaskDetailResponse | null>(null);
+  const { rememberFocus, restoreFocus } = useReturnFocus();
+
+  const openTask = (task: TaskDetailResponse) => {
+    rememberFocus();
+    setSelectedTask(task);
+  };
 
   const buildParams = useCallback((): ListTasksParams => {
     const params: ListTasksParams = {
@@ -303,7 +310,7 @@ export default function Tasks() {
                   key={task.taskId}
                   data-testid="task-row"
                   className={`grid ${TASK_GRID_COLUMNS} gap-x-2 gap-y-1 items-center p-3 bg-gray-50 rounded-2 cursor-pointer hover:bg-gray-100 transition text-sm`}
-                  onClick={() => setSelectedTask(task)}
+                  onClick={() => openTask(task)}
                 >
                   <span className="text-muted-foreground">{globalIndex}.</span>
                   <div className="min-w-0 truncate">
@@ -311,7 +318,7 @@ export default function Tasks() {
                     <button
                       type="button"
                       className="font-mono text-xs text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                      onClick={() => setSelectedTask(task)}
+                      onClick={() => openTask(task)}
                     >
                       {task.taskId}
                     </button>
@@ -373,7 +380,7 @@ export default function Tasks() {
 
       {/* Detail dialog */}
       <Dialog open={!!selectedTask} onOpenChange={(v) => !v && setSelectedTask(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto" onCloseAutoFocus={restoreFocus}>
           <DialogHeader>
             <DialogTitle>{t("tasks.detailTitle", { taskId: selectedTask?.taskId })}</DialogTitle>
           </DialogHeader>
