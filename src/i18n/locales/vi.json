@@ -74,7 +74,9 @@
     "noSearchResults": "Không có kết quả phù hợp.",
     "back": "Quay lại",
     "refresh": "Làm mới",
-    "close": "Đóng"
+    "close": "Đóng",
+    "sizeLimit": "Giới hạn dung lượng",
+    "sizeUnit": "Đơn vị"
   },
   "sidebar": {
     "application": "Ứng dụng",
@@ -201,7 +203,8 @@
       "memberRemoved": "Đã xóa thành viên",
       "errorRemovingMember": "Lỗi khi xóa thành viên",
       "noMembers": "Không có thành viên.",
-      "removeMemberTooltip": "Xóa thành viên"
+      "removeMemberTooltip": "Xóa thành viên",
+      "role": "Vai trò"
     },
     "teamMailboxQuota": {
       "title": "Hạn ngạch",
@@ -729,7 +732,8 @@
       "updated": "Label updated",
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
-      "errorDeleting": "Error deleting label"
+      "errorDeleting": "Error deleting label",
+      "colorPicker": "Bộ chọn màu"
     },
     "jmapSettings": {
       "title": "Cài đặt JMAP",
@@ -839,7 +843,9 @@
         "receivedAt": "Nhận lúc",
         "from": "Từ",
         "subject": "Chủ đề"
-      }
+      },
+      "sortField": "Trường sắp xếp",
+      "sortDirection": "Chiều sắp xếp"
     },
     "tasks": {
       "title": "Tác vụ",

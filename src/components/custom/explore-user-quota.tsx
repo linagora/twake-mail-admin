@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Search, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -66,6 +66,7 @@ interface Props {
 
 export default function ExploreUserQuota({ domain }: Props) {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const canSearchGlobal = useIsAllowed("GET", "/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}");
   const canSearchDomain = useIsAllowed("GET", "/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}&domain={domain}");
   const canSearch = domain ? canSearchDomain : canSearchGlobal;
@@ -127,8 +128,9 @@ export default function ExploreUserQuota({ domain }: Props) {
           <div className="p-4 bg-gray-50 rounded-2 space-y-3">
             <div className="flex items-end gap-3 flex-wrap">
               <div>
-                <label className="text-xs text-gray-500 font-medium">{t("exploreQuota.minOccupation")}</label>
+                <label htmlFor={`${idPrefix}-min`} className="text-xs text-gray-500 font-medium">{t("exploreQuota.minOccupation")}</label>
                 <input
+                  id={`${idPrefix}-min`}
                   type="number"
                   min="0"
                   max="100"
@@ -139,8 +141,9 @@ export default function ExploreUserQuota({ domain }: Props) {
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-500 font-medium">{t("exploreQuota.maxOccupation")}</label>
+                <label htmlFor={`${idPrefix}-max`} className="text-xs text-gray-500 font-medium">{t("exploreQuota.maxOccupation")}</label>
                 <input
+                  id={`${idPrefix}-max`}
                   type="number"
                   min="0"
                   max="100"

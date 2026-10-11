@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NetworkChannel } from "../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -61,6 +61,7 @@ export default function ChannelGrid({
   sortField: controlledSortField, sortAsc: controlledSortAsc, onSortChange,
 }: Props) {
   const { t } = useTranslation();
+  const sortFieldId = useId();
   const isControlled = paginate && onPageChange != null;
 
   const [internalSortField, setInternalSortField] = useState<SortField>("username");
@@ -127,8 +128,9 @@ export default function ChannelGrid({
     <div>
       {/* Sort controls */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <label className="text-sm font-medium">{t("networkChannels.sortBy")}</label>
+        <label htmlFor={sortFieldId} className="text-sm font-medium">{t("networkChannels.sortBy")}</label>
         <select
+          id={sortFieldId}
           className="border rounded px-2 py-1 text-sm"
           value={sortField}
           onChange={(e) => handleSortFieldChange(e.target.value as SortField)}

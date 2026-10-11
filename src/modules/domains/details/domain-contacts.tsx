@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2, Pencil, AlertTriangle, Loader2, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -52,6 +52,7 @@ export default function DomainContacts({ domain }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
+  const editIdPrefix = useId();
   const canView = useIsAllowed("GET", "/domains/{domain}/contacts");
   const canCreate = useIsAllowed("POST", "/domains/{domain}/contacts");
   const canEdit = useIsAllowed("PUT", "/domains/{domain}/contacts/{username}");
@@ -394,8 +395,9 @@ export default function DomainContacts({ domain }: Props) {
           {editContact && (
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium">{t("domains.contacts.firstname")}</label>
+                <label htmlFor={`${editIdPrefix}-firstname`} className="text-sm font-medium">{t("domains.contacts.firstname")}</label>
                 <input
+                  id={`${editIdPrefix}-firstname`}
                   type="text"
                   value={editFirstname}
                   onChange={(e) => setEditFirstname(e.target.value)}
@@ -403,8 +405,9 @@ export default function DomainContacts({ domain }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">{t("domains.contacts.surname")}</label>
+                <label htmlFor={`${editIdPrefix}-surname`} className="text-sm font-medium">{t("domains.contacts.surname")}</label>
                 <input
+                  id={`${editIdPrefix}-surname`}
                   type="text"
                   value={editSurname}
                   onChange={(e) => setEditSurname(e.target.value)}

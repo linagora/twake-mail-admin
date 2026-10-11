@@ -74,7 +74,9 @@
     "noSearchResults": "Ningún resultado coincide con su búsqueda.",
     "back": "Volver",
     "refresh": "Actualizar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "sizeLimit": "Límite de tamaño",
+    "sizeUnit": "Unidad"
   },
   "sidebar": {
     "application": "Aplicación",
@@ -201,7 +203,8 @@
       "memberRemoved": "Miembro quitado",
       "errorRemovingMember": "Error al quitar el miembro",
       "noMembers": "No hay miembros.",
-      "removeMemberTooltip": "Quitar miembro"
+      "removeMemberTooltip": "Quitar miembro",
+      "role": "Rol"
     },
     "teamMailboxQuota": {
       "title": "Cuota",
@@ -729,7 +732,8 @@
       "updated": "Etiqueta actualizada",
       "errorUpdating": "Error al actualizar la etiqueta",
       "deleted": "Etiqueta eliminada",
-      "errorDeleting": "Error al eliminar la etiqueta"
+      "errorDeleting": "Error al eliminar la etiqueta",
+      "colorPicker": "Selector de color"
     },
     "jmapSettings": {
       "title": "Ajustes JMAP",
@@ -839,7 +843,9 @@
         "receivedAt": "Fecha de recepción",
         "from": "De",
         "subject": "Asunto"
-      }
+      },
+      "sortField": "Campo de ordenación",
+      "sortDirection": "Dirección de ordenación"
     },
     "tasks": {
       "title": "Tareas",

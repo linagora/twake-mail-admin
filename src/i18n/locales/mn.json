@@ -74,7 +74,9 @@
     "noSearchResults": "Хайлтад тохирох үр дүн олдсонгүй.",
     "back": "Буцах",
     "refresh": "Шинэчлэх",
-    "close": "Хаах"
+    "close": "Хаах",
+    "sizeLimit": "Хэмжээний хязгаар",
+    "sizeUnit": "Нэгж"
   },
   "sidebar": {
     "application": "Програм",
@@ -201,7 +203,8 @@
       "memberRemoved": "Гишүүн устгагдлаа",
       "errorRemovingMember": "Гишүүн устгахад алдаа гарлаа",
       "noMembers": "Гишүүн байхгүй.",
-      "removeMemberTooltip": "Гишүүн устгах"
+      "removeMemberTooltip": "Гишүүн устгах",
+      "role": "Үүрэг"
     },
     "teamMailboxQuota": {
       "title": "Квота",
@@ -729,7 +732,8 @@
       "updated": "Label updated",
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
-      "errorDeleting": "Error deleting label"
+      "errorDeleting": "Error deleting label",
+      "colorPicker": "Өнгө сонгогч"
     },
     "jmapSettings": {
       "title": "JMAP тохиргоо",
@@ -839,7 +843,9 @@
         "receivedAt": "Хүлээн авсан огноо",
         "from": "Илгээгч",
         "subject": "Гарчиг"
-      }
+      },
+      "sortField": "Эрэмбэлэх талбар",
+      "sortDirection": "Эрэмбэлэх чиглэл"
     },
     "tasks": {
       "title": "Даалгаврууд",

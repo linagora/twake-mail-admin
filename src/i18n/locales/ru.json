@@ -74,7 +74,9 @@
     "noSearchResults": "Ничего не найдено.",
     "back": "Назад",
     "refresh": "Обновить",
-    "close": "Закрыть"
+    "close": "Закрыть",
+    "sizeLimit": "Ограничение размера",
+    "sizeUnit": "Единица"
   },
   "sidebar": {
     "application": "Приложение",
@@ -201,7 +203,8 @@
       "memberRemoved": "Участник удалён",
       "errorRemovingMember": "Ошибка при удалении участника",
       "noMembers": "Участников нет.",
-      "removeMemberTooltip": "Удалить участника"
+      "removeMemberTooltip": "Удалить участника",
+      "role": "Роль"
     },
     "teamMailboxQuota": {
       "title": "Квота",
@@ -729,7 +732,8 @@
       "updated": "Label updated",
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
-      "errorDeleting": "Error deleting label"
+      "errorDeleting": "Error deleting label",
+      "colorPicker": "Выбор цвета"
     },
     "jmapSettings": {
       "title": "Настройки JMAP",
@@ -839,7 +843,9 @@
         "receivedAt": "Получено в",
         "from": "От",
         "subject": "Тема"
-      }
+      },
+      "sortField": "Поле сортировки",
+      "sortDirection": "Направление сортировки"
     },
     "tasks": {
       "title": "Задачи",

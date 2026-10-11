@@ -74,7 +74,9 @@
     "noSearchResults": "Aucun résultat ne correspond à votre recherche.",
     "back": "Retour",
     "refresh": "Rafraîchir",
-    "close": "Fermer"
+    "close": "Fermer",
+    "sizeLimit": "Limite de taille",
+    "sizeUnit": "Unité"
   },
   "sidebar": {
     "application": "Application",
@@ -201,7 +203,8 @@
       "memberRemoved": "Membre retiré",
       "errorRemovingMember": "Erreur lors du retrait du membre",
       "noMembers": "Aucun membre.",
-      "removeMemberTooltip": "Retirer le membre"
+      "removeMemberTooltip": "Retirer le membre",
+      "role": "Rôle"
     },
     "teamMailboxQuota": {
       "title": "Quota",
@@ -729,7 +732,8 @@
       "updated": "Étiquette mise à jour",
       "errorUpdating": "Erreur lors de la mise à jour de l'étiquette",
       "deleted": "Étiquette supprimée",
-      "errorDeleting": "Erreur lors de la suppression de l'étiquette"
+      "errorDeleting": "Erreur lors de la suppression de l'étiquette",
+      "colorPicker": "Sélecteur de couleur"
     },
     "jmapSettings": {
       "title": "Paramètres JMAP",
@@ -839,7 +843,9 @@
         "receivedAt": "Date de réception",
         "from": "Expéditeur",
         "subject": "Sujet"
-      }
+      },
+      "sortField": "Champ de tri",
+      "sortDirection": "Sens du tri"
     },
     "tasks": {
       "title": "Tâches",

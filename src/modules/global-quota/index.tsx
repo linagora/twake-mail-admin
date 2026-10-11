@@ -162,11 +162,13 @@ export default function GlobalQuota() {
                     onChange={(e) => setSizeInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleUpdateSize()}
                     placeholder={t("common.sizeUnlimited")}
+                    aria-label={t("common.sizeLimit")}
                     className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   />
                   <select
                     value={sizeUnit}
                     onChange={(e) => setSizeUnit(e.target.value as "B" | "KB" | "MB" | "GB")}
+                    aria-label={t("common.sizeUnit")}
                     className="px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="B">B</option>

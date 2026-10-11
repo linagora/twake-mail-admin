@@ -74,7 +74,9 @@
     "noSearchResults": "No results match your search.",
     "back": "Back",
     "refresh": "Refresh",
-    "close": "Close"
+    "close": "Close",
+    "sizeLimit": "Size limit",
+    "sizeUnit": "Unit"
   },
   "sidebar": {
     "application": "Application",
@@ -201,7 +203,8 @@
       "memberRemoved": "Member removed",
       "errorRemovingMember": "Error removing member",
       "noMembers": "No members.",
-      "removeMemberTooltip": "Remove member"
+      "removeMemberTooltip": "Remove member",
+      "role": "Role"
     },
     "teamMailboxQuota": {
       "title": "Quota",
@@ -729,7 +732,8 @@
       "updated": "Label updated",
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
-      "errorDeleting": "Error deleting label"
+      "errorDeleting": "Error deleting label",
+      "colorPicker": "Colour picker"
     },
     "jmapSettings": {
       "title": "JMAP Settings",
@@ -839,7 +843,9 @@
         "receivedAt": "Received at",
         "from": "From",
         "subject": "Subject"
-      }
+      },
+      "sortField": "Sort field",
+      "sortDirection": "Sort direction"
     },
     "tasks": {
       "title": "Tasks",

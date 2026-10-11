@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Pencil, Trash2, Save, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -25,6 +25,7 @@ const EMPTY_CREATE: UserLabelCreatePayload = {
 
 export default function UserLabels({ username }: Props) {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/labels");
@@ -139,8 +140,9 @@ export default function UserLabels({ username }: Props) {
               <h5 className="text-sm font-semibold">{t("users.labels.newTitle")}</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs text-gray-500">{t("users.labels.displayNameLabel")}</label>
+                  <label htmlFor={`${idPrefix}-create-displayName`} className="text-xs text-gray-500">{t("users.labels.displayNameLabel")}</label>
                   <input
+                    id={`${idPrefix}-create-displayName`}
                     type="text"
                     value={createForm.displayName}
                     onChange={(e) => setCreateForm((f) => ({ ...f, displayName: e.target.value }))}
@@ -149,8 +151,9 @@ export default function UserLabels({ username }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">{t("users.labels.keyword")}</label>
+                  <label htmlFor={`${idPrefix}-create-keyword`} className="text-xs text-gray-500">{t("users.labels.keyword")}</label>
                   <input
+                    id={`${idPrefix}-create-keyword`}
                     type="text"
                     value={createForm.keyword ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, keyword: e.target.value }))}
@@ -161,15 +164,17 @@ export default function UserLabels({ username }: Props) {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs text-gray-500">{t("users.labels.color")}</label>
+                  <label htmlFor={`${idPrefix}-create-color`} className="text-xs text-gray-500">{t("users.labels.color")}</label>
                   <div className="flex gap-2 mt-1 items-center">
                     <input
                       type="color"
                       value={createForm.color?.trim() || "#000000"}
                       onChange={(e) => setCreateForm((f) => ({ ...f, color: e.target.value }))}
+                      aria-label={t("users.labels.colorPicker")}
                       className="h-9 w-12 cursor-pointer border rounded-md"
                     />
                     <input
+                      id={`${idPrefix}-create-color`}
                       type="text"
                       value={createForm.color ?? ""}
                       onChange={(e) => setCreateForm((f) => ({ ...f, color: e.target.value }))}
@@ -179,8 +184,9 @@ export default function UserLabels({ username }: Props) {
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">{t("users.labels.description")}</label>
+                  <label htmlFor={`${idPrefix}-create-description`} className="text-xs text-gray-500">{t("users.labels.description")}</label>
                   <input
+                    id={`${idPrefix}-create-description`}
                     type="text"
                     value={createForm.description ?? ""}
                     onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
@@ -293,8 +299,9 @@ export default function UserLabels({ username }: Props) {
           {editLabel && (
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium">{t("users.labels.displayNameLabel")}</label>
+                <label htmlFor={`${idPrefix}-edit-displayName`} className="text-sm font-medium">{t("users.labels.displayNameLabel")}</label>
                 <input
+                  id={`${idPrefix}-edit-displayName`}
                   type="text"
                   value={editForm.displayName}
                   onChange={(e) => setEditForm((f) => ({ ...f, displayName: e.target.value }))}
@@ -302,15 +309,17 @@ export default function UserLabels({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">{t("users.labels.colorLabel")}</label>
+                <label htmlFor={`${idPrefix}-edit-color`} className="text-sm font-medium">{t("users.labels.colorLabel")}</label>
                 <div className="flex gap-2 mt-1 items-center">
                   <input
                     type="color"
                     value={editForm.color?.trim() || "#000000"}
                     onChange={(e) => setEditForm((f) => ({ ...f, color: e.target.value }))}
+                    aria-label={t("users.labels.colorPicker")}
                     className="h-9 w-12 cursor-pointer border rounded-md"
                   />
                   <input
+                    id={`${idPrefix}-edit-color`}
                     type="text"
                     value={editForm.color ?? ""}
                     onChange={(e) => setEditForm((f) => ({ ...f, color: e.target.value }))}
@@ -325,8 +334,9 @@ export default function UserLabels({ username }: Props) {
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium">{t("users.labels.descriptionLabel")}</label>
+                <label htmlFor={`${idPrefix}-edit-description`} className="text-sm font-medium">{t("users.labels.descriptionLabel")}</label>
                 <input
+                  id={`${idPrefix}-edit-description`}
                   type="text"
                   value={editForm.description ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}

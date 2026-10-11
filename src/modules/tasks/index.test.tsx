@@ -123,3 +123,19 @@ describe("tasks: status filter", () => {
     expect(screen.queryByText("previous-task")).toBeNull();
   });
 });
+
+describe("tasks filters: field labels", () => {
+  it.each([
+    ["tasks.sort", "SELECT"],
+    ["tasks.status", "SELECT"],
+    ["tasks.type", "INPUT"],
+    ["tasks.submittedAfter", "INPUT"],
+    ["tasks.failedBefore", "INPUT"],
+  ])("names the %s field after its visible label", (label, tagName) => {
+    api.listTasks.mockResolvedValue([]);
+    renderTasks();
+    fireEvent.click(screen.getByText("tasks.filters"));
+
+    expect(screen.getByLabelText(label).tagName).toBe(tagName);
+  });
+});

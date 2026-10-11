@@ -135,6 +135,7 @@ export default function TeamMailboxDetail() {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as "member" | "manager")}
+            aria-label={t("domains.teamMailbox.role")}
             className="px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           >
             <option value="member">{t("domains.teamMailbox.member")}</option>

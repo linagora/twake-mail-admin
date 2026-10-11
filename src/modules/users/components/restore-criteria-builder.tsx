@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,7 @@ interface Props {
 
 export default function RestoreCriteriaBuilder({ onChange }: Props) {
   const { t } = useTranslation();
+  const limitId = useId();
   const [criteria, setCriteria] = useState<CriterionRow[]>([]);
   const [limit, setLimit] = useState<string>("");
 
@@ -220,8 +221,9 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
       </Button>
 
       <div className="flex items-center gap-2 pt-2 border-t">
-        <label className="text-sm font-medium">{t("users.deletedVault.criteria.limitLabel")}</label>
+        <label htmlFor={limitId} className="text-sm font-medium">{t("users.deletedVault.criteria.limitLabel")}</label>
         <Input
+          id={limitId}
           type="number"
           className="w-[120px]"
           placeholder={t("users.deletedVault.criteria.noLimit")}

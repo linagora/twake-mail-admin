@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TaskParam } from "../types";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -32,6 +32,8 @@ interface Props {
 }
 
 const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
+  const idPrefix = useId();
+  const fieldId = (key: string) => `${idPrefix}-${key}`;
   const [formData, setFormData] = useState<Record<string, string | boolean>>(() => {
     const initialData: Record<string, string | boolean> = {};
     params?.forEach(param => {
@@ -79,15 +81,17 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
     <div className="space-y-3">
       {params?.map(param => (
         <div key={param.key} className="flex items-center space-x-2">
-          <label className="font-medium">{param.key}:</label>
+          <label htmlFor={fieldId(param.key)} className="font-medium">{param.key}:</label>
           {param.type === "input" && (
             <Input
+              id={fieldId(param.key)}
               value={formData[param.key] as string}
               onChange={e => handleChange(param.key, e.target.value)}
             />
           )}
           {param.type === "checkbox" && (
             <Checkbox
+              id={fieldId(param.key)}
               checked={formData[param.key] as boolean}
               onCheckedChange={checked => handleChange(param.key, checked)}
             />
@@ -95,7 +99,7 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
           {param.type === "select" && param.values && (
             <div className="flex items-center space-x-2">
               <Select value={formData[param.key] as string} onValueChange={value => handleChange(param.key, value)}>
-                <SelectTrigger className="w-[250px]">
+                <SelectTrigger id={fieldId(param.key)} className="w-[250px]">
                   <SelectValue placeholder={(formData[param.key] as string) || "Select an option"} />
                 </SelectTrigger>
                 <SelectContent>
@@ -114,6 +118,7 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
           {param.type === "duration" && (
             <div className="flex items-center space-x-2">
               <Input
+                id={fieldId(param.key)}
                 type="number"
                 min="0"
                 className="w-[100px]"
