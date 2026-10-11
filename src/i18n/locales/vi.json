@@ -104,6 +104,7 @@
     "title": "Chi tiết tên miền",
     "label": "Tên miền: {{domain}}",
     "searchPlaceholder": "Tìm tên miền...",
+    "noMatch": "Không có tên miền nào khớp với \"{{query}}\".",
     "newDomainPlaceholder": "Tên miền mới",
     "errorCreating": "Lỗi khi tạo tên miền",
     "created": "Đã tạo tên miền \"{{name}}\"",

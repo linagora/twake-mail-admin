@@ -165,6 +165,9 @@ export default function DomainsList() {
           </div>
         ))}
       </div>
+      {search && domainsResult && filtered.length === 0 && (
+        <p className="text-gray-500 mt-4">{t("domains.noMatch", { query: search })}</p>
+      )}
     </div>
   );
 }

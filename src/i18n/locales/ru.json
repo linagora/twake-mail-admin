@@ -104,6 +104,7 @@
     "title": "Сведения о домене",
     "label": "Домен: {{domain}}",
     "searchPlaceholder": "Поиск доменов...",
+    "noMatch": "Нет доменов, соответствующих «{{query}}».",
     "newDomainPlaceholder": "Имя нового домена",
     "errorCreating": "Ошибка при создании домена",
     "created": "Домен «{{name}}» создан",

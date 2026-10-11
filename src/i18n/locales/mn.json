@@ -104,6 +104,7 @@
     "title": "Домэйны дэлгэрэнгүй",
     "label": "Домэйн: {{domain}}",
     "searchPlaceholder": "Домэйн хайх...",
+    "noMatch": "\"{{query}}\"-д тохирох домэйн алга.",
     "newDomainPlaceholder": "Шинэ домэйны нэр",
     "errorCreating": "Домэйн үүсгэхэд алдаа гарлаа",
     "created": "«{{name}}» домэйн үүслээ",

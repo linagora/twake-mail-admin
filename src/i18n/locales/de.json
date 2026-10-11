@@ -104,6 +104,7 @@
     "title": "Domain-Details",
     "label": "Domain: {{domain}}",
     "searchPlaceholder": "Domains suchen...",
+    "noMatch": "Keine Domain entspricht „{{query}}“.",
     "newDomainPlaceholder": "Neuer Domainname",
     "errorCreating": "Fehler beim Erstellen der Domain",
     "created": "Domain „{{name}}“ erstellt",
