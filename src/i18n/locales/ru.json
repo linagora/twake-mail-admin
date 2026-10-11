@@ -1291,6 +1291,7 @@
   "eventDeadletter": {
     "redeliverGroup": "Вы хотите повторно доставить события для группы: {{path}}.",
     "runTaskSuccess": "Задача успешно запущена",
+    "runTaskError": "Не удалось запустить задачу",
     "clearGroup": "Вы хотите очистить группу событий: {{path}}.",
     "clearSuccess": "События удалены.",
     "loading": "Загрузка...",

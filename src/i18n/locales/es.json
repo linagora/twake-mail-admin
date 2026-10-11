@@ -1291,6 +1291,7 @@
   "eventDeadletter": {
     "redeliverGroup": "¿Desea volver a entregar los eventos del grupo {{path}}?",
     "runTaskSuccess": "Tarea ejecutada correctamente",
+    "runTaskError": "No se pudo ejecutar la tarea",
     "clearGroup": "¿Desea vaciar el grupo de eventos {{path}}?",
     "clearSuccess": "Los eventos se han eliminado.",
     "loading": "Cargando...",

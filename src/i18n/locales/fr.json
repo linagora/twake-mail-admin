@@ -1291,6 +1291,7 @@
   "eventDeadletter": {
     "redeliverGroup": "Voulez-vous redistribuer les événements du groupe : {{path}} ?",
     "runTaskSuccess": "Tâche exécutée avec succès",
+    "runTaskError": "Échec du lancement de la tâche",
     "clearGroup": "Voulez-vous vider le groupe d'événements : {{path}} ?",
     "clearSuccess": "Les événements ont été supprimés.",
     "loading": "Chargement…",

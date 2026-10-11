@@ -15,6 +15,10 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
+import { toErrorMessage } from "@/components/custom/error-message";
+
+const toOptionalNumber = (value?: string): number | undefined =>
+  value?.trim() ? Number(value.trim()) : undefined;
 
 export default function EventListenersList() {
   const { t } = useTranslation();
@@ -52,7 +56,6 @@ export default function EventListenersList() {
     const params = [
       { key: "limit", defaultValue: "", type: "input" as const },
       { key: "maxRetries", defaultValue: "", type: "input" as const },
-      { key: "redeliver_group_events", defaultValue: false, type: "checkbox" as const },
     ];
     const paramValues: { [key: string]: string } = {};
     const command =
@@ -73,17 +76,28 @@ export default function EventListenersList() {
     });
     if (!result) return;
 
-    const { taskId } = await redeliverGroupEvents(path);
-    toast({
-      title: t("eventDeadletter.runTaskSuccess"),
-      description: (
-        <p>
-          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-            {t("common.taskLink", { taskId })}
-          </Link>
-        </p>
-      ),
-    });
+    try {
+      const { taskId } = await redeliverGroupEvents(path, {
+        limit: toOptionalNumber(paramValues.limit),
+        maxRetries: toOptionalNumber(paramValues.maxRetries),
+      });
+      toast({
+        title: t("eventDeadletter.runTaskSuccess"),
+        description: (
+          <p>
+            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
+              {t("common.taskLink", { taskId })}
+            </Link>
+          </p>
+        ),
+      });
+    } catch (err) {
+      toast({
+        title: t("eventDeadletter.runTaskError"),
+        description: toErrorMessage(err).message,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleClearGroup = async (path: string) => {

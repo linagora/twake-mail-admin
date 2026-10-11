@@ -1291,6 +1291,7 @@
   "eventDeadletter": {
     "redeliverGroup": "Möchten Sie die Ereignisse der Gruppe {{path}} erneut zustellen?",
     "runTaskSuccess": "Aufgabe erfolgreich ausgeführt",
+    "runTaskError": "Aufgabe konnte nicht gestartet werden",
     "clearGroup": "Möchten Sie die Ereignisgruppe {{path}} leeren?",
     "clearSuccess": "Die Ereignisse wurden gelöscht.",
     "loading": "Wird geladen...",

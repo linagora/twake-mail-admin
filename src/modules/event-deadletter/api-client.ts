@@ -140,7 +140,6 @@ export const redeliverGroupEvents = async (
   options?: {
     limit?: number;
     maxRetries?: number;
-    redeliver_group_events?: boolean;
   }
 ): Promise<TaskResponse> => {
   const queryParams = new URLSearchParams({
@@ -151,11 +150,6 @@ export const redeliverGroupEvents = async (
     queryParams.append("limit", String(options.limit));
   if (options?.maxRetries !== undefined)
     queryParams.append("maxRetries", String(options.maxRetries));
-  if (options?.redeliver_group_events !== undefined)
-    queryParams.append(
-      "redeliver_group_events",
-      String(options.redeliver_group_events)
-    );
 
   const response = await apiClient.post<any, TaskResponse>(
     `/events/deadLetter/groups/${encodeURIComponent(

@@ -1291,6 +1291,7 @@
   "eventDeadletter": {
     "redeliverGroup": "Vuoi recapitare di nuovo gli eventi del gruppo {{path}}?",
     "runTaskSuccess": "Attività eseguita correttamente",
+    "runTaskError": "Impossibile eseguire l'attività",
     "clearGroup": "Vuoi svuotare il gruppo di eventi {{path}}?",
     "clearSuccess": "Gli eventi sono stati eliminati.",
     "loading": "Caricamento...",

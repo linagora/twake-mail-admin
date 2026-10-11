@@ -1291,6 +1291,7 @@
   "eventDeadletter": {
     "redeliverGroup": "Bạn có muốn gửi lại sự kiện cho nhóm: {{path}}.",
     "runTaskSuccess": "Chạy tác vụ thành công",
+    "runTaskError": "Không thể chạy tác vụ",
     "clearGroup": "Bạn có muốn xóa nhóm sự kiện: {{path}}.",
     "clearSuccess": "Các sự kiện đã được xóa.",
     "loading": "Đang tải...",
