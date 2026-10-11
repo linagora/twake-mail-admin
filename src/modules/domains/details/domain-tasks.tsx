@@ -67,13 +67,9 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
         message: (
           <ProvisionTemplatesForm showUsersPerSecond onChange={(v) => { values = v; }} />
         ),
+        validate: () => (values.sourceUser.trim() ? null : t("provisionTemplates.sourceUserRequired")),
       });
       if (!result) return;
-
-      if (!values.sourceUser.trim()) {
-        toast({ title: t("provisionTemplates.sourceUserRequired") });
-        return;
-      }
 
       setProvisionLoading(true);
       const { taskId } = await provisionDomainTemplates(domain, {

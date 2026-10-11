@@ -77,13 +77,9 @@ export default function UserTasks({ username }: Props) {
         message: (
           <ProvisionTemplatesForm onChange={(v) => { values = v; }} />
         ),
+        validate: () => (values.sourceUser.trim() ? null : t("provisionTemplates.sourceUserRequired")),
       });
       if (!result) return;
-
-      if (!values.sourceUser.trim()) {
-        toast({ title: t("provisionTemplates.sourceUserRequired") });
-        return;
-      }
 
       setProvisionLoading(true);
       const data = await provisionUserTemplates(username, {
@@ -339,13 +335,9 @@ export default function UserTasks({ username }: Props) {
             onChange={(values) => { currentValues = values; }}
           />
         ),
+        validate: () => (currentValues.newUsername.trim() ? null : t("renameUserForm.newUsernameRequired")),
       });
       if (!result) return;
-
-      if (!currentValues.newUsername.trim()) {
-        toast({ title: t("renameUserForm.newUsernameRequired") });
-        return;
-      }
 
       setRenameLoading(true);
       const data = await renameUser(username, currentValues.newUsername.trim(), {
@@ -413,13 +405,9 @@ export default function UserTasks({ username }: Props) {
             }}
           />
         ),
+        validate: () => (additionalParams.tiering ? null : t("users.tasks.tieringRequired")),
       });
       if (!result) return;
-
-      if (!additionalParams.tiering) {
-        toast({ title: t("users.tasks.tieringRequired") });
-        return;
-      }
 
       setTierDataLoading(true);
       const data = await tierUserData(username, {
