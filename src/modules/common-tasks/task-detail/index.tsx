@@ -12,7 +12,6 @@ import { useToast } from "@/hooks/use-toast";
 import { TaskStatus } from "../types";
 import Header from "@/components/custom/header";
 import ErrorDisplayer from "@/components/custom/error-displayer";
-import { currentLocale } from "@/i18n/locale";
 
 export default function TaskDetail() {
   const { t } = useTranslation();
@@ -42,14 +41,6 @@ export default function TaskDetail() {
         description: <ErrorDisplayer error={error} />,
       });
     }
-  }
-
-  const formatDateTime = (dateTime: string) => {
-    if (!dateTime) {
-      return null;
-    }
-    const dateTimeValue = new Date(dateTime);
-    return `${dateTimeValue.toLocaleDateString(currentLocale())} ${dateTimeValue.toLocaleTimeString(currentLocale())}`;
   }
 
   return (
@@ -93,14 +84,7 @@ export default function TaskDetail() {
 
       {
         taskDetail && (
-          <pre>{
-            JSON.stringify({
-              ...taskDetail,
-              submitDate: formatDateTime(taskDetail.submitDate),
-              completedDate: formatDateTime(taskDetail.completedDate),
-              startedDate: formatDateTime(taskDetail.startedDate),
-            }, null, 2)
-          }</pre>
+          <pre>{JSON.stringify(taskDetail, null, 2)}</pre>
         )
       }
     </div>
