@@ -15,7 +15,8 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import Logo from '../assets/images/logo.svg';
-import { Link, useLocation } from "react-router";
+import { useLocation } from "react-router";
+import { SidebarNavItem } from "@/components/sidebar-nav-item";
 import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useOIDC } from "@/components/custom/oidc-provider";
@@ -153,14 +154,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild>
-                    <Link to={item.url} className={location.pathname.includes(item.url) ? 'font-bold' : ''}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <SidebarNavItem key={item.url} item={item} isActive={location.pathname.includes(item.url)} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

@@ -13,7 +13,8 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Link, useLocation } from "react-router";
+import { useLocation } from "react-router";
+import { SidebarNavItem } from "@/components/sidebar-nav-item";
 import { useTranslation } from "react-i18next";
 import { useDomain } from "./domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -112,17 +113,7 @@ export function DomainSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild>
-                    <Link
-                      to={item.url}
-                      className={location.pathname.startsWith(item.url) ? "font-bold" : ""}
-                    >
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <SidebarNavItem key={item.url} item={item} isActive={location.pathname.startsWith(item.url)} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
