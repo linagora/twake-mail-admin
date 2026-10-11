@@ -96,7 +96,9 @@
     "logout": "Esci",
     "language": "Lingua",
     "jmapSettingsReport": "Report impostazioni JMAP",
-    "toggle": "Mostra/nascondi la barra laterale"
+    "toggle": "Mostra/nascondi la barra laterale",
+    "title": "Navigazione",
+    "description": "Menu di navigazione dell'applicazione"
   },
   "domains": {
     "title": "Dettagli del dominio",

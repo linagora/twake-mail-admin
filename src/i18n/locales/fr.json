@@ -96,7 +96,9 @@
     "logout": "Déconnexion",
     "language": "Langue",
     "jmapSettingsReport": "Rapport paramètres JMAP",
-    "toggle": "Afficher/masquer la barre latérale"
+    "toggle": "Afficher/masquer la barre latérale",
+    "title": "Navigation",
+    "description": "Menu de navigation de l'application"
   },
   "domains": {
     "title": "Détails du domaine",

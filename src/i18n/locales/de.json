@@ -96,7 +96,9 @@
     "logout": "Abmelden",
     "language": "Sprache",
     "jmapSettingsReport": "JMAP-Einstellungsbericht",
-    "toggle": "Seitenleiste ein-/ausblenden"
+    "toggle": "Seitenleiste ein-/ausblenden",
+    "title": "Navigation",
+    "description": "Navigationsmenü der Anwendung"
   },
   "domains": {
     "title": "Domain-Details",

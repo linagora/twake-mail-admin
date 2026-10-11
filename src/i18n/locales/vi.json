@@ -96,7 +96,9 @@
     "logout": "Đăng xuất",
     "language": "Ngôn ngữ",
     "jmapSettingsReport": "Báo cáo cài đặt JMAP",
-    "toggle": "Toggle Sidebar"
+    "toggle": "Toggle Sidebar",
+    "title": "Điều hướng",
+    "description": "Menu điều hướng của ứng dụng"
   },
   "domains": {
     "title": "Chi tiết tên miền",

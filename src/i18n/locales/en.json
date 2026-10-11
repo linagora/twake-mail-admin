@@ -96,7 +96,9 @@
     "logout": "Logout",
     "language": "Language",
     "jmapSettingsReport": "JMAP Settings Report",
-    "toggle": "Toggle Sidebar"
+    "toggle": "Toggle Sidebar",
+    "title": "Navigation",
+    "description": "Application navigation menu"
   },
   "domains": {
     "title": "Domain Details",

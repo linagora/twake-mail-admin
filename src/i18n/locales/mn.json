@@ -96,7 +96,9 @@
     "logout": "Гарах",
     "language": "Хэл",
     "jmapSettingsReport": "JMAP тохиргооны тайлан",
-    "toggle": "Toggle Sidebar"
+    "toggle": "Toggle Sidebar",
+    "title": "Навигаци",
+    "description": "Програмын навигацийн цэс"
   },
   "domains": {
     "title": "Домэйны дэлгэрэнгүй",
