@@ -82,3 +82,15 @@ describe("domain quota reset", () => {
     expect(screen.queryByText("common.resetToGlobalDefault")).toBeNull();
   });
 });
+
+describe("domain quota size edition: field labels", () => {
+  it("names the size limit value and unit fields", async () => {
+    api.getDomainQuota.mockResolvedValue(WITHOUT_DOMAIN_LIMIT);
+    renderWith(ALL);
+
+    fireEvent.click(await screen.findByText("common.updateSizeLimit"));
+
+    expect(screen.getByLabelText("common.sizeLimitValue").getAttribute("type")).toBe("number");
+    expect(screen.getByLabelText("common.sizeLimitUnit").tagName).toBe("SELECT");
+  });
+});

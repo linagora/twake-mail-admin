@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -23,6 +23,7 @@ interface SearchSectionProps {
 function SearchSection({ label, placeholder, onSearch, status, children }: SearchSectionProps) {
   const { t } = useTranslation();
   const [value, setValue] = useState("");
+  const inputId = useId();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +32,14 @@ function SearchSection({ label, placeholder, onSearch, status, children }: Searc
 
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="text-base font-semibold">{label}</h2>
+      <h2 className="text-base font-semibold">
+        <label htmlFor={inputId}>{label}</label>
+      </h2>
       <form onSubmit={handleSubmit} className="flex gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
+            id={inputId}
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { useParams, Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2, Paperclip, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -29,6 +29,7 @@ export default function UserMessageSearch() {
   const { username } = useParams<{ username: string }>();
   const { t } = useTranslation();
   const canSearch = useIsAllowed("POST", "/users/{username}/mails");
+  const idPrefix = useId();
 
   // Form state
   const [reason, setReason] = useState("");
@@ -144,10 +145,11 @@ export default function UserMessageSearch() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Reason */}
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label htmlFor={`${idPrefix}-reason`} className="block text-sm font-medium mb-1">
             {t("users.messageSearch.reasonLabel")} <span className="text-red-500">*</span>
           </label>
           <input
+            id={`${idPrefix}-reason`}
             type="text"
             required
             value={reason}
@@ -171,8 +173,9 @@ export default function UserMessageSearch() {
           {showFilters && (
             <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 pl-4 border-l-2 border-gray-100">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.fullText")}</label>
+                <label htmlFor={`${idPrefix}-text`} className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.fullText")}</label>
                 <input
+                  id={`${idPrefix}-text`}
                   type="text"
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
@@ -181,8 +184,9 @@ export default function UserMessageSearch() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.from")}</label>
+                <label htmlFor={`${idPrefix}-from`} className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.from")}</label>
                 <input
+                  id={`${idPrefix}-from`}
                   type="text"
                   value={filterFrom}
                   onChange={(e) => setFilterFrom(e.target.value)}
@@ -191,8 +195,9 @@ export default function UserMessageSearch() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.to")}</label>
+                <label htmlFor={`${idPrefix}-to`} className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.to")}</label>
                 <input
+                  id={`${idPrefix}-to`}
                   type="text"
                   value={filterTo}
                   onChange={(e) => setFilterTo(e.target.value)}
@@ -201,8 +206,9 @@ export default function UserMessageSearch() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.subject")}</label>
+                <label htmlFor={`${idPrefix}-subject`} className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.subject")}</label>
                 <input
+                  id={`${idPrefix}-subject`}
                   type="text"
                   value={filterSubject}
                   onChange={(e) => setFilterSubject(e.target.value)}
@@ -211,8 +217,9 @@ export default function UserMessageSearch() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.hasAttachment")}</label>
+                <label htmlFor={`${idPrefix}-has-attachment`} className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.hasAttachment")}</label>
                 <select
+                  id={`${idPrefix}-has-attachment`}
                   value={filterHasAttachment}
                   onChange={(e) => setFilterHasAttachment(e.target.value as "any" | "yes" | "no")}
                   className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
@@ -223,10 +230,11 @@ export default function UserMessageSearch() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">
+                <label htmlFor={`${idPrefix}-has-keywords`} className="block text-xs text-gray-500 mb-1">
                   {t("users.messageSearch.hasKeywords")} <span className="font-normal">{t("users.messageSearch.hasKeywordsHint")}</span>
                 </label>
                 <input
+                  id={`${idPrefix}-has-keywords`}
                   type="text"
                   value={filterHasKeywords}
                   onChange={(e) => setFilterHasKeywords(e.target.value)}
@@ -235,10 +243,11 @@ export default function UserMessageSearch() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">
+                <label htmlFor={`${idPrefix}-in-mailboxes`} className="block text-xs text-gray-500 mb-1">
                   {t("users.messageSearch.inMailboxes")} <span className="font-normal">{t("users.messageSearch.inMailboxesHint")}</span>
                 </label>
                 <input
+                  id={`${idPrefix}-in-mailboxes`}
                   type="text"
                   value={filterInMailboxes}
                   onChange={(e) => setFilterInMailboxes(e.target.value)}
@@ -247,10 +256,11 @@ export default function UserMessageSearch() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">
+                <label htmlFor={`${idPrefix}-exclude-mailboxes`} className="block text-xs text-gray-500 mb-1">
                   {t("users.messageSearch.excludeMailboxes")} <span className="font-normal">{t("users.messageSearch.inMailboxesHint")}</span>
                 </label>
                 <input
+                  id={`${idPrefix}-exclude-mailboxes`}
                   type="text"
                   value={filterInMailboxOtherThan}
                   onChange={(e) => setFilterInMailboxOtherThan(e.target.value)}
@@ -259,8 +269,9 @@ export default function UserMessageSearch() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.receivedAfter")}</label>
+                <label htmlFor={`${idPrefix}-received-after`} className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.receivedAfter")}</label>
                 <input
+                  id={`${idPrefix}-received-after`}
                   type="text"
                   value={filterAfter}
                   onChange={(e) => setFilterAfter(e.target.value)}
@@ -269,8 +280,9 @@ export default function UserMessageSearch() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.receivedBefore")}</label>
+                <label htmlFor={`${idPrefix}-received-before`} className="block text-xs text-gray-500 mb-1">{t("users.messageSearch.receivedBefore")}</label>
                 <input
+                  id={`${idPrefix}-received-before`}
                   type="text"
                   value={filterBefore}
                   onChange={(e) => setFilterBefore(e.target.value)}
@@ -300,6 +312,7 @@ export default function UserMessageSearch() {
             {sorts.map((s, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 <select
+                  aria-label={t("users.messageSearch.sortField")}
                   value={s.property}
                   onChange={(e) => updateSort(idx, { property: e.target.value as SortEntry["property"] })}
                   className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
@@ -309,6 +322,7 @@ export default function UserMessageSearch() {
                   ))}
                 </select>
                 <select
+                  aria-label={t("users.messageSearch.sortDirection")}
                   value={s.isAscending ? "asc" : "desc"}
                   onChange={(e) => updateSort(idx, { isAscending: e.target.value === "asc" })}
                   className="px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"

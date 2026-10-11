@@ -82,3 +82,14 @@ describe("global quota size removal", () => {
     expect(screen.queryByText("globalQuota.removeSizeLimit")).toBeNull();
   });
 });
+
+describe("global quota size edition: field labels", () => {
+  it("names the size limit value and unit fields", async () => {
+    renderWith(ALL, null);
+
+    fireEvent.click(await screen.findByText("common.updateSizeLimit"));
+
+    expect(screen.getByLabelText("common.sizeLimitValue").getAttribute("type")).toBe("number");
+    expect(screen.getByLabelText("common.sizeLimitUnit").tagName).toBe("SELECT");
+  });
+});

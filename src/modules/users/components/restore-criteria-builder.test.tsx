@@ -24,4 +24,10 @@ describe("restore criteria builder", () => {
 
     expect(screen.queryByRole("combobox")).toBeNull();
   });
+
+  it("names the limit field after its visible label", () => {
+    render(<RestoreCriteriaBuilder onChange={vi.fn()} />);
+
+    expect(screen.getByLabelText("users.deletedVault.criteria.limitLabel").getAttribute("type")).toBe("number");
+  });
 });

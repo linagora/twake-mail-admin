@@ -60,4 +60,14 @@ describe("domain contacts", () => {
     expect(counter()).toBe("(1)");
     expect(api.deleteDomainContact).toHaveBeenCalledWith("example.com", "alice");
   });
+
+  it.each(["domains.contacts.firstname", "domains.contacts.surname"])(
+    "names the %s field of the edit dialog after its label",
+    async (label) => {
+      api.getDomainContact.mockResolvedValue({ id: "1", emailAddress: "alice@example.com", firstname: "Alice", surname: "Doe" });
+      fireEvent.click(screen.getAllByTitle("domains.contacts.editTooltip")[0]);
+
+      expect((await screen.findByLabelText(label)).tagName).toBe("INPUT");
+    }
+  );
 });

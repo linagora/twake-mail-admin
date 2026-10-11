@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { RefreshCcw, CircleStop, Filter } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -61,6 +61,7 @@ export default function Tasks() {
   const { toast } = useToast();
   const confirm = useConfirm();
   const canCancel = useIsAllowed("DELETE", "/tasks/{id}");
+  const idPrefix = useId();
 
   // Filters
   const [statusFilter, setStatusFilter] = useState("");
@@ -202,8 +203,9 @@ export default function Tasks() {
           </Button>
 
           <div className="flex flex-wrap items-center gap-2 ml-auto">
-            <label className="text-sm font-medium">{t("tasks.sort")}</label>
+            <label htmlFor={`${idPrefix}-sort`} className="text-sm font-medium">{t("tasks.sort")}</label>
             <select
+              id={`${idPrefix}-sort`}
               className="border rounded px-2 py-1 text-sm"
               value={sortField}
               onChange={(e) => setSortField(e.target.value as SortField)}
@@ -226,8 +228,9 @@ export default function Tasks() {
           <div className="p-4 bg-gray-50 rounded-2 mb-4 space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label className="text-xs text-gray-500 font-medium">{t("tasks.status")}</label>
+                <label htmlFor={`${idPrefix}-status`} className="text-xs text-gray-500 font-medium">{t("tasks.status")}</label>
                 <select
+                  id={`${idPrefix}-status`}
                   className="w-full mt-1 border rounded px-2 py-1.5 text-sm"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
@@ -238,8 +241,9 @@ export default function Tasks() {
                 </select>
               </div>
               <div>
-                <label className="text-xs text-gray-500 font-medium">{t("tasks.type")}</label>
+                <label htmlFor={`${idPrefix}-type`} className="text-xs text-gray-500 font-medium">{t("tasks.type")}</label>
                 <input
+                  id={`${idPrefix}-type`}
                   type="text"
                   className="w-full mt-1 border rounded px-2 py-1.5 text-sm"
                   value={typeFilter}
@@ -456,10 +460,12 @@ function isCancellable(status: TaskStatus): boolean {
 }
 
 function DateFilter({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  const id = useId();
   return (
     <div>
-      <label className="text-xs text-gray-500 font-medium">{label}</label>
+      <label htmlFor={id} className="text-xs text-gray-500 font-medium">{label}</label>
       <input
+        id={id}
         type="datetime-local"
         className="w-full mt-1 border rounded px-2 py-1.5 text-sm"
         value={value}

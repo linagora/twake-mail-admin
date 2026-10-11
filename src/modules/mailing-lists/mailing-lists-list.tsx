@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight, Plus, Trash2, X } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -44,12 +44,18 @@ interface Props {
 
 /** Input + button appending an address to a locally edited list of addresses. */
 function AddressAdder({
+  id,
+  ariaLabel,
   value,
   onChange,
   onAdd,
   placeholder,
   label,
 }: {
+  /** Id of the input, for a visible label pointing at it. */
+  id?: string;
+  /** Accessible name of the input when no visible label points at it. */
+  ariaLabel?: string;
   value: string;
   onChange: (v: string) => void;
   onAdd: () => void;
@@ -59,6 +65,8 @@ function AddressAdder({
   return (
     <div className="flex gap-2">
       <input
+        id={id}
+        aria-label={ariaLabel}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -111,6 +119,7 @@ function AddressChips({
 function CreateMailingListForm({ onCreated }: { onCreated: () => void }) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const idPrefix = useId();
 
   const [open, setOpen] = useState(false);
   const [address, setAddress] = useState("");
@@ -181,8 +190,9 @@ function CreateMailingListForm({ onCreated }: { onCreated: () => void }) {
       {open && (
         <div className="flex flex-col gap-3 mt-3 p-4 bg-gray-50 rounded-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">{t("mailingLists.address")}</label>
+            <label htmlFor={`${idPrefix}-address`} className="text-sm font-medium">{t("mailingLists.address")}</label>
             <input
+              id={`${idPrefix}-address`}
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -192,9 +202,11 @@ function CreateMailingListForm({ onCreated }: { onCreated: () => void }) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">{t("mailingLists.businessCategory")}</label>
+            <label htmlFor={`${idPrefix}-business-category`} className="text-sm font-medium">
+              {t("mailingLists.businessCategory")}
+            </label>
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
+              <SelectTrigger id={`${idPrefix}-business-category`}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -209,10 +221,11 @@ function CreateMailingListForm({ onCreated }: { onCreated: () => void }) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">
+            <label htmlFor={`${idPrefix}-members`} className="text-sm font-medium">
               {t("mailingLists.members")} <span className="text-red-600">*</span>
             </label>
             <AddressAdder
+              id={`${idPrefix}-members`}
               value={newMember}
               onChange={setNewMember}
               onAdd={() => stage(newMember, members, setMembers, () => setNewMember(""))}
@@ -229,8 +242,9 @@ function CreateMailingListForm({ onCreated }: { onCreated: () => void }) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">{t("mailingLists.owners")}</label>
+            <label htmlFor={`${idPrefix}-owners`} className="text-sm font-medium">{t("mailingLists.owners")}</label>
             <AddressAdder
+              id={`${idPrefix}-owners`}
               value={newOwner}
               onChange={setNewOwner}
               onAdd={() => stage(newOwner, owners, setOwners, () => setNewOwner(""))}
@@ -316,6 +330,7 @@ function EditableAddresses({
       {canAdd && (
         <div className="mt-2 max-w-md">
           <AddressAdder
+            ariaLabel={title}
             value={value}
             onChange={setValue}
             onAdd={handleAdd}

@@ -107,3 +107,31 @@ describe("tasks: status filter", () => {
     expect(screen.queryByText("previous-task")).toBeNull();
   });
 });
+
+describe("tasks: field labels", () => {
+  it("names the sort select after its visible label", () => {
+    api.listTasks.mockResolvedValue([]);
+    renderTasks();
+
+    expect(screen.getByLabelText("tasks.sort").tagName).toBe("SELECT");
+  });
+
+  it.each([
+    "tasks.status",
+    "tasks.type",
+    "tasks.submittedAfter",
+    "tasks.submittedBefore",
+    "tasks.startedAfter",
+    "tasks.startedBefore",
+    "tasks.completedAfter",
+    "tasks.completedBefore",
+    "tasks.failedAfter",
+    "tasks.failedBefore",
+  ])("names the %s filter after its visible label", (label) => {
+    api.listTasks.mockResolvedValue([]);
+    renderTasks();
+    fireEvent.click(screen.getByText("tasks.filters"));
+
+    expect(screen.getByLabelText(label)).not.toBeNull();
+  });
+});

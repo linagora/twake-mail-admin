@@ -59,3 +59,30 @@ describe("ConfirmTaskContent: duration parameters", () => {
     expect(values.createdBefore).toBe("");
   });
 });
+
+describe("ConfirmTaskContent: parameter labels", () => {
+  it("names every parameter field after its key", () => {
+    renderWith([
+      { key: "messagesPerSecond", defaultValue: "50", type: "input" },
+      { key: "quotaComponent", defaultValue: "", type: "select", values: ["MAILBOX", "SIEVE"] },
+      { key: "force", defaultValue: false, type: "checkbox" },
+      { key: "tiering", defaultValue: "30d", type: "duration" },
+    ]);
+
+    expect(screen.getByLabelText("messagesPerSecond:").tagName).toBe("INPUT");
+    expect(screen.getByLabelText("quotaComponent:").getAttribute("role")).toBe("combobox");
+    expect(screen.getByLabelText("force:").getAttribute("role")).toBe("checkbox");
+    expect(screen.getByLabelText("tiering:")).toBe(screen.getByRole("spinbutton"));
+    expect(screen.getByRole("combobox", { name: "tiering unit" })).not.toBeNull();
+  });
+
+  it("gives each dialog its own ids so that two of them on a page do not collide", () => {
+    const params: TaskParam[] = [{ key: "mode", defaultValue: "", type: "select", values: ["fixed", "rebuildAll"] }];
+    renderWith(params);
+    renderWith(params);
+
+    const fields = screen.getAllByLabelText("mode:");
+    expect(fields).toHaveLength(2);
+    expect(fields[0].id).not.toBe(fields[1].id);
+  });
+});
