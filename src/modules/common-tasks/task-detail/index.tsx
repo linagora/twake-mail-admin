@@ -55,7 +55,7 @@ export default function TaskDetail() {
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <Button className="hover:bg-gray-300 mx-3" variant="ghost" size="icon" onClick={refresh}>
+              <Button className="hover:bg-gray-300 mx-3" variant="ghost" size="icon" onClick={refresh} aria-label={t("tasks.refresh")}>
                 <RefreshCcw />
               </Button>
             </TooltipTrigger>
@@ -68,7 +68,7 @@ export default function TaskDetail() {
         {taskDetail?.status !== TaskStatus.COMPLETED && <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <Button className="text-red-500 hover:bg-gray-300" variant="ghost" size="icon" onClick={handleCancelTask}>
+              <Button className="text-red-500 hover:bg-gray-300" variant="ghost" size="icon" onClick={handleCancelTask} aria-label={t("tasks.cancelButton")}>
                 <CircleStop />
               </Button>
             </TooltipTrigger>

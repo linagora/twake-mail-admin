@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
+import { TaskStatus } from "../types";
 
 const TASK_ID = vi.hoisted(() => "4ebc9187-1542-4277-8cdb-9ca7576948a2");
 const api = vi.hoisted(() => ({ getTaskDetail: vi.fn(), cancelTask: vi.fn() }));
@@ -23,6 +24,10 @@ function renderTaskDetail() {
   );
 }
 
+function findTaskJson() {
+  return screen.findByText((_, element) => element?.tagName === "PRE");
+}
+
 afterEach(() => {
   cleanup();
   api.getTaskDetail.mockReset();
@@ -42,8 +47,28 @@ describe("task detail", () => {
     api.getTaskDetail.mockResolvedValue(taskDetail);
     renderTaskDetail();
 
-    const json = await screen.findByText((_, element) => element?.tagName === "PRE");
+    const json = await findTaskJson();
 
     expect(JSON.parse(json.textContent ?? "")).toEqual(taskDetail);
+  });
+
+  it("names the refresh and cancel buttons of a running task", async () => {
+    api.getTaskDetail.mockResolvedValue({ taskId: TASK_ID, status: TaskStatus.IN_PROGRESS });
+    renderTaskDetail();
+
+    await findTaskJson();
+
+    expect(screen.getByRole("button", { name: "tasks.refresh" })).not.toBeNull();
+    expect(screen.getByRole("button", { name: "tasks.cancelButton" })).not.toBeNull();
+  });
+
+  it("only names the refresh button of a completed task", async () => {
+    api.getTaskDetail.mockResolvedValue({ taskId: TASK_ID, status: TaskStatus.COMPLETED });
+    renderTaskDetail();
+
+    await findTaskJson();
+
+    expect(screen.getByRole("button", { name: "tasks.refresh" })).not.toBeNull();
+    expect(screen.queryByRole("button", { name: "tasks.cancelButton" })).toBeNull();
   });
 });
