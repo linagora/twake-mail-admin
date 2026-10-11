@@ -70,7 +70,9 @@
     "tasks": "Aufgaben",
     "list": "Liste",
     "confirm": "Bestätigen",
-    "noSearchResults": "Keine Ergebnisse für Ihre Suche."
+    "noSearchResults": "Keine Ergebnisse für Ihre Suche.",
+    "back": "Zurück",
+    "refresh": "Aktualisieren"
   },
   "sidebar": {
     "application": "Anwendung",
@@ -618,7 +620,10 @@
       "errorRemoving": "Fehler beim Entfernen des delegierten Benutzers",
       "empty": "Keine delegierten Benutzer.",
       "addTooltip": "Delegierten Benutzer hinzufügen",
-      "removeTooltip": "Delegierten Benutzer entfernen"
+      "removeTooltip": "Delegierten Benutzer entfernen",
+      "selfDelegation": "Ein Benutzer kann nicht an sich selbst delegiert werden",
+      "unknownUserTitle": "Unbekannter Benutzer",
+      "unknownUserConfirm": "\"{{delegatedUser}}\" existiert nicht und kann sich nicht anmelden. Trotzdem als delegierten Benutzer hinzufügen?"
     },
     "identities": {
       "title": "JMAP-Identitäten",
@@ -756,7 +761,8 @@
         "valuePlaceholder": "Wert",
         "addCriterion": "Kriterium hinzufügen",
         "limitLabel": "Limit (optional):",
-        "noLimit": "Kein Limit"
+        "noLimit": "Kein Limit",
+        "removeCriterion": "Kriterium entfernen"
       },
       "operators": {
         "equals": "Gleich",
@@ -1162,6 +1168,7 @@
     "cleanupOldTasksSuccess": "Alte Aufgaben (>{{days}} Tage) bereinigt",
     "errorCleanupOldTasks": "Fehler beim Bereinigen alter Aufgaben",
     "days": "Tage",
+    "invalidCleanupDays": "Geben Sie eine Anzahl von Tagen größer als 0 ein",
     "cleaningUpOldTasks": "Alte Aufgaben werden bereinigt",
     "runConfirm": "Möchten Sie die Aufgabe {{name}} ausführen?"
   },
@@ -1292,7 +1299,10 @@
     "searchError": "Fehler bei der Suche nach dem Ereignis",
     "groupLabel": "Gruppe",
     "insertionIdLabel": "Einfüge-ID",
-    "paginationInfo": "Seite {{page}} — {{limit}} Ereignisse pro Seite / Gesamt: {{total}}"
+    "paginationInfo": "Seite {{page}} — {{limit}} Ereignisse pro Seite / Gesamt: {{total}}",
+    "redeliverGroupAction": "Ereignisse der Gruppe erneut zustellen",
+    "clearGroupAction": "Gruppe leeren",
+    "deleteEventAction": "Ereignis löschen"
   },
   "mailRepositories": {
     "pathLabel": "Repository-Pfad",
@@ -1314,6 +1324,7 @@
     "errorMoving": "Fehler beim Verschieben der E-Mails",
     "clearConfirm": "Möchten Sie das Mail-Repository {{path}} leeren?",
     "runTaskSuccess": "Aufgabe erfolgreich ausgeführt",
+    "runTaskError": "Aufgabe konnte nicht gestartet werden",
     "colNameSender": "Name / Absender",
     "colRecipients": "Empfänger",
     "colSize": "Größe",

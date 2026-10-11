@@ -103,7 +103,7 @@ export default function SearchByEventId() {
             {result.group ? (
               <Link
                 className="text-blue-500 hover:underline"
-                to={`/event-dead-letter/group/${result.group}?&page=1&size=10`}
+                to={`/event-dead-letter/group/${result.group}?page=1`}
               >
                 {result.group}
               </Link>

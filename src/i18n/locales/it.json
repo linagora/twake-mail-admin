@@ -70,7 +70,9 @@
     "tasks": "Attività",
     "list": "Elenco",
     "confirm": "Conferma",
-    "noSearchResults": "Nessun risultato corrisponde alla tua ricerca."
+    "noSearchResults": "Nessun risultato corrisponde alla tua ricerca.",
+    "back": "Indietro",
+    "refresh": "Aggiorna"
   },
   "sidebar": {
     "application": "Applicazione",
@@ -618,7 +620,10 @@
       "errorRemoving": "Errore durante la rimozione dell'utente delegato",
       "empty": "Nessun utente delegato.",
       "addTooltip": "Aggiungi utente delegato",
-      "removeTooltip": "Rimuovi utente delegato"
+      "removeTooltip": "Rimuovi utente delegato",
+      "selfDelegation": "Non è possibile delegare un utente a sé stesso",
+      "unknownUserTitle": "Utente sconosciuto",
+      "unknownUserConfirm": "\"{{delegatedUser}}\" non esiste e non potrà accedere. Aggiungerlo comunque come utente delegato?"
     },
     "identities": {
       "title": "Identità JMAP",
@@ -756,7 +761,8 @@
         "valuePlaceholder": "Valore",
         "addCriterion": "Aggiungi criterio",
         "limitLabel": "Limite (facoltativo):",
-        "noLimit": "Nessun limite"
+        "noLimit": "Nessun limite",
+        "removeCriterion": "Rimuovi il criterio"
       },
       "operators": {
         "equals": "Uguale a",
@@ -1162,6 +1168,7 @@
     "cleanupOldTasksSuccess": "Attività vecchie (>{{days}} giorni) eliminate",
     "errorCleanupOldTasks": "Errore durante la pulizia delle attività vecchie",
     "days": "giorni",
+    "invalidCleanupDays": "Inserisci un numero di giorni maggiore di 0",
     "cleaningUpOldTasks": "Pulizia delle attività vecchie",
     "runConfirm": "Vuoi eseguire l'attività {{name}}?"
   },
@@ -1292,7 +1299,10 @@
     "searchError": "Errore durante la ricerca dell'evento",
     "groupLabel": "Gruppo",
     "insertionIdLabel": "ID di inserimento",
-    "paginationInfo": "Pagina {{page}} — {{limit}} eventi per pagina / Totale: {{total}}"
+    "paginationInfo": "Pagina {{page}} — {{limit}} eventi per pagina / Totale: {{total}}",
+    "redeliverGroupAction": "Riconsegna gli eventi del gruppo",
+    "clearGroupAction": "Svuota il gruppo",
+    "deleteEventAction": "Elimina l'evento"
   },
   "mailRepositories": {
     "pathLabel": "Percorso del repository",
@@ -1314,6 +1324,7 @@
     "errorMoving": "Errore durante lo spostamento delle email",
     "clearConfirm": "Vuoi svuotare il repository di posta {{path}}?",
     "runTaskSuccess": "Attività eseguita correttamente",
+    "runTaskError": "Impossibile eseguire l'attività",
     "colNameSender": "Nome / Mittente",
     "colRecipients": "Destinatari",
     "colSize": "Dimensione",

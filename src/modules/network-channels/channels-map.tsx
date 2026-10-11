@@ -159,7 +159,7 @@ export default function ChannelsMap() {
         <Button variant="outline" size="sm" onClick={() => navigate("/network-channels")}>
           <ArrowLeft className="w-4 h-4 mr-1" /> {t("networkChannels.backButton")}
         </Button>
-        <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)} disabled={!!statusText && !error}>
+        <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)} disabled={!!statusText && !error} aria-label={t("common.refresh")} title={t("common.refresh")}>
           <RefreshCw className="w-4 h-4" />
         </Button>
         {error ? (

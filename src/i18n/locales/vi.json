@@ -70,7 +70,9 @@
     "tasks": "Tác vụ",
     "list": "Danh sách",
     "confirm": "Xác nhận",
-    "noSearchResults": "Không có kết quả phù hợp."
+    "noSearchResults": "Không có kết quả phù hợp.",
+    "back": "Quay lại",
+    "refresh": "Làm mới"
   },
   "sidebar": {
     "application": "Ứng dụng",
@@ -618,7 +620,10 @@
       "errorRemoving": "Lỗi khi xóa người dùng được ủy quyền",
       "empty": "Không có người dùng được ủy quyền.",
       "addTooltip": "Thêm người dùng được ủy quyền",
-      "removeTooltip": "Xóa người dùng được ủy quyền"
+      "removeTooltip": "Xóa người dùng được ủy quyền",
+      "selfDelegation": "Không thể ủy quyền người dùng cho chính họ",
+      "unknownUserTitle": "Người dùng không xác định",
+      "unknownUserConfirm": "\"{{delegatedUser}}\" không tồn tại và sẽ không thể đăng nhập. Vẫn thêm làm người dùng được ủy quyền?"
     },
     "identities": {
       "title": "Danh tính JMAP",
@@ -756,7 +761,8 @@
         "valuePlaceholder": "Giá trị",
         "addCriterion": "Thêm tiêu chí",
         "limitLabel": "Giới hạn (tùy chọn):",
-        "noLimit": "Không giới hạn"
+        "noLimit": "Không giới hạn",
+        "removeCriterion": "Xóa tiêu chí"
       },
       "operators": {
         "equals": "Bằng",
@@ -1162,6 +1168,7 @@
     "cleanupOldTasksSuccess": "Đã dọn các tác vụ cũ (>{{days}} ngày)",
     "errorCleanupOldTasks": "Lỗi khi dọn các tác vụ cũ",
     "days": "ngày",
+    "invalidCleanupDays": "Nhập số ngày lớn hơn 0",
     "cleaningUpOldTasks": "Đang dọn các tác vụ cũ",
     "runConfirm": "Bạn có muốn chạy tác vụ {{name}} không?"
   },
@@ -1292,7 +1299,10 @@
     "searchError": "Lỗi khi tìm sự kiện",
     "groupLabel": "Nhóm",
     "insertionIdLabel": "ID chèn",
-    "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}"
+    "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}",
+    "redeliverGroupAction": "Gửi lại các sự kiện của nhóm",
+    "clearGroupAction": "Xóa nhóm",
+    "deleteEventAction": "Xóa sự kiện"
   },
   "mailRepositories": {
     "pathLabel": "Đường dẫn kho",
@@ -1314,6 +1324,7 @@
     "errorMoving": "Lỗi khi chuyển thư",
     "clearConfirm": "Bạn có muốn xóa kho lưu trữ thư: {{path}}.",
     "runTaskSuccess": "Chạy tác vụ thành công",
+    "runTaskError": "Không thể chạy tác vụ",
     "colNameSender": "Tên / Người gửi",
     "colRecipients": "Người nhận",
     "colSize": "Kích thước",

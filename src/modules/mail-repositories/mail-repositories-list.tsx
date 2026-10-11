@@ -16,6 +16,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 import { useTranslation } from "react-i18next";
 import CreateMailRepositoryButton from "./create-mail-repository-button";
+import { toErrorMessage } from "@/components/custom/error-message";
 
 export default function MailRepositoriesList() {
   const { t } = useTranslation();
@@ -63,7 +64,31 @@ export default function MailRepositoriesList() {
     }
   }, [mailRepositoriesResult, fetchRepositoryInfo]);
 
-  const handleReprocessTask = async (path: string) => {
+  // A refused task (e.g. WebAdmin answering 400) is reported instead of escaping as an unhandled rejection.
+  const runTask = async (startTask: () => Promise<{ taskId: string }>) => {
+    try {
+      const { taskId } = await startTask();
+      toast({
+        title: t("mailRepositories.runTaskSuccess"),
+        description: (
+          <p>
+            {t("mailRepositories.taskLabel")}{" "}
+            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
+              {taskId}
+            </Link>
+          </p>
+        ),
+      });
+    } catch (err) {
+      toast({
+        title: t("mailRepositories.runTaskError"),
+        description: toErrorMessage(err).message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReprocessTask = async ({ path, repository }: MailRepository) => {
     const params = [
       { key: "queue", defaultValue: "spool", type: "input" as const }, // Target mail queue
       { key: "processor", defaultValue: "root", type: "input" as const }, // Override state of reprocessing mails
@@ -73,12 +98,12 @@ export default function MailRepositoriesList() {
     ];
     const paramValues: { [key: string]: string } = {};
     const command =
-      "curl -XPATCH http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails?action=reprocess&";
+      "curl -XPATCH http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails?action=reprocess";
     const result = await confirm({
       header: t("mailRepositories.runTaskHeader"),
       message: (
         <ConfirmTaskContent
-          message={<p>{t("mailRepositories.reprocessRepoConfirm", { path })}</p>}
+          message={<p>{t("mailRepositories.reprocessRepoConfirm", { path: repository })}</p>}
           command={command}
           params={params}
           getParamValues={(key, value) => {
@@ -91,43 +116,32 @@ export default function MailRepositoriesList() {
     if (!result) {
       return;
     }
-    const { taskId } = await reprocessMailRepository(path, paramValues);
-    toast({
-      title: t("mailRepositories.runTaskSuccess"),
-      description: (
-        <p>
-          {t("mailRepositories.taskLabel")}{" "}
-          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-            {taskId}
-          </Link>
-        </p>
-      ),
-    });
+    await runTask(() => reprocessMailRepository(path, paramValues));
   };
-  const handleMoveAll = async (sourcePath: string) => {
-    const otherRepos = repositoriesWithSize.filter((r) => r.path !== sourcePath);
+  const handleMoveAll = async (source: MailRepository) => {
+    const otherRepos = repositoriesWithSize.filter((r) => r.path !== source.path);
     if (otherRepos.length === 0) {
       toast({ title: t("mailRepositories.noOtherRepositories") });
       return;
     }
-    let targetRepo = otherRepos[0].path;
+    let targetRepo: MailRepository = otherRepos[0];
     const result = await confirm({
       header: t("mailRepositories.moveTitle"),
       message: (
         <div className="space-y-2 py-2">
           <p className="text-sm">
-            {t("mailRepositories.moveConfirm", { sourcePath })}
+            {t("mailRepositories.moveConfirm", { sourcePath: source.repository })}
           </p>
           <select
             className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             defaultValue={otherRepos[0].path}
             onChange={(e) => {
-              targetRepo = e.target.value;
+              targetRepo = otherRepos.find((r) => r.path === e.target.value) ?? targetRepo;
             }}
           >
             {otherRepos.map((r) => (
               <option key={r.path} value={r.path}>
-                {r.repository} ({r.path})
+                {r.repository}
               </option>
             ))}
           </select>
@@ -136,37 +150,27 @@ export default function MailRepositoriesList() {
     });
     if (!result) return;
     try {
-      await moveAllMails(encodeURIComponent(sourcePath), targetRepo);
+      await moveAllMails(source, targetRepo);
       toast({ title: t("mailRepositories.moveDone") });
       refresh();
-    } catch (err: any) {
+    } catch (err) {
       toast({
         title: t("mailRepositories.errorMoving"),
-        description: err?.response?.data?.message || err?.message || t("mailRepositories.errorMoving"),
+        description: toErrorMessage(err).message,
+        variant: "destructive",
       });
     }
   };
 
-  const handleClearTask = async (path: string) => {
+  const handleClearTask = async ({ path, repository }: MailRepository) => {
     const result = await confirm({
       header: t("mailRepositories.runTaskHeader"),
-      message: t("mailRepositories.clearConfirm", { path }),
+      message: t("mailRepositories.clearConfirm", { path: repository }),
     });
     if (!result) {
       return;
     }
-    const { taskId } = await clearMailRepository(path);
-    toast({
-      title: t("mailRepositories.runTaskSuccess"),
-      description: (
-        <p>
-          {t("mailRepositories.taskLabel")}{" "}
-          <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-            {taskId}
-          </Link>
-        </p>
-      ),
-    });
+    await runTask(() => clearMailRepository(path));
   };
   return (
     <>
@@ -205,7 +209,7 @@ export default function MailRepositoriesList() {
                     className="p-2 rounded-md hover:bg-gray-200"
                     title={t("mailRepositories.reprocessAll")}
                     onClick={() => {
-                      handleReprocessTask(result.path);
+                      handleReprocessTask(result);
                     }}
                   >
                     <RefreshCw className="w-5 h-5 text-blue-600" />
@@ -217,7 +221,7 @@ export default function MailRepositoriesList() {
                     className="p-2 rounded-md hover:bg-gray-200"
                     title={t("mailRepositories.moveAll")}
                     onClick={() => {
-                      handleMoveAll(result.path);
+                      handleMoveAll(result);
                     }}
                   >
                     <MoveHorizontal className="w-5 h-5 text-orange-500" />
@@ -229,7 +233,7 @@ export default function MailRepositoriesList() {
                     className="p-2 rounded-md hover:bg-gray-200"
                     title={t("mailRepositories.clearAll")}
                     onClick={() => {
-                      handleClearTask(result.path);
+                      handleClearTask(result);
                     }}
                   >
                     <Trash2 className="w-5 h-5 text-red-600" />

@@ -1,13 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const http = vi.hoisted(() => ({ post: vi.fn() }));
+const http = vi.hoisted(() => ({ post: vi.fn(), delete: vi.fn() }));
 
 vi.mock("@/lib/apiClient", () => ({
-  apiClient: { get: vi.fn(), post: http.post, put: vi.fn(), patch: vi.fn(), delete: vi.fn() },
+  apiClient: { get: vi.fn(), post: http.post, put: vi.fn(), patch: vi.fn(), delete: http.delete },
+  getRaw: vi.fn(),
 }));
-vi.mock("@/lib/config", () => ({ appConfig: {} }));
+vi.mock("@/lib/config", () => ({ appConfig: { application: "MAIL", mode: "GLOBAL", sso: null } }));
 
-import { runAllUsersReindexTask, summarizeAllUsersReindex } from "./api-client";
+import {
+  runAllUsersReindexTask,
+  runBlobGarbageCollectionTask,
+  runCleanupJmapUploadsTask,
+  runFixMappingTask,
+  summarizeAllUsersReindex,
+} from "./api-client";
 
 describe("per user reindexing", () => {
   beforeEach(() => {
@@ -39,5 +46,29 @@ describe("per user reindexing", () => {
   it("tolerates an empty response", () => {
     expect(summarizeAllUsersReindex(undefined)).toEqual({ planned: 0, errors: 0 });
     expect(summarizeAllUsersReindex({})).toEqual({ planned: 0, errors: 0 });
+  });
+});
+
+describe("common tasks URLs", () => {
+  beforeEach(() => {
+    http.post.mockReset();
+    http.delete.mockReset();
+  });
+
+  it("fixes mapping denormalization without a trailing separator", async () => {
+    await runFixMappingTask();
+    expect(http.post).toHaveBeenCalledWith("/cassandra/mappings?action=SolveInconsistencies");
+  });
+
+  it("cleans up expired JMAP uploads without a trailing separator", async () => {
+    await runCleanupJmapUploadsTask();
+    expect(http.delete).toHaveBeenCalledWith("/jmap/uploads?scope=expired");
+  });
+
+  it("joins the blob garbage collection parameters with '&'", async () => {
+    await runBlobGarbageCollectionTask({ associatedProbability: "0.01", expectedBlobCount: "1000000" });
+    expect(http.delete).toHaveBeenCalledWith(
+      "/blobs?scope=unreferenced&associatedProbability=0.01&expectedBlobCount=1000000"
+    );
   });
 });

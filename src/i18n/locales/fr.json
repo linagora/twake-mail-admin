@@ -70,7 +70,9 @@
     "tasks": "Tâches",
     "list": "Liste",
     "confirm": "Confirmer",
-    "noSearchResults": "Aucun résultat ne correspond à votre recherche."
+    "noSearchResults": "Aucun résultat ne correspond à votre recherche.",
+    "back": "Retour",
+    "refresh": "Rafraîchir"
   },
   "sidebar": {
     "application": "Application",
@@ -618,7 +620,10 @@
       "errorRemoving": "Erreur lors du retrait de l'utilisateur délégué",
       "empty": "Aucun utilisateur délégué.",
       "addTooltip": "Ajouter un utilisateur délégué",
-      "removeTooltip": "Retirer l'utilisateur délégué"
+      "removeTooltip": "Retirer l'utilisateur délégué",
+      "selfDelegation": "Un utilisateur ne peut pas être délégué à lui-même",
+      "unknownUserTitle": "Utilisateur inconnu",
+      "unknownUserConfirm": "« {{delegatedUser}} » n'existe pas et ne pourra pas se connecter. L'ajouter quand même comme utilisateur délégué ?"
     },
     "identities": {
       "title": "Identités JMAP",
@@ -756,7 +761,8 @@
         "valuePlaceholder": "Valeur",
         "addCriterion": "Ajouter un critère",
         "limitLabel": "Limite (optionnel) :",
-        "noLimit": "Sans limite"
+        "noLimit": "Sans limite",
+        "removeCriterion": "Supprimer le critère"
       },
       "operators": {
         "equals": "Égal",
@@ -1162,6 +1168,7 @@
     "cleanupOldTasksSuccess": "Anciennes tâches (>{{days}} jours) nettoyées",
     "errorCleanupOldTasks": "Erreur lors du nettoyage des tâches",
     "days": "jours",
+    "invalidCleanupDays": "Saisissez un nombre de jours supérieur à 0",
     "cleaningUpOldTasks": "Nettoyage des anciennes tâches",
     "runConfirm": "Voulez-vous exécuter la tâche {{name}} ?"
   },
@@ -1292,7 +1299,10 @@
     "searchByGroupHint": "Restreint la recherche à un seul groupe de listeners, ce qui est nettement plus rapide lorsque le groupe est connu.",
     "searchError": "Erreur lors de la recherche d'événement",
     "groupLabel": "Groupe",
-    "insertionIdLabel": "ID d'insertion"
+    "insertionIdLabel": "ID d'insertion",
+    "redeliverGroupAction": "Relivrer les événements du groupe",
+    "clearGroupAction": "Vider le groupe",
+    "deleteEventAction": "Supprimer l'événement"
   },
   "mailRepositories": {
     "pathLabel": "Chemin du dépôt",
@@ -1314,6 +1324,7 @@
     "errorMoving": "Erreur lors du déplacement",
     "clearConfirm": "Voulez-vous vider le dépôt : {{path}} ?",
     "runTaskSuccess": "Tâche exécutée avec succès",
+    "runTaskError": "Échec du lancement de la tâche",
     "colNameSender": "Nom / Expéditeur",
     "colRecipients": "Destinataires",
     "colSize": "Taille",

@@ -119,7 +119,7 @@ export default function EventListenersList() {
             >
               <div>
                 <h4 className="text-sm font-medium leading-none">
-                  <Link to={`/event-dead-letter/group/${group}?&page=1&size=10`}>
+                  <Link to={`/event-dead-letter/group/${group}?page=1`}>
                     {group} ({eventCounts[group] ?? t("common.loading")})
                   </Link>
                 </h4>
@@ -129,6 +129,8 @@ export default function EventListenersList() {
                 {canRedeliver && (
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"
+                    aria-label={t("eventDeadletter.redeliverGroupAction")}
+                    title={t("eventDeadletter.redeliverGroupAction")}
                     onClick={() => handleRedeliverGroup(group)}
                   >
                     <RefreshCw className="w-5 h-5 text-blue-600" />
@@ -138,6 +140,8 @@ export default function EventListenersList() {
                 {canDelete && (
                   <button
                     className="p-2 rounded-md hover:bg-gray-200"
+                    aria-label={t("eventDeadletter.clearGroupAction")}
+                    title={t("eventDeadletter.clearGroupAction")}
                     onClick={() => handleClearGroup(group)}
                   >
                     <Trash2 className="w-5 h-5 text-red-600" />

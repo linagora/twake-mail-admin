@@ -70,7 +70,9 @@
     "tasks": "Tareas",
     "list": "Lista",
     "confirm": "Confirmar",
-    "noSearchResults": "Ningún resultado coincide con su búsqueda."
+    "noSearchResults": "Ningún resultado coincide con su búsqueda.",
+    "back": "Volver",
+    "refresh": "Actualizar"
   },
   "sidebar": {
     "application": "Aplicación",
@@ -618,7 +620,10 @@
       "errorRemoving": "Error al quitar el usuario delegado",
       "empty": "No hay usuarios delegados.",
       "addTooltip": "Añadir usuario delegado",
-      "removeTooltip": "Quitar usuario delegado"
+      "removeTooltip": "Quitar usuario delegado",
+      "selfDelegation": "No se puede delegar un usuario a sí mismo",
+      "unknownUserTitle": "Usuario desconocido",
+      "unknownUserConfirm": "\"{{delegatedUser}}\" no existe y no podrá iniciar sesión. ¿Añadirlo de todos modos como usuario delegado?"
     },
     "identities": {
       "title": "Identidades JMAP",
@@ -756,7 +761,8 @@
         "valuePlaceholder": "Valor",
         "addCriterion": "Añadir criterio",
         "limitLabel": "Límite (opcional):",
-        "noLimit": "Sin límite"
+        "noLimit": "Sin límite",
+        "removeCriterion": "Quitar el criterio"
       },
       "operators": {
         "equals": "Igual a",
@@ -1162,6 +1168,7 @@
     "cleanupOldTasksSuccess": "Tareas antiguas (>{{days}} días) limpiadas",
     "errorCleanupOldTasks": "Error al limpiar las tareas antiguas",
     "days": "días",
+    "invalidCleanupDays": "Introduzca un número de días mayor que 0",
     "cleaningUpOldTasks": "Limpiando las tareas antiguas",
     "runConfirm": "¿Desea ejecutar la tarea {{name}}?"
   },
@@ -1292,7 +1299,10 @@
     "searchError": "Error al buscar el evento",
     "groupLabel": "Grupo",
     "insertionIdLabel": "ID de inserción",
-    "paginationInfo": "Página {{page}} — {{limit}} eventos por página / Total: {{total}}"
+    "paginationInfo": "Página {{page}} — {{limit}} eventos por página / Total: {{total}}",
+    "redeliverGroupAction": "Reenviar los eventos del grupo",
+    "clearGroupAction": "Vaciar el grupo",
+    "deleteEventAction": "Eliminar el evento"
   },
   "mailRepositories": {
     "pathLabel": "Ruta del repositorio",
@@ -1314,6 +1324,7 @@
     "errorMoving": "Error al mover los correos",
     "clearConfirm": "¿Desea vaciar el repositorio de correo {{path}}?",
     "runTaskSuccess": "Tarea ejecutada correctamente",
+    "runTaskError": "No se pudo ejecutar la tarea",
     "colNameSender": "Nombre / Remitente",
     "colRecipients": "Destinatarios",
     "colSize": "Tamaño",
