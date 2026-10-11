@@ -39,4 +39,19 @@ describe("useFetchData", () => {
     expect(result.current.data).toBeNull();
     expect(result.current.error).toBe("Échec du chargement des données : Request failed with status code 400");
   });
+
+  it("translates the displayed load failure again when the language changes", async () => {
+    const { result } = renderHook(() => useFetchData(failingGetter));
+    await waitFor(() =>
+      expect(result.current.error).toBe("Échec du chargement des données : Request failed with status code 404")
+    );
+
+    await act(() => i18n.changeLanguage("en"));
+
+    try {
+      expect(result.current.error).toBe("Failed to fetch data: Request failed with status code 404");
+    } finally {
+      await act(() => i18n.changeLanguage("fr"));
+    }
+  });
 });

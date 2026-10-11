@@ -7,19 +7,20 @@ export function useFetchData<T>(getter: (() => Promise<T>) | null, refreshKey?: 
   const { t } = useTranslation();
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  // The raw failure message is stored so that the error is translated at render time and follows language changes.
+  const [failureMessage, setFailureMessage] = useState<string | null>(null);
 
   const fetchData = async () => {
     if (!getter) return;
     setIsLoading(true);
-    setError(null);
+    setFailureMessage(null);
     try {
       const result = await getter();
       setData(result);
     } catch (error: unknown) {
       const e = error as APIError;
       setData(null);
-      setError(t("common.fetchFailed", { message: e.message }));
+      setFailureMessage(e.message ?? "");
     } finally {
       setIsLoading(false);
     }
@@ -29,6 +30,8 @@ export function useFetchData<T>(getter: (() => Promise<T>) | null, refreshKey?: 
     if (!getter) return;
     fetchData();
   }, [getter, refreshKey]);
+
+  const error = failureMessage === null ? null : t("common.fetchFailed", { message: failureMessage });
 
   return { data, isLoading, error, refresh: fetchData };
 }
