@@ -39,7 +39,8 @@ is the wrong answer. Whether their content still behaves correctly is covered by
 
 `twake_profile_editor/profiles/*.json` are verbatim copies of the classpath
 profiles shipped by [linagora/webadmin-proxy](https://github.com/linagora/webadmin-proxy)
-(`src/main/resources/`), pinned at `705c40d`. They are the reusable baselines an
+(`src/main/resources/`), pinned at the release following webadmin-proxy 1.1.6 (rename denials that match
+the actual `POST /users/{user}/rename/{newUser}` call). They are the reusable baselines an
 `include` directive points at. Being in another repository, they are the only
 files here that can drift unnoticed; the checksums catch an accidental local
 edit, not an upstream change.

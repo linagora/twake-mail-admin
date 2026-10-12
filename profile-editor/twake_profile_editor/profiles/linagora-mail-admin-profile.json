@@ -24,7 +24,7 @@
         {"endpoint": "/address/forwards/*"},
         {"verb":["POST"], "endpoint": "/deletedMessages/users"},
         {"denied": true, "verb":["POST"], "endpoint": "/users/{user}?action=deleteData"},
-        {"denied": true, "verb":["POST"], "endpoint": "/users/{user}/rename"},
+        {"denied": true, "verb":["POST"], "endpoint": "/users/{user}/rename/{newUser}"},
         {"verb":["GET"], "endpoint": "/users"},
         {"verb":["GET", "HEAD"], "endpoint": "/users/{user}"},
         {"verb":["GET"], "endpoint": "/users/{user}/authorizedUsers"},
