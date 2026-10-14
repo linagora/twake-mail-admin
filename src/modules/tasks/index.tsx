@@ -182,6 +182,8 @@ export default function Tasks() {
     [TaskStatus.FAILED]: t("tasks.failed"),
   };
 
+  const statusLabel = (status: string) => STATUS_LABELS[status] ?? status;
+
   const SORT_FIELDS: { key: SortField; label: string }[] = [
     { key: "submitDate", label: t("tasks.submitted") },
     { key: "startedDate", label: t("tasks.started") },
@@ -332,7 +334,7 @@ export default function Tasks() {
                   {/* Below md the header is hidden: status and labelled dates stack under the ID / type */}
                   <div className="col-start-2 col-span-2 min-w-0 flex flex-col items-start gap-1 md:contents">
                     <span className={`md:w-full text-center text-xs px-2 py-0.5 rounded-full ${statusClass}`}>
-                      {task.status}
+                      {statusLabel(task.status)}
                     </span>
                     <span className="text-xs max-w-full truncate">
                       <span className="md:hidden text-gray-500">{t("tasks.submitted")}: </span>
@@ -393,7 +395,7 @@ export default function Tasks() {
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <span className="text-gray-500 font-medium">{t("tasks.status")}</span>
                 <span className={`inline-block w-fit px-2 py-0.5 rounded-full text-xs ${STATUS_COLORS[selectedTask.status] || ""}`}>
-                  {selectedTask.status}
+                  {statusLabel(selectedTask.status)}
                 </span>
                 <span className="text-gray-500 font-medium">{t("tasks.type")}</span>
                 <span>{selectedTask.type}</span>

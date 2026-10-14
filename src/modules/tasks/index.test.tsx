@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 
 // Hoisted: the vi.mock factories below run before the module's top-level declarations
@@ -84,6 +84,43 @@ describe("tasks list", () => {
 
     expect(columnClasses(row)).not.toEqual([]);
     expect(columnClasses(screen.getByTestId("tasks-header"))).toEqual(columnClasses(row));
+  });
+});
+
+describe("tasks: status label", () => {
+  const task = (status: string) => ({ taskId: TASK_ID, type: "full-reindexing", status, submitDate: "2026-10-10T06:00:00Z" });
+
+  it.each([
+    ["completed", "tasks.completed"],
+    ["inProgress", "tasks.inProgress"],
+    ["waiting", "tasks.waiting"],
+    ["failed", "tasks.failed"],
+  ])("translates the %s status of a row", async (status, label) => {
+    api.listTasks.mockResolvedValue([task(status)]);
+    renderTasks();
+
+    const row = await screen.findByTestId("task-row");
+
+    expect(within(row).getByText(label)).not.toBeNull();
+    expect(within(row).queryByText(status)).toBeNull();
+  });
+
+  it("falls back to the raw status when it is unknown", async () => {
+    api.listTasks.mockResolvedValue([task("unexpected")]);
+    renderTasks();
+
+    expect(within(await screen.findByTestId("task-row")).getByText("unexpected")).not.toBeNull();
+  });
+
+  it("translates the status in the task details", async () => {
+    api.listTasks.mockResolvedValue([task("inProgress")]);
+    renderTasks();
+
+    fireEvent.click(await screen.findByRole("button", { name: TASK_ID }));
+    const dialog = await screen.findByRole("dialog");
+
+    expect(within(dialog).getByText("tasks.inProgress")).not.toBeNull();
+    expect(within(dialog).queryByText("inProgress")).toBeNull();
   });
 });
 
