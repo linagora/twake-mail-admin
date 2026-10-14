@@ -9,7 +9,7 @@ import {
   reprocessMailRepository,
 } from "./api-client";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -22,6 +22,7 @@ export default function MailRepositoriesList() {
   const { t } = useTranslation();
   const confirm = useConfirm();
   const { toast } = useToast();
+  const moveTargetId = useId();
   const canCreate = useIsAllowed("PUT", "/mailRepositories/{encodedPath}");
   const canReprocess = useIsAllowed("PATCH", "/mailRepositories/{encodedPath}/mails");
   const canMove = useIsAllowed("PATCH", "/mailRepositories/{encodedPath}/mails");
@@ -128,10 +129,11 @@ export default function MailRepositoriesList() {
       header: t("mailRepositories.moveTitle"),
       message: (
         <div className="space-y-2 py-2">
-          <p className="text-sm">
+          <label htmlFor={moveTargetId} className="block text-sm">
             {t("mailRepositories.moveConfirm", { sourcePath: source.repository })}
-          </p>
+          </label>
           <select
+            id={moveTargetId}
             className="w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             defaultValue={otherRepos[0].path}
             onChange={(e) => {

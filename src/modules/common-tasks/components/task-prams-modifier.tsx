@@ -5,6 +5,7 @@ import { TaskParam } from "../types";
 import { useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const DURATION_UNITS = [
   { value: "h", label: "Hours" },
@@ -32,6 +33,7 @@ interface Props {
 }
 
 const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
+  const { t } = useTranslation();
   const idPrefix = useId();
   const fieldId = (key: string) => `${idPrefix}-${key}`;
   const [formData, setFormData] = useState<Record<string, string | boolean>>(() => {
@@ -110,7 +112,12 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
                   ))}
                 </SelectContent>
               </Select>
-              <Button variant="ghost" size="icon" onClick={() => handleRemove(param.key)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={t("commonTasks.clearParam", { key: param.key })}
+                onClick={() => handleRemove(param.key)}
+              >
                 <X className="w-4 h-4" />
               </Button>
             </div>
@@ -130,7 +137,7 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
                 value={durationParts[param.key]?.unit ?? "d"}
                 onValueChange={unit => handleDurationChange(param.key, durationParts[param.key]?.amount ?? "", unit)}
               >
-                <SelectTrigger className="w-[130px]">
+                <SelectTrigger className="w-[130px]" aria-label={t("commonTasks.durationUnit", { key: param.key })}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -141,7 +148,12 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
                   ))}
                 </SelectContent>
               </Select>
-              <Button variant="ghost" size="icon" onClick={() => handleRemoveDuration(param.key)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={t("commonTasks.clearParam", { key: param.key })}
+                onClick={() => handleRemoveDuration(param.key)}
+              >
                 <X className="w-4 h-4" />
               </Button>
             </div>

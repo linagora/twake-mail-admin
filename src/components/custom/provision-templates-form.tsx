@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -26,6 +26,10 @@ export default function ProvisionTemplatesForm({ showUsersPerSecond, onChange }:
   const [prune, setPrune] = useState(false);
   const [usersPerSecond, setUsersPerSecond] = useState("1");
   const status = useCheckUserExists(sourceUser);
+  const idPrefix = useId();
+  const sourceUserId = `${idPrefix}-source-user`;
+  const folderNameId = `${idPrefix}-folder-name`;
+  const usersPerSecondId = `${idPrefix}-users-per-second`;
 
   useEffect(() => {
     onChange({ sourceUser, folderName, overwriteExisting, prune, usersPerSecond });
@@ -34,9 +38,10 @@ export default function ProvisionTemplatesForm({ showUsersPerSecond, onChange }:
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <label className="text-sm font-medium">{t("provisionTemplates.sourceUser")}</label>
+        <label htmlFor={sourceUserId} className="text-sm font-medium">{t("provisionTemplates.sourceUser")}</label>
         <div className="flex gap-2 items-center">
           <Input
+            id={sourceUserId}
             type="text"
             value={sourceUser}
             placeholder="reference.user@domain.tld"
@@ -68,8 +73,9 @@ export default function ProvisionTemplatesForm({ showUsersPerSecond, onChange }:
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium">{t("provisionTemplates.folderName")}</label>
+        <label htmlFor={folderNameId} className="text-sm font-medium">{t("provisionTemplates.folderName")}</label>
         <Input
+          id={folderNameId}
           type="text"
           value={folderName}
           placeholder="Templates"
@@ -79,8 +85,9 @@ export default function ProvisionTemplatesForm({ showUsersPerSecond, onChange }:
 
       {showUsersPerSecond && (
         <div className="space-y-1">
-          <label className="text-sm font-medium">{t("provisionTemplates.usersPerSecond")}</label>
+          <label htmlFor={usersPerSecondId} className="text-sm font-medium">{t("provisionTemplates.usersPerSecond")}</label>
           <Input
+            id={usersPerSecondId}
             type="number"
             min={1}
             value={usersPerSecond}

@@ -1142,6 +1142,8 @@
   },
   "commonTasks": {
     "title": "Tác vụ chung",
+    "clearParam": "Xóa {{key}}",
+    "durationUnit": "Đơn vị của {{key}}",
     "subtitleMail": "Tác vụ chung để bảo trì dữ liệu của máy chủ Twake Mail",
     "subtitleCalendar": "Tác vụ chung để bảo trì dữ liệu của máy chủ Twake Calendar",
     "reindexFixOutdated": "Lập chỉ mục lại toàn bộ dữ liệu trong OpenSearch (chế độ sửa lỗi thời)",

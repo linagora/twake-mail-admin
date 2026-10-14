@@ -25,6 +25,18 @@ describe("task parameters: field labels", () => {
     expect(screen.getByLabelText(`${key}:`).tagName).toBe(tagName);
   });
 
+  it("names the duration unit select", () => {
+    render(<TaskParamsModifier params={PARAMS} handleChangeParam={() => {}} />);
+
+    expect(screen.getByRole("combobox", { name: "commonTasks.durationUnit" })).toBeTruthy();
+  });
+
+  it("names the clear buttons of the select and duration fields", () => {
+    render(<TaskParamsModifier params={PARAMS} handleChangeParam={() => {}} />);
+
+    expect(screen.getAllByRole("button", { name: "commonTasks.clearParam" })).toHaveLength(2);
+  });
+
   it("gives each dialog its own ids so that two parameter lists on a page do not collide", () => {
     render(
       <>

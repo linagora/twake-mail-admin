@@ -1142,6 +1142,8 @@
   },
   "commonTasks": {
     "title": "Allgemeine Aufgaben",
+    "clearParam": "{{key}} leeren",
+    "durationUnit": "Einheit von {{key}}",
     "subtitleMail": "Allgemeine Aufgaben zur Datenpflege eines Twake Mail-Servers",
     "subtitleCalendar": "Allgemeine Aufgaben zur Datenpflege eines Twake Calendar-Servers",
     "reindexFixOutdated": "Alle Daten in OpenSearch neu indizieren (Modus: veraltete korrigieren)",

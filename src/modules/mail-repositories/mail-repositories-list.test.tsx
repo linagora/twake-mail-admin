@@ -105,3 +105,26 @@ describe("mail repositories list tasks", () => {
     expect(api.clearMailRepository).toHaveBeenCalledWith("var%2Fmail%2Ferror");
   });
 });
+
+describe("mail repositories list: move all mails", () => {
+  afterEach(() => {
+    REPOSITORIES.splice(1);
+  });
+
+  it("names the destination select after the move prompt", async () => {
+    REPOSITORIES.push({ repository: "var/mail/qa-repo", path: "var%2Fmail%2Fqa-repo" });
+    api.moveAllMails.mockResolvedValue(undefined);
+    render(
+      <MemoryRouter>
+        <MailRepositoriesList />
+      </MemoryRouter>
+    );
+    fireEvent.click((await screen.findAllByTitle("mailRepositories.moveAll"))[0]);
+    await waitFor(() => expect(api.moveAllMails).toHaveBeenCalled());
+    cleanup();
+
+    render(<>{confirmed.message}</>);
+
+    expect(screen.getByLabelText("mailRepositories.moveConfirm").tagName).toBe("SELECT");
+  });
+});

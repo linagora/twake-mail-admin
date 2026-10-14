@@ -1142,6 +1142,8 @@
   },
   "commonTasks": {
     "title": "Нийтлэг даалгаврууд",
+    "clearParam": "{{key}}-г цэвэрлэх",
+    "durationUnit": "{{key}} нэгж",
     "subtitleMail": "Twake Mail серверийн өгөгдлийн засвар үйлчилгээний нийтлэг даалгаврууд",
     "subtitleCalendar": "Twake Calendar серверийн өгөгдлийн засвар үйлчилгээний нийтлэг даалгаврууд",
     "reindexFixOutdated": "OpenSearch дахь бүх өгөгдлийг дахин индексжүүлэх (хуучирсаныг засах горим)",

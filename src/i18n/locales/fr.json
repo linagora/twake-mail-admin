@@ -1142,6 +1142,8 @@
   },
   "commonTasks": {
     "title": "Tâches communes",
+    "clearParam": "Effacer {{key}}",
+    "durationUnit": "Unité de {{key}}",
     "subtitleMail": "Tâches communes de maintenance pour un serveur Twake Mail",
     "subtitleCalendar": "Tâches communes de maintenance pour un serveur Twake Calendar",
     "reindexFixOutdated": "Réindexer toutes les données dans OpenSearch (mode correction)",
