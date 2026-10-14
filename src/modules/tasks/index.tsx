@@ -24,6 +24,9 @@ const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 const TASK_GRID_COLUMNS =
   "grid-cols-[2rem_minmax(0,1fr)_auto] md:grid-cols-[2rem_minmax(0,3fr)_6rem_minmax(0,2fr)_minmax(0,3fr)_4rem]";
 
+// Stacked phone cards have room to wrap; desktop columns keep a single truncated line
+const WRAP_BELOW_MD = "break-words md:truncate";
+
 const STATUS_OPTIONS = [
   "",
   TaskStatus.WAITING,
@@ -53,6 +56,11 @@ function formatDate(d: string | null | undefined): string {
   } catch {
     return d;
   }
+}
+
+function startedCompletedText(task: TaskDetailResponse): string {
+  const started = formatDate(task.startedDate);
+  return task.completedDate ? `${started} → ${formatDate(task.completedDate)}` : started;
 }
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";
@@ -317,7 +325,7 @@ export default function Tasks() {
                   onClick={() => openTask(task)}
                 >
                   <span className="text-muted-foreground">{globalIndex}.</span>
-                  <div className="min-w-0 truncate">
+                  <div className={`min-w-0 ${WRAP_BELOW_MD}`}>
                     {/* A real button (the row itself holds the cancel button) so the detail opens from the keyboard */}
                     <button
                       type="button"
@@ -327,18 +335,24 @@ export default function Tasks() {
                       {task.taskId}
                     </button>
                     <br />
-                    <span className="text-xs text-gray-500">{task.type}</span>
+                    <span className="text-xs text-gray-500" title={task.type}>
+                      {task.type}
+                    </span>
                   </div>
                   {/* Below md the header is hidden: status and labelled dates stack under the ID / type */}
                   <div className="col-start-2 col-span-2 min-w-0 flex flex-col items-start gap-1 md:contents">
                     <span className={`md:w-full text-center text-xs px-2 py-0.5 rounded-full ${statusClass}`}>
                       {task.status}
                     </span>
-                    <span className="text-xs max-w-full truncate">
+                    <span className={`text-xs max-w-full ${WRAP_BELOW_MD}`}>
                       <span className="md:hidden text-gray-500">{t("tasks.submitted")}: </span>
                       {formatDate(task.submitDate)}
                     </span>
-                    <div className="text-xs max-w-full truncate">
+                    <div
+                      data-testid="task-started-completed"
+                      className={`text-xs max-w-full ${WRAP_BELOW_MD}`}
+                      title={startedCompletedText(task)}
+                    >
                       <span className="md:hidden text-gray-500">{t("tasks.startedCompleted")}: </span>
                       <span>{formatDate(task.startedDate)}</span>
                       {task.completedDate && (
