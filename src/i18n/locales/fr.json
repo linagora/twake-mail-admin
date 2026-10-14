@@ -1331,7 +1331,8 @@
     "insertionIdLabel": "ID d'insertion",
     "redeliverGroupAction": "Relivrer les événements du groupe",
     "clearGroupAction": "Vider le groupe",
-    "deleteEventAction": "Supprimer l'événement"
+    "deleteEventAction": "Supprimer l'événement",
+    "invalidPositiveInteger": "{{key}} doit être un entier positif, ou laissé vide."
   },
   "mailRepositories": {
     "pathLabel": "Chemin du dépôt",

@@ -1331,7 +1331,8 @@
     "paginationInfo": "Pagina {{page}} — {{limit}} eventi per pagina / Totale: {{total}}",
     "redeliverGroupAction": "Riconsegna gli eventi del gruppo",
     "clearGroupAction": "Svuota il gruppo",
-    "deleteEventAction": "Elimina l'evento"
+    "deleteEventAction": "Elimina l'evento",
+    "invalidPositiveInteger": "{{key}} deve essere un numero intero positivo, oppure lasciato vuoto."
   },
   "mailRepositories": {
     "pathLabel": "Percorso del repository",

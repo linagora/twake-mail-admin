@@ -1331,7 +1331,8 @@
     "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}",
     "redeliverGroupAction": "Gửi lại các sự kiện của nhóm",
     "clearGroupAction": "Xóa nhóm",
-    "deleteEventAction": "Xóa sự kiện"
+    "deleteEventAction": "Xóa sự kiện",
+    "invalidPositiveInteger": "{{key}} phải là số nguyên dương hoặc để trống."
   },
   "mailRepositories": {
     "pathLabel": "Đường dẫn kho",

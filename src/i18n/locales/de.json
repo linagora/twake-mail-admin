@@ -1331,7 +1331,8 @@
     "paginationInfo": "Seite {{page}} — {{limit}} Ereignisse pro Seite / Gesamt: {{total}}",
     "redeliverGroupAction": "Ereignisse der Gruppe erneut zustellen",
     "clearGroupAction": "Gruppe leeren",
-    "deleteEventAction": "Ereignis löschen"
+    "deleteEventAction": "Ereignis löschen",
+    "invalidPositiveInteger": "{{key}} muss eine positive ganze Zahl sein oder leer bleiben."
   },
   "mailRepositories": {
     "pathLabel": "Repository-Pfad",

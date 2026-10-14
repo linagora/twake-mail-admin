@@ -1331,7 +1331,8 @@
     "paginationInfo": "Хуудас {{page}} — хуудсанд {{limit}} үйл явдал / Нийт: {{total}}",
     "redeliverGroupAction": "Бүлгийн үйл явдлуудыг дахин хүргэх",
     "clearGroupAction": "Бүлгийг цэвэрлэх",
-    "deleteEventAction": "Үйл явдлыг устгах"
+    "deleteEventAction": "Үйл явдлыг устгах",
+    "invalidPositiveInteger": "{{key}} эерэг бүхэл тоо байх эсвэл хоосон үлдэх ёстой."
   },
   "mailRepositories": {
     "pathLabel": "Агуулахын зам",

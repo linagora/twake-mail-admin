@@ -1331,7 +1331,8 @@
     "paginationInfo": "Страница {{page}} — {{limit}} событий на странице / Всего: {{total}}",
     "redeliverGroupAction": "Повторно доставить события группы",
     "clearGroupAction": "Очистить группу",
-    "deleteEventAction": "Удалить событие"
+    "deleteEventAction": "Удалить событие",
+    "invalidPositiveInteger": "{{key}} должно быть положительным целым числом или оставаться пустым."
   },
   "mailRepositories": {
     "pathLabel": "Путь хранилища",

@@ -16,6 +16,15 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 
+const REDELIVER_PARAM_KEYS = ["limit", "maxRetries"] as const;
+type RedeliverParamKey = (typeof REDELIVER_PARAM_KEYS)[number];
+
+const POSITIVE_INTEGER = /^[1-9]\d*$/;
+
+// WebAdmin only accepts positive integers: anything else is rejected before being sent.
+const isEmptyOrPositiveInteger = (value?: string): boolean =>
+  !value?.trim() || POSITIVE_INTEGER.test(value.trim());
+
 const toOptionalNumber = (value?: string): number | undefined =>
   value?.trim() ? Number(value.trim()) : undefined;
 
@@ -52,11 +61,10 @@ export default function EventListenersList() {
   }, [listenerGroupsResult]);
 
   const handleRedeliverGroup = async (path: string) => {
-    const params = [
-      { key: "limit", defaultValue: "", type: "input" as const },
-      { key: "maxRetries", defaultValue: "", type: "input" as const },
-    ];
-    const paramValues: { [key: string]: string } = {};
+    const params = REDELIVER_PARAM_KEYS.map((key) => ({ key, defaultValue: "", type: "input" as const }));
+    const paramValues: Partial<Record<RedeliverParamKey, string>> = {};
+    const findInvalidParam = (): RedeliverParamKey | undefined =>
+      REDELIVER_PARAM_KEYS.find((key) => !isEmptyOrPositiveInteger(paramValues[key]));
     const command = `curl -XPOST /events/deadLetter/groups/${encodeURIComponent(path)}?action=reDeliver`;
     await confirm({
       header: t("eventDeadletter.redeliverGroupAction"),
@@ -66,11 +74,15 @@ export default function EventListenersList() {
           command={command}
           params={params}
           getParamValues={(key, value) => {
-            paramValues[key] =
+            paramValues[key as RedeliverParamKey] =
               typeof value === "boolean" ? value.toString() : value;
           }}
         />
       ),
+      validate: () => {
+        const invalidParam = findInvalidParam();
+        return invalidParam ? t("eventDeadletter.invalidPositiveInteger", { key: invalidParam }) : null;
+      },
       action: async () => {
         const { taskId } = await redeliverGroupEvents(path, {
           limit: toOptionalNumber(paramValues.limit),

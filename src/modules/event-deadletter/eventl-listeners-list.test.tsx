@@ -19,6 +19,7 @@ type ParamsCallback = (key: string, value: string | boolean) => void;
 interface ConfirmOptions {
   header: string;
   message: ReactElement<{ getParamValues: ParamsCallback }>;
+  validate?: () => string | null;
   action?: () => Promise<unknown>;
 }
 
@@ -27,6 +28,7 @@ const dialog = vi.hoisted(() => ({
   typedValues: {} as Record<string, string>,
   options: undefined as ConfirmOptions | undefined,
   actionError: undefined as unknown,
+  validationError: null as string | null,
 }));
 const toast = vi.hoisted(() => vi.fn());
 
@@ -39,6 +41,9 @@ vi.mock("@/hooks/use-confirm", () => ({
     dialog.options = options;
     Object.entries(dialog.typedValues).forEach(([key, value]) => options.message.props.getParamValues(key, value));
     if (!dialog.accepted) return false;
+    // Like the confirm dialog: an invalid content is reported in the dialog, which stays open
+    dialog.validationError = options.validate?.() ?? null;
+    if (dialog.validationError) return false;
     // Like the confirm dialog: a failed action is reported in the dialog, which stays open
     try {
       await options.action?.();
@@ -67,6 +72,7 @@ beforeEach(() => {
   dialog.typedValues = {};
   dialog.options = undefined;
   dialog.actionError = undefined;
+  dialog.validationError = null;
 });
 
 afterEach(() => {
@@ -130,6 +136,23 @@ describe("event dead letter groups", () => {
         maxRetries: undefined,
       })
     );
+  });
+
+  it.each([
+    { limit: "abc", maxRetries: "" },
+    { limit: "0", maxRetries: "" },
+    { limit: "1.5", maxRetries: "" },
+    { limit: "1", maxRetries: "-2" },
+    { limit: "", maxRetries: "2e3" },
+  ])("refuses to redeliver with parameters that are not positive integers: %o", async (typedValues) => {
+    dialog.accepted = true;
+    dialog.typedValues = typedValues;
+    renderList();
+
+    await clickRedeliver();
+
+    await waitFor(() => expect(dialog.validationError).toBe("eventDeadletter.invalidPositiveInteger"));
+    expect(api.redeliverGroupEvents).not.toHaveBeenCalled();
   });
 
   it("does not redeliver when the dialog is cancelled", async () => {
