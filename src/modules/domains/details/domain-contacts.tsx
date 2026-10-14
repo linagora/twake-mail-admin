@@ -321,7 +321,14 @@ export default function DomainContacts({ domain }: Props) {
                 >
                   <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
-                    {email}
+                    {/* A real button (the row itself holds the edit and remove buttons) so the detail opens from the keyboard */}
+                    <button
+                      type="button"
+                      className="text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      onClick={(e) => { e.stopPropagation(); openView(email); }}
+                    >
+                      {email}
+                    </button>
                   </h4>
                   <div className="flex shrink-0 gap-1">
                     {canEdit && (

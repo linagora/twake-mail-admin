@@ -193,7 +193,14 @@ export default function ChannelGrid({
                   onClick={() => setSelectedChannel(channel)}
                 >
                   <span className="text-muted-foreground w-10">{globalIndex}.</span>
-                  <span className="font-mono truncate">{channel.username}</span>
+                  {/* A real button so the detail opens from the keyboard */}
+                  <button
+                    type="button"
+                    className="font-mono truncate text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    onClick={(e) => { e.stopPropagation(); setSelectedChannel(channel); }}
+                  >
+                    {channel.username}
+                  </button>
                   <span className="truncate">{channel.protocol}</span>
                   <span className="font-mono truncate">{channel.remoteAddress ?? "-"}</span>
                   <span className="truncate">{info.userAgent ?? "-"}</span>

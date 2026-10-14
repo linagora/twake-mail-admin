@@ -45,3 +45,17 @@ describe("user identities: field labels", () => {
     expect((await screen.findByLabelText(label)).tagName).toBe(tagName);
   });
 });
+
+describe("user identities: details", () => {
+  it("exposes each identity as a keyboard reachable button opening its details", async () => {
+    openSection();
+
+    const identityButton = await screen.findByRole("button", { name: "Bob <bob@example.com>" });
+    identityButton.focus();
+    expect(document.activeElement).toBe(identityButton);
+
+    fireEvent.click(identityButton);
+
+    expect(await screen.findByRole("dialog")).not.toBeNull();
+  });
+});

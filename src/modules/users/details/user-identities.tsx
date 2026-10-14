@@ -243,7 +243,14 @@ export default function UserIdentities({ username }: Props) {
                   <div>
                     <h4 className="text-sm font-medium leading-none">
                       <span className="text-gray-500 mr-2">{index + 1}/</span>
-                      {identity.name} &lt;{identity.email}&gt;
+                      {/* A real button (the row itself holds the edit and delete buttons) so the detail opens from the keyboard */}
+                      <button
+                        type="button"
+                        className="text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                        onClick={(e) => { e.stopPropagation(); setViewIdentity(identity); }}
+                      >
+                        {identity.name} &lt;{identity.email}&gt;
+                      </button>
                     </h4>
                     <div className="mt-1 text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
                       <span>{t("users.identities.sort")} {identity.sortOrder}</span>

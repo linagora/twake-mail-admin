@@ -378,7 +378,14 @@ export default function MailRepositoryExtended() {
                 >
                   <span className="text-muted-foreground w-10">{globalIndex}.</span>
                   <div className="truncate">
-                    <span className="font-medium">{mail.name}</span>
+                    {/* A real button (the row itself holds the action buttons) so the detail opens from the keyboard */}
+                    <button
+                      type="button"
+                      className="font-medium text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      onClick={(e) => { e.stopPropagation(); setSelectedMail(mail); }}
+                    >
+                      {mail.name}
+                    </button>
                     <br />
                     <span className="text-xs text-gray-500">{mail.sender}</span>
                   </div>

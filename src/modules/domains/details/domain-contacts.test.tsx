@@ -60,4 +60,17 @@ describe("domain contacts", () => {
     expect(counter()).toBe("(1)");
     expect(api.deleteDomainContact).toHaveBeenCalledWith("example.com", "alice");
   });
+
+  it("exposes each contact address as a keyboard reachable button opening its details", async () => {
+    api.getDomainContact.mockResolvedValue({ id: "a902d35d", emailAddress: "alice@example.com" });
+    const contactButton = screen.getByRole("button", { name: "alice@example.com" });
+    contactButton.focus();
+    expect(document.activeElement).toBe(contactButton);
+
+    fireEvent.click(contactButton);
+
+    expect(await screen.findByRole("dialog")).not.toBeNull();
+    expect(api.getDomainContact).toHaveBeenCalledTimes(1);
+    expect(api.getDomainContact).toHaveBeenCalledWith("example.com", "alice");
+  });
 });
