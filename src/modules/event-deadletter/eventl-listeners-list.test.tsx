@@ -19,12 +19,14 @@ type ParamsCallback = (key: string, value: string | boolean) => void;
 interface ConfirmOptions {
   header: string;
   message: ReactElement<{ getParamValues: ParamsCallback }>;
+  action?: () => Promise<unknown>;
 }
 
 const dialog = vi.hoisted(() => ({
   accepted: false,
   typedValues: {} as Record<string, string>,
   options: undefined as ConfirmOptions | undefined,
+  actionError: undefined as unknown,
 }));
 const toast = vi.hoisted(() => vi.fn());
 
@@ -36,7 +38,15 @@ vi.mock("@/hooks/use-confirm", () => ({
   useConfirm: () => async (options: ConfirmOptions) => {
     dialog.options = options;
     Object.entries(dialog.typedValues).forEach(([key, value]) => options.message.props.getParamValues(key, value));
-    return dialog.accepted;
+    if (!dialog.accepted) return false;
+    // Like the confirm dialog: a failed action is reported in the dialog, which stays open
+    try {
+      await options.action?.();
+      return true;
+    } catch (err) {
+      dialog.actionError = err;
+      return false;
+    }
   },
 }));
 
@@ -56,6 +66,7 @@ beforeEach(() => {
   dialog.accepted = false;
   dialog.typedValues = {};
   dialog.options = undefined;
+  dialog.actionError = undefined;
 });
 
 afterEach(() => {
@@ -130,17 +141,26 @@ describe("event dead letter groups", () => {
     expect(api.redeliverGroupEvents).not.toHaveBeenCalled();
   });
 
-  it("shows an error toast when the redelivery is refused", async () => {
+  it("reports a refused redelivery in the dialog", async () => {
     dialog.accepted = true;
-    api.redeliverGroupEvents.mockRejectedValueOnce(new Error("Bad request"));
+    const refusal = new Error("Can not parse limit");
+    api.redeliverGroupEvents.mockRejectedValueOnce(refusal);
+    renderList();
+
+    await clickRedeliver();
+
+    await waitFor(() => expect(dialog.actionError).toBe(refusal));
+    expect(toast).not.toHaveBeenCalled();
+  });
+
+  it("links the started task once the redelivery is accepted", async () => {
+    dialog.accepted = true;
     renderList();
 
     await clickRedeliver();
 
     await waitFor(() =>
-      expect(toast).toHaveBeenCalledWith(
-        expect.objectContaining({ title: "eventDeadletter.runTaskError", variant: "destructive" })
-      )
+      expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "eventDeadletter.runTaskSuccess" }))
     );
   });
 });

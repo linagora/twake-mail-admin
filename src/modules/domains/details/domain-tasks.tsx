@@ -28,7 +28,6 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [applyLoading, setApplyLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [provisionLoading, setProvisionLoading] = useState(false);
 
   const showApply = appConfig.application === 'MAIL' && canApplySignatures;
   const showProvision = appConfig.application === 'MAIL' && canProvisionTemplates;
@@ -61,36 +60,26 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
   const handleProvisionTemplates = async () => {
     let values: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
 
-    try {
-      const result = await confirm({
-        header: t("domains.tasks.provisionTemplatesTitle"),
-        message: (
-          <ProvisionTemplatesForm showUsersPerSecond onChange={(v) => { values = v; }} />
-        ),
-        validate: () => (values.sourceUser.trim() ? null : t("provisionTemplates.sourceUserRequired")),
-      });
-      if (!result) return;
-
-      setProvisionLoading(true);
-      const { taskId } = await provisionDomainTemplates(domain, {
-        from: values.sourceUser.trim(),
-        folderName: values.folderName.trim() || undefined,
-        overwriteExisting: values.overwriteExisting,
-        prune: values.prune,
-        usersPerSecond: values.usersPerSecond.trim() || undefined,
-      });
-      toast({
-        title: t("common.taskStarted"),
-        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{t("common.taskLink", { taskId })}</Link></p>,
-      });
-    } catch (err) {
-      toast({
-        title: t("domains.tasks.errorProvisionTemplates"),
-        description: <ErrorDisplayer error={err} />,
-      });
-    } finally {
-      setProvisionLoading(false);
-    }
+    await confirm({
+      header: t("domains.tasks.provisionTemplatesTitle"),
+      message: (
+        <ProvisionTemplatesForm showUsersPerSecond onChange={(v) => { values = v; }} />
+      ),
+      validate: () => (values.sourceUser.trim() ? null : t("provisionTemplates.sourceUserRequired")),
+      action: async () => {
+        const { taskId } = await provisionDomainTemplates(domain, {
+          from: values.sourceUser.trim(),
+          folderName: values.folderName.trim() || undefined,
+          overwriteExisting: values.overwriteExisting,
+          prune: values.prune,
+          usersPerSecond: values.usersPerSecond.trim() || undefined,
+        });
+        toast({
+          title: t("common.taskStarted"),
+          description: <p><Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{t("common.taskLink", { taskId })}</Link></p>,
+        });
+      },
+    });
   };
 
   const handleDeleteAllUsersData = async () => {
@@ -145,9 +134,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
                     <Button
                       className="bg-yellow-500 hover:bg-yellow-600 rounded-sm"
                       onClick={handleProvisionTemplates}
-                      disabled={provisionLoading}
                     >
-                      {provisionLoading && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
                       {t("common.run")}
                     </Button>
                   </TooltipTrigger>

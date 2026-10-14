@@ -15,7 +15,6 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
-import { toErrorMessage } from "@/components/custom/error-message";
 
 const toOptionalNumber = (value?: string): number | undefined =>
   value?.trim() ? Number(value.trim()) : undefined;
@@ -59,7 +58,7 @@ export default function EventListenersList() {
     ];
     const paramValues: { [key: string]: string } = {};
     const command = `curl -XPOST /events/deadLetter/groups/${encodeURIComponent(path)}?action=reDeliver`;
-    const result = await confirm({
+    await confirm({
       header: t("eventDeadletter.redeliverGroupAction"),
       message: (
         <ConfirmTaskContent
@@ -72,31 +71,23 @@ export default function EventListenersList() {
           }}
         />
       ),
+      action: async () => {
+        const { taskId } = await redeliverGroupEvents(path, {
+          limit: toOptionalNumber(paramValues.limit),
+          maxRetries: toOptionalNumber(paramValues.maxRetries),
+        });
+        toast({
+          title: t("eventDeadletter.runTaskSuccess"),
+          description: (
+            <p>
+              <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
+                {t("common.taskLink", { taskId })}
+              </Link>
+            </p>
+          ),
+        });
+      },
     });
-    if (!result) return;
-
-    try {
-      const { taskId } = await redeliverGroupEvents(path, {
-        limit: toOptionalNumber(paramValues.limit),
-        maxRetries: toOptionalNumber(paramValues.maxRetries),
-      });
-      toast({
-        title: t("eventDeadletter.runTaskSuccess"),
-        description: (
-          <p>
-            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-              {t("common.taskLink", { taskId })}
-            </Link>
-          </p>
-        ),
-      });
-    } catch (err) {
-      toast({
-        title: t("eventDeadletter.runTaskError"),
-        description: toErrorMessage(err).message,
-        variant: "destructive",
-      });
-    }
   };
 
   const handleClearGroup = async (path: string) => {

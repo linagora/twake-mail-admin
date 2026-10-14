@@ -242,7 +242,7 @@ export default function MailRepositoryExtended() {
       { key: "processor", defaultValue: "", type: "input" as const },
     ];
     const paramValues: { [key: string]: string } = {};
-    const confirmed = await confirm({
+    await confirm({
       header: t("mailRepositories.reprocessMailHeader"),
       message: (
         <ConfirmTaskContent
@@ -254,24 +254,21 @@ export default function MailRepositoryExtended() {
           }}
         />
       ),
+      action: async () => {
+        const { taskId } = await reprocessSingleMail(encodedRepo, mailKey, {
+          queue: paramValues["queue"] || undefined,
+          processor: paramValues["processor"] || undefined,
+        });
+        toast({
+          title: t("mailRepositories.reprocessScheduled"),
+          description: (
+            <span>
+              {t("mailRepositories.taskLabel")}: <Link to={`/task/${taskId}`} className="text-blue-500 hover:underline">{taskId}</Link>
+            </span>
+          ),
+        });
+      },
     });
-    if (!confirmed) return;
-    try {
-      const { taskId } = await reprocessSingleMail(encodedRepo, mailKey, {
-        queue: paramValues["queue"] || undefined,
-        processor: paramValues["processor"] || undefined,
-      });
-      toast({
-        title: t("mailRepositories.reprocessScheduled"),
-        description: (
-          <span>
-            {t("mailRepositories.taskLabel")}: <Link to={`/task/${taskId}`} className="text-blue-500 hover:underline">{taskId}</Link>
-          </span>
-        ),
-      });
-    } catch (err) {
-      toast({ title: t("mailRepositories.errorReprocessing"), description: <ErrorDisplayer error={err} /> });
-    }
   };
 
   const handleMove = async (mailKey: string) => {

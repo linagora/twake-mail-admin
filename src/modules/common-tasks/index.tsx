@@ -252,14 +252,11 @@ function MailCommonTasks() {
   const canCleanupMailbox = useIsAllowed("DELETE", "/messages");
   const canCleanupOldTasks = useIsAllowed("DELETE", "/tasks");
   const canReindexUsers = useIsAllowed("POST", "/users");
-  const [perUserReindexLoading, setPerUserReindexLoading] = useState(false);
   const [reloadLoading, setReloadLoading] = useState(false);
   const [reloadPort, setReloadPort] = useState("");
   const [cleanupLoading, setCleanupLoading] = useState(false);
   const [cleanupDays, setCleanupDays] = useState("30");
   const [repositionLoading, setRepositionLoading] = useState(false);
-  const [cleanupTrashLoading, setCleanupTrashLoading] = useState(false);
-  const [cleanupSpamLoading, setCleanupSpamLoading] = useState(false);
 
   const handleReloadCertificates = async () => {
     const confirmed = await confirm({
@@ -282,66 +279,28 @@ function MailCommonTasks() {
     }
   };
 
-  const handleCleanupTrash = async () => {
+  const handleCleanupMailbox = async (mailbox: "Trash" | "Spam") => {
     let olderThan = "5d";
-    const result = await confirm({
-      header: t("users.tasks.cleanupTrashTitle"),
+    await confirm({
+      header: t(`users.tasks.cleanup${mailbox}Title`),
       message: (
         <ConfirmTaskContent
-          message={<p>{t("commonTasks.cleanupTrashAllDesc")}</p>}
-          command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Trash&useSavedDate"`}
+          message={<p>{t(`commonTasks.cleanup${mailbox}AllDesc`)}</p>}
+          command={`curl -XDELETE "/messages?olderThan=5d&mailbox=${mailbox}&useSavedDate"`}
           params={CLEANUP_PARAMS}
           getParamValues={(key, value) => {
             if (key === "olderThan") olderThan = value as string;
           }}
         />
       ),
+      action: async () => {
+        const data = await cleanupMailbox(mailbox, olderThan);
+        toast({
+          title: t("common.taskRunning"),
+          description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
+        });
+      },
     });
-    if (!result) return;
-
-    setCleanupTrashLoading(true);
-    try {
-      const data = await cleanupMailbox("Trash", olderThan);
-      toast({
-        title: t("common.taskRunning"),
-        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
-      });
-    } catch (err) {
-      toast({ title: t("commonTasks.errorCleanupTrash"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setCleanupTrashLoading(false);
-    }
-  };
-
-  const handleCleanupSpam = async () => {
-    let olderThan = "5d";
-    const result = await confirm({
-      header: t("users.tasks.cleanupSpamTitle"),
-      message: (
-        <ConfirmTaskContent
-          message={<p>{t("commonTasks.cleanupSpamAllDesc")}</p>}
-          command={`curl -XDELETE "/messages?olderThan=5d&mailbox=Spam&useSavedDate"`}
-          params={CLEANUP_PARAMS}
-          getParamValues={(key, value) => {
-            if (key === "olderThan") olderThan = value as string;
-          }}
-        />
-      ),
-    });
-    if (!result) return;
-
-    setCleanupSpamLoading(true);
-    try {
-      const data = await cleanupMailbox("Spam", olderThan);
-      toast({
-        title: t("common.taskRunning"),
-        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
-      });
-    } catch (err) {
-      toast({ title: t("commonTasks.errorCleanupSpam"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setCleanupSpamLoading(false);
-    }
   };
 
   const cleanupDaysValue = parseCleanupDays(cleanupDays);
@@ -371,7 +330,7 @@ function MailCommonTasks() {
 
   const handlePerUserReindex = async () => {
     let messagesPerSecond = "50";
-    const confirmed = await confirm({
+    await confirm({
       header: t("commonTasks.perUserReindex"),
       message: (
         <ConfirmTaskContent
@@ -383,22 +342,12 @@ function MailCommonTasks() {
           }}
         />
       ),
+      action: async () => {
+        const data = await runAllUsersReindexTask({ messagesPerSecond });
+        const { planned, errors } = summarizeAllUsersReindex(data);
+        toast({ title: t("commonTasks.perUserReindexSuccess", { planned, errors }) });
+      },
     });
-    if (!confirmed) return;
-
-    setPerUserReindexLoading(true);
-    try {
-      const data = await runAllUsersReindexTask({ messagesPerSecond });
-      const { planned, errors } = summarizeAllUsersReindex(data);
-      toast({ title: t("commonTasks.perUserReindexSuccess", { planned, errors }) });
-    } catch (err) {
-      toast({
-        title: t("commonTasks.errorPerUserReindex"),
-        description: <ErrorDisplayer error={err} />,
-      });
-    } finally {
-      setPerUserReindexLoading(false);
-    }
   };
 
   const handleRepositionSystemRights = async () => {
@@ -441,7 +390,6 @@ function MailCommonTasks() {
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
                       <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handlePerUserReindex}>
-                        {perUserReindexLoading && <Loader2 className="animate-spin" />}
                         {t("common.run")}
                       </Button>
                     </TooltipTrigger>
@@ -505,8 +453,7 @@ function MailCommonTasks() {
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
-                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupTrash}>
-                    {cleanupTrashLoading && <Loader2 className="animate-spin" />}
+                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={() => handleCleanupMailbox("Trash")}>
                     {t("common.run")}
                   </Button>
                 </TooltipTrigger>
@@ -523,8 +470,7 @@ function MailCommonTasks() {
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
-                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={handleCleanupSpam}>
-                    {cleanupSpamLoading && <Loader2 className="animate-spin" />}
+                  <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={() => handleCleanupMailbox("Spam")}>
                     {t("common.run")}
                   </Button>
                 </TooltipTrigger>

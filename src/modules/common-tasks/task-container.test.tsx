@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   confirm: vi.fn(),
   toast: vi.fn(),
   runTask: vi.fn(),
+  actionError: undefined as unknown,
 }));
 
 vi.mock("react-i18next", () => ({
@@ -24,12 +25,22 @@ import { TaskKey } from "./types";
 
 beforeEach(() => {
   vi.resetAllMocks();
-  mocks.confirm.mockResolvedValue(true);
+  mocks.actionError = undefined;
+  // Like the confirm dialog: a failed action is reported in the dialog, which stays open
+  mocks.confirm.mockImplementation(async ({ action }: { action: () => Promise<unknown> }) => {
+    try {
+      await action();
+      return true;
+    } catch (err) {
+      mocks.actionError = err;
+      return false;
+    }
+  });
 });
 
 afterEach(cleanup);
 
-const runBlobGc = async () => {
+const renderBlobGc = () => {
   render(
     <MemoryRouter>
       <TaskContainer
@@ -41,24 +52,25 @@ const runBlobGc = async () => {
     </MemoryRouter>
   );
   fireEvent.click(screen.getByRole("button", { name: "common.run" }));
-  await waitFor(() => expect(mocks.toast).toHaveBeenCalledTimes(1));
-  return mocks.toast.mock.calls[0][0];
 };
 
-describe("task container: run task toast", () => {
-  it("titles the error toast with an explicit error naming the task", async () => {
-    mocks.runTask.mockRejectedValue(new Error("DELETE /blobs can not be found"));
+describe("task container: run task", () => {
+  it("lets the dialog report a refused task instead of closing it", async () => {
+    const refusal = new Error("DELETE /blobs can not be found");
+    mocks.runTask.mockRejectedValue(refusal);
 
-    const { title } = await runBlobGc();
+    renderBlobGc();
 
-    expect(title).toBe('commonTasks.errorRunTask {"name":"commonTasks.blobGarbageCollection"}');
+    await waitFor(() => expect(mocks.actionError).toBe(refusal));
+    expect(mocks.toast).not.toHaveBeenCalled();
   });
 
   it("announces the running task on success", async () => {
     mocks.runTask.mockResolvedValue("task-id");
 
-    const { title } = await runBlobGc();
+    renderBlobGc();
 
-    expect(title).toBe("common.taskRunning");
+    await waitFor(() => expect(mocks.toast).toHaveBeenCalledTimes(1));
+    expect(mocks.toast.mock.calls[0][0].title).toBe("common.taskRunning");
   });
 });

@@ -19,11 +19,18 @@ const toast = vi.hoisted(() => vi.fn());
 vi.mock("./api-client", () => api);
 vi.mock("./create-mail-repository-button", () => ({ default: () => null }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
-const confirmed = vi.hoisted(() => ({ message: undefined as ReactNode }));
+const confirmed = vi.hoisted(() => ({ message: undefined as ReactNode, actionError: undefined as unknown }));
 vi.mock("@/hooks/use-confirm", () => ({
-  useConfirm: () => (options: { message: ReactNode }) => {
+  useConfirm: () => async (options: { message: ReactNode; action?: () => Promise<unknown> }) => {
     confirmed.message = options.message;
-    return Promise.resolve(true);
+    // Like the confirm dialog: a failed action is reported in the dialog, which stays open
+    try {
+      await options.action?.();
+      return true;
+    } catch (err) {
+      confirmed.actionError = err;
+      return false;
+    }
   },
 }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
@@ -55,20 +62,19 @@ beforeEach(() => {
   Object.values(api).forEach((mock) => mock.mockReset());
   api.getRepositoryInfo.mockResolvedValue({ size: 3 });
   toast.mockReset();
+  confirmed.actionError = undefined;
 });
 
 afterEach(cleanup);
 
 describe("mail repositories list tasks", () => {
-  it("reports a refused reprocessing with the WebAdmin reason", async () => {
-    api.reprocessMailRepository.mockRejectedValue(webAdminRefusal("unknown processor"));
+  it("reports a refused reprocessing in the dialog", async () => {
+    const refusal = webAdminRefusal("unknown processor");
+    api.reprocessMailRepository.mockRejectedValue(refusal);
     await clickAction("mailRepositories.reprocessAll");
 
-    await waitFor(() => expect(toast).toHaveBeenCalledWith({
-      title: "mailRepositories.runTaskError",
-      description: "unknown processor",
-      variant: "destructive",
-    }));
+    await waitFor(() => expect(confirmed.actionError).toBe(refusal));
+    expect(toast).not.toHaveBeenCalled();
   });
 
   it("previews the reprocessing request actually sent for the repository", async () => {

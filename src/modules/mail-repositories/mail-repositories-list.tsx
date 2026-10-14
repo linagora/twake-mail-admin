@@ -64,21 +64,22 @@ export default function MailRepositoriesList() {
     }
   }, [mailRepositoriesResult, fetchRepositoryInfo]);
 
+  const toastTaskStarted = ({ taskId }: { taskId: string }) => toast({
+    title: t("mailRepositories.runTaskSuccess"),
+    description: (
+      <p>
+        {t("mailRepositories.taskLabel")}{" "}
+        <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
+          {taskId}
+        </Link>
+      </p>
+    ),
+  });
+
   // A refused task (e.g. WebAdmin answering 400) is reported instead of escaping as an unhandled rejection.
   const runTask = async (startTask: () => Promise<{ taskId: string }>) => {
     try {
-      const { taskId } = await startTask();
-      toast({
-        title: t("mailRepositories.runTaskSuccess"),
-        description: (
-          <p>
-            {t("mailRepositories.taskLabel")}{" "}
-            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-              {taskId}
-            </Link>
-          </p>
-        ),
-      });
+      toastTaskStarted(await startTask());
     } catch (err) {
       toast({
         title: t("mailRepositories.runTaskError"),
@@ -98,7 +99,7 @@ export default function MailRepositoriesList() {
     ];
     const paramValues: { [key: string]: string } = {};
     const command = `curl -XPATCH /mailRepositories/${path}/mails?action=reprocess`;
-    const result = await confirm({
+    await confirm({
       header: t("mailRepositories.runTaskHeader"),
       message: (
         <ConfirmTaskContent
@@ -111,11 +112,8 @@ export default function MailRepositoriesList() {
           }}
         />
       ),
+      action: async () => toastTaskStarted(await reprocessMailRepository(path, paramValues)),
     });
-    if (!result) {
-      return;
-    }
-    await runTask(() => reprocessMailRepository(path, paramValues));
   };
   const handleMoveAll = async (source: MailRepository) => {
     const otherRepos = repositoriesWithSize.filter((r) => r.path !== source.path);

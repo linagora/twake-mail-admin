@@ -101,6 +101,92 @@ describe("confirm dialog validation", () => {
   });
 });
 
+function ActionOpener({ action, onResult }: { action: (name: string) => Promise<unknown>; onResult: (result: boolean) => void }) {
+  const confirm = useConfirm();
+  const open = async () => {
+    let name = "";
+    const result = await confirm({
+      header: "Rename",
+      message: <NameForm onChange={(value) => { name = value; }} />,
+      action: () => action(name),
+    });
+    onResult(result);
+  };
+  return <button onClick={open}>open</button>;
+}
+
+describe("confirm dialog action", () => {
+  const actionResults: boolean[] = [];
+
+  afterEach(() => {
+    actionResults.length = 0;
+  });
+
+  const openActionDialog = (action: (name: string) => Promise<unknown>) => {
+    render(
+      <ConfirmProvider>
+        <ActionOpener action={action} onResult={(result) => actionResults.push(result)} />
+      </ConfirmProvider>
+    );
+    fireEvent.click(screen.getByText("open"));
+  };
+
+  it("sends the request with the typed content and closes once it succeeds", async () => {
+    const sent: string[] = [];
+    openActionDialog(async (name) => { sent.push(name); });
+    await screen.findByText("Rename");
+    fireEvent.change(nameInput(), { target: { value: "bob" } });
+    clickConfirm();
+
+    await waitFor(() => expect(actionResults).toEqual([true]));
+    expect(sent).toEqual(["bob"]);
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("stays open with the typed content and reports why the request was refused", async () => {
+    openActionDialog(async () => { throw new Error("'newUser' parameter should be an existing user"); });
+    await screen.findByText("Rename");
+    fireEvent.change(nameInput(), { target: { value: "ghost" } });
+    clickConfirm();
+
+    expect((await screen.findByRole("alert")).textContent).toContain("'newUser' parameter should be an existing user");
+    expect(screen.queryByRole("dialog")).not.toBeNull();
+    expect(nameInput().value).toBe("ghost");
+    expect(actionResults).toHaveLength(0);
+  });
+
+  it("sends the corrected content when confirmed again after a refusal", async () => {
+    const sent: string[] = [];
+    openActionDialog(async (name) => {
+      sent.push(name);
+      if (name === "ghost") throw new Error("refused");
+    });
+    await screen.findByText("Rename");
+    fireEvent.change(nameInput(), { target: { value: "ghost" } });
+    clickConfirm();
+    await screen.findByRole("alert");
+    fireEvent.change(nameInput(), { target: { value: "bob" } });
+    clickConfirm();
+
+    await waitFor(() => expect(actionResults).toEqual([true]));
+    expect(sent).toEqual(["ghost", "bob"]);
+  });
+
+  it("cannot be cancelled while the request is in flight", async () => {
+    let succeed: () => void = () => {};
+    openActionDialog(() => new Promise<void>((resolve) => { succeed = resolve; }));
+    await screen.findByText("Rename");
+    clickConfirm();
+
+    await waitFor(() => expect((screen.getByText("common.cancel") as HTMLButtonElement).disabled).toBe(true));
+    fireEvent.click(screen.getByText("common.cancel"));
+    expect(screen.queryByRole("dialog")).not.toBeNull();
+
+    succeed();
+    await waitFor(() => expect(actionResults).toEqual([true]));
+  });
+});
+
 describe("confirm dialog focus", () => {
   it("returns the focus to the control that opened it once closed", async () => {
     render(

@@ -169,47 +169,42 @@ export default function MailRepositoryDetail() {
   };
 
   const handleReprocessMail = async (mailKey: string) => {
+    if (!id) return;
     const params = [
       { key: "queue", defaultValue: "spool", type: "input" as const },
       { key: "processor", defaultValue: "", type: "input" as const },
     ];
     const paramValues: { [key: string]: string } = {};
-    const confirmed = await confirm({
+    await confirm({
       header: t("mailRepositories.reprocessMailHeader"),
       message: (
         <ConfirmTaskContent
           message={<p>{t("mailRepositories.reprocessMailConfirm", { mailKey })}</p>}
-          command={`curl -XPATCH '/mailRepositories/${encodeURIComponent(id ?? "")}/mails/${mailKey}?action=reprocess'`}
+          command={`curl -XPATCH '/mailRepositories/${encodeURIComponent(id)}/mails/${mailKey}?action=reprocess'`}
           params={params}
           getParamValues={(key, value) => {
             paramValues[key] = typeof value === "boolean" ? value.toString() : value;
           }}
         />
       ),
+      action: async () => {
+        const { taskId } = await reprocessSingleMail(encodeURIComponent(id), mailKey, {
+          queue: paramValues["queue"] || undefined,
+          processor: paramValues["processor"] || undefined,
+        });
+        toast({
+          title: t("mailRepositories.reprocessScheduled"),
+          description: (
+            <p>
+              {t("mailRepositories.taskLabel")}{" "}
+              <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
+                {taskId}
+              </Link>
+            </p>
+          ),
+        });
+      },
     });
-    if (!confirmed || !id) return;
-    try {
-      const { taskId } = await reprocessSingleMail(encodeURIComponent(id), mailKey, {
-        queue: paramValues["queue"] || undefined,
-        processor: paramValues["processor"] || undefined,
-      });
-      toast({
-        title: t("mailRepositories.reprocessScheduled"),
-        description: (
-          <p>
-            {t("mailRepositories.taskLabel")}{" "}
-            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-              {taskId}
-            </Link>
-          </p>
-        ),
-      });
-    } catch (error) {
-      toast({
-        title: t("mailRepositories.errorReprocessing"),
-        description: <ErrorDisplayer error={error} />,
-      });
-    }
   };
 
   const handleRemoveMail = async (mailKey: string) => {
