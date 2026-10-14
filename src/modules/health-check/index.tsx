@@ -9,6 +9,7 @@ import {
 import { getHealthCheck } from "./api-client";
 import { HealthCheckResponseType, HealthCheckType, HealthStatuses } from "./types";
 import { groupHealthChecks } from "./sections";
+import { statusStyle } from "./status-style";
 import Header from "@/components/custom/header";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useTranslation } from "react-i18next";
@@ -21,16 +22,9 @@ const DOCU_URL_CALENDAR =
 
 const isCalendar = appConfig.application === "CALENDAR";
 
-const statusColor = (status: HealthStatuses) =>
-  status === HealthStatuses.HEALTHY
-    ? "bg-green-600"
-    : status === HealthStatuses.DEGRADED
-    ? "bg-orange-400"
-    : "bg-red-600";
-
 function HealthCheckCard({ result }: { result: HealthCheckType }) {
   const card = (
-    <Card className={statusColor(result.status)}>
+    <Card className={statusStyle(result.status)}>
       <CardContent className="py-4 text-center break-words">
         {result.componentName}
       </CardContent>
