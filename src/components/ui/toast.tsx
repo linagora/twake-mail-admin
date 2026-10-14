@@ -12,8 +12,12 @@ const ToastViewport = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
 >(({ className, ...props }, ref) => (
+  // A modal dialog hides everything outside of it from assistive technologies,
+  // except live regions: aria-live keeps the toasts raised while a dialog stays
+  // open readable. "off" because Radix already announces each toast itself.
   <ToastPrimitives.Viewport
     ref={ref}
+    aria-live="off"
     className={cn(
       "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
       className
