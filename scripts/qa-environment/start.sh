@@ -24,7 +24,7 @@ QA_PROJECT="${QA_PROJECT:-twake-mail-admin-qa}"
 QA_USERS="${QA_USERS:-}"
 export QA_ADMIN_PORT="${QA_ADMIN_PORT:-18500}"
 export QA_WEBADMIN_PORT="${QA_WEBADMIN_PORT:-18501}"
-export TMAIL_BACKEND_IMAGE="${TMAIL_BACKEND_IMAGE:-linagora/tmail-backend:distributed-branch-master}"
+export TMAIL_BACKEND_IMAGE="${TMAIL_BACKEND_IMAGE:-linagora/tmail-backend:distributed-1.0.22}"
 TMAIL_BACKEND_DIR="${TMAIL_BACKEND_DIR:-$HOME/Documents/tmail-backend/tmail-backend/apps/distributed}"
 export TMAIL_BACKEND_DIR="${TMAIL_BACKEND_DIR/#\~/$HOME}"
 
