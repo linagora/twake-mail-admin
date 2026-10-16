@@ -8,6 +8,7 @@ import { removeTeamMailboxMember } from "@/modules/domains/api-client";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import { useUserMappingsRevision } from "./user-mappings-revision";
 
 interface Props {
   username: string;
@@ -17,6 +18,7 @@ export default function UserTeamMailboxes({ username }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
+  const { notifyMappingsChanged } = useUserMappingsRevision();
   const canView = useIsAllowed("GET", "/users/{username}/team-mailboxes");
   const canLeave = useIsAllowed("DELETE", "/domains/{domain}/team-mailboxes/{mailbox}/members/{member}");
 
@@ -47,6 +49,8 @@ export default function UserTeamMailboxes({ username }: Props) {
     try {
       await removeTeamMailboxMember(domain, mb.name, username);
       toast({ title: t("users.teamMailboxes.left", { emailAddress: mb.emailAddress }) });
+      // Leaving also drops the team mailbox from the allowed From headers and the JMAP identities
+      notifyMappingsChanged();
       await refresh();
     } catch (err) {
       toast({

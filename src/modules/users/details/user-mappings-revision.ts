@@ -2,7 +2,8 @@ import { createContext, useCallback, useContext, useMemo, useState } from "react
 
 // Aliases, forwards and mapping sources are all stored as mappings: a change made from one section
 // also affects the others (Aliases, Forwards, Mappings, Allowed From Headers, JMAP Identities).
-// Sections read the shared revision to refetch their data, and notify after each mapping change.
+// Leaving a team mailbox also changes the allowed From headers and the JMAP identities.
+// Sections read the shared revision to refetch their data, and notify after each such change.
 export interface UserMappingsRevision {
   revision: number;
   notifyMappingsChanged: () => void;
