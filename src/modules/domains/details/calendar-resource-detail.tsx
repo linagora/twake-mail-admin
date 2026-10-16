@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { Pencil, Save, Trash2 } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
@@ -18,6 +18,7 @@ const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 export default function CalendarResourceDetail() {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const { domain: domainParam, resourceId } = useParams();
   const domainContext = useDomain();
   // In GLOBAL mode domain comes from the URL; in DOMAIN mode it comes from context.
@@ -144,13 +145,13 @@ export default function CalendarResourceDetail() {
           {editing ? (
             <div className="mt-2 space-y-2">
               <div>
-                <label className="text-sm font-medium text-gray-500">{t("domains.calendarResources.fieldName")}</label>
-                <input type="text" value={editName} onChange={(e) => setEditName(e.target.value)}
+                <label htmlFor={`${idPrefix}-name`} className="text-sm font-medium text-gray-500">{t("domains.calendarResources.fieldName")}</label>
+                <input id={`${idPrefix}-name`} type="text" value={editName} onChange={(e) => setEditName(e.target.value)}
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">{t("domains.calendarResources.fieldDescription")}</label>
-                <input type="text" value={editDescription} onChange={(e) => setEditDescription(e.target.value)}
+                <label htmlFor={`${idPrefix}-description`} className="text-sm font-medium text-gray-500">{t("domains.calendarResources.fieldDescription")}</label>
+                <input id={`${idPrefix}-description`} type="text" value={editDescription} onChange={(e) => setEditDescription(e.target.value)}
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
@@ -191,10 +192,10 @@ export default function CalendarResourceDetail() {
           )}
 
           <div className="mt-6">
-            <h4 className="text-md font-semibold">{t("domains.calendarResources.administratorsLabel")}</h4>
+            <h4 id={`${idPrefix}-administrators`} className="text-md font-semibold">{t("domains.calendarResources.administratorsLabel")}</h4>
             {canEdit && (
             <div className="flex gap-2 mt-3 mb-4">
-              <input type="text" value={newAdmin} onChange={(e) => setNewAdmin(e.target.value)}
+              <input type="text" value={newAdmin} aria-labelledby={`${idPrefix}-administrators`} onChange={(e) => setNewAdmin(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddAdmin()} placeholder="admin@domain.tld"
                 className="flex-1 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               {adminStatus === "checking" && <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>}

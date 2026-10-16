@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useSearchPagination } from "@/hooks/use-search-pagination";
@@ -32,6 +32,7 @@ interface Props {
 
 export default function CalendarDomainResources({ domain, defaultOpen = false, resourceLink }: Props) {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/domains/{domain}/resources");
@@ -145,17 +146,19 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
             <div className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2">
               <h5 className="text-sm font-semibold">{t("domains.calendarResources.newTitle")}</h5>
               <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={t("domains.calendarResources.namePlaceholder")}
+                aria-label={t("domains.calendarResources.namePlaceholder")}
                 className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               <input type="text" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} placeholder={t("domains.calendarResources.descriptionPlaceholder")}
+                aria-label={t("domains.calendarResources.fieldDescription")}
                 className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               <div>
                 <label className="text-xs font-medium text-gray-500">{t("domains.calendarResources.iconLabel")}</label>
                 <div className="mt-1"><ResourceIconPicker value={newIcon} onChange={setNewIcon} /></div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500">{t("domains.calendarResources.creatorLabel")} <span className="text-red-500">*</span></label>
+                <label htmlFor={`${idPrefix}-creator`} className="text-xs font-medium text-gray-500">{t("domains.calendarResources.creatorLabel")} <span className="text-red-500">*</span></label>
                 <div className="flex items-center gap-2 mt-1">
-                  <input type="text" value={newCreator} onChange={(e) => setNewCreator(e.target.value)}
+                  <input id={`${idPrefix}-creator`} type="text" value={newCreator} required onChange={(e) => setNewCreator(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleAdd()} placeholder="user@domain.tld"
                     className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
                   {creatorStatus === "checking" && <span className="text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>}
@@ -165,9 +168,9 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500">{t("domains.calendarResources.administratorsLabel")}</label>
+                <label htmlFor={`${idPrefix}-administrators`} className="text-xs font-medium text-gray-500">{t("domains.calendarResources.administratorsLabel")}</label>
                 <div className="flex items-center gap-2 mt-1">
-                  <input type="text" value={newAdminInput} onChange={(e) => setNewAdminInput(e.target.value)}
+                  <input id={`${idPrefix}-administrators`} type="text" value={newAdminInput} onChange={(e) => setNewAdminInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleAddAdmin()} placeholder="user@domain.tld"
                     className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
                   {adminInputStatus === "checking" && <span className="text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>}

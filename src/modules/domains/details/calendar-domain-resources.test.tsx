@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { Resource } from "../types";
 
 const api = vi.hoisted(() => ({
@@ -49,5 +49,17 @@ describe("CalendarDomainResources", () => {
 
     const links = await screen.findAllByRole("link");
     expect(links.map((link) => link.textContent)).toEqual(["abc-nameless", "QA Room 2"]);
+  });
+
+  it("ties every field of the creation form to its caption", async () => {
+    api.getResources.mockResolvedValue([]);
+    render(<CalendarDomainResources domain="open-paas.org" defaultOpen />);
+
+    fireEvent.click(await screen.findByTitle("domains.calendarResources.addTooltip"));
+
+    expect(screen.getByRole("textbox", { name: "domains.calendarResources.namePlaceholder" })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "domains.calendarResources.fieldDescription" })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "domains.calendarResources.creatorLabel *" })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "domains.calendarResources.administratorsLabel" })).toBeTruthy();
   });
 });
