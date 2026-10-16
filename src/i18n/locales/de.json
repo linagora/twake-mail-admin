@@ -1593,6 +1593,7 @@
     "deleteAllTitle": "Alle nicht gesendeten E-Mails löschen",
     "deleteAllConfirm": "Eine Aufgabe einplanen, die alle aufbewahrten E-Mails löscht? Dies kann nicht rückgängig gemacht werden.",
     "deleteAllFilteredConfirm": "Eine Aufgabe einplanen, die die aufbewahrten E-Mails löscht, die {{filters}} entsprechen? Dies kann nicht rückgängig gemacht werden.",
+    "bulkNeedsFullAddress": "Sammelaktionen wählen E-Mails nach vollständiger Adresse aus: Geben Sie eine vollständige Absender- oder Empfängeradresse ein (z. B. alice@example.com), um die aufgelisteten E-Mails erneut zu senden oder zu löschen.",
     "deleteTitle": "Nicht gesendete E-Mail löschen",
     "deleteConfirm": "Nicht gesendete E-Mail {{id}} löschen? Dies kann nicht rückgängig gemacht werden.",
     "deleteTooltip": "Diese E-Mail löschen",

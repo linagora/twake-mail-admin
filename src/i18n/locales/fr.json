@@ -1593,6 +1593,7 @@
     "deleteAllTitle": "Supprimer tous les mails non envoyés",
     "deleteAllConfirm": "Planifier une tâche supprimant tous les mails conservés ? Cette action est irréversible.",
     "deleteAllFilteredConfirm": "Planifier une tâche supprimant les mails conservés correspondant à {{filters}} ? Cette action est irréversible.",
+    "bulkNeedsFullAddress": "Les actions groupées sélectionnent les mails par adresse complète : saisissez une adresse d'expéditeur ou de destinataire entière (ex. alice@example.com) pour réémettre ou supprimer les mails listés.",
     "deleteTitle": "Supprimer le mail non envoyé",
     "deleteConfirm": "Supprimer le mail non envoyé {{id}} ? Cette action est irréversible.",
     "deleteTooltip": "Supprimer ce mail",

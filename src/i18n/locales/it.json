@@ -1593,6 +1593,7 @@
     "deleteAllTitle": "Elimina tutte le email non inviate",
     "deleteAllConfirm": "Pianificare un'attività che elimini tutte le email conservate? Questa azione non può essere annullata.",
     "deleteAllFilteredConfirm": "Pianificare un'attività che elimini le email conservate corrispondenti a {{filters}}? Questa azione non può essere annullata.",
+    "bulkNeedsFullAddress": "Le azioni di massa selezionano le email per indirizzo completo: digita un indirizzo completo di mittente o destinatario (es. alice@example.com) per reinviare o eliminare le email elencate.",
     "deleteTitle": "Elimina email non inviata",
     "deleteConfirm": "Eliminare l'email non inviata {{id}}? Questa azione non può essere annullata.",
     "deleteTooltip": "Elimina questa email",

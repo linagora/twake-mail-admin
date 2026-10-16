@@ -1593,6 +1593,7 @@
     "deleteAllTitle": "Xóa tất cả thư chưa gửi",
     "deleteAllConfirm": "Lên lịch tác vụ xóa mọi thư đã lưu? Không thể hoàn tác.",
     "deleteAllFilteredConfirm": "Lên lịch tác vụ xóa các thư đã lưu khớp với {{filters}}? Không thể hoàn tác.",
+    "bulkNeedsFullAddress": "Thao tác hàng loạt chọn thư theo địa chỉ đầy đủ: nhập địa chỉ người gửi hoặc người nhận đầy đủ (ví dụ alice@example.com) để gửi lại hoặc xóa các thư được liệt kê.",
     "deleteTitle": "Xóa thư chưa gửi",
     "deleteConfirm": "Xóa thư chưa gửi {{id}}? Không thể hoàn tác.",
     "deleteTooltip": "Xóa thư này",

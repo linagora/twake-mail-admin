@@ -1593,6 +1593,7 @@
     "deleteAllTitle": "Delete all unsent mails",
     "deleteAllConfirm": "Schedule a task deleting every retained mail? This cannot be undone.",
     "deleteAllFilteredConfirm": "Schedule a task deleting the retained mails matching {{filters}}? This cannot be undone.",
+    "bulkNeedsFullAddress": "Bulk actions select mails by complete address: type a full sender or recipient address (e.g. alice@example.com) to resend or delete the listed mails.",
     "deleteTitle": "Delete unsent mail",
     "deleteConfirm": "Delete unsent mail {{id}}? This cannot be undone.",
     "deleteTooltip": "Delete this mail",
