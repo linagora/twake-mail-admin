@@ -240,13 +240,14 @@ export default function UserIdentities({ username }: Props) {
                   className="p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-start cursor-pointer hover:bg-gray-100 transition"
                   onClick={() => setViewIdentity(identity)}
                 >
-                  <div>
+                  {/* min-w-0 lets an unbroken name or address wrap instead of widening the page */}
+                  <div className="min-w-0 flex-1">
                     <h4 className="text-sm font-medium leading-none">
                       <span className="text-gray-500 mr-2">{index + 1}/</span>
                       {/* A real button (the row itself holds the edit and delete buttons) so the detail opens from the keyboard */}
                       <button
                         type="button"
-                        className="text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="text-left break-all rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                         onClick={(e) => { e.stopPropagation(); setViewIdentity(identity); }}
                       >
                         {identity.name} &lt;{identity.email}&gt;
@@ -256,16 +257,16 @@ export default function UserIdentities({ username }: Props) {
                       <span>{t("users.identities.sort")} {identity.sortOrder}</span>
                       <span>{t("users.identities.deletable")} {identity.mayDelete ? t("common.yes") : t("common.no")}</span>
                       {identity.replyTo?.length > 0 && (
-                        <span>Reply-To: {identity.replyTo.map((r) => r.mailAddress).join(", ")}</span>
+                        <span className="break-all">Reply-To: {identity.replyTo.map((r) => r.mailAddress).join(", ")}</span>
                       )}
                       {identity.bcc?.length > 0 && (
-                        <span>BCC: {identity.bcc.map((b) => b.mailAddress).join(", ")}</span>
+                        <span className="break-all">BCC: {identity.bcc.map((b) => b.mailAddress).join(", ")}</span>
                       )}
                       {identity.textSignature && <span>{t("users.identities.hasTextSignature")}</span>}
                       {identity.htmlSignature && <span>{t("users.identities.hasHtmlSignature")}</span>}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 shrink-0">
                     {canEdit && (
                       <button
                         onClick={(e) => { e.stopPropagation(); openEdit(identity); }}

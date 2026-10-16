@@ -59,3 +59,14 @@ describe("user identities: details", () => {
     expect(await screen.findByRole("dialog")).not.toBeNull();
   });
 });
+
+describe("user identities: long values", () => {
+  it("lets the identity name wrap inside a shrinkable row instead of widening the page", async () => {
+    openSection();
+
+    const identityButton = await screen.findByRole("button", { name: "Bob <bob@example.com>" });
+
+    expect(identityButton.className).toContain("break-all");
+    expect(identityButton.closest("h4")?.parentElement?.className).toContain("min-w-0");
+  });
+});

@@ -9,7 +9,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { createRegisteredUser, getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
-import ErrorDisplayer from "@/components/custom/error-displayer";
+import { validateRegisteredUserNames } from "@/modules/registered-users/validation";
 import { Button } from "@/components/ui/button";
 import CalendarUserTasks from "./calendar-user-tasks";
 import UserCalendars from "./user-calendars";
@@ -38,18 +38,22 @@ function RegisterUserForm({
         <span>{t("registeredUsers.ldapWarning")}</span>
       </div>
       <div>
-        <label className="text-sm font-medium">{t("registeredUsers.firstname")}</label>
+        <label htmlFor="register-user-firstname" className="text-sm font-medium">{t("registeredUsers.firstname")} <span className="text-red-500">*</span></label>
         <input
+          id="register-user-firstname"
           type="text"
+          required
           value={firstname}
           onChange={(e) => { setFirstname(e.target.value); onChange({ firstname: e.target.value, lastname }); }}
           className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div>
-        <label className="text-sm font-medium">{t("registeredUsers.lastname")}</label>
+        <label htmlFor="register-user-lastname" className="text-sm font-medium">{t("registeredUsers.lastname")} <span className="text-red-500">*</span></label>
         <input
+          id="register-user-lastname"
           type="text"
+          required
           value={lastname}
           onChange={(e) => { setLastname(e.target.value); onChange({ firstname, lastname: e.target.value }); }}
           className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
@@ -65,13 +69,12 @@ function UnregisteredUser({ username, onRegistered }: { username: string; onRegi
   const { toast } = useToast();
   const domain = useDomain() || undefined;
   const canRegister = useIsAllowed("POST", "/registeredUsers");
-  const [isRegistering, setIsRegistering] = useState(false);
 
   const handleRegister = async () => {
     const defaults = { firstname: username.split("@")[0] || "", lastname: "" };
     let values = { ...defaults };
 
-    const confirmed = await confirm({
+    await confirm({
       header: t("users.registration.registerTitle"),
       message: (
         <RegisterUserForm
@@ -80,22 +83,13 @@ function UnregisteredUser({ username, onRegistered }: { username: string; onRegi
           onChange={(v) => { values = v; }}
         />
       ),
+      validate: () => validateRegisteredUserNames(values, t),
+      action: async () => {
+        await createRegisteredUser({ id: username, email: username, ...values }, domain);
+        toast({ title: t("users.registration.registered", { username }) });
+        onRegistered();
+      },
     });
-    if (!confirmed) return;
-
-    setIsRegistering(true);
-    try {
-      await createRegisteredUser({ id: username, email: username, ...values }, domain);
-      toast({ title: t("users.registration.registered", { username }) });
-      onRegistered();
-    } catch (err) {
-      toast({
-        title: t("users.registration.errorRegistering"),
-        description: <ErrorDisplayer error={err} />,
-      });
-    } finally {
-      setIsRegistering(false);
-    }
   };
 
   return (
@@ -104,7 +98,7 @@ function UnregisteredUser({ username, onRegistered }: { username: string; onRegi
       <h4 className="text-lg font-semibold text-amber-900">{t("users.registration.notRegistered")}</h4>
       <p className="text-sm text-amber-800 max-w-xl">{t("users.registration.notRegisteredHint")}</p>
       {canRegister && (
-        <Button size="lg" onClick={handleRegister} disabled={isRegistering}>
+        <Button size="lg" onClick={handleRegister}>
           <UserPlus className="w-5 h-5 mr-2" />
           {t("users.registration.register")}
         </Button>

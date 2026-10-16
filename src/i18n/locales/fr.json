@@ -31,6 +31,8 @@
     "userExists": "Utilisateur trouvé",
     "userNotFound": "Utilisateur introuvable",
     "invalidUsername": "Nom d'utilisateur invalide",
+    "unknownUserTitle": "Utilisateur inconnu",
+    "unknownUserConfirm": "« {{username}} » n'existe pas. L'ajouter quand même ?",
     "unlimited": "illimité",
     "notSet": "non défini",
     "invalidSize": "Taille invalide",
@@ -319,7 +321,9 @@
       "deleted": "Modèles de signature supprimés",
       "errorDeleting": "Erreur lors de la suppression des modèles",
       "deleteAll": "Tout supprimer",
-      "empty": "Aucun modèle de signature configuré."
+      "empty": "Aucun modèle de signature configuré.",
+      "addTemplate": "Ajouter un modèle de signature",
+      "removeTemplate": "Supprimer le modèle « {{language}} »"
     },
     "calendarDetail": {
       "title": "Détails du domaine calendrier",
@@ -539,8 +543,7 @@
       "register": "Enregistrer cet utilisateur",
       "registerTitle": "Enregistrer l'utilisateur",
       "registerHint": "Enregistrement de « {{username}} » sur le serveur DAV. Le prénom et le nom ne sont pas lus depuis l'annuaire, merci de les confirmer.",
-      "registered": "Utilisateur « {{username}} » enregistré",
-      "errorRegistering": "Erreur lors de l'enregistrement de l'utilisateur"
+      "registered": "Utilisateur « {{username}} » enregistré"
     },
     "aliases": {
       "title": "Alias",
@@ -943,6 +946,7 @@
         "remove": "Retirer",
         "undoRemove": "Annuler le retrait",
         "alreadyInvited": "Déjà invité",
+        "isOwner": "Cet utilisateur est le propriétaire du calendrier",
         "updated": "Invités mis à jour",
         "errorUpdate": "Erreur lors de la mise à jour des invités",
         "rights": {
@@ -961,6 +965,7 @@
     "addressBooks": {
       "title": "Carnets d'adresses",
       "empty": "Aucun carnet d'adresses.",
+      "ownerLabel": "propriétaire :",
       "createTitle": "Créer un carnet d'adresses",
       "name": "Nom",
       "description": "Description",
@@ -978,6 +983,12 @@
       "errorExport": "Erreur lors de l'export du carnet d'adresses",
       "importTitle": "Importer des contacts (vCard)",
       "errorImport": "Erreur lors de l'import des contacts",
+      "system": {
+        "contacts": "Mes contacts",
+        "collected": "Contacts collectés",
+        "badge": "Système",
+        "hint": "Créé par le serveur pour chaque utilisateur : il ne peut être ni renommé ni supprimé."
+      },
       "publicRight": {
         "title": "Visibilité publique",
         "publicTitle": "Carnet d'adresses public (lecture)",
@@ -998,6 +1009,7 @@
         "undoRemove": "Annuler le retrait",
         "alreadyShared": "Déjà partagé avec cet utilisateur",
         "unresolved": "Utilisateur inconnu : son partage ne peut pas être modifié ici",
+        "isOwner": "Cet utilisateur est le propriétaire du carnet d'adresses",
         "updated": "Partage mis à jour",
         "errorUpdate": "Erreur lors de la mise à jour du partage",
         "rights": {
@@ -1044,8 +1056,8 @@
       "duplicateTitle": "Dupliquer le lien de réservation",
       "copyName": "{{name}} (copie)",
       "timeZone": "Fuseau horaire",
-      "rulesCount": "{{count}} règle",
-      "rulesCount_plural": "{{count}} règles",
+      "rulesCount_one": "{{count}} règle",
+      "rulesCount_other":"{{count}} règles",
       "clearRules": "Supprimer toutes les règles",
       "clearRulesWarning": "Toutes les règles seront supprimées à la sauvegarde.",
       "deleteEventsTitle": "Supprimer les événements associés",
@@ -1079,7 +1091,8 @@
   },
   "deleteUserDataForm": {
     "fromStep": "Reprendre depuis l'étape",
-    "fromStepPlaceholder": "ex. MailboxUserDeletionTaskStep"
+    "fromStepPlaceholder": "ex. MailboxUserDeletionTaskStep",
+    "calendarFromStepPlaceholder": "ex. DavCalendarDeletionTaskStep"
   },
   "restoreCriteria": {
     "addCriteria": "Ajouter un critère",
@@ -1280,6 +1293,8 @@
     "minOccupation": "Occupation min (%)",
     "maxOccupation": "Occupation max (%)",
     "empty": "Aucun utilisateur dans cette plage d'occupation.",
+    "invalidPercent": "Saisissez un pourcentage entre 0 et 100.",
+    "minAboveMax": "Ne doit pas être inférieure à l'occupation min.",
     "username": "Utilisateur",
     "occupationSize": "Occupation (taille)",
     "occupationCount": "Occupation (nombre)",
@@ -1565,12 +1580,12 @@
     "errorRegistering": "Erreur lors de l'enregistrement",
     "registered": "Utilisateur « {{username}} » enregistré",
     "searchPlaceholder": "Rechercher des utilisateurs enregistrés…",
+    "noMatch": "Aucun utilisateur enregistré ne correspond à « {{query}} ».",
     "editTitle": "Modifier l'utilisateur enregistré",
     "ldapWarning": "Votre déploiement peut inclure un import LDAP périodique : si c'est le cas, les modifications effectuées ici finiront par être écrasées.",
     "email": "Email",
     "firstname": "Prénom",
     "lastname": "Nom",
-    "errorUpdating": "Erreur lors de la mise à jour",
     "updated": "Utilisateur mis à jour",
     "editTooltip": "Modifier l'utilisateur",
     "deleteTooltip": "Supprimer l'utilisateur",
@@ -1579,7 +1594,10 @@
     "deleted": "Utilisateur « {{email}} » supprimé",
     "errorDeleting": "Erreur lors de la suppression de l'utilisateur",
     "id": "ID :",
-    "subtitle": "Gérer les utilisateurs enregistrés sur le serveur DAV."
+    "subtitle": "Gérer les utilisateurs enregistrés sur le serveur DAV.",
+    "firstnameRequired": "Le prénom est obligatoire",
+    "lastnameRequired": "Le nom est obligatoire",
+    "invalidEmail": "L'e-mail doit être une adresse valide, par exemple user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Mails dont la livraison SMTP a échoué, conservés pour inspection et réémission.",
@@ -1594,6 +1612,7 @@
     "deleteAllTitle": "Supprimer tous les mails non envoyés",
     "deleteAllConfirm": "Planifier une tâche supprimant tous les mails conservés ? Cette action est irréversible.",
     "deleteAllFilteredConfirm": "Planifier une tâche supprimant les mails conservés correspondant à {{filters}} ? Cette action est irréversible.",
+    "bulkNeedsFullAddress": "Les actions groupées sélectionnent les mails par adresse complète : saisissez une adresse d'expéditeur ou de destinataire entière (ex. alice@example.com) pour réémettre ou supprimer les mails listés.",
     "deleteTitle": "Supprimer le mail non envoyé",
     "deleteConfirm": "Supprimer le mail non envoyé {{id}} ? Cette action est irréversible.",
     "deleteTooltip": "Supprimer ce mail",

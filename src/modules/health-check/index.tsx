@@ -14,11 +14,10 @@ import Header from "@/components/custom/header";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/lib/config";
+import { CALENDAR_WEBADMIN_DOC_URL } from "@/lib/calendar-docs";
 
 const DOCU_URL_MAIL =
   "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_healthcheck";
-const DOCU_URL_CALENDAR =
-  "https://github.com/linagora/twake-calendar-side-service/blob/main/docs/apis/webadmin.md";
 
 const isCalendar = appConfig.application === "CALENDAR";
 
@@ -63,7 +62,7 @@ export default function HealthCheck() {
       <Header
         headerTitle={isCalendar ? t("healthCheck.welcomeCalendar") : t("healthCheck.welcome")}
         headerSubTitle={isCalendar ? t("healthCheck.descriptionCalendar") : t("healthCheck.description")}
-        docuUrl={isCalendar ? DOCU_URL_CALENDAR : DOCU_URL_MAIL}
+        docuUrl={isCalendar ? CALENDAR_WEBADMIN_DOC_URL : DOCU_URL_MAIL}
       />
 
       {isLoading && (

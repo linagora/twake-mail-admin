@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { AxiosError, AxiosResponse } from "axios";
 import i18n from "@/i18n";
 import { useFetchData } from "./use-fetch-data";
 
@@ -20,6 +21,42 @@ describe("useFetchData", () => {
 
     await waitFor(() =>
       expect(result.current.error).toBe("Échec du chargement des données : Request failed with status code 404")
+    );
+  });
+
+  it("reports WebAdmin's message and details rather than the generic Axios message", async () => {
+    const getter = () =>
+      Promise.reject(
+        new AxiosError("Request failed with status code 400", "ERR_BAD_REQUEST", undefined, undefined, {
+          status: 400,
+          data: { message: "Invalid task id", details: "Invalid UUID string: does-not-exist" },
+        } as AxiosResponse)
+      );
+
+    const { result } = renderHook(() => useFetchData(getter));
+
+    await waitFor(() =>
+      expect(result.current.error).toBe(
+        "Échec du chargement des données : Invalid task id — Invalid UUID string: does-not-exist"
+      )
+    );
+  });
+
+  it("reports a plain text WebAdmin answer rather than the generic Axios message", async () => {
+    const getter = () =>
+      Promise.reject(
+        new AxiosError("Request failed with status code 404", "ERR_BAD_REQUEST", undefined, undefined, {
+          status: 404,
+          data: "00000000-0000-0000-0000-000000000000 can not be found",
+        } as AxiosResponse)
+      );
+
+    const { result } = renderHook(() => useFetchData(getter));
+
+    await waitFor(() =>
+      expect(result.current.error).toBe(
+        "Échec du chargement des données : 00000000-0000-0000-0000-000000000000 can not be found"
+      )
     );
   });
 

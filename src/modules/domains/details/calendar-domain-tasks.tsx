@@ -31,7 +31,6 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
   const [open, setOpen] = useState(defaultOpen);
   const [deleting, setDeleting] = useState(false);
   const [syncing, setSyncing] = useState(false);
-  const [republishing, setRepublishing] = useState(false);
 
   const handleDeleteAllUsersData = async () => {
     const confirmed = await confirm({
@@ -77,7 +76,7 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
 
   const handleRepublishContacts = async () => {
     const params: { contactsPerSecond?: string; scope?: string } = {};
-    const confirmed = await confirm({
+    await confirm({
       header: t("domains.calendarTasks.republishContactsTitle"),
       message: (
         <ConfirmTaskContent
@@ -89,21 +88,14 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
           }}
         />
       ),
+      action: async () => {
+        const { taskId } = await republishDomainContacts(domain, params);
+        toast({
+          title: t("common.taskStarted"),
+          description: <p>{t("domains.calendarTasks.taskLabel")} <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
+        });
+      },
     });
-    if (!confirmed) return;
-
-    setRepublishing(true);
-    try {
-      const { taskId } = await republishDomainContacts(domain, params);
-      toast({
-        title: t("common.taskStarted"),
-        description: <p>{t("domains.calendarTasks.taskLabel")} <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
-      });
-    } catch (err) {
-      toast({ title: t("domains.calendarTasks.errorRepublishingContacts"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setRepublishing(false);
-    }
   };
 
   return (
@@ -138,9 +130,7 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
               <Button
                 className="bg-green-400 hover:bg-green-500 rounded-sm w-full"
                 onClick={handleRepublishContacts}
-                disabled={republishing}
               >
-                {republishing && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
                 {t("domains.calendarTasks.republishContactsButton")}
               </Button>
               <p className="text-xs text-muted-foreground">

@@ -25,4 +25,23 @@ describe("header", () => {
     renderHeader(false);
     expect(screen.queryByRole("button")).toBeNull();
   });
+
+  it("links the subtitle to the documentation", () => {
+    render(
+      <MemoryRouter>
+        <Header headerTitle="Title" headerSubTitle="Subtitle" docuUrl="https://example.com" />
+      </MemoryRouter>
+    );
+    expect(screen.getByRole("link", { name: "doc" }).getAttribute("href")).toBe("https://example.com");
+  });
+
+  it("renders no doc link when there is no documentation", () => {
+    render(
+      <MemoryRouter>
+        <Header headerTitle="Title" headerSubTitle="Subtitle" docuUrl="" />
+      </MemoryRouter>
+    );
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(screen.getByText("Subtitle")).toBeTruthy();
+  });
 });

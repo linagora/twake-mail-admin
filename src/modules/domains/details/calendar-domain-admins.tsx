@@ -44,7 +44,7 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
 
   const handleAdd = async () => {
     const username = newAdmin.trim();
-    if (!username) return;
+    if (!username || adminStatus !== "exists") return;
     try {
       await addDomainAdmin(domain, username);
       toast({ title: t("domains.calendarAdmins.added") });
@@ -138,7 +138,7 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
               )}
               <button
                 onClick={handleAdd}
-                disabled={!newAdmin.trim()}
+                disabled={!newAdmin.trim() || adminStatus !== "exists"}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t("common.add")}

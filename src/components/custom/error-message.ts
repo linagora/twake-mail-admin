@@ -8,6 +8,23 @@ export interface ErrorMessage {
 const asText = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim() !== "" ? value : undefined;
 
+const XML_DOCUMENT_START = "<?xml";
+const SABRE_ERROR_MESSAGE = /<s:message>([\s\S]*?)<\/s:message>/;
+
+/**
+ * Side services relay the raw error document of the DAV server (Sabre) in
+ * `details`, stack trace included: keep only its human readable message.
+ */
+const withoutXmlDocument = (details: string | undefined): string | undefined => {
+  const xmlStart = details?.indexOf(XML_DOCUMENT_START) ?? -1;
+  if (!details || xmlStart < 0) {
+    return details;
+  }
+  const context = details.slice(0, xmlStart).trim();
+  const serverMessage = details.match(SABRE_ERROR_MESSAGE)?.[1].trim();
+  return asText([context, serverMessage].filter(Boolean).join(" — "));
+};
+
 const fromResponseData = (data: unknown): ErrorMessage | undefined => {
   const text = asText(data);
   if (text) {
@@ -17,7 +34,7 @@ const fromResponseData = (data: unknown): ErrorMessage | undefined => {
     const { message, details } = data as Record<string, unknown>;
     const serverMessage = asText(message);
     if (serverMessage) {
-      return { message: serverMessage, details: asText(details) };
+      return { message: serverMessage, details: withoutXmlDocument(asText(details)) };
     }
   }
   return undefined;

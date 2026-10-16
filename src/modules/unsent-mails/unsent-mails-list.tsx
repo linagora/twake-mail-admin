@@ -17,10 +17,12 @@ import {
   resendUnsentMail,
   downloadUnsentMail,
 } from "./api-client";
-import type { UnsentMailId, UnsentMail, UnsentMailSelection } from "./types";
+import { bulkSelection, matchesFilters } from "./filters";
+import type { UnsentMailId, UnsentMail } from "./types";
 import { currentLocale } from "@/i18n/locale";
 
 const PAGE_SIZE = 50;
+const BULK_HINT_ID = "unsent-mails-bulk-hint";
 
 export default function UnsentMailsList() {
   const { t } = useTranslation();
@@ -57,15 +59,10 @@ export default function UnsentMailsList() {
 
   const filtered = useMemo(() => {
     if (!ids) return [];
-    const sender = senderFilter.trim().toLowerCase();
-    const recipient = recipientFilter.trim().toLowerCase();
+    const unfiltered = !senderFilter.trim() && !recipientFilter.trim();
     return ids.filter(({ id }) => {
       const mail = mails[id];
-      if (!mail) return !sender && !recipient;
-      const fromMatch = !sender || (mail.mailFrom ?? "").toLowerCase().includes(sender);
-      const toMatch =
-        !recipient || mail.rcptTo.some((r) => r.toLowerCase().includes(recipient));
-      return fromMatch && toMatch;
+      return mail ? matchesFilters(mail, senderFilter, recipientFilter) : unfiltered;
     });
   }, [ids, mails, senderFilter, recipientFilter]);
 
@@ -75,19 +72,17 @@ export default function UnsentMailsList() {
 
   // The bulk tasks are filtered server side by the very same criteria the page
   // exposes, so that "all" never means more than what the admin is looking at.
-  const selection = useMemo<UnsentMailSelection>(
-    () => ({
-      sender: senderFilter.trim() || undefined,
-      recipient: recipientFilter.trim() || undefined,
-    }),
+  // WebAdmin only selects by complete address: a partial filter disables them.
+  const selection = useMemo(
+    () => bulkSelection(senderFilter, recipientFilter),
     [senderFilter, recipientFilter]
   );
 
   const selectionSummary = useMemo(
     () =>
       [
-        selection.sender ? `${t("unsentMails.sender")}: ${selection.sender}` : null,
-        selection.recipient
+        selection?.sender ? `${t("unsentMails.sender")}: ${selection.sender}` : null,
+        selection?.recipient
           ? `${t("unsentMails.recipient")}: ${selection.recipient}`
           : null,
       ]
@@ -103,6 +98,7 @@ export default function UnsentMailsList() {
   );
 
   const handleResendAll = async () => {
+    if (!selection) return;
     const confirmed = await confirm({
       header: t("unsentMails.resendAllTitle"),
       message: selectionSummary
@@ -125,6 +121,7 @@ export default function UnsentMailsList() {
   };
 
   const handleDeleteAll = async () => {
+    if (!selection) return;
     const confirmed = await confirm({
       header: t("unsentMails.deleteAllTitle"),
       message: selectionSummary
@@ -212,21 +209,32 @@ export default function UnsentMailsList() {
   return (
     <div>
       {canRunBulkTask && (
-        <div className="mb-4 flex flex-wrap gap-2">
-          <button
-            onClick={handleResendAll}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition flex items-center gap-2"
-          >
-            <Send className="w-4 h-4" />
-            {t("unsentMails.resendAll")}
-          </button>
-          <button
-            onClick={handleDeleteAll}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition flex items-center gap-2"
-          >
-            <Eraser className="w-4 h-4" />
-            {t("unsentMails.deleteAll")}
-          </button>
+        <div className="mb-4">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleResendAll}
+              disabled={!selection}
+              aria-describedby={selection ? undefined : BULK_HINT_ID}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-500"
+            >
+              <Send className="w-4 h-4" />
+              {t("unsentMails.resendAll")}
+            </button>
+            <button
+              onClick={handleDeleteAll}
+              disabled={!selection}
+              aria-describedby={selection ? undefined : BULK_HINT_ID}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-red-600"
+            >
+              <Eraser className="w-4 h-4" />
+              {t("unsentMails.deleteAll")}
+            </button>
+          </div>
+          {!selection && (
+            <p id={BULK_HINT_ID} className="mt-2 text-sm text-gray-600">
+              {t("unsentMails.bulkNeedsFullAddress")}
+            </p>
+          )}
         </div>
       )}
 

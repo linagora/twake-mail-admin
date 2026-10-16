@@ -8,7 +8,7 @@ import { getTeamMailboxMembers, addTeamMailboxMember, removeTeamMailboxMember, s
 import { GetTeamMailboxMembersResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
-import { useCheckUserExists } from "@/hooks/use-check-user-exists";
+import { isSubmittableUserStatus, useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import TeamMailboxFolders from "./team-mailbox-folders";
@@ -39,6 +39,7 @@ export default function TeamMailboxDetail() {
   const [newMember, setNewMember] = useState("");
   const [role, setRole] = useState<"member" | "manager">("member");
   const memberStatus = useCheckUserExists(newMember);
+  const canSubmit = !!newMember.trim() && isSubmittableUserStatus(memberStatus);
 
   const sorted = useMemo(() => {
     if (!members) return [];
@@ -53,13 +54,21 @@ export default function TeamMailboxDetail() {
     setPage(newPage);
   };
 
+  const confirmUnknownUser = (username: string) =>
+    confirm({
+      header: t("common.unknownUserTitle"),
+      message: t("common.unknownUserConfirm", { username }),
+    });
+
   const handleAdd = async () => {
+    if (!canSubmit) return;
     const username = newMember.trim();
-    if (!username) return;
+    if (memberStatus === "not_found" && !(await confirmUnknownUser(username))) return;
     try {
       await addTeamMailboxMember(domain!, mailbox!, username, role);
       toast({ title: t("domains.teamMailbox.memberAdded") });
       setNewMember("");
+      setRole("member");
       await refresh();
     } catch (err) {
       toast({
@@ -144,7 +153,7 @@ export default function TeamMailboxDetail() {
           </select>
           <button
             onClick={handleAdd}
-            disabled={!newMember.trim()}
+            disabled={!canSubmit}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t("common.add")}
