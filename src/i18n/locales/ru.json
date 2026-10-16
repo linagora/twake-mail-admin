@@ -1027,6 +1027,7 @@
       "calendarUrl": "Календарь",
       "selectCalendar": "Выберите календарь…",
       "durationMinutes": "Длительность (минуты)",
+      "durationInvalid": "Введите целое число минут, не меньше 1.",
       "active": "Активна",
       "inactive": "Неактивна",
       "publicId": "Публичный ID",

@@ -1027,6 +1027,7 @@
       "calendarUrl": "Calendrier",
       "selectCalendar": "Sélectionner un calendrier…",
       "durationMinutes": "Durée (minutes)",
+      "durationInvalid": "Saisissez un nombre entier de minutes, au moins 1.",
       "active": "Actif",
       "inactive": "Inactif",
       "publicId": "ID public",

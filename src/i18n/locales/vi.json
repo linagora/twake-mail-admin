@@ -1027,6 +1027,7 @@
       "calendarUrl": "Lịch",
       "selectCalendar": "Chọn một lịch…",
       "durationMinutes": "Thời lượng (phút)",
+      "durationInvalid": "Nhập số phút là số nguyên, tối thiểu 1.",
       "active": "Hoạt động",
       "inactive": "Không hoạt động",
       "publicId": "ID công khai",

@@ -7,6 +7,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserBookingLinks, createUserBookingLink, updateUserBookingLink, deleteUserBookingLink, resetUserBookingLinkPublicId, deleteUserBookingLinkEvents, getUserCalendars } from "../api-client";
 import { BookingLink, AvailabilityRule, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserCalendarsResponseType, UserCalendar } from "../types";
 import { isBookableCalendar } from "./bookable-calendars";
+import { isValidDurationMinutes, parseDurationMinutes } from "./booking-link-duration";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -288,6 +289,40 @@ function BookingLinkRow({
   );
 }
 
+// Keeps the raw text typed by the admin so the field can be emptied and
+// retyped; an invalid value is flagged instead of being silently replaced.
+function DurationInput({
+  id,
+  value,
+  onChange,
+}: {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const { t } = useTranslation();
+  const invalid = !isValidDurationMinutes(value);
+  const errorId = `${id}-error`;
+  return (
+    <>
+      <input
+        id={id}
+        type="number"
+        min={1}
+        step={1}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-invalid={invalid}
+        aria-describedby={invalid ? errorId : undefined}
+        className={`w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 ${invalid ? "border-red-500" : ""}`}
+      />
+      {invalid && (
+        <p id={errorId} className="text-xs text-red-500 mt-1">{t("users.bookingLinks.durationInvalid")}</p>
+      )}
+    </>
+  );
+}
+
 // Booking links always carry a color; the backend defaults to this value when
 // none is stored, so the create form starts from the same default (see issue #31).
 const DEFAULT_COLOR = "#6B4ECC";
@@ -338,22 +373,34 @@ export default function UserBookingLinks({ username }: Props) {
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState<CreateBookingLinkPayload>({ ...EMPTY_CREATE });
   const [createRules, setCreateRules] = useState<AvailabilityRule[]>([]);
+  const [createDuration, setCreateDuration] = useState(String(EMPTY_CREATE.durationMinutes));
   const [creating, setCreating] = useState(false);
 
   const [editLink, setEditLink] = useState<BookingLink | null>(null);
   const [editForm, setEditForm] = useState<UpdateBookingLinkPayload>({});
   const [editRules, setEditRules] = useState<AvailabilityRule[] | null>(null);
+  const [editDuration, setEditDuration] = useState("");
   const [editClearRules, setEditClearRules] = useState(false);
   const [saving, setSaving] = useState(false);
 
   if (!canView) return null;
 
   const links = data ?? [];
+  const createDurationMinutes = parseDurationMinutes(createDuration);
+  const editDurationMinutes = parseDurationMinutes(editDuration);
+
+  const closeCreate = () => {
+    setShowCreate(false);
+    setCreateForm({ ...EMPTY_CREATE });
+    setCreateRules([]);
+    setCreateDuration(String(EMPTY_CREATE.durationMinutes));
+  };
 
   const handleCreate = async () => {
+    if (createDurationMinutes === null) return;
     setCreating(true);
     try {
-      const payload: CreateBookingLinkPayload = { ...createForm };
+      const payload: CreateBookingLinkPayload = { ...createForm, durationMinutes: createDurationMinutes };
       const name = createForm.name?.trim();
       const description = createForm.description?.trim();
       if (name) payload.name = name; else delete payload.name;
@@ -362,9 +409,7 @@ export default function UserBookingLinks({ username }: Props) {
       payload.autoAccept = createForm.autoAccept ?? false;
       await createUserBookingLink(username, payload);
       toast({ title: t("users.bookingLinks.created") });
-      setCreateForm({ ...EMPTY_CREATE });
-      setCreateRules([]);
-      setShowCreate(false);
+      closeCreate();
       await refresh();
     } catch (err) {
       toast({ title: t("users.bookingLinks.errorCreate"), description: <ErrorDisplayer error={err} /> });
@@ -386,6 +431,7 @@ export default function UserBookingLinks({ username }: Props) {
       color: link.color ?? DEFAULT_COLOR,
     });
     setCreateRules(link.availabilityRules ? link.availabilityRules.map((r) => ({ ...r })) : []);
+    setCreateDuration(String(link.durationMinutes));
     setShowCreate(true);
   };
 
@@ -401,14 +447,15 @@ export default function UserBookingLinks({ username }: Props) {
       color: link.color ?? DEFAULT_COLOR,
     });
     setEditRules(link.availabilityRules ? [...link.availabilityRules] : []);
+    setEditDuration(String(link.durationMinutes));
     setEditClearRules(false);
   };
 
   const handleUpdate = async () => {
-    if (!editLink) return;
+    if (!editLink || editDurationMinutes === null) return;
     setSaving(true);
     try {
-      const payload: UpdateBookingLinkPayload = { ...editForm };
+      const payload: UpdateBookingLinkPayload = { ...editForm, durationMinutes: editDurationMinutes };
       // Blank name/description map to removal (null) on the backend.
       if (editForm.name !== undefined) payload.name = editForm.name?.trim() || null;
       if (editForm.description !== undefined) payload.description = editForm.description?.trim() || null;
@@ -535,7 +582,7 @@ export default function UserBookingLinks({ username }: Props) {
       {/* Create dialog */}
       <Dialog
         open={showCreate}
-        onOpenChange={(v) => { if (!v) { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); setCreateRules([]); } }}
+        onOpenChange={(v) => { if (!v) closeCreate(); }}
       >
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -571,14 +618,8 @@ export default function UserBookingLinks({ username }: Props) {
               />
             </div>
             <div>
-              <label className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")} *</label>
-              <input
-                type="number"
-                min={1}
-                value={createForm.durationMinutes}
-                onChange={(e) => setCreateForm((f) => ({ ...f, durationMinutes: parseInt(e.target.value, 10) || 1 }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              />
+              <label htmlFor="create-duration" className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")} *</label>
+              <DurationInput id="create-duration" value={createDuration} onChange={setCreateDuration} />
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -620,13 +661,13 @@ export default function UserBookingLinks({ username }: Props) {
               <RulesEditor rules={createRules} onChange={setCreateRules} />
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={() => { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); setCreateRules([]); }}>
+              <Button variant="outline" size="sm" onClick={closeCreate}>
                 {t("common.cancel")}
               </Button>
               <Button
                 size="sm"
                 onClick={handleCreate}
-                disabled={creating || !createForm.calendarUrl.trim() || !createForm.durationMinutes}
+                disabled={creating || !createForm.calendarUrl.trim() || createDurationMinutes === null}
               >
                 {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
                 {t("common.create")}
@@ -673,14 +714,8 @@ export default function UserBookingLinks({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")}</label>
-                <input
-                  type="number"
-                  min={1}
-                  value={editForm.durationMinutes ?? ""}
-                  onChange={(e) => setEditForm((f) => ({ ...f, durationMinutes: parseInt(e.target.value, 10) || undefined }))}
-                  className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-                />
+                <label htmlFor="edit-duration" className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")}</label>
+                <DurationInput id="edit-duration" value={editDuration} onChange={setEditDuration} />
               </div>
               <div className="flex items-center gap-2">
                 <input
@@ -742,7 +777,7 @@ export default function UserBookingLinks({ username }: Props) {
                 <Button variant="outline" size="sm" onClick={() => setEditLink(null)}>
                   {t("common.cancel")}
                 </Button>
-                <Button size="sm" onClick={handleUpdate} disabled={saving}>
+                <Button size="sm" onClick={handleUpdate} disabled={saving || editDurationMinutes === null}>
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                   {t("common.save")}
                 </Button>
