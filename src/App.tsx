@@ -27,6 +27,7 @@ import UsersList from "./modules/users/users-list";
 import UserDetail from "./modules/users/details/user-detail";
 import CalendarUserDetail from "./modules/users/details/calendar-user-detail";
 import UserMessageSearch from "./modules/users/details/user-message-search";
+import RemountOnParamsChange from "./components/custom/remount-on-params-change";
 import RegisteredUsers from "./modules/registered-users";
 import RegisteredUsersList from "./modules/registered-users/registered-users-list";
 import UnsentMails from "./modules/unsent-mails";
@@ -127,11 +128,11 @@ function GlobalLayout() {
             <Route path="/users" element={<Users />}>
               <Route index element={<UsersList />} />
               {isCalendar ? (
-                <Route path="user/:username" element={<CalendarUserDetail />} />
+                <Route path="user/:username" element={<RemountOnParamsChange><CalendarUserDetail /></RemountOnParamsChange>} />
               ) : (
                 <>
-                  <Route path="user/:username" element={<UserDetail />} />
-                  <Route path="user/:username/message-search" element={<UserMessageSearch />} />
+                  <Route path="user/:username" element={<RemountOnParamsChange><UserDetail /></RemountOnParamsChange>} />
+                  <Route path="user/:username/message-search" element={<RemountOnParamsChange><UserMessageSearch /></RemountOnParamsChange>} />
                 </>
               )}
             </Route>
