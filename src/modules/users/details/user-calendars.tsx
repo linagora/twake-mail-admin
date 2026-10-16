@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserCalendar, deleteUserCalendar, exportUserCalendar, getUserCalendarEventCount, getUserCalendars, importUserCalendar, setUserCalendarPublicRight, updateUserCalendar, updateUserCalendarInvitees } from "../api-client";
+import { isMainCalendar } from "./main-calendar";
 import { CalendarShareUpdate, CreateUserCalendarPayload, GetUserCalendarsResponseType, UpdateUserCalendarPayload, UserCalendar } from "../types";
 import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
@@ -172,6 +173,8 @@ function CalendarRow({
   const description = calendar["caldav:description"];
   const isPublicCalendar = isPublic(calendar);
   const id = calendarId(calendar);
+  // esn-sabre always refuses to delete the main calendar of a user.
+  const isMain = isOwned && isMainCalendar(calendar);
   // Bumped once an import task is over: a new key re-reads the event counter.
   const [countKey, setCountKey] = useState(0);
 
@@ -262,7 +265,17 @@ function CalendarRow({
           <Pencil className="w-3.5 h-3.5 text-blue-600" />
         </button>
       )}
-      {permissions.remove && (
+      {permissions.remove && isMain && (
+        <button
+          disabled
+          aria-label={t("users.calendars.deleteTitle")}
+          className="p-1.5 rounded-md opacity-40 cursor-not-allowed"
+          title={t("users.calendars.mainCalendarUndeletable")}
+        >
+          <Trash2 className="w-3.5 h-3.5 text-gray-400" />
+        </button>
+      )}
+      {permissions.remove && !isMain && (
         <button
           onClick={() => onDelete(calendar)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"

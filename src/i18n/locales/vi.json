@@ -919,6 +919,7 @@
       "deleteConfirm": "Bạn có thực sự muốn xóa lịch \"{{name}}\"?",
       "deleted": "Đã xóa lịch",
       "errorDelete": "Lỗi khi xóa lịch",
+      "mainCalendarUndeletable": "Không thể xóa lịch chính",
       "editTitle": "Sửa lịch",
       "updated": "Đã cập nhật lịch",
       "errorUpdate": "Lỗi khi cập nhật lịch",

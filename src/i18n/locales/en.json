@@ -919,6 +919,7 @@
       "deleteConfirm": "Do you really want to delete the calendar \"{{name}}\"?",
       "deleted": "Calendar deleted",
       "errorDelete": "Error deleting calendar",
+      "mainCalendarUndeletable": "The main calendar cannot be deleted",
       "editTitle": "Edit calendar",
       "updated": "Calendar updated",
       "errorUpdate": "Error updating calendar",

@@ -919,6 +919,7 @@
       "deleteConfirm": "¿Seguro que desea eliminar el calendario «{{name}}»?",
       "deleted": "Calendario eliminado",
       "errorDelete": "Error al eliminar el calendario",
+      "mainCalendarUndeletable": "El calendario principal no se puede eliminar",
       "editTitle": "Editar calendario",
       "updated": "Calendario actualizado",
       "errorUpdate": "Error al actualizar el calendario",
