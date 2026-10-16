@@ -1564,6 +1564,7 @@
     "errorRegistering": "Errore durante la registrazione dell'utente",
     "registered": "Utente «{{username}}» registrato",
     "searchPlaceholder": "Cerca utenti registrati...",
+    "noMatch": "Nessun utente registrato corrisponde a «{{query}}».",
     "editTitle": "Modifica utente registrato",
     "ldapWarning": "La tua installazione potrebbe includere un'importazione LDAP periodica: in tal caso, le modifiche apportate qui verranno prima o poi sovrascritte.",
     "email": "Email",

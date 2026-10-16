@@ -1564,6 +1564,7 @@
     "errorRegistering": "Lỗi khi đăng ký người dùng",
     "registered": "Đã đăng ký người dùng \"{{username}}\"",
     "searchPlaceholder": "Tìm người dùng đã đăng ký...",
+    "noMatch": "Không có người dùng đã đăng ký nào khớp với \"{{query}}\".",
     "editTitle": "Sửa người dùng đã đăng ký",
     "ldapWarning": "Hệ thống của bạn có thể bao gồm việc nhập định kỳ từ LDAP: nếu vậy, các thay đổi thực hiện ở đây cuối cùng sẽ bị ghi đè.",
     "email": "Email",

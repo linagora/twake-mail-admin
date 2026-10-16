@@ -300,6 +300,9 @@ export default function RegisteredUsersList() {
           </div>
         ))}
       </div>
+      {search && usersResult && filtered.length === 0 && (
+        <p className="text-gray-500 mt-4">{t("registeredUsers.noMatch", { query: search })}</p>
+      )}
     </div>
   );
 }

@@ -1564,6 +1564,7 @@
     "errorRegistering": "Error al registrar el usuario",
     "registered": "Usuario «{{username}}» registrado",
     "searchPlaceholder": "Buscar usuarios registrados...",
+    "noMatch": "Ningún usuario registrado coincide con «{{query}}».",
     "editTitle": "Editar usuario registrado",
     "ldapWarning": "Su instalación puede incluir una importación periódica desde LDAP: en ese caso, los cambios realizados aquí acabarán sobrescribiéndose.",
     "email": "Correo",
