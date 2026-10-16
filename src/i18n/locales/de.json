@@ -539,8 +539,7 @@
       "register": "Diesen Benutzer registrieren",
       "registerTitle": "Benutzer registrieren",
       "registerHint": "„{{username}}“ wird auf dem DAV-Server registriert. Vor- und Nachname werden nicht aus dem Verzeichnis gelesen, bitte bestätigen Sie sie.",
-      "registered": "Benutzer „{{username}}“ registriert",
-      "errorRegistering": "Fehler beim Registrieren des Benutzers"
+      "registered": "Benutzer „{{username}}“ registriert"
     },
     "aliases": {
       "title": "Aliasse",
@@ -1569,7 +1568,6 @@
     "email": "E-Mail",
     "firstname": "Vorname",
     "lastname": "Nachname",
-    "errorUpdating": "Fehler beim Aktualisieren des Benutzers",
     "updated": "Benutzer aktualisiert",
     "editTooltip": "Benutzer bearbeiten",
     "deleteTooltip": "Benutzer löschen",
@@ -1578,7 +1576,10 @@
     "deleted": "Benutzer „{{email}}“ gelöscht",
     "errorDeleting": "Fehler beim Löschen des Benutzers",
     "id": "ID:",
-    "subtitle": "Auf dem DAV-Server registrierte Benutzer verwalten."
+    "subtitle": "Auf dem DAV-Server registrierte Benutzer verwalten.",
+    "firstnameRequired": "Vorname ist erforderlich",
+    "lastnameRequired": "Nachname ist erforderlich",
+    "invalidEmail": "E-Mail muss eine gültige Adresse sein, z. B. user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "E-Mails, deren SMTP-Zustellung fehlgeschlagen ist, aufbewahrt zur Prüfung und erneuten Versendung.",

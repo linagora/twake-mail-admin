@@ -539,8 +539,7 @@
       "register": "Đăng ký người dùng này",
       "registerTitle": "Đăng ký người dùng",
       "registerHint": "Đăng ký \"{{username}}\" trên máy chủ DAV. Họ và tên không được đọc từ thư mục, vui lòng xác nhận.",
-      "registered": "Đã đăng ký người dùng \"{{username}}\"",
-      "errorRegistering": "Lỗi khi đăng ký người dùng"
+      "registered": "Đã đăng ký người dùng \"{{username}}\""
     },
     "aliases": {
       "title": "Bí danh",
@@ -1569,7 +1568,6 @@
     "email": "Email",
     "firstname": "Tên",
     "lastname": "Họ",
-    "errorUpdating": "Lỗi khi cập nhật người dùng",
     "updated": "Đã cập nhật người dùng",
     "editTooltip": "Sửa người dùng",
     "deleteTooltip": "Xóa người dùng",
@@ -1578,7 +1576,10 @@
     "deleted": "Đã xóa người dùng \"{{email}}\"",
     "errorDeleting": "Lỗi khi xóa người dùng",
     "id": "ID:",
-    "subtitle": "Quản lý người dùng đã đăng ký trên máy chủ DAV."
+    "subtitle": "Quản lý người dùng đã đăng ký trên máy chủ DAV.",
+    "firstnameRequired": "Tên là bắt buộc",
+    "lastnameRequired": "Họ là bắt buộc",
+    "invalidEmail": "Email phải là địa chỉ hợp lệ, ví dụ user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Thư không gửi được qua SMTP, được lưu lại để xem và gửi lại.",

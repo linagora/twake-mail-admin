@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getRegisteredUsers, createRegisteredUser, updateRegisteredUser, deleteRegisteredUser } from "./api-client";
 import { RegisteredUser } from "./types";
+import { validateRegisteredUser } from "./validation";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -34,27 +35,33 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
         </div>
       )}
       <div>
-        <label className="text-sm font-medium">{t("registeredUsers.email")}</label>
+        <label htmlFor="registered-user-email" className="text-sm font-medium">{t("registeredUsers.email")} <span className="text-red-500">*</span></label>
         <input
+          id="registered-user-email"
           type="text"
+          required
           value={email}
           onChange={(e) => { setEmail(e.target.value); handleChange(e.target.value, firstname, lastname); }}
           className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div>
-        <label className="text-sm font-medium">{t("registeredUsers.firstname")}</label>
+        <label htmlFor="registered-user-firstname" className="text-sm font-medium">{t("registeredUsers.firstname")} <span className="text-red-500">*</span></label>
         <input
+          id="registered-user-firstname"
           type="text"
+          required
           value={firstname}
           onChange={(e) => { setFirstname(e.target.value); handleChange(email, e.target.value, lastname); }}
           className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <div>
-        <label className="text-sm font-medium">{t("registeredUsers.lastname")}</label>
+        <label htmlFor="registered-user-lastname" className="text-sm font-medium">{t("registeredUsers.lastname")} <span className="text-red-500">*</span></label>
         <input
+          id="registered-user-lastname"
           type="text"
+          required
           value={lastname}
           onChange={(e) => { setLastname(e.target.value); handleChange(email, firstname, e.target.value); }}
           className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
@@ -130,7 +137,7 @@ export default function RegisteredUsersList() {
   const handleEdit = async (user: RegisteredUser) => {
     let currentValues = { email: user.email ?? "", firstname: user.firstname ?? "", lastname: user.lastname ?? "" };
 
-    const result = await confirm({
+    await confirm({
       header: t("registeredUsers.editTitle"),
       message: (
         <EditUserForm
@@ -138,19 +145,13 @@ export default function RegisteredUsersList() {
           onChange={(values) => { currentValues = values; }}
         />
       ),
+      validate: () => validateRegisteredUser(currentValues, t),
+      action: async () => {
+        await updateRegisteredUser(user.id, currentValues, domain);
+        toast({ title: t("registeredUsers.updated") });
+        refresh();
+      },
     });
-    if (!result) return;
-
-    try {
-      await updateRegisteredUser(user.id, currentValues, domain);
-      toast({ title: t("registeredUsers.updated") });
-      refresh();
-    } catch (err) {
-      toast({
-        title: t("registeredUsers.errorUpdating"),
-        description: <ErrorDisplayer error={err} />,
-      });
-    }
   };
 
   const filtered = useMemo(() => {

@@ -539,8 +539,7 @@
       "register": "Enregistrer cet utilisateur",
       "registerTitle": "Enregistrer l'utilisateur",
       "registerHint": "Enregistrement de « {{username}} » sur le serveur DAV. Le prénom et le nom ne sont pas lus depuis l'annuaire, merci de les confirmer.",
-      "registered": "Utilisateur « {{username}} » enregistré",
-      "errorRegistering": "Erreur lors de l'enregistrement de l'utilisateur"
+      "registered": "Utilisateur « {{username}} » enregistré"
     },
     "aliases": {
       "title": "Alias",
@@ -1569,7 +1568,6 @@
     "email": "Email",
     "firstname": "Prénom",
     "lastname": "Nom",
-    "errorUpdating": "Erreur lors de la mise à jour",
     "updated": "Utilisateur mis à jour",
     "editTooltip": "Modifier l'utilisateur",
     "deleteTooltip": "Supprimer l'utilisateur",
@@ -1578,7 +1576,10 @@
     "deleted": "Utilisateur « {{email}} » supprimé",
     "errorDeleting": "Erreur lors de la suppression de l'utilisateur",
     "id": "ID :",
-    "subtitle": "Gérer les utilisateurs enregistrés sur le serveur DAV."
+    "subtitle": "Gérer les utilisateurs enregistrés sur le serveur DAV.",
+    "firstnameRequired": "Le prénom est obligatoire",
+    "lastnameRequired": "Le nom est obligatoire",
+    "invalidEmail": "L'e-mail doit être une adresse valide, par exemple user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Mails dont la livraison SMTP a échoué, conservés pour inspection et réémission.",

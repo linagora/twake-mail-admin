@@ -539,8 +539,7 @@
       "register": "Registra questo utente",
       "registerTitle": "Registra utente",
       "registerHint": "Registrazione di «{{username}}» sul server DAV. Nome e cognome non vengono letti dalla directory: confermali.",
-      "registered": "Utente «{{username}}» registrato",
-      "errorRegistering": "Errore durante la registrazione dell'utente"
+      "registered": "Utente «{{username}}» registrato"
     },
     "aliases": {
       "title": "Alias",
@@ -1569,7 +1568,6 @@
     "email": "Email",
     "firstname": "Nome",
     "lastname": "Cognome",
-    "errorUpdating": "Errore durante l'aggiornamento dell'utente",
     "updated": "Utente aggiornato",
     "editTooltip": "Modifica utente",
     "deleteTooltip": "Elimina utente",
@@ -1578,7 +1576,10 @@
     "deleted": "Utente «{{email}}» eliminato",
     "errorDeleting": "Errore durante l'eliminazione dell'utente",
     "id": "ID:",
-    "subtitle": "Gestisci gli utenti registrati sul server DAV."
+    "subtitle": "Gestisci gli utenti registrati sul server DAV.",
+    "firstnameRequired": "Il nome è obbligatorio",
+    "lastnameRequired": "Il cognome è obbligatorio",
+    "invalidEmail": "L'e-mail deve essere un indirizzo valido, ad esempio user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Email il cui recapito SMTP non è riuscito, conservate per l'ispezione e il reinvio.",

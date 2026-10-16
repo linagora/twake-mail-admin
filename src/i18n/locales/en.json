@@ -539,8 +539,7 @@
       "register": "Register this user",
       "registerTitle": "Register user",
       "registerHint": "Registering \"{{username}}\" on the DAV server. Firstname and lastname are not read from the directory, please confirm them.",
-      "registered": "User \"{{username}}\" registered",
-      "errorRegistering": "Error registering user"
+      "registered": "User \"{{username}}\" registered"
     },
     "aliases": {
       "title": "Aliases",
@@ -1569,7 +1568,6 @@
     "email": "Email",
     "firstname": "Firstname",
     "lastname": "Lastname",
-    "errorUpdating": "Error updating user",
     "updated": "User updated",
     "editTooltip": "Edit user",
     "deleteTooltip": "Delete user",
@@ -1578,7 +1576,10 @@
     "deleted": "User \"{{email}}\" deleted",
     "errorDeleting": "Error deleting user",
     "id": "ID:",
-    "subtitle": "Manage users registered on the DAV server."
+    "subtitle": "Manage users registered on the DAV server.",
+    "firstnameRequired": "Firstname is required",
+    "lastnameRequired": "Lastname is required",
+    "invalidEmail": "Email must be a valid address, like user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Mails that failed SMTP delivery, retained for inspection and re-emission.",

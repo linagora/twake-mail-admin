@@ -539,8 +539,7 @@
       "register": "Registrar este usuario",
       "registerTitle": "Registrar usuario",
       "registerHint": "Registrando a «{{username}}» en el servidor DAV. El nombre y los apellidos no se leen del directorio: confírmelos.",
-      "registered": "Usuario «{{username}}» registrado",
-      "errorRegistering": "Error al registrar el usuario"
+      "registered": "Usuario «{{username}}» registrado"
     },
     "aliases": {
       "title": "Alias",
@@ -1569,7 +1568,6 @@
     "email": "Correo",
     "firstname": "Nombre",
     "lastname": "Apellidos",
-    "errorUpdating": "Error al actualizar el usuario",
     "updated": "Usuario actualizado",
     "editTooltip": "Editar usuario",
     "deleteTooltip": "Eliminar usuario",
@@ -1578,7 +1576,10 @@
     "deleted": "Usuario «{{email}}» eliminado",
     "errorDeleting": "Error al eliminar el usuario",
     "id": "ID:",
-    "subtitle": "Gestione los usuarios registrados en el servidor DAV."
+    "subtitle": "Gestione los usuarios registrados en el servidor DAV.",
+    "firstnameRequired": "El nombre es obligatorio",
+    "lastnameRequired": "El apellido es obligatorio",
+    "invalidEmail": "El correo debe ser una dirección válida, como user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Correos cuya entrega SMTP ha fallado, conservados para su inspección y reenvío.",
