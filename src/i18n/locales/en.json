@@ -1078,7 +1078,8 @@
   },
   "deleteUserDataForm": {
     "fromStep": "Resume from step",
-    "fromStepPlaceholder": "e.g. MailboxUserDeletionTaskStep"
+    "fromStepPlaceholder": "e.g. MailboxUserDeletionTaskStep",
+    "calendarFromStepPlaceholder": "e.g. DavCalendarDeletionTaskStep"
   },
   "restoreCriteria": {
     "addCriteria": "Add criterion",

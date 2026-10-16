@@ -10,4 +10,22 @@ describe("delete user data form", () => {
     render(<DeleteUserDataForm username="bob@example.com" onChange={() => {}} />);
     expect(screen.getByLabelText("deleteUserDataForm.fromStep:").tagName).toBe("INPUT");
   });
+
+  it("suggests a mail step by default", () => {
+    render(<DeleteUserDataForm username="bob@example.com" onChange={() => {}} />);
+    expect(screen.getByLabelText("deleteUserDataForm.fromStep:").getAttribute("placeholder"))
+      .toBe("deleteUserDataForm.fromStepPlaceholder");
+  });
+
+  it("suggests the step given by the caller", () => {
+    render(
+      <DeleteUserDataForm
+        username="bob@example.com"
+        onChange={() => {}}
+        fromStepPlaceholderKey="deleteUserDataForm.calendarFromStepPlaceholder"
+      />,
+    );
+    expect(screen.getByLabelText("deleteUserDataForm.fromStep:").getAttribute("placeholder"))
+      .toBe("deleteUserDataForm.calendarFromStepPlaceholder");
+  });
 });
