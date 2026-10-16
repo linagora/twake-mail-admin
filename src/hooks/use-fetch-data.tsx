@@ -1,6 +1,12 @@
-import { APIError } from "@/lib/apiClient";
+import { toErrorMessage } from "@/components/custom/error-message";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+
+// WebAdmin's message and details are preferred over the generic "Request failed with status code ..." of Axios.
+const toFailureMessage = (error: unknown): string => {
+  const { message, details } = toErrorMessage(error);
+  return details ? `${message} — ${details}` : message;
+};
 
 // Data is fetched again whenever the getter or the refreshKey changes.
 export function useFetchData<T>(getter: (() => Promise<T>) | null, refreshKey?: unknown) {
@@ -18,9 +24,8 @@ export function useFetchData<T>(getter: (() => Promise<T>) | null, refreshKey?: 
       const result = await getter();
       setData(result);
     } catch (error: unknown) {
-      const e = error as APIError;
       setData(null);
-      setFailureMessage(e.message ?? "");
+      setFailureMessage(toFailureMessage(error));
     } finally {
       setIsLoading(false);
     }
