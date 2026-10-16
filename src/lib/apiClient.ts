@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, AxiosError, InternalAxiosRequestConfig, AxiosRequestConfig } from "axios";
 import { getBearerToken, removeBearerToken } from "./auth";
+import { decodeBlobErrorBody } from "./blob-error-body";
 
 export interface APIError {
   response?: AxiosResponse;
@@ -38,6 +39,9 @@ export const apiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// Registered first so that the auth interceptors and callers see decoded bodies.
+apiClient.interceptors.response.use(undefined, decodeBlobErrorBody);
 
 export function configureApiClient(baseURL: string): void {
   apiClient.defaults.baseURL = baseURL;

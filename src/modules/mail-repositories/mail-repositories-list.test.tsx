@@ -112,6 +112,20 @@ describe("mail repositories list tasks", () => {
   });
 });
 
+describe("mail repositories list: links", () => {
+  it("opens the repository details with a clean query string", async () => {
+    render(
+      <MemoryRouter>
+        <MailRepositoriesList />
+      </MemoryRouter>
+    );
+
+    expect((await screen.findByRole("link", { name: "var/mail/error (3)" })).getAttribute("href")).toBe(
+      "/mail-repositories/repository/var%2Fmail%2Ferror?page=1&size=3"
+    );
+  });
+});
+
 describe("mail repositories list: move all mails", () => {
   afterEach(() => {
     REPOSITORIES.splice(1);

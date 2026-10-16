@@ -21,6 +21,7 @@ import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-c
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import { currentLocale } from "@/i18n/locale";
+import { formatByteSize } from "@/i18n/format-size";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -42,10 +43,7 @@ function compareValues(a: string | number | null, b: string | number | null, asc
 
 function formatSize(bytes: number): string {
   if (bytes === 0) return "—";
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  return formatByteSize(bytes);
 }
 
 function formatDate(d: string | null): string {

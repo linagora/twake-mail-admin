@@ -52,6 +52,7 @@ export default function CalendarUserTasks({ username }: Props) {
           <DeleteUserDataForm
             username={username}
             onChange={(value) => { currentFromStep = value; }}
+            fromStepPlaceholderKey="deleteUserDataForm.calendarFromStepPlaceholder"
           />
         ),
       });

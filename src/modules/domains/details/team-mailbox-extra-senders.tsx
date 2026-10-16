@@ -3,7 +3,7 @@ import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { useCheckUserExists } from "@/hooks/use-check-user-exists";
+import { isSubmittableUserStatus, useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getTeamMailboxExtraSenders, addTeamMailboxExtraSender, removeTeamMailboxExtraSender } from "../api-client";
@@ -35,6 +35,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
   const [page, setPage] = useState(1);
   const [newSender, setNewSender] = useState("");
   const senderStatus = useCheckUserExists(newSender);
+  const canSubmit = !!newSender.trim() && isSubmittableUserStatus(senderStatus);
 
   const sorted = useMemo(() => {
     if (!senders) return [];
@@ -51,9 +52,16 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
     setPage(p);
   };
 
+  const confirmUnknownUser = (username: string) =>
+    confirm({
+      header: t("common.unknownUserTitle"),
+      message: t("common.unknownUserConfirm", { username }),
+    });
+
   const handleAdd = async () => {
+    if (!canSubmit) return;
     const username = newSender.trim();
-    if (!username) return;
+    if (senderStatus === "not_found" && !(await confirmUnknownUser(username))) return;
     try {
       await addTeamMailboxExtraSender(domain, mailbox, username);
       toast({ title: t("domains.extraSenders.added") });
@@ -124,7 +132,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
           )}
           <button
             onClick={handleAdd}
-            disabled={!newSender.trim()}
+            disabled={!canSubmit}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t("common.add")}
