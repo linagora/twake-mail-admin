@@ -1,0 +1,53 @@
+// @vitest-environment jsdom
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import type { Resource } from "../types";
+
+const api = vi.hoisted(() => ({
+  getResources: vi.fn(),
+  createResource: vi.fn(),
+  deleteResource: vi.fn(),
+  getResourceEventCount: vi.fn(),
+  exportResource: vi.fn(),
+  importResource: vi.fn(),
+  setResourcePublicRight: vi.fn(),
+}));
+
+vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
+vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => true }));
+vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: () => "idle" }));
+vi.mock("../api-client", () => api);
+
+import CalendarDomainResources from "./calendar-domain-resources";
+
+const resource = (id: string, name: string | null): Resource => ({
+  id,
+  name,
+  deleted: false,
+  description: "",
+  icon: "projector",
+  domain: "open-paas.org",
+  creator: "alice@open-paas.org",
+  administrators: [],
+});
+
+beforeEach(() => {
+  api.getResources.mockReset();
+});
+
+afterEach(() => {
+  cleanup();
+});
+
+describe("CalendarDomainResources", () => {
+  it("lists a resource without a name under its ID, sorted with the named ones", async () => {
+    api.getResources.mockResolvedValue([
+      resource("room-2", "QA Room 2"),
+      resource("abc-nameless", null),
+    ]);
+    render(<CalendarDomainResources domain="open-paas.org" defaultOpen />);
+
+    const links = await screen.findAllByRole("link");
+    expect(links.map((link) => link.textContent)).toEqual(["abc-nameless", "QA Room 2"]);
+  });
+});

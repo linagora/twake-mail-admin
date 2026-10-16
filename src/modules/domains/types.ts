@@ -95,12 +95,14 @@ export interface ResourceAdmin {
   email: string;
 }
 
+// WebAdmin does not require a name nor a known icon: resources created by other
+// clients may lack them (see issue #292).
 export interface Resource {
   id: string;
-  name: string;
+  name: string | null;
   deleted: boolean;
   description: string;
-  icon: string;
+  icon: string | null;
   domain: string;
   creator: string;
   administrators: ResourceAdmin[];

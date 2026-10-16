@@ -7,7 +7,8 @@ import { Resource } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
-import ResourceIconPicker, { RESOURCE_ICONS } from "@/components/custom/resource-icon-picker";
+import ResourceIconPicker from "@/components/custom/resource-icon-picker";
+import { isKnownResourceIcon, resourceDisplayName } from "../resource-display";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -92,9 +93,9 @@ export default function CalendarResourceDetail() {
 
   const startEdit = () => {
     if (!resource) return;
-    setEditName(resource.name);
+    setEditName(resource.name ?? "");
     setEditDescription(resource.description || "");
-    setEditIcon(RESOURCE_ICONS.includes(resource.icon) ? resource.icon : "home");
+    setEditIcon(isKnownResourceIcon(resource.icon) ? resource.icon : "home");
     setEditing(true);
   };
 
@@ -120,7 +121,7 @@ export default function CalendarResourceDetail() {
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">{t("domains.calendarResources.detailTitle", { name: resource?.name })}</h3>
+        <h3 className="text-lg font-semibold">{t("domains.calendarResources.detailTitle", { name: resource && resourceDisplayName(resource) })}</h3>
         {resource && !editing && canEdit && (
           <button onClick={startEdit}
             className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition">
@@ -177,7 +178,9 @@ export default function CalendarResourceDetail() {
               {resource.icon && (
                 <p className="flex items-center gap-2">
                   <span className="text-gray-500 font-medium">{t("domains.calendarResources.iconLabel")}:</span>
-                  <img src={`/icons/resources/${resource.icon}.svg`} alt={resource.icon} className="w-5 h-5 inline-block" />
+                  {isKnownResourceIcon(resource.icon) && (
+                    <img src={`/icons/resources/${resource.icon}.svg`} alt={resource.icon} className="w-5 h-5 inline-block" />
+                  )}
                   {resource.icon}
                 </p>
               )}

@@ -6,6 +6,7 @@ import { ListSearchPagination } from "@/components/custom/list-search-pagination
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getResources, createResource, deleteResource, getResourceEventCount, exportResource, importResource, setResourcePublicRight } from "../api-client";
 import { Resource } from "../types";
+import { compareResourcesByDisplayName, resourceDisplayName } from "../resource-display";
 import DomainCalendarControls, { DomainCalendarApi } from "./domain-calendar-controls";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -14,7 +15,7 @@ import ResourceIconPicker from "@/components/custom/resource-icon-picker";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useTranslation } from "react-i18next";
 
-const searchable = (resource: Resource) => [resource.name, resource.description];
+const searchable = (resource: Resource) => [resourceDisplayName(resource), resource.description];
 
 const CONTENT_API: DomainCalendarApi = {
   count: getResourceEventCount,
@@ -59,7 +60,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
 
   const active = useMemo(() => {
     if (!resources) return [];
-    return resources.filter((r) => !r.deleted).sort((a, b) => a.name.localeCompare(b.name));
+    return resources.filter((r) => !r.deleted).sort(compareResourcesByDisplayName);
   }, [resources]);
   const { search, setSearch, filtered, paginated, page, totalPages, offset, goToPage } = useSearchPagination(active, searchable);
 
@@ -106,7 +107,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
   const handleRemove = async (resource: Resource) => {
     const confirmed = await confirm({
       header: t("domains.calendarResources.deleteTitle"),
-      message: t("domains.calendarResources.deleteConfirm", { name: resource.name }),
+      message: t("domains.calendarResources.deleteConfirm", { name: resourceDisplayName(resource) }),
     });
     if (!confirmed) return;
     try {
@@ -221,7 +222,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                   <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                     <a href={resourceLink ? resourceLink(resource.id) : `/domains/domain/${encodeURIComponent(domain)}/resource/${encodeURIComponent(resource.id)}`}
-                      className="text-blue-600 hover:underline">{resource.name}</a>
+                      className="text-blue-600 hover:underline">{resourceDisplayName(resource)}</a>
                     {resource.description && (
                       <span className="text-xs text-muted-foreground ml-2">{resource.description}</span>
                     )}
@@ -230,7 +231,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                     <DomainCalendarControls
                       domain={domain}
                       calendarId={resource.id}
-                      name={resource.name}
+                      name={resourceDisplayName(resource)}
                       permissions={contentPermissions}
                       api={CONTENT_API}
                       labels="domains.calendarResources"
