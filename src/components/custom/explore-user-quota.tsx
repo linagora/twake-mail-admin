@@ -8,6 +8,7 @@ import { appConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import i18n from "i18next";
 import { currentLocale } from "@/i18n/locale";
+import { formatByteSize } from "@/i18n/format-size";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -44,10 +45,7 @@ interface UserQuotaEntry {
 function formatSize(bytes: number | null): string {
   if (bytes === null) return "—";
   if (bytes === -1) return i18n.t("common.unlimited");
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  return formatByteSize(bytes);
 }
 
 function formatCount(count: number | null): string {
