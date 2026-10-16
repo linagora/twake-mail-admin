@@ -31,6 +31,8 @@
     "userExists": "L'utente esiste",
     "userNotFound": "Utente non trovato",
     "invalidUsername": "Nome utente non valido",
+    "unknownUserTitle": "Utente sconosciuto",
+    "unknownUserConfirm": "\"{{username}}\" non esiste. Aggiungerlo comunque?",
     "unlimited": "illimitato",
     "notSet": "non impostato",
     "invalidSize": "Dimensione non valida",

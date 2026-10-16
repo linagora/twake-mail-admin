@@ -31,6 +31,8 @@
     "userExists": "Пользователь существует",
     "userNotFound": "Пользователь не найден",
     "invalidUsername": "Недопустимое имя пользователя",
+    "unknownUserTitle": "Неизвестный пользователь",
+    "unknownUserConfirm": "«{{username}}» не существует. Всё равно добавить?",
     "unlimited": "без ограничений",
     "notSet": "не задано",
     "invalidSize": "Недопустимый размер",

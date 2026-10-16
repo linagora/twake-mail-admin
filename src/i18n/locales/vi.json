@@ -31,6 +31,8 @@
     "userExists": "Người dùng đã tồn tại",
     "userNotFound": "Không tìm thấy người dùng",
     "invalidUsername": "Tên người dùng không hợp lệ",
+    "unknownUserTitle": "Người dùng không xác định",
+    "unknownUserConfirm": "\"{{username}}\" không tồn tại. Vẫn thêm?",
     "unlimited": "không giới hạn",
     "notSet": "chưa đặt",
     "invalidSize": "Kích thước không hợp lệ",

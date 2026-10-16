@@ -31,6 +31,8 @@
     "userExists": "Utilisateur trouvé",
     "userNotFound": "Utilisateur introuvable",
     "invalidUsername": "Nom d'utilisateur invalide",
+    "unknownUserTitle": "Utilisateur inconnu",
+    "unknownUserConfirm": "« {{username}} » n'existe pas. L'ajouter quand même ?",
     "unlimited": "illimité",
     "notSet": "non défini",
     "invalidSize": "Taille invalide",

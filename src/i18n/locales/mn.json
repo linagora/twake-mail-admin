@@ -31,6 +31,8 @@
     "userExists": "Хэрэглэгч аль хэдийн байна",
     "userNotFound": "Хэрэглэгч олдсонгүй",
     "invalidUsername": "Хэрэглэгчийн нэр буруу байна",
+    "unknownUserTitle": "Үл мэдэгдэх хэрэглэгч",
+    "unknownUserConfirm": "\"{{username}}\" байхгүй байна. Гэсэн ч нэмэх үү?",
     "unlimited": "хязгааргүй",
     "notSet": "тохируулаагүй",
     "invalidSize": "Хэмжээ буруу байна",
