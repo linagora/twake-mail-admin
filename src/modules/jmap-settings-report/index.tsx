@@ -5,6 +5,9 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getJmapSettingsReport, JmapSettingsReport } from "./api-client";
 import Header from "@/components/custom/header";
 
+const docuUrl =
+  "https://github.com/linagora/tmail-backend/blob/master/docs/modules/ROOT/pages/tmail-backend/webadmin.adoc#jmap-settings-reports";
+
 export function ReportTable({ report }: { report: JmapSettingsReport }) {
   const { t } = useTranslation();
   const keys = Object.keys(report).sort();
@@ -60,7 +63,7 @@ export default function JmapSettingsReportPage() {
       <Header
         headerTitle={t("jmapReport.title")}
         headerSubTitle={t("jmapReport.subtitle")}
-        docuUrl=""
+        docuUrl={docuUrl}
       />
 
       <div className="mt-6 max-w-2xl space-y-4">
