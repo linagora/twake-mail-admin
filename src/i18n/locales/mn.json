@@ -961,6 +961,7 @@
     "addressBooks": {
       "title": "Хаягийн дэвтрүүд",
       "empty": "Хаягийн дэвтэр байхгүй.",
+      "ownerLabel": "эзэмшигч:",
       "createTitle": "Хаягийн дэвтэр үүсгэх",
       "name": "Нэр",
       "description": "Тайлбар",

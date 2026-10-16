@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Contact, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -6,10 +7,14 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserAddressBook, deleteUserAddressBook, exportUserAddressBook, getUserAddressBookContactCount, getUserAddressBooks, importUserAddressBook, setUserAddressBookPublicRight, updateUserAddressBook, updateUserAddressBookInvitees } from "../api-client";
 import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBooksResponseType, UpdateUserAddressBookPayload, UserAddressBook } from "../types";
 import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess, shareAccessToRight } from "./address-book-share-access";
+import { ownerEmail, parseAddressBookSource } from "./address-book-source";
 import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
+import { useDomain } from "@/modules/domain-admin/domain-context";
+import { getRegisteredUsers } from "@/modules/registered-users/api-client";
+import { RegisteredUser } from "@/modules/registered-users/types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -33,8 +38,12 @@ function addressBookId(addressBook: UserAddressBook): string {
   return last.replace(/\.json$/, "") || href;
 }
 
+// The sharee's mirror of a shared address book has no name of its own: the
+// source one is more telling than the technical id of the mirror.
 function addressBookName(addressBook: UserAddressBook): string {
-  return addressBook["dav:name"]?.trim() || addressBookId(addressBook);
+  return addressBook["dav:name"]?.trim()
+    || parseAddressBookSource(addressBook["openpaas:source"])?.addressBookId
+    || addressBookId(addressBook);
 }
 
 // A shared or subscribed address book is a mirror of its owner's one: it can be
@@ -80,6 +89,7 @@ interface AddressBookPermissions {
 function AddressBookRow({
   username,
   addressBook,
+  owner,
   permissions,
   onEdit,
   onDelete,
@@ -88,6 +98,7 @@ function AddressBookRow({
 }: {
   username: string;
   addressBook: UserAddressBook;
+  owner: string | null;
   permissions: AddressBookPermissions;
   onEdit: (addressBook: UserAddressBook) => void;
   onDelete: (addressBook: UserAddressBook) => void;
@@ -120,6 +131,17 @@ function AddressBookRow({
         </div>
         {addressBook["carddav:description"] && (
           <p className="text-xs text-gray-400">{addressBook["carddav:description"]}</p>
+        )}
+        {owner && (
+          <p className="text-xs text-gray-400">
+            {t("users.addressBooks.ownerLabel")}{" "}
+            <Link
+              to={`/users/user/${encodeURIComponent(owner)}`}
+              className="text-blue-600 hover:underline"
+            >
+              {owner}
+            </Link>
+          </p>
         )}
       </div>
       {owned && permissions.export && (
@@ -205,6 +227,14 @@ export default function UserAddressBooks({ username }: Props) {
   const fetchAddressBooks = useCallback(() => getUserAddressBooks(username), [username]);
   const { data, isLoading, error, refresh } = useFetchData<GetUserAddressBooksResponseType>(
     canView ? fetchAddressBooks : null
+  );
+
+  // Resolve owner emails of shared/subscribed address books via the registered users list.
+  const domain = useDomain() || undefined;
+  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const fetchRegisteredUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
+  const { data: registeredUsers } = useFetchData<RegisteredUser[]>(
+    canView && canRegisteredUsers ? fetchRegisteredUsers : null
   );
 
   const [open, setOpen] = useState(false);
@@ -352,6 +382,7 @@ export default function UserAddressBooks({ username }: Props) {
                     key={addressBookId(ab)}
                     username={username}
                     addressBook={ab}
+                    owner={ownerEmail(parseAddressBookSource(ab["openpaas:source"]), registeredUsers)}
                     permissions={permissions}
                     onEdit={openEdit}
                     onDelete={handleDelete}

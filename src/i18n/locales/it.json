@@ -961,6 +961,7 @@
     "addressBooks": {
       "title": "Rubriche",
       "empty": "Nessuna rubrica.",
+      "ownerLabel": "proprietario:",
       "createTitle": "Crea rubrica",
       "name": "Nome",
       "description": "Descrizione",

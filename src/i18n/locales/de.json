@@ -961,6 +961,7 @@
     "addressBooks": {
       "title": "Adressbücher",
       "empty": "Kein Adressbuch.",
+      "ownerLabel": "Eigentümer:",
       "createTitle": "Adressbuch erstellen",
       "name": "Name",
       "description": "Beschreibung",

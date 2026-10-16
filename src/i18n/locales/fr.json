@@ -961,6 +961,7 @@
     "addressBooks": {
       "title": "Carnets d'adresses",
       "empty": "Aucun carnet d'adresses.",
+      "ownerLabel": "propriétaire :",
       "createTitle": "Créer un carnet d'adresses",
       "name": "Nom",
       "description": "Description",

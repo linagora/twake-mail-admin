@@ -961,6 +961,7 @@
     "addressBooks": {
       "title": "Libretas de direcciones",
       "empty": "Ninguna libreta de direcciones.",
+      "ownerLabel": "propietario:",
       "createTitle": "Crear libreta de direcciones",
       "name": "Nombre",
       "description": "Descripción",

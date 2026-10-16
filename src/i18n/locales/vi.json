@@ -961,6 +961,7 @@
     "addressBooks": {
       "title": "Sổ địa chỉ",
       "empty": "Không có sổ địa chỉ.",
+      "ownerLabel": "chủ sở hữu:",
       "createTitle": "Tạo sổ địa chỉ",
       "name": "Tên",
       "description": "Mô tả",

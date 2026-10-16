@@ -961,6 +961,7 @@
     "addressBooks": {
       "title": "Адресные книги",
       "empty": "Нет адресной книги.",
+      "ownerLabel": "владелец:",
       "createTitle": "Создать адресную книгу",
       "name": "Имя",
       "description": "Описание",
