@@ -978,6 +978,12 @@
       "errorExport": "Error exporting address book",
       "importTitle": "Import contacts (vCard)",
       "errorImport": "Error importing contacts",
+      "system": {
+        "contacts": "My contacts",
+        "collected": "Collected contacts",
+        "badge": "System",
+        "hint": "Created by the server for every user: it can be neither renamed nor deleted."
+      },
       "publicRight": {
         "title": "Public visibility",
         "publicTitle": "Public address book (read)",

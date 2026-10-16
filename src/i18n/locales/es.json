@@ -978,6 +978,12 @@
       "errorExport": "Error al exportar la libreta de direcciones",
       "importTitle": "Importar contactos (vCard)",
       "errorImport": "Error al importar los contactos",
+      "system": {
+        "contacts": "Mis contactos",
+        "collected": "Contactos recopilados",
+        "badge": "Sistema",
+        "hint": "Creada por el servidor para cada usuario: no se puede renombrar ni eliminar."
+      },
       "publicRight": {
         "title": "Visibilidad pública",
         "publicTitle": "Libreta de direcciones pública (lectura)",

@@ -978,6 +978,12 @@
       "errorExport": "Erreur lors de l'export du carnet d'adresses",
       "importTitle": "Importer des contacts (vCard)",
       "errorImport": "Erreur lors de l'import des contacts",
+      "system": {
+        "contacts": "Mes contacts",
+        "collected": "Contacts collectés",
+        "badge": "Système",
+        "hint": "Créé par le serveur pour chaque utilisateur : il ne peut être ni renommé ni supprimé."
+      },
       "publicRight": {
         "title": "Visibilité publique",
         "publicTitle": "Carnet d'adresses public (lecture)",

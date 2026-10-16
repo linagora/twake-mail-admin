@@ -978,6 +978,12 @@
       "errorExport": "Fehler beim Exportieren des Adressbuchs",
       "importTitle": "Kontakte importieren (vCard)",
       "errorImport": "Fehler beim Importieren der Kontakte",
+      "system": {
+        "contacts": "Meine Kontakte",
+        "collected": "Gesammelte Kontakte",
+        "badge": "System",
+        "hint": "Vom Server für jeden Benutzer angelegt: kann weder umbenannt noch gelöscht werden."
+      },
       "publicRight": {
         "title": "Öffentliche Sichtbarkeit",
         "publicTitle": "Öffentliches Adressbuch (lesen)",

@@ -978,6 +978,12 @@
       "errorExport": "Errore durante l'esportazione della rubrica",
       "importTitle": "Importa contatti (vCard)",
       "errorImport": "Errore durante l'importazione dei contatti",
+      "system": {
+        "contacts": "I miei contatti",
+        "collected": "Contatti raccolti",
+        "badge": "Sistema",
+        "hint": "Creata dal server per ogni utente: non può essere rinominata né eliminata."
+      },
       "publicRight": {
         "title": "Visibilità pubblica",
         "publicTitle": "Rubrica pubblica (lettura)",
