@@ -17,6 +17,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { appConfig } from "@/lib/config";
+import { CALENDAR_WEBADMIN_DOC_URL, calendarWebadminDoc } from "@/lib/calendar-docs";
 
 const TASKS: TaskProps[] = [
   {
@@ -151,7 +152,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     params: [
       { key: 'usersPerSecond', defaultValue: '100', type: 'input' },
     ],
-    doc: '',
+    doc: calendarWebadminDoc('import-ldap-users'),
   },
   {
     nameKey: 'commonTasks.domainMemberSync',
@@ -161,7 +162,7 @@ const CALENDAR_TASKS: TaskProps[] = [
       { key: 'ignoredDomains', defaultValue: '', type: 'input' },
       { key: 'ldapFilter', defaultValue: '', type: 'input' },
     ],
-    doc: '',
+    doc: calendarWebadminDoc('domain-member-synchronisation'),
   },
   {
     nameKey: 'commonTasks.calendarEventReindex',
@@ -170,7 +171,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     params: [
       { key: 'eventsPerSecond', defaultValue: '100', type: 'input' },
     ],
-    doc: '',
+    doc: calendarWebadminDoc('calendar-event-reindexing'),
   },
   {
     nameKey: 'commonTasks.calendarEventArchival',
@@ -184,7 +185,7 @@ const CALENDAR_TASKS: TaskProps[] = [
       { key: 'isNotRecurring', defaultValue: '', type: 'select', values: ['', 'true', 'false'] },
       { key: 'eventsPerSecond', defaultValue: '100', type: 'input' },
     ],
-    doc: '',
+    doc: calendarWebadminDoc('calendar-event-archival'),
   },
   {
     nameKey: 'commonTasks.alarmRescheduling',
@@ -193,14 +194,14 @@ const CALENDAR_TASKS: TaskProps[] = [
     params: [
       { key: 'eventsPerSecond', defaultValue: '100', type: 'input' },
     ],
-    doc: '',
+    doc: calendarWebadminDoc('alarm-rescheduling'),
   },
   {
     nameKey: 'commonTasks.addMissingFields',
     taskKey: TaskKey.ADD_MISSING_FIELDS,
     command: 'curl -XPOST /registeredUsers?action=addMissingFields',
     params: [],
-    doc: '',
+    doc: calendarWebadminDoc('add-missing-fields-to-registered-users'),
   },
   {
     nameKey: 'commonTasks.republishCommonContacts',
@@ -210,7 +211,7 @@ const CALENDAR_TASKS: TaskProps[] = [
       { key: 'contactsPerSecond', defaultValue: '100', type: 'input' },
       { key: 'scope', defaultValue: '', type: 'select', values: ['', 'domain', 'user'] },
     ],
-    doc: '',
+    doc: calendarWebadminDoc('common-contacts-routes'),
     allowanceCheck: { verb: 'POST', pattern: '/contacts?action=republish' },
   },
   {
@@ -220,7 +221,7 @@ const CALENDAR_TASKS: TaskProps[] = [
     params: [
       { key: 'ignoredDomains', defaultValue: '', type: 'input' },
     ],
-    doc: '',
+    doc: calendarWebadminDoc('delete-domain-members-contacts'),
     danger: true,
   },
 ];
@@ -230,7 +231,7 @@ export default function CommonTasks() {
   if (appConfig.application === 'CALENDAR') {
     return (
       <div className="p-4 relative w-fit max-w-full">
-        <Header headerTitle={t("commonTasks.title")} headerSubTitle={t("commonTasks.subtitleCalendar")} docuUrl="" />
+        <Header headerTitle={t("commonTasks.title")} headerSubTitle={t("commonTasks.subtitleCalendar")} docuUrl={CALENDAR_WEBADMIN_DOC_URL} />
         <div className="grid grid-cols-1 gap-4 mt-4">
           {CALENDAR_TASKS.map((task) => (
             <TaskContainer {...task} key={task.nameKey} />
