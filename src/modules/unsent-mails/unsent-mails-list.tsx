@@ -57,14 +57,15 @@ export default function UnsentMailsList() {
     });
   }, [ids, page]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const isFiltering = Boolean(senderFilter.trim() || recipientFilter.trim());
+
   const filtered = useMemo(() => {
     if (!ids) return [];
-    const unfiltered = !senderFilter.trim() && !recipientFilter.trim();
     return ids.filter(({ id }) => {
       const mail = mails[id];
-      return mail ? matchesFilters(mail, senderFilter, recipientFilter) : unfiltered;
+      return mail ? matchesFilters(mail, senderFilter, recipientFilter) : !isFiltering;
     });
-  }, [ids, mails, senderFilter, recipientFilter]);
+  }, [ids, mails, senderFilter, recipientFilter, isFiltering]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageStart = (page - 1) * PAGE_SIZE;
@@ -269,6 +270,11 @@ export default function UnsentMailsList() {
 
       {isLoading && <p className="text-gray-500">{t("common.loading")}</p>}
       {error && <p className="text-red-500">{error}</p>}
+      {!isLoading && !error && ids && filtered.length === 0 && (
+        <p className="text-sm text-gray-500 mt-4">
+          {isFiltering ? t("unsentMails.noMatch") : t("unsentMails.empty")}
+        </p>
+      )}
 
       {filtered.length > 0 && (
         <PaginationControls

@@ -1651,7 +1651,9 @@
     "sendingTrials": "Lần thử gửi",
     "noTrials": "Chưa ghi nhận lần thử gửi nào.",
     "showContent": "Hiển thị nội dung",
-    "hideContent": "Ẩn nội dung"
+    "hideContent": "Ẩn nội dung",
+    "empty": "Không có thư chưa gửi.",
+    "noMatch": "Không có thư chưa gửi nào khớp với bộ lọc."
   },
   "domainAdminPages": {
     "quota": "Hạn ngạch",

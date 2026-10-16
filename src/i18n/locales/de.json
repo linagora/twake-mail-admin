@@ -1652,7 +1652,9 @@
     "sendingTrials": "Sendeversuche",
     "noTrials": "Keine Sendeversuche aufgezeichnet.",
     "showContent": "Inhalt anzeigen",
-    "hideContent": "Inhalt ausblenden"
+    "hideContent": "Inhalt ausblenden",
+    "empty": "Keine nicht zugestellten E-Mails.",
+    "noMatch": "Keine nicht zugestellte E-Mail entspricht den Filtern."
   },
   "domainAdminPages": {
     "quota": "Kontingent",

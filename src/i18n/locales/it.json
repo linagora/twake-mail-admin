@@ -1652,7 +1652,9 @@
     "sendingTrials": "Tentativi di invio",
     "noTrials": "Nessun tentativo di invio registrato.",
     "showContent": "Mostra il contenuto",
-    "hideContent": "Nascondi il contenuto"
+    "hideContent": "Nascondi il contenuto",
+    "empty": "Nessuna email non inviata.",
+    "noMatch": "Nessuna email non inviata corrisponde ai filtri."
   },
   "domainAdminPages": {
     "quota": "Quota",

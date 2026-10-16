@@ -1652,7 +1652,9 @@
     "sendingTrials": "Sending trials",
     "noTrials": "No sending trials recorded.",
     "showContent": "Show content",
-    "hideContent": "Hide content"
+    "hideContent": "Hide content",
+    "empty": "No unsent mail.",
+    "noMatch": "No unsent mail matches the filters."
   },
   "domainAdminPages": {
     "quota": "Quota",
