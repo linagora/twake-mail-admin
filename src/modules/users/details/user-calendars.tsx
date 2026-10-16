@@ -183,8 +183,8 @@ function CalendarRow({
         title={color}
       />
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="font-medium">{name}</p>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+          <p className="font-medium min-w-0 break-words">{name}</p>
           {permissions.count && (
             <CollectionCountBadge
               key={countKey}
