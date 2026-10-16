@@ -353,6 +353,7 @@
       "title": "Administradores del dominio",
       "addPlaceholder": "admin@domain.tld",
       "added": "Administrador añadido",
+      "alreadyAdmin": "Ya es administrador",
       "errorAdding": "Error al añadir el administrador",
       "removeTitle": "Quitar administrador",
       "removeConfirm": "¿Quitar a «{{username}}» de los administradores de {{domain}}?",

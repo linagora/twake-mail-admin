@@ -353,6 +353,7 @@
       "title": "Quản trị viên tên miền",
       "addPlaceholder": "admin@domain.tld",
       "added": "Đã thêm quản trị viên",
+      "alreadyAdmin": "Đã là quản trị viên",
       "errorAdding": "Lỗi khi thêm quản trị viên",
       "removeTitle": "Xóa quản trị viên",
       "removeConfirm": "Xóa \"{{username}}\" khỏi quản trị viên của {{domain}}?",

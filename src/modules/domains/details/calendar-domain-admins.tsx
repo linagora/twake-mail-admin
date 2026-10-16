@@ -13,6 +13,9 @@ import { useTranslation } from "react-i18next";
 
 const searchable = (admin: string) => [admin];
 
+const isListedAdmin = (admins: string[], username: string) =>
+  admins.some((admin) => admin.toLowerCase() === username.toLowerCase());
+
 interface Props {
   domain: string;
   defaultOpen?: boolean;
@@ -42,11 +45,14 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
 
   if (!canView) return null;
 
+  const trimmedAdmin = newAdmin.trim();
+  const isAlreadyAdmin = isListedAdmin(admins ?? [], trimmedAdmin);
+  const canSubmit = !!trimmedAdmin && !isAlreadyAdmin;
+
   const handleAdd = async () => {
-    const username = newAdmin.trim();
-    if (!username) return;
+    if (!canSubmit) return;
     try {
-      await addDomainAdmin(domain, username);
+      await addDomainAdmin(domain, trimmedAdmin);
       toast({ title: t("domains.calendarAdmins.added") });
       setNewAdmin("");
       setShowAddInput(false);
@@ -118,7 +124,13 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
               {adminStatus === "checking" && (
                 <span className="flex items-center text-xs text-gray-400 whitespace-nowrap">{t("common.checking")}</span>
               )}
-              {adminStatus === "exists" && (
+              {isAlreadyAdmin && (
+                <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
+                  <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
+                  {t("domains.calendarAdmins.alreadyAdmin")}
+                </span>
+              )}
+              {!isAlreadyAdmin && adminStatus === "exists" && (
                 <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
                   <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
                   {t("common.userExists")}
@@ -138,7 +150,7 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
               )}
               <button
                 onClick={handleAdd}
-                disabled={!newAdmin.trim()}
+                disabled={!canSubmit}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t("common.add")}
