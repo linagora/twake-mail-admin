@@ -24,4 +24,26 @@ describe("restore criteria builder", () => {
 
     expect(screen.queryByRole("combobox")).toBeNull();
   });
+
+  it("reports an incomplete criterion as invalid and flags it", () => {
+    const onChange = vi.fn();
+    render(<RestoreCriteriaBuilder onChange={onChange} />);
+    expect(onChange).toHaveBeenLastCalledWith([], undefined, true);
+
+    fireEvent.click(screen.getByText("users.deletedVault.criteria.addCriterion"));
+
+    expect(onChange).toHaveBeenLastCalledWith([], undefined, false);
+    expect(screen.getByRole("alert").textContent).toBe("users.deletedVault.criteria.incomplete");
+  });
+
+  it("reports the criteria as valid again once the incomplete criterion is removed", () => {
+    const onChange = vi.fn();
+    render(<RestoreCriteriaBuilder onChange={onChange} />);
+    fireEvent.click(screen.getByText("users.deletedVault.criteria.addCriterion"));
+
+    fireEvent.click(screen.getByRole("button", { name: "users.deletedVault.criteria.removeCriterion" }));
+
+    expect(onChange).toHaveBeenLastCalledWith([], undefined, true);
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
 });

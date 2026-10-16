@@ -789,7 +789,8 @@
         "addCriterion": "Thêm tiêu chí",
         "limitLabel": "Giới hạn (tùy chọn):",
         "noLimit": "Không giới hạn",
-        "removeCriterion": "Xóa tiêu chí"
+        "removeCriterion": "Xóa tiêu chí",
+        "incomplete": "Hãy hoàn thành hoặc xóa từng tiêu chí trước khi tìm kiếm hoặc khôi phục."
       },
       "operators": {
         "equals": "Bằng",

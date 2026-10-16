@@ -170,6 +170,7 @@ export default function UserTasks({ username }: Props) {
 
   const handleRestoreDeletedMessages = async () => {
     let request = buildRestoreRequest([], undefined);
+    let criteriaValid = true;
 
     await confirm({
       header: t("users.deletedVault.restoreTitle"),
@@ -178,12 +179,18 @@ export default function UserTasks({ username }: Props) {
         <FormTaskContent
           initialValues={request}
           renderForm={(onChange) => (
-            <RestoreCriteriaBuilder onChange={(criteria, limit) => onChange(buildRestoreRequest(criteria, limit))} />
+            <RestoreCriteriaBuilder
+              onChange={(criteria, limit, isValid) => {
+                criteriaValid = isValid;
+                onChange(buildRestoreRequest(criteria, limit));
+              }}
+            />
           )}
           buildCommand={(r) => restoreDeletedMessagesCommand(username, r)}
           onChange={(r) => { request = r; }}
         />
       ),
+      validate: () => (criteriaValid ? null : t("users.deletedVault.criteria.incomplete")),
       action: async () => {
         const data = await restoreDeletedMessages(username, request);
         toastTaskRunning(data.taskId);

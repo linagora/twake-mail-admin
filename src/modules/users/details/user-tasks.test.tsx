@@ -11,10 +11,11 @@ vi.mock("@/lib/proxy-resolver-context", () => ({
   useIsAllowed: (verb: HttpVerb, pattern: string) => proxy.resolver!.isAllowed(verb as never, pattern),
 }));
 vi.mock("@/lib/config", () => ({ appConfig: { application: "MAIL", mode: "DOMAIN", sso: null } }));
-const dialog = vi.hoisted(() => ({ message: null as unknown }));
+const dialog = vi.hoisted(() => ({ message: null as unknown, validate: undefined as (() => string | null) | undefined }));
 vi.mock("@/hooks/use-confirm", () => ({
-  useConfirm: () => async (options: { message: unknown }) => {
+  useConfirm: () => async (options: { message: unknown; validate?: () => string | null }) => {
     dialog.message = options.message;
+    dialog.validate = options.validate;
     return false;
   },
 }));
@@ -87,5 +88,16 @@ describe("user tasks: confirmation dialogs preview their command", () => {
     await openDialog("users.tasks.renameUser");
     fireEvent.change(screen.getByLabelText("renameUserForm.newUsername:"), { target: { value: "alice@linagora.com" } });
     expect(screen.getByText("curl -XPOST /users/bob@linagora.com/rename/alice@linagora.com?action=rename", { exact: false })).not.toBeNull();
+  });
+
+  it("refuses to restore deleted messages while a criterion is incomplete", async () => {
+    await openDialog("users.tasks.restoreDeleted");
+    expect(dialog.validate!()).toBeNull();
+
+    fireEvent.click(screen.getByText("users.deletedVault.criteria.addCriterion"));
+    expect(dialog.validate!()).toBe("users.deletedVault.criteria.incomplete");
+
+    fireEvent.click(screen.getByRole("button", { name: "users.deletedVault.criteria.removeCriterion" }));
+    expect(dialog.validate!()).toBeNull();
   });
 });

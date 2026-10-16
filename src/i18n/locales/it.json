@@ -789,7 +789,8 @@
         "addCriterion": "Aggiungi criterio",
         "limitLabel": "Limite (facoltativo):",
         "noLimit": "Nessun limite",
-        "removeCriterion": "Rimuovi il criterio"
+        "removeCriterion": "Rimuovi il criterio",
+        "incomplete": "Completa o rimuovi ogni criterio prima di cercare o ripristinare."
       },
       "operators": {
         "equals": "Uguale a",

@@ -37,6 +37,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
   const [open, setOpen] = useState(false);
   const [criteria, setCriteria] = useState<RestoreCriterion[]>([]);
   const [limit, setLimit] = useState<number | undefined>(undefined);
+  const [criteriaValid, setCriteriaValid] = useState(true);
   const [loading, setLoading] = useState(false);
   const [restoreLoading, setRestoreLoading] = useState(false);
   const [results, setResults] = useState<DeletedMessage[] | null>(null);
@@ -161,9 +162,10 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
       {open && (
         <div className="mt-3 space-y-4">
           <RestoreCriteriaBuilder
-            onChange={(c, l) => {
+            onChange={(c, l, valid) => {
               setCriteria(c);
               setLimit(l);
+              setCriteriaValid(valid);
             }}
           />
 
@@ -172,7 +174,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
               <Button
                 size="sm"
                 onClick={handleSearch}
-                disabled={loading || restoreLoading}
+                disabled={loading || restoreLoading || !criteriaValid}
                 className="flex items-center gap-2"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
@@ -184,7 +186,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                 size="sm"
                 variant="outline"
                 onClick={handleRestore}
-                disabled={loading || restoreLoading}
+                disabled={loading || restoreLoading || !criteriaValid}
                 className="flex items-center gap-2 text-green-700 border-green-600 hover:bg-green-50"
               >
                 {restoreLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}

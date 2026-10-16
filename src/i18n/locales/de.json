@@ -789,7 +789,8 @@
         "addCriterion": "Kriterium hinzufügen",
         "limitLabel": "Limit (optional):",
         "noLimit": "Kein Limit",
-        "removeCriterion": "Kriterium entfernen"
+        "removeCriterion": "Kriterium entfernen",
+        "incomplete": "Vervollständigen oder entfernen Sie jedes Kriterium, bevor Sie suchen oder wiederherstellen."
       },
       "operators": {
         "equals": "Gleich",

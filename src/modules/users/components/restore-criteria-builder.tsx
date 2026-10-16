@@ -51,6 +51,10 @@ const FIELD_CONFIG: Record<string, { operators: string[]; inputType: string }> =
 
 const FIELD_NAMES = Object.keys(FIELD_CONFIG);
 
+const getInputType = (fieldName: string) => {
+  return FIELD_CONFIG[fieldName]?.inputType || "text";
+};
+
 interface CriterionRow {
   fieldName: string;
   operator: string;
@@ -58,8 +62,10 @@ interface CriterionRow {
 }
 
 interface Props {
-  onChange: (criteria: RestoreCriterion[], limit: number | undefined) => void;
+  onChange: (criteria: RestoreCriterion[], limit: number | undefined, isValid: boolean) => void;
 }
+
+const isComplete = (c: CriterionRow) => Boolean(c.fieldName && c.operator && c.value);
 
 export default function RestoreCriteriaBuilder({ onChange }: Props) {
   const { t } = useTranslation();
@@ -68,11 +74,12 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
   const [limit, setLimit] = useState<string>("");
 
   useEffect(() => {
-    const validCriteria = criteria.filter(
-      (c) => c.fieldName && c.operator && c.value
-    );
     const parsedLimit = limit ? parseInt(limit, 10) : undefined;
-    onChange(validCriteria, Number.isNaN(parsedLimit) ? undefined : parsedLimit);
+    onChange(
+      criteria.filter(isComplete),
+      Number.isNaN(parsedLimit) ? undefined : parsedLimit,
+      criteria.every(isComplete)
+    );
   }, [criteria, limit]);
 
   const addCriterion = () => {
@@ -94,13 +101,12 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
         if (field === "fieldName") {
           return { fieldName: value, operator: "", value: "" };
         }
+        if (field === "operator" && getInputType(c.fieldName) === "checkbox" && !c.value) {
+          return { ...c, operator: value, value: "false" };
+        }
         return { ...c, [field]: value };
       })
     );
-  };
-
-  const getInputType = (fieldName: string) => {
-    return FIELD_CONFIG[fieldName]?.inputType || "text";
   };
 
   const getOperators = (fieldName: string) => {
@@ -214,6 +220,12 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
           </div>
         );
       })}
+
+      {!criteria.every(isComplete) && (
+        <p role="alert" className="text-sm text-red-600">
+          {t("users.deletedVault.criteria.incomplete")}
+        </p>
+      )}
 
       <Button variant="outline" size="sm" onClick={addCriterion}>
         <Plus className="w-4 h-4 mr-1" />
