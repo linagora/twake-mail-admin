@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import i18n from "i18next";
 import { currentLocale } from "@/i18n/locale";
 import { formatByteSize } from "@/i18n/format-size";
+import { formatPercent } from "@/i18n/format-percent";
 import { toErrorMessage } from "./error-message";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
@@ -53,10 +54,6 @@ function formatCount(count: number | null): string {
   if (count === null) return "—";
   if (count === -1) return i18n.t("common.unlimited");
   return count.toLocaleString(currentLocale());
-}
-
-function formatPercent(ratio: number): string {
-  return `${(ratio * 100).toFixed(1)}%`;
 }
 
 interface Props {

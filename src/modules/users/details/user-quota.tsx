@@ -12,6 +12,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import i18n from "i18next";
 import { currentLocale } from "@/i18n/locale";
 import { formatByteSize } from "@/i18n/format-size";
+import { formatPercent } from "@/i18n/format-percent";
 
 function formatSize(bytes: number | null): string {
   if (bytes === null) return i18n.t("common.notSet");
@@ -141,9 +142,9 @@ export default function UserQuota({ username }: Props) {
                 <div className="flex flex-wrap justify-between items-center gap-x-4 py-1">
                   <span className="text-sm text-gray-600">{t("common.ratio")}</span>
                   <span className="text-sm">
-                    <span className="mr-4">{t("common.count")} <strong>{(quota.occupation.ratio.count * 100).toFixed(1)}%</strong></span>
-                    <span className="mr-4">{t("common.size")} <strong>{(quota.occupation.ratio.size * 100).toFixed(1)}%</strong></span>
-                    {t("common.max")} <strong>{(quota.occupation.ratio.max * 100).toFixed(1)}%</strong>
+                    <span className="mr-4">{t("common.count")} <strong>{formatPercent(quota.occupation.ratio.count)}</strong></span>
+                    <span className="mr-4">{t("common.size")} <strong>{formatPercent(quota.occupation.ratio.size)}</strong></span>
+                    {t("common.max")} <strong>{formatPercent(quota.occupation.ratio.max)}</strong>
                   </span>
                 </div>
                 <div className="mt-1 w-full bg-gray-200 rounded-full h-2">

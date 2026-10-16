@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { getAllChannels } from "./api-client";
 import { NetworkChannel } from "./types";
 import { useFetchData } from "@/hooks/use-fetch-data";
+import { currentLocale } from "@/i18n/locale";
+import { formatPercent } from "@/i18n/format-percent";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, RefreshCw } from "lucide-react";
 
@@ -125,7 +127,7 @@ export default function ChannelsUserAgent() {
                 <span className="inline-block w-3 h-3 rounded-full shrink-0" style={{ background: s.color }} />
                 <span className="truncate max-w-xs font-mono">{s.label}</span>
                 <span className="text-muted-foreground ml-auto pl-4 shrink-0">
-                  {s.count} ({((s.count / total) * 100).toFixed(1)}%)
+                  {s.count.toLocaleString(currentLocale())} ({formatPercent(s.count / total)})
                 </span>
               </div>
             ))}
