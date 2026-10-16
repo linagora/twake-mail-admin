@@ -319,7 +319,9 @@
       "deleted": "Đã xóa mẫu chữ ký",
       "errorDeleting": "Lỗi khi xóa mẫu chữ ký",
       "deleteAll": "Xóa tất cả",
-      "empty": "Chưa cấu hình mẫu chữ ký nào."
+      "empty": "Chưa cấu hình mẫu chữ ký nào.",
+      "addTemplate": "Thêm mẫu chữ ký",
+      "removeTemplate": "Xóa mẫu \"{{language}}\""
     },
     "calendarDetail": {
       "title": "Chi tiết tên miền Lịch",

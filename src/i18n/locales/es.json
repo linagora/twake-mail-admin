@@ -319,7 +319,9 @@
       "deleted": "Plantillas de firma eliminadas",
       "errorDeleting": "Error al eliminar las plantillas de firma",
       "deleteAll": "Eliminar todas",
-      "empty": "No hay plantillas de firma configuradas."
+      "empty": "No hay plantillas de firma configuradas.",
+      "addTemplate": "Añadir plantilla de firma",
+      "removeTemplate": "Eliminar la plantilla «{{language}}»"
     },
     "calendarDetail": {
       "title": "Detalles del dominio de calendario",

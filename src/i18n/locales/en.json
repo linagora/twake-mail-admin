@@ -319,7 +319,9 @@
       "deleted": "Signature templates deleted",
       "errorDeleting": "Error deleting signature templates",
       "deleteAll": "Delete all",
-      "empty": "No signature templates configured."
+      "empty": "No signature templates configured.",
+      "addTemplate": "Add signature template",
+      "removeTemplate": "Remove template \"{{language}}\""
     },
     "calendarDetail": {
       "title": "Calendar Domain Details",

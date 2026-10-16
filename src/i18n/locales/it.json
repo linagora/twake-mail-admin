@@ -319,7 +319,9 @@
       "deleted": "Modelli di firma eliminati",
       "errorDeleting": "Errore durante l'eliminazione dei modelli di firma",
       "deleteAll": "Elimina tutto",
-      "empty": "Nessun modello di firma configurato."
+      "empty": "Nessun modello di firma configurato.",
+      "addTemplate": "Aggiungi modello di firma",
+      "removeTemplate": "Rimuovi il modello «{{language}}»"
     },
     "calendarDetail": {
       "title": "Dettagli del dominio del calendario",

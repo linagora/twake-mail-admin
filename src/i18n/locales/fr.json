@@ -319,7 +319,9 @@
       "deleted": "Modèles de signature supprimés",
       "errorDeleting": "Erreur lors de la suppression des modèles",
       "deleteAll": "Tout supprimer",
-      "empty": "Aucun modèle de signature configuré."
+      "empty": "Aucun modèle de signature configuré.",
+      "addTemplate": "Ajouter un modèle de signature",
+      "removeTemplate": "Supprimer le modèle « {{language}} »"
     },
     "calendarDetail": {
       "title": "Détails du domaine calendrier",

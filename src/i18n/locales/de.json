@@ -319,7 +319,9 @@
       "deleted": "Signaturvorlagen gelöscht",
       "errorDeleting": "Fehler beim Löschen der Signaturvorlagen",
       "deleteAll": "Alle löschen",
-      "empty": "Keine Signaturvorlagen konfiguriert."
+      "empty": "Keine Signaturvorlagen konfiguriert.",
+      "addTemplate": "Signaturvorlage hinzufügen",
+      "removeTemplate": "Vorlage „{{language}}“ entfernen"
     },
     "calendarDetail": {
       "title": "Details der Kalender-Domain",
