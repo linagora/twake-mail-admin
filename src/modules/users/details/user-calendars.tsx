@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { Link } from "react-router";
 import { CalendarDays, ChevronDown, ChevronRight, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -16,6 +16,7 @@ import { RegisteredUser } from "@/modules/registered-users/types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DEFAULT_CALENDAR_COLOR, isValidCalendarColor, toColorPickerValue } from "./calendar-color";
 
 interface Props {
   username: string;
@@ -275,6 +276,40 @@ function CalendarRow({
   );
 }
 
+function CalendarColorField({ value, onChange }: { value: string | undefined; onChange: (color: string) => void }) {
+  const { t } = useTranslation();
+  const id = useId();
+  const invalid = !isValidCalendarColor(value);
+
+  return (
+    <div>
+      <label htmlFor={id} className="text-sm font-medium">{t("users.calendars.color")}</label>
+      <div className="flex gap-2 mt-1 items-center">
+        <input
+          type="color"
+          value={toColorPickerValue(value)}
+          onChange={(e) => onChange(e.target.value)}
+          aria-label={t("users.calendars.color")}
+          className="h-9 w-12 cursor-pointer border rounded-md"
+        />
+        <input
+          id={id}
+          type="text"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={DEFAULT_CALENDAR_COLOR}
+          aria-invalid={invalid}
+          aria-describedby={invalid ? `${id}-error` : undefined}
+          className={`flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 ${invalid ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
+        />
+      </div>
+      {invalid && (
+        <p id={`${id}-error`} className="text-xs text-red-600 mt-1">{t("users.calendars.invalidColor")}</p>
+      )}
+    </div>
+  );
+}
+
 export default function UserCalendars({ username }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -330,7 +365,7 @@ export default function UserCalendars({ username }: Props) {
 
   const handleCreate = async () => {
     const name = createForm["dav:name"].trim();
-    if (!name) return;
+    if (!name || !isValidCalendarColor(createForm["apple:color"])) return;
     setCreating(true);
     try {
       const payload: CreateUserCalendarPayload = { "dav:name": name };
@@ -360,7 +395,7 @@ export default function UserCalendars({ username }: Props) {
   const handleUpdate = async () => {
     if (!editCalendar) return;
     const name = editForm["dav:name"]?.trim();
-    if (!name) return;
+    if (!name || !isValidCalendarColor(editForm["apple:color"])) return;
     setSaving(true);
     try {
       const payload: UpdateUserCalendarPayload = {
@@ -496,24 +531,10 @@ export default function UserCalendars({ username }: Props) {
                 className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div>
-              <label className="text-sm font-medium">{t("users.calendars.color")}</label>
-              <div className="flex gap-2 mt-1 items-center">
-                <input
-                  type="color"
-                  value={createForm["apple:color"]?.trim() || "#007fd8"}
-                  onChange={(e) => setCreateForm((f) => ({ ...f, "apple:color": e.target.value }))}
-                  className="h-9 w-12 cursor-pointer border rounded-md"
-                />
-                <input
-                  type="text"
-                  value={createForm["apple:color"] ?? ""}
-                  onChange={(e) => setCreateForm((f) => ({ ...f, "apple:color": e.target.value }))}
-                  placeholder="#007fd8"
-                  className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
+            <CalendarColorField
+              value={createForm["apple:color"]}
+              onChange={(color) => setCreateForm((f) => ({ ...f, "apple:color": color }))}
+            />
             <div>
               <label className="text-sm font-medium">{t("users.calendars.description")}</label>
               <input
@@ -530,7 +551,7 @@ export default function UserCalendars({ username }: Props) {
               <Button
                 size="sm"
                 onClick={handleCreate}
-                disabled={creating || !createForm["dav:name"].trim()}
+                disabled={creating || !createForm["dav:name"].trim() || !isValidCalendarColor(createForm["apple:color"])}
               >
                 {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
                 {t("common.create")}
@@ -557,24 +578,10 @@ export default function UserCalendars({ username }: Props) {
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium">{t("users.calendars.color")}</label>
-                <div className="flex gap-2 mt-1 items-center">
-                  <input
-                    type="color"
-                    value={editForm["apple:color"]?.trim() || "#007fd8"}
-                    onChange={(e) => setEditForm((f) => ({ ...f, "apple:color": e.target.value }))}
-                    className="h-9 w-12 cursor-pointer border rounded-md"
-                  />
-                  <input
-                    type="text"
-                    value={editForm["apple:color"] ?? ""}
-                    onChange={(e) => setEditForm((f) => ({ ...f, "apple:color": e.target.value }))}
-                    placeholder="#007fd8"
-                    className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
+              <CalendarColorField
+                value={editForm["apple:color"]}
+                onChange={(color) => setEditForm((f) => ({ ...f, "apple:color": color }))}
+              />
               <div>
                 <label className="text-sm font-medium">{t("users.calendars.description")}</label>
                 <input
@@ -591,7 +598,7 @@ export default function UserCalendars({ username }: Props) {
                 <Button
                   size="sm"
                   onClick={handleUpdate}
-                  disabled={saving || !editForm["dav:name"]?.trim()}
+                  disabled={saving || !editForm["dav:name"]?.trim() || !isValidCalendarColor(editForm["apple:color"])}
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                   {t("common.save")}

@@ -912,6 +912,7 @@
       "createTitle": "Crear calendario",
       "name": "Nombre",
       "color": "Color",
+      "invalidColor": "Introduzca un color con el formato #rrggbb (p. ej. #007fd8).",
       "description": "Descripción",
       "created": "Calendario creado",
       "errorCreate": "Error al crear el calendario",

@@ -912,6 +912,7 @@
       "createTitle": "Tạo lịch",
       "name": "Tên",
       "color": "Màu",
+      "invalidColor": "Nhập màu theo định dạng #rrggbb (ví dụ: #007fd8).",
       "description": "Mô tả",
       "created": "Đã tạo lịch",
       "errorCreate": "Lỗi khi tạo lịch",
