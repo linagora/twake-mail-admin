@@ -76,3 +76,43 @@ describe("ConfirmTaskContent: quoted commands", () => {
     );
   });
 });
+
+describe("ConfirmTaskContent: parameters already present in the command", () => {
+  function renderCommand(command: string) {
+    render(
+      <ConfirmTaskContent
+        message="message"
+        command={command}
+        params={[{ key: "eventsPerSecond", defaultValue: "100", type: "input" }]}
+        getParamValues={() => {}}
+      />
+    );
+  }
+
+  const typeRate = (value: string) =>
+    fireEvent.change(screen.getByRole("textbox"), { target: { value } });
+
+  it("overrides the value of the base command", () => {
+    renderCommand("curl -XPOST /calendars?task=scheduleAlarms&eventsPerSecond=100");
+
+    typeRate("9");
+
+    expect(preview()).toMatch(/curl -XPOST \/calendars\?task=scheduleAlarms&eventsPerSecond=9$/);
+  });
+
+  it("removes the parameter of the base command once the field is cleared", () => {
+    renderCommand("curl -XPOST /calendars?task=scheduleAlarms&eventsPerSecond=100");
+
+    typeRate("");
+
+    expect(preview()).toMatch(/curl -XPOST \/calendars\?task=scheduleAlarms$/);
+  });
+
+  it("keeps the following parameters when removing the first one", () => {
+    renderCommand("curl -XPOST '/calendars?eventsPerSecond=100&task=scheduleAlarms'");
+
+    typeRate("");
+
+    expect(preview()).toMatch(/curl -XPOST '\/calendars\?task=scheduleAlarms'$/);
+  });
+});
