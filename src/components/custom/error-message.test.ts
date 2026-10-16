@@ -66,6 +66,28 @@ describe("toErrorMessage", () => {
     expect(toErrorMessage(axiosErrorWithData("Bad gateway"))).toEqual({ message: "Bad gateway" });
   });
 
+  it("uses the WebAdmin message of an unparsed JSON body", () => {
+    const error = axiosErrorWithData(
+      '{"statusCode":404,"type":"notFound","message":"GET /metrics can not be found","details":null}',
+    );
+
+    expect(toErrorMessage(error)).toEqual({ message: "GET /metrics can not be found", details: undefined });
+  });
+
+  it("uses the WebAdmin message and details of an unparsed JSON body", () => {
+    const error = axiosErrorWithData('{"statusCode":500,"message":"Boom","details":"Something failed"}');
+
+    expect(toErrorMessage(error)).toEqual({ message: "Boom", details: "Something failed" });
+  });
+
+  it("keeps a JSON text body carrying no message as is", () => {
+    expect(toErrorMessage(axiosErrorWithData('{"statusCode":500}'))).toEqual({ message: '{"statusCode":500}' });
+  });
+
+  it("keeps a malformed JSON text body as is", () => {
+    expect(toErrorMessage(axiosErrorWithData("{not json"))).toEqual({ message: "{not json" });
+  });
+
   it("falls back to the Axios message when the body carries no message", () => {
     expect(toErrorMessage(axiosErrorWithData({ statusCode: 500 }))).toEqual({
       message: "Request failed with status code 400",

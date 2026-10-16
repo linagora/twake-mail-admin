@@ -25,17 +25,37 @@ const withoutXmlDocument = (details: string | undefined): string | undefined => 
   return asText([context, serverMessage].filter(Boolean).join(" — "));
 };
 
+/**
+ * Clients reading a raw text body (e.g. /metrics) also receive the WebAdmin
+ * JSON error body unparsed: parse it to reach its `message` / `details`.
+ */
+const parseJsonObject = (text: string): Record<string, unknown> | undefined => {
+  if (!text.trim().startsWith("{")) {
+    return undefined;
+  }
+  try {
+    const parsed: unknown = JSON.parse(text);
+    return parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const fromErrorBody = (body: Record<string, unknown>): ErrorMessage | undefined => {
+  const serverMessage = asText(body.message);
+  return serverMessage
+    ? { message: serverMessage, details: withoutXmlDocument(asText(body.details)) }
+    : undefined;
+};
+
 const fromResponseData = (data: unknown): ErrorMessage | undefined => {
   const text = asText(data);
   if (text) {
-    return { message: text };
+    const body = parseJsonObject(text);
+    return (body && fromErrorBody(body)) ?? { message: text };
   }
   if (data && typeof data === "object") {
-    const { message, details } = data as Record<string, unknown>;
-    const serverMessage = asText(message);
-    if (serverMessage) {
-      return { message: serverMessage, details: withoutXmlDocument(asText(details)) };
-    }
+    return fromErrorBody(data as Record<string, unknown>);
   }
   return undefined;
 };
