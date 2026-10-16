@@ -12,16 +12,17 @@ const api = vi.hoisted(() => ({
   deleteRegisteredUser: vi.fn(),
 }));
 const toast = vi.hoisted(() => vi.fn());
+const userStatus = vi.hoisted(() => ({ current: "idle" }));
 
 vi.mock("./api-client", () => api);
 vi.mock("@/lib/config", () => ({ appConfig: { application: "CALENDAR", mode: "GLOBAL", sso: null } }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
-vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: () => "idle" }));
+vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: () => userStatus.current }));
 vi.mock("@/modules/domain-admin/domain-context", () => ({ useDomain: () => "" }));
 
 import RegisteredUsersList, { EditUserForm } from "./registered-users-list";
-import { RegisterUserForm } from "@/modules/users/details/calendar-user-detail";
+import { RegisterUserForm } from "./register-user-form";
 
 const input = (label: string) => screen.getByLabelText(label, { exact: false }) as HTMLInputElement;
 
@@ -44,6 +45,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  userStatus.current = "idle";
   vi.clearAllMocks();
 });
 
@@ -87,6 +89,62 @@ describe("Edit registered user dialog", () => {
     expect((await screen.findByRole("alert")).textContent).toContain("Invalid arguments supplied in the user request");
     expect(screen.queryByRole("dialog")).not.toBeNull();
     expect(input("registeredUsers.lastname").value).toBe("Tester");
+    expect(toast).not.toHaveBeenCalled();
+  });
+});
+
+describe("Add registered user", () => {
+  const EMMA = "emma@open-paas.org";
+
+  const openRegisterDialog = async () => {
+    userStatus.current = "exists";
+    api.createRegisteredUser.mockResolvedValue(undefined);
+    render(
+      <ConfirmProvider>
+        <RegisteredUsersList />
+      </ConfirmProvider>
+    );
+    await screen.findByText(CHARLOTTE.email);
+    fireEvent.change(screen.getByPlaceholderText("registeredUsers.placeholder"), { target: { value: EMMA } });
+    fireEvent.click(screen.getByText("common.add"));
+    await screen.findByText("users.registration.registerTitle");
+  };
+
+  it("asks for the names, suggesting the local part as firstname", async () => {
+    await openRegisterDialog();
+
+    expect(input("registeredUsers.firstname").value).toBe("emma");
+    expect(input("registeredUsers.lastname").value).toBe("");
+    expect(api.createRegisteredUser).not.toHaveBeenCalled();
+  });
+
+  it("does not send a user without lastname", async () => {
+    await openRegisterDialog();
+    confirmDialog();
+
+    expect((await screen.findByRole("alert")).textContent).toBe("registeredUsers.lastnameRequired");
+    expect(screen.queryByRole("dialog")).not.toBeNull();
+    expect(api.createRegisteredUser).not.toHaveBeenCalled();
+  });
+
+  it("registers the user with the typed names", async () => {
+    await openRegisterDialog();
+    fireEvent.change(input("registeredUsers.lastname"), { target: { value: "QA" } });
+    confirmDialog();
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(api.createRegisteredUser).toHaveBeenCalledWith({ id: EMMA, email: EMMA, firstname: "emma", lastname: "QA" }, undefined);
+    expect(toast).toHaveBeenCalledWith({ title: "registeredUsers.registered" });
+  });
+
+  it("stays open with the typed values when the server refuses the request", async () => {
+    await openRegisterDialog();
+    api.createRegisteredUser.mockRejectedValue(new Error("Missing lastname"));
+    fireEvent.change(input("registeredUsers.lastname"), { target: { value: "QA" } });
+    confirmDialog();
+
+    expect((await screen.findByRole("alert")).textContent).toContain("Missing lastname");
+    expect(input("registeredUsers.lastname").value).toBe("QA");
     expect(toast).not.toHaveBeenCalled();
   });
 });

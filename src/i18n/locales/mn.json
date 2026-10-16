@@ -1597,7 +1597,6 @@
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",
-    "errorRegistering": "Хэрэглэгч бүртгэхэд алдаа гарлаа",
     "registered": "«{{username}}» хэрэглэгч бүртгэгдлээ",
     "searchPlaceholder": "Бүртгэгдсэн хэрэглэгч хайх...",
     "noMatch": "\"{{query}}\"-д тохирох бүртгэгдсэн хэрэглэгч алга.",

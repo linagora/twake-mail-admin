@@ -1596,7 +1596,6 @@
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",
-    "errorRegistering": "Lỗi khi đăng ký người dùng",
     "registered": "Đã đăng ký người dùng \"{{username}}\"",
     "searchPlaceholder": "Tìm người dùng đã đăng ký...",
     "noMatch": "Không có người dùng đã đăng ký nào khớp với \"{{query}}\".",

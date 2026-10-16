@@ -1,4 +1,4 @@
-import { useCallback, useId, useState } from "react";
+import { useCallback } from "react";
 import { useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { AlertTriangle, UserPlus } from "lucide-react";
@@ -9,60 +9,13 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { createRegisteredUser, getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
-import { validateRegisteredUserNames } from "@/modules/registered-users/validation";
+import { defaultRegisteredUserNames, validateRegisteredUserNames } from "@/modules/registered-users/validation";
+import { RegisterUserForm } from "@/modules/registered-users/register-user-form";
 import { Button } from "@/components/ui/button";
 import CalendarUserTasks from "./calendar-user-tasks";
 import UserCalendars from "./user-calendars";
 import UserBookingLinks from "./user-booking-links";
 import UserAddressBooks from "./user-address-books";
-
-// The DAV APIs do not expose the directory (LDAP) firstname/lastname, so the admin is asked for them.
-export function RegisterUserForm({
-  username,
-  defaults,
-  onChange,
-}: {
-  username: string;
-  defaults: { firstname: string; lastname: string };
-  onChange: (data: { firstname: string; lastname: string }) => void;
-}) {
-  const { t } = useTranslation();
-  const idPrefix = useId();
-  const [firstname, setFirstname] = useState(defaults.firstname);
-  const [lastname, setLastname] = useState(defaults.lastname);
-
-  return (
-    <div className="space-y-3">
-      <p className="text-sm text-gray-600">{t("users.registration.registerHint", { username })}</p>
-      <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md text-sm text-amber-800">
-        <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-        <span>{t("registeredUsers.ldapWarning")}</span>
-      </div>
-      <div>
-        <label htmlFor={`${idPrefix}-firstname`} className="text-sm font-medium">{t("registeredUsers.firstname")} <span className="text-red-500">*</span></label>
-        <input
-          id={`${idPrefix}-firstname`}
-          type="text"
-          required
-          value={firstname}
-          onChange={(e) => { setFirstname(e.target.value); onChange({ firstname: e.target.value, lastname }); }}
-          className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-      <div>
-        <label htmlFor={`${idPrefix}-lastname`} className="text-sm font-medium">{t("registeredUsers.lastname")} <span className="text-red-500">*</span></label>
-        <input
-          id={`${idPrefix}-lastname`}
-          type="text"
-          required
-          value={lastname}
-          onChange={(e) => { setLastname(e.target.value); onChange({ firstname, lastname: e.target.value }); }}
-          className="w-full px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-    </div>
-  );
-}
 
 function UnregisteredUser({ username, onRegistered }: { username: string; onRegistered: () => void }) {
   const { t } = useTranslation();
@@ -72,7 +25,7 @@ function UnregisteredUser({ username, onRegistered }: { username: string; onRegi
   const canRegister = useIsAllowed("POST", "/registeredUsers");
 
   const handleRegister = async () => {
-    const defaults = { firstname: username.split("@")[0] || "", lastname: "" };
+    const defaults = defaultRegisteredUserNames(username);
     let values = { ...defaults };
 
     await confirm({

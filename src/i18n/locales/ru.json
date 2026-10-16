@@ -1599,7 +1599,6 @@
   },
   "registeredUsers": {
     "placeholder": "user@domain.tld",
-    "errorRegistering": "Ошибка при регистрации пользователя",
     "registered": "Пользователь «{{username}}» зарегистрирован",
     "searchPlaceholder": "Поиск зарегистрированных пользователей...",
     "noMatch": "Нет зарегистрированных пользователей, соответствующих «{{query}}».",

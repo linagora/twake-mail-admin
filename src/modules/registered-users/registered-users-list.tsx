@@ -8,7 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getRegisteredUsers, createRegisteredUser, updateRegisteredUser, deleteRegisteredUser } from "./api-client";
 import { RegisteredUser } from "./types";
-import { validateRegisteredUser } from "./validation";
+import { defaultRegisteredUserNames, validateRegisteredUser, validateRegisteredUserNames } from "./validation";
+import { RegisterUserForm } from "./register-user-form";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -100,24 +101,26 @@ export default function RegisteredUsersList() {
     const username = newUsername.trim();
     if (!username || userStatus !== "exists") return;
 
-    try {
-      const parts = username.split("@");
-      const user: RegisteredUser = {
-        id: username,
-        email: username,
-        firstname: parts[0] || "",
-        lastname: "",
-      };
-      await createRegisteredUser(user, domain);
-      toast({ title: t("registeredUsers.registered", { username }) });
-      setNewUsername("");
-      refresh();
-    } catch (err) {
-      toast({
-        title: t("registeredUsers.errorRegistering"),
-        description: <ErrorDisplayer error={err} />,
-      });
-    }
+    const defaults = defaultRegisteredUserNames(username);
+    let values = { ...defaults };
+
+    await confirm({
+      header: t("users.registration.registerTitle"),
+      message: (
+        <RegisterUserForm
+          username={username}
+          defaults={defaults}
+          onChange={(v) => { values = v; }}
+        />
+      ),
+      validate: () => validateRegisteredUserNames(values, t),
+      action: async () => {
+        await createRegisteredUser({ id: username, email: username, ...values }, domain);
+        toast({ title: t("registeredUsers.registered", { username }) });
+        setNewUsername("");
+        refresh();
+      },
+    });
   };
 
   const handleDelete = async (user: RegisteredUser) => {

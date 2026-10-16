@@ -1597,7 +1597,6 @@
   },
   "registeredUsers": {
     "placeholder": "utilisateur@domaine.tld",
-    "errorRegistering": "Erreur lors de l'enregistrement",
     "registered": "Utilisateur « {{username}} » enregistré",
     "searchPlaceholder": "Rechercher des utilisateurs enregistrés…",
     "noMatch": "Aucun utilisateur enregistré ne correspond à « {{query}} ».",
