@@ -359,9 +359,14 @@ export default function UserBookingLinks({ username }: Props) {
   const fetchLinks = useCallback(() => getUserBookingLinks(username), [username]);
   const { data, isLoading, error, refresh } = useFetchData<BookingLink[]>(canView ? fetchLinks : null);
 
+  const [open, setOpen] = useState(false);
+
+  // The calendars can be created or deleted from the Calendars section of the
+  // same page: they are fetched each time this section is expanded and each
+  // time a dialog opens, so that the dropdowns never offer a stale list.
   const fetchCalendars = useCallback(() => getUserCalendars(username), [username]);
-  const { data: calendarsData } = useFetchData<GetUserCalendarsResponseType>(
-    canView && canViewCalendars ? fetchCalendars : null
+  const { data: calendarsData, refresh: refreshCalendars } = useFetchData<GetUserCalendarsResponseType>(
+    open && canView && canViewCalendars ? fetchCalendars : null
   );
   const allCalendars = calendarsData?._embedded?.["dav:calendar"] ?? [];
   // Full list, used only to resolve calendar names for display (a link may
@@ -375,8 +380,6 @@ export default function UserBookingLinks({ username }: Props) {
     .filter((c) => isBookableCalendar(c, username))
     .map((c) => ({ value: calendarHref(c), label: calendarLabel(c) }))
     .filter((o) => o.value);
-
-  const [open, setOpen] = useState(false);
 
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState<CreateBookingLinkPayload>({ ...EMPTY_CREATE });
@@ -402,6 +405,11 @@ export default function UserBookingLinks({ username }: Props) {
     setCreateForm({ ...EMPTY_CREATE });
     setCreateRules([]);
     setCreateDuration(String(EMPTY_CREATE.durationMinutes));
+  };
+
+  const openCreate = () => {
+    setShowCreate(true);
+    refreshCalendars();
   };
 
   const handleCreate = async () => {
@@ -440,7 +448,7 @@ export default function UserBookingLinks({ username }: Props) {
     });
     setCreateRules(link.availabilityRules ? link.availabilityRules.map((r) => ({ ...r })) : []);
     setCreateDuration(String(link.durationMinutes));
-    setShowCreate(true);
+    openCreate();
   };
 
   const openEdit = (link: BookingLink) => {
@@ -457,6 +465,7 @@ export default function UserBookingLinks({ username }: Props) {
     setEditRules(link.availabilityRules ? [...link.availabilityRules] : []);
     setEditDuration(String(link.durationMinutes));
     setEditClearRules(false);
+    refreshCalendars();
   };
 
   const handleUpdate = async () => {
@@ -556,7 +565,7 @@ export default function UserBookingLinks({ username }: Props) {
 
           {canCreate && (
             <div className="mb-2">
-              <Button variant="outline" size="sm" onClick={() => setShowCreate(true)}>
+              <Button variant="outline" size="sm" onClick={openCreate}>
                 <Plus className="w-4 h-4 mr-1" />
                 {t("users.bookingLinks.create")}
               </Button>

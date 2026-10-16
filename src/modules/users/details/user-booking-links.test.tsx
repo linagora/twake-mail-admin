@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type { BookingLink, GetUserCalendarsResponseType } from "../types";
 
 const mocks = vi.hoisted(() => ({
   canListCalendars: false,
@@ -156,5 +157,62 @@ describe("booking link dialog: field labels", () => {
     fireEvent.click(screen.getByText("users.bookingLinks.addRule"));
 
     expect(screen.getByLabelText(label)).toBeTruthy();
+  });
+});
+
+const ALICE = "alice@example.com";
+
+const calendars = (...names: string[]): GetUserCalendarsResponseType => ({
+  _embedded: {
+    "dav:calendar": names.map((name) => ({ _links: { self: { href: `/calendars/alice/${name}.json` } }, "dav:name": name })),
+  },
+}) as GetUserCalendarsResponseType;
+
+const LINK = {
+  publicId: "abc",
+  calendarUrl: "/calendars/alice/Gone",
+  durationMinutes: 30,
+  active: true,
+  name: "Intro call",
+} as BookingLink;
+
+const offeredCalendars = () =>
+  screen.getAllByRole("option").map((o) => o.textContent).filter((label) => label !== "users.bookingLinks.selectCalendar");
+
+const expandSection = async () => {
+  render(<UserBookingLinks username={ALICE} />);
+  fireEvent.click(screen.getByText("users.bookingLinks.title"));
+  await screen.findByText("Intro call");
+  await waitFor(() => expect(mocks.api.getUserCalendars).toHaveBeenCalledTimes(1));
+};
+
+describe("booking link dialogs: calendar list", () => {
+  beforeEach(() => {
+    mocks.canListCalendars = true;
+    mocks.api.getUserBookingLinks.mockResolvedValue([LINK]);
+    mocks.api.getUserCalendars.mockResolvedValueOnce(calendars("Gone")).mockResolvedValue(calendars("New"));
+  });
+
+  it("offers the current calendars in the create dialog", async () => {
+    await expandSection();
+
+    fireEvent.click(screen.getByText("users.bookingLinks.create"));
+
+    await waitFor(() => expect(offeredCalendars()).toEqual(["New"]));
+  });
+
+  it("offers the current calendars in the edit dialog", async () => {
+    await expandSection();
+
+    fireEvent.click(screen.getByTitle("users.bookingLinks.editTitle"));
+
+    await waitFor(() => expect(offeredCalendars()).toContain("New"));
+    expect(offeredCalendars()).not.toContain("Gone");
+  });
+
+  it("does not fetch the calendars while the section is collapsed", () => {
+    render(<UserBookingLinks username={ALICE} />);
+
+    expect(mocks.api.getUserCalendars).not.toHaveBeenCalled();
   });
 });
