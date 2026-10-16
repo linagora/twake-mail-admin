@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { ChevronDown, ChevronRight, Plus, Trash2, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -72,6 +72,11 @@ export default function DomainSignatureTemplates({ domain }: Props) {
     setDirty(true);
   };
 
+  const removeLabel = (tpl: SignatureTemplate) =>
+    t("domains.signatureTemplates.removeTemplate", {
+      language: tpl.language || t("domains.signatureTemplates.newTemplate"),
+    });
+
   const handleSave = async () => {
     if (templates.some(tpl => !tpl.language.trim())) {
       toast({ title: t("domains.signatureTemplates.languageCode") });
@@ -122,7 +127,8 @@ export default function DomainSignatureTemplates({ domain }: Props) {
           <button
             onClick={handleAdd}
             className="p-1 rounded-md hover:bg-gray-200 transition"
-            title={t("domains.signatureTemplates.languageCode")}
+            title={t("domains.signatureTemplates.addTemplate")}
+            aria-label={t("domains.signatureTemplates.addTemplate")}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -156,7 +162,8 @@ export default function DomainSignatureTemplates({ domain }: Props) {
                   <button
                     onClick={() => handleRemove(index)}
                     className="p-1 rounded-md hover:bg-gray-200"
-                    title={t("domains.signatureTemplates.deleteAll")}
+                    title={removeLabel(tpl)}
+                    aria-label={removeLabel(tpl)}
                   >
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
@@ -164,39 +171,11 @@ export default function DomainSignatureTemplates({ domain }: Props) {
               </div>
 
               {expandedIndex === index && (
-                <div className="px-4 pb-4 space-y-3 border-t border-gray-200 pt-3">
-                  <div>
-                    <label className="text-xs text-gray-500 font-medium block mb-1">{t("domains.signatureTemplates.languageCode")}</label>
-                    <input
-                      type="text"
-                      value={tpl.language}
-                      onChange={e => handleChange(index, "language", e.target.value)}
-                      placeholder={t("domains.signatureTemplates.languagePlaceholder")}
-                      disabled={!canEdit}
-                      className="w-40 px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 font-medium block mb-1">{t("domains.signatureTemplates.textSignature")}</label>
-                    <textarea
-                      value={tpl.textSignature}
-                      onChange={e => handleChange(index, "textSignature", e.target.value)}
-                      rows={4}
-                      disabled={!canEdit}
-                      className="w-full px-3 py-2 border rounded-md text-sm font-mono focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 font-medium block mb-1">{t("domains.signatureTemplates.htmlSignature")}</label>
-                    <textarea
-                      value={tpl.htmlSignature}
-                      onChange={e => handleChange(index, "htmlSignature", e.target.value)}
-                      rows={6}
-                      disabled={!canEdit}
-                      className="w-full px-3 py-2 border rounded-md text-sm font-mono focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-                    />
-                  </div>
-                </div>
+                <SignatureTemplateFields
+                  template={tpl}
+                  disabled={!canEdit}
+                  onChange={(field, value) => handleChange(index, field, value)}
+                />
               )}
             </div>
           ))}
@@ -224,6 +203,62 @@ export default function DomainSignatureTemplates({ domain }: Props) {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+interface SignatureTemplateFieldsProps {
+  template: SignatureTemplate;
+  disabled: boolean;
+  onChange: (field: keyof SignatureTemplate, value: string) => void;
+}
+
+const LABEL_CLASS = "text-xs text-gray-500 font-medium block mb-1";
+const TEXTAREA_CLASS = "w-full px-3 py-2 border rounded-md text-sm font-mono focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100";
+
+function SignatureTemplateFields({ template, disabled, onChange }: SignatureTemplateFieldsProps) {
+  const { t } = useTranslation();
+  const id = useId();
+  const languageId = `${id}-language`;
+  const textSignatureId = `${id}-text-signature`;
+  const htmlSignatureId = `${id}-html-signature`;
+
+  return (
+    <div className="px-4 pb-4 space-y-3 border-t border-gray-200 pt-3">
+      <div>
+        <label htmlFor={languageId} className={LABEL_CLASS}>{t("domains.signatureTemplates.languageCode")}</label>
+        <input
+          id={languageId}
+          type="text"
+          value={template.language}
+          onChange={e => onChange("language", e.target.value)}
+          placeholder={t("domains.signatureTemplates.languagePlaceholder")}
+          disabled={disabled}
+          className="w-40 px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+        />
+      </div>
+      <div>
+        <label htmlFor={textSignatureId} className={LABEL_CLASS}>{t("domains.signatureTemplates.textSignature")}</label>
+        <textarea
+          id={textSignatureId}
+          value={template.textSignature}
+          onChange={e => onChange("textSignature", e.target.value)}
+          rows={4}
+          disabled={disabled}
+          className={TEXTAREA_CLASS}
+        />
+      </div>
+      <div>
+        <label htmlFor={htmlSignatureId} className={LABEL_CLASS}>{t("domains.signatureTemplates.htmlSignature")}</label>
+        <textarea
+          id={htmlSignatureId}
+          value={template.htmlSignature}
+          onChange={e => onChange("htmlSignature", e.target.value)}
+          rows={6}
+          disabled={disabled}
+          className={TEXTAREA_CLASS}
+        />
+      </div>
     </div>
   );
 }

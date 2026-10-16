@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserCalendar, deleteUserCalendar, exportUserCalendar, getUserCalendarEventCount, getUserCalendars, importUserCalendar, setUserCalendarPublicRight, updateUserCalendar, updateUserCalendarInvitees } from "../api-client";
+import { isMainCalendar } from "./main-calendar";
 import { CalendarShareUpdate, CreateUserCalendarPayload, GetUserCalendarsResponseType, UpdateUserCalendarPayload, UserCalendar } from "../types";
 import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
@@ -172,6 +173,8 @@ function CalendarRow({
   const description = calendar["caldav:description"];
   const isPublicCalendar = isPublic(calendar);
   const id = calendarId(calendar);
+  // esn-sabre always refuses to delete the main calendar of a user.
+  const isMain = isOwned && isMainCalendar(calendar);
   // Bumped once an import task is over: a new key re-reads the event counter.
   const [countKey, setCountKey] = useState(0);
 
@@ -183,8 +186,8 @@ function CalendarRow({
         title={color}
       />
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="font-medium">{name}</p>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+          <p className="font-medium min-w-0 break-words">{name}</p>
           {permissions.count && (
             <CollectionCountBadge
               key={countKey}
@@ -262,7 +265,17 @@ function CalendarRow({
           <Pencil className="w-3.5 h-3.5 text-blue-600" />
         </button>
       )}
-      {permissions.remove && (
+      {permissions.remove && isMain && (
+        <button
+          disabled
+          aria-label={t("users.calendars.deleteTitle")}
+          className="p-1.5 rounded-md opacity-40 cursor-not-allowed"
+          title={t("users.calendars.mainCalendarUndeletable")}
+        >
+          <Trash2 className="w-3.5 h-3.5 text-gray-400" />
+        </button>
+      )}
+      {permissions.remove && !isMain && (
         <button
           onClick={() => onDelete(calendar)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -691,7 +704,8 @@ function InviteesModal({
   const isDuplicate =
     existing.some((i) => i.email === trimmedEmail && !removals.has(i.href)) ||
     additions.some((a) => a.email === trimmedEmail);
-  const canAdd = status === "exists" && !isDuplicate;
+  const isOwner = trimmedEmail.toLowerCase() === username.toLowerCase();
+  const canAdd = status === "exists" && !isOwner && !isDuplicate;
 
   const toggleRemoval = (href: string) => {
     setRemovals((prev) => {
@@ -837,10 +851,13 @@ function InviteesModal({
               {trimmedEmail && status === "checking" && (
                 <span className="text-xs text-gray-400">{t("common.checking")}</span>
               )}
-              {trimmedEmail && status === "exists" && isDuplicate && (
+              {trimmedEmail && status === "exists" && isOwner && (
+                <span className="text-xs text-orange-500">{t("users.calendars.invitees.isOwner")}</span>
+              )}
+              {trimmedEmail && status === "exists" && !isOwner && isDuplicate && (
                 <span className="text-xs text-orange-500">{t("users.calendars.invitees.alreadyInvited")}</span>
               )}
-              {trimmedEmail && status === "exists" && !isDuplicate && (
+              {trimmedEmail && status === "exists" && !isOwner && !isDuplicate && (
                 <span className="text-xs text-green-600">{t("common.userExists")}</span>
               )}
               {trimmedEmail && status === "not_found" && (

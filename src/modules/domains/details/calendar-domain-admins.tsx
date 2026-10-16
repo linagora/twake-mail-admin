@@ -47,7 +47,7 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
 
   const trimmedAdmin = newAdmin.trim();
   const isAlreadyAdmin = isListedAdmin(admins ?? [], trimmedAdmin);
-  const canSubmit = !!trimmedAdmin && !isAlreadyAdmin;
+  const canSubmit = !!trimmedAdmin && !isAlreadyAdmin && adminStatus === "exists";
 
   const handleAdd = async () => {
     if (!canSubmit) return;

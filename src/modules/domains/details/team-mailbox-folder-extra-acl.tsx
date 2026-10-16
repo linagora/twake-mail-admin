@@ -3,7 +3,7 @@ import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { useCheckUserExists } from "@/hooks/use-check-user-exists";
+import { isSubmittableUserStatus, useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import {
@@ -93,10 +93,18 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
   };
 
   const rightsString = RIGHTS_ORDER.filter((k) => selectedRights.has(k)).join("");
+  const canSubmit = !!newUser.trim() && !!rightsString && isSubmittableUserStatus(userStatus);
+
+  const confirmUnknownUser = (username: string) =>
+    confirm({
+      header: t("common.unknownUserTitle"),
+      message: t("common.unknownUserConfirm", { username }),
+    });
 
   const handleAdd = async () => {
+    if (!canSubmit) return;
     const username = newUser.trim();
-    if (!username || !rightsString) return;
+    if (userStatus === "not_found" && !(await confirmUnknownUser(username))) return;
     try {
       await setTeamMailboxFolderExtraAclEntry(domain, mailbox, folder, username, rightsString);
       toast({ title: "ACL entry set" });
@@ -247,7 +255,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
               <div className="flex justify-end">
                 <Button
                   onClick={handleAdd}
-                  disabled={!newUser.trim() || !rightsString}
+                  disabled={!canSubmit}
                   className="rounded-sm"
                 >
                   Add

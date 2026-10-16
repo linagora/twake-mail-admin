@@ -13,6 +13,9 @@ import { TaskStatus } from "../types";
 import Header from "@/components/custom/header";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 
+// Only a task that is still waiting or running can be cancelled.
+const CANCELLABLE_STATUSES: ReadonlySet<TaskStatus> = new Set([TaskStatus.WAITING, TaskStatus.IN_PROGRESS]);
+
 export default function TaskDetail() {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -65,7 +68,7 @@ export default function TaskDetail() {
           </Tooltip>
         </TooltipProvider>
         
-        {taskDetail?.status !== TaskStatus.COMPLETED && <TooltipProvider>
+        {taskDetail && CANCELLABLE_STATUSES.has(taskDetail.status) && <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <Button className="text-red-500 hover:bg-gray-300" variant="ghost" size="icon" onClick={handleCancelTask} aria-label={t("tasks.cancelButton")}>

@@ -5,14 +5,8 @@ import { apiClient } from "@/lib/apiClient";
 import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { currentLocale } from "@/i18n/locale";
+import { formatByteSize } from "@/i18n/format-size";
 import { parseQuotaUsageSum, type QuotaUsageSum } from "./quota-usage";
-
-function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
-}
 
 function formatCount(count: number): string {
   return count.toLocaleString(currentLocale());
@@ -77,7 +71,7 @@ export default function QuotaUsageSumSection({ domain }: Props) {
               </div>
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm text-gray-600">{t("common.size")}</span>
-                <strong className="text-sm">{formatSize(data.size)}</strong>
+                <strong className="text-sm">{formatByteSize(data.size)}</strong>
               </div>
             </div>
           ) : null}

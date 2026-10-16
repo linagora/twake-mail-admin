@@ -1,15 +1,33 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const http = vi.hoisted(() => ({ patch: vi.fn() }));
+const http = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn() }));
 
 vi.mock("@/lib/apiClient", () => ({
-  apiClient: { patch: http.patch },
+  apiClient: { get: http.get, patch: http.patch },
 }));
 
-import { moveAllMails, moveSingleMail, reprocessMailRepository } from "./api-client";
+import { getMailRepositories, moveAllMails, moveSingleMail, reprocessMailRepository } from "./api-client";
 
 const error = { repository: "var/mail/error", path: "var%2Fmail%2Ferror" };
 const qaRepo = { repository: "var/mail/qa-repo", path: "var%2Fmail%2Fqa-repo" };
+
+describe("mail repositories listing", () => {
+  it("rebuilds the form-encoded path of a repository with a space as a URL path segment", async () => {
+    http.get.mockResolvedValue([{ repository: "var/mail/qa space", path: "var%2Fmail%2Fqa+space" }]);
+
+    expect(await getMailRepositories()).toEqual([
+      { repository: "var/mail/qa space", path: "var%2Fmail%2Fqa%20space" },
+    ]);
+  });
+
+  it("encodes a literal plus of the repository name", async () => {
+    http.get.mockResolvedValue([{ repository: "var/mail/a+b", path: "var%2Fmail%2Fa%2Bb" }]);
+
+    expect(await getMailRepositories()).toEqual([
+      { repository: "var/mail/a+b", path: "var%2Fmail%2Fa%2Bb" },
+    ]);
+  });
+});
 
 describe("mail repository moves", () => {
   beforeEach(() => {

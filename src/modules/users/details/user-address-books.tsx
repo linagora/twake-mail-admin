@@ -1,15 +1,22 @@
 import { useCallback, useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Contact, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserAddressBook, deleteUserAddressBook, exportUserAddressBook, getUserAddressBookContactCount, getUserAddressBooks, importUserAddressBook, setUserAddressBookPublicRight, updateUserAddressBook, updateUserAddressBookInvitees } from "../api-client";
 import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBooksResponseType, UpdateUserAddressBookPayload, UserAddressBook } from "../types";
-import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess, shareAccessToRight } from "./address-book-share-access";
+import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess } from "./address-book-share-access";
+import { CurrentSharee, currentSharees, userEmailsById } from "./address-book-sharees";
+import { ownerEmail, parseAddressBookSource } from "./address-book-source";
 import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
+import { useDomain } from "@/modules/domain-admin/domain-context";
+import { getRegisteredUsers } from "@/modules/registered-users/api-client";
+import { RegisteredUser } from "@/modules/registered-users/types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -33,8 +40,25 @@ function addressBookId(addressBook: UserAddressBook): string {
   return last.replace(/\.json$/, "") || href;
 }
 
-function addressBookName(addressBook: UserAddressBook): string {
-  return addressBook["dav:name"]?.trim() || addressBookId(addressBook);
+// The sharee's mirror of a shared address book has no name of its own: the
+// source one is more telling than the technical id of the mirror.
+// Every user owns the "contacts" and "collected" address books, created by the
+// DAV server: WebAdmin refuses to rename or delete them.
+const SYSTEM_ADDRESS_BOOK_IDS = ["contacts", "collected"] as const;
+type SystemAddressBookId = (typeof SYSTEM_ADDRESS_BOOK_IDS)[number];
+
+function systemAddressBookId(addressBook: UserAddressBook): SystemAddressBookId | null {
+  if (!isOwned(addressBook)) return null;
+  const id = addressBookId(addressBook);
+  return SYSTEM_ADDRESS_BOOK_IDS.find((systemId) => systemId === id) ?? null;
+}
+
+function addressBookName(addressBook: UserAddressBook, t: TFunction): string {
+  const systemId = systemAddressBookId(addressBook);
+  if (systemId) return t(`users.addressBooks.system.${systemId}`);
+  return addressBook["dav:name"]?.trim()
+    || parseAddressBookSource(addressBook["openpaas:source"])?.addressBookId
+    || addressBookId(addressBook);
 }
 
 // A shared or subscribed address book is a mirror of its owner's one: it can be
@@ -51,22 +75,6 @@ function isPublic(addressBook: UserAddressBook): boolean {
   );
 }
 
-interface CurrentSharee {
-  href: string;
-  email: string;
-  right: AddressBookRight | null;
-}
-
-function currentSharees(addressBook: UserAddressBook): CurrentSharee[] {
-  return (addressBook.invite ?? [])
-    .filter((i) => i.href?.startsWith("mailto:"))
-    .map((i) => ({
-      href: i.href,
-      email: i.href.replace(/^mailto:/, ""),
-      right: shareAccessToRight(i.access),
-    }));
-}
-
 interface AddressBookPermissions {
   edit: boolean;
   remove: boolean;
@@ -80,6 +88,7 @@ interface AddressBookPermissions {
 function AddressBookRow({
   username,
   addressBook,
+  owner,
   permissions,
   onEdit,
   onDelete,
@@ -88,6 +97,7 @@ function AddressBookRow({
 }: {
   username: string;
   addressBook: UserAddressBook;
+  owner: string | null;
   permissions: AddressBookPermissions;
   onEdit: (addressBook: UserAddressBook) => void;
   onDelete: (addressBook: UserAddressBook) => void;
@@ -96,8 +106,9 @@ function AddressBookRow({
 }) {
   const { t } = useTranslation();
   const id = addressBookId(addressBook);
-  const name = addressBookName(addressBook);
+  const name = addressBookName(addressBook, t);
   const owned = isOwned(addressBook);
+  const system = systemAddressBookId(addressBook) !== null;
   const isPublicAb = isPublic(addressBook);
   // Bumped once an import task is over: a new key re-reads the contact counter.
   const [countKey, setCountKey] = useState(0);
@@ -105,8 +116,16 @@ function AddressBookRow({
   return (
     <div className="group flex items-start gap-3 py-1">
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="font-medium">{name}</p>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+          <p className="font-medium min-w-0 break-words">{name}</p>
+          {system && (
+            <span
+              className="px-1.5 py-0.5 rounded-sm bg-gray-100 text-xs text-gray-600"
+              title={t("users.addressBooks.system.hint")}
+            >
+              {t("users.addressBooks.system.badge")}
+            </span>
+          )}
           {permissions.count && (
             <CollectionCountBadge
               key={countKey}
@@ -120,6 +139,17 @@ function AddressBookRow({
         </div>
         {addressBook["carddav:description"] && (
           <p className="text-xs text-gray-400">{addressBook["carddav:description"]}</p>
+        )}
+        {owner && (
+          <p className="text-xs text-gray-400">
+            {t("users.addressBooks.ownerLabel")}{" "}
+            <Link
+              to={`/users/user/${encodeURIComponent(owner)}`}
+              className="text-blue-600 hover:underline"
+            >
+              {owner}
+            </Link>
+          </p>
         )}
       </div>
       {owned && permissions.export && (
@@ -164,7 +194,7 @@ function AddressBookRow({
             : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
         </button>
       )}
-      {owned && permissions.edit && (
+      {owned && !system && permissions.edit && (
         <button
           onClick={() => onEdit(addressBook)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -173,7 +203,7 @@ function AddressBookRow({
           <Pencil className="w-3.5 h-3.5 text-blue-600" />
         </button>
       )}
-      {permissions.remove && (
+      {!system && permissions.remove && (
         <button
           onClick={() => onDelete(addressBook)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -205,6 +235,14 @@ export default function UserAddressBooks({ username }: Props) {
   const fetchAddressBooks = useCallback(() => getUserAddressBooks(username), [username]);
   const { data, isLoading, error, refresh } = useFetchData<GetUserAddressBooksResponseType>(
     canView ? fetchAddressBooks : null
+  );
+  // Registered users tell the e-mail of the owners of shared/subscribed address books, and of
+  // the sharees, listed by technical user id.
+  const domain = useDomain() || undefined;
+  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const fetchRegisteredUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
+  const { data: registeredUsers } = useFetchData<RegisteredUser[]>(
+    canView && canRegisteredUsers ? fetchRegisteredUsers : null
   );
 
   const [open, setOpen] = useState(false);
@@ -297,7 +335,7 @@ export default function UserAddressBooks({ username }: Props) {
   const handleDelete = async (addressBook: UserAddressBook) => {
     const confirmed = await confirm({
       header: t("users.addressBooks.deleteTitle"),
-      message: t("users.addressBooks.deleteConfirm", { name: addressBookName(addressBook) }),
+      message: t("users.addressBooks.deleteConfirm", { name: addressBookName(addressBook, t) }),
     });
     if (!confirmed) return;
     try {
@@ -352,6 +390,7 @@ export default function UserAddressBooks({ username }: Props) {
                     key={addressBookId(ab)}
                     username={username}
                     addressBook={ab}
+                    owner={ownerEmail(parseAddressBookSource(ab["openpaas:source"]), registeredUsers)}
                     permissions={permissions}
                     onEdit={openEdit}
                     onDelete={handleDelete}
@@ -411,7 +450,7 @@ export default function UserAddressBooks({ username }: Props) {
       <Dialog open={!!editAddressBook} onOpenChange={(v) => { if (!v) setEditAddressBook(null); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{t("users.addressBooks.editTitle")} — {editAddressBook ? addressBookName(editAddressBook) : ""}</DialogTitle>
+            <DialogTitle>{t("users.addressBooks.editTitle")} — {editAddressBook ? addressBookName(editAddressBook, t) : ""}</DialogTitle>
           </DialogHeader>
           {editAddressBook && (
             <div className="space-y-3">
@@ -455,7 +494,7 @@ export default function UserAddressBooks({ username }: Props) {
       <Dialog open={!!publicRightAddressBook} onOpenChange={(v) => { if (!v) setPublicRightAddressBook(null); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{t("users.addressBooks.publicRight.title")} — {publicRightAddressBook ? addressBookName(publicRightAddressBook) : ""}</DialogTitle>
+            <DialogTitle>{t("users.addressBooks.publicRight.title")} — {publicRightAddressBook ? addressBookName(publicRightAddressBook, t) : ""}</DialogTitle>
           </DialogHeader>
           {publicRightAddressBook && (
             <div className="space-y-3">
@@ -504,6 +543,7 @@ export default function UserAddressBooks({ username }: Props) {
         <InviteesModal
           username={username}
           addressBook={inviteesAddressBook}
+          userEmails={userEmailsById(registeredUsers)}
           onClose={() => setInviteesAddressBook(null)}
           onSaved={async () => { setInviteesAddressBook(null); await refresh(); }}
         />
@@ -515,11 +555,13 @@ export default function UserAddressBooks({ username }: Props) {
 function InviteesModal({
   username,
   addressBook,
+  userEmails,
   onClose,
   onSaved,
 }: {
   username: string;
   addressBook: UserAddressBook;
+  userEmails: Record<string, string>;
   onClose: () => void;
   onSaved: () => void | Promise<void>;
 }) {
@@ -534,13 +576,14 @@ function InviteesModal({
   const [saving, setSaving] = useState(false);
 
   const status = useCheckUserExists(newEmail);
-  const existing = currentSharees(addressBook);
+  const existing = currentSharees(addressBook, username, userEmails);
 
   const trimmedEmail = newEmail.trim();
   const isDuplicate =
-    existing.some((i) => i.email === trimmedEmail && !removals.has(i.href)) ||
+    existing.some((i) => i.email === trimmedEmail && !(i.href && removals.has(i.href))) ||
     additions.some((a) => a.email === trimmedEmail);
-  const canAdd = status === "exists" && !isDuplicate;
+  const isOwner = trimmedEmail.toLowerCase() === username.toLowerCase();
+  const canAdd = status === "exists" && !isOwner && !isDuplicate;
 
   const toggleRemoval = (href: string) => {
     setRemovals((prev) => {
@@ -551,11 +594,11 @@ function InviteesModal({
     });
   };
 
-  const changeRight = (sharee: CurrentSharee, right: AddressBookRight) => {
+  const changeRight = (href: string, sharee: CurrentSharee, right: AddressBookRight) => {
     setChanges((prev) => {
       const next = { ...prev };
-      if (right === sharee.right) delete next[sharee.href];
-      else next[sharee.href] = right;
+      if (right === sharee.right) delete next[href];
+      else next[href] = right;
       return next;
     });
   };
@@ -598,7 +641,7 @@ function InviteesModal({
     <Dialog open onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>{t("users.addressBooks.invitees.title")} — {addressBookName(addressBook)}</DialogTitle>
+          <DialogTitle>{t("users.addressBooks.invitees.title")} — {addressBookName(addressBook, t)}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1">
@@ -606,18 +649,20 @@ function InviteesModal({
               <p className="text-sm text-gray-500">{t("users.addressBooks.invitees.empty")}</p>
             )}
             {existing.map((sharee) => {
-              const removed = removals.has(sharee.href);
-              const currentRight = changes[sharee.href] ?? sharee.right ?? "read";
-              const changed = sharee.href in changes;
+              const { href } = sharee;
+              if (!href) return <UnresolvedShareeRow key={sharee.label} sharee={sharee} />;
+              const removed = removals.has(href);
+              const currentRight = changes[href] ?? sharee.right ?? "read";
+              const changed = href in changes;
               return (
-                <div key={sharee.href} className="flex items-center gap-2 py-1">
+                <div key={href} className="flex items-center gap-2 py-1">
                   <span className={`flex-1 text-sm truncate ${removed ? "line-through text-gray-400" : ""}`}>
-                    {sharee.email}
+                    {sharee.label}
                   </span>
                   <select
                     value={currentRight}
                     disabled={removed}
-                    onChange={(e) => changeRight(sharee, e.target.value as AddressBookRight)}
+                    onChange={(e) => changeRight(href, sharee, e.target.value as AddressBookRight)}
                     className={`px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
                   >
                     {RIGHT_OPTIONS.map((r) => (
@@ -625,7 +670,7 @@ function InviteesModal({
                     ))}
                   </select>
                   <button
-                    onClick={() => toggleRemoval(sharee.href)}
+                    onClick={() => toggleRemoval(href)}
                     className="p-1.5 rounded-md hover:bg-gray-200 transition"
                     title={removed ? t("users.addressBooks.invitees.undoRemove") : t("users.addressBooks.invitees.remove")}
                   >
@@ -680,10 +725,13 @@ function InviteesModal({
               {trimmedEmail && status === "checking" && (
                 <span className="text-xs text-gray-400">{t("common.checking")}</span>
               )}
-              {trimmedEmail && status === "exists" && isDuplicate && (
+              {trimmedEmail && status === "exists" && isOwner && (
+                <span className="text-xs text-orange-500">{t("users.addressBooks.invitees.isOwner")}</span>
+              )}
+              {trimmedEmail && status === "exists" && !isOwner && isDuplicate && (
                 <span className="text-xs text-orange-500">{t("users.addressBooks.invitees.alreadyShared")}</span>
               )}
-              {trimmedEmail && status === "exists" && !isDuplicate && (
+              {trimmedEmail && status === "exists" && !isOwner && !isDuplicate && (
                 <span className="text-xs text-green-600">{t("common.userExists")}</span>
               )}
               {trimmedEmail && status === "not_found" && (
@@ -711,5 +759,19 @@ function InviteesModal({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+// A sharee whose e-mail is unknown cannot be addressed by the DAV server, which
+// only resolves `mailto:` sharees: it is listed, but cannot be changed here.
+function UnresolvedShareeRow({ sharee }: { sharee: CurrentSharee }) {
+  const { t } = useTranslation();
+  return (
+    <div className="flex items-center gap-2 py-1" title={t("users.addressBooks.invitees.unresolved")}>
+      <span className="flex-1 text-sm truncate text-gray-500">{sharee.label}</span>
+      <span className="text-xs text-gray-500 w-28 text-right">
+        {sharee.right ? t(`users.addressBooks.invitees.rights.${sharee.right}`) : ""}
+      </span>
+    </div>
   );
 }

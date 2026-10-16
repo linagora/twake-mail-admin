@@ -74,3 +74,28 @@ describe("task container: run task", () => {
     expect(mocks.toast.mock.calls[0][0].title).toBe("common.taskRunning");
   });
 });
+
+const renderTaskWithDoc = (doc: string) => {
+  render(
+    <MemoryRouter>
+      <TaskContainer
+        nameKey="commonTasks.alarmRescheduling"
+        taskKey={TaskKey.ALARM_RESCHEDULING}
+        command="POST /calendars?task=scheduleAlarms"
+        doc={doc}
+      />
+    </MemoryRouter>
+  );
+};
+
+describe("task container: doc link", () => {
+  it("links to the task documentation", () => {
+    renderTaskWithDoc("https://example.com/doc");
+    expect(screen.getByRole("link", { name: "(doc)" }).getAttribute("href")).toBe("https://example.com/doc");
+  });
+
+  it("renders no doc link when the task has no documentation", () => {
+    renderTaskWithDoc("");
+    expect(screen.queryByRole("link")).toBeNull();
+  });
+});

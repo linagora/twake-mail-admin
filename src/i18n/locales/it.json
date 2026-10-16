@@ -31,6 +31,8 @@
     "userExists": "L'utente esiste",
     "userNotFound": "Utente non trovato",
     "invalidUsername": "Nome utente non valido",
+    "unknownUserTitle": "Utente sconosciuto",
+    "unknownUserConfirm": "\"{{username}}\" non esiste. Aggiungerlo comunque?",
     "unlimited": "illimitato",
     "notSet": "non impostato",
     "invalidSize": "Dimensione non valida",
@@ -319,7 +321,9 @@
       "deleted": "Modelli di firma eliminati",
       "errorDeleting": "Errore durante l'eliminazione dei modelli di firma",
       "deleteAll": "Elimina tutto",
-      "empty": "Nessun modello di firma configurato."
+      "empty": "Nessun modello di firma configurato.",
+      "addTemplate": "Aggiungi modello di firma",
+      "removeTemplate": "Rimuovi il modello «{{language}}»"
     },
     "calendarDetail": {
       "title": "Dettagli del dominio del calendario",
@@ -540,8 +544,7 @@
       "register": "Registra questo utente",
       "registerTitle": "Registra utente",
       "registerHint": "Registrazione di «{{username}}» sul server DAV. Nome e cognome non vengono letti dalla directory: confermali.",
-      "registered": "Utente «{{username}}» registrato",
-      "errorRegistering": "Errore durante la registrazione dell'utente"
+      "registered": "Utente «{{username}}» registrato"
     },
     "aliases": {
       "title": "Alias",
@@ -917,6 +920,7 @@
       "deleteConfirm": "Vuoi davvero eliminare il calendario «{{name}}»?",
       "deleted": "Calendario eliminato",
       "errorDelete": "Errore durante l'eliminazione del calendario",
+      "mainCalendarUndeletable": "Il calendario principale non può essere eliminato",
       "editTitle": "Modifica calendario",
       "updated": "Calendario aggiornato",
       "errorUpdate": "Errore durante l'aggiornamento del calendario",
@@ -944,6 +948,7 @@
         "remove": "Rimuovi",
         "undoRemove": "Annulla la rimozione",
         "alreadyInvited": "Già invitato",
+        "isOwner": "Questo è il proprietario del calendario",
         "updated": "Invitati aggiornati",
         "errorUpdate": "Errore durante l'aggiornamento degli invitati",
         "rights": {
@@ -962,6 +967,7 @@
     "addressBooks": {
       "title": "Rubriche",
       "empty": "Nessuna rubrica.",
+      "ownerLabel": "proprietario:",
       "createTitle": "Crea rubrica",
       "name": "Nome",
       "description": "Descrizione",
@@ -979,6 +985,12 @@
       "errorExport": "Errore durante l'esportazione della rubrica",
       "importTitle": "Importa contatti (vCard)",
       "errorImport": "Errore durante l'importazione dei contatti",
+      "system": {
+        "contacts": "I miei contatti",
+        "collected": "Contatti raccolti",
+        "badge": "Sistema",
+        "hint": "Creata dal server per ogni utente: non può essere rinominata né eliminata."
+      },
       "publicRight": {
         "title": "Visibilità pubblica",
         "publicTitle": "Rubrica pubblica (lettura)",
@@ -998,6 +1010,8 @@
         "remove": "Rimuovi",
         "undoRemove": "Annulla la rimozione",
         "alreadyShared": "Già condivisa con questo utente",
+        "unresolved": "Utente sconosciuto: la sua condivisione non può essere modificata qui",
+        "isOwner": "Questo è il proprietario della rubrica",
         "updated": "Condivisione aggiornata",
         "errorUpdate": "Errore durante l'aggiornamento della condivisione",
         "rights": {
@@ -1044,8 +1058,8 @@
       "duplicateTitle": "Duplica link di prenotazione",
       "copyName": "{{name}} (copia)",
       "timeZone": "Fuso orario",
-      "rulesCount": "{{count}} regola",
-      "rulesCount_plural": "{{count}} regole",
+      "rulesCount_one": "{{count}} regola",
+      "rulesCount_other":"{{count}} regole",
       "clearRules": "Rimuovi tutte le regole",
       "clearRulesWarning": "Tutte le regole verranno rimosse al salvataggio.",
       "deleteEventsTitle": "Elimina gli eventi associati",
@@ -1079,7 +1093,8 @@
   },
   "deleteUserDataForm": {
     "fromStep": "Riprendi dal passaggio",
-    "fromStepPlaceholder": "ad es. MailboxUserDeletionTaskStep"
+    "fromStepPlaceholder": "ad es. MailboxUserDeletionTaskStep",
+    "calendarFromStepPlaceholder": "ad es. DavCalendarDeletionTaskStep"
   },
   "restoreCriteria": {
     "addCriteria": "Aggiungi criterio",
@@ -1280,6 +1295,8 @@
     "minOccupation": "Occupazione min. (%)",
     "maxOccupation": "Occupazione max. (%)",
     "empty": "Nessun utente trovato in questo intervallo di occupazione.",
+    "invalidPercent": "Inserire una percentuale tra 0 e 100.",
+    "minAboveMax": "Non deve essere inferiore all'occupazione min.",
     "username": "Nome utente",
     "occupationSize": "Dimensione occupata",
     "occupationCount": "Numero occupato",
@@ -1565,12 +1582,12 @@
     "errorRegistering": "Errore durante la registrazione dell'utente",
     "registered": "Utente «{{username}}» registrato",
     "searchPlaceholder": "Cerca utenti registrati...",
+    "noMatch": "Nessun utente registrato corrisponde a «{{query}}».",
     "editTitle": "Modifica utente registrato",
     "ldapWarning": "La tua installazione potrebbe includere un'importazione LDAP periodica: in tal caso, le modifiche apportate qui verranno prima o poi sovrascritte.",
     "email": "Email",
     "firstname": "Nome",
     "lastname": "Cognome",
-    "errorUpdating": "Errore durante l'aggiornamento dell'utente",
     "updated": "Utente aggiornato",
     "editTooltip": "Modifica utente",
     "deleteTooltip": "Elimina utente",
@@ -1579,7 +1596,10 @@
     "deleted": "Utente «{{email}}» eliminato",
     "errorDeleting": "Errore durante l'eliminazione dell'utente",
     "id": "ID:",
-    "subtitle": "Gestisci gli utenti registrati sul server DAV."
+    "subtitle": "Gestisci gli utenti registrati sul server DAV.",
+    "firstnameRequired": "Il nome è obbligatorio",
+    "lastnameRequired": "Il cognome è obbligatorio",
+    "invalidEmail": "L'e-mail deve essere un indirizzo valido, ad esempio user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Email il cui recapito SMTP non è riuscito, conservate per l'ispezione e il reinvio.",
@@ -1594,6 +1614,7 @@
     "deleteAllTitle": "Elimina tutte le email non inviate",
     "deleteAllConfirm": "Pianificare un'attività che elimini tutte le email conservate? Questa azione non può essere annullata.",
     "deleteAllFilteredConfirm": "Pianificare un'attività che elimini le email conservate corrispondenti a {{filters}}? Questa azione non può essere annullata.",
+    "bulkNeedsFullAddress": "Le azioni di massa selezionano le email per indirizzo completo: digita un indirizzo completo di mittente o destinatario (es. alice@example.com) per reinviare o eliminare le email elencate.",
     "deleteTitle": "Elimina email non inviata",
     "deleteConfirm": "Eliminare l'email non inviata {{id}}? Questa azione non può essere annullata.",
     "deleteTooltip": "Elimina questa email",

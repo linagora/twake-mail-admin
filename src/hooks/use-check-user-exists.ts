@@ -3,6 +3,10 @@ import { apiClient } from "@/lib/apiClient";
 
 export type UserExistsStatus = "idle" | "checking" | "exists" | "not_found" | "invalid";
 
+// "not_found" stays submittable: callers ask for an explicit confirmation instead.
+export const isSubmittableUserStatus = (status: UserExistsStatus): boolean =>
+  status !== "checking" && status !== "invalid";
+
 export function useCheckUserExists(username: string): UserExistsStatus {
   const [status, setStatus] = useState<UserExistsStatus>("idle");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
