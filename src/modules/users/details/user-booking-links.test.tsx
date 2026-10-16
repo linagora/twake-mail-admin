@@ -158,6 +158,14 @@ describe("booking link dialog: field labels", () => {
 
     expect(screen.getByLabelText(label)).toBeTruthy();
   });
+
+  it("lets an availability rule row wrap so it fits a phone-width dialog", async () => {
+    await openCreateDialog();
+    fireEvent.click(screen.getByText("users.bookingLinks.addRule"));
+
+    const row = screen.getByLabelText("users.bookingLinks.ruleDay").parentElement!;
+    expect(row.className).toContain("flex-wrap");
+  });
 });
 
 const ALICE = "alice@example.com";

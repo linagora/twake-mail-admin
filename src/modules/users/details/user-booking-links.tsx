@@ -116,7 +116,9 @@ function RulesEditor({
         // scrolls on its own instead of pushing the dialog past the screen.
         <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
           {rules.map((rule, i) => (
-            <div key={i} className="flex items-center gap-2 p-2 border rounded-md bg-gray-50">
+            // flex-wrap: on a phone the fields exceed the dialog width; let them wrap
+            // instead of widening the whole dialog past the screen.
+            <div key={i} className="flex flex-wrap items-center gap-2 p-2 border rounded-md bg-gray-50">
               <select
                 value={rule.dayOfWeek ?? "MON"}
                 onChange={(e) => update(i, { dayOfWeek: e.target.value })}
