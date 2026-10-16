@@ -471,7 +471,11 @@
           "viewer": "Người xem",
           "member": "Thành viên",
           "manager": "Người quản lý"
-        }
+        },
+        "email": "Email thành viên",
+        "role": "Vai trò",
+        "roleOf": "Vai trò của {{email}}",
+        "add": "Thêm thành viên"
       },
       "searchPlaceholder": "Tìm lịch nhóm..."
     },
@@ -956,14 +960,19 @@
           "read": "Đọc",
           "read-write": "Đọc/ghi",
           "administration": "Quản trị"
-        }
+        },
+        "email": "Email người được mời",
+        "right": "Quyền",
+        "rightOf": "Quyền của {{email}}",
+        "add": "Thêm người được mời"
       },
       "categories": {
         "owner": "Chủ sở hữu",
         "delegated": "Được ủy quyền",
         "subscription": "Đăng ký",
         "resource": "Tài nguyên"
-      }
+      },
+      "colorCode": "Mã màu"
     },
     "addressBooks": {
       "title": "Sổ địa chỉ",
@@ -1019,7 +1028,11 @@
           "read": "Đọc",
           "read-write": "Đọc/ghi",
           "administration": "Quản trị"
-        }
+        },
+        "email": "Email người được chia sẻ",
+        "right": "Quyền",
+        "rightOf": "Quyền của {{email}}",
+        "add": "Thêm người được chia sẻ"
       }
     },
     "bookingLinks": {
@@ -1074,7 +1087,10 @@
         "FRI": "T6",
         "SAT": "T7",
         "SUN": "CN"
-      }
+      },
+      "ruleDay": "Ngày",
+      "ruleStart": "Giờ bắt đầu",
+      "ruleEnd": "Giờ kết thúc"
     },
     "subtitle": "Quản lý người dùng đã đăng ký trên máy chủ thư.",
     "subtitleCalendar": "Quản lý người dùng đã đăng ký trên máy chủ lịch."

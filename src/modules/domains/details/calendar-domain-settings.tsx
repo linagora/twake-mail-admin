@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { ChevronDown, ChevronRight, Save, Loader2, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -39,7 +39,7 @@ function toValues(s: DomainSettings): DomainSettingsValues {
   };
 }
 
-function SettingRow({
+export function SettingRow({
   label,
   defaultLabel,
   value,
@@ -54,11 +54,12 @@ function SettingRow({
   disabled: boolean;
   onChange: (v: string) => void;
 }) {
+  const triggerId = useId();
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-sm font-medium">{label}</label>
+      <label htmlFor={triggerId} className="text-sm font-medium">{label}</label>
       <Select value={value} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className="w-[240px]">
+        <SelectTrigger id={triggerId} className="w-[240px]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

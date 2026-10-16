@@ -299,18 +299,18 @@ function CalendarColorField({ value, onChange }: { value: string | undefined; on
       <label htmlFor={id} className="text-sm font-medium">{t("users.calendars.color")}</label>
       <div className="flex gap-2 mt-1 items-center">
         <input
+          id={id}
           type="color"
           value={toColorPickerValue(value)}
           onChange={(e) => onChange(e.target.value)}
-          aria-label={t("users.calendars.color")}
           className="h-9 w-12 cursor-pointer border rounded-md"
         />
         <input
-          id={id}
           type="text"
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
           placeholder={DEFAULT_CALENDAR_COLOR}
+          aria-label={t("users.calendars.colorCode")}
           aria-invalid={invalid}
           aria-describedby={invalid ? `${id}-error` : undefined}
           className={`flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 ${invalid ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
@@ -325,6 +325,7 @@ function CalendarColorField({ value, onChange }: { value: string | undefined; on
 
 export default function UserCalendars({ username }: Props) {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/calendars");
@@ -530,14 +531,15 @@ export default function UserCalendars({ username }: Props) {
 
       {/* Create modal */}
       <Dialog open={showCreate} onOpenChange={(v) => { if (!v) { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); } }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("users.calendars.createTitle")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <label className="text-sm font-medium">{t("users.calendars.name")} *</label>
+              <label htmlFor={`${idPrefix}-create-name`} className="text-sm font-medium">{t("users.calendars.name")} *</label>
               <input
+                id={`${idPrefix}-create-name`}
                 type="text"
                 value={createForm["dav:name"]}
                 onChange={(e) => setCreateForm((f) => ({ ...f, "dav:name": e.target.value }))}
@@ -549,8 +551,9 @@ export default function UserCalendars({ username }: Props) {
               onChange={(color) => setCreateForm((f) => ({ ...f, "apple:color": color }))}
             />
             <div>
-              <label className="text-sm font-medium">{t("users.calendars.description")}</label>
+              <label htmlFor={`${idPrefix}-create-description`} className="text-sm font-medium">{t("users.calendars.description")}</label>
               <input
+                id={`${idPrefix}-create-description`}
                 type="text"
                 value={createForm["caldav:description"] ?? ""}
                 onChange={(e) => setCreateForm((f) => ({ ...f, "caldav:description": e.target.value }))}
@@ -576,15 +579,16 @@ export default function UserCalendars({ username }: Props) {
 
       {/* Edit modal */}
       <Dialog open={!!editCalendar} onOpenChange={(v) => { if (!v) setEditCalendar(null); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("users.calendars.editTitle")} — {editCalendar?.["dav:name"]}</DialogTitle>
           </DialogHeader>
           {editCalendar && (
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium">{t("users.calendars.name")} *</label>
+                <label htmlFor={`${idPrefix}-edit-name`} className="text-sm font-medium">{t("users.calendars.name")} *</label>
                 <input
+                  id={`${idPrefix}-edit-name`}
                   type="text"
                   value={editForm["dav:name"] ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, "dav:name": e.target.value }))}
@@ -596,8 +600,9 @@ export default function UserCalendars({ username }: Props) {
                 onChange={(color) => setEditForm((f) => ({ ...f, "apple:color": color }))}
               />
               <div>
-                <label className="text-sm font-medium">{t("users.calendars.description")}</label>
+                <label htmlFor={`${idPrefix}-edit-description`} className="text-sm font-medium">{t("users.calendars.description")}</label>
                 <input
+                  id={`${idPrefix}-edit-description`}
                   type="text"
                   value={editForm["caldav:description"] ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, "caldav:description": e.target.value }))}
@@ -624,7 +629,7 @@ export default function UserCalendars({ username }: Props) {
 
       {/* Public visibility modal */}
       <Dialog open={!!publicRightCalendar} onOpenChange={(v) => { if (!v) setPublicRightCalendar(null); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("users.calendars.publicRight.title")} — {publicRightCalendar?.["dav:name"]}</DialogTitle>
           </DialogHeader>
@@ -772,7 +777,7 @@ function InviteesModal({
 
   return (
     <Dialog open onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>{t("users.calendars.invitees.title")} — {calendar["dav:name"]}</DialogTitle>
         </DialogHeader>
@@ -793,6 +798,7 @@ function InviteesModal({
                   </span>
                   <select
                     value={currentRight}
+                    aria-label={t("users.calendars.invitees.rightOf", { email: invitee.email })}
                     disabled={removed}
                     onChange={(e) => changeRight(invitee, e.target.value as CalendarRight)}
                     className={`px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
@@ -839,10 +845,12 @@ function InviteesModal({
                 onChange={(e) => setNewEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleStageAdd()}
                 placeholder={t("users.calendars.invitees.placeholder")}
+                aria-label={t("users.calendars.invitees.email")}
                 className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <select
                 value={newRight}
+                aria-label={t("users.calendars.invitees.right")}
                 onChange={(e) => setNewRight(e.target.value as CalendarRight)}
                 className="px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
@@ -850,7 +858,7 @@ function InviteesModal({
                   <option key={r} value={r}>{t(`users.calendars.invitees.rights.${r}`)}</option>
                 ))}
               </select>
-              <Button size="sm" onClick={handleStageAdd} disabled={!canAdd}>
+              <Button size="sm" onClick={handleStageAdd} disabled={!canAdd} aria-label={t("users.calendars.invitees.add")}>
                 <Plus className="w-4 h-4" />
               </Button>
             </div>

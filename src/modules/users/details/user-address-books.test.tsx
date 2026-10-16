@@ -20,12 +20,11 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => (options?.email ? `${key} ${options.email}` : key),
+  }),
 }));
-vi.mock("@/lib/proxy-resolver-context", () => ({
-  useIsAllowed: (method: string, path: string) =>
-    (method === "GET" && path === "/users/{username}/addressbooks") || path.endsWith("/invitee"),
-}));
+vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: mocks.userStatus }));
@@ -78,5 +77,54 @@ describe("address book sharing: stage a sharee", () => {
     fireEvent.click(stageButton());
 
     await waitFor(() => expect(screen.getByText(BOB)).toBeTruthy());
+  });
+});
+
+describe("address book dialogs: field labels", () => {
+  const openSection = async () => {
+    mocks.userStatus.mockReturnValue("idle");
+    mocks.api.getUserAddressBookContactCount.mockResolvedValue({ count: 0 });
+    mocks.api.getUserAddressBooks.mockResolvedValue({
+      _embedded: {
+        "dav:addressbook": [{
+          "dav:name": "Friends",
+          _links: { self: { href: "/addressbooks/bob/friends.json" } },
+          invite: [{ href: "mailto:alice@example.com", principal: "principals/users/alice", access: 2 }],
+        }],
+      },
+    });
+    render(<UserAddressBooks username={BOB} />);
+    fireEvent.click(screen.getByText("users.addressBooks.title"));
+    await screen.findByText("Friends");
+  };
+
+  it.each(["users.addressBooks.name", "users.addressBooks.description"])(
+    "names the %s field of the create dialog",
+    async (label) => {
+      await openSection();
+      fireEvent.click(screen.getByTitle("users.addressBooks.createTitle"));
+
+      expect(screen.getByLabelText(label, { exact: false }).tagName).toBe("INPUT");
+    },
+  );
+
+  it.each(["users.addressBooks.name", "users.addressBooks.description"])(
+    "names the %s field of the edit dialog",
+    async (label) => {
+      await openSection();
+      fireEvent.click(screen.getByTitle("users.addressBooks.editTitle"));
+
+      expect(screen.getByLabelText(label, { exact: false }).tagName).toBe("INPUT");
+    },
+  );
+
+  it("names the right selects and the add button of the sharing dialog", async () => {
+    await openSection();
+    fireEvent.click(screen.getByTitle("users.addressBooks.invitees.title"));
+
+    expect(screen.getByRole("combobox", { name: "users.addressBooks.invitees.rightOf alice@example.com" })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "users.addressBooks.invitees.email" })).toBeTruthy();
+    expect(screen.getByRole("combobox", { name: "users.addressBooks.invitees.right" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "users.addressBooks.invitees.add" })).toBeTruthy();
   });
 });

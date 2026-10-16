@@ -471,7 +471,11 @@
           "viewer": "Lector",
           "member": "Miembro",
           "manager": "Gestor"
-        }
+        },
+        "email": "Correo del miembro",
+        "role": "Rol",
+        "roleOf": "Rol de {{email}}",
+        "add": "Añadir miembro"
       },
       "searchPlaceholder": "Buscar calendarios de equipo..."
     },
@@ -956,14 +960,19 @@
           "read": "Lectura",
           "read-write": "Lectura/escritura",
           "administration": "Administración"
-        }
+        },
+        "email": "Correo del invitado",
+        "right": "Permiso",
+        "rightOf": "Permiso de {{email}}",
+        "add": "Añadir invitado"
       },
       "categories": {
         "owner": "Propietario",
         "delegated": "Delegados",
         "subscription": "Suscripciones",
         "resource": "Recursos"
-      }
+      },
+      "colorCode": "Código de color"
     },
     "addressBooks": {
       "title": "Libretas de direcciones",
@@ -1019,7 +1028,11 @@
           "read": "Lectura",
           "read-write": "Lectura/escritura",
           "administration": "Administración"
-        }
+        },
+        "email": "Correo del destinatario",
+        "right": "Permiso",
+        "rightOf": "Permiso de {{email}}",
+        "add": "Añadir destinatario"
       }
     },
     "bookingLinks": {
@@ -1075,7 +1088,10 @@
         "FRI": "Vie",
         "SAT": "Sáb",
         "SUN": "Dom"
-      }
+      },
+      "ruleDay": "Día",
+      "ruleStart": "Hora de inicio",
+      "ruleEnd": "Hora de fin"
     },
     "subtitle": "Gestione los usuarios registrados en el servidor de correo.",
     "subtitleCalendar": "Gestione los usuarios registrados en el servidor de calendario."

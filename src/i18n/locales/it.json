@@ -471,7 +471,11 @@
           "viewer": "Lettore",
           "member": "Membro",
           "manager": "Gestore"
-        }
+        },
+        "email": "E-mail del membro",
+        "role": "Ruolo",
+        "roleOf": "Ruolo di {{email}}",
+        "add": "Aggiungi membro"
       },
       "searchPlaceholder": "Cerca calendari del team..."
     },
@@ -956,14 +960,19 @@
           "read": "Lettura",
           "read-write": "Lettura/scrittura",
           "administration": "Amministrazione"
-        }
+        },
+        "email": "E-mail dell'invitato",
+        "right": "Diritto",
+        "rightOf": "Diritto di {{email}}",
+        "add": "Aggiungi invitato"
       },
       "categories": {
         "owner": "Proprietario",
         "delegated": "Delegati",
         "subscription": "Iscrizioni",
         "resource": "Risorse"
-      }
+      },
+      "colorCode": "Codice colore"
     },
     "addressBooks": {
       "title": "Rubriche",
@@ -1019,7 +1028,11 @@
           "read": "Lettura",
           "read-write": "Lettura/scrittura",
           "administration": "Amministrazione"
-        }
+        },
+        "email": "E-mail del destinatario della condivisione",
+        "right": "Diritto",
+        "rightOf": "Diritto di {{email}}",
+        "add": "Aggiungi condivisione"
       }
     },
     "bookingLinks": {
@@ -1075,7 +1088,10 @@
         "FRI": "Ven",
         "SAT": "Sab",
         "SUN": "Dom"
-      }
+      },
+      "ruleDay": "Giorno",
+      "ruleStart": "Ora di inizio",
+      "ruleEnd": "Ora di fine"
     },
     "subtitle": "Gestisci gli utenti registrati sul server di posta.",
     "subtitleCalendar": "Gestisci gli utenti registrati sul server del calendario."

@@ -40,10 +40,12 @@ function calendarLabel(calendar: UserCalendar): string {
 // booking-links API expects as calendarUrl. Falls back to a free-text input
 // when no calendar can be listed, and preserves an unknown existing value.
 function CalendarSelect({
+  id,
   value,
   onChange,
   options,
 }: {
+  id: string;
   value: string;
   onChange: (value: string) => void;
   options: CalendarOption[];
@@ -53,6 +55,7 @@ function CalendarSelect({
   if (options.length === 0) {
     return (
       <input
+        id={id}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -65,6 +68,7 @@ function CalendarSelect({
   const known = options.some((o) => o.value === value);
   return (
     <select
+      id={id}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
@@ -116,6 +120,7 @@ function RulesEditor({
               <select
                 value={rule.dayOfWeek ?? "MON"}
                 onChange={(e) => update(i, { dayOfWeek: e.target.value })}
+                aria-label={t("users.bookingLinks.ruleDay")}
                 className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
                 {DAYS.map((d) => (
@@ -126,6 +131,7 @@ function RulesEditor({
                 type="time"
                 value={rule.start ?? "09:00"}
                 onChange={(e) => update(i, { start: e.target.value })}
+                aria-label={t("users.bookingLinks.ruleStart")}
                 className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <span className="shrink-0 text-xs text-gray-400">→</span>
@@ -133,6 +139,7 @@ function RulesEditor({
                 type="time"
                 value={rule.end ?? "17:00"}
                 onChange={(e) => update(i, { end: e.target.value })}
+                aria-label={t("users.bookingLinks.ruleEnd")}
                 className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <input
@@ -140,6 +147,7 @@ function RulesEditor({
                 value={rule.timeZone ?? ""}
                 onChange={(e) => update(i, { timeZone: e.target.value })}
                 placeholder={t("users.bookingLinks.timeZone")}
+                aria-label={t("users.bookingLinks.timeZone")}
                 className="flex-1 min-w-[80px] px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -584,22 +592,24 @@ export default function UserBookingLinks({ username }: Props) {
         open={showCreate}
         onOpenChange={(v) => { if (!v) closeCreate(); }}
       >
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("users.bookingLinks.create")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <label className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} *</label>
+              <label htmlFor="create-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} *</label>
               <CalendarSelect
+                id="create-calendar"
                 value={createForm.calendarUrl}
                 onChange={(value) => setCreateForm((f) => ({ ...f, calendarUrl: value }))}
                 options={bookableCalendarOptions}
               />
             </div>
             <div>
-              <label className="text-sm font-medium">{t("users.bookingLinks.name")}</label>
+              <label htmlFor="create-name" className="text-sm font-medium">{t("users.bookingLinks.name")}</label>
               <input
+                id="create-name"
                 type="text"
                 value={createForm.name ?? ""}
                 onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
@@ -608,8 +618,9 @@ export default function UserBookingLinks({ username }: Props) {
               />
             </div>
             <div>
-              <label className="text-sm font-medium">{t("users.bookingLinks.description")}</label>
+              <label htmlFor="create-description" className="text-sm font-medium">{t("users.bookingLinks.description")}</label>
               <textarea
+                id="create-description"
                 value={createForm.description ?? ""}
                 onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
                 placeholder={t("users.bookingLinks.descriptionPlaceholder")}
@@ -645,9 +656,10 @@ export default function UserBookingLinks({ username }: Props) {
               </label>
             </div>
             <div>
-              <label className="text-sm font-medium block mb-1">{t("users.bookingLinks.color")}</label>
+              <label htmlFor="create-color" className="text-sm font-medium block mb-1">{t("users.bookingLinks.color")}</label>
               <div className="flex items-center gap-2">
                 <input
+                  id="create-color"
                   type="color"
                   value={createForm.color ?? DEFAULT_COLOR}
                   onChange={(e) => setCreateForm((f) => ({ ...f, color: e.target.value }))}
@@ -679,23 +691,25 @@ export default function UserBookingLinks({ username }: Props) {
 
       {/* Edit dialog */}
       <Dialog open={!!editLink} onOpenChange={(v) => { if (!v) setEditLink(null); }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("users.bookingLinks.editTitle")}</DialogTitle>
           </DialogHeader>
           {editLink && (
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")}</label>
+                <label htmlFor="edit-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")}</label>
                 <CalendarSelect
+                  id="edit-calendar"
                   value={editForm.calendarUrl ?? ""}
                   onChange={(value) => setEditForm((f) => ({ ...f, calendarUrl: value }))}
                   options={bookableCalendarOptions}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">{t("users.bookingLinks.name")}</label>
+                <label htmlFor="edit-name" className="text-sm font-medium">{t("users.bookingLinks.name")}</label>
                 <input
+                  id="edit-name"
                   type="text"
                   value={editForm.name ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
@@ -704,8 +718,9 @@ export default function UserBookingLinks({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">{t("users.bookingLinks.description")}</label>
+                <label htmlFor="edit-description" className="text-sm font-medium">{t("users.bookingLinks.description")}</label>
                 <textarea
+                  id="edit-description"
                   value={editForm.description ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
                   placeholder={t("users.bookingLinks.descriptionPlaceholder")}
@@ -741,9 +756,10 @@ export default function UserBookingLinks({ username }: Props) {
                 </label>
               </div>
               <div>
-                <label className="text-sm font-medium block mb-1">{t("users.bookingLinks.color")}</label>
+                <label htmlFor="edit-color" className="text-sm font-medium block mb-1">{t("users.bookingLinks.color")}</label>
                 <div className="flex items-center gap-2">
                   <input
+                    id="edit-color"
                     type="color"
                     value={editForm.color ?? DEFAULT_COLOR}
                     onChange={(e) => setEditForm((f) => ({ ...f, color: e.target.value }))}

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { Pencil, Trash2, AlertTriangle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/lib/config";
@@ -16,8 +16,9 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
-function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (data: { email: string; firstname: string; lastname: string }) => void }) {
+export function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (data: { email: string; firstname: string; lastname: string }) => void }) {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const [email, setEmail] = useState(user.email ?? "");
   const [firstname, setFirstname] = useState(user.firstname ?? "");
   const [lastname, setLastname] = useState(user.lastname ?? "");
@@ -35,9 +36,9 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
         </div>
       )}
       <div>
-        <label htmlFor="registered-user-email" className="text-sm font-medium">{t("registeredUsers.email")} <span className="text-red-500">*</span></label>
+        <label htmlFor={`${idPrefix}-email`} className="text-sm font-medium">{t("registeredUsers.email")} <span className="text-red-500">*</span></label>
         <input
-          id="registered-user-email"
+          id={`${idPrefix}-email`}
           type="text"
           required
           value={email}
@@ -46,9 +47,9 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
         />
       </div>
       <div>
-        <label htmlFor="registered-user-firstname" className="text-sm font-medium">{t("registeredUsers.firstname")} <span className="text-red-500">*</span></label>
+        <label htmlFor={`${idPrefix}-firstname`} className="text-sm font-medium">{t("registeredUsers.firstname")} <span className="text-red-500">*</span></label>
         <input
-          id="registered-user-firstname"
+          id={`${idPrefix}-firstname`}
           type="text"
           required
           value={firstname}
@@ -57,9 +58,9 @@ function EditUserForm({ user, onChange }: { user: RegisteredUser; onChange: (dat
         />
       </div>
       <div>
-        <label htmlFor="registered-user-lastname" className="text-sm font-medium">{t("registeredUsers.lastname")} <span className="text-red-500">*</span></label>
+        <label htmlFor={`${idPrefix}-lastname`} className="text-sm font-medium">{t("registeredUsers.lastname")} <span className="text-red-500">*</span></label>
         <input
-          id="registered-user-lastname"
+          id={`${idPrefix}-lastname`}
           type="text"
           required
           value={lastname}

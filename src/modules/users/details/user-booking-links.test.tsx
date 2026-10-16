@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 
 const mocks = vi.hoisted(() => ({
+  canListCalendars: false,
   api: {
     createUserBookingLink: vi.fn(),
     deleteUserBookingLink: vi.fn(),
@@ -17,9 +18,10 @@ const mocks = vi.hoisted(() => ({
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
-// Calendars cannot be listed, so the calendar is typed in a free-text field.
+// Unless canListCalendars is set, calendars cannot be listed, so the calendar is typed in a free-text field.
 vi.mock("@/lib/proxy-resolver-context", () => ({
-  useIsAllowed: (method: string, path: string) => !(method === "GET" && path === "/users/{username}/calendars"),
+  useIsAllowed: (method: string, path: string) =>
+    mocks.canListCalendars || !(method === "GET" && path === "/users/{username}/calendars"),
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
@@ -33,6 +35,7 @@ const CALENDAR_URL = "/calendars/alice/alice";
 
 beforeEach(() => {
   vi.resetAllMocks();
+  mocks.canListCalendars = false;
   mocks.api.getUserBookingLinks.mockResolvedValue([
     { publicId: "abc", calendarUrl: CALENDAR_URL, durationMinutes: 30, active: true },
   ]);
@@ -117,5 +120,41 @@ describe("UserBookingLinks edit dialog duration", () => {
       "abc",
       expect.objectContaining({ durationMinutes: 45 }),
     );
+  });
+});
+
+describe("booking link dialog: field labels", () => {
+  const openCreateDialog = async () => {
+    mocks.canListCalendars = true;
+    mocks.api.getUserCalendars.mockResolvedValue({
+      _embedded: { "dav:calendar": [{ "dav:name": "Work", _links: { self: { href: "/calendars/bob/work.json" } } }] },
+    });
+    await openSection();
+    fireEvent.click(screen.getByText("users.bookingLinks.create"));
+    await screen.findByRole("option", { name: "Work" });
+  };
+
+  it.each([
+    ["users.bookingLinks.calendarUrl", "SELECT"],
+    ["users.bookingLinks.name", "INPUT"],
+    ["users.bookingLinks.description", "TEXTAREA"],
+    ["users.bookingLinks.durationMinutes", "INPUT"],
+    ["users.bookingLinks.color", "INPUT"],
+  ])("names the %s field after its visible label", async (label, tagName) => {
+    await openCreateDialog();
+
+    expect(screen.getByLabelText(label, { exact: false }).tagName).toBe(tagName);
+  });
+
+  it.each([
+    "users.bookingLinks.ruleDay",
+    "users.bookingLinks.ruleStart",
+    "users.bookingLinks.ruleEnd",
+    "users.bookingLinks.timeZone",
+  ])("names the %s field of an availability rule", async (label) => {
+    await openCreateDialog();
+    fireEvent.click(screen.getByText("users.bookingLinks.addRule"));
+
+    expect(screen.getByLabelText(label)).toBeTruthy();
   });
 });

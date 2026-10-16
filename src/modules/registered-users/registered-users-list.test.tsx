@@ -20,7 +20,8 @@ vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
 vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: () => "idle" }));
 vi.mock("@/modules/domain-admin/domain-context", () => ({ useDomain: () => "" }));
 
-import RegisteredUsersList from "./registered-users-list";
+import RegisteredUsersList, { EditUserForm } from "./registered-users-list";
+import { RegisterUserForm } from "@/modules/users/details/calendar-user-detail";
 
 const input = (label: string) => screen.getByLabelText(label, { exact: false }) as HTMLInputElement;
 
@@ -129,4 +130,24 @@ describe("registered users list: search", () => {
     expect(screen.getByText("alice@example.com")).not.toBeNull();
     expect(screen.queryByText("registeredUsers.noMatch")).toBeNull();
   });
+});
+
+describe("registered user forms: field labels", () => {
+  it.each(["registeredUsers.email", "registeredUsers.firstname", "registeredUsers.lastname"])(
+    "names the %s field of the edit form after its visible label",
+    (label) => {
+      render(<EditUserForm user={{ id: "1", email: "bob@example.com", firstname: "Bob", lastname: "Smith" }} onChange={() => {}} />);
+
+      expect(screen.getByLabelText(label, { exact: false }).tagName).toBe("INPUT");
+    },
+  );
+
+  it.each(["registeredUsers.firstname", "registeredUsers.lastname"])(
+    "names the %s field of the registration form after its visible label",
+    (label) => {
+      render(<RegisterUserForm username="bob@example.com" defaults={{ firstname: "", lastname: "" }} onChange={() => {}} />);
+
+      expect(screen.getByLabelText(label, { exact: false }).tagName).toBe("INPUT");
+    },
+  );
 });

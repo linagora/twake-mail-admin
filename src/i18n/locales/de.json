@@ -471,7 +471,11 @@
           "viewer": "Betrachter",
           "member": "Mitglied",
           "manager": "Verwalter"
-        }
+        },
+        "email": "E-Mail des Mitglieds",
+        "role": "Rolle",
+        "roleOf": "Rolle von {{email}}",
+        "add": "Mitglied hinzufügen"
       },
       "searchPlaceholder": "Teamkalender suchen..."
     },
@@ -956,14 +960,19 @@
           "read": "Lesen",
           "read-write": "Lesen/Schreiben",
           "administration": "Verwaltung"
-        }
+        },
+        "email": "E-Mail des Eingeladenen",
+        "right": "Recht",
+        "rightOf": "Recht von {{email}}",
+        "add": "Eingeladenen hinzufügen"
       },
       "categories": {
         "owner": "Eigentümer",
         "delegated": "Delegiert",
         "subscription": "Abonnements",
         "resource": "Ressourcen"
-      }
+      },
+      "colorCode": "Farbcode"
     },
     "addressBooks": {
       "title": "Adressbücher",
@@ -1019,7 +1028,11 @@
           "read": "Lesen",
           "read-write": "Lesen/Schreiben",
           "administration": "Verwaltung"
-        }
+        },
+        "email": "E-Mail des Freigabeempfängers",
+        "right": "Recht",
+        "rightOf": "Recht von {{email}}",
+        "add": "Freigabe hinzufügen"
       }
     },
     "bookingLinks": {
@@ -1075,7 +1088,10 @@
         "FRI": "Fr",
         "SAT": "Sa",
         "SUN": "So"
-      }
+      },
+      "ruleDay": "Tag",
+      "ruleStart": "Startzeit",
+      "ruleEnd": "Endzeit"
     },
     "subtitle": "Auf dem Mailserver registrierte Benutzer verwalten.",
     "subtitleCalendar": "Auf dem Kalenderserver registrierte Benutzer verwalten."

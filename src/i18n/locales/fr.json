@@ -471,7 +471,11 @@
           "viewer": "Lecteur",
           "member": "Membre",
           "manager": "Gestionnaire"
-        }
+        },
+        "email": "E-mail du membre",
+        "role": "Rôle",
+        "roleOf": "Rôle de {{email}}",
+        "add": "Ajouter le membre"
       },
       "searchPlaceholder": "Rechercher des calendriers d'équipe…"
     },
@@ -956,14 +960,19 @@
           "read": "Lecture",
           "read-write": "Lecture/écriture",
           "administration": "Administration"
-        }
+        },
+        "email": "E-mail de l'invité",
+        "right": "Droit",
+        "rightOf": "Droit de {{email}}",
+        "add": "Ajouter l'invité"
       },
       "categories": {
         "owner": "Propriétaire",
         "delegated": "Délégués",
         "subscription": "Abonnements",
         "resource": "Ressources"
-      }
+      },
+      "colorCode": "Code couleur"
     },
     "addressBooks": {
       "title": "Carnets d'adresses",
@@ -1019,7 +1028,11 @@
           "read": "Lecture",
           "read-write": "Lecture/écriture",
           "administration": "Administration"
-        }
+        },
+        "email": "E-mail du destinataire du partage",
+        "right": "Droit",
+        "rightOf": "Droit de {{email}}",
+        "add": "Ajouter le partage"
       }
     },
     "bookingLinks": {
@@ -1075,7 +1088,10 @@
         "FRI": "Ven",
         "SAT": "Sam",
         "SUN": "Dim"
-      }
+      },
+      "ruleDay": "Jour",
+      "ruleStart": "Heure de début",
+      "ruleEnd": "Heure de fin"
     },
     "subtitle": "Gérer les utilisateurs enregistrés sur le serveur mail.",
     "subtitleCalendar": "Gérer les utilisateurs enregistrés sur le serveur calendrier."

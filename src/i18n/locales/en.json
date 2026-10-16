@@ -471,7 +471,11 @@
           "viewer": "Viewer",
           "member": "Member",
           "manager": "Manager"
-        }
+        },
+        "email": "Member email",
+        "role": "Role",
+        "roleOf": "Role of {{email}}",
+        "add": "Add member"
       },
       "searchPlaceholder": "Search team calendars..."
     },
@@ -956,14 +960,19 @@
           "read": "Read",
           "read-write": "Read/write",
           "administration": "Administration"
-        }
+        },
+        "email": "Invitee email",
+        "right": "Right",
+        "rightOf": "Right of {{email}}",
+        "add": "Add invitee"
       },
       "categories": {
         "owner": "Owner",
         "delegated": "Delegated",
         "subscription": "Subscriptions",
         "resource": "Resources"
-      }
+      },
+      "colorCode": "Color code"
     },
     "addressBooks": {
       "title": "Address Books",
@@ -1019,7 +1028,11 @@
           "read": "Read",
           "read-write": "Read/write",
           "administration": "Administration"
-        }
+        },
+        "email": "Sharee email",
+        "right": "Right",
+        "rightOf": "Right of {{email}}",
+        "add": "Add sharee"
       }
     },
     "bookingLinks": {
@@ -1075,7 +1088,10 @@
         "FRI": "Fri",
         "SAT": "Sat",
         "SUN": "Sun"
-      }
+      },
+      "ruleDay": "Day",
+      "ruleStart": "Start time",
+      "ruleEnd": "End time"
     },
     "subtitle": "Manage users registered on the mail server.",
     "subtitleCalendar": "Manage users registered on the calendar server."

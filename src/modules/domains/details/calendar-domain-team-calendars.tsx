@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { Check, ChevronDown, ChevronRight, Loader2, Minus, Pencil, Plus, Save, Trash2, Users, X } from "lucide-react";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useSearchPagination } from "@/hooks/use-search-pagination";
@@ -41,6 +41,7 @@ interface Props {
 
 export default function CalendarDomainTeamCalendars({ domain, defaultOpen = false }: Props) {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/domains/{domain}/team-calendars");
@@ -154,14 +155,14 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
             <div className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2">
               <h5 className="text-sm font-semibold">{t("domains.teamCalendars.newTitle")}</h5>
               <div>
-                <label className="text-xs font-medium text-gray-500">{t("domains.teamCalendars.nameLabel")} <span className="text-red-500">*</span></label>
-                <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)}
+                <label htmlFor={`${idPrefix}-newName`} className="text-xs font-medium text-gray-500">{t("domains.teamCalendars.nameLabel")} <span className="text-red-500">*</span></label>
+                <input id={`${idPrefix}-newName`} type="text" value={newName} onChange={(e) => setNewName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAdd()} placeholder={t("domains.teamCalendars.namePlaceholder")}
                   className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500">{t("domains.teamCalendars.displayNameLabel")}</label>
-                <input type="text" value={newDisplayName} onChange={(e) => setNewDisplayName(e.target.value)}
+                <label htmlFor={`${idPrefix}-newDisplayName`} className="text-xs font-medium text-gray-500">{t("domains.teamCalendars.displayNameLabel")}</label>
+                <input id={`${idPrefix}-newDisplayName`} type="text" value={newDisplayName} onChange={(e) => setNewDisplayName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAdd()} placeholder={t("domains.teamCalendars.displayNamePlaceholder")}
                   className="mt-1 w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
@@ -202,6 +203,7 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
                         <input type="text" value={editDisplayName} onChange={(e) => setEditDisplayName(e.target.value)}
                           onKeyDown={(e) => { if (e.key === "Enter") handleUpdate(teamCalendar); if (e.key === "Escape") cancelEdit(); }}
                           autoFocus placeholder={t("domains.teamCalendars.displayNamePlaceholder")}
+                          aria-label={t("domains.teamCalendars.displayNameLabel")}
                           className="flex-1 px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
                       </div>
                     ) : (
@@ -371,7 +373,7 @@ function MembersModal({
 
   return (
     <Dialog open onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>{t("domains.teamCalendars.members.title")} — {teamCalendar.displayName || teamCalendar.name}</DialogTitle>
         </DialogHeader>
@@ -395,6 +397,7 @@ function MembersModal({
                     </span>
                     <select
                       value={currentRole}
+                      aria-label={t("domains.teamCalendars.members.roleOf", { email: member.username })}
                       disabled={removed || !canManage}
                       onChange={(e) => changeRole(member, e.target.value as TeamCalendarMemberRole)}
                       className={`px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
@@ -445,10 +448,12 @@ function MembersModal({
                   onChange={(e) => setNewUser(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleStageAdd()}
                   placeholder={t("domains.teamCalendars.members.placeholder")}
+                  aria-label={t("domains.teamCalendars.members.email")}
                   className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
                 <select
                   value={newRole}
+                  aria-label={t("domains.teamCalendars.members.role")}
                   onChange={(e) => setNewRole(e.target.value as TeamCalendarMemberRole)}
                   className="px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 >
@@ -456,7 +461,7 @@ function MembersModal({
                     <option key={r} value={r}>{t(`domains.teamCalendars.members.roles.${r}`)}</option>
                   ))}
                 </select>
-                <Button size="sm" onClick={handleStageAdd} disabled={!canAdd}>
+                <Button size="sm" onClick={handleStageAdd} disabled={!canAdd} aria-label={t("domains.teamCalendars.members.add")}>
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { AlertTriangle, UserPlus } from "lucide-react";
@@ -17,7 +17,7 @@ import UserBookingLinks from "./user-booking-links";
 import UserAddressBooks from "./user-address-books";
 
 // The DAV APIs do not expose the directory (LDAP) firstname/lastname, so the admin is asked for them.
-function RegisterUserForm({
+export function RegisterUserForm({
   username,
   defaults,
   onChange,
@@ -27,6 +27,7 @@ function RegisterUserForm({
   onChange: (data: { firstname: string; lastname: string }) => void;
 }) {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const [firstname, setFirstname] = useState(defaults.firstname);
   const [lastname, setLastname] = useState(defaults.lastname);
 
@@ -38,9 +39,9 @@ function RegisterUserForm({
         <span>{t("registeredUsers.ldapWarning")}</span>
       </div>
       <div>
-        <label htmlFor="register-user-firstname" className="text-sm font-medium">{t("registeredUsers.firstname")} <span className="text-red-500">*</span></label>
+        <label htmlFor={`${idPrefix}-firstname`} className="text-sm font-medium">{t("registeredUsers.firstname")} <span className="text-red-500">*</span></label>
         <input
-          id="register-user-firstname"
+          id={`${idPrefix}-firstname`}
           type="text"
           required
           value={firstname}
@@ -49,9 +50,9 @@ function RegisterUserForm({
         />
       </div>
       <div>
-        <label htmlFor="register-user-lastname" className="text-sm font-medium">{t("registeredUsers.lastname")} <span className="text-red-500">*</span></label>
+        <label htmlFor={`${idPrefix}-lastname`} className="text-sm font-medium">{t("registeredUsers.lastname")} <span className="text-red-500">*</span></label>
         <input
-          id="register-user-lastname"
+          id={`${idPrefix}-lastname`}
           type="text"
           required
           value={lastname}

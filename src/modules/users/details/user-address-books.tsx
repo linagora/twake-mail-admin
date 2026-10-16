@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Contact, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -218,6 +218,7 @@ function AddressBookRow({
 
 export default function UserAddressBooks({ username }: Props) {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/addressbooks");
@@ -406,14 +407,15 @@ export default function UserAddressBooks({ username }: Props) {
 
       {/* Create modal */}
       <Dialog open={showCreate} onOpenChange={(v) => { if (!v) { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); } }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("users.addressBooks.createTitle")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <label className="text-sm font-medium">{t("users.addressBooks.name")} *</label>
+              <label htmlFor={`${idPrefix}-create-name`} className="text-sm font-medium">{t("users.addressBooks.name")} *</label>
               <input
+                id={`${idPrefix}-create-name`}
                 type="text"
                 value={createForm["dav:name"]}
                 onChange={(e) => setCreateForm((f) => ({ ...f, "dav:name": e.target.value }))}
@@ -421,8 +423,9 @@ export default function UserAddressBooks({ username }: Props) {
               />
             </div>
             <div>
-              <label className="text-sm font-medium">{t("users.addressBooks.description")}</label>
+              <label htmlFor={`${idPrefix}-create-description`} className="text-sm font-medium">{t("users.addressBooks.description")}</label>
               <input
+                id={`${idPrefix}-create-description`}
                 type="text"
                 value={createForm["carddav:description"] ?? ""}
                 onChange={(e) => setCreateForm((f) => ({ ...f, "carddav:description": e.target.value }))}
@@ -448,15 +451,16 @@ export default function UserAddressBooks({ username }: Props) {
 
       {/* Edit modal */}
       <Dialog open={!!editAddressBook} onOpenChange={(v) => { if (!v) setEditAddressBook(null); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("users.addressBooks.editTitle")} — {editAddressBook ? addressBookName(editAddressBook, t) : ""}</DialogTitle>
           </DialogHeader>
           {editAddressBook && (
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium">{t("users.addressBooks.name")} *</label>
+                <label htmlFor={`${idPrefix}-edit-name`} className="text-sm font-medium">{t("users.addressBooks.name")} *</label>
                 <input
+                  id={`${idPrefix}-edit-name`}
                   type="text"
                   value={editForm["dav:name"] ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, "dav:name": e.target.value }))}
@@ -464,8 +468,9 @@ export default function UserAddressBooks({ username }: Props) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">{t("users.addressBooks.description")}</label>
+                <label htmlFor={`${idPrefix}-edit-description`} className="text-sm font-medium">{t("users.addressBooks.description")}</label>
                 <input
+                  id={`${idPrefix}-edit-description`}
                   type="text"
                   value={editForm["carddav:description"] ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, "carddav:description": e.target.value }))}
@@ -492,7 +497,7 @@ export default function UserAddressBooks({ username }: Props) {
 
       {/* Public visibility modal */}
       <Dialog open={!!publicRightAddressBook} onOpenChange={(v) => { if (!v) setPublicRightAddressBook(null); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("users.addressBooks.publicRight.title")} — {publicRightAddressBook ? addressBookName(publicRightAddressBook, t) : ""}</DialogTitle>
           </DialogHeader>
@@ -639,7 +644,7 @@ function InviteesModal({
 
   return (
     <Dialog open onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>{t("users.addressBooks.invitees.title")} — {addressBookName(addressBook, t)}</DialogTitle>
         </DialogHeader>
@@ -661,6 +666,7 @@ function InviteesModal({
                   </span>
                   <select
                     value={currentRight}
+                    aria-label={t("users.addressBooks.invitees.rightOf", { email: sharee.email })}
                     disabled={removed}
                     onChange={(e) => changeRight(href, sharee, e.target.value as AddressBookRight)}
                     className={`px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
@@ -706,10 +712,12 @@ function InviteesModal({
                 onChange={(e) => setNewEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleStageAdd()}
                 placeholder={t("users.addressBooks.invitees.placeholder")}
+                aria-label={t("users.addressBooks.invitees.email")}
                 className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <select
                 value={newRight}
+                aria-label={t("users.addressBooks.invitees.right")}
                 onChange={(e) => setNewRight(e.target.value as AddressBookRight)}
                 className="px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
@@ -717,7 +725,7 @@ function InviteesModal({
                   <option key={r} value={r}>{t(`users.addressBooks.invitees.rights.${r}`)}</option>
                 ))}
               </select>
-              <Button size="sm" onClick={handleStageAdd} disabled={!canAdd}>
+              <Button size="sm" onClick={handleStageAdd} disabled={!canAdd} aria-label={t("users.addressBooks.invitees.add")}>
                 <Plus className="w-4 h-4" />
               </Button>
             </div>
