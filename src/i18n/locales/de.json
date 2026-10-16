@@ -997,6 +997,7 @@
         "remove": "Entfernen",
         "undoRemove": "Entfernen rückgängig machen",
         "alreadyShared": "Bereits für diesen Benutzer freigegeben",
+        "unresolved": "Unbekannter Benutzer: seine Freigabe kann hier nicht geändert werden",
         "updated": "Freigabe aktualisiert",
         "errorUpdate": "Fehler beim Aktualisieren der Freigabe",
         "rights": {

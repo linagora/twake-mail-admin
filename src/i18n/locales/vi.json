@@ -997,6 +997,7 @@
         "remove": "Xóa",
         "undoRemove": "Hoàn tác xóa",
         "alreadyShared": "Đã chia sẻ với người dùng này",
+        "unresolved": "Người dùng không xác định: không thể thay đổi chia sẻ của họ tại đây",
         "updated": "Đã cập nhật chia sẻ",
         "errorUpdate": "Lỗi khi cập nhật chia sẻ",
         "rights": {

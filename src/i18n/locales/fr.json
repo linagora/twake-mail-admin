@@ -997,6 +997,7 @@
         "remove": "Retirer",
         "undoRemove": "Annuler le retrait",
         "alreadyShared": "Déjà partagé avec cet utilisateur",
+        "unresolved": "Utilisateur inconnu : son partage ne peut pas être modifié ici",
         "updated": "Partage mis à jour",
         "errorUpdate": "Erreur lors de la mise à jour du partage",
         "rights": {
