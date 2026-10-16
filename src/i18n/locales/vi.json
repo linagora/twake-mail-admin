@@ -31,6 +31,8 @@
     "userExists": "Người dùng đã tồn tại",
     "userNotFound": "Không tìm thấy người dùng",
     "invalidUsername": "Tên người dùng không hợp lệ",
+    "unknownUserTitle": "Người dùng không xác định",
+    "unknownUserConfirm": "\"{{username}}\" không tồn tại. Vẫn thêm?",
     "unlimited": "không giới hạn",
     "notSet": "chưa đặt",
     "invalidSize": "Kích thước không hợp lệ",
@@ -319,7 +321,9 @@
       "deleted": "Đã xóa mẫu chữ ký",
       "errorDeleting": "Lỗi khi xóa mẫu chữ ký",
       "deleteAll": "Xóa tất cả",
-      "empty": "Chưa cấu hình mẫu chữ ký nào."
+      "empty": "Chưa cấu hình mẫu chữ ký nào.",
+      "addTemplate": "Thêm mẫu chữ ký",
+      "removeTemplate": "Xóa mẫu \"{{language}}\""
     },
     "calendarDetail": {
       "title": "Chi tiết tên miền Lịch",
@@ -539,8 +543,7 @@
       "register": "Đăng ký người dùng này",
       "registerTitle": "Đăng ký người dùng",
       "registerHint": "Đăng ký \"{{username}}\" trên máy chủ DAV. Họ và tên không được đọc từ thư mục, vui lòng xác nhận.",
-      "registered": "Đã đăng ký người dùng \"{{username}}\"",
-      "errorRegistering": "Lỗi khi đăng ký người dùng"
+      "registered": "Đã đăng ký người dùng \"{{username}}\""
     },
     "aliases": {
       "title": "Bí danh",
@@ -943,6 +946,7 @@
         "remove": "Xóa",
         "undoRemove": "Hoàn tác xóa",
         "alreadyInvited": "Đã được mời",
+        "isOwner": "Đây là chủ sở hữu của lịch",
         "updated": "Đã cập nhật người được mời",
         "errorUpdate": "Lỗi khi cập nhật người được mời",
         "rights": {
@@ -961,6 +965,7 @@
     "addressBooks": {
       "title": "Sổ địa chỉ",
       "empty": "Không có sổ địa chỉ.",
+      "ownerLabel": "chủ sở hữu:",
       "createTitle": "Tạo sổ địa chỉ",
       "name": "Tên",
       "description": "Mô tả",
@@ -1003,6 +1008,7 @@
         "remove": "Xóa",
         "undoRemove": "Hoàn tác xóa",
         "alreadyShared": "Đã chia sẻ với người dùng này",
+        "isOwner": "Đây là chủ sở hữu của sổ địa chỉ",
         "updated": "Đã cập nhật chia sẻ",
         "errorUpdate": "Lỗi khi cập nhật chia sẻ",
         "rights": {
@@ -1049,8 +1055,7 @@
       "duplicateTitle": "Nhân bản liên kết đặt lịch",
       "copyName": "{{name}} (bản sao)",
       "timeZone": "Múi giờ",
-      "rulesCount": "{{count}} quy tắc",
-      "rulesCount_plural": "{{count}} quy tắc",
+      "rulesCount_other":"{{count}} quy tắc",
       "clearRules": "Xóa tất cả quy tắc",
       "clearRulesWarning": "Tất cả quy tắc sẽ bị xóa khi lưu.",
       "deleteEventsTitle": "Xóa các sự kiện liên quan",
@@ -1084,7 +1089,8 @@
   },
   "deleteUserDataForm": {
     "fromStep": "Tiếp tục từ bước",
-    "fromStepPlaceholder": "e.g. MailboxUserDeletionTaskStep"
+    "fromStepPlaceholder": "e.g. MailboxUserDeletionTaskStep",
+    "calendarFromStepPlaceholder": "e.g. DavCalendarDeletionTaskStep"
   },
   "restoreCriteria": {
     "addCriteria": "Thêm tiêu chí",
@@ -1285,6 +1291,8 @@
     "minOccupation": "Mức sử dụng tối thiểu (%)",
     "maxOccupation": "Mức sử dụng tối đa (%)",
     "empty": "Không tìm thấy người dùng nào trong khoảng mức sử dụng này.",
+    "invalidPercent": "Nhập tỷ lệ phần trăm từ 0 đến 100.",
+    "minAboveMax": "Không được nhỏ hơn mức sử dụng tối thiểu.",
     "username": "Tên người dùng",
     "occupationSize": "Mức sử dụng theo kích thước",
     "occupationCount": "Mức sử dụng theo số lượng",
@@ -1570,12 +1578,12 @@
     "errorRegistering": "Lỗi khi đăng ký người dùng",
     "registered": "Đã đăng ký người dùng \"{{username}}\"",
     "searchPlaceholder": "Tìm người dùng đã đăng ký...",
+    "noMatch": "Không có người dùng đã đăng ký nào khớp với \"{{query}}\".",
     "editTitle": "Sửa người dùng đã đăng ký",
     "ldapWarning": "Hệ thống của bạn có thể bao gồm việc nhập định kỳ từ LDAP: nếu vậy, các thay đổi thực hiện ở đây cuối cùng sẽ bị ghi đè.",
     "email": "Email",
     "firstname": "Tên",
     "lastname": "Họ",
-    "errorUpdating": "Lỗi khi cập nhật người dùng",
     "updated": "Đã cập nhật người dùng",
     "editTooltip": "Sửa người dùng",
     "deleteTooltip": "Xóa người dùng",
@@ -1584,7 +1592,10 @@
     "deleted": "Đã xóa người dùng \"{{email}}\"",
     "errorDeleting": "Lỗi khi xóa người dùng",
     "id": "ID:",
-    "subtitle": "Quản lý người dùng đã đăng ký trên máy chủ DAV."
+    "subtitle": "Quản lý người dùng đã đăng ký trên máy chủ DAV.",
+    "firstnameRequired": "Tên là bắt buộc",
+    "lastnameRequired": "Họ là bắt buộc",
+    "invalidEmail": "Email phải là địa chỉ hợp lệ, ví dụ user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Thư không gửi được qua SMTP, được lưu lại để xem và gửi lại.",
@@ -1599,6 +1610,7 @@
     "deleteAllTitle": "Xóa tất cả thư chưa gửi",
     "deleteAllConfirm": "Lên lịch tác vụ xóa mọi thư đã lưu? Không thể hoàn tác.",
     "deleteAllFilteredConfirm": "Lên lịch tác vụ xóa các thư đã lưu khớp với {{filters}}? Không thể hoàn tác.",
+    "bulkNeedsFullAddress": "Thao tác hàng loạt chọn thư theo địa chỉ đầy đủ: nhập địa chỉ người gửi hoặc người nhận đầy đủ (ví dụ alice@example.com) để gửi lại hoặc xóa các thư được liệt kê.",
     "deleteTitle": "Xóa thư chưa gửi",
     "deleteConfirm": "Xóa thư chưa gửi {{id}}? Không thể hoàn tác.",
     "deleteTooltip": "Xóa thư này",

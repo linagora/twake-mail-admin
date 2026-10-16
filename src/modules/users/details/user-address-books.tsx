@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Contact, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
@@ -7,10 +8,14 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserAddressBook, deleteUserAddressBook, exportUserAddressBook, getUserAddressBookContactCount, getUserAddressBooks, importUserAddressBook, setUserAddressBookPublicRight, updateUserAddressBook, updateUserAddressBookInvitees } from "../api-client";
 import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBooksResponseType, UpdateUserAddressBookPayload, UserAddressBook } from "../types";
 import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess, shareAccessToRight } from "./address-book-share-access";
+import { ownerEmail, parseAddressBookSource } from "./address-book-source";
 import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
+import { useDomain } from "@/modules/domain-admin/domain-context";
+import { getRegisteredUsers } from "@/modules/registered-users/api-client";
+import { RegisteredUser } from "@/modules/registered-users/types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -34,12 +39,8 @@ function addressBookId(addressBook: UserAddressBook): string {
   return last.replace(/\.json$/, "") || href;
 }
 
-// A shared or subscribed address book is a mirror of its owner's one: it can be
-// counted and read, but exporting or importing belongs to the owner.
-function isOwned(addressBook: UserAddressBook): boolean {
-  return addressBook["openpaas:source"] == null;
-}
-
+// The sharee's mirror of a shared address book has no name of its own: the
+// source one is more telling than the technical id of the mirror.
 // Every user owns the "contacts" and "collected" address books, created by the
 // DAV server: WebAdmin refuses to rename or delete them.
 const SYSTEM_ADDRESS_BOOK_IDS = ["contacts", "collected"] as const;
@@ -54,7 +55,15 @@ function systemAddressBookId(addressBook: UserAddressBook): SystemAddressBookId 
 function addressBookName(addressBook: UserAddressBook, t: TFunction): string {
   const systemId = systemAddressBookId(addressBook);
   if (systemId) return t(`users.addressBooks.system.${systemId}`);
-  return addressBook["dav:name"]?.trim() || addressBookId(addressBook);
+  return addressBook["dav:name"]?.trim()
+    || parseAddressBookSource(addressBook["openpaas:source"])?.addressBookId
+    || addressBookId(addressBook);
+}
+
+// A shared or subscribed address book is a mirror of its owner's one: it can be
+// counted and read, but exporting or importing belongs to the owner.
+function isOwned(addressBook: UserAddressBook): boolean {
+  return addressBook["openpaas:source"] == null;
 }
 
 function isPublic(addressBook: UserAddressBook): boolean {
@@ -94,6 +103,7 @@ interface AddressBookPermissions {
 function AddressBookRow({
   username,
   addressBook,
+  owner,
   permissions,
   onEdit,
   onDelete,
@@ -102,6 +112,7 @@ function AddressBookRow({
 }: {
   username: string;
   addressBook: UserAddressBook;
+  owner: string | null;
   permissions: AddressBookPermissions;
   onEdit: (addressBook: UserAddressBook) => void;
   onDelete: (addressBook: UserAddressBook) => void;
@@ -120,8 +131,8 @@ function AddressBookRow({
   return (
     <div className="group flex items-start gap-3 py-1">
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="font-medium">{name}</p>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+          <p className="font-medium min-w-0 break-words">{name}</p>
           {system && (
             <span
               className="px-1.5 py-0.5 rounded-sm bg-gray-100 text-xs text-gray-600"
@@ -143,6 +154,17 @@ function AddressBookRow({
         </div>
         {addressBook["carddav:description"] && (
           <p className="text-xs text-gray-400">{addressBook["carddav:description"]}</p>
+        )}
+        {owner && (
+          <p className="text-xs text-gray-400">
+            {t("users.addressBooks.ownerLabel")}{" "}
+            <Link
+              to={`/users/user/${encodeURIComponent(owner)}`}
+              className="text-blue-600 hover:underline"
+            >
+              {owner}
+            </Link>
+          </p>
         )}
       </div>
       {owned && permissions.export && (
@@ -228,6 +250,14 @@ export default function UserAddressBooks({ username }: Props) {
   const fetchAddressBooks = useCallback(() => getUserAddressBooks(username), [username]);
   const { data, isLoading, error, refresh } = useFetchData<GetUserAddressBooksResponseType>(
     canView ? fetchAddressBooks : null
+  );
+
+  // Resolve owner emails of shared/subscribed address books via the registered users list.
+  const domain = useDomain() || undefined;
+  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const fetchRegisteredUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
+  const { data: registeredUsers } = useFetchData<RegisteredUser[]>(
+    canView && canRegisteredUsers ? fetchRegisteredUsers : null
   );
 
   const [open, setOpen] = useState(false);
@@ -375,6 +405,7 @@ export default function UserAddressBooks({ username }: Props) {
                     key={addressBookId(ab)}
                     username={username}
                     addressBook={ab}
+                    owner={ownerEmail(parseAddressBookSource(ab["openpaas:source"]), registeredUsers)}
                     permissions={permissions}
                     onEdit={openEdit}
                     onDelete={handleDelete}
@@ -563,7 +594,8 @@ function InviteesModal({
   const isDuplicate =
     existing.some((i) => i.email === trimmedEmail && !removals.has(i.href)) ||
     additions.some((a) => a.email === trimmedEmail);
-  const canAdd = status === "exists" && !isDuplicate;
+  const isOwner = trimmedEmail.toLowerCase() === username.toLowerCase();
+  const canAdd = status === "exists" && !isOwner && !isDuplicate;
 
   const toggleRemoval = (href: string) => {
     setRemovals((prev) => {
@@ -703,10 +735,13 @@ function InviteesModal({
               {trimmedEmail && status === "checking" && (
                 <span className="text-xs text-gray-400">{t("common.checking")}</span>
               )}
-              {trimmedEmail && status === "exists" && isDuplicate && (
+              {trimmedEmail && status === "exists" && isOwner && (
+                <span className="text-xs text-orange-500">{t("users.addressBooks.invitees.isOwner")}</span>
+              )}
+              {trimmedEmail && status === "exists" && !isOwner && isDuplicate && (
                 <span className="text-xs text-orange-500">{t("users.addressBooks.invitees.alreadyShared")}</span>
               )}
-              {trimmedEmail && status === "exists" && !isDuplicate && (
+              {trimmedEmail && status === "exists" && !isOwner && !isDuplicate && (
                 <span className="text-xs text-green-600">{t("common.userExists")}</span>
               )}
               {trimmedEmail && status === "not_found" && (

@@ -71,4 +71,35 @@ describe("task detail", () => {
     expect(screen.getByRole("button", { name: "tasks.refresh" })).not.toBeNull();
     expect(screen.queryByRole("button", { name: "tasks.cancelButton" })).toBeNull();
   });
+
+  it.each([TaskStatus.FAILED, TaskStatus.CANCELLED, TaskStatus.CANCEL_REQUESTED])(
+    "does not offer to cancel a %s task",
+    async (status) => {
+      api.getTaskDetail.mockResolvedValue({ taskId: TASK_ID, status });
+      renderTaskDetail();
+
+      await findTaskJson();
+
+      expect(screen.queryByRole("button", { name: "tasks.cancelButton" })).toBeNull();
+    }
+  );
+
+  it("offers to cancel a waiting task", async () => {
+    api.getTaskDetail.mockResolvedValue({ taskId: TASK_ID, status: TaskStatus.WAITING });
+    renderTaskDetail();
+
+    await findTaskJson();
+
+    expect(screen.getByRole("button", { name: "tasks.cancelButton" })).not.toBeNull();
+  });
+
+  it("does not offer to cancel a task that could not be loaded", async () => {
+    api.getTaskDetail.mockRejectedValue(new Error("can not be found"));
+    renderTaskDetail();
+
+    await screen.findByText("common.errorPrefix");
+
+    expect(screen.getByRole("button", { name: "tasks.refresh" })).not.toBeNull();
+    expect(screen.queryByRole("button", { name: "tasks.cancelButton" })).toBeNull();
+  });
 });

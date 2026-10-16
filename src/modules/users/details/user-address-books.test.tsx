@@ -1,67 +1,82 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type { UserExistsStatus } from "@/hooks/use-check-user-exists";
 
-vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
-vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
-vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => false }));
-vi.mock("@/components/custom/dav-collection-actions", () => ({
-  CollectionCountBadge: () => null,
-  ExportCollectionButton: () => null,
-  ImportCollectionButton: () => null,
+const mocks = vi.hoisted(() => ({
+  toast: vi.fn(),
+  userStatus: vi.fn(),
+  api: {
+    createUserAddressBook: vi.fn(),
+    deleteUserAddressBook: vi.fn(),
+    exportUserAddressBook: vi.fn(),
+    getUserAddressBookContactCount: vi.fn(),
+    getUserAddressBooks: vi.fn(),
+    importUserAddressBook: vi.fn(),
+    setUserAddressBookPublicRight: vi.fn(),
+    updateUserAddressBook: vi.fn(),
+    updateUserAddressBookInvitees: vi.fn(),
+  },
 }));
-vi.mock("../api-client", () => ({
-  getUserAddressBooks: async () => ({
-    _embedded: {
-      "dav:addressbook": [
-        { _links: { self: { href: "/addressbooks/alice-id/contacts.json" } }, "dav:name": "" },
-        { _links: { self: { href: "/addressbooks/alice-id/collected.json" } }, "dav:name": "" },
-        { _links: { self: { href: "/addressbooks/alice-id/0f1e2d.json" } }, "dav:name": "contacts" },
-      ],
-    },
-  }),
-  createUserAddressBook: vi.fn(),
-  deleteUserAddressBook: vi.fn(),
-  exportUserAddressBook: vi.fn(),
-  getUserAddressBookContactCount: vi.fn(),
-  importUserAddressBook: vi.fn(),
-  setUserAddressBookPublicRight: vi.fn(),
-  updateUserAddressBook: vi.fn(),
-  updateUserAddressBookInvitees: vi.fn(),
+
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
 }));
+vi.mock("@/lib/proxy-resolver-context", () => ({
+  useIsAllowed: (method: string, path: string) =>
+    (method === "GET" && path === "/users/{username}/addressbooks") || path.endsWith("/invitee"),
+}));
+vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
+vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
+vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: mocks.userStatus }));
+vi.mock("../api-client", () => mocks.api);
 
 import UserAddressBooks from "./user-address-books";
 
-async function rowOf(name: string): Promise<HTMLElement> {
-  const label = await screen.findByText(name, { selector: "p" });
-  return label.closest(".group") as HTMLElement;
-}
+const ALICE = "alice@example.com";
+const BOB = "bob@example.com";
+
+const typeSharee = async (sharee: string, status: UserExistsStatus) => {
+  mocks.userStatus.mockReturnValue(status);
+  render(<UserAddressBooks username={ALICE} />);
+  fireEvent.click(screen.getByText("users.addressBooks.title"));
+  fireEvent.click(await screen.findByTitle("users.addressBooks.invitees.title"));
+  fireEvent.change(shareeInput(), { target: { value: sharee } });
+};
+
+const shareeInput = () => screen.getByPlaceholderText("users.addressBooks.invitees.placeholder");
+
+const stageButton = () => shareeInput().parentElement!.querySelector("button")!;
+
+beforeEach(() => {
+  vi.resetAllMocks();
+  mocks.api.getUserAddressBooks.mockResolvedValue({
+    _embedded: {
+      "dav:addressbook": [{ _links: { self: { href: "/addressbooks/abc/contacts.json" } }, "dav:name": "Contacts" }],
+    },
+  });
+});
 
 afterEach(cleanup);
 
-describe("user address books: system address books", () => {
-  it.each([
-    ["users.addressBooks.system.contacts"],
-    ["users.addressBooks.system.collected"],
-  ])("labels %s as a system address book that cannot be edited nor deleted", async (name) => {
-    render(<UserAddressBooks username="alice@example.com" />);
-    fireEvent.click(screen.getByText("users.addressBooks.title"));
+describe("address book sharing: stage a sharee", () => {
+  it("refuses to share the address book with its owner", async () => {
+    await typeSharee(" ALICE@example.com ", "exists");
 
-    const row = within(await rowOf(name));
-
-    expect(row.getByText("users.addressBooks.system.badge")).not.toBeNull();
-    expect(row.queryByTitle("users.addressBooks.deleteTitle")).toBeNull();
-    expect(row.queryByTitle("users.addressBooks.editTitle")).toBeNull();
+    expect(screen.getByText("users.addressBooks.invitees.isOwner")).toBeTruthy();
+    expect(screen.queryByText("common.userExists")).toBeNull();
+    expect(stageButton().disabled).toBe(true);
+    fireEvent.keyDown(shareeInput(), { key: "Enter" });
+    expect(screen.queryByText(ALICE)).toBeNull();
   });
 
-  it("keeps a user address book named after a system one editable and deletable", async () => {
-    render(<UserAddressBooks username="alice@example.com" />);
-    fireEvent.click(screen.getByText("users.addressBooks.title"));
+  it("stages another existing user", async () => {
+    await typeSharee(BOB, "exists");
 
-    const row = within(await rowOf("contacts"));
+    expect(screen.getByText("common.userExists")).toBeTruthy();
+    expect(stageButton().disabled).toBe(false);
+    fireEvent.click(stageButton());
 
-    expect(row.queryByText("users.addressBooks.system.badge")).toBeNull();
-    expect(row.getByTitle("users.addressBooks.deleteTitle")).not.toBeNull();
-    expect(row.getByTitle("users.addressBooks.editTitle")).not.toBeNull();
+    await waitFor(() => expect(screen.getByText(BOB)).toBeTruthy());
   });
 });

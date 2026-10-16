@@ -46,7 +46,7 @@ export default function TaskContainer({ nameKey, taskKey, mode, command, doc, pa
   return (
     <>
       <div className="flex justify-between items-center gap-4">
-        <p>{name} <a className="text-blue-500 hover:underline" href={doc} target="_blank">(doc)</a></p>
+        <p>{name}{doc && <> <a className="text-blue-500 hover:underline" href={doc} target="_blank">(doc)</a></>}</p>
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>

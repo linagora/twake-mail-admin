@@ -11,14 +11,12 @@ import { Button } from "@/components/ui/button";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import i18n from "i18next";
 import { currentLocale } from "@/i18n/locale";
+import { formatByteSize } from "@/i18n/format-size";
 
 function formatSize(bytes: number | null): string {
   if (bytes === null) return i18n.t("common.notSet");
   if (bytes === -1) return i18n.t("common.unlimited");
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  return formatByteSize(bytes);
 }
 
 function formatCount(count: number | null): string {

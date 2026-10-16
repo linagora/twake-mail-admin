@@ -31,6 +31,8 @@
     "userExists": "User exists",
     "userNotFound": "User not found",
     "invalidUsername": "Invalid username",
+    "unknownUserTitle": "Unknown user",
+    "unknownUserConfirm": "\"{{username}}\" does not exist. Add it anyway?",
     "unlimited": "unlimited",
     "notSet": "not set",
     "invalidSize": "Invalid size",
@@ -319,7 +321,9 @@
       "deleted": "Signature templates deleted",
       "errorDeleting": "Error deleting signature templates",
       "deleteAll": "Delete all",
-      "empty": "No signature templates configured."
+      "empty": "No signature templates configured.",
+      "addTemplate": "Add signature template",
+      "removeTemplate": "Remove template \"{{language}}\""
     },
     "calendarDetail": {
       "title": "Calendar Domain Details",
@@ -539,8 +543,7 @@
       "register": "Register this user",
       "registerTitle": "Register user",
       "registerHint": "Registering \"{{username}}\" on the DAV server. Firstname and lastname are not read from the directory, please confirm them.",
-      "registered": "User \"{{username}}\" registered",
-      "errorRegistering": "Error registering user"
+      "registered": "User \"{{username}}\" registered"
     },
     "aliases": {
       "title": "Aliases",
@@ -943,6 +946,7 @@
         "remove": "Remove",
         "undoRemove": "Undo removal",
         "alreadyInvited": "Already invited",
+        "isOwner": "This is the owner of the calendar",
         "updated": "Invitees updated",
         "errorUpdate": "Error updating invitees",
         "rights": {
@@ -961,6 +965,7 @@
     "addressBooks": {
       "title": "Address Books",
       "empty": "No address book.",
+      "ownerLabel": "owner:",
       "createTitle": "Create address book",
       "name": "Name",
       "description": "Description",
@@ -1003,6 +1008,7 @@
         "remove": "Remove",
         "undoRemove": "Undo removal",
         "alreadyShared": "Already shared with this user",
+        "isOwner": "This is the owner of the address book",
         "updated": "Sharing updated",
         "errorUpdate": "Error updating sharing",
         "rights": {
@@ -1049,8 +1055,8 @@
       "duplicateTitle": "Duplicate booking link",
       "copyName": "{{name}} (copy)",
       "timeZone": "Time zone",
-      "rulesCount": "{{count}} rule",
-      "rulesCount_plural": "{{count}} rules",
+      "rulesCount_one": "{{count}} rule",
+      "rulesCount_other":"{{count}} rules",
       "clearRules": "Remove all rules",
       "clearRulesWarning": "All rules will be removed on save.",
       "deleteEventsTitle": "Delete associated events",
@@ -1084,7 +1090,8 @@
   },
   "deleteUserDataForm": {
     "fromStep": "Resume from step",
-    "fromStepPlaceholder": "e.g. MailboxUserDeletionTaskStep"
+    "fromStepPlaceholder": "e.g. MailboxUserDeletionTaskStep",
+    "calendarFromStepPlaceholder": "e.g. DavCalendarDeletionTaskStep"
   },
   "restoreCriteria": {
     "addCriteria": "Add criterion",
@@ -1285,6 +1292,8 @@
     "minOccupation": "Min occupation (%)",
     "maxOccupation": "Max occupation (%)",
     "empty": "No users found in this occupation range.",
+    "invalidPercent": "Enter a percentage between 0 and 100.",
+    "minAboveMax": "Must not be lower than the min occupation.",
     "username": "Username",
     "occupationSize": "Occupation Size",
     "occupationCount": "Occupation Count",
@@ -1570,12 +1579,12 @@
     "errorRegistering": "Error registering user",
     "registered": "User \"{{username}}\" registered",
     "searchPlaceholder": "Search registered users...",
+    "noMatch": "No registered user matches \"{{query}}\".",
     "editTitle": "Edit Registered User",
     "ldapWarning": "Your deployment may include a periodic LDAP import: if this is the case, changes done here will eventually be overridden.",
     "email": "Email",
     "firstname": "Firstname",
     "lastname": "Lastname",
-    "errorUpdating": "Error updating user",
     "updated": "User updated",
     "editTooltip": "Edit user",
     "deleteTooltip": "Delete user",
@@ -1584,7 +1593,10 @@
     "deleted": "User \"{{email}}\" deleted",
     "errorDeleting": "Error deleting user",
     "id": "ID:",
-    "subtitle": "Manage users registered on the DAV server."
+    "subtitle": "Manage users registered on the DAV server.",
+    "firstnameRequired": "Firstname is required",
+    "lastnameRequired": "Lastname is required",
+    "invalidEmail": "Email must be a valid address, like user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Mails that failed SMTP delivery, retained for inspection and re-emission.",
@@ -1599,6 +1611,7 @@
     "deleteAllTitle": "Delete all unsent mails",
     "deleteAllConfirm": "Schedule a task deleting every retained mail? This cannot be undone.",
     "deleteAllFilteredConfirm": "Schedule a task deleting the retained mails matching {{filters}}? This cannot be undone.",
+    "bulkNeedsFullAddress": "Bulk actions select mails by complete address: type a full sender or recipient address (e.g. alice@example.com) to resend or delete the listed mails.",
     "deleteTitle": "Delete unsent mail",
     "deleteConfirm": "Delete unsent mail {{id}}? This cannot be undone.",
     "deleteTooltip": "Delete this mail",

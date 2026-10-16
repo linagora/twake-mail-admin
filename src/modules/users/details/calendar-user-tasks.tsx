@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { deleteUserData, archiveUserCalendarEvents, republishUserContacts } from "../api-client";
 import DeleteUserDataForm from "../components/delete-user-data-form";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
-import ErrorDisplayer from "@/components/custom/error-displayer";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 import { TaskParam } from "@/modules/common-tasks/types";
 import { Button } from "@/components/ui/button";
@@ -38,98 +37,71 @@ export default function CalendarUserTasks({ username }: Props) {
   const canArchiveCalendar = useIsAllowed("POST", "/calendars/{username}");
   const canRepublishContacts = useIsAllowed("POST", "/users/{username}/contacts?action=republish");
   const [open, setOpen] = useState(false);
-  const [deleteUserDataLoading, setDeleteUserDataLoading] = useState(false);
-  const [archiveCalendarLoading, setArchiveCalendarLoading] = useState(false);
-  const [republishContactsLoading, setRepublishContactsLoading] = useState(false);
+
+  const toastTaskRunning = (taskId: string) => toast({
+    title: t("common.taskRunning"),
+    description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
+  });
 
   const handleDeleteUserData = async () => {
     let currentFromStep = "";
 
-    try {
-      const result = await confirm({
-        header: t("users.tasks.deleteDataTitle"),
-        message: (
-          <DeleteUserDataForm
-            username={username}
-            onChange={(value) => { currentFromStep = value; }}
-          />
-        ),
-      });
-      if (!result) return;
-
-      setDeleteUserDataLoading(true);
-      const data = await deleteUserData(username, currentFromStep || undefined);
-      toast({
-        title: t("common.taskRunning"),
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
-      });
-    } catch (err) {
-      toast({ title: t("users.tasks.errorDeleteData"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setDeleteUserDataLoading(false);
-    }
+    await confirm({
+      header: t("users.tasks.deleteDataTitle"),
+      message: (
+        <DeleteUserDataForm
+          username={username}
+          onChange={(value) => { currentFromStep = value; }}
+          fromStepPlaceholderKey="deleteUserDataForm.calendarFromStepPlaceholder"
+        />
+      ),
+      action: async () => {
+        const data = await deleteUserData(username, currentFromStep || undefined);
+        toastTaskRunning(data.taskId);
+      },
+    });
   };
 
   const handleArchiveCalendarEvents = async () => {
-    try {
-      const additionalParams: any = {};
-      const result = await confirm({
-        header: t("users.calendarTasks.archiveTitle"),
-        message: (
-          <ConfirmTaskContent
-            message={<p>{t("users.calendarTasks.archiveDesc", { username })}</p>}
-            command={`curl -XPOST /calendars/${username}?task=archive`}
-            params={ARCHIVE_CALENDAR_PARAMS}
-            getParamValues={(key, value) => {
-              additionalParams[key] = value;
-            }}
-          />
-        ),
-      });
-      if (!result) return;
-
-      setArchiveCalendarLoading(true);
-      const data = await archiveUserCalendarEvents(username, additionalParams);
-      toast({
-        title: t("common.taskRunning"),
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
-      });
-    } catch (err) {
-      toast({ title: t("users.calendarTasks.errorArchive"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setArchiveCalendarLoading(false);
-    }
+    const additionalParams: Parameters<typeof archiveUserCalendarEvents>[1] = {};
+    await confirm({
+      header: t("users.calendarTasks.archiveTitle"),
+      message: (
+        <ConfirmTaskContent
+          message={<p>{t("users.calendarTasks.archiveDesc", { username })}</p>}
+          command={`curl -XPOST /calendars/${username}?task=archive`}
+          params={ARCHIVE_CALENDAR_PARAMS}
+          getParamValues={(key, value) => {
+            additionalParams[key as keyof typeof additionalParams] = value as string;
+          }}
+        />
+      ),
+      action: async () => {
+        const data = await archiveUserCalendarEvents(username, additionalParams);
+        toastTaskRunning(data.taskId);
+      },
+    });
   };
 
   const handleRepublishContacts = async () => {
-    try {
-      const params: { contactsPerSecond?: string } = {};
-      const result = await confirm({
-        header: t("users.calendarTasks.republishContactsTitle"),
-        message: (
-          <ConfirmTaskContent
-            message={<p>{t("users.calendarTasks.republishContactsDesc", { username })}</p>}
-            command={`curl -XPOST /users/${username}/contacts?action=republish`}
-            params={REPUBLISH_CONTACTS_PARAMS}
-            getParamValues={(key, value) => {
-              params[key as keyof typeof params] = value as string;
-            }}
-          />
-        ),
-      });
-      if (!result) return;
-
-      setRepublishContactsLoading(true);
-      const data = await republishUserContacts(username, params);
-      toast({
-        title: t("common.taskRunning"),
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
-      });
-    } catch (err) {
-      toast({ title: t("users.calendarTasks.errorRepublishContacts"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setRepublishContactsLoading(false);
-    }
+    const params: { contactsPerSecond?: string } = {};
+    await confirm({
+      header: t("users.calendarTasks.republishContactsTitle"),
+      message: (
+        <ConfirmTaskContent
+          message={<p>{t("users.calendarTasks.republishContactsDesc", { username })}</p>}
+          command={`curl -XPOST /users/${username}/contacts?action=republish`}
+          params={REPUBLISH_CONTACTS_PARAMS}
+          getParamValues={(key, value) => {
+            params[key as keyof typeof params] = value as string;
+          }}
+        />
+      ),
+      action: async () => {
+        const data = await republishUserContacts(username, params);
+        toastTaskRunning(data.taskId);
+      },
+    });
   };
 
   return (
@@ -151,7 +123,6 @@ export default function CalendarUserTasks({ username }: Props) {
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleArchiveCalendarEvents}>
-                      {archiveCalendarLoading && <Loader2 className="animate-spin" />}
                       {t("common.run")}
                     </Button>
                   </TooltipTrigger>
@@ -169,7 +140,6 @@ export default function CalendarUserTasks({ username }: Props) {
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRepublishContacts}>
-                      {republishContactsLoading && <Loader2 className="animate-spin" />}
                       {t("common.run")}
                     </Button>
                   </TooltipTrigger>
@@ -187,7 +157,6 @@ export default function CalendarUserTasks({ username }: Props) {
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button className="bg-red-600 hover:bg-red-700 rounded-sm" onClick={handleDeleteUserData}>
-                      {deleteUserDataLoading && <Loader2 className="animate-spin" />}
                       {t("common.run")}
                     </Button>
                   </TooltipTrigger>

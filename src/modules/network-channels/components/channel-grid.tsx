@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { NetworkChannel } from "../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { formatByteSize } from "@/i18n/format-size";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -36,10 +37,7 @@ function formatBytes(value: string | undefined, perSecond = false): string {
   const num = Number(value);
   if (isNaN(num)) return value;
   const suffix = perSecond ? "/s" : "";
-  if (num < 1024) return `${num} B${suffix}`;
-  if (num < 1024 * 1024) return `${(num / 1024).toFixed(1)} KB${suffix}`;
-  if (num < 1024 * 1024 * 1024) return `${(num / (1024 * 1024)).toFixed(1)} MB${suffix}`;
-  return `${(num / (1024 * 1024 * 1024)).toFixed(2)} GB${suffix}`;
+  return `${formatByteSize(num)}${suffix}`;
 }
 
 interface Props {
