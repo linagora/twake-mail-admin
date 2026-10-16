@@ -47,17 +47,28 @@ function addressBookId(addressBook: UserAddressBook): string {
 const SYSTEM_ADDRESS_BOOK_IDS = ["contacts", "collected"] as const;
 type SystemAddressBookId = (typeof SYSTEM_ADDRESS_BOOK_IDS)[number];
 
+function asSystemAddressBookId(id: string | undefined): SystemAddressBookId | null {
+  return SYSTEM_ADDRESS_BOOK_IDS.find((systemId) => systemId === id) ?? null;
+}
+
 function systemAddressBookId(addressBook: UserAddressBook): SystemAddressBookId | null {
   if (!isOwned(addressBook)) return null;
-  const id = addressBookId(addressBook);
-  return SYSTEM_ADDRESS_BOOK_IDS.find((systemId) => systemId === id) ?? null;
+  return asSystemAddressBookId(addressBookId(addressBook));
+}
+
+// A mirror without a name of its own is named as on its owner's page.
+function sourceAddressBookName(addressBook: UserAddressBook, t: TFunction): string | null {
+  const sourceId = parseAddressBookSource(addressBook["openpaas:source"])?.addressBookId;
+  const systemId = asSystemAddressBookId(sourceId);
+  if (systemId) return t(`users.addressBooks.system.${systemId}`);
+  return sourceId ?? null;
 }
 
 function addressBookName(addressBook: UserAddressBook, t: TFunction): string {
   const systemId = systemAddressBookId(addressBook);
   if (systemId) return t(`users.addressBooks.system.${systemId}`);
   return addressBook["dav:name"]?.trim()
-    || parseAddressBookSource(addressBook["openpaas:source"])?.addressBookId
+    || sourceAddressBookName(addressBook, t)
     || addressBookId(addressBook);
 }
 
@@ -65,6 +76,17 @@ function addressBookName(addressBook: UserAddressBook, t: TFunction): string {
 // counted and read, but exporting or importing belongs to the owner.
 function isOwned(addressBook: UserAddressBook): boolean {
   return addressBook["openpaas:source"] == null;
+}
+
+const SHARE_PRIVILEGES = ["{DAV:}share", "{DAV:}all"];
+
+// Sharing an address book, or changing its visibility, takes the {DAV:}share
+// privilege: the owner has it, the sharee of a mirror only through an
+// "Administration" share, which the mirror ACL grants to the user principal.
+function canManageSharing(addressBook: UserAddressBook): boolean {
+  return isOwned(addressBook) || (addressBook.acl ?? []).some(
+    (a) => a.principal?.startsWith("principals/users/") && SHARE_PRIVILEGES.includes(a.privilege)
+  );
 }
 
 function isPublic(addressBook: UserAddressBook): boolean {
@@ -109,6 +131,7 @@ function AddressBookRow({
   const name = addressBookName(addressBook, t);
   const owned = isOwned(addressBook);
   const system = systemAddressBookId(addressBook) !== null;
+  const sharingManageable = canManageSharing(addressBook);
   const isPublicAb = isPublic(addressBook);
   // Bumped once an import task is over: a new key re-reads the contact counter.
   const [countKey, setCountKey] = useState(0);
@@ -174,7 +197,7 @@ function AddressBookRow({
           onImported={() => setCountKey((key) => key + 1)}
         />
       )}
-      {permissions.invitees && (
+      {sharingManageable && permissions.invitees && (
         <button
           onClick={() => onInvitees(addressBook)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
@@ -183,7 +206,7 @@ function AddressBookRow({
           <Users className="w-3.5 h-3.5 text-gray-600" />
         </button>
       )}
-      {permissions.publicRight && (
+      {sharingManageable && permissions.publicRight && (
         <button
           onClick={() => onPublicRight(addressBook)}
           className="p-1.5 rounded-md hover:bg-gray-200 transition"
