@@ -943,6 +943,7 @@
         "remove": "Xóa",
         "undoRemove": "Hoàn tác xóa",
         "alreadyInvited": "Đã được mời",
+        "isOwner": "Đây là chủ sở hữu của lịch",
         "updated": "Đã cập nhật người được mời",
         "errorUpdate": "Lỗi khi cập nhật người được mời",
         "rights": {
@@ -997,6 +998,7 @@
         "remove": "Xóa",
         "undoRemove": "Hoàn tác xóa",
         "alreadyShared": "Đã chia sẻ với người dùng này",
+        "isOwner": "Đây là chủ sở hữu của sổ địa chỉ",
         "updated": "Đã cập nhật chia sẻ",
         "errorUpdate": "Lỗi khi cập nhật chia sẻ",
         "rights": {

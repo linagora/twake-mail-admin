@@ -540,7 +540,8 @@ function InviteesModal({
   const isDuplicate =
     existing.some((i) => i.email === trimmedEmail && !removals.has(i.href)) ||
     additions.some((a) => a.email === trimmedEmail);
-  const canAdd = status === "exists" && !isDuplicate;
+  const isOwner = trimmedEmail.toLowerCase() === username.toLowerCase();
+  const canAdd = status === "exists" && !isOwner && !isDuplicate;
 
   const toggleRemoval = (href: string) => {
     setRemovals((prev) => {
@@ -680,10 +681,13 @@ function InviteesModal({
               {trimmedEmail && status === "checking" && (
                 <span className="text-xs text-gray-400">{t("common.checking")}</span>
               )}
-              {trimmedEmail && status === "exists" && isDuplicate && (
+              {trimmedEmail && status === "exists" && isOwner && (
+                <span className="text-xs text-orange-500">{t("users.addressBooks.invitees.isOwner")}</span>
+              )}
+              {trimmedEmail && status === "exists" && !isOwner && isDuplicate && (
                 <span className="text-xs text-orange-500">{t("users.addressBooks.invitees.alreadyShared")}</span>
               )}
-              {trimmedEmail && status === "exists" && !isDuplicate && (
+              {trimmedEmail && status === "exists" && !isOwner && !isDuplicate && (
                 <span className="text-xs text-green-600">{t("common.userExists")}</span>
               )}
               {trimmedEmail && status === "not_found" && (

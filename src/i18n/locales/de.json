@@ -943,6 +943,7 @@
         "remove": "Entfernen",
         "undoRemove": "Entfernen rückgängig machen",
         "alreadyInvited": "Bereits eingeladen",
+        "isOwner": "Dies ist der Eigentümer des Kalenders",
         "updated": "Eingeladene aktualisiert",
         "errorUpdate": "Fehler beim Aktualisieren der Eingeladenen",
         "rights": {
@@ -997,6 +998,7 @@
         "remove": "Entfernen",
         "undoRemove": "Entfernen rückgängig machen",
         "alreadyShared": "Bereits für diesen Benutzer freigegeben",
+        "isOwner": "Dies ist der Eigentümer des Adressbuchs",
         "updated": "Freigabe aktualisiert",
         "errorUpdate": "Fehler beim Aktualisieren der Freigabe",
         "rights": {

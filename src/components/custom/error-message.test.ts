@@ -32,6 +32,36 @@ describe("toErrorMessage", () => {
     expect(toErrorMessage(error)).toEqual({ message: "User not found", details: undefined });
   });
 
+  it("keeps only the message of a DAV error document relayed in the details", () => {
+    const error = axiosErrorWithData({
+      statusCode: 500,
+      message: "Error while calling the DAV server",
+      details:
+        "Unexpected status code: 400 when updating shares of address book /addressbooks/abc/contacts.json " +
+        '<?xml version="1.0" encoding="utf-8"?> <d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns"> ' +
+        "<s:sabredav-version>4.7.1</s:sabredav-version> <s:exception>Sabre\\DAV\\Exception\\BadRequest</s:exception> " +
+        "<s:message>Cannot delegate an address book to yourself</s:message> " +
+        "<s:file>/var/www/lib/CardDAV/Sharing/Plugin.php</s:file> <s:stacktrace>#0 {main}</s:stacktrace> </d:error>",
+    });
+
+    expect(toErrorMessage(error)).toEqual({
+      message: "Error while calling the DAV server",
+      details:
+        "Unexpected status code: 400 when updating shares of address book /addressbooks/abc/contacts.json — " +
+        "Cannot delegate an address book to yourself",
+    });
+  });
+
+  it("drops a DAV error document carrying no message", () => {
+    const error = axiosErrorWithData({
+      statusCode: 500,
+      message: "Error while calling the DAV server",
+      details: '<?xml version="1.0" encoding="utf-8"?><d:error xmlns:d="DAV:"/>',
+    });
+
+    expect(toErrorMessage(error)).toEqual({ message: "Error while calling the DAV server", details: undefined });
+  });
+
   it("uses a plain text response body", () => {
     expect(toErrorMessage(axiosErrorWithData("Bad gateway"))).toEqual({ message: "Bad gateway" });
   });

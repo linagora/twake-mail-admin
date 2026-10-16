@@ -943,6 +943,7 @@
         "remove": "Quitar",
         "undoRemove": "Deshacer la eliminación",
         "alreadyInvited": "Ya invitado",
+        "isOwner": "Este es el propietario del calendario",
         "updated": "Invitados actualizados",
         "errorUpdate": "Error al actualizar los invitados",
         "rights": {
@@ -997,6 +998,7 @@
         "remove": "Quitar",
         "undoRemove": "Deshacer la eliminación",
         "alreadyShared": "Ya se comparte con este usuario",
+        "isOwner": "Este es el propietario de la libreta de direcciones",
         "updated": "Uso compartido actualizado",
         "errorUpdate": "Error al actualizar el uso compartido",
         "rights": {

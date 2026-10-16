@@ -943,6 +943,7 @@
         "remove": "Remove",
         "undoRemove": "Undo removal",
         "alreadyInvited": "Already invited",
+        "isOwner": "This is the owner of the calendar",
         "updated": "Invitees updated",
         "errorUpdate": "Error updating invitees",
         "rights": {
@@ -997,6 +998,7 @@
         "remove": "Remove",
         "undoRemove": "Undo removal",
         "alreadyShared": "Already shared with this user",
+        "isOwner": "This is the owner of the address book",
         "updated": "Sharing updated",
         "errorUpdate": "Error updating sharing",
         "rights": {

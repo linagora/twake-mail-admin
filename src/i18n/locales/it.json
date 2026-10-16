@@ -943,6 +943,7 @@
         "remove": "Rimuovi",
         "undoRemove": "Annulla la rimozione",
         "alreadyInvited": "Già invitato",
+        "isOwner": "Questo è il proprietario del calendario",
         "updated": "Invitati aggiornati",
         "errorUpdate": "Errore durante l'aggiornamento degli invitati",
         "rights": {
@@ -997,6 +998,7 @@
         "remove": "Rimuovi",
         "undoRemove": "Annulla la rimozione",
         "alreadyShared": "Già condivisa con questo utente",
+        "isOwner": "Questo è il proprietario della rubrica",
         "updated": "Condivisione aggiornata",
         "errorUpdate": "Errore durante l'aggiornamento della condivisione",
         "rights": {
