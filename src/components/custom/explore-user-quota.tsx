@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import i18n from "i18next";
 import { currentLocale } from "@/i18n/locale";
 import { formatByteSize } from "@/i18n/format-size";
+import { toErrorMessage } from "./error-message";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -62,6 +63,39 @@ interface Props {
   domain?: string;
 }
 
+interface OccupationRange {
+  minRatio: number;
+  maxRatio: number;
+}
+
+interface RangeErrors {
+  min?: string;
+  max?: string;
+}
+
+const parsePercent = (value: string): number | undefined => {
+  const percent = value.trim() === "" ? NaN : Number(value);
+  return Number.isFinite(percent) && percent >= 0 && percent <= 100 ? percent : undefined;
+};
+
+// WebAdmin rejects negative ratios and silently returns nothing for inverted ranges: both are flagged before sending.
+const validateRange = (minPercent: string, maxPercent: string): OccupationRange | RangeErrors => {
+  const min = parsePercent(minPercent);
+  const max = parsePercent(maxPercent);
+  if (min === undefined || max === undefined) {
+    return {
+      min: min === undefined ? "exploreQuota.invalidPercent" : undefined,
+      max: max === undefined ? "exploreQuota.invalidPercent" : undefined,
+    };
+  }
+  if (min > max) {
+    return { max: "exploreQuota.minAboveMax" };
+  }
+  return { minRatio: min / 100, maxRatio: max / 100 };
+};
+
+const isValidRange = (range: OccupationRange | RangeErrors): range is OccupationRange => "minRatio" in range;
+
 export default function ExploreUserQuota({ domain }: Props) {
   const { t } = useTranslation();
   const idPrefix = useId();
@@ -76,14 +110,20 @@ export default function ExploreUserQuota({ domain }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
+  const [rangeErrors, setRangeErrors] = useState<RangeErrors>({});
 
   if (!canSearch || appConfig.application !== 'MAIL') return null;
 
   const fetchUsers = async (targetPage: number) => {
-    const minRatio = parseFloat(minPercent) / 100;
-    const maxRatio = parseFloat(maxPercent) / 100;
-    if (isNaN(minRatio) || isNaN(maxRatio)) return;
+    const range = validateRange(minPercent, maxPercent);
+    if (!isValidRange(range)) {
+      setRangeErrors(range);
+      setError(null);
+      return;
+    }
+    const { minRatio, maxRatio } = range;
 
+    setRangeErrors({});
     setLoading(true);
     setError(null);
     try {
@@ -98,9 +138,11 @@ export default function ExploreUserQuota({ domain }: Props) {
       setResults(data);
       setPage(targetPage);
       setSearched(true);
-    } catch (err: any) {
-      setError(err?.message || "Failed to fetch");
+    } catch (err: unknown) {
+      const { message, details } = toErrorMessage(err);
+      setError(details ? `${message} ${details}` : message);
       setResults([]);
+      setSearched(false);
     } finally {
       setLoading(false);
     }
@@ -124,7 +166,7 @@ export default function ExploreUserQuota({ domain }: Props) {
         <div className="mt-2">
           {/* Search controls */}
           <div className="p-4 bg-gray-50 rounded-2 space-y-3">
-            <div className="flex items-end gap-3 flex-wrap">
+            <div className="flex items-start gap-3 flex-wrap">
               <div>
                 <label htmlFor={`${idPrefix}-min`} className="text-xs text-gray-500 font-medium">{t("exploreQuota.minOccupation")}</label>
                 <input
@@ -135,8 +177,15 @@ export default function ExploreUserQuota({ domain }: Props) {
                   step="1"
                   value={minPercent}
                   onChange={(e) => setMinPercent(e.target.value)}
-                  className="w-24 mt-1 block px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                  aria-invalid={!!rangeErrors.min}
+                  aria-describedby={rangeErrors.min ? `${idPrefix}-min-error` : undefined}
+                  className="w-24 mt-1 block px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 aria-invalid:border-red-500"
                 />
+                {rangeErrors.min && (
+                  <p id={`${idPrefix}-min-error`} role="alert" className="mt-1 max-w-48 text-xs text-red-500">
+                    {t(rangeErrors.min)}
+                  </p>
+                )}
               </div>
               <div>
                 <label htmlFor={`${idPrefix}-max`} className="text-xs text-gray-500 font-medium">{t("exploreQuota.maxOccupation")}</label>
@@ -148,10 +197,17 @@ export default function ExploreUserQuota({ domain }: Props) {
                   step="1"
                   value={maxPercent}
                   onChange={(e) => setMaxPercent(e.target.value)}
-                  className="w-24 mt-1 block px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                  aria-invalid={!!rangeErrors.max}
+                  aria-describedby={rangeErrors.max ? `${idPrefix}-max-error` : undefined}
+                  className="w-24 mt-1 block px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 aria-invalid:border-red-500"
                 />
+                {rangeErrors.max && (
+                  <p id={`${idPrefix}-max-error`} role="alert" className="mt-1 max-w-48 text-xs text-red-500">
+                    {t(rangeErrors.max)}
+                  </p>
+                )}
               </div>
-              <Button size="sm" onClick={handleSearch} disabled={loading}>
+              <Button size="sm" onClick={handleSearch} disabled={loading} className="mt-5">
                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Search className="w-4 h-4 mr-1" />}
                 {t("common.search")}
               </Button>

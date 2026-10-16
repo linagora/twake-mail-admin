@@ -1286,6 +1286,8 @@
     "minOccupation": "Min. Belegung (%)",
     "maxOccupation": "Max. Belegung (%)",
     "empty": "Keine Benutzer in diesem Belegungsbereich gefunden.",
+    "invalidPercent": "Geben Sie einen Prozentsatz zwischen 0 und 100 ein.",
+    "minAboveMax": "Darf nicht kleiner als die min. Belegung sein.",
     "username": "Benutzername",
     "occupationSize": "Belegte Größe",
     "occupationCount": "Belegte Anzahl",

@@ -1285,6 +1285,8 @@
     "minOccupation": "Mức sử dụng tối thiểu (%)",
     "maxOccupation": "Mức sử dụng tối đa (%)",
     "empty": "Không tìm thấy người dùng nào trong khoảng mức sử dụng này.",
+    "invalidPercent": "Nhập tỷ lệ phần trăm từ 0 đến 100.",
+    "minAboveMax": "Không được nhỏ hơn mức sử dụng tối thiểu.",
     "username": "Tên người dùng",
     "occupationSize": "Mức sử dụng theo kích thước",
     "occupationCount": "Mức sử dụng theo số lượng",

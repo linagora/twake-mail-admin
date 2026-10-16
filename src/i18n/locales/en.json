@@ -1286,6 +1286,8 @@
     "minOccupation": "Min occupation (%)",
     "maxOccupation": "Max occupation (%)",
     "empty": "No users found in this occupation range.",
+    "invalidPercent": "Enter a percentage between 0 and 100.",
+    "minAboveMax": "Must not be lower than the min occupation.",
     "username": "Username",
     "occupationSize": "Occupation Size",
     "occupationCount": "Occupation Count",

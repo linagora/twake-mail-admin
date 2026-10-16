@@ -1286,6 +1286,8 @@
     "minOccupation": "Ocupación mín. (%)",
     "maxOccupation": "Ocupación máx. (%)",
     "empty": "No se han encontrado usuarios en este rango de ocupación.",
+    "invalidPercent": "Introduzca un porcentaje entre 0 y 100.",
+    "minAboveMax": "No debe ser inferior a la ocupación mín.",
     "username": "Nombre de usuario",
     "occupationSize": "Tamaño ocupado",
     "occupationCount": "Número ocupado",
