@@ -58,9 +58,15 @@ function formatDate(d: string | null | undefined): string {
   }
 }
 
+// A task ends by completing, failing or being cancelled: WebAdmin sets the matching date only
+function endDate(task: TaskDetailResponse): string | null {
+  return task.completedDate ?? task.failedDate ?? task.cancelledDate ?? null;
+}
+
 function startedCompletedText(task: TaskDetailResponse): string {
   const started = formatDate(task.startedDate);
-  return task.completedDate ? `${started} → ${formatDate(task.completedDate)}` : started;
+  const ended = endDate(task);
+  return ended ? `${started} → ${formatDate(ended)}` : started;
 }
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";
@@ -129,7 +135,7 @@ export default function Tasks() {
       switch (sortField) {
         case "submitDate": va = a.submitDate; vb = b.submitDate; break;
         case "startedDate": va = a.startedDate; vb = b.startedDate; break;
-        case "completedDate": va = a.completedDate; vb = b.completedDate; break;
+        case "completedDate": va = endDate(a); vb = endDate(b); break;
         case "status": va = a.status; vb = b.status; break;
         case "type": va = a.type; vb = b.type; break;
         default: va = a.submitDate; vb = b.submitDate;
@@ -362,8 +368,8 @@ export default function Tasks() {
                     >
                       <span className="md:hidden text-gray-500">{t("tasks.startedCompleted")}: </span>
                       <span>{formatDate(task.startedDate)}</span>
-                      {task.completedDate && (
-                        <span className="text-gray-400"> → {formatDate(task.completedDate)}</span>
+                      {endDate(task) && (
+                        <span className="text-gray-400"> → {formatDate(endDate(task))}</span>
                       )}
                     </div>
                   </div>

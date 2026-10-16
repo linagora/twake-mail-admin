@@ -110,6 +110,53 @@ describe("tasks list", () => {
   });
 });
 
+describe("tasks: end date", () => {
+  const endedTask = (status: string, endField: string) => ({
+    taskId: TASK_ID,
+    type: "calendar-archival",
+    status,
+    submitDate: "2026-10-16T18:18:45Z",
+    startedDate: "2026-10-16T18:18:46Z",
+    completedDate: null,
+    [endField]: "2026-10-16T18:18:47Z",
+  });
+
+  it.each([
+    ["failed", "failedDate"],
+    ["canceled", "cancelledDate"],
+  ])("shows the end of a %s task in the Started / Completed column", async (status, endField) => {
+    api.listTasks.mockResolvedValue([endedTask(status, endField)]);
+    renderTasks();
+
+    const startedCompleted = await screen.findByTestId("task-started-completed");
+
+    expect(startedCompleted.textContent).toContain("→");
+    expect(startedCompleted.title).toContain("→");
+  });
+
+  it("sorts a failed task by its failure date on the Completed sort", async () => {
+    api.listTasks.mockResolvedValue([
+      { taskId: "never-ended", type: "never-ended", status: "inProgress", submitDate: "2026-10-16T18:18:40Z" },
+      { ...endedTask("failed", "failedDate"), taskId: "failed-task", type: "failed-task" },
+      {
+        taskId: "earlier-completed",
+        type: "earlier-completed",
+        status: "completed",
+        submitDate: "2026-10-16T18:18:40Z",
+        completedDate: "2026-10-16T18:18:41Z",
+      },
+    ]);
+    renderTasks();
+    await screen.findAllByTestId("task-row");
+
+    fireEvent.change(screen.getByLabelText("tasks.sort"), { target: { value: "completedDate" } });
+
+    const types = screen.getAllByTestId("task-row").map((row) => row.querySelector("span[title]")!.getAttribute("title"));
+    // Recent first: tasks that never ended lead, then the failed task by its failure date
+    expect(types).toEqual(["never-ended", "failed-task", "earlier-completed"]);
+  });
+});
+
 describe("tasks: status label", () => {
   const task = (status: string) => ({ taskId: TASK_ID, type: "full-reindexing", status, submitDate: "2026-10-10T06:00:00Z" });
 
