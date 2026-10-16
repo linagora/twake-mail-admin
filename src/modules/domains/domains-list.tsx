@@ -95,7 +95,13 @@ export default function DomainsList() {
             type="text"
             value={newDomain}
             onChange={(e) => setNewDomain(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter") return;
+              // The confirmation dialog takes the focus synchronously: without this, the
+              // keypress of the same Enter would activate its Cancel button.
+              e.preventDefault();
+              handleCreate();
+            }}
             placeholder={t("domains.newDomainPlaceholder")}
             className="flex-1 min-w-48 px-4 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           />
