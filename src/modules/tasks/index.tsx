@@ -101,11 +101,9 @@ export default function Tasks() {
     setSelectedTask(task);
   };
 
+  // WebAdmin cannot sort: fetch every matching task, then sort and paginate locally
   const buildParams = useCallback((): ListTasksParams => {
-    const params: ListTasksParams = {
-      offset: (page - 1) * PAGE_LIMIT,
-      limit: PAGE_LIMIT,
-    };
+    const params: ListTasksParams = {};
     if (statusFilter) params.status = statusFilter;
     if (typeFilter.trim()) params.type = typeFilter.trim();
     if (submittedAfter) params.submittedAfter = new Date(submittedAfter).toISOString();
@@ -117,7 +115,7 @@ export default function Tasks() {
     if (failedAfter) params.failedAfter = new Date(failedAfter).toISOString();
     if (failedBefore) params.failedBefore = new Date(failedBefore).toISOString();
     return params;
-  }, [page, statusFilter, typeFilter, submittedAfter, submittedBefore, startedAfter, startedBefore, completedAfter, completedBefore, failedAfter, failedBefore]);
+  }, [statusFilter, typeFilter, submittedAfter, submittedBefore, startedAfter, startedBefore, completedAfter, completedBefore, failedAfter, failedBefore]);
 
   const fetchTasks = useCallback(() => listTasks(buildParams()), [buildParams]);
   const { data: tasks, isLoading, error, refresh } = useFetchData<TaskDetailResponse[]>(fetchTasks);
@@ -144,7 +142,14 @@ export default function Tasks() {
     return copy;
   }, [tasks, sortField, sortAsc]);
 
-  const hasMore = tasks ? tasks.length >= PAGE_LIMIT : false;
+  const pageTasks = useMemo(() => sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT), [sorted, page]);
+  const hasMore = sorted.length > page * PAGE_LIMIT;
+
+  const changeSort = (field: SortField, asc: boolean) => {
+    setSortField(field);
+    setSortAsc(asc);
+    setPage(1);
+  };
 
   const handleCancel = async (task: TaskDetailResponse) => {
     const confirmed = await confirm({
@@ -223,7 +228,7 @@ export default function Tasks() {
               id={`${idPrefix}-sort`}
               className="border rounded px-2 py-1 text-sm"
               value={sortField}
-              onChange={(e) => setSortField(e.target.value as SortField)}
+              onChange={(e) => changeSort(e.target.value as SortField, sortAsc)}
             >
               {SORT_FIELDS.map((f) => (
                 <option key={f.key} value={f.key}>{f.label}</option>
@@ -231,7 +236,7 @@ export default function Tasks() {
             </select>
             <button
               className="border rounded px-2 py-1 text-sm"
-              onClick={() => setSortAsc(!sortAsc)}
+              onClick={() => changeSort(sortField, !sortAsc)}
             >
               {sortAsc ? t("tasks.asc") : t("tasks.desc")}
             </button>
@@ -314,7 +319,7 @@ export default function Tasks() {
         {/* Task rows */}
         {tasks && (
           <div className="space-y-1">
-            {sorted.map((task, index) => {
+            {pageTasks.map((task, index) => {
               const globalIndex = (page - 1) * PAGE_LIMIT + index + 1;
               const statusClass = STATUS_COLORS[task.status] || "bg-gray-100 text-gray-600";
               return (
@@ -391,7 +396,7 @@ export default function Tasks() {
             onNext={() => setPage((p) => p + 1)}
             disabledPrev={page <= 1}
             disabledNext={!hasMore}
-            label={t("common.pageOf", { page, count: tasks.length })}
+            label={t("common.pageOf", { page, count: pageTasks.length })}
           />
         )}
       </div>

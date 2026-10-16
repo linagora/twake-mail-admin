@@ -162,3 +162,60 @@ describe("tasks filters: field labels", () => {
     expect(screen.getByLabelText(label).tagName).toBe(tagName);
   });
 });
+
+describe("tasks: sort", () => {
+  const taskOfType = (type: string, index: number) => ({
+    taskId: `task-${index}`,
+    type,
+    status: "completed",
+    submitDate: `2026-10-10T06:${String(index % 60).padStart(2, "0")}:00Z`,
+  });
+
+  function typesOnPage(): string[] {
+    return screen.getAllByTestId("task-row").map((row) => row.querySelector("span[title]")!.getAttribute("title")!);
+  }
+
+  it("fetches every task instead of a single WebAdmin page", async () => {
+    api.listTasks.mockResolvedValue([]);
+    renderTasks();
+
+    await waitFor(() => expect(api.listTasks).toHaveBeenCalled());
+    expect(api.listTasks).toHaveBeenLastCalledWith(
+      expect.not.objectContaining({ offset: expect.anything(), limit: expect.anything() })
+    );
+  });
+
+  it("sorts the whole task list, not only the current page", async () => {
+    const tasks = [
+      ...Array.from({ length: 50 }, (_, index) => taskOfType("user-reindexing", index)),
+      taskOfType("ClearMailboxContentTask", 50),
+    ];
+    api.listTasks.mockResolvedValue(tasks);
+    renderTasks();
+    await screen.findAllByTestId("task-row");
+
+    fireEvent.change(screen.getByLabelText("tasks.sort"), { target: { value: "type" } });
+    fireEvent.click(screen.getByText("tasks.desc"));
+
+    expect(typesOnPage()[0]).toBe("ClearMailboxContentTask");
+    expect(typesOnPage()).toHaveLength(50);
+
+    fireEvent.click(screen.getByText("common.next"));
+
+    expect(typesOnPage()).toEqual(["user-reindexing"]);
+    expect(api.listTasks).toHaveBeenCalledTimes(1);
+  });
+
+  it("goes back to the first page when the sort changes", async () => {
+    api.listTasks.mockResolvedValue(Array.from({ length: 51 }, (_, index) => taskOfType(`type-${index}`, index)));
+    renderTasks();
+    await screen.findAllByTestId("task-row");
+
+    fireEvent.click(screen.getByText("common.next"));
+    expect(screen.getAllByTestId("task-row")).toHaveLength(1);
+
+    fireEvent.click(screen.getByText("tasks.desc"));
+
+    expect(screen.getAllByTestId("task-row")).toHaveLength(50);
+  });
+});
