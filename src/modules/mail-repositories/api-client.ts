@@ -15,13 +15,19 @@ import {
  *
  * - Returns a list of mail repositories, each with a `repository` name and its `path`.
  * - HTTP 200: Successfully retrieved the list of mail repositories.
+ *
+ * WebAdmin form-encodes `path` (a space becomes `+`, read back as a literal `+` in a
+ * URL path), so it is rebuilt from `repository` as a path segment.
  */
 export const getMailRepositories =
   async (): Promise<GetMailRepositoriesResponseType> => {
     const response = await apiClient.get<any, GetMailRepositoriesResponseType>(
       "/mailRepositories"
     );
-    return response; // Correctly accessing the `data` property
+    return response.map(({ repository }) => ({
+      repository,
+      path: encodeURIComponent(repository),
+    }));
   };
 
 /**

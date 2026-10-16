@@ -10,6 +10,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { currentLocale } from "@/i18n/locale";
+import { formatByteSize } from "@/i18n/format-size";
 
 const PAGE_SIZE = 10;
 
@@ -27,12 +28,6 @@ function formatDate(iso: string): string {
   } catch {
     return iso;
   }
-}
-
-function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 export default function UserDeletedMessageVault({ label, onSearch, onRestore, canSearch = true, canRestore = true }: Props) {
@@ -248,7 +243,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                             <td className="px-3 py-2 text-xs text-center">
                               {msg.hasAttachment ? t("common.yes") : t("common.no")}
                             </td>
-                            <td className="px-3 py-2 text-xs whitespace-nowrap">{formatSize(msg.size)}</td>
+                            <td className="px-3 py-2 text-xs whitespace-nowrap">{formatByteSize(msg.size)}</td>
                             <td className="px-3 py-2 font-mono text-xs text-muted-foreground whitespace-nowrap">
                               {msg.messageId}
                             </td>

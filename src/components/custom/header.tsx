@@ -11,6 +11,9 @@ interface HeaderProps {
   enableBackBtn?: boolean;
 }
 
+const DocLink = ({ url }: { url: string }) =>
+  url ? <> (<a href={url} target="_blank" className="text-blue-500 underline">doc</a>)</> : null;
+
 const Header: React.FC<HeaderProps> = ({
   headerTitle,
   headerSubTitle,
@@ -41,12 +44,12 @@ const Header: React.FC<HeaderProps> = ({
       <div>
         {headerTitle && (
           <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">
-            {headerTitle}{!headerSubTitle && (<> (<a href={docuUrl} target="_blank" className="text-blue-500 underline">doc</a>)</>)}
+            {headerTitle}{!headerSubTitle && <DocLink url={docuUrl} />}
           </h2>
         )}
         {headerSubTitle && (
           <p className={`leading-7 text-muted-foreground ${headerTitle ? 'mt-1' : ''}`}>
-            {headerSubTitle} (<a href={docuUrl} target="_blank" className="text-blue-500 underline">doc</a>)
+            {headerSubTitle}<DocLink url={docuUrl} />
           </p>
         )}
       </div>

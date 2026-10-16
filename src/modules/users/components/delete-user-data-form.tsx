@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 interface Props {
   username: string;
   onChange: (fromStep: string) => void;
+  fromStepPlaceholderKey?: string;
 }
 
-export default function DeleteUserDataForm({ username, onChange }: Props) {
+export default function DeleteUserDataForm({ username, onChange, fromStepPlaceholderKey = "deleteUserDataForm.fromStepPlaceholder" }: Props) {
   const { t } = useTranslation();
   const fromStepId = useId();
   return (
@@ -18,7 +19,7 @@ export default function DeleteUserDataForm({ username, onChange }: Props) {
         <Input
           id={fromStepId}
           type="text"
-          placeholder={t("deleteUserDataForm.fromStepPlaceholder")}
+          placeholder={t(fromStepPlaceholderKey)}
           onChange={(e) => onChange(e.target.value)}
         />
       </div>

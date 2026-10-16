@@ -31,6 +31,8 @@
     "userExists": "El usuario existe",
     "userNotFound": "Usuario no encontrado",
     "invalidUsername": "Nombre de usuario no válido",
+    "unknownUserTitle": "Usuario desconocido",
+    "unknownUserConfirm": "\"{{username}}\" no existe. ¿Añadirlo de todos modos?",
     "unlimited": "ilimitado",
     "notSet": "no definido",
     "invalidSize": "Tamaño no válido",
@@ -319,7 +321,9 @@
       "deleted": "Plantillas de firma eliminadas",
       "errorDeleting": "Error al eliminar las plantillas de firma",
       "deleteAll": "Eliminar todas",
-      "empty": "No hay plantillas de firma configuradas."
+      "empty": "No hay plantillas de firma configuradas.",
+      "addTemplate": "Añadir plantilla de firma",
+      "removeTemplate": "Eliminar la plantilla «{{language}}»"
     },
     "calendarDetail": {
       "title": "Detalles del dominio de calendario",
@@ -539,8 +543,7 @@
       "register": "Registrar este usuario",
       "registerTitle": "Registrar usuario",
       "registerHint": "Registrando a «{{username}}» en el servidor DAV. El nombre y los apellidos no se leen del directorio: confírmelos.",
-      "registered": "Usuario «{{username}}» registrado",
-      "errorRegistering": "Error al registrar el usuario"
+      "registered": "Usuario «{{username}}» registrado"
     },
     "aliases": {
       "title": "Alias",
@@ -943,6 +946,7 @@
         "remove": "Quitar",
         "undoRemove": "Deshacer la eliminación",
         "alreadyInvited": "Ya invitado",
+        "isOwner": "Este es el propietario del calendario",
         "updated": "Invitados actualizados",
         "errorUpdate": "Error al actualizar los invitados",
         "rights": {
@@ -961,6 +965,7 @@
     "addressBooks": {
       "title": "Libretas de direcciones",
       "empty": "Ninguna libreta de direcciones.",
+      "ownerLabel": "propietario:",
       "createTitle": "Crear libreta de direcciones",
       "name": "Nombre",
       "description": "Descripción",
@@ -997,6 +1002,7 @@
         "remove": "Quitar",
         "undoRemove": "Deshacer la eliminación",
         "alreadyShared": "Ya se comparte con este usuario",
+        "isOwner": "Este es el propietario de la libreta de direcciones",
         "updated": "Uso compartido actualizado",
         "errorUpdate": "Error al actualizar el uso compartido",
         "rights": {
@@ -1043,8 +1049,8 @@
       "duplicateTitle": "Duplicar enlace de reserva",
       "copyName": "{{name}} (copia)",
       "timeZone": "Zona horaria",
-      "rulesCount": "{{count}} regla",
-      "rulesCount_plural": "{{count}} reglas",
+      "rulesCount_one": "{{count}} regla",
+      "rulesCount_other":"{{count}} reglas",
       "clearRules": "Quitar todas las reglas",
       "clearRulesWarning": "Todas las reglas se quitarán al guardar.",
       "deleteEventsTitle": "Eliminar los eventos asociados",
@@ -1078,7 +1084,8 @@
   },
   "deleteUserDataForm": {
     "fromStep": "Reanudar desde el paso",
-    "fromStepPlaceholder": "p. ej. MailboxUserDeletionTaskStep"
+    "fromStepPlaceholder": "p. ej. MailboxUserDeletionTaskStep",
+    "calendarFromStepPlaceholder": "p. ej. DavCalendarDeletionTaskStep"
   },
   "restoreCriteria": {
     "addCriteria": "Añadir criterio",
@@ -1279,6 +1286,8 @@
     "minOccupation": "Ocupación mín. (%)",
     "maxOccupation": "Ocupación máx. (%)",
     "empty": "No se han encontrado usuarios en este rango de ocupación.",
+    "invalidPercent": "Introduzca un porcentaje entre 0 y 100.",
+    "minAboveMax": "No debe ser inferior a la ocupación mín.",
     "username": "Nombre de usuario",
     "occupationSize": "Tamaño ocupado",
     "occupationCount": "Número ocupado",
@@ -1564,12 +1573,12 @@
     "errorRegistering": "Error al registrar el usuario",
     "registered": "Usuario «{{username}}» registrado",
     "searchPlaceholder": "Buscar usuarios registrados...",
+    "noMatch": "Ningún usuario registrado coincide con «{{query}}».",
     "editTitle": "Editar usuario registrado",
     "ldapWarning": "Su instalación puede incluir una importación periódica desde LDAP: en ese caso, los cambios realizados aquí acabarán sobrescribiéndose.",
     "email": "Correo",
     "firstname": "Nombre",
     "lastname": "Apellidos",
-    "errorUpdating": "Error al actualizar el usuario",
     "updated": "Usuario actualizado",
     "editTooltip": "Editar usuario",
     "deleteTooltip": "Eliminar usuario",
@@ -1578,7 +1587,10 @@
     "deleted": "Usuario «{{email}}» eliminado",
     "errorDeleting": "Error al eliminar el usuario",
     "id": "ID:",
-    "subtitle": "Gestione los usuarios registrados en el servidor DAV."
+    "subtitle": "Gestione los usuarios registrados en el servidor DAV.",
+    "firstnameRequired": "El nombre es obligatorio",
+    "lastnameRequired": "El apellido es obligatorio",
+    "invalidEmail": "El correo debe ser una dirección válida, como user@domain.tld"
   },
   "unsentMails": {
     "subtitle": "Correos cuya entrega SMTP ha fallado, conservados para su inspección y reenvío.",
@@ -1593,6 +1605,7 @@
     "deleteAllTitle": "Eliminar todos los correos no enviados",
     "deleteAllConfirm": "¿Programar una tarea que elimine todos los correos conservados? Esta acción no se puede deshacer.",
     "deleteAllFilteredConfirm": "¿Programar una tarea que elimine los correos conservados que coinciden con {{filters}}? Esta acción no se puede deshacer.",
+    "bulkNeedsFullAddress": "Las acciones masivas seleccionan los correos por dirección completa: escriba una dirección de remitente o destinatario completa (p. ej. alice@example.com) para reenviar o eliminar los correos listados.",
     "deleteTitle": "Eliminar correo no enviado",
     "deleteConfirm": "¿Eliminar el correo no enviado {{id}}? Esta acción no se puede deshacer.",
     "deleteTooltip": "Eliminar este correo",

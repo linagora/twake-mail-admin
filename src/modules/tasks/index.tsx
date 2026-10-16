@@ -101,11 +101,9 @@ export default function Tasks() {
     setSelectedTask(task);
   };
 
+  // WebAdmin cannot sort: fetch every matching task, then sort and paginate locally
   const buildParams = useCallback((): ListTasksParams => {
-    const params: ListTasksParams = {
-      offset: (page - 1) * PAGE_LIMIT,
-      limit: PAGE_LIMIT,
-    };
+    const params: ListTasksParams = {};
     if (statusFilter) params.status = statusFilter;
     if (typeFilter.trim()) params.type = typeFilter.trim();
     if (submittedAfter) params.submittedAfter = new Date(submittedAfter).toISOString();
@@ -117,7 +115,7 @@ export default function Tasks() {
     if (failedAfter) params.failedAfter = new Date(failedAfter).toISOString();
     if (failedBefore) params.failedBefore = new Date(failedBefore).toISOString();
     return params;
-  }, [page, statusFilter, typeFilter, submittedAfter, submittedBefore, startedAfter, startedBefore, completedAfter, completedBefore, failedAfter, failedBefore]);
+  }, [statusFilter, typeFilter, submittedAfter, submittedBefore, startedAfter, startedBefore, completedAfter, completedBefore, failedAfter, failedBefore]);
 
   const fetchTasks = useCallback(() => listTasks(buildParams()), [buildParams]);
   const { data: tasks, isLoading, error, refresh } = useFetchData<TaskDetailResponse[]>(fetchTasks);
@@ -144,7 +142,14 @@ export default function Tasks() {
     return copy;
   }, [tasks, sortField, sortAsc]);
 
-  const hasMore = tasks ? tasks.length >= PAGE_LIMIT : false;
+  const pageTasks = useMemo(() => sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT), [sorted, page]);
+  const hasMore = sorted.length > page * PAGE_LIMIT;
+
+  const changeSort = (field: SortField, asc: boolean) => {
+    setSortField(field);
+    setSortAsc(asc);
+    setPage(1);
+  };
 
   const handleCancel = async (task: TaskDetailResponse) => {
     const confirmed = await confirm({
@@ -190,6 +195,8 @@ export default function Tasks() {
     [TaskStatus.FAILED]: t("tasks.failed"),
   };
 
+  const statusLabel = (status: string) => STATUS_LABELS[status] ?? status;
+
   const SORT_FIELDS: { key: SortField; label: string }[] = [
     { key: "submitDate", label: t("tasks.submitted") },
     { key: "startedDate", label: t("tasks.started") },
@@ -223,7 +230,7 @@ export default function Tasks() {
               id={`${idPrefix}-sort`}
               className="border rounded px-2 py-1 text-sm"
               value={sortField}
-              onChange={(e) => setSortField(e.target.value as SortField)}
+              onChange={(e) => changeSort(e.target.value as SortField, sortAsc)}
             >
               {SORT_FIELDS.map((f) => (
                 <option key={f.key} value={f.key}>{f.label}</option>
@@ -231,7 +238,7 @@ export default function Tasks() {
             </select>
             <button
               className="border rounded px-2 py-1 text-sm"
-              onClick={() => setSortAsc(!sortAsc)}
+              onClick={() => changeSort(sortField, !sortAsc)}
             >
               {sortAsc ? t("tasks.asc") : t("tasks.desc")}
             </button>
@@ -314,7 +321,7 @@ export default function Tasks() {
         {/* Task rows */}
         {tasks && (
           <div className="space-y-1">
-            {sorted.map((task, index) => {
+            {pageTasks.map((task, index) => {
               const globalIndex = (page - 1) * PAGE_LIMIT + index + 1;
               const statusClass = STATUS_COLORS[task.status] || "bg-gray-100 text-gray-600";
               return (
@@ -342,7 +349,7 @@ export default function Tasks() {
                   {/* Below md the header is hidden: status and labelled dates stack under the ID / type */}
                   <div className="col-start-2 col-span-2 min-w-0 flex flex-col items-start gap-1 md:contents">
                     <span className={`md:w-full text-center text-xs px-2 py-0.5 rounded-full ${statusClass}`}>
-                      {task.status}
+                      {statusLabel(task.status)}
                     </span>
                     <span className={`text-xs max-w-full ${WRAP_BELOW_MD}`}>
                       <span className="md:hidden text-gray-500">{t("tasks.submitted")}: </span>
@@ -391,7 +398,7 @@ export default function Tasks() {
             onNext={() => setPage((p) => p + 1)}
             disabledPrev={page <= 1}
             disabledNext={!hasMore}
-            label={t("common.pageOf", { page, count: tasks.length })}
+            label={t("common.pageOf", { page, count: pageTasks.length })}
           />
         )}
       </div>
@@ -407,7 +414,7 @@ export default function Tasks() {
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <span className="text-gray-500 font-medium">{t("tasks.status")}</span>
                 <span className={`inline-block w-fit px-2 py-0.5 rounded-full text-xs ${STATUS_COLORS[selectedTask.status] || ""}`}>
-                  {selectedTask.status}
+                  {statusLabel(selectedTask.status)}
                 </span>
                 <span className="text-gray-500 font-medium">{t("tasks.type")}</span>
                 <span>{selectedTask.type}</span>

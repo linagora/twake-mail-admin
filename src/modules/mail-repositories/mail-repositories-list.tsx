@@ -194,7 +194,7 @@ export default function MailRepositoriesList() {
               <div>
                 <h4 className="text-sm font-medium leading-none">
                   <Link
-                    to={`/mail-repositories/repository/${result.path}?&page=1&size=${result.size}`}
+                    to={`/mail-repositories/repository/${result.path}?page=1&size=${result.size}`}
                   >
                     {result.repository} ({result.size})
                   </Link>
