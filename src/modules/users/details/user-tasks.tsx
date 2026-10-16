@@ -4,7 +4,6 @@ import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { reindexUserMailboxes, subscribeAllUserMailboxes, recomputeFastViewProjection, deleteAllUserMailboxes, restoreDeletedMessages, renameUser, deleteUserData, cleanupUserMailbox, tierUserData, provisionUserTemplates } from "../api-client";
-import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import RenameUserForm from "../components/rename-user-form";
 import DeleteUserDataForm from "../components/delete-user-data-form";
@@ -14,6 +13,17 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
+import FormTaskContent from "@/modules/common-tasks/components/form-task-content";
+import {
+  buildRestoreRequest,
+  deleteAllMailboxesCommand,
+  deleteUserDataCommand,
+  provisionTemplatesCommand,
+  renameUserCommand,
+  RenameUserValues,
+  restoreDeletedMessagesCommand,
+  subscribeAllCommand,
+} from "./user-task-commands";
 import { TaskParam } from "@/modules/common-tasks/types";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -70,7 +80,12 @@ export default function UserTasks({ username }: Props) {
     await confirm({
       header: t("users.tasks.provisionTemplatesTitle"),
       message: (
-        <ProvisionTemplatesForm onChange={(v) => { values = v; }} />
+        <FormTaskContent
+          initialValues={values}
+          renderForm={(onChange) => <ProvisionTemplatesForm onChange={onChange} />}
+          buildCommand={(v) => provisionTemplatesCommand(username, v)}
+          onChange={(v) => { values = v; }}
+        />
       ),
       validate: () => (values.sourceUser.trim() ? null : t("provisionTemplates.sourceUserRequired")),
       action: async () => {
@@ -110,7 +125,12 @@ export default function UserTasks({ username }: Props) {
     try {
       const result = await confirm({
         header: t("users.tasks.subscribeTitle"),
-        message: <p>{t("users.tasks.subscribeDesc", { username })}</p>,
+        message: (
+          <ConfirmTaskContent
+            message={<p>{t("users.tasks.subscribeDesc", { username })}</p>}
+            command={subscribeAllCommand(username)}
+          />
+        ),
       });
       if (!result) return;
 
@@ -149,29 +169,23 @@ export default function UserTasks({ username }: Props) {
   };
 
   const handleRestoreDeletedMessages = async () => {
-    let currentCriteria: RestoreCriterion[] = [];
-    let currentLimit: number | undefined = undefined;
+    let request = buildRestoreRequest([], undefined);
 
     await confirm({
       header: t("users.deletedVault.restoreTitle"),
       className: "max-w-3xl",
       message: (
-        <RestoreCriteriaBuilder
-          onChange={(criteria, limit) => {
-            currentCriteria = criteria;
-            currentLimit = limit;
-          }}
+        <FormTaskContent
+          initialValues={request}
+          renderForm={(onChange) => (
+            <RestoreCriteriaBuilder onChange={(criteria, limit) => onChange(buildRestoreRequest(criteria, limit))} />
+          )}
+          buildCommand={(r) => restoreDeletedMessagesCommand(username, r)}
+          onChange={(r) => { request = r; }}
         />
       ),
       action: async () => {
-        const body: RestoreDeletedMessagesRequest = {
-          combinator: "and",
-          criteria: currentCriteria,
-        };
-        if (currentLimit !== undefined) {
-          body.limit = currentLimit;
-        }
-        const data = await restoreDeletedMessages(username, body);
+        const data = await restoreDeletedMessages(username, request);
         toastTaskRunning(data.taskId);
       },
     });
@@ -180,7 +194,12 @@ export default function UserTasks({ username }: Props) {
   const handleDeleteAllMailboxes = async () => {
     const confirmed = await confirm({
       header: t("users.tasks.deleteAllMailboxesTitle"),
-      message: t("users.tasks.deleteAllMailboxesConfirm", { username }),
+      message: (
+        <ConfirmTaskContent
+          message={<p>{t("users.tasks.deleteAllMailboxesConfirm", { username })}</p>}
+          command={deleteAllMailboxesCommand(username)}
+        />
+      ),
     });
     if (!confirmed) return;
     try {
@@ -217,13 +236,15 @@ export default function UserTasks({ username }: Props) {
   };
 
   const handleRenameUser = async () => {
-    let currentValues = { newUsername: "", force: false, fromStep: "" };
+    let currentValues: RenameUserValues = { newUsername: "", force: false, fromStep: "" };
 
     await confirm({
       header: t("users.tasks.renameTitle"),
       message: (
-        <RenameUserForm
-          username={username}
+        <FormTaskContent
+          initialValues={currentValues}
+          renderForm={(onChange) => <RenameUserForm username={username} onChange={onChange} />}
+          buildCommand={(values) => renameUserCommand(username, values)}
           onChange={(values) => { currentValues = values; }}
         />
       ),
@@ -244,8 +265,10 @@ export default function UserTasks({ username }: Props) {
     await confirm({
       header: t("users.tasks.deleteDataTitle"),
       message: (
-        <DeleteUserDataForm
-          username={username}
+        <FormTaskContent
+          initialValues={currentFromStep}
+          renderForm={(onChange) => <DeleteUserDataForm username={username} onChange={onChange} />}
+          buildCommand={(fromStep) => deleteUserDataCommand(username, fromStep)}
           onChange={(value) => { currentFromStep = value; }}
         />
       ),

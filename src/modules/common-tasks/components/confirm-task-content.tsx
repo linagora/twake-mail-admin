@@ -7,7 +7,7 @@ interface Props {
   message: string | ReactNode;
   command: string;
   params?: TaskParam[];
-  getParamValues: (key: string, value: string | boolean) => void;
+  getParamValues?: (key: string, value: string | boolean) => void;
 }
 
 // Builds the command preview by reflecting the user's custom parameters into the
@@ -51,7 +51,7 @@ const ConfirmTaskContent = ({
 
   const handleChangeParam = (key: string, value: string | boolean) => {
     setCustomParams((prev) => ({ ...prev, [key]: value }));
-    getParamValues(key, value);
+    getParamValues?.(key, value);
   };
 
   return (

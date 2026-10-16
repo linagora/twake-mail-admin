@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { type ReactNode } from "react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { ProxyResolver, type HttpVerb, type ProxyRule } from "@/lib/proxy-resolver";
 
@@ -10,13 +11,23 @@ vi.mock("@/lib/proxy-resolver-context", () => ({
   useIsAllowed: (verb: HttpVerb, pattern: string) => proxy.resolver!.isAllowed(verb as never, pattern),
 }));
 vi.mock("@/lib/config", () => ({ appConfig: { application: "MAIL", mode: "DOMAIN", sso: null } }));
-vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => false }));
+const dialog = vi.hoisted(() => ({ message: null as unknown }));
+vi.mock("@/hooks/use-confirm", () => ({
+  useConfirm: () => async (options: { message: unknown }) => {
+    dialog.message = options.message;
+    return false;
+  },
+}));
 vi.mock("../api-client", () => ({}));
 
 import UserTasks from "./user-tasks";
 
 function renderWith(rules: ProxyRule[]) {
-  proxy.resolver = new ProxyResolver(rules);
+  renderWithResolver(new ProxyResolver(rules));
+}
+
+function renderWithResolver(resolver: NonNullable<typeof proxy.resolver>) {
+  proxy.resolver = resolver;
   render(
     <MemoryRouter>
       <UserTasks username="bob@linagora.com" />
@@ -46,5 +57,35 @@ describe("user tasks: cleanup mailbox gates", () => {
     renderWith([{ endpoint: "/messages?mailbox=Trash" }]);
     expect(screen.queryByText("users.tasks.cleanupTrash")).not.toBeNull();
     expect(screen.queryByText("users.tasks.cleanupSpam")).toBeNull();
+  });
+});
+
+describe("user tasks: confirmation dialogs preview their command", () => {
+  const openDialog = async (label: string) => {
+    renderWithResolver({ isAllowed: () => true });
+    const row = screen.getByText(label).parentElement!;
+    fireEvent.click(within(row).getByRole("button"));
+    await waitFor(() => expect(dialog.message).not.toBeNull());
+    cleanup();
+    render(<>{dialog.message as ReactNode}</>);
+  };
+
+  afterEach(() => { dialog.message = null; });
+
+  it.each([
+    ["users.tasks.subscribeAll", "curl -XPOST /users/bob@linagora.com/mailboxes?task=subscribeAll"],
+    ["users.tasks.deleteAllMailboxes", "curl -XDELETE /users/bob@linagora.com/mailboxes"],
+    ["users.tasks.deleteData", "curl -XPOST /users/bob@linagora.com?action=deleteData"],
+    ["users.tasks.renameUser", "curl -XPOST /users/bob@linagora.com/rename/{newUser}?action=rename"],
+    ["users.tasks.restoreDeleted", `curl -XPOST /deletedMessages/users/bob@linagora.com?action=restore -d '{"combinator":"and","criteria":[]}'`],
+  ])("%s", async (label, command) => {
+    await openDialog(label);
+    expect(screen.getByText(command, { exact: false })).not.toBeNull();
+  });
+
+  it("follows the values typed in the form", async () => {
+    await openDialog("users.tasks.renameUser");
+    fireEvent.change(screen.getByLabelText("renameUserForm.newUsername:"), { target: { value: "alice@linagora.com" } });
+    expect(screen.getByText("curl -XPOST /users/bob@linagora.com/rename/alice@linagora.com?action=rename", { exact: false })).not.toBeNull();
   });
 });
