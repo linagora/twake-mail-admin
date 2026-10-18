@@ -227,18 +227,26 @@ export default function UserLabels({ username }: Props) {
                   <thead>
                     <tr className="bg-gray-100 text-left text-xs text-gray-500 uppercase">
                       <th className="px-3 py-2 font-medium">{t("users.labels.displayName")}</th>
-                      <th className="px-3 py-2 font-medium">{t("users.labels.keywordLabel")}</th>
+                      {/* On a phone, keyword, read-only and description move under the display name so the actions stay on screen */}
+                      <th className="hidden md:table-cell px-3 py-2 font-medium">{t("users.labels.keywordLabel")}</th>
                       <th className="px-3 py-2 font-medium">{t("users.labels.colorLabel")}</th>
-                      <th className="px-3 py-2 font-medium">{t("users.labels.readOnly")}</th>
-                      <th className="px-3 py-2 font-medium">{t("users.labels.descriptionLabel")}</th>
+                      <th className="hidden md:table-cell px-3 py-2 font-medium">{t("users.labels.readOnly")}</th>
+                      <th className="hidden md:table-cell px-3 py-2 font-medium">{t("users.labels.descriptionLabel")}</th>
                       <th className="px-3 py-2 font-medium"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {labels.map((label) => (
                       <tr key={label.id} className="border-t border-gray-100 hover:bg-gray-50">
-                        <td className="px-3 py-2 font-medium">{label.displayName}</td>
-                        <td className="px-3 py-2 font-mono text-xs text-gray-600">{label.keyword}</td>
+                        <td className="px-3 py-2">
+                          <div className="font-medium break-all">{label.displayName}</div>
+                          <div className="md:hidden mt-1 space-y-1 text-xs text-gray-600" data-testid="label-phone-details">
+                            <div className="font-mono break-all">{label.keyword}</div>
+                            {label.readOnly && <div className="text-orange-600 font-medium">{t("users.labels.readOnly")}</div>}
+                            {label.description && <div className="break-words">{label.description}</div>}
+                          </div>
+                        </td>
+                        <td className="hidden md:table-cell px-3 py-2 font-mono text-xs text-gray-600">{label.keyword}</td>
                         <td className="px-3 py-2">
                           {label.color ? (
                             <div className="flex items-center gap-2">
@@ -252,13 +260,13 @@ export default function UserLabels({ username }: Props) {
                             <span className="text-gray-400">—</span>
                           )}
                         </td>
-                        <td className="px-3 py-2">
+                        <td className="hidden md:table-cell px-3 py-2">
                           <span className={label.readOnly ? "text-orange-600 font-medium" : "text-gray-400"}>
                             {label.readOnly ? t("common.yes") : t("common.no")}
                           </span>
                         </td>
-                        <td className="px-3 py-2 text-gray-600">{label.description ?? <span className="text-gray-400">—</span>}</td>
-                        <td className="px-3 py-2">
+                        <td className="hidden md:table-cell px-3 py-2 text-gray-600">{label.description ?? <span className="text-gray-400">—</span>}</td>
+                        <td className="px-3 py-2 w-px">
                           <div className="flex gap-1 justify-end">
                             {canEdit && (
                               <button
