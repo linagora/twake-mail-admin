@@ -16,6 +16,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 interface Props {
   username: string;
+  // Changes whenever the Calendars section of the page creates, renames or deletes a calendar.
+  calendarsVersion?: number;
 }
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] as const;
@@ -38,7 +40,9 @@ function calendarLabel(calendar: UserCalendar): string {
 // A dropdown of the user's calendars (by name) instead of a raw URL field.
 // The stored value is the calendar's self href, which is exactly what the
 // booking-links API expects as calendarUrl. Falls back to a free-text input
-// when no calendar can be listed, and preserves an unknown existing value.
+// when no calendar can be listed. An existing value that is not offered (its
+// calendar was deleted, or can no longer be booked) stays displayed but is
+// flagged: the admin must pick another calendar before saving.
 function CalendarSelect({
   id,
   value,
@@ -65,21 +69,34 @@ function CalendarSelect({
     );
   }
 
-  const known = options.some((o) => o.value === value);
+  const unavailable = !!value && !isOfferedCalendar(value, options);
+  const errorId = `${id}-error`;
   return (
-    <select
-      id={id}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-    >
-      <option value="">{t("users.bookingLinks.selectCalendar")}</option>
-      {!known && value && <option value={value}>{value}</option>}
-      {options.map((o) => (
-        <option key={o.value} value={o.value}>{o.label}</option>
-      ))}
-    </select>
+    <>
+      <select
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-invalid={unavailable}
+        aria-describedby={unavailable ? errorId : undefined}
+        className={`w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 ${unavailable ? "border-red-500" : ""}`}
+      >
+        <option value="">{t("users.bookingLinks.selectCalendar")}</option>
+        {unavailable && <option value={value} disabled>{t("users.bookingLinks.calendarUnavailableOption")}</option>}
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+      {unavailable && (
+        <p id={errorId} className="text-xs text-red-500 mt-1">{t("users.bookingLinks.calendarUnavailable")}</p>
+      )}
+    </>
   );
+}
+
+// Without any listed calendar the field is free text: whatever is typed is accepted.
+function isOfferedCalendar(value: string, options: CalendarOption[]): boolean {
+  return options.length === 0 || options.some((o) => o.value === value);
 }
 
 const EMPTY_RULE: AvailabilityRule = { type: "weekly", dayOfWeek: "MON", start: "09:00", end: "17:00", timeZone: "UTC" };
@@ -188,6 +205,7 @@ function RulesEditor({
 function BookingLinkRow({
   link,
   calendarOptions,
+  calendarsListed,
   canEdit,
   canDelete,
   canReset,
@@ -201,6 +219,7 @@ function BookingLinkRow({
 }: {
   link: BookingLink;
   calendarOptions: CalendarOption[];
+  calendarsListed: boolean;
   canEdit: boolean;
   canDelete: boolean;
   canReset: boolean;
@@ -237,7 +256,12 @@ function BookingLinkRow({
         {link.description && (
           <p className="text-xs text-gray-500 truncate" title={link.description}>{link.description}</p>
         )}
-        <p className="text-xs text-gray-400 truncate" title={link.calendarUrl}>{calendarName ?? link.calendarUrl}</p>
+        {calendarName === undefined && calendarsListed ? (
+          // The side service keeps the links of a deleted calendar: flag them so they can be repaired.
+          <p className="text-xs text-red-500 truncate" title={link.calendarUrl}>{t("users.bookingLinks.calendarDeleted")}</p>
+        ) : (
+          <p className="text-xs text-gray-400 truncate" title={link.calendarUrl}>{calendarName ?? link.calendarUrl}</p>
+        )}
         <p className="text-xs text-gray-400">
           {link.durationMinutes} min
           {rulesCount > 0 && (
@@ -344,7 +368,7 @@ const EMPTY_CREATE: CreateBookingLinkPayload = {
   color: DEFAULT_COLOR,
 };
 
-export default function UserBookingLinks({ username }: Props) {
+export default function UserBookingLinks({ username, calendarsVersion }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
@@ -364,11 +388,13 @@ export default function UserBookingLinks({ username }: Props) {
   const [open, setOpen] = useState(false);
 
   // The calendars can be created or deleted from the Calendars section of the
-  // same page: they are fetched each time this section is expanded and each
-  // time a dialog opens, so that the dropdowns never offer a stale list.
+  // same page: they are fetched each time this section is expanded, each time
+  // a dialog opens and each time that section changes them, so that neither the
+  // rows nor the dropdowns show a stale list.
   const fetchCalendars = useCallback(() => getUserCalendars(username), [username]);
   const { data: calendarsData, refresh: refreshCalendars } = useFetchData<GetUserCalendarsResponseType>(
-    open && canView && canViewCalendars ? fetchCalendars : null
+    open && canView && canViewCalendars ? fetchCalendars : null,
+    calendarsVersion
   );
   const allCalendars = calendarsData?._embedded?.["dav:calendar"] ?? [];
   // Full list, used only to resolve calendar names for display (a link may
@@ -583,6 +609,7 @@ export default function UserBookingLinks({ username }: Props) {
               key={link.publicId}
               link={link}
               calendarOptions={calendarOptions}
+              calendarsListed={calendarsData !== null}
               canEdit={canEdit}
               canDelete={canDelete}
               canReset={canReset}
@@ -690,7 +717,7 @@ export default function UserBookingLinks({ username }: Props) {
               <Button
                 size="sm"
                 onClick={handleCreate}
-                disabled={creating || !createForm.calendarUrl.trim() || createDurationMinutes === null}
+                disabled={creating || !createForm.calendarUrl.trim() || !isOfferedCalendar(createForm.calendarUrl, bookableCalendarOptions) || createDurationMinutes === null}
               >
                 {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
                 {t("common.create")}
@@ -804,7 +831,11 @@ export default function UserBookingLinks({ username }: Props) {
                 <Button variant="outline" size="sm" onClick={() => setEditLink(null)}>
                   {t("common.cancel")}
                 </Button>
-                <Button size="sm" onClick={handleUpdate} disabled={saving || editDurationMinutes === null}>
+                <Button
+                  size="sm"
+                  onClick={handleUpdate}
+                  disabled={saving || !isOfferedCalendar(editForm.calendarUrl ?? "", bookableCalendarOptions) || editDurationMinutes === null}
+                >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                   {t("common.save")}
                 </Button>

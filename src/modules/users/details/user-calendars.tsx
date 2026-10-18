@@ -21,6 +21,8 @@ import { DEFAULT_CALENDAR_COLOR, isValidCalendarColor, toColorPickerValue } from
 
 interface Props {
   username: string;
+  // Called once a calendar was created, renamed or deleted, for the other sections listing them.
+  onCalendarsChanged?: () => void;
 }
 
 type CalendarCategory = "owner" | "delegated" | "subscription" | "resource";
@@ -323,7 +325,7 @@ function CalendarColorField({ value, onChange }: { value: string | undefined; on
   );
 }
 
-export default function UserCalendars({ username }: Props) {
+export default function UserCalendars({ username, onCalendarsChanged }: Props) {
   const { t } = useTranslation();
   const idPrefix = useId();
   const { toast } = useToast();
@@ -389,6 +391,7 @@ export default function UserCalendars({ username }: Props) {
       toast({ title: t("users.calendars.created") });
       setCreateForm({ ...EMPTY_CREATE });
       setShowCreate(false);
+      onCalendarsChanged?.();
       await refresh();
     } catch (err) {
       toast({ title: t("users.calendars.errorCreate"), description: <ErrorDisplayer error={err} /> });
@@ -420,6 +423,7 @@ export default function UserCalendars({ username }: Props) {
       await updateUserCalendar(username, calendarId(editCalendar), payload);
       toast({ title: t("users.calendars.updated") });
       setEditCalendar(null);
+      onCalendarsChanged?.();
       await refresh();
     } catch (err) {
       toast({ title: t("users.calendars.errorUpdate"), description: <ErrorDisplayer error={err} /> });
@@ -457,6 +461,7 @@ export default function UserCalendars({ username }: Props) {
     try {
       await deleteUserCalendar(username, calendarId(calendar));
       toast({ title: t("users.calendars.deleted") });
+      onCalendarsChanged?.();
       await refresh();
     } catch (err) {
       toast({ title: t("users.calendars.errorDelete"), description: <ErrorDisplayer error={err} /> });

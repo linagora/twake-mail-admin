@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { AlertTriangle, UserPlus } from "lucide-react";
@@ -78,6 +78,9 @@ export default function CalendarUserDetail() {
   const isRegistered =
     registeredUsers === null ||
     registeredUsers.some((u) => (u.email ?? "").toLowerCase() === username!.toLowerCase());
+  // The booking links show the name of their calendar: they re-read the calendars once the
+  // Calendars section changed them.
+  const [calendarsVersion, setCalendarsVersion] = useState(0);
 
   return (
     <div className="mt-4 p-4 bg-white rounded-2">
@@ -92,9 +95,9 @@ export default function CalendarUserDetail() {
 
       {!pending && isRegistered && (
         <>
-          <UserCalendars username={username!} />
+          <UserCalendars username={username!} onCalendarsChanged={() => setCalendarsVersion((v) => v + 1)} />
           <UserAddressBooks username={username!} />
-          <UserBookingLinks username={username!} />
+          <UserBookingLinks username={username!} calendarsVersion={calendarsVersion} />
           <CalendarUserTasks username={username!} />
         </>
       )}

@@ -224,3 +224,45 @@ describe("booking link dialogs: calendar list", () => {
     expect(mocks.api.getUserCalendars).not.toHaveBeenCalled();
   });
 });
+
+describe("booking link whose calendar was deleted", () => {
+  beforeEach(() => {
+    mocks.canListCalendars = true;
+    mocks.api.getUserBookingLinks.mockResolvedValue([LINK]);
+    mocks.api.getUserCalendars.mockResolvedValue(calendars("New"));
+  });
+
+  it("is flagged in its row instead of showing the raw calendar URL", async () => {
+    await expandSection();
+
+    expect(await screen.findByText("users.bookingLinks.calendarDeleted")).toBeTruthy();
+    expect(screen.queryByText(LINK.calendarUrl)).toBeNull();
+  });
+
+  it("must be moved to an existing calendar before saving", async () => {
+    await expandSection();
+    fireEvent.click(screen.getByTitle("users.bookingLinks.editTitle"));
+
+    const select = (await screen.findByLabelText("users.bookingLinks.calendarUrl")) as HTMLSelectElement;
+    expect(select.getAttribute("aria-invalid")).toBe("true");
+    expect(screen.getByText("users.bookingLinks.calendarUnavailable")).toBeTruthy();
+    expect(saveButton()).toHaveProperty("disabled", true);
+
+    fireEvent.change(select, { target: { value: "/calendars/alice/New" } });
+
+    expect(saveButton()).toHaveProperty("disabled", false);
+    expect(screen.queryByText("users.bookingLinks.calendarUnavailable")).toBeNull();
+  });
+
+  it("is noticed once the Calendars section deleted its calendar", async () => {
+    mocks.api.getUserCalendars.mockReset();
+    mocks.api.getUserCalendars.mockResolvedValueOnce(calendars("Gone")).mockResolvedValue(calendars("New"));
+    const { rerender } = render(<UserBookingLinks username={ALICE} calendarsVersion={0} />);
+    fireEvent.click(screen.getByText("users.bookingLinks.title"));
+    expect(await screen.findByText("Gone")).toBeTruthy();
+
+    rerender(<UserBookingLinks username={ALICE} calendarsVersion={1} />);
+
+    expect(await screen.findByText("users.bookingLinks.calendarDeleted")).toBeTruthy();
+  });
+});
