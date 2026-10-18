@@ -176,8 +176,9 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
                     )
                   }
                   disabled={!criterion.operator}
+                  aria-label={t("users.deletedVault.criteria.valuePlaceholder")}
                 />
-                <span className="text-sm">
+                <span className="text-sm" aria-hidden="true">
                   {criterion.value === "true" ? "true" : "false"}
                 </span>
               </div>
@@ -185,6 +186,7 @@ export default function RestoreCriteriaBuilder({ onChange }: Props) {
               <Input
                 type="datetime-local"
                 className="flex-1 min-w-0"
+                aria-label={t("users.deletedVault.criteria.valuePlaceholder")}
                 disabled={!criterion.operator}
                 value={isoToDatetimeLocal(criterion.value)}
                 onChange={(e) =>
