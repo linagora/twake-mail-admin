@@ -110,4 +110,26 @@ describe("task container: command tooltip", () => {
     expect(tooltip.textContent).toBe("POST /calendars?task=scheduleAlarms");
     expect(document.querySelector("[data-side]")?.getAttribute("data-side")).toBe("left");
   });
+
+  it("states the default parameters, as the dialog previews and sends them", async () => {
+    render(
+      <MemoryRouter>
+        <TaskContainer
+          nameKey="commonTasks.calendarEventArchival"
+          taskKey={TaskKey.CALENDAR_EVENT_ARCHIVAL}
+          command="curl -XPOST /calendars?task=archive"
+          doc=""
+          params={[
+            { key: "createdBefore", defaultValue: "", type: "duration" },
+            { key: "eventsPerSecond", defaultValue: "100", type: "input" },
+          ]}
+        />
+      </MemoryRouter>
+    );
+
+    fireEvent.focus(screen.getByRole("button", { name: "common.run" }));
+
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toBe("curl -XPOST /calendars?task=archive&eventsPerSecond=100");
+  });
 });

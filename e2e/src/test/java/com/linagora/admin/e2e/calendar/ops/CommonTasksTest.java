@@ -40,7 +40,7 @@ class CommonTasksTest extends CalendarAdminE2ETest {
         "curl -XPOST /registeredUsers/tasks?task=importFromLDAP&usersPerSecond=100",
         "curl -XPOST /addressbook/domain-members?task=sync",
         "curl -XPOST /calendars?task=reindex&eventsPerSecond=100",
-        "curl -XPOST /calendars?task=archive",
+        "curl -XPOST /calendars?task=archive&eventsPerSecond=100",
         "curl -XPOST /calendars?task=scheduleAlarms&eventsPerSecond=100",
         "curl -XPOST /registeredUsers?action=addMissingFields",
         "curl -XPOST /contacts?action=republish&contactsPerSecond=100",

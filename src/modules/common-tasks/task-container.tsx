@@ -7,6 +7,7 @@ import { useRunTask } from "@/hooks/use-run-task";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import ConfirmTaskContent from "./components/confirm-task-content";
+import { defaultCommand } from "./components/command-preview";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
 export default function TaskContainer({ nameKey, taskKey, mode, command, doc, params, allowanceCheck, danger }: TaskProps) {
@@ -56,7 +57,7 @@ export default function TaskContainer({ nameKey, taskKey, mode, command, doc, pa
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">
-              {command}
+              {defaultCommand(command, params)}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
