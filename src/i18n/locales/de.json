@@ -38,8 +38,7 @@
     "invalidSize": "Ungültige Größe",
     "invalidSizeDesc": "Geben Sie eine positive Zahl ein oder -1 für unbegrenzt.",
     "sizeUnlimited": "-1 für unbegrenzt",
-    "taskRunning": "Aufgabe wird ausgeführt",
-    "taskStarted": "Aufgabe gestartet",
+    "taskCreated": "Aufgabe erstellt",
     "taskLink": "Aufgabe {{taskId}}",
     "errorPrefix": "Fehler: {{message}}",
     "fetchFailed": "Daten konnten nicht geladen werden: {{message}}",
@@ -481,7 +480,6 @@
     },
     "calendarTasks": {
       "title": "Aufgaben",
-      "taskLabel": "Aufgabe:",
       "syncTitle": "Domain-Mitglieder synchronisieren",
       "syncConfirm": "Domain-Mitglieder von „{{domain}}“ aus dem Adressbuch synchronisieren?",
       "syncButton": "Domain-Mitglieder synchronisieren",
@@ -1343,12 +1341,10 @@
     "upgradeTitle": "Cassandra-Schema aktualisieren",
     "upgradeConfirm": "Schema von Version {{current}} auf Version {{latest}} aktualisieren? Dadurch werden Migrationsaufgaben eingeplant.",
     "upgradeScheduled": "Aktualisierung eingeplant",
-    "taskStarted": "Aufgabe gestartet: {{taskId}}",
     "errorUpgrading": "Fehler beim Aktualisieren des Schemas"
   },
   "eventDeadletter": {
     "redeliverGroup": "Möchten Sie die Ereignisse der Gruppe {{path}} erneut zustellen?",
-    "runTaskSuccess": "Aufgabe erfolgreich ausgeführt",
     "runTaskError": "Aufgabe konnte nicht gestartet werden",
     "clearGroup": "Möchten Sie die Ereignisgruppe {{path}} leeren?",
     "clearSuccess": "Die Ereignisse wurden gelöscht.",
@@ -1401,7 +1397,6 @@
     "moveDone": "Alle E-Mails erfolgreich verschoben",
     "errorMoving": "Fehler beim Verschieben der E-Mails",
     "clearConfirm": "Möchten Sie das Mail-Repository {{path}} leeren?",
-    "runTaskSuccess": "Aufgabe erfolgreich ausgeführt",
     "runTaskError": "Aufgabe konnte nicht gestartet werden",
     "colNameSender": "Name / Absender",
     "colRecipients": "Empfänger",
@@ -1457,7 +1452,6 @@
     "removeMailConfirm": "Diese E-Mail aus dem Repository entfernen?",
     "removeMailSuccess": "E-Mail erfolgreich entfernt",
     "runTaskHeader": "Aufgabe ausführen",
-    "taskLabel": "Aufgabe:",
     "subtitle": "Mail-Repositorys speichern E-Mails zusammen mit ihrem Verarbeitungskontext, sodass die Verarbeitung später fortgesetzt werden kann."
   },
   "mappings": {

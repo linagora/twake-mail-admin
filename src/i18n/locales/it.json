@@ -38,8 +38,7 @@
     "invalidSize": "Dimensione non valida",
     "invalidSizeDesc": "Inserisci un numero positivo o -1 per illimitato.",
     "sizeUnlimited": "-1 per illimitato",
-    "taskRunning": "L'attività è in esecuzione",
-    "taskStarted": "Attività avviata",
+    "taskCreated": "Attività creata",
     "taskLink": "Attività {{taskId}}",
     "errorPrefix": "Errore: {{message}}",
     "fetchFailed": "Impossibile caricare i dati: {{message}}",
@@ -481,7 +480,6 @@
     },
     "calendarTasks": {
       "title": "Attività",
-      "taskLabel": "Attività:",
       "syncTitle": "Sincronizza i membri del dominio",
       "syncConfirm": "Sincronizzare i membri del dominio «{{domain}}» dalla rubrica?",
       "syncButton": "Sincronizza i membri del dominio",
@@ -1343,12 +1341,10 @@
     "upgradeTitle": "Aggiorna lo schema Cassandra",
     "upgradeConfirm": "Aggiornare lo schema dalla versione {{current}} alla versione {{latest}}? Verranno pianificate attività di migrazione.",
     "upgradeScheduled": "Aggiornamento pianificato",
-    "taskStarted": "Attività avviata: {{taskId}}",
     "errorUpgrading": "Errore durante l'aggiornamento dello schema"
   },
   "eventDeadletter": {
     "redeliverGroup": "Vuoi recapitare di nuovo gli eventi del gruppo {{path}}?",
-    "runTaskSuccess": "Attività eseguita correttamente",
     "runTaskError": "Impossibile eseguire l'attività",
     "clearGroup": "Vuoi svuotare il gruppo di eventi {{path}}?",
     "clearSuccess": "Gli eventi sono stati eliminati.",
@@ -1401,7 +1397,6 @@
     "moveDone": "Tutte le email sono state spostate correttamente",
     "errorMoving": "Errore durante lo spostamento delle email",
     "clearConfirm": "Vuoi svuotare il repository di posta {{path}}?",
-    "runTaskSuccess": "Attività eseguita correttamente",
     "runTaskError": "Impossibile eseguire l'attività",
     "colNameSender": "Nome / Mittente",
     "colRecipients": "Destinatari",
@@ -1457,7 +1452,6 @@
     "removeMailConfirm": "Rimuovere questa email dal repository?",
     "removeMailSuccess": "Email rimossa correttamente",
     "runTaskHeader": "Esegui attività",
-    "taskLabel": "Attività:",
     "subtitle": "I repository di posta conservano le email insieme al loro contesto di elaborazione, consentendo di riprenderne l'elaborazione in seguito."
   },
   "mappings": {

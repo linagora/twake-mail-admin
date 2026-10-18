@@ -112,12 +112,12 @@ public class CollectionSection {
 
     /**
      * Feeds the hidden file input of the row's import button, as picking a file would, and
-     * returns the id of the task announced by the "Task started" toast.
+     * returns the id of the task announced by the "Task created" toast.
      */
     public String importFile(Locator row, String fileName, String mimeType, String content) {
         row.locator("input[type=file]").setInputFiles(
             new FilePayload(fileName, mimeType, content.getBytes(StandardCharsets.UTF_8)));
-        Locator toast = app.toast("Task started");
+        Locator toast = app.toast("Task created");
         assertThat(toast).isVisible();
         Locator link = toast.getByRole(AriaRole.LINK);
         assertThat(link).hasText(TASK_LINK);

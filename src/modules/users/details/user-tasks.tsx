@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -10,6 +9,7 @@ import DeleteUserDataForm from "../components/delete-user-data-form";
 import ProvisionTemplatesForm, { ProvisionTemplatesValues } from "@/components/custom/provision-templates-form";
 import { appConfig } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
@@ -53,6 +53,7 @@ interface Props {
 export default function UserTasks({ username }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const canReindex = useIsAllowed("POST", "/users/{username}/mailboxes");
   const canSubscribeAll = useIsAllowed("POST", "/users/{username}/mailboxes");
@@ -69,10 +70,6 @@ export default function UserTasks({ username }: Props) {
   const [open, setOpen] = useState(false);
   const [subscribeLoading, setSubscribeLoading] = useState(false);
 
-  const toastTaskRunning = (taskId: string) => toast({
-    title: t("common.taskRunning"),
-    description: <p><Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{t("common.taskLink", { taskId })}</Link></p>,
-  });
 
   const handleProvisionTemplates = async () => {
     let values: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
@@ -95,7 +92,7 @@ export default function UserTasks({ username }: Props) {
           overwriteExisting: values.overwriteExisting,
           prune: values.prune,
         });
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };
@@ -116,7 +113,7 @@ export default function UserTasks({ username }: Props) {
       ),
       action: async () => {
         const data = await reindexUserMailboxes(username, additionalParams);
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };
@@ -136,7 +133,7 @@ export default function UserTasks({ username }: Props) {
 
       setSubscribeLoading(true);
       const data = await subscribeAllUserMailboxes(username);
-      toastTaskRunning(data.taskId);
+      toastTaskCreated(data.taskId);
     } catch (err) {
       toast({
         title: t("users.tasks.errorSubscribe"),
@@ -163,7 +160,7 @@ export default function UserTasks({ username }: Props) {
       ),
       action: async () => {
         const data = await recomputeFastViewProjection(username, additionalParams);
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };
@@ -194,7 +191,7 @@ export default function UserTasks({ username }: Props) {
       validate: () => (criteriaValid ? null : false),
       action: async () => {
         const data = await restoreDeletedMessages(username, request);
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };
@@ -238,7 +235,7 @@ export default function UserTasks({ username }: Props) {
       ),
       action: async () => {
         const data = await cleanupUserMailbox(username, mailbox, olderThan);
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };
@@ -262,7 +259,7 @@ export default function UserTasks({ username }: Props) {
           force: currentValues.force || undefined,
           fromStep: currentValues.fromStep || undefined,
         });
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };
@@ -282,7 +279,7 @@ export default function UserTasks({ username }: Props) {
       ),
       action: async () => {
         const data = await deleteUserData(username, currentFromStep || undefined);
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };
@@ -308,7 +305,7 @@ export default function UserTasks({ username }: Props) {
           tiering: additionalParams.tiering,
           messagesPerSecond: additionalParams.messagesPerSecond || undefined,
         });
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };

@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { deleteUserData, archiveUserCalendarEvents, republishUserContacts } from "../api-client";
 import DeleteUserDataForm from "../components/delete-user-data-form";
-import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 import { TaskParam } from "@/modules/common-tasks/types";
@@ -31,17 +30,13 @@ interface Props {
 
 export default function CalendarUserTasks({ username }: Props) {
   const { t } = useTranslation();
-  const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
   const canArchiveCalendar = useIsAllowed("POST", "/calendars/{username}");
   const canRepublishContacts = useIsAllowed("POST", "/users/{username}/contacts?action=republish");
   const [open, setOpen] = useState(false);
 
-  const toastTaskRunning = (taskId: string) => toast({
-    title: t("common.taskRunning"),
-    description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
-  });
 
   const handleDeleteUserData = async () => {
     let currentFromStep = "";
@@ -57,7 +52,7 @@ export default function CalendarUserTasks({ username }: Props) {
       ),
       action: async () => {
         const data = await deleteUserData(username, currentFromStep || undefined);
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };
@@ -78,7 +73,7 @@ export default function CalendarUserTasks({ username }: Props) {
       ),
       action: async () => {
         const data = await archiveUserCalendarEvents(username, additionalParams);
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };
@@ -99,7 +94,7 @@ export default function CalendarUserTasks({ username }: Props) {
       ),
       action: async () => {
         const data = await republishUserContacts(username, params);
-        toastTaskRunning(data.taskId);
+        toastTaskCreated(data.taskId);
       },
     });
   };

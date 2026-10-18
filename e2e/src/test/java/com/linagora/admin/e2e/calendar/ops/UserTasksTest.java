@@ -25,11 +25,11 @@ class UserTasksTest extends CalendarAdminE2ETest {
     private static final String[] ARCHIVE_PARAMS = {
         "createdBefore", "lastModifiedBefore", "masterDtStartBefore", "isRejected", "isNotRecurring", "eventsPerSecond"};
 
-    /** Reads the id of the task linked by the "Task is running" toast. */
+    /** Reads the id of the task linked by the "Task created" toast. */
     static String runningTaskId(AdminApp app) {
-        Locator link = app.toast("Task is running").getByRole(AriaRole.LINK);
-        assertThat(link).hasText(Pattern.compile("^[0-9a-f-]{36}$"));
-        return link.textContent().trim();
+        Locator link = app.toast("Task created").getByRole(AriaRole.LINK);
+        assertThat(link).hasText(Pattern.compile("^Task [0-9a-f-]{36}$"));
+        return link.textContent().substring("Task ".length());
     }
 
     /**
@@ -62,7 +62,7 @@ class UserTasksTest extends CalendarAdminE2ETest {
         app.confirm();
 
         String taskId = runningTaskId(app);
-        app.toast("Task is running").getByRole(AriaRole.LINK).click();
+        app.toast("Task created").getByRole(AriaRole.LINK).click();
         assertThat(page).hasURL(Pattern.compile("/task/" + taskId + "$"));
         assertThat(webAdmin.awaitTask(taskId).path("status").asText()).isEqualTo("completed");
     }

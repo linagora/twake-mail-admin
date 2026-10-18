@@ -95,9 +95,9 @@ class UserDetailTest extends MailAdminE2ETest {
         detail.clickItemButton(mailboxes, "INBOX", "Clear mailbox content");
         assertThat(app.dialog()).containsText("Are you sure you want to delete all messages in \"INBOX\"?");
         app.confirm();
-        Locator taskLink = app.toast("Task is running").getByRole(AriaRole.LINK);
+        Locator taskLink = app.toast("Task created").getByRole(AriaRole.LINK);
         assertThat(taskLink).isVisible();
-        String taskId = taskLink.innerText().trim();
+        String taskId = taskLink.innerText().trim().substring("Task ".length());
         // Follow the link right away: the toast vanishes after a few seconds
         taskLink.click();
         assertThat(page).hasURL(Pattern.compile("/task/" + taskId + "$"));

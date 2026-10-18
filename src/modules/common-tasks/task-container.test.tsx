@@ -71,7 +71,7 @@ describe("task container: run task", () => {
     renderBlobGc();
 
     await waitFor(() => expect(mocks.toast).toHaveBeenCalledTimes(1));
-    expect(mocks.toast.mock.calls[0][0].title).toBe("common.taskRunning");
+    expect(mocks.toast.mock.calls[0][0].title).toBe("common.taskCreated");
   });
 });
 

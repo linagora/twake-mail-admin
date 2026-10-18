@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { deleteAllUsersData, republishDomainContacts, syncDomainMembers } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
@@ -24,6 +24,7 @@ interface Props {
 export default function CalendarDomainTasks({ domain, defaultOpen = false }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const canDeleteData = useIsAllowed("POST", "/domains/{domain}?action=deleteData");
   const canSyncMembers = useIsAllowed("POST", "/addressbook/domain-members/{domain}");
@@ -42,10 +43,7 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
     setDeleting(true);
     try {
       const { taskId } = await deleteAllUsersData(domain);
-      toast({
-        title: t("common.taskStarted"),
-        description: <p>{t("domains.calendarTasks.taskLabel")} <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
-      });
+      toastTaskCreated(taskId);
     } catch (err) {
       toast({ title: t("domains.tasks.errorDeletingData"), description: <ErrorDisplayer error={err} /> });
     } finally {
@@ -63,10 +61,7 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
     setSyncing(true);
     try {
       const { taskId } = await syncDomainMembers(domain);
-      toast({
-        title: t("common.taskStarted"),
-        description: <p>{t("domains.calendarTasks.taskLabel")} <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
-      });
+      toastTaskCreated(taskId);
     } catch (err) {
       toast({ title: t("domains.calendarTasks.errorSyncing"), description: <ErrorDisplayer error={err} /> });
     } finally {
@@ -90,10 +85,7 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
       ),
       action: async () => {
         const { taskId } = await republishDomainContacts(domain, params);
-        toast({
-          title: t("common.taskStarted"),
-          description: <p>{t("domains.calendarTasks.taskLabel")} <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{taskId}</Link></p>,
-        });
+        toastTaskCreated(taskId);
       },
     });
   };

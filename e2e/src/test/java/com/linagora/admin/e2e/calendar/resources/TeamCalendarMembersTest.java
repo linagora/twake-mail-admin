@@ -112,8 +112,8 @@ class TeamCalendarMembersTest extends CalendarAdminE2ETest {
         assertThat(row.eventCount()).hasText("0");
 
         row.importIcs(DomainCalendarsBackend.ics(uid));
-        assertThat(app.toast("Task started")).isVisible();
-        assertThat(app.toast("Task started").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions()
+        assertThat(app.toast("Task created")).isVisible();
+        assertThat(app.toast("Task created").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions()
             .setName(Pattern.compile("^Task [0-9a-f-]+$")))).isVisible();
         assertThat(row.importButton()).isEnabled(new LocatorAssertions.IsEnabledOptions().setTimeout(60_000));
         assertThat(row.eventCount()).hasText("1", new LocatorAssertions.HasTextOptions().setTimeout(20_000));

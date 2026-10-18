@@ -38,8 +38,7 @@
     "invalidSize": "Invalid size",
     "invalidSizeDesc": "Enter a positive number or -1 for unlimited.",
     "sizeUnlimited": "-1 for unlimited",
-    "taskRunning": "Task is running",
-    "taskStarted": "Task started",
+    "taskCreated": "Task created",
     "taskLink": "Task {{taskId}}",
     "errorPrefix": "Error: {{message}}",
     "fetchFailed": "Failed to fetch data: {{message}}",
@@ -481,7 +480,6 @@
     },
     "calendarTasks": {
       "title": "Tasks",
-      "taskLabel": "Task:",
       "syncTitle": "Sync Domain Members",
       "syncConfirm": "Synchronize domain members for \"{{domain}}\" from the address book?",
       "syncButton": "Sync domain members",
@@ -1343,12 +1341,10 @@
     "upgradeTitle": "Upgrade Cassandra Schema",
     "upgradeConfirm": "Upgrade schema from version {{current}} to version {{latest}}? This will schedule migration tasks.",
     "upgradeScheduled": "Upgrade scheduled",
-    "taskStarted": "Task started: {{taskId}}",
     "errorUpgrading": "Error upgrading schema"
   },
   "eventDeadletter": {
     "redeliverGroup": "Do you want to re-deliver events for the group: {{path}}.",
-    "runTaskSuccess": "Run Task Successfully",
     "runTaskError": "Failed to run the task",
     "clearGroup": "Do you want to clear the event group: {{path}}.",
     "clearSuccess": "The events were deleted.",
@@ -1401,7 +1397,6 @@
     "moveDone": "All mails moved successfully",
     "errorMoving": "Error moving mails",
     "clearConfirm": "Do you want to clear the mail repository: {{path}}.",
-    "runTaskSuccess": "Run Task Successfully",
     "runTaskError": "Failed to run the task",
     "colNameSender": "Name / Sender",
     "colRecipients": "Recipients",
@@ -1457,7 +1452,6 @@
     "removeMailConfirm": "Remove this email from the repository?",
     "removeMailSuccess": "Email removed successfully",
     "runTaskHeader": "Run Task",
-    "taskLabel": "Task:",
     "subtitle": "Mail repositories store emails along with their processing context, allowing to later resume the mail processing."
   },
   "mappings": {

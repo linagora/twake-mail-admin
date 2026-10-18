@@ -66,7 +66,7 @@ class CommonTasksTest extends MailAdminE2ETest {
     }
 
     private static void expectTaskToast(AdminApp app, String taskId) {
-        assertThat(app.toast("Task is running").getByRole(AriaRole.LINK,
+        assertThat(app.toast("Task created").getByRole(AriaRole.LINK,
             new Locator.GetByRoleOptions().setName("Task " + taskId).setExact(true))).isVisible();
     }
 
@@ -93,7 +93,7 @@ class CommonTasksTest extends MailAdminE2ETest {
         assertThat(pathOf(response)).isEqualTo("/mailboxes?task=RecomputeMailboxCounters");
         String taskId = taskIdOf(response);
 
-        app.toast("Task is running").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("Task " + taskId)).click();
+        app.toast("Task created").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("Task " + taskId)).click();
         assertThat(page).hasURL(Pattern.compile("/task/" + taskId + "$"));
         JsonNode task = webAdmin.awaitTask(taskId);
         assertThat(task.path("status").asText()).isEqualTo("completed");

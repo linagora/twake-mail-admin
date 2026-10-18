@@ -64,7 +64,7 @@ class DomainTasksTest extends MailAdminE2ETest {
         assertThat(dialog).containsText("Command: curl -XPOST /domains/" + domain
             + "/templates?action=provision&from=" + alice + "&folderName=Templates&usersPerSecond=5");
         app.confirm();
-        String taskId = taskIdOfToast(app, "Task started");
+        String taskId = taskIdOfToast(app, "Task created");
         JsonNode task = webAdmin.awaitTask(taskId);
         assertThat(task.path("status").asText()).isEqualTo("completed");
     }
@@ -85,7 +85,7 @@ class DomainTasksTest extends MailAdminE2ETest {
         assertThat(app.dialog()).containsText("Command: curl -XPOST /domains/" + domain + "?action=deleteData");
         app.confirm();
 
-        String taskId = taskIdOfToast(app, "Task started");
+        String taskId = taskIdOfToast(app, "Task created");
         JsonNode task = webAdmin.awaitTask(taskId);
         assertThat(task.path("status").asText()).isEqualTo("completed");
         assertThat(task.path("type").asText()).isEqualTo("DeleteUsersDataOfDomainTask");

@@ -142,8 +142,8 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         assertThat(repositories.commandPreview()).hasText("Command: curl -XPATCH /mailRepositories/" + WebAdmin.encode(source)
             + "/mails?action=reprocess&queue=spool&processor=root&consume=true");
         app.confirm();
-        Locator toast = app.toast("Run Task Successfully");
-        assertThat(toast).containsText("Task:");
+        Locator toast = app.toast("Task created");
+        assertThat(toast.getByRole(AriaRole.LINK)).hasText(Pattern.compile("^Task [0-9a-f-]{36}$"));
         String reprocessTask = OpsBackend.taskIdOf(toast.getByRole(AriaRole.LINK).getAttribute("href"));
         assertThat(webAdmin.awaitTask(reprocessTask).path("status").asText()).isEqualTo("completed");
         assertThat(OpsBackend.size(webAdmin, source)).isZero();
@@ -177,7 +177,7 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         repositories.action(target, MailRepositoriesPage.CLEAR_ALL).click();
         assertThat(app.dialog().getByText("Do you want to clear the mail repository: " + target + ".", new Locator.GetByTextOptions().setExact(true))).isVisible();
         app.confirm();
-        Locator clearToast = app.toast("Run Task Successfully");
+        Locator clearToast = app.toast("Task created");
         String clearTask = OpsBackend.taskIdOf(clearToast.getByRole(AriaRole.LINK).getAttribute("href"));
         assertThat(webAdmin.awaitTask(clearTask).path("status").asText()).isEqualTo("completed");
         assertThat(OpsBackend.size(webAdmin, target)).isZero();
@@ -208,7 +208,7 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         String query = reprocess.url().substring(reprocess.url().indexOf('?') + 1);
         assertThat(query.split("&")).filteredOn(param -> param.startsWith("processor=")).containsExactly("processor=transport");
         assertThat(query).doesNotContain("limit=").doesNotContain("maxRetries=").doesNotContain("&&");
-        Locator toast = app.toast("Run Task Successfully");
+        Locator toast = app.toast("Task created");
         String taskId = OpsBackend.taskIdOf(toast.getByRole(AriaRole.LINK).getAttribute("href"));
         assertThat(webAdmin.awaitTask(taskId).path("status").asText()).isEqualTo("completed");
     }

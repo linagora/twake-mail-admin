@@ -5,11 +5,10 @@
  * their owner, their path and their media type.
  */
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
-import { Link } from "react-router";
 import { Download, Loader2, Upload, type LucideIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { getTaskDetail } from "@/modules/common-tasks/api-client";
 import { TaskStatus, type RunTaskResponse } from "@/modules/common-tasks/types";
@@ -128,8 +127,8 @@ export function ImportCollectionButton({
   // Called once the import task is over, so the row can re-read its counter.
   onImported: () => void;
 }) {
-  const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const domain = useDomain() || undefined;
   const inputRef = useRef<HTMLInputElement>(null);
   const [importing, setImporting] = useState(false);
@@ -148,16 +147,7 @@ export function ImportCollectionButton({
     setImporting(true);
     try {
       const { taskId } = await importCollection(owner, collectionId, await file.text());
-      toast({
-        title: t("common.taskStarted"),
-        description: (
-          <p>
-            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-              {t("common.taskLink", { taskId })}
-            </Link>
-          </p>
-        ),
-      });
+      toastTaskCreated(taskId);
       await waitForTask(taskId, domain, () => mounted.current);
       if (mounted.current) onImported();
     } catch (err) {

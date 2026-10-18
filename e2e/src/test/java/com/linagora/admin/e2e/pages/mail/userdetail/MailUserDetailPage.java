@@ -88,17 +88,16 @@ public class MailUserDetailPage {
         return new DeletedVaultSection(this);
     }
 
-    /** Reads the id of the task out of the "Task is running" toast, which vanishes after a few seconds. */
+    /** Reads the id of the task out of the "Task created" toast, which vanishes after a few seconds. */
     public String taskIdFromToast(String title) {
         Locator link = app.toast(title).getByRole(AriaRole.LINK);
         assertThat(link).isVisible();
         String text = link.textContent().trim();
         Matcher matcher = TASK_LINK.matcher(text);
-        if (matcher.find()) {
-            return matcher.group(1);
+        if (!matcher.find()) {
+            throw new IllegalStateException("No task id in " + text);
         }
-        // The vault toast shows the bare id as link text
-        return text;
+        return matcher.group(1);
     }
 
     /** The "Command: curl ..." preview of the open task dialog. */

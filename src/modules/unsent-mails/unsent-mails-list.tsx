@@ -4,6 +4,7 @@ import { RefreshCw, Trash2, Download, Search, Send, Eraser } from "lucide-react"
 import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -27,6 +28,7 @@ const BULK_HINT_ID = "unsent-mails-bulk-hint";
 export default function UnsentMailsList() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
 
   // Both bulk actions are the very same route, so they share a single gate.
@@ -92,11 +94,6 @@ export default function UnsentMailsList() {
     [selection, t]
   );
 
-  const taskLink = (taskId: string) => (
-    <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-      {t("common.taskLink", { taskId })}
-    </Link>
-  );
 
   const handleResendAll = async () => {
     if (!selection) return;
@@ -109,10 +106,7 @@ export default function UnsentMailsList() {
     if (!confirmed) return;
     try {
       const { taskId } = await resendAllUnsentMails(selection);
-      toast({
-        title: t("unsentMails.taskSubmitted"),
-        description: taskLink(taskId),
-      });
+      toastTaskCreated(taskId, t("unsentMails.taskSubmitted"));
     } catch (err) {
       toast({
         title: t("unsentMails.errorResending"),
@@ -132,10 +126,7 @@ export default function UnsentMailsList() {
     if (!confirmed) return;
     try {
       const { taskId } = await deleteAllUnsentMails(selection);
-      toast({
-        title: t("unsentMails.deleteTaskSubmitted"),
-        description: taskLink(taskId),
-      });
+      toastTaskCreated(taskId, t("unsentMails.deleteTaskSubmitted"));
     } catch (err) {
       toast({
         title: t("unsentMails.errorDeleting"),
@@ -154,10 +145,7 @@ export default function UnsentMailsList() {
     if (!confirmed) return;
     try {
       const { taskId } = await resendUnsentMail(id);
-      toast({
-        title: t("unsentMails.taskSubmitted"),
-        description: taskLink(taskId),
-      });
+      toastTaskCreated(taskId, t("unsentMails.taskSubmitted"));
       refresh();
     } catch (err) {
       toast({

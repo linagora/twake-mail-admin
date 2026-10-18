@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { deleteAllUsersData, applyDomainSignatureTemplates, provisionDomainTemplates } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import ProvisionTemplatesForm, { ProvisionTemplatesValues } from "@/components/custom/provision-templates-form";
@@ -23,6 +23,7 @@ interface Props {
 export default function DomainTasks({ domain, defaultOpen }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const canApplySignatures = useIsAllowed("POST", "/domains/{domain}/signature-templates?action=apply");
   const canDeleteData = useIsAllowed("POST", "/domains/{domain}?action=deleteData");
@@ -82,10 +83,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
           prune: values.prune,
           usersPerSecond: values.usersPerSecond.trim() || undefined,
         });
-        toast({
-          title: t("common.taskStarted"),
-          description: <p><Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{t("common.taskLink", { taskId })}</Link></p>,
-        });
+        toastTaskCreated(taskId);
       },
     });
   };
@@ -105,10 +103,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
     setDeleting(true);
     try {
       const { taskId } = await deleteAllUsersData(domain);
-      toast({
-        title: t("common.taskStarted"),
-        description: <p><Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{t("common.taskLink", { taskId })}</Link></p>,
-      });
+      toastTaskCreated(taskId);
     } catch (err) {
       toast({
         title: t("domains.tasks.errorDeletingData"),

@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Loader2, Search, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import { DeletedMessage, RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
@@ -33,6 +33,7 @@ function formatDate(iso: string): string {
 export default function UserDeletedMessageVault({ label, onSearch, onRestore, canSearch = true, canRestore = true }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const [open, setOpen] = useState(false);
   const [criteria, setCriteria] = useState<RestoreCriterion[]>([]);
@@ -82,17 +83,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
         ...(limit !== undefined ? { limit } : {}),
       };
       const data = await onRestore(body);
-      toast({
-        title: t("users.deletedVault.restoreStarted"),
-        description: (
-          <p>
-            Task{" "}
-            <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>
-              {data.taskId}
-            </Link>
-          </p>
-        ),
-      });
+      toastTaskCreated(data.taskId, t("users.deletedVault.restoreStarted"));
     } catch (err) {
       toast({
         title: t("users.deletedVault.errorRestoring"),
@@ -123,17 +114,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
         ],
       };
       const data = await onRestore(body);
-      toast({
-        title: t("users.deletedVault.restoreStarted"),
-        description: (
-          <p>
-            Task{" "}
-            <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>
-              {data.taskId}
-            </Link>
-          </p>
-        ),
-      });
+      toastTaskCreated(data.taskId, t("users.deletedVault.restoreStarted"));
     } catch (err) {
       toast({
         title: t("users.deletedVault.errorRestoring"),

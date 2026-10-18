@@ -57,7 +57,7 @@ class UserRenameAndDeleteTest extends MailAdminE2ETest {
 
         dialog.getByLabel("New username:").fill(ren2);
         app.confirm();
-        JsonNode task = webAdmin.awaitTask(detail.taskIdFromToast("Task is running"));
+        JsonNode task = webAdmin.awaitTask(detail.taskIdFromToast("Task created"));
         assertThat(task.path("status").asText()).as(task.toString()).isEqualTo("completed");
         assertThat(task.path("type").asText()).isEqualTo("UsernameChangeTask");
         Awaitility.await().atMost(Duration.ofSeconds(20)).untilAsserted(() ->
@@ -101,7 +101,7 @@ class UserRenameAndDeleteTest extends MailAdminE2ETest {
         assertThat(dialog.getByLabel("Resume from step:")).hasValue("");
         assertThat(detail.commandPreview()).hasText(Pattern.compile("action=deleteData$"));
         app.confirm();
-        JsonNode task = webAdmin.awaitTask(detail.taskIdFromToast("Task is running"));
+        JsonNode task = webAdmin.awaitTask(detail.taskIdFromToast("Task created"));
         assertThat(task.path("status").asText()).as(task.toString()).isEqualTo("completed");
         assertThat(task.path("type").asText()).isEqualTo("DeleteUserDataTask");
         assertThat(webAdmin.get("/users/" + user + "/mailboxes").expect(200).json().size()).isZero();

@@ -157,7 +157,7 @@ class DeletedMessageVaultTest extends MailAdminE2ETest {
         assertThat(restoreCalls).isEmpty();
 
         app.confirm();
-        String taskId = detail.taskIdFromToast("Task is running");
+        String taskId = detail.taskIdFromToast("Task created");
         assertThat(restoreCalls).hasSize(1);
         assertThat(restoreCalls.get(0)).contains("\"value\":\"Quarterly\"");
         assertThat(webAdmin.awaitTask(taskId).path("status").asText()).isEqualTo("completed");

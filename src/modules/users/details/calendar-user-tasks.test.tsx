@@ -79,7 +79,7 @@ describe("calendar user tasks: dialogs stay open until the request is accepted",
 
     await waitFor(() => expect(screen.queryByText("users.calendarTasks.archiveTitle")).toBeNull());
     expect(api.archiveUserCalendarEvents).toHaveBeenLastCalledWith(USERNAME, expect.objectContaining({ eventsPerSecond: "50" }));
-    expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "common.taskRunning" }));
+    expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "common.taskCreated" }));
   });
 
   it("keeps the republish contacts dialog open with the typed values when the request fails", async () => {

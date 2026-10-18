@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
-import { Link } from "react-router";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { getCassandraVersion, getCassandraLatestVersion, upgradeCassandraToLatest, CassandraVersion } from "./api-client";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import Header from "@/components/custom/header";
@@ -16,6 +16,7 @@ const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/di
 export default function Cassandra() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const canUpgrade = useIsAllowed("POST", "/cassandra/version/upgrade/latest");
   const [upgrading, setUpgrading] = useState(false);
@@ -45,17 +46,7 @@ export default function Cassandra() {
     setUpgrading(true);
     try {
       const result = await upgradeCassandraToLatest();
-      toast({
-        title: t("cassandra.upgradeScheduled"),
-        description: (
-          <span>
-            {t("common.taskStarted")}{" "}
-            <Link to={`/task/${result.taskId}`} className="underline text-blue-600">
-              {result.taskId}
-            </Link>
-          </span>
-        ),
-      });
+      toastTaskCreated(result.taskId, t("cassandra.upgradeScheduled"));
       await refresh();
     } catch (err) {
       toast({

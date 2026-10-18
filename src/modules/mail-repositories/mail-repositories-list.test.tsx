@@ -106,7 +106,7 @@ describe("mail repositories list tasks", () => {
     await clickAction("mailRepositories.clearAll");
 
     await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({
-      title: "mailRepositories.runTaskSuccess",
+      title: "common.taskCreated",
     })));
     expect(api.clearMailRepository).toHaveBeenCalledWith("var%2Fmail%2Ferror");
   });

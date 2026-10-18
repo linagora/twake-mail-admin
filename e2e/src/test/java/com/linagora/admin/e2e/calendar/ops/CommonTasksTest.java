@@ -46,9 +46,9 @@ class CommonTasksTest extends CalendarAdminE2ETest {
         "curl -XPOST /contacts?action=republish&contactsPerSecond=100",
         "curl -XDELETE /addressbook/domain-members"};
 
-    /** Reads the task id from the "Task is running" toast. */
+    /** Reads the task id from the "Task created" toast. */
     private static String runningTaskId(AdminApp app) {
-        Locator link = app.toast("Task is running").getByRole(AriaRole.LINK);
+        Locator link = app.toast("Task created").getByRole(AriaRole.LINK);
         assertThat(link).hasText(Pattern.compile("^Task [0-9a-f-]{36}$"));
         return link.textContent().substring("Task ".length());
     }

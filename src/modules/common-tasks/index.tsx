@@ -1,5 +1,4 @@
 import { Fragment, useState } from "react";
-import { Link } from "react-router";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -15,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { appConfig } from "@/lib/config";
 import { CALENDAR_WEBADMIN_DOC_URL, calendarWebadminDoc } from "@/lib/calendar-docs";
@@ -247,6 +247,7 @@ export default function CommonTasks() {
 function MailCommonTasks() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const canReloadCerts = useIsAllowed("POST", "/servers");
   const canRepositionRights = useIsAllowed("POST", "/team-mailboxes");
@@ -296,10 +297,7 @@ function MailCommonTasks() {
       ),
       action: async () => {
         const data = await cleanupMailbox(mailbox, olderThan);
-        toast({
-          title: t("common.taskRunning"),
-          description: <p><Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{t("common.taskLink", { taskId: data.taskId })}</Link></p>,
-        });
+        toastTaskCreated(data.taskId);
       },
     });
   };

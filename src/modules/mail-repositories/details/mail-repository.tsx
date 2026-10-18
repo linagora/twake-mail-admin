@@ -1,4 +1,4 @@
-import { useParams, useSearchParams, Link } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import {
   getMailRepositories,
@@ -11,6 +11,7 @@ import { GetMailRepositoriesResponseType, MailKeysResponseType, MailRepository }
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { toast, useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { MoveHorizontal, Trash2, RefreshCw } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -79,6 +80,7 @@ const fetchMailData = async (
 export default function MailRepositoryDetail() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
   const confirm = useConfirm();
@@ -192,17 +194,7 @@ export default function MailRepositoryDetail() {
           queue: paramValues["queue"] || undefined,
           processor: paramValues["processor"] || undefined,
         });
-        toast({
-          title: t("mailRepositories.reprocessScheduled"),
-          description: (
-            <p>
-              {t("mailRepositories.taskLabel")}{" "}
-              <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-                {taskId}
-              </Link>
-            </p>
-          ),
-        });
+        toastTaskCreated(taskId, t("mailRepositories.reprocessScheduled"));
       },
     });
   };

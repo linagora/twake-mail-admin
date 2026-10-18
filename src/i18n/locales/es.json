@@ -38,8 +38,7 @@
     "invalidSize": "Tamaño no válido",
     "invalidSizeDesc": "Introduzca un número positivo o -1 para ilimitado.",
     "sizeUnlimited": "-1 para ilimitado",
-    "taskRunning": "La tarea está en ejecución",
-    "taskStarted": "Tarea iniciada",
+    "taskCreated": "Tarea creada",
     "taskLink": "Tarea {{taskId}}",
     "errorPrefix": "Error: {{message}}",
     "fetchFailed": "Error al cargar los datos: {{message}}",
@@ -481,7 +480,6 @@
     },
     "calendarTasks": {
       "title": "Tareas",
-      "taskLabel": "Tarea:",
       "syncTitle": "Sincronizar los miembros del dominio",
       "syncConfirm": "¿Sincronizar los miembros del dominio «{{domain}}» desde la libreta de direcciones?",
       "syncButton": "Sincronizar los miembros del dominio",
@@ -1343,12 +1341,10 @@
     "upgradeTitle": "Actualizar el esquema de Cassandra",
     "upgradeConfirm": "¿Actualizar el esquema de la versión {{current}} a la versión {{latest}}? Se programarán tareas de migración.",
     "upgradeScheduled": "Actualización programada",
-    "taskStarted": "Tarea iniciada: {{taskId}}",
     "errorUpgrading": "Error al actualizar el esquema"
   },
   "eventDeadletter": {
     "redeliverGroup": "¿Desea volver a entregar los eventos del grupo {{path}}?",
-    "runTaskSuccess": "Tarea ejecutada correctamente",
     "runTaskError": "No se pudo ejecutar la tarea",
     "clearGroup": "¿Desea vaciar el grupo de eventos {{path}}?",
     "clearSuccess": "Los eventos se han eliminado.",
@@ -1401,7 +1397,6 @@
     "moveDone": "Todos los correos se han movido correctamente",
     "errorMoving": "Error al mover los correos",
     "clearConfirm": "¿Desea vaciar el repositorio de correo {{path}}?",
-    "runTaskSuccess": "Tarea ejecutada correctamente",
     "runTaskError": "No se pudo ejecutar la tarea",
     "colNameSender": "Nombre / Remitente",
     "colRecipients": "Destinatarios",
@@ -1457,7 +1452,6 @@
     "removeMailConfirm": "¿Quitar este correo del repositorio?",
     "removeMailSuccess": "Correo quitado correctamente",
     "runTaskHeader": "Ejecutar tarea",
-    "taskLabel": "Tarea:",
     "subtitle": "Los repositorios de correo almacenan los correos junto con su contexto de procesamiento, lo que permite reanudar su procesamiento más adelante."
   },
   "mappings": {

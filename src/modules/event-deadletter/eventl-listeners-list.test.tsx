@@ -183,7 +183,7 @@ describe("event dead letter groups", () => {
     await clickRedeliver();
 
     await waitFor(() =>
-      expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "eventDeadletter.runTaskSuccess" }))
+      expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "common.taskCreated" }))
     );
   });
 });

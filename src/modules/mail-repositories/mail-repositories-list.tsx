@@ -12,6 +12,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCallback, useEffect, useId, useState } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,7 @@ export default function MailRepositoriesList() {
   const { t } = useTranslation();
   const confirm = useConfirm();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const moveTargetId = useId();
   const canCreate = useIsAllowed("PUT", "/mailRepositories/{encodedPath}");
   const canReprocess = useIsAllowed("PATCH", "/mailRepositories/{encodedPath}/mails");
@@ -65,22 +67,10 @@ export default function MailRepositoriesList() {
     }
   }, [mailRepositoriesResult, fetchRepositoryInfo]);
 
-  const toastTaskStarted = ({ taskId }: { taskId: string }) => toast({
-    title: t("mailRepositories.runTaskSuccess"),
-    description: (
-      <p>
-        {t("mailRepositories.taskLabel")}{" "}
-        <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-          {taskId}
-        </Link>
-      </p>
-    ),
-  });
-
   // A refused task (e.g. WebAdmin answering 400) is reported instead of escaping as an unhandled rejection.
   const runTask = async (startTask: () => Promise<{ taskId: string }>) => {
     try {
-      toastTaskStarted(await startTask());
+      toastTaskCreated((await startTask()).taskId);
     } catch (err) {
       toast({
         title: t("mailRepositories.runTaskError"),
@@ -113,7 +103,7 @@ export default function MailRepositoriesList() {
           }}
         />
       ),
-      action: async () => toastTaskStarted(await reprocessMailRepository(path, paramValues)),
+      action: async () => { toastTaskCreated((await reprocessMailRepository(path, paramValues)).taskId); },
     });
   };
   const handleMoveAll = async (source: MailRepository) => {

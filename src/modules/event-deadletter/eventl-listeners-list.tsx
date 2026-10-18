@@ -13,6 +13,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { useState, useEffect } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 
@@ -32,6 +33,7 @@ export default function EventListenersList() {
   const { t } = useTranslation();
   const confirm = useConfirm();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const canRedeliver = useIsAllowed("POST", "/events/deadLetter/groups/{group}");
   const canDelete = useIsAllowed("DELETE", "/events/deadLetter/groups/{group}");
   const { data: listenerGroupsResult, isLoading } =
@@ -88,16 +90,7 @@ export default function EventListenersList() {
           limit: toOptionalNumber(paramValues.limit),
           maxRetries: toOptionalNumber(paramValues.maxRetries),
         });
-        toast({
-          title: t("eventDeadletter.runTaskSuccess"),
-          description: (
-            <p>
-              <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-                {t("common.taskLink", { taskId })}
-              </Link>
-            </p>
-          ),
-        });
+        toastTaskCreated(taskId);
       },
     });
   };

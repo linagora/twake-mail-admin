@@ -61,6 +61,6 @@ describe("calendar domain tasks: republish contacts dialog", () => {
 
     await waitFor(() => expect(screen.queryByText("domains.calendarTasks.republishContactsTitle")).toBeNull());
     expect(api.republishDomainContacts).toHaveBeenCalledWith(DOMAIN, expect.objectContaining({ contactsPerSecond: "7" }));
-    expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "common.taskStarted" }));
+    expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "common.taskCreated" }));
   });
 });

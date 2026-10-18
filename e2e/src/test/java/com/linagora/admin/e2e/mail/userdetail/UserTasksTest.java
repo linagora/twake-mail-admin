@@ -93,15 +93,15 @@ class UserTasksTest extends MailAdminE2ETest {
             + "/mailboxes?task=reIndex&messagesPerSecond=50&mode=fixOutdated");
         Request reindex = page.waitForRequest(request -> request.url().contains("task=reIndex"), app::confirm);
         assertThat(reindex.url()).contains("mode=fixOutdated").contains("messagesPerSecond=50");
-        expectCompleted(webAdmin, detail.taskIdFromToast("Task is running"));
+        expectCompleted(webAdmin, detail.taskIdFromToast("Task created"));
 
         tasks.run("Subscribe to all mailboxes");
         app.confirm();
-        expectCompleted(webAdmin, detail.taskIdFromToast("Task is running"));
+        expectCompleted(webAdmin, detail.taskIdFromToast("Task created"));
 
         tasks.run("Recompute JMAP fast view projection");
         app.confirm();
-        expectCompleted(webAdmin, detail.taskIdFromToast("Task is running"));
+        expectCompleted(webAdmin, detail.taskIdFromToast("Task created"));
     }
 
     @Test
@@ -118,7 +118,7 @@ class UserTasksTest extends MailAdminE2ETest {
             Locator dialog = tasks.run("Cleanup user " + folder + " folder");
             assertThat(dialog.getByLabel("olderThan:")).hasValue("5d");
             app.confirm();
-            expectCompleted(webAdmin, detail.taskIdFromToast("Task is running"));
+            expectCompleted(webAdmin, detail.taskIdFromToast("Task created"));
         }
 
         Locator dialog = tasks.run("Tier user data");
@@ -127,7 +127,7 @@ class UserTasksTest extends MailAdminE2ETest {
         assertThat(dialog.getByRole(AriaRole.COMBOBOX, new Locator.GetByRoleOptions().setName("tiering unit"))).hasText("Days");
         assertThat(detail.commandPreview()).hasText("Command: curl -XPOST /users/" + user + "/data?tiering=30d&messagesPerSecond=50");
         app.confirm();
-        expectCompleted(webAdmin, detail.taskIdFromToast("Task is running"));
+        expectCompleted(webAdmin, detail.taskIdFromToast("Task created"));
 
         dialog = tasks.run("Tier user data");
         amount = dialog.getByLabel("tiering:");

@@ -1,11 +1,10 @@
-import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { TaskProps } from "./types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRunTask } from "@/hooks/use-run-task";
 import { useConfirm } from "@/hooks/use-confirm";
-import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import ConfirmTaskContent from "./components/confirm-task-content";
 import { defaultCommand } from "./components/command-preview";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -13,7 +12,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 export default function TaskContainer({ nameKey, taskKey, mode, command, doc, params, allowanceCheck, danger }: TaskProps) {
   const { t } = useTranslation();
   const name = t(nameKey);
-  const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const runTask = useRunTask();
   const isAllowed = useIsAllowed(allowanceCheck?.verb ?? "POST", allowanceCheck?.pattern ?? "");
@@ -36,10 +35,7 @@ export default function TaskContainer({ nameKey, taskKey, mode, command, doc, pa
       ),
       action: async () => {
         const taskId = await runTask(taskKey, mode, additionParams);
-        toast({
-          title: t("common.taskRunning"),
-          description: <p><Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>{t("common.taskLink", { taskId })}</Link></p>,
-        });
+        toastTaskCreated(taskId);
       },
     });
   };

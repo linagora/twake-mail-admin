@@ -38,8 +38,7 @@
     "invalidSize": "Kích thước không hợp lệ",
     "invalidSizeDesc": "Nhập số dương hoặc -1 để không giới hạn.",
     "sizeUnlimited": "-1 để không giới hạn",
-    "taskRunning": "Tác vụ đang chạy",
-    "taskStarted": "Tác vụ đã bắt đầu",
+    "taskCreated": "Đã tạo tác vụ",
     "taskLink": "Tác vụ {{taskId}}",
     "errorPrefix": "Lỗi: {{message}}",
     "fetchFailed": "Không thể tải dữ liệu: {{message}}",
@@ -481,7 +480,6 @@
     },
     "calendarTasks": {
       "title": "Tác vụ",
-      "taskLabel": "Tác vụ:",
       "syncTitle": "Đồng bộ thành viên tên miền",
       "syncConfirm": "Đồng bộ thành viên tên miền cho \"{{domain}}\" từ sổ địa chỉ?",
       "syncButton": "Đồng bộ thành viên tên miền",
@@ -1342,12 +1340,10 @@
     "upgradeTitle": "Nâng cấp lược đồ Cassandra",
     "upgradeConfirm": "Nâng cấp lược đồ từ phiên bản {{current}} lên phiên bản {{latest}}? Việc này sẽ lên lịch các tác vụ di chuyển.",
     "upgradeScheduled": "Đã lên lịch nâng cấp",
-    "taskStarted": "Tác vụ đã bắt đầu: {{taskId}}",
     "errorUpgrading": "Lỗi khi nâng cấp lược đồ"
   },
   "eventDeadletter": {
     "redeliverGroup": "Bạn có muốn gửi lại sự kiện cho nhóm: {{path}}.",
-    "runTaskSuccess": "Chạy tác vụ thành công",
     "runTaskError": "Không thể chạy tác vụ",
     "clearGroup": "Bạn có muốn xóa nhóm sự kiện: {{path}}.",
     "clearSuccess": "Các sự kiện đã được xóa.",
@@ -1400,7 +1396,6 @@
     "moveDone": "Đã chuyển tất cả thư thành công",
     "errorMoving": "Lỗi khi chuyển thư",
     "clearConfirm": "Bạn có muốn xóa kho lưu trữ thư: {{path}}.",
-    "runTaskSuccess": "Chạy tác vụ thành công",
     "runTaskError": "Không thể chạy tác vụ",
     "colNameSender": "Tên / Người gửi",
     "colRecipients": "Người nhận",
@@ -1456,7 +1451,6 @@
     "removeMailConfirm": "Xóa email này khỏi kho?",
     "removeMailSuccess": "Đã xóa email thành công",
     "runTaskHeader": "Chạy tác vụ",
-    "taskLabel": "Tác vụ:",
     "subtitle": "Kho lưu trữ thư lưu các email cùng với bối cảnh xử lý của chúng, cho phép tiếp tục xử lý thư sau này."
   },
   "mappings": {

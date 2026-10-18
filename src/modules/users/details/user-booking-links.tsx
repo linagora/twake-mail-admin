@@ -1,5 +1,4 @@
 import { useCallback, useId, useState } from "react";
-import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Plus, Minus, Copy, Pencil, Trash2, RefreshCw, Loader2, Save, CalendarX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -10,6 +9,7 @@ import { isBookableCalendar } from "./bookable-calendars";
 import { isValidDurationMinutes, parseDurationMinutes } from "./booking-link-duration";
 import { areValidRules, DEFAULT_RULE_END, DEFAULT_RULE_START, listTimeZones, ruleErrors } from "./booking-link-rules";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
@@ -406,6 +406,7 @@ const EMPTY_CREATE: CreateBookingLinkPayload = {
 export default function UserBookingLinks({ username, calendarsVersion }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
 
   const canView = useIsAllowed("GET", "/users/{username}/booking-links");
@@ -593,16 +594,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
     if (!confirmed) return;
     try {
       const { taskId } = await deleteUserBookingLinkEvents(username, link.publicId);
-      toast({
-        title: t("common.taskStarted"),
-        description: (
-          <p>
-            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-              {t("common.taskLink", { taskId })}
-            </Link>
-          </p>
-        ),
-      });
+      toastTaskCreated(taskId);
     } catch (err) {
       toast({ title: t("users.bookingLinks.errorDeleteEvents"), description: <ErrorDisplayer error={err} /> });
     }

@@ -92,15 +92,14 @@ class DomainTasksTest extends CalendarAdminE2ETest {
         assertThat(app.dialog()).containsText("This will delete the data of ALL users belonging to \"" + domain + "\".");
         app.confirm();
 
-        Locator toast = app.toast("Task started");
+        Locator toast = app.toast("Task created");
         assertThat(toast).isVisible();
         Locator link = toast.getByRole(AriaRole.LINK);
-        assertThat(toast).containsText("Task:");
         String href = link.getAttribute("href");
         Matcher matcher = Pattern.compile("^/task/([0-9a-f-]{36})$").matcher(href);
         assertThat(matcher.matches()).as(href).isTrue();
         String taskId = matcher.group(1);
-        assertThat(link).hasText(taskId);
+        assertThat(link).hasText("Task " + taskId);
 
         JsonNode task = webAdmin.awaitTask(taskId);
         assertThat(task.path("status").asText()).isEqualTo("completed");

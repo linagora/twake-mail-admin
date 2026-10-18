@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Download, MoveHorizontal, Trash2, RefreshCw, Loader2 } from "lucide-react";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
@@ -14,6 +14,7 @@ import {
 import { GetMailRepositoriesResponseType, MailDetail, MailRepository } from "../types";
 import { apiClient } from "@/lib/apiClient";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useReturnFocus } from "@/hooks/use-return-focus";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -60,6 +61,7 @@ export default function MailRepositoryExtended() {
   const { t } = useTranslation();
   const sortFieldId = useId();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -265,14 +267,7 @@ export default function MailRepositoryExtended() {
           queue: paramValues["queue"] || undefined,
           processor: paramValues["processor"] || undefined,
         });
-        toast({
-          title: t("mailRepositories.reprocessScheduled"),
-          description: (
-            <span>
-              {t("mailRepositories.taskLabel")}: <Link to={`/task/${taskId}`} className="text-blue-500 hover:underline">{taskId}</Link>
-            </span>
-          ),
-        });
+        toastTaskCreated(taskId, t("mailRepositories.reprocessScheduled"));
       },
     });
   };

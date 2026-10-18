@@ -182,7 +182,7 @@ class EventDeadLetterTest extends MailAdminE2ETest {
         app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Back").setExact(true)).click();
         deadLetters.groupAction(group, EventDeadLetterPage.REDELIVER).click();
         app.confirm();
-        Locator toast = app.toast("Run Task Successfully");
+        Locator toast = app.toast("Task created");
         String taskId = OpsBackend.taskIdOf(toast.getByRole(AriaRole.LINK).getAttribute("href"));
         assertThat(webAdmin.awaitTask(taskId).path("status").asText()).isEqualTo("completed");
 
@@ -241,7 +241,7 @@ class EventDeadLetterTest extends MailAdminE2ETest {
             request -> request.method().equals("POST") && request.url().contains("/events/deadLetter/groups/"),
             app::confirm);
         assertThat(redeliver.url()).contains("limit=1").doesNotContain("maxRetries").doesNotContain("NaN");
-        Locator toast = app.toast("Run Task Successfully");
+        Locator toast = app.toast("Task created");
         String taskId = OpsBackend.taskIdOf(toast.getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(Pattern.compile("^Task "))).getAttribute("href"));
         JsonNode task = webAdmin.awaitTask(taskId);
         assertThat(task.path("status").asText()).as(task.toString()).isEqualTo("completed");
@@ -257,7 +257,7 @@ class EventDeadLetterTest extends MailAdminE2ETest {
             request -> request.method().equals("POST") && request.url().contains("/events/deadLetter/groups/"),
             app::confirm);
         assertThat(rest.url()).endsWith("?action=reDeliver");
-        String restTask = OpsBackend.taskIdOf(app.toast("Run Task Successfully").getByRole(AriaRole.LINK).getAttribute("href"));
+        String restTask = OpsBackend.taskIdOf(app.toast("Task created").getByRole(AriaRole.LINK).getAttribute("href"));
         JsonNode restInfo = webAdmin.awaitTask(restTask);
         assertThat(restInfo.path("status").asText()).as(restInfo.toString()).isEqualTo("completed");
         assertThat(restInfo.path("additionalInformation").path("successfulRedeliveriesCount").asInt()).as(restInfo.toString())

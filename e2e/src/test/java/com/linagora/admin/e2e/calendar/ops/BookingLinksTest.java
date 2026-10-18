@@ -198,7 +198,7 @@ class BookingLinksTest extends CalendarAdminE2ETest {
         assertThat(app.dialog()).containsText("Delete every calendar event created through the booking link \"Intro call\"?");
         app.confirm();
 
-        Locator taskLink = app.toast("Task started").getByRole(AriaRole.LINK);
+        Locator taskLink = app.toast("Task created").getByRole(AriaRole.LINK);
         assertThat(taskLink).hasText(Pattern.compile("^Task [0-9a-f-]{36}$"));
         String taskId = taskLink.textContent().substring("Task ".length());
         taskLink.click();

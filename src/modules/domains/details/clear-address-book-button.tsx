@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router";
 import { Eraser, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { waitForTask } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { clearDomainAddressBook, DomainAddressBookId } from "../api-client";
 import { isValidDomainName } from "./domain-name";
@@ -42,6 +42,7 @@ interface Props {
 export default function ClearAddressBookButton({ domain, addressBookId, onCleared }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const scopedDomain = useDomain() || undefined;
   const [open, setOpen] = useState(false);
   const [confirmation, setConfirmation] = useState("");
@@ -69,16 +70,7 @@ export default function ClearAddressBookButton({ domain, addressBookId, onCleare
     try {
       const { taskId } = await clearDomainAddressBook(domain, addressBookId, trimmedSourceDomain || undefined);
       close();
-      toast({
-        title: t("common.taskStarted"),
-        description: (
-          <p>
-            <Link className="text-blue-500 hover:underline" to={`/task/${taskId}`}>
-              {t("common.taskLink", { taskId })}
-            </Link>
-          </p>
-        ),
-      });
+      toastTaskCreated(taskId);
       await waitForTask(taskId, scopedDomain, () => mounted.current);
       if (mounted.current) onCleared();
     } catch (err) {

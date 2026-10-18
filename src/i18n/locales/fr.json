@@ -38,8 +38,7 @@
     "invalidSize": "Taille invalide",
     "invalidSizeDesc": "Entrez un nombre positif ou -1 pour illimité.",
     "sizeUnlimited": "-1 pour illimité",
-    "taskRunning": "Tâche en cours",
-    "taskStarted": "Tâche démarrée",
+    "taskCreated": "Tâche créée",
     "taskLink": "Tâche {{taskId}}",
     "errorPrefix": "Erreur : {{message}}",
     "fetchFailed": "Échec du chargement des données : {{message}}",
@@ -481,7 +480,6 @@
     },
     "calendarTasks": {
       "title": "Tâches",
-      "taskLabel": "Tâche :",
       "syncTitle": "Synchroniser les membres du domaine",
       "syncConfirm": "Synchroniser les membres du domaine « {{domain}} » depuis le carnet d'adresses ?",
       "syncButton": "Synchroniser les membres",
@@ -1343,12 +1341,10 @@
     "upgradeTitle": "Mettre à jour le schéma Cassandra",
     "upgradeConfirm": "Mettre à jour le schéma de la version {{current}} vers {{latest}} ? Des tâches de migration seront planifiées.",
     "upgradeScheduled": "Mise à jour planifiée",
-    "taskStarted": "Tâche démarrée : {{taskId}}",
     "errorUpgrading": "Erreur lors de la mise à jour du schéma"
   },
   "eventDeadletter": {
     "redeliverGroup": "Voulez-vous redistribuer les événements du groupe : {{path}} ?",
-    "runTaskSuccess": "Tâche exécutée avec succès",
     "runTaskError": "Échec du lancement de la tâche",
     "clearGroup": "Voulez-vous vider le groupe d'événements : {{path}} ?",
     "clearSuccess": "Les événements ont été supprimés.",
@@ -1401,7 +1397,6 @@
     "moveDone": "Tous les emails déplacés avec succès",
     "errorMoving": "Erreur lors du déplacement",
     "clearConfirm": "Voulez-vous vider le dépôt : {{path}} ?",
-    "runTaskSuccess": "Tâche exécutée avec succès",
     "runTaskError": "Échec du lancement de la tâche",
     "colNameSender": "Nom / Expéditeur",
     "colRecipients": "Destinataires",
@@ -1457,7 +1452,6 @@
     "removeMailConfirm": "Retirer cet email du dépôt ?",
     "removeMailSuccess": "Email retiré avec succès",
     "runTaskHeader": "Exécuter la tâche",
-    "taskLabel": "Tâche :",
     "subtitle": "Les dépôts de courrier stockent les emails avec leur contexte de traitement, permettant de reprendre le traitement ultérieurement."
   },
   "mappings": {

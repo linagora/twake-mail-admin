@@ -7,6 +7,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserMailboxes, createUserMailbox, deleteUserMailbox, clearMailboxContent } from "../api-client";
 import { GetUserMailboxesResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
+import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import MailboxCounts from "./mailbox-counts";
@@ -30,6 +31,7 @@ function MailboxCreationDate({ mailboxId }: { mailboxId: string }) {
 export default function UserMailboxes({ username }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/users/{username}/mailboxes");
   const canCreate = useIsAllowed("PUT", "/users/{username}/mailboxes/{mailboxName}");
@@ -120,10 +122,7 @@ export default function UserMailboxes({ username }: Props) {
     if (!confirmed) return;
     try {
       const data = await clearMailboxContent(username, mailboxName);
-      toast({
-        title: t("common.taskRunning"),
-        description: <p>Task <Link className="text-blue-500 hover:underline" to={`/task/${data.taskId}`}>{data.taskId}</Link></p>,
-      });
+      toastTaskCreated(data.taskId);
     } catch (err) {
       toast({
         title: t("users.mailboxes.errorClearing"),
