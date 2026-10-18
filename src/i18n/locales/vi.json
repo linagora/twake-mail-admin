@@ -1420,7 +1420,7 @@
     "sortLastUpdated": "Cập nhật lần cuối",
     "extendedView": "Chế độ xem mở rộng",
     "extendedTitle": "Chế độ xem mở rộng",
-    "repositoryLabel": "Kho",
+    "repositoryLabel": "Kho: {{id}}",
     "repositoryId": "ID kho",
     "mailDetailTitle": "Chi tiết email",
     "loadingMailDetails": "Đang tải chi tiết email...",

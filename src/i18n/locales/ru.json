@@ -1423,7 +1423,7 @@
     "sortLastUpdated": "Последнее обновление",
     "extendedView": "Расширенный вид",
     "extendedTitle": "Расширенный вид",
-    "repositoryLabel": "Хранилище",
+    "repositoryLabel": "Хранилище: {{id}}",
     "repositoryId": "ID хранилища",
     "mailDetailTitle": "Сведения о письме",
     "loadingMailDetails": "Загрузка сведений о письме...",

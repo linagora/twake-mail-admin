@@ -1421,7 +1421,7 @@
     "sortLastUpdated": "Last Updated",
     "extendedView": "Extended view",
     "extendedTitle": "Extended View",
-    "repositoryLabel": "Repository",
+    "repositoryLabel": "Repository: {{id}}",
     "repositoryId": "Repository ID",
     "mailDetailTitle": "Email Details",
     "loadingMailDetails": "Loading email details...",

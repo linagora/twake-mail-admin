@@ -1421,7 +1421,7 @@
     "sortLastUpdated": "Сүүлд шинэчилсэн",
     "extendedView": "Өргөтгөсөн харагдац",
     "extendedTitle": "Өргөтгөсөн харагдац",
-    "repositoryLabel": "Агуулах",
+    "repositoryLabel": "Агуулах: {{id}}",
     "repositoryId": "Агуулахын ID",
     "mailDetailTitle": "И-мэйлийн дэлгэрэнгүй",
     "loadingMailDetails": "И-мэйлийн дэлгэрэнгүйг ачааллаж байна...",
