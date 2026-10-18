@@ -332,7 +332,10 @@ export default function MailRepositoryDetail() {
           {t("common.last")}
         </button>
       </div>
-      {mailKeys && (
+      {!isLoading && mailKeys?.length === 0 && (
+        <p className="text-sm text-gray-500 mt-8">{t("mailRepositories.noMails")}</p>
+      )}
+      {mailKeys && mailKeys.length > 0 && (
         <div className="mt-8">
           <ul>
             {mailKeys.map((mailKey, index) => (
