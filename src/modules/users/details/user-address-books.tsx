@@ -7,6 +7,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserAddressBook, deleteUserAddressBook, exportUserAddressBook, getUserAddressBookContactCount, getUserAddressBooks, importUserAddressBook, setUserAddressBookPublicRight, updateUserAddressBook, updateUserAddressBookInvitees } from "../api-client";
 import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBooksResponseType, UpdateUserAddressBookPayload, UserAddressBook } from "../types";
+import { addressBookKeys } from "./address-book-keys";
 import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess } from "./address-book-share-access";
 import { CurrentSharee, currentSharees, userEmailsById } from "./address-book-sharees";
 import { ownerEmail, parseAddressBookSource } from "./address-book-source";
@@ -287,6 +288,7 @@ export default function UserAddressBooks({ username }: Props) {
   if (!canView) return null;
 
   const addressBooks = data?._embedded?.["dav:addressbook"] ?? [];
+  const rowKeys = addressBookKeys(addressBooks);
 
   const handleCreate = async () => {
     const name = createForm["dav:name"].trim();
@@ -409,9 +411,9 @@ export default function UserAddressBooks({ username }: Props) {
                 </div>
               )}
               <div className="space-y-1">
-                {addressBooks.map((ab) => (
+                {addressBooks.map((ab, i) => (
                   <AddressBookRow
-                    key={addressBookId(ab)}
+                    key={rowKeys[i]}
                     username={username}
                     addressBook={ab}
                     owner={ownerEmail(parseAddressBookSource(ab["openpaas:source"]), registeredUsers)}
