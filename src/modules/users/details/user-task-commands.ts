@@ -8,7 +8,7 @@ type QueryValue = string | boolean | undefined;
 
 const isSent = ([, value]: [string, QueryValue]) => value !== undefined && value !== false && value !== "";
 
-const withQuery = (path: string, params: [string, QueryValue][]): string => {
+export const withQuery = (path: string, params: [string, QueryValue][]): string => {
   const query = params
     .filter(isSent)
     .map(([key, value]) => (value === true ? key : `${key}=${value}`))
@@ -16,7 +16,7 @@ const withQuery = (path: string, params: [string, QueryValue][]): string => {
   return query ? `${path}?${query}` : path;
 };
 
-const orPlaceholder = (value: string, placeholder: string) => value.trim() || `{${placeholder}}`;
+export const orPlaceholder = (value: string, placeholder: string) => value.trim() || `{${placeholder}}`;
 
 export const subscribeAllCommand = (username: string) =>
   `curl -XPOST /users/${username}/mailboxes?task=subscribeAll`;

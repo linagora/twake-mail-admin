@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { appConfig } from "@/lib/config";
+import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
+import FormTaskContent from "@/modules/common-tasks/components/form-task-content";
+import { deleteAllUsersDataCommand, provisionDomainTemplatesCommand } from "./domain-task-commands";
 
 interface Props {
   domain: string;
@@ -63,7 +66,12 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
     await confirm({
       header: t("domains.tasks.provisionTemplatesTitle"),
       message: (
-        <ProvisionTemplatesForm showUsersPerSecond onChange={(v) => { values = v; }} />
+        <FormTaskContent
+          initialValues={values}
+          renderForm={(onChange) => <ProvisionTemplatesForm showUsersPerSecond onChange={onChange} />}
+          buildCommand={(v) => provisionDomainTemplatesCommand(domain, v)}
+          onChange={(v) => { values = v; }}
+        />
       ),
       validate: () => (values.sourceUser.trim() ? null : t("provisionTemplates.sourceUserRequired")),
       action: async () => {
@@ -85,7 +93,12 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
   const handleDeleteAllUsersData = async () => {
     const confirmed = await confirm({
       header: t("domains.tasks.deleteAllDataTitle"),
-      message: t("domains.tasks.deleteAllDataConfirm", { domain }),
+      message: (
+        <ConfirmTaskContent
+          message={<p>{t("domains.tasks.deleteAllDataConfirm", { domain })}</p>}
+          command={deleteAllUsersDataCommand(domain)}
+        />
+      ),
     });
     if (!confirmed) return;
 
