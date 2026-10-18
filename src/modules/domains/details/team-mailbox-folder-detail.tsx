@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useId } from "react";
 import { useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -12,6 +12,7 @@ export default function TeamMailboxFolderDetail() {
   const { t } = useTranslation();
   const { domain, mailbox, folder } = useParams();
   const { toast } = useToast();
+  const idPrefix = useId();
   const canToggleSubaddressing = useIsAllowed("PUT", "/domains/{domain}/team-mailboxes/{mailbox}/mailboxes/{folderName}/subaddressing");
 
   const fetchSubaddressing = useCallback(
@@ -48,7 +49,13 @@ export default function TeamMailboxFolderDetail() {
 
         {data !== undefined && data !== null && !isLoading && (
           <button
-            onClick={canToggleSubaddressing ? handleToggle : undefined}
+            type="button"
+            role="switch"
+            aria-checked={data.enabled}
+            aria-labelledby={`${idPrefix}-label`}
+            aria-describedby={`${idPrefix}-description`}
+            disabled={!canToggleSubaddressing}
+            onClick={handleToggle}
             style={!canToggleSubaddressing ? { cursor: 'default', opacity: 0.6 } : undefined}
             className={`w-full flex items-center justify-between px-6 py-4 rounded-2 border-2 transition-colors ${
               data.enabled
@@ -57,8 +64,8 @@ export default function TeamMailboxFolderDetail() {
             }`}
           >
             <div className="text-left">
-              <p className="text-base font-semibold">{t("domains.folders.subaddressing")}</p>
-              <p className="text-sm text-gray-500 mt-0.5">
+              <p id={`${idPrefix}-label`} className="text-base font-semibold">{t("domains.folders.subaddressing")}</p>
+              <p id={`${idPrefix}-description`} className="text-sm text-gray-500 mt-0.5">
                 {data.enabled
                   ? t("domains.folders.subaddressingEnabledDesc", { mailbox, folder, domain })
                   : t("domains.folders.subaddressingDisabledDesc")}
