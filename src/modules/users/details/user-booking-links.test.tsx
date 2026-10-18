@@ -5,6 +5,7 @@ import type { BookingLink, GetUserCalendarsResponseType } from "../types";
 
 const mocks = vi.hoisted(() => ({
   canListCalendars: false,
+  confirm: vi.fn(),
   api: {
     createUserBookingLink: vi.fn(),
     deleteUserBookingLink: vi.fn(),
@@ -17,14 +18,16 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => (options ? `${key} ${JSON.stringify(options)}` : key),
+  }),
 }));
 // Unless canListCalendars is set, calendars cannot be listed, so the calendar is typed in a free-text field.
 vi.mock("@/lib/proxy-resolver-context", () => ({
   useIsAllowed: (method: string, path: string) =>
     mocks.canListCalendars || !(method === "GET" && path === "/users/{username}/calendars"),
 }));
-vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
+vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => mocks.confirm }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock("react-router", () => ({ Link: () => null }));
 vi.mock("../api-client", () => mocks.api);
@@ -337,5 +340,30 @@ describe("booking link row: active state", () => {
     await openSection();
 
     expect(screen.queryByText(/users.bookingLinks.inactive/)).toBeNull();
+  });
+});
+
+describe("booking link row: confirmations", () => {
+  it.each([
+    ["users.bookingLinks.deleteTitle", "users.bookingLinks.deleteConfirm"],
+    ["users.bookingLinks.resetTitle", "users.bookingLinks.resetConfirm"],
+    ["users.bookingLinks.deleteEventsTitle", "users.bookingLinks.deleteEventsConfirm"],
+  ])("%s names the link it acts on", async (button, message) => {
+    mocks.api.getUserBookingLinks.mockResolvedValue([
+      { publicId: "abc", name: "Intro call", calendarUrl: CALENDAR_URL, durationMinutes: 30, active: true },
+    ]);
+    await openSection();
+
+    fireEvent.click(screen.getByTitle(button));
+
+    expect(mocks.confirm).toHaveBeenCalledWith(expect.objectContaining({ message: `${message} {"name":"Intro call"}` }));
+  });
+
+  it("names a link without name by its public ID", async () => {
+    await openSection();
+
+    fireEvent.click(screen.getByTitle("users.bookingLinks.deleteTitle"));
+
+    expect(mocks.confirm).toHaveBeenCalledWith(expect.objectContaining({ message: 'users.bookingLinks.deleteConfirm {"name":"abc"}' }));
   });
 });

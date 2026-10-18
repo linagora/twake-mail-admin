@@ -174,7 +174,7 @@ class BookingLinksTest extends CalendarAdminE2ETest {
 
         BookingLinksSection links = CalendarUserPage.open(app, user).bookingLinks();
         links.rowAction(publicId, "Reset public ID").click();
-        assertThat(app.dialog()).containsText("Generate a new public ID? The current one will be invalidated.");
+        assertThat(app.dialog()).containsText("Generate a new public ID for the booking link \"Intro call\"? The current one will be invalidated.");
         app.confirm();
 
         app.expectToast("Public ID reset");
@@ -195,7 +195,7 @@ class BookingLinksTest extends CalendarAdminE2ETest {
 
         BookingLinksSection links = CalendarUserPage.open(app, user).bookingLinks();
         links.rowAction(publicId, "Delete associated events").click();
-        assertThat(app.dialog()).containsText("Delete every calendar event created through this booking link?");
+        assertThat(app.dialog()).containsText("Delete every calendar event created through the booking link \"Intro call\"?");
         app.confirm();
 
         Locator taskLink = app.toast("Task started").getByRole(AriaRole.LINK);
@@ -207,7 +207,7 @@ class BookingLinksTest extends CalendarAdminE2ETest {
 
         links = CalendarUserPage.open(app, user).bookingLinks();
         links.rowAction(publicId, "Delete booking link").click();
-        assertThat(app.dialog()).containsText("Do you really want to delete this booking link?");
+        assertThat(app.dialog()).containsText("Do you really want to delete the booking link \"Intro call\"?");
         app.confirm();
 
         app.expectToast("Booking link deleted");

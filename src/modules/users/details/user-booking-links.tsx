@@ -558,7 +558,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
   const handleDelete = async (link: BookingLink) => {
     const confirmed = await confirm({
       header: t("users.bookingLinks.deleteTitle"),
-      message: t("users.bookingLinks.deleteConfirm"),
+      message: t("users.bookingLinks.deleteConfirm", { name: link.name || link.publicId }),
     });
     if (!confirmed) return;
     try {
@@ -573,7 +573,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
   const handleReset = async (link: BookingLink) => {
     const confirmed = await confirm({
       header: t("users.bookingLinks.resetTitle"),
-      message: t("users.bookingLinks.resetConfirm"),
+      message: t("users.bookingLinks.resetConfirm", { name: link.name || link.publicId }),
     });
     if (!confirmed) return;
     try {
@@ -588,7 +588,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
   const handleDeleteEvents = async (link: BookingLink) => {
     const confirmed = await confirm({
       header: t("users.bookingLinks.deleteEventsTitle"),
-      message: t("users.bookingLinks.deleteEventsConfirm"),
+      message: t("users.bookingLinks.deleteEventsConfirm", { name: link.name || link.publicId }),
     });
     if (!confirmed) return;
     try {
