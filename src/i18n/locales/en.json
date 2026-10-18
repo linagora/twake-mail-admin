@@ -732,7 +732,7 @@
       "deleteTooltip": "Delete label",
       "editTitle": "Edit Label — {{displayName}}",
       "colorEdit": "#ff0000",
-      "colorCannotBeCleared": "The colour of a label cannot be removed: the current colour ({{color}}) will be kept.",
+      "colorCannotBeCleared": "The color of a label cannot be removed: the current color ({{color}}) will be kept.",
       "descriptionEdit": "(empty to clear)",
       "keywordLabel": "Keyword",
       "colorLabel": "Color",
@@ -741,7 +741,7 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Colour picker"
+      "colorPicker": "Color picker"
     },
     "jmapSettings": {
       "title": "JMAP Settings",

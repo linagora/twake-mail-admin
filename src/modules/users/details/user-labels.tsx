@@ -321,7 +321,7 @@ export default function UserLabels({ username }: Props) {
                 <div className="flex gap-2 mt-1 items-center">
                   <input
                     type="color"
-                    value={editForm.color?.trim() || "#000000"}
+                    value={editForm.color?.trim() || editLabel?.color || "#000000"}
                     onChange={(e) => setEditForm((f) => ({ ...f, color: e.target.value }))}
                     aria-label={t("users.labels.colorPicker")}
                     className="h-9 w-12 cursor-pointer border rounded-md"

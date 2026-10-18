@@ -249,8 +249,9 @@ class UserDetailSettingsTest extends MailAdminE2ETest {
         edit = app.dialog();
         assertThat(label(edit, "Color")).hasAttribute("placeholder", "#ff0000");
         label(edit, "Color").fill("");
-        assertThat(edit.getByText("The colour of a label cannot be removed: the current colour (#00ff00) will be kept."))
+        assertThat(edit.getByText("The color of a label cannot be removed: the current color (#00ff00) will be kept."))
             .isVisible();
+        assertThat(label(edit, "Color picker")).hasValue("#00ff00");
         label(edit, "Description").fill("Work and projects");
         detail.button(edit, "Save").click();
         app.expectToast("Label updated");

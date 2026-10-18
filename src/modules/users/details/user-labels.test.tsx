@@ -44,3 +44,16 @@ describe("user labels: phone layout", () => {
     expect(phoneDetails.textContent).toContain("Mails to handle first");
   });
 });
+
+describe("user labels: edit dialog color", () => {
+  it("keeps the current color in the picker when the Color field is emptied, as the warning says", async () => {
+    render(<UserLabels username="bob@example.com" />);
+    fireEvent.click(screen.getByText("users.labels.title"));
+    fireEvent.click(await screen.findByTitle("users.labels.editTooltip"));
+
+    fireEvent.change(await screen.findByLabelText("users.labels.colorLabel"), { target: { value: "" } });
+
+    expect((screen.getByLabelText("users.labels.colorPicker") as HTMLInputElement).value).toBe("#ff0000");
+    expect(screen.getByText("users.labels.colorCannotBeCleared")).not.toBeNull();
+  });
+});
