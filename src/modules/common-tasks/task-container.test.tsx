@@ -99,3 +99,15 @@ describe("task container: doc link", () => {
     expect(screen.queryByRole("link")).toBeNull();
   });
 });
+
+describe("task container: command tooltip", () => {
+  it("opens the command on the side of the Run button, where it covers no other task", async () => {
+    renderTaskWithDoc("");
+
+    fireEvent.focus(screen.getByRole("button", { name: "common.run" }));
+
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toBe("POST /calendars?task=scheduleAlarms");
+    expect(document.querySelector("[data-side]")?.getAttribute("data-side")).toBe("left");
+  });
+});

@@ -380,6 +380,7 @@ function MailCommonTasks() {
         docuUrl={docuUrl}
       />
 
+      {/* Like TaskContainer: the command tooltips open on the side of their Run button, not over its neighbours */}
       <div className="grid grid-cols-1 gap-4 mt-4">
         {TASKS.map((task) => (
           <Fragment key={task.nameKey}>
@@ -388,13 +389,13 @@ function MailCommonTasks() {
               <div className="flex justify-between items-center gap-4">
                 <p>{t("commonTasks.perUserReindex")}</p>
                 <TooltipProvider>
-                  <Tooltip delayDuration={0}>
+                  <Tooltip delayDuration={0} disableHoverableContent>
                     <TooltipTrigger asChild>
                       <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handlePerUserReindex}>
                         {t("common.run")}
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent side="left">
                       curl -XPOST /users?action=reindex&amp;mode=rebuildAll&amp;messagesPerSecond=50
                     </TooltipContent>
                   </Tooltip>
@@ -416,14 +417,14 @@ function MailCommonTasks() {
               />
             </div>
             <TooltipProvider>
-              <Tooltip delayDuration={0}>
+              <Tooltip delayDuration={0} disableHoverableContent>
                 <TooltipTrigger asChild>
                   <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleReloadCertificates}>
                     {reloadLoading && <Loader2 className="animate-spin" />}
                     {t("common.run")}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent side="left">
                   curl -XPOST /servers?reload-certificate
                 </TooltipContent>
               </Tooltip>
@@ -434,14 +435,14 @@ function MailCommonTasks() {
           <div className="flex justify-between items-center gap-4">
             <p>{t("commonTasks.repositionSystemRights")}</p>
             <TooltipProvider>
-              <Tooltip delayDuration={0}>
+              <Tooltip delayDuration={0} disableHoverableContent>
                 <TooltipTrigger asChild>
                   <Button className="bg-green-400 hover:bg-green-500 rounded-sm" onClick={handleRepositionSystemRights}>
                     {repositionLoading && <Loader2 className="animate-spin" />}
                     {t("common.run")}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent side="left">
                   curl -XPOST /team-mailboxes?action=repositionSystemRights
                 </TooltipContent>
               </Tooltip>
@@ -452,13 +453,13 @@ function MailCommonTasks() {
           <div className="flex justify-between items-center gap-4">
             <p>{t("commonTasks.cleanupTrashAll")}</p>
             <TooltipProvider>
-              <Tooltip delayDuration={0}>
+              <Tooltip delayDuration={0} disableHoverableContent>
                 <TooltipTrigger asChild>
                   <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={() => handleCleanupMailbox("Trash")}>
                     {t("common.run")}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent side="left">
                   curl -XDELETE /messages?olderThan=5d&amp;mailbox=Trash&amp;useSavedDate
                 </TooltipContent>
               </Tooltip>
@@ -469,13 +470,13 @@ function MailCommonTasks() {
           <div className="flex justify-between items-center gap-4">
             <p>{t("commonTasks.cleanupSpamAll")}</p>
             <TooltipProvider>
-              <Tooltip delayDuration={0}>
+              <Tooltip delayDuration={0} disableHoverableContent>
                 <TooltipTrigger asChild>
                   <Button className="bg-yellow-500 hover:bg-yellow-600 rounded-sm" onClick={() => handleCleanupMailbox("Spam")}>
                     {t("common.run")}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent side="left">
                   curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;useSavedDate
                 </TooltipContent>
               </Tooltip>
@@ -500,14 +501,14 @@ function MailCommonTasks() {
               )}
             </div>
             <TooltipProvider>
-              <Tooltip delayDuration={0}>
+              <Tooltip delayDuration={0} disableHoverableContent>
                 <TooltipTrigger asChild>
                   <Button className="bg-orange-500 hover:bg-orange-600 rounded-sm" onClick={handleCleanupOldTasks} disabled={cleanupDaysValue === null || cleanupLoading}>
                     {cleanupLoading && <Loader2 className="animate-spin" />}
                     {t("common.run")}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent side="left">
                   curl -XDELETE /tasks?olderThan=Nday
                 </TooltipContent>
               </Tooltip>

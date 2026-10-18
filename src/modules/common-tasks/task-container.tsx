@@ -47,14 +47,15 @@ export default function TaskContainer({ nameKey, taskKey, mode, command, doc, pa
     <>
       <div className="flex justify-between items-center gap-4">
         <p>{name}{doc && <> <a className="text-blue-500 hover:underline" href={doc} target="_blank">(doc)</a></>}</p>
+        {/* On the side and not hoverable: above, the command would cover the Run button of the previous task */}
         <TooltipProvider>
-          <Tooltip delayDuration={0}>
+          <Tooltip delayDuration={0} disableHoverableContent>
             <TooltipTrigger asChild>
               <Button className={`${danger ? "bg-red-500 hover:bg-red-600" : "bg-green-400 hover:bg-green-500"} rounded-sm`} onClick={handleRunTask}>
                 {t("common.run")}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent side="left">
               {command}
             </TooltipContent>
           </Tooltip>
