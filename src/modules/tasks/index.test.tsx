@@ -222,8 +222,28 @@ describe("tasks: status filter", () => {
     renderTasks();
 
     fireEvent.change(statusSelect(), { target: { value: status } });
+    fireEvent.click(screen.getByText("tasks.apply"));
 
     await waitFor(() => expect(api.listTasks).toHaveBeenLastCalledWith(expect.objectContaining({ status })));
+  });
+
+  it("fetches the list once, when the filters are applied", async () => {
+    api.listTasks.mockResolvedValue([]);
+    renderTasks();
+    await waitFor(() => expect(api.listTasks).toHaveBeenCalledTimes(1));
+
+    fireEvent.change(statusSelect(), { target: { value: "completed" } });
+    fireEvent.change(screen.getByLabelText("tasks.type"), { target: { value: "a" } });
+    fireEvent.change(screen.getByLabelText("tasks.type"), { target: { value: "ab" } });
+    fireEvent.change(screen.getByLabelText("tasks.submittedAfter"), { target: { value: "2026-10-10T06:00" } });
+    expect(api.listTasks).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByText("tasks.apply"));
+
+    await waitFor(() => expect(api.listTasks).toHaveBeenCalledTimes(2));
+    expect(api.listTasks).toHaveBeenLastCalledWith(expect.objectContaining({ status: "completed", type: "ab" }));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(api.listTasks).toHaveBeenCalledTimes(2);
   });
 
   it("does not keep showing previous tasks when the filtered request fails", async () => {
@@ -235,6 +255,7 @@ describe("tasks: status filter", () => {
 
     api.listTasks.mockRejectedValue(new Error("Request failed with status code 400"));
     fireEvent.change(statusSelect(), { target: { value: "failed" } });
+    fireEvent.click(screen.getByText("tasks.apply"));
 
     await screen.findByText("common.errorPrefix");
     expect(screen.queryByText("previous-task")).toBeNull();

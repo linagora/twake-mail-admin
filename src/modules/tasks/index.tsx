@@ -108,8 +108,8 @@ export default function Tasks() {
     setSelectedTask(task);
   };
 
-  // WebAdmin cannot sort: fetch every matching task, then sort and paginate locally
-  const buildParams = useCallback((): ListTasksParams => {
+  // The fields only build the request: it is sent when the filters are applied, not on every keystroke
+  const buildParams = (): ListTasksParams => {
     const params: ListTasksParams = {};
     if (statusFilter) params.status = statusFilter;
     if (typeFilter.trim()) params.type = typeFilter.trim();
@@ -122,9 +122,11 @@ export default function Tasks() {
     if (failedAfter) params.failedAfter = new Date(failedAfter).toISOString();
     if (failedBefore) params.failedBefore = new Date(failedBefore).toISOString();
     return params;
-  }, [statusFilter, typeFilter, submittedAfter, submittedBefore, startedAfter, startedBefore, completedAfter, completedBefore, failedAfter, failedBefore]);
+  };
+  const [appliedParams, setAppliedParams] = useState<ListTasksParams>({});
 
-  const fetchTasks = useCallback(() => listTasks(buildParams()), [buildParams]);
+  // WebAdmin cannot sort: fetch every matching task, then sort and paginate locally
+  const fetchTasks = useCallback(() => listTasks(appliedParams), [appliedParams]);
   const { data: tasks, isLoading, error, refresh } = useFetchData<TaskDetailResponse[]>(fetchTasks);
 
   const sorted = useMemo(() => {
@@ -173,9 +175,10 @@ export default function Tasks() {
     }
   };
 
+  // A new params object fetches the list once, even when the filters did not change
   const handleApplyFilters = () => {
     setPage(1);
-    refresh();
+    setAppliedParams(buildParams());
   };
 
   const handleResetFilters = () => {
@@ -190,6 +193,7 @@ export default function Tasks() {
     setFailedAfter("");
     setFailedBefore("");
     setPage(1);
+    setAppliedParams({});
   };
 
   const STATUS_LABELS: Record<string, string> = {
