@@ -1605,6 +1605,7 @@
   "registeredUsers": {
     "placeholder": "usuario@dominio.tld",
     "registered": "Usuario «{{username}}» registrado",
+    "alreadyRegistered": "Ya registrado",
     "searchPlaceholder": "Buscar usuarios registrados...",
     "noMatch": "Ningún usuario registrado coincide con «{{query}}».",
     "editTitle": "Editar usuario registrado",

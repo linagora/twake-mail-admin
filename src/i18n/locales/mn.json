@@ -1605,6 +1605,7 @@
   "registeredUsers": {
     "placeholder": "user@domain.tld",
     "registered": "«{{username}}» хэрэглэгч бүртгэгдлээ",
+    "alreadyRegistered": "Аль хэдийн бүртгэгдсэн",
     "searchPlaceholder": "Бүртгэгдсэн хэрэглэгч хайх...",
     "noMatch": "\"{{query}}\"-д тохирох бүртгэгдсэн хэрэглэгч алга.",
     "editTitle": "Бүртгэгдсэн хэрэглэгч засах",

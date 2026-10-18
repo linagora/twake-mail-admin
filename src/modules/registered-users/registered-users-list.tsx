@@ -96,10 +96,15 @@ export default function RegisteredUsersList() {
   const [search, setSearch] = useState("");
   const [newUsername, setNewUsername] = useState("");
   const userStatus = useCheckUserExists(newUsername);
+  // The DAV server refuses to register a user twice: tell it before the Register dialog.
+  const isAlreadyRegistered = !!newUsername.trim() && (usersResult ?? []).some(
+    (u) => (u.email ?? "").toLowerCase() === newUsername.trim().toLowerCase()
+  );
+  const canAdd = !!newUsername.trim() && userStatus === "exists" && !isAlreadyRegistered;
 
   const handleAdd = async () => {
     const username = newUsername.trim();
-    if (!username || userStatus !== "exists") return;
+    if (!canAdd) return;
 
     const defaults = defaultRegisteredUserNames(username);
     let values = { ...defaults };
@@ -202,7 +207,13 @@ export default function RegisteredUsersList() {
               {t("common.checking")}
             </span>
           )}
-          {userStatus === "exists" && (
+          {isAlreadyRegistered && (
+            <span className="flex items-center gap-1 text-xs text-orange-500 whitespace-nowrap">
+              <span className="inline-block w-2 h-2 rounded-full bg-orange-400" />
+              {t("registeredUsers.alreadyRegistered")}
+            </span>
+          )}
+          {!isAlreadyRegistered && userStatus === "exists" && (
             <span className="flex items-center gap-1 text-xs text-green-600 whitespace-nowrap">
               <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
               {t("common.userExists")}
@@ -222,7 +233,7 @@ export default function RegisteredUsersList() {
           )}
           <button
             onClick={handleAdd}
-            disabled={!newUsername.trim() || userStatus !== "exists"}
+            disabled={!canAdd}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t("common.add")}

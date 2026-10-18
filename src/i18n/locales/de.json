@@ -1605,6 +1605,7 @@
   "registeredUsers": {
     "placeholder": "user@domain.tld",
     "registered": "Benutzer „{{username}}“ registriert",
+    "alreadyRegistered": "Bereits registriert",
     "searchPlaceholder": "Registrierte Benutzer suchen...",
     "noMatch": "Kein registrierter Benutzer entspricht „{{query}}“.",
     "editTitle": "Registrierten Benutzer bearbeiten",

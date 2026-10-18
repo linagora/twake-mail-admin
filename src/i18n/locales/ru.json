@@ -1607,6 +1607,7 @@
   "registeredUsers": {
     "placeholder": "user@domain.tld",
     "registered": "Пользователь «{{username}}» зарегистрирован",
+    "alreadyRegistered": "Уже зарегистрирован",
     "searchPlaceholder": "Поиск зарегистрированных пользователей...",
     "noMatch": "Нет зарегистрированных пользователей, соответствующих «{{query}}».",
     "editTitle": "Изменить зарегистрированного пользователя",

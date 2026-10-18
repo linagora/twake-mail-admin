@@ -147,6 +147,21 @@ describe("Add registered user", () => {
     expect(input("registeredUsers.lastname").value).toBe("QA");
     expect(toast).not.toHaveBeenCalled();
   });
+
+  it.each([CHARLOTTE.email, "Charlotte@Open-Paas.org"])("tells that %s is already registered and keeps Add disabled", async (typed) => {
+    userStatus.current = "exists";
+    render(
+      <ConfirmProvider>
+        <RegisteredUsersList />
+      </ConfirmProvider>
+    );
+    await screen.findAllByText(CHARLOTTE.email);
+    fireEvent.change(screen.getByPlaceholderText("registeredUsers.placeholder"), { target: { value: typed } });
+
+    expect(screen.getByText("registeredUsers.alreadyRegistered")).toBeTruthy();
+    expect(screen.queryByText("common.userExists")).toBeNull();
+    expect(screen.getByText("common.add").closest("button")).toHaveProperty("disabled", true);
+  });
 });
 
 describe("registered users list: search", () => {

@@ -1604,6 +1604,7 @@
   "registeredUsers": {
     "placeholder": "user@domain.tld",
     "registered": "Đã đăng ký người dùng \"{{username}}\"",
+    "alreadyRegistered": "Đã đăng ký",
     "searchPlaceholder": "Tìm người dùng đã đăng ký...",
     "noMatch": "Không có người dùng đã đăng ký nào khớp với \"{{query}}\".",
     "editTitle": "Sửa người dùng đã đăng ký",
