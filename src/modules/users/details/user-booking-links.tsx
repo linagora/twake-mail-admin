@@ -771,7 +771,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
           {editLink && (
             <div className="space-y-3">
               <div>
-                <label htmlFor="edit-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")}</label>
+                <label htmlFor="edit-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} *</label>
                 <CalendarSelect
                   id="edit-calendar"
                   value={editForm.calendarUrl ?? ""}
@@ -802,7 +802,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
                 />
               </div>
               <div>
-                <label htmlFor="edit-duration" className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")}</label>
+                <label htmlFor="edit-duration" className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")} *</label>
                 <DurationInput id="edit-duration" value={editDuration} onChange={setEditDuration} />
               </div>
               <div className="flex items-center gap-2">

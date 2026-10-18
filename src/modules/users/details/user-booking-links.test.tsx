@@ -246,7 +246,7 @@ describe("booking link whose calendar was deleted", () => {
     await expandSection();
     fireEvent.click(screen.getByTitle("users.bookingLinks.editTitle"));
 
-    const select = (await screen.findByLabelText("users.bookingLinks.calendarUrl")) as HTMLSelectElement;
+    const select = (await screen.findByLabelText("users.bookingLinks.calendarUrl *")) as HTMLSelectElement;
     expect(select.getAttribute("aria-invalid")).toBe("true");
     expect(screen.getByText("users.bookingLinks.calendarUnavailable")).toBeTruthy();
     expect(saveButton()).toHaveProperty("disabled", true);
@@ -365,5 +365,15 @@ describe("booking link row: confirmations", () => {
     fireEvent.click(screen.getByTitle("users.bookingLinks.deleteTitle"));
 
     expect(mocks.confirm).toHaveBeenCalledWith(expect.objectContaining({ message: 'users.bookingLinks.deleteConfirm {"name":"abc"}' }));
+  });
+});
+
+describe("booking link dialogs: required fields", () => {
+  it.each(["users.bookingLinks.create", "users.bookingLinks.editTitle"])("%s marks the calendar and the duration as required", async (opener) => {
+    await openSection();
+    fireEvent.click(screen.queryByText(opener) ?? screen.getByTitle(opener));
+
+    expect(screen.getByLabelText("users.bookingLinks.calendarUrl *")).toBeTruthy();
+    expect(screen.getByLabelText("users.bookingLinks.durationMinutes *")).toBeTruthy();
   });
 });

@@ -59,9 +59,9 @@ public class BookingLinksSection {
             return app.dialog();
         }
 
-        /** The calendar dropdown: "Calendar *" when creating, "Calendar" when editing. */
+        /** The calendar dropdown, "Calendar *" in both dialogs. */
         public Locator calendar() {
-            return root().getByLabel(Pattern.compile("^Calendar( \\*)?$"));
+            return root().getByLabel(Pattern.compile("^Calendar \\*$"));
         }
 
         public Locator calendarOptions() {
