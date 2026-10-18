@@ -127,4 +127,13 @@ describe("address book dialogs: field labels", () => {
     expect(screen.getByRole("combobox", { name: "users.addressBooks.invitees.right" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "users.addressBooks.invitees.add" })).toBeTruthy();
   });
+
+  it("lets the add row of the sharing dialog wrap so it fits a phone-width dialog", async () => {
+    await openSection();
+    fireEvent.click(screen.getByTitle("users.addressBooks.invitees.title"));
+
+    const email = screen.getByRole("textbox", { name: "users.addressBooks.invitees.email" });
+    expect(email.parentElement!.className).toContain("flex-wrap");
+    expect(email.className).toContain("min-w-0");
+  });
 });

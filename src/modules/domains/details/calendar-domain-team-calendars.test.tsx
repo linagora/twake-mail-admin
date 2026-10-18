@@ -55,4 +55,13 @@ describe("team calendars: field labels", () => {
     expect(screen.getByRole("combobox", { name: "domains.teamCalendars.members.role" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "domains.teamCalendars.members.add" })).toBeTruthy();
   });
+
+  it("lets the add row of the members dialog wrap so it fits a phone-width dialog", async () => {
+    await openSection();
+    fireEvent.click(screen.getByTitle("domains.teamCalendars.members.tooltip"));
+
+    const email = await screen.findByRole("textbox", { name: "domains.teamCalendars.members.email" });
+    expect(email.parentElement!.className).toContain("flex-wrap");
+    expect(email.className).toContain("min-w-0");
+  });
 });

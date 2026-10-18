@@ -129,6 +129,16 @@ describe("calendar dialogs: field labels", () => {
     expect(screen.getByRole("combobox", { name: "users.calendars.invitees.right" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "users.calendars.invitees.add" })).toBeTruthy();
   });
+
+  it("lets the add row of the delegation dialog wrap so it fits a phone-width dialog", async () => {
+    await openCalendars();
+    const [, workDelegation] = screen.getAllByTitle("users.calendars.invitees.title");
+    fireEvent.click(workDelegation);
+
+    const email = screen.getByRole("textbox", { name: "users.calendars.invitees.email" });
+    expect(email.parentElement!.className).toContain("flex-wrap");
+    expect(email.className).toContain("min-w-0");
+  });
 });
 
 describe("calendar delegation: stage an invitee", () => {

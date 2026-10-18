@@ -843,7 +843,9 @@ function InviteesModal({
 
           {/* Add row */}
           <div className="border-t pt-3 space-y-2">
-            <div className="flex gap-2">
+            {/* flex-wrap and min-w-0: on a phone the select and the + button move under the
+                address instead of being pushed past the dialog's right edge. */}
+            <div className="flex flex-wrap gap-2">
               <input
                 type="text"
                 value={newEmail}
@@ -851,13 +853,13 @@ function InviteesModal({
                 onKeyDown={(e) => e.key === "Enter" && handleStageAdd()}
                 placeholder={t("users.calendars.invitees.placeholder")}
                 aria-label={t("users.calendars.invitees.email")}
-                className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                className="flex-1 basis-48 min-w-0 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               />
               <select
                 value={newRight}
                 aria-label={t("users.calendars.invitees.right")}
                 onChange={(e) => setNewRight(e.target.value as CalendarRight)}
-                className="px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                className="max-w-full px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
                 {RIGHT_OPTIONS.map((r) => (
                   <option key={r} value={r}>{t(`users.calendars.invitees.rights.${r}`)}</option>
