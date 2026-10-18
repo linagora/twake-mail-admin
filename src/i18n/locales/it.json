@@ -1241,6 +1241,11 @@
     "description": "Questo strumento semplifica la gestione di Twake Mail tramite webadmin.",
     "welcomeCalendar": "Benvenuto nell'amministrazione di Twake Calendar!",
     "descriptionCalendar": "Questo strumento semplifica la gestione di Twake Calendar tramite webadmin.",
+    "status": {
+      "healthy": "Integro",
+      "degraded": "Degradato",
+      "unhealthy": "Non integro"
+    },
     "sections": {
       "storage": "Dipendenze di archiviazione",
       "core": "Componenti principali",

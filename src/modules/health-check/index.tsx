@@ -15,17 +15,31 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/lib/config";
 import { CALENDAR_WEBADMIN_DOC_URL } from "@/lib/calendar-docs";
+import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 
 const DOCU_URL_MAIL =
   "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_healthcheck";
 
 const isCalendar = appConfig.application === "CALENDAR";
 
+const STATUS_ICONS = {
+  [HealthStatuses.HEALTHY]: CheckCircle2,
+  [HealthStatuses.DEGRADED]: AlertTriangle,
+  [HealthStatuses.UNHEALTHY]: XCircle,
+};
+
 function HealthCheckCard({ result }: { result: HealthCheckType }) {
+  const { t } = useTranslation();
+  const StatusIcon = STATUS_ICONS[result.status];
+  // The status is written out, not only conveyed by the card colour (WCAG 1.4.1)
   const card = (
     <Card className={statusStyle(result.status)}>
       <CardContent className="py-4 text-center break-words">
-        {result.componentName}
+        <p>{result.componentName}</p>
+        <p className="mt-1 text-xs font-medium inline-flex items-center gap-1">
+          {StatusIcon && <StatusIcon className="h-3.5 w-3.5" aria-hidden="true" />}
+          {t(`healthCheck.status.${result.status}`)}
+        </p>
       </CardContent>
     </Card>
   );

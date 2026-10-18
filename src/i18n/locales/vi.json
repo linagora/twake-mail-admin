@@ -1240,6 +1240,11 @@
     "description": "Công cụ này giúp dễ dàng quản lý Twake Mail qua webadmin.",
     "welcomeCalendar": "Chào mừng đến với quản trị Twake Calendar!",
     "descriptionCalendar": "Công cụ này giúp dễ dàng quản lý Twake Calendar qua webadmin.",
+    "status": {
+      "healthy": "Khỏe mạnh",
+      "degraded": "Suy giảm",
+      "unhealthy": "Không khỏe mạnh"
+    },
     "sections": {
       "storage": "Phụ thuộc lưu trữ",
       "core": "Thành phần cốt lõi",

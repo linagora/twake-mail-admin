@@ -50,18 +50,29 @@ public class HealthCheckPage {
 
     /** The component names of a section, in display order. */
     public List<String> componentsOf(String heading) {
-        return section(heading).locator(":scope > div > *").allInnerTexts().stream().map(String::trim).toList();
+        return names(section(heading).locator(":scope > div > *"));
     }
 
     /** Every component name shown, whatever the section. */
     public List<String> allComponents() {
-        return app.main().locator("section > div > *").allInnerTexts().stream().map(String::trim).toList();
+        return names(app.main().locator("section > div > *"));
+    }
+
+    /** A card reads the component name, then its status. */
+    private static List<String> names(Locator cards) {
+        return cards.locator("p:first-child").allInnerTexts().stream().map(String::trim).toList();
     }
 
     /** The element the user hovers or focuses: the card itself, or its tooltip trigger wrapper. */
     public Locator hoverTarget(String component) {
         return app.main().locator("section > div > *").filter(new Locator.FilterOptions()
-            .setHasText(Shell.exactly(component))).first();
+            .setHas(app.page().locator("p:first-child").filter(new Locator.FilterOptions()
+                .setHasText(Shell.exactly(component))))).first();
+    }
+
+    /** The status written on a component card, e.g. "Healthy". */
+    public Locator status(String component) {
+        return hoverTarget(component).locator("p:nth-child(2)");
     }
 
     public Locator tooltip() {
@@ -85,8 +96,7 @@ public class HealthCheckPage {
 
     /** Computed border colour of a component card, e.g. {@code rgb(22, 163, 74)} or an oklch() value. */
     public String borderColor(String component) {
-        return String.valueOf(app.main().locator("section > div > *").filter(new Locator.FilterOptions()
-                .setHasText(Shell.exactly(component))).first()
+        return String.valueOf(hoverTarget(component)
             .evaluate("e => { const card = e.matches('[tabindex]') ? e.firstElementChild : e;"
                 + " return getComputedStyle(card).borderTopColor; }"));
     }

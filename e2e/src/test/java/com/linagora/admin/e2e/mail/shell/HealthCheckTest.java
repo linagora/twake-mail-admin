@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -81,14 +80,11 @@ class HealthCheckTest extends MailAdminE2ETest {
         }
     }
 
-    // known-bug: the status of a component is conveyed by the card colour only, no text nor accessible
-    // name says "healthy" / "degraded" / "unhealthy" (WCAG 1.4.1), see health-check-status-colour-only.md
     @Test
-    @Tag("known-bug")
     @DisplayName("HC-01 Health check cards state their status without colour")
     void healthCheckStatusIsNotColourOnly(AdminApp app, WebAdmin webAdmin) {
         HealthCheckPage healthCheck = HealthCheckPage.open(app);
 
-        assertThat(healthCheck.hoverTarget("Redis")).containsText(java.util.regex.Pattern.compile("\\bhealthy\\b", java.util.regex.Pattern.CASE_INSENSITIVE));
+        assertThat(healthCheck.status("Redis")).hasText("Healthy");
     }
 }

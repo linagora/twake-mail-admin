@@ -97,6 +97,9 @@ class DegradedStateTest extends MailAdminE2ETest {
         assertThat(StatusColor.of(healthCheck.borderColor(UNHEALTHY))).isEqualTo(StatusColor.RED);
         assertThat(StatusColor.of(healthCheck.backgroundColor(UNHEALTHY))).isEqualTo(StatusColor.RED);
         assertThat(StatusColor.of(healthCheck.borderColor("Cassandra backend"))).isEqualTo(StatusColor.GREEN);
+        assertThat(healthCheck.status(DEGRADED)).hasText("Degraded");
+        assertThat(healthCheck.status(UNHEALTHY)).hasText("Unhealthy");
+        assertThat(healthCheck.status("Cassandra backend")).hasText("Healthy");
 
         healthCheck.hoverTarget(DEGRADED).hover();
         assertThat(healthCheck.tooltip()).hasText(DEGRADED_CAUSE);

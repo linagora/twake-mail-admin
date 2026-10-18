@@ -1243,6 +1243,11 @@
     "description": "Этот инструмент упрощает управление Twake Mail через webadmin.",
     "welcomeCalendar": "Добро пожаловать в администрирование Twake Calendar!",
     "descriptionCalendar": "Этот инструмент упрощает управление Twake Calendar через webadmin.",
+    "status": {
+      "healthy": "Исправен",
+      "degraded": "Работает с ухудшениями",
+      "unhealthy": "Неисправен"
+    },
     "sections": {
       "storage": "Зависимости хранилища",
       "core": "Основные компоненты",
