@@ -41,10 +41,14 @@ const parseJsonObject = (text: string): Record<string, unknown> | undefined => {
   }
 };
 
+/** WebAdmin answers built from an exception repeat their message in `details`: show it once. */
+const distinctFrom = (message: string, details: string | undefined): string | undefined =>
+  details?.trim() === message.trim() ? undefined : details;
+
 const fromErrorBody = (body: Record<string, unknown>): ErrorMessage | undefined => {
   const serverMessage = asText(body.message);
   return serverMessage
-    ? { message: serverMessage, details: withoutXmlDocument(asText(body.details)) }
+    ? { message: serverMessage, details: distinctFrom(serverMessage, withoutXmlDocument(asText(body.details))) }
     : undefined;
 };
 

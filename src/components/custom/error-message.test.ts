@@ -32,6 +32,25 @@ describe("toErrorMessage", () => {
     expect(toErrorMessage(error)).toEqual({ message: "User not found", details: undefined });
   });
 
+  it("omits details repeating the WebAdmin message", () => {
+    const error = axiosErrorWithData({
+      statusCode: 400,
+      type: "InvalidArgument",
+      message: "Invalid 'timeZone' format: Mars/Olympus",
+      details: "Invalid 'timeZone' format: Mars/Olympus ",
+    });
+
+    expect(toErrorMessage(error)).toEqual({ message: "Invalid 'timeZone' format: Mars/Olympus", details: undefined });
+  });
+
+  it("omits details repeating the message of a WebAdmin body read as text", () => {
+    const error = axiosErrorWithData(
+      JSON.stringify({ statusCode: 400, message: "'start' must be before 'end'", details: "'start' must be before 'end'" })
+    );
+
+    expect(toErrorMessage(error)).toEqual({ message: "'start' must be before 'end'", details: undefined });
+  });
+
   it("keeps only the message of a DAV error document relayed in the details", () => {
     const error = axiosErrorWithData({
       statusCode: 500,
