@@ -675,7 +675,7 @@
       "hasHtmlSignature": "Has HTML signature",
       "editTooltip": "Edit identity",
       "deleteTooltip": "Delete identity",
-      "editTitle": "Edit Identity — {{email}}",
+      "editTitle": "Edit Identity — {{name}}",
       "displayName": "Display Name",
       "empty": "No JMAP identities."
     },

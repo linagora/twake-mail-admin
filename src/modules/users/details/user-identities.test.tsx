@@ -2,6 +2,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => (options ? `${key} ${JSON.stringify(options)}` : key),
+  }),
+}));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => false }));
@@ -83,6 +88,15 @@ describe("user identities: details", () => {
 
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     await waitFor(() => expect(document.activeElement).toBe(identityButton));
+  });
+});
+
+describe("user identities: edit dialog", () => {
+  it("is titled with the name of the identity, like its details", async () => {
+    openSection();
+    fireEvent.click(await screen.findByTitle("users.identities.editTooltip"));
+
+    expect((await screen.findByRole("dialog")).textContent).toContain('users.identities.editTitle {"name":"Bob"}');
   });
 });
 

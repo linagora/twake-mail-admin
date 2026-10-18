@@ -675,7 +675,7 @@
       "hasHtmlSignature": "HTML гарын үсэгтэй",
       "editTooltip": "Таних тэмдэг засах",
       "deleteTooltip": "Таних тэмдэг устгах",
-      "editTitle": "Таних тэмдэг засах — {{email}}",
+      "editTitle": "Таних тэмдэг засах — {{name}}",
       "displayName": "Харагдах нэр",
       "empty": "JMAP таних тэмдэг байхгүй."
     },

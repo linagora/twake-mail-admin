@@ -374,7 +374,7 @@ export default function UserIdentities({ username }: Props) {
       <Dialog open={!!editIdentity} onOpenChange={(v) => { if (!v) { setEditIdentity(null); setEditForm({}); } }}>
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto" onCloseAutoFocus={restoreFocus}>
           <DialogHeader>
-            <DialogTitle>{t("users.identities.editTitle", { email: editIdentity?.email })}</DialogTitle>
+            <DialogTitle>{t("users.identities.editTitle", { name: editIdentity?.name })}</DialogTitle>
           </DialogHeader>
           {editIdentity && (
             <div className="space-y-3">

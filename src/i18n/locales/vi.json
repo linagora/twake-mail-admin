@@ -675,7 +675,7 @@
       "hasHtmlSignature": "Có chữ ký HTML",
       "editTooltip": "Sửa danh tính",
       "deleteTooltip": "Xóa danh tính",
-      "editTitle": "Sửa danh tính — {{email}}",
+      "editTitle": "Sửa danh tính — {{name}}",
       "displayName": "Tên hiển thị",
       "empty": "Không có danh tính JMAP."
     },

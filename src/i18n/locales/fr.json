@@ -675,7 +675,7 @@
       "hasHtmlSignature": "Signature HTML définie",
       "editTooltip": "Modifier l'identité",
       "deleteTooltip": "Supprimer l'identité",
-      "editTitle": "Modifier l'identité — {{email}}",
+      "editTitle": "Modifier l'identité — {{name}}",
       "displayName": "Nom d'affichage",
       "empty": "Aucune identité JMAP."
     },

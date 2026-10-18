@@ -675,7 +675,7 @@
       "hasHtmlSignature": "Есть HTML-подпись",
       "editTooltip": "Изменить идентичность",
       "deleteTooltip": "Удалить идентичность",
-      "editTitle": "Изменить идентичность — {{email}}",
+      "editTitle": "Изменить идентичность — {{name}}",
       "displayName": "Отображаемое имя",
       "empty": "Идентичностей JMAP нет."
     },
