@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.linagora.admin</groupId>
+    <artifactId>twake-mail-admin-e2e</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>Twake Mail Admin :: end to end tests</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>21</maven.compiler.release>
+        <!-- Playwright bundles its own browsers, downloaded on first run into ~/.cache/ms-playwright -->
+        <playwright.version>1.62.0</playwright.version>
+        <junit.version>5.10.2</junit.version>
+        <!-- Test classes running at the same time, against the shared docker stacks -->
+        <e2e.parallelism>4</e2e.parallelism>
+        <!-- Lets several checkouts build side by side: -De2e.build.dir=target-foo -->
+        <e2e.build.dir>${project.basedir}/target</e2e.build.dir>
+        <!-- Tests reproducing a product bug not fixed yet, see README.md: -De2e.excludedGroups= runs them -->
+        <e2e.excludedGroups>known-bug</e2e.excludedGroups>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>1.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.26.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>4.2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.18.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.16</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <directory>${e2e.build.dir}</directory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>-Xms512m -Xmx2048m</argLine>
+                    <reuseForks>true</reuseForks>
+                    <forkCount>1</forkCount>
+                    <!-- The stacks are started once for the whole run: the budget is 30 minutes -->
+                    <forkedProcessTimeoutInSeconds>2400</forkedProcessTimeoutInSeconds>
+                    <trimStackTrace>false</trimStackTrace>
+                    <excludedGroups>${e2e.excludedGroups}</excludedGroups>
+                    <systemPropertyVariables>
+                        <e2e.build.dir>${e2e.build.dir}</e2e.build.dir>
+                        <!-- Compose files are used from the sources, whatever the build directory: the
+                             bind mounts of a reused stack then never change, compose never recreates it -->
+                        <e2e.resources.dir>${project.basedir}/src/test/resources</e2e.resources.dir>
+                    </systemPropertyVariables>
+                    <properties>
+                        <configurationParameters>
+                            junit.jupiter.execution.parallel.config.fixed.parallelism=${e2e.parallelism}
+                            junit.jupiter.execution.parallel.config.fixed.max-pool-size=${e2e.parallelism}
+                        </configurationParameters>
+                    </properties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

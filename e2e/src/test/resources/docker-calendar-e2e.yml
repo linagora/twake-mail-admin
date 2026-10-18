@@ -1,0 +1,113 @@
+# The Calendar stack: the admin app (APPLICATION=CALENDAR) in front of the WebAdmin of the
+# twake-calendar side service, with esn-sabre, MongoDB, OpenLDAP, OpenSearch, RabbitMQ, Redis and
+# a mock SMTP server. The backend half is a copy of the e2e stack of twake-calendar-frontend,
+# without its SPAs and OIDC provider: the admin app needs neither.
+#
+# Nothing is published on a fixed port: docker picks free host ports on 127.0.0.1, CalendarStack
+# reads them back, and the browser is taught to resolve the URLs of env.js onto them.
+services:
+  admin:
+    image: ${ADMIN_IMAGE:-twake-mail-admin-e2e}
+    volumes:
+      - ./calendar/env.js:/usr/share/nginx/html/env.js:ro
+    ports:
+      - "127.0.0.1::80"
+
+  twake-calendar-side-service:
+    image: twake-admin-e2e-tcalendar
+    depends_on:
+      opensearch:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      ldap:
+        condition: service_started
+      sabre_dav:
+        condition: service_started
+    volumes:
+      - ./webadmin.properties:/root/conf/webadmin.properties:ro
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx1g
+    ports:
+      - "127.0.0.1::8000"
+      - "127.0.0.1::8080"
+
+  sabre_dav:
+    hostname: esn_sabre
+    image: twake-admin-e2e-sabre
+    environment:
+      - SABRE_ENV=dev
+      - SABRE_MONGO_HOST=mongo
+      - SABRE_MONGO_PORT=27017
+      - ESN_MONGO_HOST=mongo
+      - ESN_MONGO_PORT=27017
+      - ESN_MONGO_DBNAME=esn_docker
+      - MONGO_TIMEOUT=100000
+      - ESN_HOST=twake-calendar-side-service
+      - ESN_PORT=8080
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - AMQP_HOST=rabbitmq
+      - AMQP_PORT=5672
+      - AMQP_LOGIN=guest
+      - AMQP_PASSWORD=guest
+      - SABRE_ADMIN_LOGIN=admin
+      - SABRE_ADMIN_PASSWORD=secret123
+      - OPENPASS_BASIC_AUTH=YWRtaW5Ab3Blbi1wYWFzLm9yZzpzZWNyZXQ=
+      - LDAP_ADMIN_DN=cn=admin,dc=open-paas.org,dc=lng
+      - LDAP_ADMIN_PASSWORD=admin
+      - LDAP_BASE=ou=users,dc=open-paas.org,dc=lng
+      - LDAP_BASE_WITH_MAIL=ou=users,dc=open-paas.org,dc=lng
+      - LDAP_SERVER=ldap://esn_ldap:389
+      - LDAP_USERNAME_MODE=username
+      - SABRE_IMPERSONATION_ENABLED=true
+      - SABRE_EMAIL_VALARM_RECIPIENT_SCHEDULING=true
+      # The whole side service is one client IP for Sabre's nginx: its default 50 r/s limit
+      # answers 429 to WebAdmin under the parallel load of the suite
+      - NGINX_RATE_LIMIT=off
+    ports:
+      - "127.0.0.1::80"
+
+  ldap:
+    hostname: esn_ldap
+    image: twake-admin-e2e-ldap
+    environment:
+      - LDAP_PORT_NUMBER=389
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=admin
+      - LDAP_ROOT=dc=open-paas.org,dc=lng
+    ports:
+      - "127.0.0.1::389"
+
+  opensearch:
+    image: opensearchproject/opensearch:2.19.2
+    environment:
+      - discovery.type=single-node
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_JAVA_OPTS=-Xms384m -Xmx384m
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9200/_cluster/health']
+      interval: 3s
+      timeout: 10s
+      retries: 40
+
+  redis:
+    image: redis:8.0.2
+
+  rabbitmq:
+    image: rabbitmq:4.1.1-management
+
+  mongo:
+    image: mongo:8.0.6
+    ports:
+      - "127.0.0.1::27017"
+
+  mock-smtp:
+    image: linagora/mock-smtp-server:0.7
+    ports:
+      - "127.0.0.1::8000"

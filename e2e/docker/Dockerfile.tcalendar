@@ -1,0 +1,9 @@
+# Build context: the e2e/ directory. Same side service as the e2e of twake-calendar-frontend.
+FROM linagora/twake-calendar-side-service:2.4.7
+
+COPY src/test/resources/calendar/side-service-conf/configuration.properties /root/conf/configuration.properties
+COPY src/test/resources/calendar/side-service-conf/opensearch.properties /root/conf/opensearch.properties
+COPY src/test/resources/calendar/side-service-conf/rabbitmq.properties /root/conf/rabbitmq.properties
+COPY src/test/resources/calendar/side-service-conf/jwt_privatekey /root/conf/jwt_privatekey
+COPY src/test/resources/calendar/side-service-conf/jwt_publickey /root/conf/jwt_publickey
+COPY src/test/resources/calendar/side-service-conf/logback.xml /root/conf/logback.xml

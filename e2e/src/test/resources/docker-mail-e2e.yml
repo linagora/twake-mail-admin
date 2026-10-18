@@ -1,0 +1,87 @@
+# The Mail stack: the admin app (APPLICATION=MAIL) in front of a distributed tmail-backend
+# (Cassandra, OpenSearch, RabbitMQ, S3, Redis, Tika). Same topology as scripts/qa-environment.
+#
+# Nothing is published on a fixed port: docker picks free host ports on 127.0.0.1, MailStack
+# reads them back, and the browser is taught to resolve the URLs of env.js onto them.
+#
+# Memory: the JVMs size their heap after the host RAM by default; they are capped so that the
+# stack fits in about 3 GB.
+services:
+  tmail-backend:
+    image: ${TMAIL_BACKEND_IMAGE:-linagora/tmail-backend:distributed-1.0.22}
+    hostname: tmail-backend.local
+    depends_on:
+      cassandra:
+        condition: service_healthy
+      opensearch:
+        condition: service_started
+      tika:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      redis:
+        condition: service_started
+      s3:
+        condition: service_started
+    volumes:
+      - ./mail/jwt_publickey:/root/conf/jwt_publickey:ro
+      - ./mail/jwt_privatekey:/root/conf/jwt_privatekey:ro
+      - ./mail/redis.properties:/root/conf/redis.properties:ro
+      - ./webadmin.properties:/root/conf/webadmin.properties:ro
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx1g
+    ports:
+      - "127.0.0.1::8000"
+      - "127.0.0.1::25"
+    restart: on-failure
+
+  admin:
+    image: ${ADMIN_IMAGE:-twake-mail-admin-e2e}
+    volumes:
+      - ./mail/env.js:/usr/share/nginx/html/env.js:ro
+    ports:
+      - "127.0.0.1::80"
+
+  cassandra:
+    image: cassandra:4.1.9
+    healthcheck:
+      test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
+      interval: 3s
+      timeout: 20s
+      retries: 60
+    environment:
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=128M
+      - JVM_OPTS=-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=1
+
+  opensearch:
+    image: opensearchproject/opensearch:2.19.2
+    environment:
+      - discovery.type=single-node
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_JAVA_OPTS=-Xms384m -Xmx384m
+
+  tika:
+    image: apache/tika:3.2.0.0
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m
+
+  rabbitmq:
+    image: rabbitmq:4.0.9-management
+
+  s3:
+    image: ghcr.io/scality/cloudserver:c1ba296859690c1cbbec609aaae430f6b04b4745
+    environment:
+      - SCALITY_ACCESS_KEY_ID=accessKey1
+      - SCALITY_SECRET_ACCESS_KEY=secretKey1
+      - S3BACKEND=mem
+      - REMOTE_MANAGEMENT_DISABLE=1
+    networks:
+      default:
+        # blob.properties of the image: objectstorage.s3.endPoint=http://s3.docker.test:8000/
+        aliases:
+          - s3.docker.test
+
+  redis:
+    image: redis:8.0.2

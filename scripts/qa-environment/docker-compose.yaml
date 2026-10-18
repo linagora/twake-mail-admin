@@ -34,7 +34,7 @@ services:
     restart: on-failure
 
   admin:
-    image: twake-mail-admin-qa
+    image: ${ADMIN_IMAGE:-twake-mail-admin-qa}
     volumes:
       - ./.generated/env.js:/usr/share/nginx/html/env.js:ro
     ports:

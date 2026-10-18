@@ -1,12 +1,16 @@
 pipeline {
-    agent any
+    agent {
+        // The e2e stage boots two backend stacks in docker
+        label 'heavy'
+    }
 
     tools {
         nodejs 'nodejs_24'
     }
 
     options {
-        timeout(time: 1, unit: 'HOURS')
+        // The e2e suite is budgeted 30 minutes, on top of the stack boot
+        timeout(time: 2, unit: 'HOURS')
         disableConcurrentBuilds()
     }
 
@@ -34,6 +38,26 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'npm run build'
+            }
+        }
+        stage('End to end tests') {
+            // Drives the production image of the admin app, built from this checkout,
+            // against real backends: Mail over a distributed tmail-backend, Calendar over
+            // the twake-calendar side service. See e2e/README.md.
+            steps {
+                dir('e2e') {
+                    sh './pre-build.sh'
+                    sh 'mvn clean test'
+                }
+            }
+            post {
+                always {
+                    junit(testResults: 'e2e/target/surefire-reports/*.xml', allowEmptyResults: false)
+                }
+                failure {
+                    // Screenshots and Playwright traces of whatever broke
+                    archiveArtifacts artifacts: 'e2e/target/e2e-artifacts/**', allowEmptyArchive: true
+                }
             }
         }
         stage('Profile editor') {

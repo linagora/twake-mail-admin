@@ -1,0 +1,4 @@
+# Build context: the e2e/ directory
+FROM bitnamilegacy/openldap
+
+COPY src/test/resources/calendar/side-service-conf/ldap_populate.ldif /ldifs/populate.ldif
