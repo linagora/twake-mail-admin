@@ -8,9 +8,10 @@ import ErrorDisplayer from "./error-displayer";
 
 /**
  * Checks the dialog content when "Confirm" is clicked. Returns the error to show in the
- * dialog, which then stays open with its content, or null to let the dialog close.
+ * dialog, which then stays open with its content, false to keep it open without a message
+ * when the content already reports the problem, or null to let the dialog close.
  */
-export type ConfirmValidator = () => string | null;
+export type ConfirmValidator = () => string | false | null;
 
 /**
  * Sends the confirmed request while the dialog stays open. The dialog closes once it
@@ -77,6 +78,7 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
 
   const handleConfirm = () => {
     const error = confirmState.validate?.() ?? null;
+    if (error === false) return;
     if (error) {
       showError(error);
       return;

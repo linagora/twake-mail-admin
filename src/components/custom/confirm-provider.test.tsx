@@ -204,3 +204,32 @@ describe("confirm dialog focus", () => {
     await waitFor(() => expect(document.activeElement).toBe(opener));
   });
 });
+
+describe("confirm dialog validation without message", () => {
+  function SilentOpener({ onResult }: { onResult: (result: boolean) => void }) {
+    const confirm = useConfirm();
+    const open = async () => onResult(await confirm({
+      header: "Restore",
+      message: <p role="alert">Complete the criteria</p>,
+      validate: () => false,
+    }));
+    return <button onClick={open}>open</button>;
+  }
+
+  it("stays open without adding an error when the content already reports the problem", async () => {
+    const silentResults: boolean[] = [];
+    render(
+      <ConfirmProvider>
+        <SilentOpener onResult={(result) => silentResults.push(result)} />
+      </ConfirmProvider>
+    );
+    fireEvent.click(screen.getByText("open"));
+    await screen.findByText("Restore");
+
+    clickConfirm();
+
+    expect(screen.queryByRole("dialog")).not.toBeNull();
+    expect(screen.getAllByRole("alert").map((alert) => alert.textContent)).toEqual(["Complete the criteria"]);
+    expect(silentResults).toEqual([]);
+  });
+});

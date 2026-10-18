@@ -190,7 +190,8 @@ export default function UserTasks({ username }: Props) {
           onChange={(r) => { request = r; }}
         />
       ),
-      validate: () => (criteriaValid ? null : t("users.deletedVault.criteria.incomplete")),
+      // The criteria builder already shows why the criteria cannot be sent
+      validate: () => (criteriaValid ? null : false),
       action: async () => {
         const data = await restoreDeletedMessages(username, request);
         toastTaskRunning(data.taskId);
