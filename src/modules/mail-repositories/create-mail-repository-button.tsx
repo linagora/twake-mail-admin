@@ -108,17 +108,20 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
           <DialogHeader>
             <DialogTitle>{t("mailRepositories.createTitle")}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-3 py-2">
-            {renderField("path", t("mailRepositories.pathLabel"), t("mailRepositories.pathPlaceholder"))}
-            {renderField("protocol", t("mailRepositories.protocolLabel"))}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={close}>{t("common.cancel")}</Button>
-            <Button className="mb-4 md:mb-0" onClick={handleCreate} disabled={creating}>
-              {creating && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-              {t("common.confirm")}
-            </Button>
-          </DialogFooter>
+          {/* A form, so that Enter in a field submits like Confirm */}
+          <form onSubmit={(e) => { e.preventDefault(); if (!creating) handleCreate(); }}>
+            <div className="space-y-3 py-2">
+              {renderField("path", t("mailRepositories.pathLabel"), t("mailRepositories.pathPlaceholder"))}
+              {renderField("protocol", t("mailRepositories.protocolLabel"))}
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={close}>{t("common.cancel")}</Button>
+              <Button type="submit" className="mb-4 md:mb-0" disabled={creating}>
+                {creating && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+                {t("common.confirm")}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

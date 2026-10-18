@@ -608,6 +608,10 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
     }
   };
 
+  // Functions, not values: the rules are only validated while their dialog is open
+  const isCreateDisabled = () => creating || !createForm.calendarUrl.trim() || !isOfferedCalendar(createForm.calendarUrl, bookableCalendarOptions) || createDurationMinutes === null || !areValidRules(createRules);
+  const isEditDisabled = () => saving || !isOfferedCalendar(editForm.calendarUrl ?? "", bookableCalendarOptions) || editDurationMinutes === null || (!editClearRules && !areValidRules(editRules ?? []));
+
   return (
     <div className="mt-6">
       <button
@@ -669,7 +673,8 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
           <DialogHeader>
             <DialogTitle>{t("users.bookingLinks.create")}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-3">
+          {/* A form, so that Enter in a field submits like Create; the fields are validated in place, not by the browser */}
+          <form noValidate className="space-y-3" onSubmit={(e) => { e.preventDefault(); if (!isCreateDisabled()) handleCreate(); }}>
             <div>
               <label htmlFor="create-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} *</label>
               <CalendarSelect
@@ -746,19 +751,19 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
               <RulesEditor rules={createRules} onChange={setCreateRules} />
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={closeCreate}>
+              <Button type="button" variant="outline" size="sm" onClick={closeCreate}>
                 {t("common.cancel")}
               </Button>
               <Button
+                type="submit"
                 size="sm"
-                onClick={handleCreate}
-                disabled={creating || !createForm.calendarUrl.trim() || !isOfferedCalendar(createForm.calendarUrl, bookableCalendarOptions) || createDurationMinutes === null || !areValidRules(createRules)}
+                disabled={isCreateDisabled()}
               >
                 {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
                 {t("common.create")}
               </Button>
             </div>
-          </div>
+          </form>
         </DialogContent>
       </Dialog>
 
@@ -769,7 +774,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
             <DialogTitle>{t("users.bookingLinks.editTitle")}</DialogTitle>
           </DialogHeader>
           {editLink && (
-            <div className="space-y-3">
+            <form noValidate className="space-y-3" onSubmit={(e) => { e.preventDefault(); if (!isEditDisabled()) handleUpdate(); }}>
               <div>
                 <label htmlFor="edit-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} *</label>
                 <CalendarSelect
@@ -863,19 +868,19 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
                 )}
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" size="sm" onClick={() => setEditLink(null)}>
+                <Button type="button" variant="outline" size="sm" onClick={() => setEditLink(null)}>
                   {t("common.cancel")}
                 </Button>
                 <Button
+                  type="submit"
                   size="sm"
-                  onClick={handleUpdate}
-                  disabled={saving || !isOfferedCalendar(editForm.calendarUrl ?? "", bookableCalendarOptions) || editDurationMinutes === null || (!editClearRules && !areValidRules(editRules ?? []))}
+                  disabled={isEditDisabled()}
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                   {t("common.save")}
                 </Button>
               </div>
-            </div>
+            </form>
           )}
         </DialogContent>
       </Dialog>

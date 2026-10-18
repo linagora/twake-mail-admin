@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
@@ -22,6 +22,7 @@ vi.mock("../api-client", () => ({
 }));
 
 import UserLabels from "./user-labels";
+import { createUserLabel, updateUserLabel } from "../api-client";
 
 afterEach(cleanup);
 
@@ -55,5 +56,31 @@ describe("user labels: edit dialog color", () => {
 
     expect((screen.getByLabelText("users.labels.colorPicker") as HTMLInputElement).value).toBe("#ff0000");
     expect(screen.getByText("users.labels.colorCannotBeCleared")).not.toBeNull();
+  });
+});
+
+// jsdom does not submit a form on Enter: submitting the field's form is what the browser does then
+describe("user labels: Enter in a field", () => {
+  it("creates the label, like Create", async () => {
+    render(<UserLabels username="bob@example.com" />);
+    fireEvent.click(screen.getByText("users.labels.title"));
+    fireEvent.click(screen.getByTitle("users.labels.createButton"));
+
+    const displayName = screen.getByLabelText("users.labels.displayNameLabel") as HTMLInputElement;
+    fireEvent.change(displayName, { target: { value: "QAEnter" } });
+    fireEvent.submit(displayName.form!);
+
+    await waitFor(() => expect(createUserLabel).toHaveBeenCalledWith("bob@example.com", { displayName: "QAEnter" }));
+  });
+
+  it("saves the edited label, like Save", async () => {
+    render(<UserLabels username="bob@example.com" />);
+    fireEvent.click(screen.getByText("users.labels.title"));
+    fireEvent.click(await screen.findByTitle("users.labels.editTooltip"));
+
+    const displayName = (await screen.findByLabelText("users.labels.displayNameLabel")) as HTMLInputElement;
+    fireEvent.submit(displayName.form!);
+
+    await waitFor(() => expect(updateUserLabel).toHaveBeenCalledWith("bob@example.com", "1", expect.anything()));
   });
 });

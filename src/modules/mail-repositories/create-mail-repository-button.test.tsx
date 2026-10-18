@@ -112,4 +112,23 @@ describe("create mail repository dialog", () => {
     }));
     expect(protocolInput().value).toBe("nosuchproto");
   });
+
+  // jsdom does not submit a form on Enter: submitting the field's form is what the browser does then
+  it("creates the repository on Enter in a field, like Confirm", async () => {
+    api.createMailRepository.mockResolvedValue(undefined);
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/qa-enter" } });
+    fireEvent.submit(protocolInput().form!);
+
+    await waitFor(() => expect(onCreated).toHaveBeenCalled());
+    expect(api.createMailRepository).toHaveBeenCalledWith(encodeURIComponent("var/mail/qa-enter"), "cassandra");
+  });
+
+  it("flags a missing field on Enter", () => {
+    openDialog();
+    fireEvent.submit(pathInput().form!);
+
+    expect(screen.getByText("mailRepositories.pathRequired")).not.toBeNull();
+    expect(api.createMailRepository).not.toHaveBeenCalled();
+  });
 });

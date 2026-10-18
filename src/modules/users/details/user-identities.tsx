@@ -171,7 +171,12 @@ export default function UserIdentities({ username }: Props) {
       {open && (
         <div className="mt-2">
           {showCreate && (
-            <div className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2">
+            // A form, so that Enter in a field submits like Create; the address is checked by the server, as before
+            <form
+              noValidate
+              className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2"
+              onSubmit={(e) => { e.preventDefault(); if (!creating) handleCreate(); }}
+            >
               <h5 className="text-sm font-semibold">{t("users.identities.newTitle")}</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <input
@@ -224,19 +229,19 @@ export default function UserIdentities({ username }: Props) {
                 />
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={() => setShowCreate(false)}>
+                <Button type="button" variant="outline" size="sm" onClick={() => setShowCreate(false)}>
                   {t("common.cancel")}
                 </Button>
                 <Button
+                  type="submit"
                   size="sm"
-                  onClick={handleCreate}
                   disabled={creating || !createForm.name.trim() || !createForm.email.trim()}
                 >
                   {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
                   {t("common.create")}
                 </Button>
               </div>
-            </div>
+            </form>
           )}
 
           {isLoading && (
@@ -377,7 +382,7 @@ export default function UserIdentities({ username }: Props) {
             <DialogTitle>{t("users.identities.editTitle", { name: editIdentity?.name })}</DialogTitle>
           </DialogHeader>
           {editIdentity && (
-            <div className="space-y-3">
+            <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); if (!saving) handleUpdate(); }}>
               <div>
                 <label htmlFor={`${idPrefix}-edit-name`} className="text-sm font-medium">{t("users.identities.name")}</label>
                 <input
@@ -419,15 +424,15 @@ export default function UserIdentities({ username }: Props) {
                 />
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" size="sm" onClick={() => { setEditIdentity(null); setEditForm({}); }}>
+                <Button type="button" variant="outline" size="sm" onClick={() => { setEditIdentity(null); setEditForm({}); }}>
                   {t("common.cancel")}
                 </Button>
-                <Button size="sm" onClick={handleUpdate} disabled={saving}>
+                <Button type="submit" size="sm" disabled={saving}>
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                   {t("common.save")}
                 </Button>
               </div>
-            </div>
+            </form>
           )}
         </DialogContent>
       </Dialog>

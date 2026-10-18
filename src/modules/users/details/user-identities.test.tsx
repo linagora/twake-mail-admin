@@ -20,6 +20,7 @@ vi.mock("../api-client", () => ({
 }));
 
 import UserIdentities from "./user-identities";
+import { createUserIdentity } from "../api-client";
 
 const FIELDS: [string, string][] = [
   ["users.identities.name", "INPUT"],
@@ -108,5 +109,20 @@ describe("user identities: long values", () => {
 
     expect(identityButton.className).toContain("break-all");
     expect(identityButton.closest("h4")?.parentElement?.className).toContain("min-w-0");
+  });
+});
+
+describe("user identities: Enter in a field", () => {
+  // jsdom does not submit a form on Enter: submitting the field's form is what the browser does then
+  it("creates the identity, like Create", async () => {
+    openSection();
+    fireEvent.click(screen.getByTitle("users.identities.createButton"));
+
+    fireEvent.change(screen.getByLabelText("users.identities.name"), { target: { value: "Bob QA" } });
+    const email = screen.getByLabelText("users.identities.email") as HTMLInputElement;
+    fireEvent.change(email, { target: { value: "bob@example.com" } });
+    fireEvent.submit(email.form!);
+
+    await waitFor(() => expect(createUserIdentity).toHaveBeenCalledWith("bob@example.com", expect.objectContaining({ name: "Bob QA", email: "bob@example.com" })));
   });
 });

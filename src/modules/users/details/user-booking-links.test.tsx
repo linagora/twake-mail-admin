@@ -187,8 +187,11 @@ const LINK = {
   name: "Intro call",
 } as BookingLink;
 
+// The options of the calendar select itself: a role query over the whole dialog is slow enough to time out under load
 const offeredCalendars = () =>
-  screen.getAllByRole("option").map((o) => o.textContent).filter((label) => label !== "users.bookingLinks.selectCalendar");
+  Array.from((screen.getByLabelText("users.bookingLinks.calendarUrl *") as HTMLSelectElement).options)
+    .map((o) => o.textContent)
+    .filter((label) => label !== "users.bookingLinks.selectCalendar");
 
 const expandSection = async () => {
   render(<UserBookingLinks username={ALICE} />);
@@ -375,5 +378,34 @@ describe("booking link dialogs: required fields", () => {
 
     expect(screen.getByLabelText("users.bookingLinks.calendarUrl *")).toBeTruthy();
     expect(screen.getByLabelText("users.bookingLinks.durationMinutes *")).toBeTruthy();
+  });
+});
+
+describe("booking link dialogs: Enter in a field", () => {
+  // jsdom does not submit a form on Enter: submitting the field's form is what the browser does then
+  it("creates the link, like Create", async () => {
+    await openCreate();
+
+    fireEvent.submit(durationField().form!);
+
+    await vi.waitFor(() => expect(mocks.api.createUserBookingLink).toHaveBeenCalled());
+  });
+
+  it("does not create an invalid link", async () => {
+    await openCreate();
+    typeDuration("0");
+
+    fireEvent.submit(durationField().form!);
+
+    expect(mocks.api.createUserBookingLink).not.toHaveBeenCalled();
+  });
+
+  it("saves the edited link, like Save", async () => {
+    await openSection();
+    fireEvent.click(screen.getByTitle("users.bookingLinks.editTitle"));
+
+    fireEvent.submit(durationField().form!);
+
+    await vi.waitFor(() => expect(mocks.api.updateUserBookingLink).toHaveBeenCalled());
   });
 });

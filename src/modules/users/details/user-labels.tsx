@@ -136,7 +136,11 @@ export default function UserLabels({ username }: Props) {
       {open && (
         <div className="mt-2">
           {showCreate && (
-            <div className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2">
+            // A form, so that Enter in a field submits like Create
+            <form
+              className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2"
+              onSubmit={(e) => { e.preventDefault(); if (!creating) handleCreate(); }}
+            >
               <h5 className="text-sm font-semibold">{t("users.labels.newTitle")}</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div>
@@ -196,19 +200,19 @@ export default function UserLabels({ username }: Props) {
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={() => { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); }}>
+                <Button type="button" variant="outline" size="sm" onClick={() => { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); }}>
                   {t("common.cancel")}
                 </Button>
                 <Button
+                  type="submit"
                   size="sm"
-                  onClick={handleCreate}
                   disabled={creating || !createForm.displayName.trim()}
                 >
                   {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
                   {t("common.create")}
                 </Button>
               </div>
-            </div>
+            </form>
           )}
 
           {isLoading && (
@@ -305,7 +309,10 @@ export default function UserLabels({ username }: Props) {
             <DialogTitle>{t("users.labels.editTitle", { displayName: editLabel?.displayName })}</DialogTitle>
           </DialogHeader>
           {editLabel && (
-            <div className="space-y-3">
+            <form
+              className="space-y-3"
+              onSubmit={(e) => { e.preventDefault(); if (!saving && editForm.displayName.trim()) handleUpdate(); }}
+            >
               <div>
                 <label htmlFor={`${idPrefix}-edit-displayName`} className="text-sm font-medium">{t("users.labels.displayNameLabel")}</label>
                 <input
@@ -363,19 +370,19 @@ export default function UserLabels({ username }: Props) {
                 <label htmlFor="edit-readonly" className="text-sm font-medium">{t("users.labels.readOnly")}</label>
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" size="sm" onClick={() => setEditLabel(null)}>
+                <Button type="button" variant="outline" size="sm" onClick={() => setEditLabel(null)}>
                   {t("common.cancel")}
                 </Button>
                 <Button
+                  type="submit"
                   size="sm"
-                  onClick={handleUpdate}
                   disabled={saving || !editForm.displayName.trim()}
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                   {t("common.save")}
                 </Button>
               </div>
-            </div>
+            </form>
           )}
         </DialogContent>
       </Dialog>
