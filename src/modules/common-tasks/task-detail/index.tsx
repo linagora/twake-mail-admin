@@ -9,6 +9,7 @@ import { CircleStop, RefreshCcw } from "lucide-react";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tooltip } from "@radix-ui/react-tooltip";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/hooks/use-confirm";
 import { TaskStatus } from "../types";
 import Header from "@/components/custom/header";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -20,6 +21,7 @@ export default function TaskDetail() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { toast } = useToast();
+  const confirm = useConfirm();
   const domain = useDomain() || undefined;
 
   const fetchTaskDetail = useCallback(
@@ -34,9 +36,16 @@ export default function TaskDetail() {
     refresh,
   } = useFetchData(fetchTaskDetail);
 
+  // Same confirmation and feedback as the Tasks list
   const handleCancelTask = async () => {
+    const confirmed = await confirm({
+      header: t("tasks.cancelTitle"),
+      message: t("tasks.cancelConfirm", { taskId: id, type: taskDetail?.type }),
+    });
+    if (!confirmed) return;
     try {
       await cancelTask(id!, domain);
+      toast({ title: t("tasks.taskCancelled") });
       await refresh();
     } catch (error) {
       toast({

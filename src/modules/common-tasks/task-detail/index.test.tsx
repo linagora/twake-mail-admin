@@ -1,13 +1,16 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { TaskStatus } from "../types";
 
 const TASK_ID = vi.hoisted(() => "4ebc9187-1542-4277-8cdb-9ca7576948a2");
 const api = vi.hoisted(() => ({ getTaskDetail: vi.fn(), cancelTask: vi.fn() }));
+const confirm = vi.hoisted(() => vi.fn());
+const toast = vi.hoisted(() => vi.fn());
 
-vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
+vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
+vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => confirm }));
 vi.mock("@/modules/domain-admin/domain-context", () => ({ useDomain: () => null }));
 vi.mock("@/components/custom/header", () => ({ default: () => null }));
 vi.mock("../api-client", () => api);
@@ -31,6 +34,9 @@ function findTaskJson() {
 afterEach(() => {
   cleanup();
   api.getTaskDetail.mockReset();
+  api.cancelTask.mockReset();
+  confirm.mockReset();
+  toast.mockReset();
 });
 
 describe("task detail", () => {
@@ -101,5 +107,30 @@ describe("task detail", () => {
 
     expect(screen.getByRole("button", { name: "tasks.refresh" })).not.toBeNull();
     expect(screen.queryByRole("button", { name: "tasks.cancelButton" })).toBeNull();
+  });
+
+  it("asks for a confirmation before cancelling the task", async () => {
+    api.getTaskDetail.mockResolvedValue({ taskId: TASK_ID, type: "ExpireMailboxTask", status: TaskStatus.IN_PROGRESS });
+    confirm.mockResolvedValue(false);
+    renderTaskDetail();
+    await findTaskJson();
+
+    fireEvent.click(screen.getByRole("button", { name: "tasks.cancelButton" }));
+
+    await waitFor(() => expect(confirm).toHaveBeenCalledWith(expect.objectContaining({ header: "tasks.cancelTitle" })));
+    expect(api.cancelTask).not.toHaveBeenCalled();
+  });
+
+  it("cancels the task and says so once confirmed", async () => {
+    api.getTaskDetail.mockResolvedValue({ taskId: TASK_ID, type: "ExpireMailboxTask", status: TaskStatus.IN_PROGRESS });
+    api.cancelTask.mockResolvedValue(undefined);
+    confirm.mockResolvedValue(true);
+    renderTaskDetail();
+    await findTaskJson();
+
+    fireEvent.click(screen.getByRole("button", { name: "tasks.cancelButton" }));
+
+    await waitFor(() => expect(toast).toHaveBeenCalledWith({ title: "tasks.taskCancelled" }));
+    expect(api.cancelTask).toHaveBeenCalledWith(TASK_ID, undefined);
   });
 });
