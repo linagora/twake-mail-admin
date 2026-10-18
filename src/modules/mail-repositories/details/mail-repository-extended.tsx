@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Download, MoveHorizontal, Trash2, RefreshCw, Loader2 } from "lucide-react";
@@ -58,6 +58,7 @@ function formatDate(d: string | null): string {
 
 export default function MailRepositoryExtended() {
   const { t } = useTranslation();
+  const sortFieldId = useId();
   const { toast } = useToast();
   const confirm = useConfirm();
   const { id } = useParams();
@@ -333,8 +334,9 @@ export default function MailRepositoryExtended() {
 
       {/* Sort controls */}
       <div className="flex items-center gap-2 mt-4 mb-3">
-        <label className="text-sm font-medium">{t("mailRepositories.sortBy")}</label>
+        <label htmlFor={sortFieldId} className="text-sm font-medium">{t("mailRepositories.sortBy")}</label>
         <select
+          id={sortFieldId}
           className="border rounded px-2 py-1 text-sm"
           value={sortField}
           onChange={(e) => setSortField(e.target.value as SortField)}
