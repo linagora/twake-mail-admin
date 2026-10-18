@@ -85,7 +85,7 @@ export type TaskDetailResponse = {
   submitDate: string;
   startedDate: string;
   completedDate: string;
-  cancelledDate?: string;
+  canceledDate?: string;
   failedDate?: string;
   taskId: string;
   additionalInformation: any;

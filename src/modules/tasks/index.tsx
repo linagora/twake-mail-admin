@@ -59,8 +59,9 @@ function formatDate(d: string | null | undefined): string {
 }
 
 // A task ends by completing, failing or being cancelled: WebAdmin sets the matching date only
+// (spelled canceledDate, with a single L, unlike cancelledFrom)
 function endDate(task: TaskDetailResponse): string | null {
-  return task.completedDate ?? task.failedDate ?? task.cancelledDate ?? null;
+  return task.completedDate ?? task.failedDate ?? task.canceledDate ?? null;
 }
 
 function startedCompletedText(task: TaskDetailResponse): string {
@@ -430,10 +431,10 @@ export default function Tasks() {
                 <span>{formatDate(selectedTask.startedDate)}</span>
                 <span className="text-gray-500 font-medium">{t("tasks.completed")}</span>
                 <span>{formatDate(selectedTask.completedDate)}</span>
-                {selectedTask.cancelledDate && (
+                {selectedTask.canceledDate && (
                   <>
                     <span className="text-gray-500 font-medium">{t("tasks.cancelledAt")}</span>
-                    <span>{formatDate(selectedTask.cancelledDate)}</span>
+                    <span>{formatDate(selectedTask.canceledDate)}</span>
                   </>
                 )}
                 {selectedTask.failedDate && (

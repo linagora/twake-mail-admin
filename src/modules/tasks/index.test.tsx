@@ -123,7 +123,7 @@ describe("tasks: end date", () => {
 
   it.each([
     ["failed", "failedDate"],
-    ["canceled", "cancelledDate"],
+    ["canceled", "canceledDate"],
   ])("shows the end of a %s task in the Started / Completed column", async (status, endField) => {
     api.listTasks.mockResolvedValue([endedTask(status, endField)]);
     renderTasks();
@@ -132,6 +132,16 @@ describe("tasks: end date", () => {
 
     expect(startedCompleted.textContent).toContain("→");
     expect(startedCompleted.title).toContain("→");
+  });
+
+  it("shows the cancellation date of a cancelled task in its details", async () => {
+    api.listTasks.mockResolvedValue([endedTask("canceled", "canceledDate")]);
+    renderTasks();
+
+    fireEvent.click(await screen.findByRole("button", { name: TASK_ID }));
+    const dialog = await screen.findByRole("dialog");
+
+    expect(within(dialog).getByText("tasks.cancelledAt")).not.toBeNull();
   });
 
   it("sorts a failed task by its failure date on the Completed sort", async () => {
