@@ -155,8 +155,8 @@ export default function CalendarResourceDetail() {
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">{t("domains.calendarResources.iconLabel")}</label>
-                <div className="mt-1"><ResourceIconPicker value={editIcon} onChange={setEditIcon} /></div>
+                <label id={`${idPrefix}-icon-label`} className="text-sm font-medium text-gray-500">{t("domains.calendarResources.iconLabel")}</label>
+                <div className="mt-1"><ResourceIconPicker value={editIcon} onChange={setEditIcon} labelId={`${idPrefix}-icon-label`} /></div>
               </div>
               <div className="flex justify-end gap-2 pt-1">
                 <button onClick={() => setEditing(false)}

@@ -152,8 +152,8 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                 aria-label={t("domains.calendarResources.fieldDescription")}
                 className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               <div>
-                <label className="text-xs font-medium text-gray-500">{t("domains.calendarResources.iconLabel")}</label>
-                <div className="mt-1"><ResourceIconPicker value={newIcon} onChange={setNewIcon} /></div>
+                <label id={`${idPrefix}-icon-label`} className="text-xs font-medium text-gray-500">{t("domains.calendarResources.iconLabel")}</label>
+                <div className="mt-1"><ResourceIconPicker value={newIcon} onChange={setNewIcon} labelId={`${idPrefix}-icon-label`} /></div>
               </div>
               <div>
                 <label htmlFor={`${idPrefix}-creator`} className="text-xs font-medium text-gray-500">{t("domains.calendarResources.creatorLabel")} <span className="text-red-500">*</span></label>
