@@ -154,14 +154,16 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
                   className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2"
                 >
                   <h4 className="min-w-0 text-sm font-medium leading-none break-all">
-                    <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
+                    {/* Text separators, not only margins: the heading is read as one string */}
+                    <span className="text-gray-500 mr-1">{offset + index + 1}/</span>{" "}
                     <Link
                       to={`/domains/domain/${encodeURIComponent(domain)}/team-mailbox/${encodeURIComponent(mb.name)}`}
                       className="text-blue-600 hover:underline"
                     >
                       {mb.name}
-                    </Link>
-                    <span className="text-xs text-muted-foreground ml-2">{mb.emailAddress}</span>
+                    </Link>{" "}
+                    <span className="sr-only">— </span>
+                    <span className="text-xs text-muted-foreground ml-1">{mb.emailAddress}</span>
                   </h4>
                   {canDelete && (
                     <button
