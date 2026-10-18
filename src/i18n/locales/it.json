@@ -1363,6 +1363,7 @@
     "searchByGroupPlaceholder": "Gruppo (facoltativo)",
     "searchByGroupHint": "Limita la ricerca a un solo gruppo di listener, il che è molto più veloce se conosci il gruppo.",
     "searchError": "Errore durante la ricerca dell'evento",
+    "notFound": "Nessun evento in dead letter trovato con questo ID.",
     "groupLabel": "Gruppo",
     "insertionIdLabel": "ID di inserimento",
     "paginationInfo": "Pagina {{page}} — {{limit}} eventi per pagina / Totale: {{total}}",

@@ -1363,6 +1363,7 @@
     "searchByGroupPlaceholder": "Gruppe (optional)",
     "searchByGroupHint": "Beschränkt die Suche auf eine einzelne Listener-Gruppe, was deutlich schneller ist, wenn die Gruppe bekannt ist.",
     "searchError": "Fehler bei der Suche nach dem Ereignis",
+    "notFound": "Kein Dead-Letter-Ereignis mit dieser ID gefunden.",
     "groupLabel": "Gruppe",
     "insertionIdLabel": "Einfüge-ID",
     "paginationInfo": "Seite {{page}} — {{limit}} Ereignisse pro Seite / Gesamt: {{total}}",

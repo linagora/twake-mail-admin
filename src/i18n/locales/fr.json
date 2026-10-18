@@ -1364,6 +1364,7 @@
     "searchByGroupPlaceholder": "Groupe (optionnel)",
     "searchByGroupHint": "Restreint la recherche à un seul groupe de listeners, ce qui est nettement plus rapide lorsque le groupe est connu.",
     "searchError": "Erreur lors de la recherche d'événement",
+    "notFound": "Aucun événement en dead letter trouvé avec cet ID.",
     "groupLabel": "Groupe",
     "insertionIdLabel": "ID d'insertion",
     "redeliverGroupAction": "Relivrer les événements du groupe",

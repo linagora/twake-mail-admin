@@ -1362,6 +1362,7 @@
     "searchByGroupPlaceholder": "Nhóm (tùy chọn)",
     "searchByGroupHint": "Thu hẹp tìm kiếm vào một nhóm listener duy nhất, nhanh hơn đáng kể khi đã biết nhóm.",
     "searchError": "Lỗi khi tìm sự kiện",
+    "notFound": "Không tìm thấy sự kiện dead letter nào với ID này.",
     "groupLabel": "Nhóm",
     "insertionIdLabel": "ID chèn",
     "paginationInfo": "Trang {{page}} — {{limit}} sự kiện mỗi trang / Tổng: {{total}}",

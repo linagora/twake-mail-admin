@@ -1,4 +1,5 @@
 import { useState, FormEvent } from "react";
+import axios from "axios";
 import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { searchDeadLetterEventByEventId } from "./api-client";
@@ -24,6 +25,7 @@ export default function SearchByEventId() {
     insertionId: string;
     json: Record<string, unknown>;
   } | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
   if (!canSearch) return null;
 
@@ -34,6 +36,7 @@ export default function SearchByEventId() {
 
     setIsLoading(true);
     setResult(null);
+    setNotFound(false);
     try {
       const found = await searchDeadLetterEventByEventId(
         trimmed,
@@ -41,6 +44,11 @@ export default function SearchByEventId() {
       );
       setResult(found);
     } catch (error) {
+      // WebAdmin answers an unknown event with an empty 404: the search worked, it found nothing
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setNotFound(true);
+        return;
+      }
       toast({
         title: t("eventDeadletter.searchError"),
         description: <ErrorDisplayer error={error} />,
@@ -95,6 +103,12 @@ export default function SearchByEventId() {
       </form>
 
       {isLoading && <p className="mt-3">{t("common.loading")}</p>}
+
+      {notFound && (
+        <p role="status" className="mt-3 text-sm text-gray-500">
+          {t("eventDeadletter.notFound")}
+        </p>
+      )}
 
       {result && (
         <div className="mt-4 space-y-2">

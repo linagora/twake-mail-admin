@@ -1363,6 +1363,7 @@
     "searchByGroupPlaceholder": "Бүлэг (заавал биш)",
     "searchByGroupHint": "Хайлтыг нэг сонсогч бүлгээр хязгаарлана; бүлэг нь мэдэгдэж байвал илүү хурдан.",
     "searchError": "Үйл явдал хайх үед алдаа гарлаа",
+    "notFound": "Энэ ID-тай dead letter үйл явдал олдсонгүй.",
     "groupLabel": "Бүлэг",
     "insertionIdLabel": "Оруулах ID",
     "paginationInfo": "Хуудас {{page}} — хуудсанд {{limit}} үйл явдал / Нийт: {{total}}",

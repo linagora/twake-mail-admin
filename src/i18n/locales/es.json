@@ -1363,6 +1363,7 @@
     "searchByGroupPlaceholder": "Grupo (opcional)",
     "searchByGroupHint": "Limita la búsqueda a un único grupo de listeners, lo que es mucho más rápido si se conoce el grupo.",
     "searchError": "Error al buscar el evento",
+    "notFound": "No se encontró ningún evento en dead letter con este ID.",
     "groupLabel": "Grupo",
     "insertionIdLabel": "ID de inserción",
     "paginationInfo": "Página {{page}} — {{limit}} eventos por página / Total: {{total}}",

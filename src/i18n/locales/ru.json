@@ -1365,6 +1365,7 @@
     "searchByGroupPlaceholder": "Группа (необязательно)",
     "searchByGroupHint": "Ограничивает поиск одной группой слушателей, что значительно быстрее, если группа известна.",
     "searchError": "Ошибка поиска события",
+    "notFound": "Событие с этим ID в dead letter не найдено.",
     "groupLabel": "Группа",
     "insertionIdLabel": "ID вставки",
     "paginationInfo": "Страница {{page}} — {{limit}} событий на странице / Всего: {{total}}",
