@@ -63,3 +63,16 @@ describe("CalendarDomainResources", () => {
     expect(screen.getByRole("textbox", { name: "domains.calendarResources.administratorsLabel" })).toBeTruthy();
   });
 });
+
+describe("CalendarDomainResources: phone layout", () => {
+  it("wraps the actions under a readable name instead of breaking it in the middle of a word", async () => {
+    api.getResources.mockResolvedValue([resource("room-2", "QA Room 2")]);
+    render(<CalendarDomainResources domain="open-paas.org" defaultOpen />);
+
+    const heading = (await screen.findByRole("link", { name: "QA Room 2" })).closest("h4")!;
+    expect(heading.parentElement!.className).toContain("flex-wrap");
+    expect(heading.className).toContain("min-w-48");
+    expect(heading.className).toContain("break-words");
+    expect(heading.className).not.toContain("break-all");
+  });
+});

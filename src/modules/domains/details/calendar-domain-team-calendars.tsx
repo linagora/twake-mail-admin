@@ -194,8 +194,9 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
                 goToPage={goToPage}
               />
               {paginated.map((teamCalendar, index) => (
-                <div key={teamCalendar.id} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2">
-                  <div className="flex-1 min-w-0">
+                <div key={teamCalendar.id} className="p-4 bg-gray-50 rounded-2 my-2 flex flex-wrap justify-between items-center gap-2">
+                  {/* Wide enough to stay readable: on a phone the actions wrap under the name instead of squeezing it */}
+                  <div className="flex-1 min-w-48">
                     {editingId === teamCalendar.id ? (
                       <div className="flex items-center gap-2">
                         <span className="text-gray-500">{offset + index + 1}/</span>
@@ -207,7 +208,7 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
                           className="flex-1 px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
                       </div>
                     ) : (
-                      <h4 className="text-sm font-medium leading-none truncate">
+                      <h4 className="text-sm font-medium leading-snug break-words">
                         <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                         {teamCalendar.name}
                         {teamCalendar.displayName && teamCalendar.displayName !== teamCalendar.name && (
@@ -216,7 +217,7 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
                       </h4>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0 ml-auto">
                     {editingId === teamCalendar.id ? (
                       <>
                         <button onClick={() => handleUpdate(teamCalendar)} disabled={!editDisplayName.trim()}

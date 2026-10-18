@@ -221,8 +221,9 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                 goToPage={goToPage}
               />
               {paginated.map((resource, index) => (
-                <div key={resource.id} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2">
-                  <h4 className="min-w-0 text-sm font-medium leading-none break-all">
+                <div key={resource.id} className="p-4 bg-gray-50 rounded-2 my-2 flex flex-wrap justify-between items-center gap-2">
+                  {/* Wide enough to stay readable: on a phone the actions wrap under the name instead of squeezing it */}
+                  <h4 className="flex-1 min-w-48 text-sm font-medium leading-snug break-words">
                     <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                     <a href={resourceLink ? resourceLink(resource.id) : `/domains/domain/${encodeURIComponent(domain)}/resource/${encodeURIComponent(resource.id)}`}
                       className="text-blue-600 hover:underline">{resourceDisplayName(resource)}</a>
@@ -230,7 +231,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                       <span className="text-xs text-muted-foreground ml-2">{resource.description}</span>
                     )}
                   </h4>
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0 ml-auto">
                     <DomainCalendarControls
                       domain={domain}
                       calendarId={resource.id}

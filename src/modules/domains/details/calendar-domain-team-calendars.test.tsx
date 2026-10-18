@@ -65,3 +65,16 @@ describe("team calendars: field labels", () => {
     expect(email.className).toContain("min-w-0");
   });
 });
+
+describe("team calendars: phone layout", () => {
+  it("wraps the actions under the name and display name instead of truncating them", async () => {
+    await openSection();
+
+    const heading = screen.getByText("Sales").closest("h4")!;
+    const nameBlock = heading.parentElement!;
+    expect(nameBlock.parentElement!.className).toContain("flex-wrap");
+    expect(nameBlock.className).toContain("min-w-48");
+    expect(heading.className).toContain("break-words");
+    expect(heading.className).not.toContain("truncate");
+  });
+});
