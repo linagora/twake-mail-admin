@@ -34,4 +34,10 @@ describe("DialogContent", () => {
     expect(classes).toContain("grid-cols-[minmax(0,1fr)]");
     expect(classes).toContain("max-w-md");
   });
+
+  it("names the corner close button in the current language", () => {
+    renderDialog();
+
+    expect(screen.getByRole("button", { name: "common.close" })).not.toBeNull();
+  });
 });
