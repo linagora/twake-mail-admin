@@ -322,3 +322,20 @@ describe("booking link dialog: availability rules", () => {
     expect(saveButton()).toHaveProperty("disabled", true);
   });
 });
+
+describe("booking link row: active state", () => {
+  it("writes out that a link is inactive", async () => {
+    mocks.api.getUserBookingLinks.mockResolvedValue([
+      { publicId: "abc", calendarUrl: CALENDAR_URL, durationMinutes: 30, active: false },
+    ]);
+    await openSection();
+
+    expect(screen.getByText(/users.bookingLinks.inactive/)).toBeTruthy();
+  });
+
+  it("does not flag an active link", async () => {
+    await openSection();
+
+    expect(screen.queryByText(/users.bookingLinks.inactive/)).toBeNull();
+  });
+});

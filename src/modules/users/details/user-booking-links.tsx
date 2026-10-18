@@ -267,7 +267,9 @@ function BookingLinkRow({
 
   return (
     <div className="flex items-start gap-3 py-1">
+      {/* The state is also written out below: the colour alone tells nothing to a screen reader. */}
       <span
+        aria-hidden="true"
         className={`inline-block w-2 h-2 rounded-full shrink-0 mt-1.5 ${link.active ? "bg-green-500" : "bg-gray-400"}`}
         title={link.active ? t("users.bookingLinks.active") : t("users.bookingLinks.inactive")}
       />
@@ -293,6 +295,9 @@ function BookingLinkRow({
           <p className="text-xs text-gray-400 truncate" title={link.calendarUrl}>{calendarName ?? link.calendarUrl}</p>
         )}
         <p className="text-xs text-gray-400">
+          {!link.active && (
+            <span className="mr-2 font-medium text-gray-600">{t("users.bookingLinks.inactive")} ·</span>
+          )}
           {link.durationMinutes} min
           {rulesCount > 0 && (
             <span className="ml-2">
