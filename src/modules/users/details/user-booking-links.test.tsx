@@ -266,3 +266,59 @@ describe("booking link whose calendar was deleted", () => {
     expect(await screen.findByText("users.bookingLinks.calendarDeleted")).toBeTruthy();
   });
 });
+
+describe("booking link dialog: availability rules", () => {
+  const addRule = async () => {
+    await openCreate();
+    fireEvent.click(screen.getByText("users.bookingLinks.addRule"));
+  };
+
+  it("accepts the default rule", async () => {
+    await addRule();
+
+    expect(screen.queryByText("users.bookingLinks.ruleRangeInvalid")).toBeNull();
+    expect(screen.queryByText("users.bookingLinks.timeZoneInvalid")).toBeNull();
+    expect(createButton()).toHaveProperty("disabled", false);
+  });
+
+  it("flags an unknown time zone next to the rule and disables Create", async () => {
+    await addRule();
+
+    const timeZone = screen.getByLabelText("users.bookingLinks.timeZone");
+    fireEvent.change(timeZone, { target: { value: "Mars/Olympus" } });
+
+    expect(timeZone.getAttribute("aria-invalid")).toBe("true");
+    expect(screen.getByText("users.bookingLinks.timeZoneInvalid")).toBeTruthy();
+    expect(createButton()).toHaveProperty("disabled", true);
+  });
+
+  it("flags a rule ending before it starts and disables Create", async () => {
+    await addRule();
+
+    fireEvent.change(screen.getByLabelText("users.bookingLinks.ruleStart"), { target: { value: "12:00" } });
+    fireEvent.change(screen.getByLabelText("users.bookingLinks.ruleEnd"), { target: { value: "09:00" } });
+
+    expect(screen.getByLabelText("users.bookingLinks.ruleEnd").getAttribute("aria-invalid")).toBe("true");
+    expect(screen.getByText("users.bookingLinks.ruleRangeInvalid")).toBeTruthy();
+    expect(createButton()).toHaveProperty("disabled", true);
+  });
+
+  it("disables Save of the edit dialog on an invalid rule", async () => {
+    mocks.api.getUserBookingLinks.mockResolvedValue([
+      {
+        publicId: "abc",
+        calendarUrl: CALENDAR_URL,
+        durationMinutes: 30,
+        active: true,
+        availabilityRules: [{ type: "weekly", dayOfWeek: "MON", start: "09:00", end: "17:00", timeZone: "UTC" }],
+      },
+    ]);
+    await openSection();
+    fireEvent.click(screen.getByTitle("users.bookingLinks.editTitle"));
+    expect(saveButton()).toHaveProperty("disabled", false);
+
+    fireEvent.change(screen.getByLabelText("users.bookingLinks.timeZone"), { target: { value: "Nowhere" } });
+
+    expect(saveButton()).toHaveProperty("disabled", true);
+  });
+});

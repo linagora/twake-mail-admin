@@ -1077,6 +1077,8 @@
       "duplicateTitle": "Dupliquer le lien de réservation",
       "copyName": "{{name}} (copie)",
       "timeZone": "Fuseau horaire",
+      "timeZoneInvalid": "Fuseau horaire inconnu : choisissez-en un dans la liste, par ex. Europe/Paris.",
+      "ruleRangeInvalid": "L'heure de fin doit être postérieure à l'heure de début.",
       "rulesCount_one": "{{count}} règle",
       "rulesCount_other":"{{count}} règles",
       "clearRules": "Supprimer toutes les règles",

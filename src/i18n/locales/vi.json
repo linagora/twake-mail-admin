@@ -1077,6 +1077,8 @@
       "duplicateTitle": "Nhân bản liên kết đặt lịch",
       "copyName": "{{name}} (bản sao)",
       "timeZone": "Múi giờ",
+      "timeZoneInvalid": "Múi giờ không xác định: hãy chọn một múi giờ trong danh sách, ví dụ Europe/Paris.",
+      "ruleRangeInvalid": "Giờ kết thúc phải sau giờ bắt đầu.",
       "rulesCount_other":"{{count}} quy tắc",
       "clearRules": "Xóa tất cả quy tắc",
       "clearRulesWarning": "Tất cả quy tắc sẽ bị xóa khi lưu.",

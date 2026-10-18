@@ -1077,6 +1077,8 @@
       "duplicateTitle": "Buchungslink duplizieren",
       "copyName": "{{name}} (Kopie)",
       "timeZone": "Zeitzone",
+      "timeZoneInvalid": "Unbekannte Zeitzone: Wählen Sie eine aus der Liste, z. B. Europe/Paris.",
+      "ruleRangeInvalid": "Die Endzeit muss nach der Startzeit liegen.",
       "rulesCount_one": "{{count}} Regel",
       "rulesCount_other":"{{count}} Regeln",
       "clearRules": "Alle Regeln entfernen",

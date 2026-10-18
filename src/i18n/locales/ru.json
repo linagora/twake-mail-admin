@@ -1077,6 +1077,8 @@
       "duplicateTitle": "Дублировать ссылку для записи",
       "copyName": "{{name}} (копия)",
       "timeZone": "Часовой пояс",
+      "timeZoneInvalid": "Неизвестный часовой пояс: выберите его из списка, например Europe/Paris.",
+      "ruleRangeInvalid": "Время окончания должно быть позже времени начала.",
       "rulesCount_one": "{{count}} правило",
       "rulesCount_few": "{{count}} правила",
       "rulesCount_many": "{{count}} правил",

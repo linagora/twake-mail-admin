@@ -1077,6 +1077,8 @@
       "duplicateTitle": "Захиалгын холбоосыг хуулбарлах",
       "copyName": "{{name}} (хуулбар)",
       "timeZone": "Цагийн бүс",
+      "timeZoneInvalid": "Үл мэдэгдэх цагийн бүс: жагсаалтаас сонгоно уу, жишээ нь Europe/Paris.",
+      "ruleRangeInvalid": "Дуусах цаг эхлэх цагаас хойш байх ёстой.",
       "rulesCount_one": "{{count}} дүрэм",
       "rulesCount_other":"{{count}} дүрэм",
       "clearRules": "Бүх дүрмийг устгах",

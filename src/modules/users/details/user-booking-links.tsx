@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Plus, Minus, Copy, Pencil, Trash2, RefreshCw, Loader2, Save, CalendarX } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import { getUserBookingLinks, createUserBookingLink, updateUserBookingLink, dele
 import { BookingLink, AvailabilityRule, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserCalendarsResponseType, UserCalendar } from "../types";
 import { isBookableCalendar } from "./bookable-calendars";
 import { isValidDurationMinutes, parseDurationMinutes } from "./booking-link-duration";
+import { areValidRules, DEFAULT_RULE_END, DEFAULT_RULE_START, listTimeZones, ruleErrors } from "./booking-link-rules";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -99,7 +100,9 @@ function isOfferedCalendar(value: string, options: CalendarOption[]): boolean {
   return options.length === 0 || options.some((o) => o.value === value);
 }
 
-const EMPTY_RULE: AvailabilityRule = { type: "weekly", dayOfWeek: "MON", start: "09:00", end: "17:00", timeZone: "UTC" };
+const EMPTY_RULE: AvailabilityRule = { type: "weekly", dayOfWeek: "MON", start: DEFAULT_RULE_START, end: DEFAULT_RULE_END, timeZone: "UTC" };
+
+const TIME_ZONES = listTimeZones();
 
 function RulesEditor({
   rules,
@@ -109,6 +112,8 @@ function RulesEditor({
   onChange: (rules: AvailabilityRule[]) => void;
 }) {
   const { t } = useTranslation();
+  const idPrefix = useId();
+  const timeZonesId = `${idPrefix}-time-zones`;
 
   const update = (index: number, patch: Partial<AvailabilityRule>) => {
     onChange(rules.map((r, i) => (i === index ? { ...r, ...patch } : r)));
@@ -132,62 +137,87 @@ function RulesEditor({
         // Bound the rule list height so a long availability set (10+ rules)
         // scrolls on its own instead of pushing the dialog past the screen.
         <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-          {rules.map((rule, i) => (
-            // flex-wrap: on a phone the fields exceed the dialog width; let them wrap
-            // instead of widening the whole dialog past the screen.
-            <div key={i} className="flex flex-wrap items-center gap-2 p-2 border rounded-md bg-gray-50">
-              <select
-                value={rule.dayOfWeek ?? "MON"}
-                onChange={(e) => update(i, { dayOfWeek: e.target.value })}
-                aria-label={t("users.bookingLinks.ruleDay")}
-                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              >
-                {DAYS.map((d) => (
-                  <option key={d} value={d}>{t(`users.bookingLinks.days.${d}`)}</option>
-                ))}
-              </select>
-              <input
-                type="time"
-                value={rule.start ?? "09:00"}
-                onChange={(e) => update(i, { start: e.target.value })}
-                aria-label={t("users.bookingLinks.ruleStart")}
-                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              />
-              <span className="shrink-0 text-xs text-gray-400">→</span>
-              <input
-                type="time"
-                value={rule.end ?? "17:00"}
-                onChange={(e) => update(i, { end: e.target.value })}
-                aria-label={t("users.bookingLinks.ruleEnd")}
-                className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="text"
-                value={rule.timeZone ?? ""}
-                onChange={(e) => update(i, { timeZone: e.target.value })}
-                placeholder={t("users.bookingLinks.timeZone")}
-                aria-label={t("users.bookingLinks.timeZone")}
-                className="flex-1 min-w-[80px] px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                onClick={() => duplicate(i)}
-                className="shrink-0 p-1 rounded-md hover:bg-gray-200 transition"
-                title={t("users.bookingLinks.duplicateRule")}
-                type="button"
-              >
-                <Copy className="w-3.5 h-3.5 text-blue-600" />
-              </button>
-              <button
-                onClick={() => remove(i)}
-                className="shrink-0 p-1 rounded-md hover:bg-gray-200 transition"
-                title={t("users.bookingLinks.removeRule")}
-                type="button"
-              >
-                <Minus className="w-3.5 h-3.5 text-red-600" />
-              </button>
-            </div>
-          ))}
+          {rules.map((rule, i) => {
+            const errors = ruleErrors(rule);
+            const rangeErrorId = `${idPrefix}-${i}-range-error`;
+            const timeZoneErrorId = `${idPrefix}-${i}-time-zone-error`;
+            return (
+              <div key={i} className="p-2 border rounded-md bg-gray-50">
+                {/* flex-wrap: on a phone the fields exceed the dialog width; let them wrap
+                    instead of widening the whole dialog past the screen. */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <select
+                    value={rule.dayOfWeek ?? "MON"}
+                    onChange={(e) => update(i, { dayOfWeek: e.target.value })}
+                    aria-label={t("users.bookingLinks.ruleDay")}
+                    className="shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                  >
+                    {DAYS.map((d) => (
+                      <option key={d} value={d}>{t(`users.bookingLinks.days.${d}`)}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="time"
+                    value={rule.start ?? DEFAULT_RULE_START}
+                    onChange={(e) => update(i, { start: e.target.value })}
+                    aria-label={t("users.bookingLinks.ruleStart")}
+                    aria-invalid={errors.range}
+                    aria-describedby={errors.range ? rangeErrorId : undefined}
+                    className={`shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 ${errors.range ? "border-red-500" : ""}`}
+                  />
+                  <span className="shrink-0 text-xs text-gray-400">→</span>
+                  <input
+                    type="time"
+                    value={rule.end ?? DEFAULT_RULE_END}
+                    onChange={(e) => update(i, { end: e.target.value })}
+                    aria-label={t("users.bookingLinks.ruleEnd")}
+                    aria-invalid={errors.range}
+                    aria-describedby={errors.range ? rangeErrorId : undefined}
+                    className={`shrink-0 px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 ${errors.range ? "border-red-500" : ""}`}
+                  />
+                  <input
+                    type="text"
+                    list={TIME_ZONES.length > 0 ? timeZonesId : undefined}
+                    value={rule.timeZone ?? ""}
+                    onChange={(e) => update(i, { timeZone: e.target.value })}
+                    placeholder={t("users.bookingLinks.timeZone")}
+                    aria-label={t("users.bookingLinks.timeZone")}
+                    aria-invalid={errors.timeZone}
+                    aria-describedby={errors.timeZone ? timeZoneErrorId : undefined}
+                    className={`flex-1 min-w-[80px] px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 ${errors.timeZone ? "border-red-500" : ""}`}
+                  />
+                  <button
+                    onClick={() => duplicate(i)}
+                    className="shrink-0 p-1 rounded-md hover:bg-gray-200 transition"
+                    title={t("users.bookingLinks.duplicateRule")}
+                    type="button"
+                  >
+                    <Copy className="w-3.5 h-3.5 text-blue-600" />
+                  </button>
+                  <button
+                    onClick={() => remove(i)}
+                    className="shrink-0 p-1 rounded-md hover:bg-gray-200 transition"
+                    title={t("users.bookingLinks.removeRule")}
+                    type="button"
+                  >
+                    <Minus className="w-3.5 h-3.5 text-red-600" />
+                  </button>
+                </div>
+                {errors.range && (
+                  <p id={rangeErrorId} className="text-xs text-red-500 mt-1">{t("users.bookingLinks.ruleRangeInvalid")}</p>
+                )}
+                {errors.timeZone && (
+                  <p id={timeZoneErrorId} className="text-xs text-red-500 mt-1">{t("users.bookingLinks.timeZoneInvalid")}</p>
+                )}
+              </div>
+            );
+          })}
         </div>
+      )}
+      {TIME_ZONES.length > 0 && (
+        <datalist id={timeZonesId}>
+          {TIME_ZONES.map((zone) => <option key={zone} value={zone} />)}
+        </datalist>
       )}
       <Button
         type="button"
@@ -717,7 +747,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
               <Button
                 size="sm"
                 onClick={handleCreate}
-                disabled={creating || !createForm.calendarUrl.trim() || !isOfferedCalendar(createForm.calendarUrl, bookableCalendarOptions) || createDurationMinutes === null}
+                disabled={creating || !createForm.calendarUrl.trim() || !isOfferedCalendar(createForm.calendarUrl, bookableCalendarOptions) || createDurationMinutes === null || !areValidRules(createRules)}
               >
                 {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
                 {t("common.create")}
@@ -834,7 +864,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
                 <Button
                   size="sm"
                   onClick={handleUpdate}
-                  disabled={saving || !isOfferedCalendar(editForm.calendarUrl ?? "", bookableCalendarOptions) || editDurationMinutes === null}
+                  disabled={saving || !isOfferedCalendar(editForm.calendarUrl ?? "", bookableCalendarOptions) || editDurationMinutes === null || (!editClearRules && !areValidRules(editRules ?? []))}
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                   {t("common.save")}

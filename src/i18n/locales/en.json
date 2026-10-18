@@ -1077,6 +1077,8 @@
       "duplicateTitle": "Duplicate booking link",
       "copyName": "{{name}} (copy)",
       "timeZone": "Time zone",
+      "timeZoneInvalid": "Unknown time zone: pick one from the list, e.g. Europe/Paris.",
+      "ruleRangeInvalid": "The end time must be after the start time.",
       "rulesCount_one": "{{count}} rule",
       "rulesCount_other":"{{count}} rules",
       "clearRules": "Remove all rules",

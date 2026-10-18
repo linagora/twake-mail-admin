@@ -1077,6 +1077,8 @@
       "duplicateTitle": "Duplicar enlace de reserva",
       "copyName": "{{name}} (copia)",
       "timeZone": "Zona horaria",
+      "timeZoneInvalid": "Zona horaria desconocida: elija una de la lista, p. ej. Europe/Paris.",
+      "ruleRangeInvalid": "La hora de fin debe ser posterior a la hora de inicio.",
       "rulesCount_one": "{{count}} regla",
       "rulesCount_other":"{{count}} reglas",
       "clearRules": "Quitar todas las reglas",

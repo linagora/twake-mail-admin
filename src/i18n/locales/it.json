@@ -1077,6 +1077,8 @@
       "duplicateTitle": "Duplica link di prenotazione",
       "copyName": "{{name}} (copia)",
       "timeZone": "Fuso orario",
+      "timeZoneInvalid": "Fuso orario sconosciuto: scegline uno dall'elenco, ad es. Europe/Paris.",
+      "ruleRangeInvalid": "L'ora di fine deve essere successiva all'ora di inizio.",
       "rulesCount_one": "{{count}} regola",
       "rulesCount_other":"{{count}} regole",
       "clearRules": "Rimuovi tutte le regole",
