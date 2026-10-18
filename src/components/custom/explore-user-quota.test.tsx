@@ -122,3 +122,31 @@ describe("explore user quota: search failure", () => {
     expect(screen.queryByText("exploreQuota.empty")).toBeNull();
   });
 });
+
+describe("explore user quota: stale results", () => {
+  it("clears the previous results when the new range is invalid", async () => {
+    api.get.mockResolvedValue([]);
+    renderOpened();
+    search("10", "90");
+    await screen.findByText("exploreQuota.empty");
+
+    search("90", "10");
+
+    expect(screen.getByRole("alert").textContent).toBe("exploreQuota.minAboveMax");
+    expect(screen.queryByText("exploreQuota.empty")).toBeNull();
+  });
+});
+
+describe("explore user quota: keyboard", () => {
+  it("runs the search when the form is submitted with Enter", async () => {
+    api.get.mockResolvedValue([]);
+    renderOpened();
+    fireEvent.change(minInput(), { target: { value: "0" } });
+    fireEvent.change(maxInput(), { target: { value: "100" } });
+
+    fireEvent.submit(maxInput().form!);
+
+    await waitFor(() => expect(api.get).toHaveBeenCalledWith(
+      "/quota/users?minOccupationRatio=0&maxOccupationRatio=1&limit=50&offset=0&domain=example.com"));
+  });
+});

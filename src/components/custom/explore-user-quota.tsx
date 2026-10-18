@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { FormEvent, useId, useState } from "react";
 import { Link } from "react-router";
 import { ChevronDown, ChevronRight, Search, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -114,8 +114,11 @@ export default function ExploreUserQuota({ domain }: Props) {
   const fetchUsers = async (targetPage: number) => {
     const range = validateRange(minPercent, maxPercent);
     if (!isValidRange(range)) {
+      // The previous results no longer match the fields
       setRangeErrors(range);
       setError(null);
+      setResults([]);
+      setSearched(false);
       return;
     }
     const { minRatio, maxRatio } = range;
@@ -145,7 +148,10 @@ export default function ExploreUserQuota({ domain }: Props) {
     }
   };
 
-  const handleSearch = () => fetchUsers(1);
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    fetchUsers(1);
+  };
 
   const hasMore = results.length >= PAGE_LIMIT;
 
@@ -163,7 +169,7 @@ export default function ExploreUserQuota({ domain }: Props) {
         <div className="mt-2">
           {/* Search controls */}
           <div className="p-4 bg-gray-50 rounded-2 space-y-3">
-            <div className="flex items-start gap-3 flex-wrap">
+            <form onSubmit={handleSearch} noValidate className="flex items-start gap-3 flex-wrap">
               <div>
                 <label htmlFor={`${idPrefix}-min`} className="text-xs text-gray-500 font-medium">{t("exploreQuota.minOccupation")}</label>
                 <input
@@ -204,11 +210,11 @@ export default function ExploreUserQuota({ domain }: Props) {
                   </p>
                 )}
               </div>
-              <Button size="sm" onClick={handleSearch} disabled={loading} className="mt-5">
+              <Button type="submit" size="sm" disabled={loading} className="mt-5">
                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Search className="w-4 h-4 mr-1" />}
                 {t("common.search")}
               </Button>
-            </div>
+            </form>
 
             {error && <p className="text-red-500 text-sm mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
