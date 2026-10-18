@@ -2,6 +2,7 @@ import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NetworkChannel } from "../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useReturnFocus } from "@/hooks/use-return-focus";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import { formatByteSize } from "@/i18n/format-size";
 
@@ -66,6 +67,12 @@ export default function ChannelGrid({
   const [internalSortAsc, setInternalSortAsc] = useState(true);
   const [internalPage, setInternalPage] = useState(1);
   const [selectedChannel, setSelectedChannel] = useState<NetworkChannel | null>(null);
+  // The detail modal is controlled: bring the focus back to the row control that opened it
+  const { rememberFocus, restoreFocus } = useReturnFocus();
+  const openChannel = (channel: NetworkChannel) => {
+    rememberFocus();
+    setSelectedChannel(channel);
+  };
   const [search, setSearch] = useState("");
 
   const sortField = isControlled ? (controlledSortField ?? "username") : internalSortField;
@@ -188,14 +195,14 @@ export default function ChannelGrid({
                 <div
                   key={index}
                   className="grid grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-2 items-center p-3 bg-gray-50 rounded-2 cursor-pointer hover:bg-gray-100 transition text-sm"
-                  onClick={() => setSelectedChannel(channel)}
+                  onClick={() => openChannel(channel)}
                 >
                   <span className="text-muted-foreground w-10">{globalIndex}.</span>
                   {/* A real button so the detail opens from the keyboard */}
                   <button
                     type="button"
                     className="font-mono truncate text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                    onClick={(e) => { e.stopPropagation(); setSelectedChannel(channel); }}
+                    onClick={(e) => { e.stopPropagation(); openChannel(channel); }}
                   >
                     {channel.username}
                   </button>
@@ -231,7 +238,7 @@ export default function ChannelGrid({
 
       {/* Detail dialog */}
       <Dialog open={!!selectedChannel} onOpenChange={(v) => !v && setSelectedChannel(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto" onCloseAutoFocus={restoreFocus}>
           <DialogHeader>
             <DialogTitle>{t("networkChannels.channelDetail", { address: selectedChannel?.remoteAddress })}</DialogTitle>
           </DialogHeader>

@@ -13,6 +13,7 @@ import {
 import { DomainContact } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useReturnFocus } from "@/hooks/use-return-focus";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -86,6 +87,9 @@ export default function DomainContacts({ domain }: Props) {
   const [editSurname, setEditSurname] = useState("");
   const [saving, setSaving] = useState(false);
 
+  // Both modals are controlled: bring the focus back to the row control that opened them
+  const { rememberFocus, restoreFocus } = useReturnFocus();
+
   const filtered = useMemo(() => {
     if (!contacts) return [];
     const sorted = [...contacts].sort((a, b) => a.localeCompare(b));
@@ -151,6 +155,7 @@ export default function DomainContacts({ domain }: Props) {
   };
 
   const openView = async (email: string) => {
+    rememberFocus();
     setViewLoading(true);
     setViewContact(null);
     try {
@@ -174,6 +179,7 @@ export default function DomainContacts({ domain }: Props) {
   };
 
   const openEditFromList = async (email: string) => {
+    rememberFocus();
     try {
       const contact = await getDomainContact(domain, usernameFromEmail(email));
       setEditContact(contact);
@@ -365,7 +371,11 @@ export default function DomainContacts({ domain }: Props) {
 
       {/* View modal */}
       <Dialog open={!!viewContact || viewLoading} onOpenChange={(v) => { if (!v) { setViewContact(null); setViewLoading(false); } }}>
-        <DialogContent className="max-w-md">
+        <DialogContent
+          className="max-w-md"
+          // Switching to the edit modal: the focus goes there, and back to the row once it closes
+          onCloseAutoFocus={(e) => (editContact ? e.preventDefault() : restoreFocus(e))}
+        >
           <DialogHeader>
             <DialogTitle>{t("domains.contacts.detailTitle")}</DialogTitle>
           </DialogHeader>
@@ -395,7 +405,7 @@ export default function DomainContacts({ domain }: Props) {
 
       {/* Edit modal */}
       <Dialog open={!!editContact} onOpenChange={(v) => { if (!v) setEditContact(null); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md" onCloseAutoFocus={restoreFocus}>
           <DialogHeader>
             <DialogTitle>{t("domains.contacts.editTitle", { email: editContact?.emailAddress })}</DialogTitle>
           </DialogHeader>

@@ -15,6 +15,7 @@ import {
 } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useReturnFocus } from "@/hooks/use-return-focus";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -58,6 +59,9 @@ export default function UserIdentities({ username }: Props) {
   const [editForm, setEditForm] = useState<JmapIdentityUpdatePayload>({});
   const [saving, setSaving] = useState(false);
 
+  // Both modals are controlled: bring the focus back to the row control that opened them
+  const { rememberFocus, restoreFocus } = useReturnFocus();
+
   if (!canView) return null;
 
   const handleCreate = async () => {
@@ -77,6 +81,16 @@ export default function UserIdentities({ username }: Props) {
     } finally {
       setCreating(false);
     }
+  };
+
+  const openView = (identity: JmapIdentity) => {
+    rememberFocus();
+    setViewIdentity(identity);
+  };
+
+  const openEditFromList = (identity: JmapIdentity) => {
+    rememberFocus();
+    openEdit(identity);
   };
 
   const openEdit = (identity: JmapIdentity) => {
@@ -238,7 +252,7 @@ export default function UserIdentities({ username }: Props) {
                 <div
                   key={identity.id}
                   className="p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-start cursor-pointer hover:bg-gray-100 transition"
-                  onClick={() => setViewIdentity(identity)}
+                  onClick={() => openView(identity)}
                 >
                   {/* min-w-0 lets an unbroken name or address wrap instead of widening the page */}
                   <div className="min-w-0 flex-1">
@@ -248,7 +262,7 @@ export default function UserIdentities({ username }: Props) {
                       <button
                         type="button"
                         className="text-left break-all rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                        onClick={(e) => { e.stopPropagation(); setViewIdentity(identity); }}
+                        onClick={(e) => { e.stopPropagation(); openView(identity); }}
                       >
                         {identity.name} &lt;{identity.email}&gt;
                       </button>
@@ -269,7 +283,7 @@ export default function UserIdentities({ username }: Props) {
                   <div className="flex items-center gap-1 shrink-0">
                     {canEdit && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); openEdit(identity); }}
+                        onClick={(e) => { e.stopPropagation(); openEditFromList(identity); }}
                         className="p-2 rounded-md hover:bg-gray-200"
                         title={t("users.identities.editTooltip")}
                       >
@@ -298,7 +312,11 @@ export default function UserIdentities({ username }: Props) {
 
       {/* Detail (read-only) modal */}
       <Dialog open={!!viewIdentity} onOpenChange={(v) => !v && setViewIdentity(null)}>
-        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+        <DialogContent
+          className="max-w-lg max-h-[80vh] overflow-y-auto"
+          // Switching to the edit modal: the focus goes there, and back to the row once it closes
+          onCloseAutoFocus={(e) => (editIdentity ? e.preventDefault() : restoreFocus(e))}
+        >
           <DialogHeader>
             <DialogTitle>{t("users.identities.viewTitle", { name: viewIdentity?.name })}</DialogTitle>
           </DialogHeader>
@@ -354,7 +372,7 @@ export default function UserIdentities({ username }: Props) {
 
       {/* Edit modal */}
       <Dialog open={!!editIdentity} onOpenChange={(v) => { if (!v) { setEditIdentity(null); setEditForm({}); } }}>
-        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto" onCloseAutoFocus={restoreFocus}>
           <DialogHeader>
             <DialogTitle>{t("users.identities.editTitle", { email: editIdentity?.email })}</DialogTitle>
           </DialogHeader>

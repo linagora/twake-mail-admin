@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
@@ -57,6 +57,32 @@ describe("user identities: details", () => {
     fireEvent.click(identityButton);
 
     expect(await screen.findByRole("dialog")).not.toBeNull();
+  });
+
+  it("returns the focus to the identity that opened the details once they are closed", async () => {
+    openSection();
+
+    const identityButton = await screen.findByRole("button", { name: "Bob <bob@example.com>" });
+    identityButton.focus();
+    fireEvent.click(identityButton);
+    fireEvent.keyDown(await screen.findByRole("dialog"), { key: "Escape" });
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    // Radix moves the focus on close from a timeout
+    await waitFor(() => expect(document.activeElement).toBe(identityButton));
+  });
+
+  it("returns the focus to the identity once the edit dialog opened from its details is closed", async () => {
+    openSection();
+
+    const identityButton = await screen.findByRole("button", { name: "Bob <bob@example.com>" });
+    identityButton.focus();
+    fireEvent.click(identityButton);
+    fireEvent.click(await screen.findByRole("button", { name: "common.edit" }));
+    fireEvent.keyDown(await screen.findByLabelText("users.identities.name"), { key: "Escape" });
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    await waitFor(() => expect(document.activeElement).toBe(identityButton));
   });
 });
 

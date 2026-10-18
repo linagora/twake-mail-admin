@@ -73,4 +73,17 @@ describe("domain contacts", () => {
     expect(api.getDomainContact).toHaveBeenCalledTimes(1);
     expect(api.getDomainContact).toHaveBeenCalledWith("example.com", "alice");
   });
+
+  it("returns the focus to the contact address that opened the details once they are closed", async () => {
+    api.getDomainContact.mockResolvedValue({ id: "a902d35d", emailAddress: "alice@example.com" });
+    const contactButton = screen.getByRole("button", { name: "alice@example.com" });
+    contactButton.focus();
+    fireEvent.click(contactButton);
+    await screen.findByText("a902d35d");
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    // Radix moves the focus on close from a timeout
+    await waitFor(() => expect(document.activeElement).toBe(contactButton));
+  });
 });

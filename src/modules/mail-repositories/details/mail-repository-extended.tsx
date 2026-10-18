@@ -15,6 +15,7 @@ import { GetMailRepositoriesResponseType, MailDetail, MailRepository } from "../
 import { apiClient } from "@/lib/apiClient";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useReturnFocus } from "@/hooks/use-return-focus";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
@@ -89,6 +90,12 @@ export default function MailRepositoryExtended() {
   const [sortAsc, setSortAsc] = useState(true);
 
   const [selectedMail, setSelectedMail] = useState<MailRow | null>(null);
+  // The detail modal is controlled: bring the focus back to the row control that opened it
+  const { rememberFocus, restoreFocus } = useReturnFocus();
+  const openMail = (mail: MailRow) => {
+    rememberFocus();
+    setSelectedMail(mail);
+  };
 
   const [allRepos, setAllRepos] = useState<GetMailRepositoriesResponseType>([]);
   useEffect(() => {
@@ -372,7 +379,7 @@ export default function MailRepositoryExtended() {
                 <div
                   key={mail.name}
                   className="grid grid-cols-[auto_1fr_1fr_1fr_auto_auto_auto] gap-2 items-center p-3 bg-gray-50 rounded-2 cursor-pointer hover:bg-gray-100 transition text-sm"
-                  onClick={() => setSelectedMail(mail)}
+                  onClick={() => openMail(mail)}
                 >
                   <span className="text-muted-foreground w-10">{globalIndex}.</span>
                   <div className="truncate">
@@ -380,7 +387,7 @@ export default function MailRepositoryExtended() {
                     <button
                       type="button"
                       className="font-medium text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                      onClick={(e) => { e.stopPropagation(); setSelectedMail(mail); }}
+                      onClick={(e) => { e.stopPropagation(); openMail(mail); }}
                     >
                       {mail.name}
                     </button>
@@ -455,7 +462,7 @@ export default function MailRepositoryExtended() {
 
       {/* JSON Detail Dialog */}
       <Dialog open={!!selectedMail} onOpenChange={(v) => !v && setSelectedMail(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto" onCloseAutoFocus={restoreFocus}>
           <DialogHeader>
             <DialogTitle>{t("mailRepositories.mailDetailTitle", { name: selectedMail?.name })}</DialogTitle>
           </DialogHeader>
