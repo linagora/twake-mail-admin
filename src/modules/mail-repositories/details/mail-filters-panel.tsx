@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { ChevronDown, ChevronUp, Filter } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -27,6 +27,7 @@ interface Props {
 
 export default function MailFiltersPanel({ filters, onApply }: Props) {
   const { t } = useTranslation();
+  const idPrefix = useId();
   const FIELDS: { key: keyof MailFilters; label: string; placeholder: string }[] = [
     { key: "sender", label: t("mailRepositories.filterSender"), placeholder: "alice@domain.org" },
     { key: "recipient", label: t("mailRepositories.filterRecipient"), placeholder: "bob@domain.org" },
@@ -72,8 +73,9 @@ export default function MailFiltersPanel({ filters, onApply }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {FIELDS.map(({ key, label, placeholder }) => (
               <div key={key} className="space-y-1">
-                <label className="text-xs font-medium text-gray-600">{label}</label>
+                <label htmlFor={`${idPrefix}-${key}`} className="text-xs font-medium text-gray-600">{label}</label>
                 <input
+                  id={`${idPrefix}-${key}`}
                   type="text"
                   value={draft[key]}
                   onChange={set(key)}
