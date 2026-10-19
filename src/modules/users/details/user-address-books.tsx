@@ -573,6 +573,7 @@ export default function UserAddressBooks({ username }: Props) {
         <InviteesModal
           username={username}
           addressBook={inviteesAddressBook}
+          owner={ownerEmail(parseAddressBookSource(inviteesAddressBook["openpaas:source"]), registeredUsers)}
           userEmails={userEmailsById(registeredUsers)}
           onClose={() => setInviteesAddressBook(null)}
           onSaved={async () => { setInviteesAddressBook(null); await refresh(); }}
@@ -585,12 +586,15 @@ export default function UserAddressBooks({ username }: Props) {
 function InviteesModal({
   username,
   addressBook,
+  owner,
   userEmails,
   onClose,
   onSaved,
 }: {
   username: string;
   addressBook: UserAddressBook;
+  // The e-mail of the owner of a shared copy, null for an address book of the page user
+  owner: string | null;
   userEmails: Record<string, string>;
   onClose: () => void;
   onSaved: () => void | Promise<void>;
@@ -606,13 +610,24 @@ function InviteesModal({
   const [saving, setSaving] = useState(false);
 
   const status = useCheckUserExists(newEmail);
-  const existing = currentSharees(addressBook, username, userEmails);
+
+  // The ACL of a shared copy only holds the page user: the sharees are listed on the source
+  // address book, in the owner's listing.
+  const source = isOwned(addressBook) ? null : parseAddressBookSource(addressBook["openpaas:source"]);
+  const fetchOwnerAddressBooks = useCallback(() => getUserAddressBooks(owner ?? ""), [owner]);
+  const { data: ownerAddressBooks, isLoading: loadingSource } = useFetchData<GetUserAddressBooksResponseType>(
+    source && owner ? fetchOwnerAddressBooks : null
+  );
+  const sourceAddressBook = source && ownerAddressBooks?._embedded?.["dav:addressbook"]
+    ?.find((ab) => addressBookId(ab) === source.addressBookId);
+  const bookOwner = sourceAddressBook && owner ? owner : username;
+  const existing = currentSharees(sourceAddressBook ?? addressBook, bookOwner, userEmails);
 
   const trimmedEmail = newEmail.trim();
   const isDuplicate =
     existing.some((i) => i.email === trimmedEmail && !(i.href && removals.has(i.href))) ||
     additions.some((a) => a.email === trimmedEmail);
-  const isOwner = trimmedEmail.toLowerCase() === username.toLowerCase();
+  const isOwner = trimmedEmail.toLowerCase() === (owner ?? username).toLowerCase();
   const canAdd = status === "exists" && !isOwner && !isDuplicate;
 
   const toggleRemoval = (href: string) => {
@@ -675,7 +690,10 @@ function InviteesModal({
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1">
-            {existing.length === 0 && additions.length === 0 && (
+            {loadingSource && (
+              <p role="status" className="text-sm text-gray-500">{t("common.loading")}</p>
+            )}
+            {!loadingSource && existing.length === 0 && additions.length === 0 && (
               <p className="text-sm text-gray-500">{t("users.addressBooks.invitees.empty")}</p>
             )}
             {existing.map((sharee) => {

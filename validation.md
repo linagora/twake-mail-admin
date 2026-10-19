@@ -533,6 +533,7 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | "Delete address book" button | DELETE | `/users/{username}/addressbooks/{addressBookId}` | MAY (do not show the button if missing) |
 | "Public visibility" button | POST | `/users/{username}/addressbooks/{addressBookId}/publicRight` | MAY (do not show the button if missing) |
 | "Invitees / delegation" button | POST | `/users/{username}/addressbooks/{addressBookId}/invitee` | MAY (do not show the button if missing) |
+| Current sharees of a shared copy, read on the owner's address book | GET | `/users/{username}/addressbooks` (`{username}` = the owner) | MAY (the copy's own ACL is then listed) |
 | "Export address book" button (owned address books) | POST | `/users/{username}/addressbooks/{addressBookId}?action=export` | MAY (do not show the button if missing) |
 | "Import contacts" button (owned address books) | POST | `/users/{username}/addressbooks/{addressBookId}?action=import` | MAY (do not show the button if missing) |
 | Contact counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the section is reopened) |
