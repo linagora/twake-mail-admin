@@ -17,6 +17,7 @@ import { MoveHorizontal, Trash2, RefreshCw } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
+import { BASIC_PAGE_LIMIT, extendedPageOf } from "./page-limits";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useTranslation } from "react-i18next";
 
@@ -95,7 +96,7 @@ export default function MailRepositoryDetail() {
 
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 0;
-  const limit = Number(import.meta.env.VITE_PAGE_LIMIT) || 200;
+  const limit = BASIC_PAGE_LIMIT;
   const offset = (page - 1) * limit;
   const totalPages = Math.max(1, Math.ceil(size / limit));
   // check if we reached the end of the list
@@ -265,7 +266,7 @@ export default function MailRepositoryDetail() {
   };
 
   const extendedHref = (() => {
-    const p = new URLSearchParams(buildParams({ page: page.toString() }));
+    const p = new URLSearchParams(buildParams({ page: extendedPageOf(page).toString() }));
     return `/mail-repositories/repository/${encodeURIComponent(id!)}/extended?${p.toString()}`;
   })();
 

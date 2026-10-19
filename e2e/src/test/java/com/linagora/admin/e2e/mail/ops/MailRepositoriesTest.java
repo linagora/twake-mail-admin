@@ -18,7 +18,6 @@ import java.util.stream.IntStream;
 
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 
@@ -652,14 +651,8 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         assertThat(page).hasURL(Pattern.compile("[?&]size=" + TOTAL + "(&|$)"));
     }
 
-    /*
-     * Known bug: the "Extended view" link carries the page number of the simple view, but the two
-     * views page by different sizes (200 and 50 mails). From page 2 of the simple view (mails 201
-     * to 400), the Extended view opens on its own page 2, mails 51 to 100: the operator does not
-     * land on the mails they were looking at.
-     */
+    // The two views page by different sizes (200 and 50 mails): the link must keep the mails in sight
     @Test
-    @Tag("known-bug")
     @DisplayName("MR-04 Extended view opened from page 2 shows the mails of page 2")
     void extendedViewFromSecondPage(AdminApp app, Page page, WebAdmin webAdmin) {
         String repository = OpsBackend.createRepository(webAdmin, "qa-paging-ext2");

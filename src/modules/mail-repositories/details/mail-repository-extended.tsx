@@ -24,8 +24,9 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import { currentLocale } from "@/i18n/locale";
 import { formatByteSize } from "@/i18n/format-size";
+import { EXTENDED_PAGE_LIMIT } from "./page-limits";
 
-const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
+const PAGE_LIMIT = EXTENDED_PAGE_LIMIT;
 
 type SortField = "name" | "sender" | "recipients" | "size" | "lastUpdated";
 
