@@ -88,6 +88,16 @@ final class OpsBackend {
         return keys;
     }
 
+    /** Sends one mail with the given subject and body, moves it into {@code repository}, returns its key. */
+    static String injectMail(MailFixtures fixtures, String sender, String recipient, String repository, String subject, String body) {
+        WebAdmin webAdmin = fixtures.webAdmin();
+        fixtures.sendMail(sender, recipient, subject, body);
+        String key = awaitKeys(webAdmin, RRT_ERROR, "sender=" + sender, list -> !list.isEmpty()).get(0);
+        webAdmin.patch("/mailRepositories/" + WebAdmin.encode(RRT_ERROR) + "/mails/" + key,
+            "{\"mailRepository\":\"" + repository + "\"}").expect(204);
+        return key;
+    }
+
     static List<String> awaitKeys(WebAdmin webAdmin, String repository, String query, Predicate<List<String>> condition) {
         List<List<String>> last = new ArrayList<>(List.of(List.of()));
         Awaitility.await().atMost(Duration.ofSeconds(60)).pollInterval(Duration.ofMillis(300))

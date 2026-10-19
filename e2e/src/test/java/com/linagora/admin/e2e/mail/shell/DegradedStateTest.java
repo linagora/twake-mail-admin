@@ -156,4 +156,44 @@ class DegradedStateTest extends MailAdminE2ETest {
         }
         assertThat(deleted[0]).as("Cancel sends no DELETE").isFalse();
     }
+
+    @Test
+    @DisplayName("EDL-02 (JSON) of a dead-lettered event, its HTML shown as text")
+    void deadLetterEventJson(AdminApp app, Page page) throws Exception {
+        String insertionId = UUID.randomUUID().toString();
+        stubDeadLetters(page, insertionId);
+        // A mailbox name is chosen by the user: the popup must show it as text, never parse it
+        String hostile = "<img src=x onerror=\"window.opener.__xss=1\">INBOX<b>bold</b>";
+        ObjectNode mailboxPath = WebAdmin.JSON.createObjectNode()
+            .put("namespace", "#private").put("user", "alice@example.com").put("name", hostile);
+        ObjectNode added = WebAdmin.JSON.createObjectNode().put("eventId", UUID.randomUUID().toString());
+        added.set("mailboxPath", mailboxPath);
+        added.put("mailboxId", UUID.randomUUID().toString()).put("user", "alice@example.com").put("sessionId", 42);
+        ObjectNode event = WebAdmin.JSON.createObjectNode();
+        event.set("MailboxAdded", added);
+        String[] requested = new String[1];
+        page.onRequest(request -> {
+            if (request.url().endsWith("/" + insertionId)) {
+                requested[0] = java.net.URI.create(request.url()).getRawPath();
+            }
+        });
+        // Registered last, thus tried first: the event itself, not the insertion ids of the group
+        WebAdminStub.answer(page, path -> path.endsWith("/" + insertionId), event.toString());
+
+        openGroupPage(app);
+        Page popup = page.waitForPopup(() -> eventRow(app, insertionId)
+            .getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("(JSON)").setExact(true)).click());
+
+        Locator pre = popup.locator("pre");
+        // JSON escapes the quotes only
+        assertThat(pre).containsText("<img src=x onerror=");
+        assertThat(pre).containsText("INBOX<b>bold</b>");
+        String shown = pre.textContent();
+        assertThat(WebAdmin.JSON.readTree(shown)).isEqualTo(event);
+        assertThat(shown).as("pretty printed").contains("\n  \"");
+        assertThat(popup.locator("img, b")).hasCount(0);
+        assertThat(page.evaluate("() => window.__xss")).isNull();
+        assertThat(java.net.URLDecoder.decode(requested[0], java.nio.charset.StandardCharsets.UTF_8))
+            .isEqualTo("/events/deadLetter/groups/" + GROUP + "/" + insertionId);
+    }
 }

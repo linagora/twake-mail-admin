@@ -3,8 +3,10 @@ package com.linagora.admin.e2e.mail.ops;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.nio.file.Files;
 import java.time.Duration;
 import java.util.List;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 import org.awaitility.Awaitility;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.linagora.admin.e2e.MailAdminE2ETest;
 import com.linagora.admin.e2e.backend.Ids;
 import com.linagora.admin.e2e.backend.MailFixtures;
@@ -21,6 +25,7 @@ import com.linagora.admin.e2e.docker.Locks;
 import com.linagora.admin.e2e.pages.AdminApp;
 import com.linagora.admin.e2e.pages.mail.ops.MailRepositoriesPage;
 import com.linagora.admin.e2e.pages.mail.ops.MailRepositoryDetailPage;
+import com.linagora.admin.e2e.pages.mail.shell.WebAdminStub;
 import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -360,5 +365,74 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         assertThat(detail.mailButton(deleted)).hasCount(0);
         Awaitility.await().atMost(Duration.ofSeconds(10))
             .untilAsserted(() -> assertThat(OpsBackend.mailKeys(webAdmin, seeded.repository())).doesNotContain(deleted, downloaded));
+    }
+
+    @Test
+    @DisplayName("MR-04 Basic view: (JSON) and (MIME) of a mail, its HTML shown as text")
+    void jsonAndMimeOfAMail(AdminApp app, Page page, MailFixtures fixtures, WebAdmin webAdmin) throws Exception {
+        String repository = OpsBackend.createRepository(webAdmin, "qa-json");
+        String sender = fixtures.newUser("json");
+        String recipient = OpsBackend.rrtErrorRecipient(fixtures);
+        String marker = Ids.unique("qa");
+        // What an outside sender may write: the popup must show it as text, never parse it
+        String hostile = "<img src=x onerror=\"window.opener.__xss=1\">" + marker + "<b>bold</b>";
+        String key = OpsBackend.injectMail(fixtures, sender, recipient, repository, hostile, hostile);
+        String mailPath = "/mailRepositories/" + WebAdmin.encode(repository) + "/mails/" + key;
+
+        // The (JSON) request asks for no additionalFields: WebAdmin answers headers and bodies as
+        // null. The real answer is completed, for this browser only, with the hostile Subject in the
+        // fields that carry it when asked for, and in the error
+        UnaryOperator<JsonNode> withHostileFields = mail -> {
+            ObjectNode completed = mail.deepCopy();
+            completed.put("error", hostile).put("textBody", hostile).put("htmlBody", hostile);
+            completed.putObject("headers").putArray("Subject").add(hostile);
+            return completed;
+        };
+        WebAdminStub.rewrite(page, webAdmin, path -> path.endsWith("/mails/" + key),
+            body -> withHostileFields.apply(jsonOf(body)).toString());
+        List<String> accepted = new java.util.ArrayList<>();
+        page.onRequest(request -> {
+            if (request.url().endsWith("/mails/" + key)) {
+                accepted.add(java.net.URI.create(request.url()).getRawPath() + " " + request.headers().get("accept"));
+            }
+        });
+
+        app.open("/mail-repositories/repository/" + WebAdmin.encode(repository));
+        MailRepositoryDetailPage detail = new MailRepositoryDetailPage(app);
+        assertThat(detail.title(repository)).isVisible();
+        Locator row = app.main().getByRole(AriaRole.LISTITEM).filter(new Locator.FilterOptions().setHasText(key));
+        Page popup = page.waitForPopup(() ->
+            row.getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("(JSON)").setExact(true)).click());
+
+        Locator pre = popup.locator("pre");
+        // JSON escapes the quotes only
+        assertThat(pre).containsText("<img src=x onerror=");
+        assertThat(pre).containsText(marker + "<b>bold</b>");
+        String shown = pre.textContent();
+        JsonNode real = webAdmin.get(mailPath).expect(200).json();
+        assertThat(real.path("name").asText()).isEqualTo(key);
+        assertThat(real.path("sender").asText()).isEqualTo(sender);
+        assertThat(WebAdmin.JSON.readTree(shown)).isEqualTo(withHostileFields.apply(real));
+        assertThat(shown).as("pretty printed").contains("\n  \"");
+        assertThat(popup.locator("img, b")).hasCount(0);
+        assertThat(page.evaluate("() => window.__xss")).isNull();
+        assertThat(accepted).containsExactly(mailPath + " application/json");
+        popup.close();
+
+        // (MIME) gets the real message/rfc822 of WebAdmin, where the Subject is the one sent
+        page.unrouteAll();
+        Download mime = page.waitForDownload(() ->
+            row.getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("(MIME)").setExact(true)).click());
+        assertThat(mime.suggestedFilename()).isEqualTo(key + ".eml");
+        assertThat(Files.readString(mime.path())).contains("Subject: " + hostile).contains(marker);
+        assertThat(page.evaluate("() => window.__xss")).isNull();
+    }
+
+    private static JsonNode jsonOf(String body) {
+        try {
+            return WebAdmin.JSON.readTree(body);
+        } catch (Exception e) {
+            throw new IllegalStateException(body, e);
+        }
     }
 }
