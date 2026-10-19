@@ -1,6 +1,25 @@
 import { RegisteredUser } from "@/modules/registered-users/types";
 import { UserCalendar } from "../types";
 
+type CalendarInvite = NonNullable<UserCalendar["invite"]>[number];
+
+const USER_PRINCIPAL_PREFIX = "principals/users/";
+const MAILTO_PREFIX = "mailto:";
+
+const calendarInvites = (calendar: UserCalendar): CalendarInvite[] => [
+  ...(calendar.invite ?? []),
+  ...(calendar["calendarserver:source"]?.invite ?? []),
+];
+
+// An invite tells the e-mail of a user when it addresses a user principal with a mailto href.
+const isUserMailtoInvite = (invite: CalendarInvite): boolean =>
+  !!invite.href?.startsWith(MAILTO_PREFIX) && !!invite.principal?.startsWith(USER_PRINCIPAL_PREFIX);
+
+const inviteEntry = (invite: CalendarInvite): [string, string] => [
+  invite.principal.slice(USER_PRINCIPAL_PREFIX.length),
+  invite.href.slice(MAILTO_PREFIX.length),
+];
+
 // The owner of a delegated/subscribed calendar is referenced by its technical
 // user id (the segment after /calendars/ in the source href), never by email.
 // We resolve it via the registered users list (authoritative, full coverage),
@@ -9,20 +28,12 @@ export function buildOwnerEmailMap(
   calendars: UserCalendar[],
   registeredUsers: RegisteredUser[] | null,
 ): Record<string, string> {
-  const map: Record<string, string> = {};
-  for (const cal of calendars) {
-    const invites = [...(cal.invite ?? []), ...(cal["calendarserver:source"]?.invite ?? [])];
-    for (const inv of invites) {
-      if (inv.href?.startsWith("mailto:") && inv.principal?.startsWith("principals/users/")) {
-        map[inv.principal.slice("principals/users/".length)] = inv.href.replace(/^mailto:/, "");
-      }
-    }
-  }
+  const fromInvites = calendars.flatMap(calendarInvites).filter(isUserMailtoInvite).map(inviteEntry);
   // Registered users take precedence — they cover owners absent from any invite.
-  for (const u of registeredUsers ?? []) {
-    if (u.id && u.email) map[u.id] = u.email;
-  }
-  return map;
+  const fromRegisteredUsers = (registeredUsers ?? [])
+    .filter((user) => user.id && user.email)
+    .map((user): [string, string] => [user.id, user.email]);
+  return Object.fromEntries([...fromInvites, ...fromRegisteredUsers]);
 }
 
 export function ownerEmail(calendar: UserCalendar, ownerEmails: Record<string, string>): string | null {
