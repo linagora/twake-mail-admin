@@ -233,8 +233,10 @@ class BookingLinksTest extends CalendarAdminE2ETest {
             Awaitility.await().atMost(Duration.ofSeconds(20)).until(() -> backend.calendars(bob).size() >= 4);
 
             Form form = CalendarUserPage.open(app, bob).bookingLinks().openCreate();
-            assertThat(form.calendarOptions()).hasText(new String[] {"Select a calendar…", "#default", "Writable"});
-            form.selectCalendar("Writable");
+            // A delegated calendar is named after its owner (ISSUE-399)
+            String delegated = "Writable (" + owner + ")";
+            assertThat(form.calendarOptions()).hasText(new String[] {"Select a calendar…", "#default", delegated});
+            form.selectCalendar(delegated);
             assertThat(form.calendar()).hasValue(Pattern.compile("^/calendars/" + Regex.quote(OpsBackend.lastSegment(backend.defaultCalendarUrl(bob))) + "/"));
             assertThat(form.calendar().locator("option", new Locator.LocatorOptions().setHasText(room))).hasCount(0);
             form.cancel();
