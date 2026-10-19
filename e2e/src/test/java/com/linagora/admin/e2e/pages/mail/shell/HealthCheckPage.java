@@ -75,6 +75,16 @@ public class HealthCheckPage {
         return hoverTarget(component).locator("p:nth-child(2)");
     }
 
+    /** The error shown when the health check request fails. */
+    public Locator error() {
+        return app.main().getByRole(AriaRole.ALERT);
+    }
+
+    /** The status shown while the health check is running. */
+    public Locator checking() {
+        return app.main().getByRole(AriaRole.STATUS).filter(new Locator.FilterOptions().setHasText("Checking the components"));
+    }
+
     public Locator tooltip() {
         return app.page().getByRole(AriaRole.TOOLTIP);
     }

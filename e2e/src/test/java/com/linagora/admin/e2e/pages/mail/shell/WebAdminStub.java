@@ -45,8 +45,16 @@ public final class WebAdminStub {
         });
     }
 
-    /** Lets GET requests whose path matches reach WebAdmin, then rewrites the body of the answer. */
+    /** Lets GET requests whose path matches reach WebAdmin, then rewrites the body of the answer, keeping its status. */
     public static void rewrite(Page page, WebAdmin webAdmin, Predicate<String> path, Function<String, String> rewriter) {
+        rewrite(page, webAdmin, path, null, rewriter);
+    }
+
+    /**
+     * Lets GET requests whose path matches reach WebAdmin, then rewrites the answer: its body, and its status
+     * when {@code status} is not null (the real status of a rewritten state is often not the one of the shared stack).
+     */
+    public static void rewrite(Page page, WebAdmin webAdmin, Predicate<String> path, Integer status, Function<String, String> rewriter) {
         page.route(url -> path.test(java.net.URI.create(url).getRawPath()), route -> {
             if (!route.request().method().equals("GET")) {
                 route.fallback();
@@ -55,8 +63,8 @@ public final class WebAdminStub {
             // Fetched from the test JVM: the browser alone knows how to resolve WebAdmin's host
             java.net.URI uri = java.net.URI.create(route.request().url());
             WebAdmin.Response response = webAdmin.get(uri.getRawPath() + (uri.getRawQuery() == null ? "" : "?" + uri.getRawQuery()));
-            route.fulfill(new Route.FulfillOptions().setStatus(response.status()).setHeaders(headers())
-                .setBody(rewriter.apply(response.body())));
+            route.fulfill(new Route.FulfillOptions().setStatus(status == null ? response.status() : status)
+                .setHeaders(headers()).setBody(rewriter.apply(response.body())));
         });
     }
 
@@ -68,6 +76,17 @@ public final class WebAdminStub {
                 return;
             }
             route.fulfill(new Route.FulfillOptions().setStatus(status).setHeaders(headers()).setBody(body));
+        });
+    }
+
+    /** Fails GET requests whose path matches as a network failure would (WebAdmin unreachable). */
+    public static void abort(Page page, Predicate<String> path) {
+        page.route(url -> path.test(java.net.URI.create(url).getRawPath()), route -> {
+            if (!route.request().method().equals("GET")) {
+                route.fallback();
+                return;
+            }
+            route.abort();
         });
     }
 }

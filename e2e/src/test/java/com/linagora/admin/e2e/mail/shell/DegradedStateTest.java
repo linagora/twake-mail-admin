@@ -4,6 +4,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -89,8 +90,14 @@ class DegradedStateTest extends MailAdminE2ETest {
     @Test
     @DisplayName("HC-02 Unhealthy component tooltip")
     void unhealthyComponentTooltip(AdminApp app, Page page, WebAdmin webAdmin) {
-        WebAdminStub.rewrite(page, webAdmin, path -> path.equals("/healthcheck"), DegradedStateTest::degradeHealthCheck);
+        // WebAdmin answers 503 as soon as one component is unhealthy, with the usual body: a 503 here is an answer, not a failure
+        WebAdminStub.rewrite(page, webAdmin, path -> path.equals("/healthcheck"), 503, DegradedStateTest::degradeHealthCheck);
         HealthCheckPage healthCheck = HealthCheckPage.open(app);
+
+        assertThat(healthCheck.sectionTitles()).contains(HealthCheckPage.STORAGE, HealthCheckPage.CORE);
+        assertThat(healthCheck.componentsOf(HealthCheckPage.STORAGE)).contains(UNHEALTHY, "Cassandra backend", "OpenSearch Backend");
+        assertThat(healthCheck.error()).hasCount(0);
+        assertThat(healthCheck.checking()).hasCount(0);
 
         assertThat(StatusColor.of(healthCheck.borderColor(DEGRADED))).isEqualTo(StatusColor.ORANGE);
         assertThat(StatusColor.of(healthCheck.backgroundColor(DEGRADED))).isEqualTo(StatusColor.ORANGE);
@@ -114,6 +121,30 @@ class DegradedStateTest extends MailAdminE2ETest {
         healthCheck.hoverTarget("Cassandra backend").hover();
         healthCheck.hoverTarget("OpenSearch Backend").hover();
         assertThat(healthCheck.tooltip()).hasCount(0);
+    }
+
+    @Test
+    @DisplayName("HC-03 Health check request failure is reported")
+    void healthCheckFailure(AdminApp app, Page page) {
+        WebAdminStub.answer(page, "GET", path -> path.equals("/healthcheck"), 500,
+            "{\"statusCode\":500,\"type\":\"ServerError\",\"message\":\"boom\"}");
+        app.open("/health-check");
+        HealthCheckPage healthCheck = new HealthCheckPage(app);
+
+        assertThat(healthCheck.title()).isVisible();
+        assertThat(healthCheck.error()).hasText(Pattern.compile("^Error: .*boom"));
+        assertThat(healthCheck.checking()).hasCount(0);
+        assertThat(healthCheck.sectionHeadings()).hasCount(0);
+
+        // WebAdmin unreachable: the route added last is tried first
+        WebAdminStub.abort(page, path -> path.equals("/healthcheck"));
+        page.reload();
+
+        assertThat(healthCheck.title()).isVisible();
+        assertThat(healthCheck.error()).hasText(Pattern.compile("^Error: \\S"));
+        assertThat(healthCheck.error()).not().containsText("boom");
+        assertThat(healthCheck.checking()).hasCount(0);
+        assertThat(healthCheck.sectionHeadings()).hasCount(0);
     }
 
     @Test
