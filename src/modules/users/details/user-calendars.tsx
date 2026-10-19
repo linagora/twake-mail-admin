@@ -14,6 +14,7 @@ import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
+import { buildOwnerEmailMap, ownerEmail } from "./calendar-owner";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -103,40 +104,6 @@ function calendarId(calendar: UserCalendar): string {
   const href = calendar._links?.self?.href ?? "";
   const last = href.split("/").pop() ?? "";
   return last.replace(/\.json$/, "") || href;
-}
-
-// The owner of a delegated/subscribed calendar is referenced by its technical
-// user id (the segment after /calendars/ in the source href), never by email.
-// We resolve it via the registered users list (authoritative, full coverage),
-// completed by the mailto invites found in the listing itself.
-function buildOwnerEmailMap(
-  calendars: UserCalendar[],
-  registeredUsers: RegisteredUser[] | null,
-): Record<string, string> {
-  const map: Record<string, string> = {};
-  for (const cal of calendars) {
-    const invites = [...(cal.invite ?? []), ...(cal["calendarserver:source"]?.invite ?? [])];
-    for (const inv of invites) {
-      if (inv.href?.startsWith("mailto:") && inv.principal?.startsWith("principals/users/")) {
-        map[inv.principal.slice("principals/users/".length)] = inv.href.replace(/^mailto:/, "");
-      }
-    }
-  }
-  // Registered users take precedence — they cover owners absent from any invite.
-  for (const u of registeredUsers ?? []) {
-    if (u.id && u.email) map[u.id] = u.email;
-  }
-  return map;
-}
-
-function ownerEmail(calendar: UserCalendar, ownerEmails: Record<string, string>): string | null {
-  const sourceHref =
-    calendar["calendarserver:delegatedsource"] ?? calendar["calendarserver:source"]?._links?.self?.href;
-  if (!sourceHref) return null;
-  // href looks like /calendars/{ownerId}/{calendarId}.json
-  const ownerId = sourceHref.split("/").filter(Boolean)[1];
-  if (!ownerId) return null;
-  return ownerEmails[ownerId] ?? null;
 }
 
 interface CalendarPermissions {

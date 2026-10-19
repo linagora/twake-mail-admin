@@ -6,6 +6,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getUserBookingLinks, createUserBookingLink, updateUserBookingLink, deleteUserBookingLink, resetUserBookingLinkPublicId, deleteUserBookingLinkEvents, getUserCalendars } from "../api-client";
 import { BookingLink, AvailabilityRule, CreateBookingLinkPayload, UpdateBookingLinkPayload, GetUserCalendarsResponseType, UserCalendar } from "../types";
 import { isBookableCalendar } from "./bookable-calendars";
+import { buildOwnerEmailMap, ownerEmail } from "./calendar-owner";
 import { isValidDurationMinutes, parseDurationMinutes } from "./booking-link-duration";
 import { areValidRules, DEFAULT_RULE_END, DEFAULT_RULE_START, listTimeZones, ruleErrors } from "./booking-link-rules";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +15,9 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useDomain } from "@/modules/domain-admin/domain-context";
+import { getRegisteredUsers } from "@/modules/registered-users/api-client";
+import { RegisteredUser } from "@/modules/registered-users/types";
 
 interface Props {
   username: string;
@@ -34,8 +38,12 @@ function calendarHref(calendar: UserCalendar): string {
   return (calendar._links?.self?.href ?? "").replace(/\.json$/, "");
 }
 
-function calendarLabel(calendar: UserCalendar): string {
-  return calendar["dav:name"]?.trim() || calendarHref(calendar);
+// A delegated calendar keeps the name of its source one (often "#default"): its owner tells it
+// apart from the user's own calendar of the same name.
+function calendarLabel(calendar: UserCalendar, ownerEmails: Record<string, string>): string {
+  const name = calendar["dav:name"]?.trim() || calendarHref(calendar);
+  const owner = ownerEmail(calendar, ownerEmails);
+  return owner ? `${name} (${owner})` : name;
 }
 
 // A dropdown of the user's calendars (by name) instead of a raw URL field.
@@ -433,16 +441,23 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
     calendarsVersion
   );
   const allCalendars = calendarsData?._embedded?.["dav:calendar"] ?? [];
+  const domain = useDomain() || undefined;
+  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const fetchRegisteredUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
+  const { data: registeredUsers } = useFetchData<RegisteredUser[]>(
+    open && canView && canViewCalendars && canRegisteredUsers ? fetchRegisteredUsers : null
+  );
+  const ownerEmails = buildOwnerEmailMap(allCalendars, registeredUsers);
   // Full list, used only to resolve calendar names for display (a link may
   // point to a calendar the user can no longer book on).
   const calendarOptions: CalendarOption[] = allCalendars
-    .map((c) => ({ value: calendarHref(c), label: calendarLabel(c) }))
+    .map((c) => ({ value: calendarHref(c), label: calendarLabel(c, ownerEmails) }))
     .filter((o) => o.value);
   // Restricted list offered in the create/edit dropdowns: only calendars the
   // user can write to (owned or write-delegated), never resources.
   const bookableCalendarOptions: CalendarOption[] = allCalendars
     .filter((c) => isBookableCalendar(c, username))
-    .map((c) => ({ value: calendarHref(c), label: calendarLabel(c) }))
+    .map((c) => ({ value: calendarHref(c), label: calendarLabel(c, ownerEmails) }))
     .filter((o) => o.value);
 
   const [showCreate, setShowCreate] = useState(false);

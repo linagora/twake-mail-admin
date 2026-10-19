@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
     resetUserBookingLinkPublicId: vi.fn(),
     updateUserBookingLink: vi.fn(),
   },
+  getRegisteredUsers: vi.fn(),
 }));
 
 vi.mock("react-i18next", () => ({
@@ -31,6 +32,7 @@ vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => mocks.confirm }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock("react-router", () => ({ Link: () => null }));
 vi.mock("../api-client", () => mocks.api);
+vi.mock("@/modules/registered-users/api-client", () => ({ getRegisteredUsers: mocks.getRegisteredUsers }));
 
 import UserBookingLinks from "./user-booking-links";
 
@@ -407,5 +409,33 @@ describe("booking link dialogs: Enter in a field", () => {
     fireEvent.submit(durationField().form!);
 
     await vi.waitFor(() => expect(mocks.api.updateUserBookingLink).toHaveBeenCalled());
+  });
+});
+
+describe("UserBookingLinks calendar of a delegated calendar", () => {
+  beforeEach(() => {
+    mocks.canListCalendars = true;
+    mocks.api.getUserCalendars.mockResolvedValue({
+      _embedded: {
+        "dav:calendar": [
+          { "dav:name": "#default", _links: { self: { href: "/calendars/alice/alice.json" } } },
+          {
+            "dav:name": "#default",
+            _links: { self: { href: "/calendars/alice/ccd84d16.json" } },
+            "calendarserver:delegatedsource": "/calendars/charlotte-id/charlotte-id.json",
+            invite: [{ href: `mailto:${USERNAME}`, principal: "principals/users/alice", access: 3 }],
+          },
+        ],
+      },
+    });
+    mocks.getRegisteredUsers.mockResolvedValue([{ id: "charlotte-id", email: "charlotte@open-paas.org" }]);
+  });
+
+  it("is told apart from the user's own calendar of the same name by its owner", async () => {
+    await openSection();
+    fireEvent.click(screen.getByText("users.bookingLinks.create"));
+
+    await screen.findByRole("option", { name: "#default (charlotte@open-paas.org)" });
+    expect(screen.getByRole("option", { name: "#default" })).toBeTruthy();
   });
 });

@@ -1392,6 +1392,12 @@ USERS = page(
                         )
                     ],
                 ),
+                action(
+                    "owner-resolution",
+                    "Resolve the owner of a delegated calendar",
+                    "Résoudre le propriétaire d'un agenda délégué",
+                    endpoints=[may("GET", "/registeredUsers")],
+                ),
             ],
         ),
         section(

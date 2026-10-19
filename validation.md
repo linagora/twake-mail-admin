@@ -548,6 +548,7 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | "Delete booking link" button | DELETE | `/users/{username}/booking-links/{publicId}` | MAY (do not show the button if missing) |
 | "Regenerate link" button | POST | `/users/{username}/booking-links/{publicId}/reset` | MAY (do not show the button if missing) |
 | "Delete booked events" button | POST | `/users/{username}/booking-links/{publicId}?action=deleteEvents` | MAY (do not show the button if missing) |
+| Owner email of a delegated calendar, in the calendar names | GET | `/registeredUsers` | MAY (the calendar name is then shown alone) |
 
 ### User detail — Calendar: registration *(APPLICATION:"CALENDAR" only)*
 
