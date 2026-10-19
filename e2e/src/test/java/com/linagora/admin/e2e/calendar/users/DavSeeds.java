@@ -119,6 +119,33 @@ final class DavSeeds {
 
     // Content
 
+    /** Imports ICS data into a calendar of the user and waits for the import task to complete. */
+    void importEvents(String user, String calendarId, String ics) {
+        importInto("/users/" + encode(user) + "/calendars/" + encode(calendarId), ics);
+    }
+
+    /** Imports vCard data into an address book of the user and waits for the import task to complete. */
+    void importContacts(String user, String addressBookId, String vcards) {
+        importInto("/users/" + encode(user) + "/addressbooks/" + encode(addressBookId), vcards);
+    }
+
+    private void importInto(String collectionPath, String content) {
+        JsonNode task = webAdmin.runTask("POST", collectionPath + "?action=import", content);
+        if (!task.path("status").asText().equals("completed")) {
+            throw new IllegalStateException("Import into " + collectionPath + " ended " + task);
+        }
+    }
+
+    int eventCount(String user, String calendarId) {
+        return webAdmin.get("/users/" + encode(user) + "/calendars/" + encode(calendarId) + "/eventCount")
+            .expect(200).json().path("count").asInt();
+    }
+
+    int contactCount(String user, String addressBookId) {
+        return webAdmin.get("/users/" + encode(user) + "/addressbooks/" + encode(addressBookId) + "/contactCount")
+            .expect(200).json().path("count").asInt();
+    }
+
     static String ics(String uid, String summary) {
         return "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//QA//EN\r\nBEGIN:VEVENT\r\nUID:" + uid
             + "\r\nDTSTAMP:20261016T080000Z\r\nDTSTART:20261020T090000Z\r\nDTEND:20261020T100000Z\r\nSUMMARY:"

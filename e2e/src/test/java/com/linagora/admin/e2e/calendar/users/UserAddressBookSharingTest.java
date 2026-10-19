@@ -12,6 +12,7 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 
 import com.linagora.admin.e2e.CalendarAdminE2ETest;
 import com.linagora.admin.e2e.backend.CalendarFixtures;
+import com.linagora.admin.e2e.backend.Ids;
 import com.linagora.admin.e2e.docker.Locks;
 import com.linagora.admin.e2e.pages.AdminApp;
 import com.linagora.admin.e2e.pages.calendar.users.CollectionSection;
@@ -23,6 +24,7 @@ import com.microsoft.playwright.Page;
 // Server wide tasks (delete all users data of the domain...) would alter the books of every user.
 @ResourceLock(value = Locks.CALENDAR_SERVER_TASKS, mode = ResourceAccessMode.READ)
 class UserAddressBookSharingTest extends CalendarAdminE2ETest {
+    private static final int READ = 2;
     private static final int ADMINISTRATION = 5;
 
     @Test
@@ -125,5 +127,29 @@ class UserAddressBookSharingTest extends CalendarAdminE2ETest {
         // Cleanup, as the plan asks: the share is revoked from the owner
         seeds.share(charlotte, "contacts", bob, 4);
         assertThat(seeds.sharedAddressBooks(bob)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("UAB-08 A sharee deleting a shared address book keeps the owner's address book")
+    void shareeDeletesSharedAddressBook(AdminApp app, CalendarFixtures fixtures) {
+        DavSeeds seeds = new DavSeeds(fixtures);
+        String owner = seeds.newUser("c3uab08-owner");
+        String sharee = seeds.newUser("c3uab08-sharee");
+        String name = Ids.unique("QA Shared book");
+        String bookId = seeds.createAddressBook(owner, name);
+        seeds.importContacts(owner, bookId, DavSeeds.vcard(Ids.unique("c3uab08"), "QA Contact", "qa.contact@example.com"));
+        seeds.share(owner, bookId, sharee, READ);
+
+        CollectionSection books = new UserDetailPage(app).open(sharee).addressBooks().expand();
+        Locator shared = books.rowOwnedBy(name, owner);
+        assertThat(shared).hasCount(1);
+        CollectionSection.button(shared, "Delete address book").click();
+        app.confirm();
+
+        app.expectToast("Address book deleted");
+        assertThat(books.rowOwnedBy(name, owner)).hasCount(0);
+        assertThat(seeds.sharedAddressBooks(sharee)).isEmpty();
+        assertThat(seeds.addressBookNamed(owner, name)).isPresent();
+        assertThat(seeds.contactCount(owner, bookId)).isEqualTo(1);
     }
 }

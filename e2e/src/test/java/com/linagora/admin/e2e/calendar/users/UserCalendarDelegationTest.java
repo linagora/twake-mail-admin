@@ -19,6 +19,7 @@ import com.linagora.admin.e2e.backend.Ids;
 import com.linagora.admin.e2e.backend.WebAdmin;
 import com.linagora.admin.e2e.docker.Locks;
 import com.linagora.admin.e2e.pages.AdminApp;
+import com.linagora.admin.e2e.pages.calendar.users.CollectionForm;
 import com.linagora.admin.e2e.pages.calendar.users.CollectionSection;
 import com.linagora.admin.e2e.pages.calendar.users.JsRegex;
 import com.linagora.admin.e2e.pages.calendar.users.InviteesDialog;
@@ -136,6 +137,55 @@ class UserCalendarDelegationTest extends CalendarAdminE2ETest {
         dialog.cancel();
         assertThat(inviteeRequests.get()).isZero();
         assertThat(inviteAccess(seeds, alice, alice)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("UCAL-11 A sharee renaming or deleting a delegated calendar keeps the owner's calendar")
+    void shareeRenamesAndDeletesDelegatedCalendar(AdminApp app, CalendarFixtures fixtures) {
+        DavSeeds seeds = new DavSeeds(fixtures);
+        String owner = seeds.newUser("c3ucal11-owner");
+        String sharee = seeds.newUser("c3ucal11-sharee");
+        String other = seeds.newUser("c3ucal11-other");
+        String name = Ids.unique("QA Shared cal");
+        String renamed = name + " (sharee)";
+        String calendarId = seeds.createCalendar(owner, name);
+        seeds.importEvents(owner, calendarId, DavSeeds.ics(Ids.unique("c3ucal11-event"), "QA event"));
+        seeds.delegate(owner, calendarId, sharee, "dav:read-write");
+        seeds.delegate(owner, calendarId, other, "dav:read");
+
+        UserDetailPage detail = new UserDetailPage(app).open(sharee);
+        CollectionSection calendars = detail.calendars().expand();
+
+        // Rename: only the sharee's copy is renamed
+        CollectionSection.button(calendars.rowInGroup("Delegated", name), "Edit calendar").click();
+        CollectionForm form = new CollectionForm(app);
+        form.name().fill(renamed);
+        form.saveButton().click();
+        app.expectToast("Calendar updated");
+        assertThat(calendars.rowInGroup("Delegated", renamed)).isVisible();
+        assertThat(seeds.calendars(sharee)).anyMatch(c -> renamed.equals(c.path("dav:name").asText()));
+        assertThat(seeds.calendarNamed(owner, name)).isPresent();
+        assertThat(seeds.calendarNamed(owner, renamed)).isEmpty();
+
+        // Delete: only the sharee's copy is removed
+        CollectionSection.button(calendars.rowInGroup("Delegated", renamed), "Delete calendar").click();
+        app.confirm();
+        app.expectToast("Calendar deleted");
+        assertThat(calendars.groupHeading("Delegated")).hasCount(0);
+        assertThat(seeds.calendars(sharee)).noneMatch(c -> c.path("dav:name").asText().startsWith(name));
+        assertThat(seeds.calendarNamed(owner, name)).isPresent();
+        assertThat(seeds.eventCount(owner, calendarId)).isEqualTo(1);
+        // The other invitee keeps its delegated copy
+        assertThat(seeds.calendars(other)).anyMatch(c -> name.equals(c.path("dav:name").asText())
+            && c.hasNonNull("calendarserver:delegatedsource"));
+
+        detail.open(owner);
+        calendars.expand();
+        assertThat(CollectionSection.counter(calendars.rowInGroup("Owner", name), "Events")).hasText("1");
+
+        detail.open(other);
+        calendars.expand();
+        assertThat(calendars.rowInGroup("Delegated", name)).isVisible();
     }
 
     /** The access code of {@code invitee} on the main calendar of {@code owner}, if invited. */
