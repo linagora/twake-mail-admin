@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import com.linagora.admin.e2e.pages.AdminApp;
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
 /** The detail ("Mail Repository — path") and extended views of a mail repository. */
@@ -66,7 +67,39 @@ public class MailRepositoryDetailPage {
         return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Reset").setExact(true));
     }
 
+    // ---- pagination ----
+
+    /** The page label: {@code "Page 2 / 3"} (simple view), {@code "Page 2 / 3 — Total: 450"} (extended view). */
+    public Locator pageLabel(String label) {
+        return app.main().getByText(label, new Locator.GetByTextOptions().setExact(true));
+    }
+
+    /** A pagination button: First, Previous, Next, Last. */
+    public Locator pager(String name) {
+        return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(name).setExact(true));
+    }
+
     // ---- mails ----
+
+    /** The mail rows of the simple view: {@code "<n> / <key> (JSON) (MIME)"} and the mail actions. */
+    public Locator rows() {
+        return app.main().getByRole(AriaRole.LIST).getByRole(AriaRole.LISTITEM);
+    }
+
+    /** A row of the simple view, by its mail key. */
+    public Locator row(String key) {
+        return rows().filter(new Locator.FilterOptions().setHas(
+            app.page().getByText(key, new Page.GetByTextOptions().setExact(true))));
+    }
+
+    public Locator simpleRowAction(String key, String action) {
+        return row(key).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(action).setExact(true));
+    }
+
+    /** The per mail Delete buttons of the extended view: one per displayed mail. */
+    public Locator extendedDeleteButtons() {
+        return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(DELETE).setExact(true));
+    }
 
     /** A mail key of the simple view. */
     public Locator mailKey(String key) {

@@ -33,6 +33,18 @@ public final class WebAdminStub {
         });
     }
 
+    /** Answers GET requests whose path matches with the body {@code body} computes from the request URL (path and query). */
+    public static void answerEach(Page page, Predicate<String> path, Function<java.net.URI, String> body) {
+        page.route(url -> path.test(java.net.URI.create(url).getRawPath()), route -> {
+            if (!route.request().method().equals("GET")) {
+                route.fallback();
+                return;
+            }
+            route.fulfill(new Route.FulfillOptions().setStatus(200).setHeaders(headers())
+                .setBody(body.apply(java.net.URI.create(route.request().url()))));
+        });
+    }
+
     /** Lets GET requests whose path matches reach WebAdmin, then rewrites the body of the answer. */
     public static void rewrite(Page page, WebAdmin webAdmin, Predicate<String> path, Function<String, String> rewriter) {
         page.route(url -> path.test(java.net.URI.create(url).getRawPath()), route -> {
