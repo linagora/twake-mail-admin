@@ -21,6 +21,7 @@ import com.linagora.admin.e2e.pages.mail.userdetail.MailUserDetailPage;
 import com.linagora.admin.e2e.pages.mail.userdetail.UserTasksSection;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Request;
 
 class UserRenameAndDeleteTest extends MailAdminE2ETest {
 
@@ -76,34 +77,51 @@ class UserRenameAndDeleteTest extends MailAdminE2ETest {
 
     @Test
     @DisplayName("UDT-20 Delete all mailboxes")
-    void deleteAllMailboxes(AdminApp app, MailFixtures fixtures, WebAdmin webAdmin) {
+    void deleteAllMailboxes(AdminApp app, MailFixtures fixtures, WebAdmin webAdmin, Page page) {
         String user = fixtures.newUser("delmbx");
         webAdmin.put("/users/" + user + "/mailboxes/INBOX").expect(204);
         webAdmin.put("/users/" + user + "/mailboxes/Work").expect(204);
+        // Another user of the same domain, who must keep its mailboxes
+        String bystander = withTwoMailboxes(webAdmin, fixtures.newUser("keep"));
 
         MailUserDetailPage detail = new MailUserDetailPage(app).open(user);
         detail.tasks().open().run("Delete all mailboxes");
         assertThat(app.dialog()).containsText("Are you sure you want to delete ALL mailboxes for \"" + user
             + "\"? This cannot be undone.");
-        app.confirm();
+        Request sent = page.waitForRequest(
+            request -> request.method().equals("DELETE") && request.url().contains("/mailboxes"), app::confirm);
+        assertThat(sent.url()).endsWith("/users/" + user.replace("@", "%40") + "/mailboxes");
         app.expectToast("All mailboxes deleted successfully");
         assertThat(webAdmin.get("/users/" + user + "/mailboxes").expect(200).json().size()).isZero();
+        assertThat(webAdmin.get("/users/" + bystander + "/mailboxes").expect(200).json().size()).isEqualTo(2);
     }
 
     @Test
     @DisplayName("UDT-20 Delete user data")
-    void deleteUserData(AdminApp app, MailFixtures fixtures, WebAdmin webAdmin) {
+    void deleteUserData(AdminApp app, MailFixtures fixtures, WebAdmin webAdmin, Page page) {
         String user = fixtures.newUser("deldata");
         webAdmin.put("/users/" + user + "/mailboxes/INBOX").expect(204);
+        // Another user of the same domain, who must keep its data
+        String bystander = withTwoMailboxes(webAdmin, fixtures.newUser("keep"));
 
         MailUserDetailPage detail = new MailUserDetailPage(app).open(user);
         Locator dialog = detail.tasks().open().run("Delete user data");
         assertThat(dialog.getByLabel("Resume from step:")).hasValue("");
         assertThat(detail.commandPreview()).hasText(Pattern.compile("action=deleteData$"));
-        app.confirm();
+        Request sent = page.waitForRequest(
+            request -> request.method().equals("POST") && request.url().contains("action=deleteData"), app::confirm);
+        assertThat(sent.url()).endsWith("/users/" + user.replace("@", "%40") + "?action=deleteData");
         JsonNode task = webAdmin.awaitTask(detail.taskIdFromToast("Task created"));
         assertThat(task.path("status").asText()).as(task.toString()).isEqualTo("completed");
         assertThat(task.path("type").asText()).isEqualTo("DeleteUserDataTask");
         assertThat(webAdmin.get("/users/" + user + "/mailboxes").expect(200).json().size()).isZero();
+        assertThat(webAdmin.get("/users/" + bystander + "/mailboxes").expect(200).json().size()).isEqualTo(2);
+    }
+
+    /** Gives the user an INBOX and a Work mailbox. */
+    private static String withTwoMailboxes(WebAdmin webAdmin, String user) {
+        webAdmin.put("/users/" + user + "/mailboxes/INBOX").expect(204);
+        webAdmin.put("/users/" + user + "/mailboxes/Work").expect(204);
+        return user;
     }
 }

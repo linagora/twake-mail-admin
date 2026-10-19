@@ -16,6 +16,8 @@ import com.linagora.admin.e2e.backend.WebAdmin;
 import com.linagora.admin.e2e.pages.AdminApp;
 import com.linagora.admin.e2e.pages.mail.domains.DomainDetailPage;
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Request;
 import com.microsoft.playwright.options.AriaRole;
 
 class DomainTasksTest extends MailAdminE2ETest {
@@ -71,11 +73,15 @@ class DomainTasksTest extends MailAdminE2ETest {
 
     @Test
     @DisplayName("DOM-14 Domain tasks: delete all users data of a throw-away domain")
-    void deleteAllUsersData(AdminApp app, MailFixtures fixtures) {
+    void deleteAllUsersData(AdminApp app, MailFixtures fixtures, Page page) {
         String domain = fixtures.domain();
         WebAdmin webAdmin = fixtures.webAdmin();
         String user = fixtures.newUser("u1");
         webAdmin.put("/users/" + user + "/mailboxes/INBOX").expect(204);
+        // A user of another domain, who must keep its data
+        String bystander = fixtures.newUser("keep", fixtures.newDomain("keep"));
+        webAdmin.put("/users/" + bystander + "/mailboxes/INBOX").expect(204);
+        webAdmin.put("/users/" + bystander + "/mailboxes/Work").expect(204);
 
         DomainDetailPage detail = DomainDetailPage.open(app, domain).openSection("Tasks");
         runButton(detail, "Delete all users data").click();
@@ -83,13 +89,16 @@ class DomainTasksTest extends MailAdminE2ETest {
         assertThat(app.dialog()).containsText("This will delete the data of ALL users belonging to \"" + domain
             + "\". This action cannot be undone. Are you sure?");
         assertThat(app.dialog()).containsText("Command: curl -XPOST /domains/" + domain + "?action=deleteData");
-        app.confirm();
+        Request sent = page.waitForRequest(
+            request -> request.method().equals("POST") && request.url().contains("action=deleteData"), app::confirm);
+        assertThat(sent.url()).endsWith("/domains/" + domain + "?action=deleteData");
 
         String taskId = taskIdOfToast(app, "Task created");
         JsonNode task = webAdmin.awaitTask(taskId);
         assertThat(task.path("status").asText()).isEqualTo("completed");
         assertThat(task.path("type").asText()).isEqualTo("DeleteUsersDataOfDomainTask");
         assertThat(webAdmin.get("/users/" + user + "/mailboxes").expect(200).json().size()).isZero();
+        assertThat(webAdmin.get("/users/" + bystander + "/mailboxes").expect(200).json().size()).isEqualTo(2);
     }
 
     /** The Run button of a task row. */
