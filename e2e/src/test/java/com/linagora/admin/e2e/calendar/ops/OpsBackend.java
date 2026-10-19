@@ -116,6 +116,15 @@ final class OpsBackend {
             + "DTEND:20261120T100000Z\r\nSUMMARY:" + summary + "\r\nEND:VEVENT\r\n";
     }
 
+    /** {@code count} events, for an import that makes a slow reindexing last. */
+    static String[] events(int count) {
+        String[] events = new String[count];
+        for (int i = 0; i < count; i++) {
+            events[i] = event("load " + i);
+        }
+        return events;
+    }
+
     /** An event Sabre refuses (no DTSTART): its import task ends up failed. */
     static String brokenEvent() {
         return "BEGIN:VEVENT\r\nUID:" + Ids.unique("broken") + "\r\nDTSTAMP:20261016T080000Z\r\nSUMMARY:no start\r\nEND:VEVENT\r\n";

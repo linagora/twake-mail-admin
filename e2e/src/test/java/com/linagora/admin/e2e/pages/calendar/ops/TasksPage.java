@@ -31,6 +31,14 @@ public class TasksPage {
         return fromSidebar(app);
     }
 
+    /** Opens Tasks by its URL, without the sidebar: folded on a phone. */
+    public static TasksPage openByUrl(AdminApp app) {
+        app.page().navigate("/tasks");
+        TasksPage page = new TasksPage(app);
+        assertThat(page.button("Refresh")).isVisible();
+        return page;
+    }
+
     public Locator button(String name) {
         return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(name).setExact(true));
     }
