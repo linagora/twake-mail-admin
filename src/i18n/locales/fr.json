@@ -1131,6 +1131,7 @@
     "hasAttachment": "Pièce jointe"
   },
   "tasks": {
+    "detailSubtitle": "Tâche <u>{{taskId}}</u>",
     "title": "Tâches",
     "subtitle": "Surveiller et gérer les tâches du serveur",
     "refresh": "Actualiser",

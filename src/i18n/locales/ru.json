@@ -1133,6 +1133,7 @@
     "hasAttachment": "Есть вложение"
   },
   "tasks": {
+    "detailSubtitle": "Задача <u>{{taskId}}</u>",
     "title": "Задачи",
     "subtitle": "Мониторинг и управление задачами сервера",
     "refresh": "Обновить",

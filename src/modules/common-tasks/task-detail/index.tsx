@@ -1,7 +1,7 @@
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useCallback } from "react";
 import { useParams } from "react-router";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { cancelTask, getTaskDetail } from "../api-client";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ export default function TaskDetail() {
     <div className="p-4 relative">
       <div className="flex items-center mb-4">
         <Header
-          headerSubTitle={<span>Task <u>{id}</u></span>}
+          headerSubTitle={<span><Trans i18nKey="tasks.detailSubtitle" values={{ taskId: id }} components={{ u: <u /> }} /></span>}
           docuUrl="https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_getting_a_task_details"
           enableBackBtn={true}
         />

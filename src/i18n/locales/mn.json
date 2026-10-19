@@ -1131,6 +1131,7 @@
     "hasAttachment": "Хавсралттай"
   },
   "tasks": {
+    "detailSubtitle": "Даалгавар <u>{{taskId}}</u>",
     "title": "Даалгаврууд",
     "subtitle": "Серверийн даалгавруудыг хянах, удирдах",
     "refresh": "Шинэчлэх",

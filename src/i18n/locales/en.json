@@ -1131,6 +1131,7 @@
     "hasAttachment": "Has attachment"
   },
   "tasks": {
+    "detailSubtitle": "Task <u>{{taskId}}</u>",
     "title": "Tasks",
     "subtitle": "Monitor and manage server tasks",
     "refresh": "Refresh",

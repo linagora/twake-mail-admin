@@ -1131,6 +1131,7 @@
     "hasAttachment": "Mit Anhang"
   },
   "tasks": {
+    "detailSubtitle": "Aufgabe <u>{{taskId}}</u>",
     "title": "Aufgaben",
     "subtitle": "Serveraufgaben überwachen und verwalten",
     "refresh": "Aktualisieren",

@@ -1131,6 +1131,7 @@
     "hasAttachment": "Con archivo adjunto"
   },
   "tasks": {
+    "detailSubtitle": "Tarea <u>{{taskId}}</u>",
     "title": "Tareas",
     "subtitle": "Supervise y gestione las tareas del servidor",
     "refresh": "Actualizar",

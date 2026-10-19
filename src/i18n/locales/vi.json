@@ -1130,6 +1130,7 @@
     "hasAttachment": "Có tệp đính kèm"
   },
   "tasks": {
+    "detailSubtitle": "Tác vụ <u>{{taskId}}</u>",
     "title": "Tác vụ",
     "subtitle": "Giám sát và quản lý tác vụ máy chủ",
     "refresh": "Làm mới",

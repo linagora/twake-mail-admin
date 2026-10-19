@@ -1131,6 +1131,7 @@
     "hasAttachment": "Con allegato"
   },
   "tasks": {
+    "detailSubtitle": "Attività <u>{{taskId}}</u>",
     "title": "Attività",
     "subtitle": "Monitora e gestisci le attività del server",
     "refresh": "Aggiorna",
