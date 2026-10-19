@@ -3,8 +3,12 @@ package com.linagora.admin.e2e.calendar.users;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -195,5 +199,81 @@ class UsersTest extends CalendarAdminE2ETest {
         assertThat(addressBooks.row("My contacts")).isVisible();
         assertThat(addressBooks.row("Collected contacts")).isVisible();
         assertThat(addressBooks.rows(bobAddressBook)).hasCount(0);
+    }
+
+    @Test
+    @DisplayName("USR-05 Page through more than 50 users")
+    void pageThroughMoreThanFiftyUsers(AdminApp app, Page page, CalendarFixtures fixtures) {
+        // The side service ignores limit, anchor and query: the console filters, sorts and pages by 50
+        String prefix = Ids.unique("c3usr05");
+        String otherDomain = fixtures.newDomain("c3usr05");
+        List<String> users = IntStream.range(0, 55).parallel()
+            .mapToObj(i -> fixtures.newUnregisteredUser(prefix + "-" + String.format("%02d", i)))
+            .sorted()
+            .toList();
+        UsersListPage list = new UsersListPage(app).open().searchFor(prefix);
+
+        assertThat(list.rows()).hasText(numbered(users, 0, 50, 1));
+        assertThat(list.pageLabel()).hasText("Page 1");
+        assertThat(list.first()).isDisabled();
+        assertThat(list.previous()).isDisabled();
+        assertThat(list.next()).isEnabled();
+        List<String> firstPage = list.userLinks().allInnerTexts();
+
+        list.next().click();
+        assertThat(list.pageLabel()).hasText("Page 2");
+        assertThat(list.rows()).hasText(numbered(users, 50, 55, 51));
+        assertThat(list.next()).isDisabled();
+        assertThat(list.previous()).isEnabled();
+        assertThat(list.first()).isEnabled();
+        List<String> all = new ArrayList<>(firstPage);
+        all.addAll(list.userLinks().allInnerTexts());
+        assertThat(all).containsExactlyElementsOf(users);
+        assertThat(new HashSet<>(all)).hasSize(55);
+
+        list.previous().click();
+        assertThat(list.pageLabel()).hasText("Page 1");
+        assertThat(list.rows()).hasText(numbered(users, 0, 50, 1));
+
+        list.next().click();
+        assertThat(list.pageLabel()).hasText("Page 2");
+        list.first().click();
+        assertThat(list.pageLabel()).hasText("Page 1");
+        assertThat(list.row(1)).hasText("1/" + users.get(0));
+
+        // Typing from page 2 restarts from page 1, everything fits on it: no paging controls
+        list.next().click();
+        assertThat(list.pageLabel()).hasText("Page 2");
+        list.searchFor(prefix + "-5");
+        assertThat(list.rows()).hasText(numbered(users, 50, 55, 1));
+        assertThat(list.pageLabel()).hasCount(0);
+        assertThat(list.next()).hasCount(0);
+        assertThat(list.previous()).hasCount(0);
+
+        // Changing the domain from page 2 restarts from page 1 too
+        list.searchFor(prefix);
+        assertThat(list.pageLabel()).hasText("Page 1");
+        list.next().click();
+        assertThat(list.pageLabel()).hasText("Page 2");
+        list.domainSelector().selectOption(new SelectOption().setLabel(otherDomain));
+        assertThat(list.noMatch(prefix)).isVisible();
+        assertThat(list.rows()).hasCount(0);
+        assertThat(list.pageLabel()).hasCount(0);
+        list.domainSelector().selectOption(new SelectOption().setLabel(CalendarFixtures.DOMAIN));
+        assertThat(list.pageLabel()).hasText("Page 1");
+        assertThat(list.rows()).hasText(numbered(users, 0, 50, 1));
+
+        // A user of page 2 opens its page
+        list.next().click();
+        assertThat(list.pageLabel()).hasText("Page 2");
+        String last = users.get(54);
+        list.userLink(last).click();
+        assertThat(page).hasURL(Pattern.compile("/users/user/" + JsRegex.quote(WebAdmin.encode(last)) + "$"));
+        assertThat(new UserDetailPage(app).usernameLabel()).hasText("Username: " + last);
+    }
+
+    /** {@code "n/username"} for {@code users[from..to)}, numbered from {@code firstNumber}. */
+    private static String[] numbered(List<String> users, int from, int to, int firstNumber) {
+        return IntStream.range(from, to).mapToObj(i -> (firstNumber + i - from) + "/" + users.get(i)).toArray(String[]::new);
     }
 }
