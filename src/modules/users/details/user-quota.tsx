@@ -191,6 +191,7 @@ export default function UserQuota({ username }: Props) {
               {showSizeEdit && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   <input
+                    autoFocus
                     type="number"
                     value={sizeInput}
                     onChange={(e) => setSizeInput(e.target.value)}

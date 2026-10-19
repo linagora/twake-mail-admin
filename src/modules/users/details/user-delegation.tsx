@@ -118,6 +118,7 @@ export default function UserDelegation({ username }: Props) {
           {showCreateInput && (
             <div className="flex gap-2 mt-2 mb-2">
               <input
+                autoFocus
                 type="text"
                 value={newUser}
                 onChange={(e) => setNewUser(e.target.value)}

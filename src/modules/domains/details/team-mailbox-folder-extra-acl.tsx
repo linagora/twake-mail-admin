@@ -192,6 +192,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
               {/* Username input */}
               <div className="flex gap-2 items-center">
                 <input
+                  autoFocus
                   type="text"
                   value={newUser}
                   onChange={(e) => setNewUser(e.target.value)}

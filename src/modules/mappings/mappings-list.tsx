@@ -313,6 +313,7 @@ export default function MappingsList() {
         <div className="mt-3 p-4 border rounded-md bg-gray-50 flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <input
+              autoFocus
               type="text"
               value={source}
               onChange={(e) => setSource(e.target.value)}
@@ -351,6 +352,7 @@ export default function MappingsList() {
         <div className="mt-3 p-4 border rounded-md bg-gray-50 flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <input
+              autoFocus
               type="text"
               value={regexSource}
               onChange={(e) => setRegexSource(e.target.value)}
@@ -389,6 +391,7 @@ export default function MappingsList() {
         <div className="mt-3 p-4 border rounded-md bg-gray-50 flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <input
+              autoFocus
               type="text"
               value={domainSource}
               onChange={(e) => setDomainSource(e.target.value)}

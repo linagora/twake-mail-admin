@@ -113,6 +113,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
           {showCreateInput && (
             <div className="flex gap-2 mt-2 mb-2">
               <input
+                autoFocus
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}

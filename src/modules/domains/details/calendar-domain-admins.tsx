@@ -114,6 +114,7 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
           {showAddInput && (
             <div className="flex gap-2 mt-2 mb-2">
               <input
+                autoFocus
                 type="text"
                 value={newAdmin}
                 onChange={(e) => setNewAdmin(e.target.value)}

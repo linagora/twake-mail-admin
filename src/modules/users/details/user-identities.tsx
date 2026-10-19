@@ -180,6 +180,7 @@ export default function UserIdentities({ username }: Props) {
               <h5 className="text-sm font-semibold">{t("users.identities.newTitle")}</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <input
+                  autoFocus
                   type="text"
                   value={createForm.name}
                   onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}

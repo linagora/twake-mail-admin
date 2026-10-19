@@ -155,6 +155,7 @@ export default function GlobalQuota() {
               {showSizeEdit && (
                 <div className="flex gap-2 mt-2">
                   <input
+                    autoFocus
                     type="number"
                     value={sizeInput}
                     onChange={(e) => setSizeInput(e.target.value)}

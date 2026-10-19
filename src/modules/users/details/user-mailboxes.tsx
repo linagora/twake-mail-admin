@@ -173,6 +173,7 @@ export default function UserMailboxes({ username }: Props) {
           {showCreateInput && (
             <div className="flex gap-2 mt-2 mb-2">
               <input
+                autoFocus
                 type="text"
                 value={newMailbox}
                 onChange={(e) => setNewMailbox(e.target.value)}

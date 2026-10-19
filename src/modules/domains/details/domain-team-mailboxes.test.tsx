@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 
 const mocks = vi.hoisted(() => ({
@@ -40,5 +40,19 @@ describe("domain team mailboxes: row heading", () => {
 
     const heading = await screen.findByRole("heading", { level: 4 });
     expect(heading.textContent).toBe("1/ sales — sales@example.com");
+  });
+});
+
+describe("domain team mailboxes: add", () => {
+  it("focuses the name field revealed by the + button", async () => {
+    render(
+      <MemoryRouter>
+        <DomainTeamMailboxes domain="example.com" defaultOpen />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(await screen.findByTitle("domains.teamMailboxes.addTooltip"));
+
+    expect(document.activeElement).toBe(screen.getByPlaceholderText("domains.teamMailboxes.namePlaceholder"));
   });
 });

@@ -145,7 +145,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
           {showCreate && (
             <div className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2">
               <h5 className="text-sm font-semibold">{t("domains.calendarResources.newTitle")}</h5>
-              <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={t("domains.calendarResources.namePlaceholder")}
+              <input autoFocus type="text" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={t("domains.calendarResources.namePlaceholder")}
                 aria-label={t("domains.calendarResources.namePlaceholder")}
                 className="w-full px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               <input type="text" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} placeholder={t("domains.calendarResources.descriptionPlaceholder")}

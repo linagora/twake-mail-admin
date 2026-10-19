@@ -146,6 +146,7 @@ export default function UserLabels({ username }: Props) {
                 <div>
                   <label htmlFor={`${idPrefix}-create-displayName`} className="text-xs text-gray-500">{t("users.labels.displayNameLabel")}</label>
                   <input
+                    autoFocus
                     id={`${idPrefix}-create-displayName`}
                     type="text"
                     value={createForm.displayName}

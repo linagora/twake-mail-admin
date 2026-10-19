@@ -121,6 +121,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
           {showCreateInput && (
             <div className="flex gap-2 mt-2 mb-2">
               <input
+                autoFocus
                 type="text"
                 value={newFolder}
                 onChange={(e) => setNewFolder(e.target.value)}

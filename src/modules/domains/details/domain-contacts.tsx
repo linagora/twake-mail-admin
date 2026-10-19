@@ -251,6 +251,7 @@ export default function DomainContacts({ domain }: Props) {
             <div className="p-4 bg-blue-50 rounded-2 mb-2 space-y-2">
               <h5 className="text-sm font-semibold">{t("domains.contacts.newTitle")}</h5>
               <input
+                autoFocus
                 type="email"
                 value={createEmail}
                 onChange={(e) => setCreateEmail(e.target.value)}
