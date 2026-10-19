@@ -145,6 +145,23 @@ public abstract class ComposeStack {
         return compose(args.toArray(String[]::new));
     }
 
+    /**
+     * Starts a long running command in a running container of the stack, its standard input and
+     * output attached to the returned process (standard error is discarded). The caller destroys it.
+     */
+    public Process spawn(String service, String... command) {
+        List<String> args = new ArrayList<>(List.of("docker", "compose", "-p", project,
+            "-f", composeFilePath().toString(), "exec", "-T", service));
+        args.addAll(List.of(command));
+        try {
+            return new ProcessBuilder(args)
+                .redirectError(ProcessBuilder.Redirect.DISCARD)
+                .start();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     /** Chromium {@code --host-resolver-rules} entry pointing {@code hostname} at a published port. */
     protected String rule(String hostname, String service, int containerPort) {
         return "MAP " + hostname + " 127.0.0.1:" + port(service, containerPort);
