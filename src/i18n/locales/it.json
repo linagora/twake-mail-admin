@@ -1235,6 +1235,7 @@
     "errorRunTask": "Errore durante l'esecuzione di {{name}}"
   },
   "healthCheck": {
+    "checking": "Verifica dei componenti in corso, potrebbe richiedere un po' di tempo…",
     "welcome": "Benvenuto nell'amministrazione di Twake Mail!",
     "description": "Questo strumento semplifica la gestione di Twake Mail tramite webadmin.",
     "welcomeCalendar": "Benvenuto nell'amministrazione di Twake Calendar!",

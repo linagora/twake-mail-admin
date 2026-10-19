@@ -67,6 +67,7 @@ export default function HealthCheck() {
   const {
     data: healthCheckResponse,
     isLoading,
+    error,
   } = useFetchData<HealthCheckResponseType>(getHealthCheck);
 
   const sections = groupHealthChecks(healthCheckResponse?.checks || [], isCalendar);
@@ -79,6 +80,11 @@ export default function HealthCheck() {
         docuUrl={isCalendar ? CALENDAR_WEBADMIN_DOC_URL : DOCU_URL_MAIL}
       />
 
+      {error && <p role="alert" className="text-red-500 mt-4">{t("common.errorPrefix", { message: error })}</p>}
+
+      {isLoading && (
+        <p role="status" className="text-sm text-muted-foreground mt-4">{t("healthCheck.checking")}</p>
+      )}
       {isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
           <Skeleton className="h-[58px] rounded-2" />

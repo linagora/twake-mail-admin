@@ -12,8 +12,8 @@ import { HealthCheckResponseType } from "./types";
  * - HTTP 503: At least one check is `unhealthy`.
  */
 export const getHealthCheck = async (): Promise<HealthCheckResponseType> => {
-  const response = await apiClient.get<any, HealthCheckResponseType>(
-    "/healthcheck"
-  );
-  return response; // Accessing the `data` property correctly
+  // A 503 is WebAdmin's normal "something is unhealthy" answer and carries the usual body
+  return apiClient.get<any, HealthCheckResponseType>("/healthcheck", {
+    validateStatus: (status) => status === 200 || status === 503,
+  });
 };

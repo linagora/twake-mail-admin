@@ -1234,6 +1234,7 @@
     "errorRunTask": "Lỗi khi chạy {{name}}"
   },
   "healthCheck": {
+    "checking": "Đang kiểm tra các thành phần, việc này có thể mất một lúc…",
     "welcome": "Chào mừng đến với quản trị Twake Mail!",
     "description": "Công cụ này giúp dễ dàng quản lý Twake Mail qua webadmin.",
     "welcomeCalendar": "Chào mừng đến với quản trị Twake Calendar!",
