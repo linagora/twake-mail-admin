@@ -55,3 +55,16 @@ describe("health check: loading and failure", () => {
     expect((await screen.findByRole("alert")).textContent).toContain("Network Error");
   });
 });
+
+describe("health check: component names", () => {
+  it("offers a line break between the words of a CamelCase name only", async () => {
+    api.getHealthCheck.mockReset().mockResolvedValue({
+      status: "healthy",
+      checks: [{ componentName: "RabbitMQDeadLetterQueues", escapedComponentName: "RabbitMQDeadLetterQueues", status: "healthy" }],
+    });
+    render(<MemoryRouter><HealthCheck /></MemoryRouter>);
+
+    const name = await screen.findByText("RabbitMQDeadLetterQueues");
+    expect(name.innerHTML).toBe("Rabbit<wbr>MQ<wbr>Dead<wbr>Letter<wbr>Queues");
+  });
+});

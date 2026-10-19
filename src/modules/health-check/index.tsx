@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -22,6 +23,22 @@ const DOCU_URL_MAIL =
 
 const isCalendar = appConfig.application === "CALENDAR";
 
+// James names its health checks in CamelCase, without spaces: offer a line break between the
+// words (EventDeadLetters|HealthCheck, RabbitMQ|DeadLetter...) rather than at an arbitrary letter
+function ComponentName({ name }: { name: string }) {
+  const words = name.split(/(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/);
+  return (
+    <>
+      {words.map((word, index) => (
+        <Fragment key={index}>
+          {index > 0 && <wbr />}
+          {word}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
 const STATUS_ICONS = {
   [HealthStatuses.HEALTHY]: CheckCircle2,
   [HealthStatuses.DEGRADED]: AlertTriangle,
@@ -35,7 +52,7 @@ function HealthCheckCard({ result }: { result: HealthCheckType }) {
   const card = (
     <Card className={statusStyle(result.status)}>
       <CardContent className="py-4 text-center break-words">
-        <p>{result.componentName}</p>
+        <p><ComponentName name={result.componentName} /></p>
         <p className="mt-1 text-xs font-medium inline-flex items-center gap-1">
           {StatusIcon && <StatusIcon className="h-3.5 w-3.5" aria-hidden="true" />}
           {t(`healthCheck.status.${result.status}`)}
