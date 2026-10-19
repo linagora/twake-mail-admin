@@ -22,7 +22,9 @@ import com.linagora.admin.e2e.backend.Ids;
 import com.linagora.admin.e2e.backend.WebAdmin;
 import com.linagora.admin.e2e.pages.AdminApp;
 import com.linagora.admin.e2e.pages.calendar.resources.CalendarDomainPage;
+import com.linagora.admin.e2e.docker.CalendarStack;
 import com.linagora.admin.e2e.pages.calendar.resources.DomainCalendarRow;
+import com.linagora.admin.e2e.pages.calendar.resources.ResourcesSection;
 import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.assertions.LocatorAssertions;
@@ -70,11 +72,17 @@ class ResourceContentTest extends CalendarAdminE2ETest {
 
     @Test
     @DisplayName("RES-06 Resource public visibility")
-    void resourcePublicVisibility(AdminApp app, CalendarFixtures fixtures) {
-        String name = "QA Room " + Ids.suffix(6);
-        backend.createResource(name, "visibility " + Ids.suffix(8), "laptop", fixtures.newRegisteredUser("creator"));
+    void resourcePublicVisibility(AdminApp app, CalendarFixtures fixtures, CalendarStack stack) {
+        String prefix = "QA Room " + Ids.suffix(6);
+        String creator = fixtures.newRegisteredUser("creator");
+        // Two resources listed together: the dialog of the second one must act on it only
+        String neighbourId = backend.createResource(prefix + " A", "visibility " + Ids.suffix(8), "laptop", creator);
+        String name = prefix + " B";
+        String id = backend.createResource(name, "visibility " + Ids.suffix(8), "laptop", creator);
+        PublicReadProbe probe = new PublicReadProbe(stack, fixtures.newRegisteredUser("reader"));
 
-        DomainCalendarRow row = CalendarDomainPage.open(app, DOMAIN).resources().search(name).row(name);
-        VisibilityChecks.makePublicThenPrivate(app, row);
+        ResourcesSection section = CalendarDomainPage.open(app, DOMAIN).resources().search(prefix);
+        assertThat(section.row(prefix + " A").root()).isVisible();
+        VisibilityChecks.makePublicThenPrivate(app, section.row(name), "resources", id, probe, neighbourId);
     }
 }

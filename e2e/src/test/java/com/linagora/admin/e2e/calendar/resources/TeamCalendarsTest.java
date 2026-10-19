@@ -11,12 +11,13 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.linagora.admin.e2e.CalendarAdminE2ETest;
+import com.linagora.admin.e2e.backend.CalendarFixtures;
 import com.linagora.admin.e2e.backend.Ids;
 import com.linagora.admin.e2e.backend.WebAdmin;
+import com.linagora.admin.e2e.docker.CalendarStack;
 import com.linagora.admin.e2e.pages.AdminApp;
 import com.linagora.admin.e2e.pages.calendar.resources.CalendarDomainPage;
 import com.linagora.admin.e2e.pages.calendar.resources.DomainCalendarRow;
-import com.linagora.admin.e2e.pages.calendar.resources.PublicVisibilityDialog;
 import com.linagora.admin.e2e.pages.calendar.resources.TeamCalendarsSection;
 
 /** Team calendars of open-paas.org: create, rename, delete, visibility and search (TCAL-01, 02, 04, 06). */
@@ -121,18 +122,17 @@ class TeamCalendarsTest extends CalendarAdminE2ETest {
 
     @Test
     @DisplayName("TCAL-06 Team calendar public visibility and search")
-    void teamCalendarPublicVisibilityAndSearch(AdminApp app) {
+    void teamCalendarPublicVisibilityAndSearch(AdminApp app, CalendarFixtures fixtures, CalendarStack stack) {
         String suffix = Ids.suffix(6);
         String name = "qa-team-" + suffix;
         // A display name word the name does not hold: the search must match display names too
         String marker = Ids.suffix(6);
         String displayName = "QA Team Renamed " + marker;
-        backend.createTeamCalendar(name, displayName);
+        String id = backend.createTeamCalendar(name, displayName);
+        PublicReadProbe probe = new PublicReadProbe(stack, fixtures.newRegisteredUser("reader"));
 
         TeamCalendarsSection section = CalendarDomainPage.open(app, DOMAIN).teamCalendars().search(name);
-        PublicVisibilityDialog dialog = section.row(name, displayName).openVisibility();
-        VisibilityChecks.expectNothingPreselected(dialog);
-        VisibilityChecks.choose(app, dialog, dialog.publicOption());
+        VisibilityChecks.makePublicThenPrivate(app, section.row(name, displayName), "team-calendars", id, probe);
 
         // Search matches the display name, and the name
         section.search("renamed " + marker);
