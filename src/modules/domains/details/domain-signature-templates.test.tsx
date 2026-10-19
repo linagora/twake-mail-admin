@@ -55,3 +55,31 @@ describe("domain signature templates accessibility", () => {
     expect(screen.getAllByRole("button", { name: "domains.signatureTemplates.removeTemplate" })).toHaveLength(2);
   });
 });
+
+describe("domain signature templates: save changes", () => {
+  const saveButton = () => screen.queryByRole("button", { name: "domains.signatureTemplates.saveChanges" });
+
+  it("is hidden again once an added template is removed", async () => {
+    await openSection();
+
+    fireEvent.click(screen.getByRole("button", { name: "domains.signatureTemplates.addTemplate" }));
+    fireEvent.change(screen.getByLabelText("domains.signatureTemplates.languageCode"), { target: { value: "fr" } });
+    expect(saveButton()).not.toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "domains.signatureTemplates.removeTemplate" }));
+    expect(saveButton()).toBeNull();
+  });
+
+  it("is hidden again once an edited field is typed back to its saved value", async () => {
+    api.getDomainSignatureTemplates.mockResolvedValue([{ language: "en", textSignature: "Bye", htmlSignature: "" }]);
+    await openSection();
+    fireEvent.click(await screen.findByText("en"));
+
+    const text = screen.getByLabelText("domains.signatureTemplates.textSignature");
+    fireEvent.change(text, { target: { value: "Bye!" } });
+    expect(saveButton()).not.toBeNull();
+
+    fireEvent.change(text, { target: { value: "Bye" } });
+    expect(saveButton()).toBeNull();
+  });
+});

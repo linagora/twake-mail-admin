@@ -19,6 +19,13 @@ interface Props {
 
 const EMPTY_TEMPLATE: SignatureTemplate = { language: "", textSignature: "", htmlSignature: "" };
 
+const sameTemplates = (a: SignatureTemplate[], b: SignatureTemplate[]) =>
+  a.length === b.length &&
+  a.every((tpl, i) =>
+    tpl.language === b[i].language &&
+    tpl.textSignature === b[i].textSignature &&
+    tpl.htmlSignature === b[i].htmlSignature);
+
 export default function DomainSignatureTemplates({ domain }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -32,7 +39,8 @@ export default function DomainSignatureTemplates({ domain }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [templates, setTemplates] = useState<SignatureTemplate[]>([]);
-  const [dirty, setDirty] = useState(false);
+  // The list as last loaded or saved: there is something to save only when the edited one differs
+  const [savedTemplates, setSavedTemplates] = useState<SignatureTemplate[]>([]);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   const fetchTemplates = useCallback(async () => {
@@ -41,7 +49,7 @@ export default function DomainSignatureTemplates({ domain }: Props) {
     try {
       const data = await getDomainSignatureTemplates(domain);
       setTemplates(data);
-      setDirty(false);
+      setSavedTemplates(data);
     } catch (err: any) {
       setError(err?.message || t("domains.signatureTemplates.empty"));
     } finally {
@@ -55,21 +63,20 @@ export default function DomainSignatureTemplates({ domain }: Props) {
 
   if (!canView) return null;
 
+  const dirty = !sameTemplates(templates, savedTemplates);
+
   const handleChange = (index: number, field: keyof SignatureTemplate, value: string) => {
     setTemplates(prev => prev.map((t, i) => i === index ? { ...t, [field]: value } : t));
-    setDirty(true);
   };
 
   const handleAdd = () => {
     setTemplates(prev => [...prev, { ...EMPTY_TEMPLATE }]);
     setExpandedIndex(templates.length);
-    setDirty(true);
   };
 
   const handleRemove = (index: number) => {
     setTemplates(prev => prev.filter((_, i) => i !== index));
     if (expandedIndex === index) setExpandedIndex(null);
-    setDirty(true);
   };
 
   const removeLabel = (tpl: SignatureTemplate) =>
@@ -86,7 +93,7 @@ export default function DomainSignatureTemplates({ domain }: Props) {
     try {
       await updateDomainSignatureTemplates(domain, templates);
       toast({ title: t("domains.signatureTemplates.saved") });
-      setDirty(false);
+      setSavedTemplates(templates);
     } catch (err) {
       toast({ title: t("domains.signatureTemplates.errorSaving"), description: <ErrorDisplayer error={err} /> });
     } finally {
@@ -104,7 +111,7 @@ export default function DomainSignatureTemplates({ domain }: Props) {
       await deleteDomainSignatureTemplates(domain);
       toast({ title: t("domains.signatureTemplates.deleted") });
       setTemplates([]);
-      setDirty(false);
+      setSavedTemplates([]);
     } catch (err) {
       toast({ title: t("domains.signatureTemplates.errorDeleting"), description: <ErrorDisplayer error={err} /> });
     }
