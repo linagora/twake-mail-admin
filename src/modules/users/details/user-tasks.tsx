@@ -25,6 +25,7 @@ import {
   subscribeAllCommand,
 } from "./user-task-commands";
 import { TaskParam } from "@/modules/common-tasks/types";
+import { defaultCommand } from "@/modules/common-tasks/components/command-preview";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -45,6 +46,10 @@ const TIER_PARAMS: TaskParam[] = [
   { key: "tiering", defaultValue: "30d", type: "duration" },
   { key: "messagesPerSecond", defaultValue: "50", type: "input" },
 ];
+
+const INITIAL_PROVISION_VALUES: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
+
+const INITIAL_RENAME_VALUES: RenameUserValues = { newUsername: "", force: false, fromStep: "" };
 
 interface Props {
   username: string;
@@ -70,9 +75,16 @@ export default function UserTasks({ username }: Props) {
   const [open, setOpen] = useState(false);
   const [subscribeLoading, setSubscribeLoading] = useState(false);
 
+  // Each Run tooltip shows the command its dialog first previews, with the default parameters
+  const reindexCommand = `curl -XPOST /users/${username}/mailboxes?task=reIndex`;
+  const fastViewCommand = `curl -XPOST /users/${username}/mailboxes?task=recomputeFastViewProjectionItems`;
+  const cleanupCommand = (mailbox: "Trash" | "Spam") =>
+    `curl -XDELETE "/messages?olderThan=5d&mailbox=${mailbox}&user=${username}&useSavedDate"`;
+  const tierCommand = `curl -XPOST /users/${username}/data`;
+
 
   const handleProvisionTemplates = async () => {
-    let values: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
+    let values = INITIAL_PROVISION_VALUES;
 
     await confirm({
       header: t("users.tasks.provisionTemplatesTitle"),
@@ -104,7 +116,7 @@ export default function UserTasks({ username }: Props) {
       message: (
         <ConfirmTaskContent
           message={<p>{t("users.tasks.reindexDesc", { username })}</p>}
-          command={`curl -XPOST /users/${username}/mailboxes?task=reIndex`}
+          command={reindexCommand}
           params={REINDEX_PARAMS}
           getParamValues={(key, value) => {
             additionalParams[key] = value;
@@ -151,7 +163,7 @@ export default function UserTasks({ username }: Props) {
       message: (
         <ConfirmTaskContent
           message={<p>{t("users.tasks.fastViewDesc", { username })}</p>}
-          command={`curl -XPOST /users/${username}/mailboxes?task=recomputeFastViewProjectionItems`}
+          command={fastViewCommand}
           params={FAST_VIEW_PARAMS}
           getParamValues={(key, value) => {
             additionalParams[key] = value;
@@ -226,7 +238,7 @@ export default function UserTasks({ username }: Props) {
       message: (
         <ConfirmTaskContent
           message={<p>{t(`users.tasks.cleanup${mailbox}Desc`, { username })}</p>}
-          command={`curl -XDELETE "/messages?olderThan=5d&mailbox=${mailbox}&user=${username}&useSavedDate"`}
+          command={cleanupCommand(mailbox)}
           params={CLEANUP_PARAMS}
           getParamValues={(key, value) => {
             if (key === "olderThan") olderThan = value as string;
@@ -241,7 +253,7 @@ export default function UserTasks({ username }: Props) {
   };
 
   const handleRenameUser = async () => {
-    let currentValues: RenameUserValues = { newUsername: "", force: false, fromStep: "" };
+    let currentValues = INITIAL_RENAME_VALUES;
 
     await confirm({
       header: t("users.tasks.renameTitle"),
@@ -292,7 +304,7 @@ export default function UserTasks({ username }: Props) {
       message: (
         <ConfirmTaskContent
           message={<p>{t("users.tasks.tierDataDesc", { username })}</p>}
-          command={`curl -XPOST /users/${username}/data`}
+          command={tierCommand}
           params={TIER_PARAMS}
           getParamValues={(key, value) => {
             additionalParams[key] = value;
@@ -333,7 +345,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XPOST /users/{username}/mailboxes?task=reIndex
+                    {defaultCommand(reindexCommand, REINDEX_PARAMS)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -351,7 +363,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XPOST /users/{username}/mailboxes?task=subscribeAll
+                    {subscribeAllCommand(username)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -368,7 +380,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XPOST /users/{username}/mailboxes?task=recomputeFastViewProjectionItems
+                    {defaultCommand(fastViewCommand, FAST_VIEW_PARAMS)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -385,7 +397,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XPOST /deletedMessages/users/{username}?action=restore
+                    {restoreDeletedMessagesCommand(username, buildRestoreRequest([], undefined))}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -402,7 +414,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XDELETE /messages?olderThan=5d&amp;mailbox=Trash&amp;user={username}&amp;useSavedDate
+                    {defaultCommand(cleanupCommand("Trash"), CLEANUP_PARAMS)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -419,7 +431,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;user={username}&amp;useSavedDate
+                    {defaultCommand(cleanupCommand("Spam"), CLEANUP_PARAMS)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -436,7 +448,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XPOST /users/{username}/templates?action=provision&amp;from=&#123;sourceUser&#125;
+                    {provisionTemplatesCommand(username, INITIAL_PROVISION_VALUES)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -453,7 +465,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XPOST /users/{username}/data?tiering=&#123;duration&#125;
+                    {defaultCommand(tierCommand, TIER_PARAMS)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -470,7 +482,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XPOST /users/{username}/rename/newUser?action=rename
+                    {renameUserCommand(username, INITIAL_RENAME_VALUES)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -487,7 +499,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XDELETE /users/{username}/mailboxes
+                    {deleteAllMailboxesCommand(username)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -504,7 +516,7 @@ export default function UserTasks({ username }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XPOST /users/{username}?action=deleteData
+                    {deleteUserDataCommand(username, "")}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

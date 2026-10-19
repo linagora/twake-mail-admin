@@ -507,7 +507,8 @@ function MailCommonTasks() {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="left">
-                  curl -XDELETE /tasks?olderThan=Nday
+                  {/* The request run with the days of the field, as sent by cleanupOldTasks */}
+                  curl -XDELETE /tasks?olderThan={cleanupDaysValue ?? "N"}day
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

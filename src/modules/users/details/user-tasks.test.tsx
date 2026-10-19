@@ -102,3 +102,19 @@ describe("user tasks: confirmation dialogs preview their command", () => {
     expect(dialog.validate!()).toBeNull();
   });
 });
+
+describe("user tasks: Run tooltips show the command run with the default parameters", () => {
+  it.each([
+    ["users.tasks.reindexAll", "curl -XPOST /users/bob@linagora.com/mailboxes?task=reIndex&messagesPerSecond=50"],
+    ["users.tasks.fastView", "curl -XPOST /users/bob@linagora.com/mailboxes?task=recomputeFastViewProjectionItems&messagesPerSecond=10"],
+    ["users.tasks.tierData", "curl -XPOST /users/bob@linagora.com/data?tiering=30d&messagesPerSecond=50"],
+    ["users.tasks.renameUser", "curl -XPOST /users/bob@linagora.com/rename/{newUser}?action=rename"],
+    ["users.tasks.restoreDeleted", `curl -XPOST /deletedMessages/users/bob@linagora.com?action=restore -d '{"combinator":"and","criteria":[]}'`],
+  ])("%s", async (label, command) => {
+    renderWithResolver({ isAllowed: () => true });
+    const row = screen.getByText(label).parentElement!;
+    fireEvent.focus(within(row).getByRole("button"));
+
+    expect((await screen.findByRole("tooltip")).textContent).toBe(command);
+  });
+});

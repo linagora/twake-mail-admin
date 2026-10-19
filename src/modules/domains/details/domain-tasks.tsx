@@ -15,6 +15,8 @@ import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-c
 import FormTaskContent from "@/modules/common-tasks/components/form-task-content";
 import { deleteAllUsersDataCommand, provisionDomainTemplatesCommand } from "./domain-task-commands";
 
+const INITIAL_PROVISION_VALUES: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
+
 interface Props {
   domain: string;
   defaultOpen?: boolean;
@@ -62,7 +64,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
   };
 
   const handleProvisionTemplates = async () => {
-    let values: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
+    let values = INITIAL_PROVISION_VALUES;
 
     await confirm({
       header: t("domains.tasks.provisionTemplatesTitle"),
@@ -147,7 +149,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    curl -XPOST /domains/{domain}/templates?action=provision&amp;from=&#123;sourceUser&#125;
+                    {provisionDomainTemplatesCommand(domain, INITIAL_PROVISION_VALUES)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
