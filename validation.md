@@ -39,7 +39,6 @@ a task or action parameter.
 | `DELETE /messages?user={username}&mailbox=Trash` | `DELETE /messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` |
 | `DELETE /registeredUsers` | `DELETE /registeredUsers?email={email}` |
 | `DELETE /tasks` | `DELETE /tasks?olderThan={days}day` |
-| `GET /quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}&domain={domain}` | `GET /quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}` |
 | `GET /tasks` | `GET /tasks?{query_params}` |
 | `PATCH /registeredUsers` | `PATCH /registeredUsers?id={id}` |
 | `POST /addressbook/domain-members/{domain}` | `POST /addressbook/domain-members/{domain}?task=sync` |
@@ -563,7 +562,8 @@ Shown when the user exists in Twake Mail but is not yet a registered calendar us
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
-| "Search by occupation ratio" button | GET | `/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}` | MUST |
+| "Search by occupation ratio" button (GLOBAL mode) | GET | `/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}` | MUST |
+| "Search by occupation ratio" button (DOMAIN mode) | GET | `/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}&domain={domain}` | MUST |
 
 ---
 

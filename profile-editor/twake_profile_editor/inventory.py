@@ -1212,12 +1212,7 @@ USERS = page(
             applications=MAIL,
             endpoints=[
                 must("GET", _QUOTA_EXPLORER, modes=GLOBAL),
-                must(
-                    "GET",
-                    _QUOTA_EXPLORER,
-                    modes=DOMAIN,
-                    gates=(f"{_QUOTA_EXPLORER}&domain={{domain}}",),
-                ),
+                must("GET", f"{_QUOTA_EXPLORER}&domain={{domain}}", modes=DOMAIN),
             ],
         ),
         section(
