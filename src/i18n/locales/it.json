@@ -1312,6 +1312,7 @@
     "usersUnlimitedStorage": "Utenti con spazio illimitato:",
     "usersUnlimitedCount": "Utenti con numero illimitato:",
     "usersSpecificTitle": "Utenti con quote specifiche ({{count}})",
+    "usersSpecific": "Utenti con quote specifiche",
     "noSpecificQuotas": "Nessun utente ha quote specifiche."
   },
   "quotaUsage": {

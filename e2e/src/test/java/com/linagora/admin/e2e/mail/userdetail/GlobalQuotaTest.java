@@ -119,9 +119,21 @@ class GlobalQuotaTest extends MailAdminE2ETest {
     void quotaReports(AdminApp app, MailFixtures fixtures, WebAdmin webAdmin, Page page) {
         String user = userAtOneThird(fixtures, webAdmin);
 
-        GlobalQuotaPage quota = new GlobalQuotaPage(app);
+        List<String> reports = new CopyOnWriteArrayList<>();
+        page.onRequest(request -> {
+            if (request.url().contains("/reports/quota/")) {
+                reports.add(request.url());
+            }
+        });
+        GlobalQuotaPage quota = new GlobalQuotaPage(app).open();
+        // The reports scan every user: they are only fetched when their section is opened
+        assertThat(quota.toggle("Aggregated extra quotas")).isVisible();
+        assertThat(quota.toggle("Users with specific quotas")).isVisible();
+        assertThat(reports).isEmpty();
+
         Response sumResponse = page.waitForResponse(
-            response -> response.url().contains("/reports/quota/users/sum"), quota::open);
+            response -> response.url().contains("/reports/quota/users/sum"),
+            () -> quota.toggle("Aggregated extra quotas").click());
         JsonNode sum = parse(sumResponse.text());
         Locator extra = quota.aggregatedExtra();
         assertThat(GlobalQuotaPage.value(extra, "Total extra storage:")).hasText(formatSize(sum.path("totalExtraStorageLimit")));
@@ -129,7 +141,8 @@ class GlobalQuotaTest extends MailAdminE2ETest {
         assertThat(GlobalQuotaPage.value(extra, "Users with unlimited storage:")).hasText(sum.path("totalUnlimitedStorage").asText());
         assertThat(GlobalQuotaPage.value(extra, "Users with unlimited count:")).hasText(sum.path("totalUnlimitedCount").asText());
 
-        quota.toggle("Users with specific quotas (").click();
+        quota.toggle("Users with specific quotas").click();
+        assertThat(quota.toggle("Users with specific quotas (")).isVisible();
         Locator link = app.main().getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(user).setExact(true));
         Locator next = app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Next").setExact(true));
         while (link.count() == 0 && next.count() > 0 && next.first().isEnabled()) {

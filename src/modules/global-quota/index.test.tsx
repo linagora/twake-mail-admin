@@ -21,7 +21,8 @@ vi.mock("./api-client", () => api);
 vi.mock("@/components/custom/header", () => ({ default: () => null }));
 vi.mock("@/components/custom/quota-usage-sum", () => ({ default: () => null }));
 vi.mock("@/components/custom/explore-user-quota", () => ({ default: () => null }));
-vi.mock("./users-with-specific-quotas", () => ({ default: () => null }));
+vi.mock("./users-with-specific-quotas", () => ({ default: () => <p>users-with-specific-quotas</p> }));
+vi.mock("./aggregated-extra-quotas", () => ({ default: () => <p>aggregated-extra-quotas</p> }));
 
 import GlobalQuota from "./index";
 
@@ -35,13 +36,6 @@ function renderWith(rules: ProxyRule[], size: number | null) {
 
 beforeEach(() => {
   Object.values(api).forEach((fn) => fn.mockReset());
-  api.getUsersWithSpecificQuotas.mockResolvedValue([]);
-  api.getQuotaExtraSummary.mockResolvedValue({
-    totalExtraStorageLimit: 0,
-    totalExtraCountLimit: 0,
-    totalUnlimitedStorage: 0,
-    totalUnlimitedCount: 0,
-  });
   confirmation.answer = true;
 });
 
@@ -80,5 +74,31 @@ describe("global quota size removal", () => {
 
     expect(await screen.findByText("common.updateSizeLimit")).not.toBeNull();
     expect(screen.queryByText("globalQuota.removeSizeLimit")).toBeNull();
+  });
+});
+
+describe("global quota reports", () => {
+  const REPORTS = [
+    ...ALL,
+    { endpoint: "/reports/quota/users?hasSpecificQuota" },
+    { endpoint: "/reports/quota/users/sum?hasSpecificQuota" },
+  ];
+
+  it("loads only the global quota with the page, the reports being fetched by their sections", async () => {
+    renderWith(REPORTS, null);
+
+    expect(await screen.findByText("users-with-specific-quotas")).not.toBeNull();
+    expect(screen.queryByText("aggregated-extra-quotas")).not.toBeNull();
+    expect(api.getGlobalQuota).toHaveBeenCalledTimes(1);
+    expect(api.getUsersWithSpecificQuotas).not.toHaveBeenCalled();
+    expect(api.getQuotaExtraSummary).not.toHaveBeenCalled();
+  });
+
+  it("hides the report sections the profile does not allow", async () => {
+    renderWith(ALL, null);
+
+    expect(await screen.findByText("common.updateSizeLimit")).not.toBeNull();
+    expect(screen.queryByText("users-with-specific-quotas")).toBeNull();
+    expect(screen.queryByText("aggregated-extra-quotas")).toBeNull();
   });
 });

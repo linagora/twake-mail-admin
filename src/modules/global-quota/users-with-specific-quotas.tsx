@@ -3,20 +3,26 @@ import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { useFetchData } from "@/hooks/use-fetch-data";
+import { getUsersWithSpecificQuotas } from "./api-client";
 import { UserSpecificQuota } from "./types";
 
 const PAGE_SIZE = 20;
 
+const NO_USERS: UserSpecificQuota[] = [];
+
 interface UsersWithSpecificQuotasProps {
-  users: UserSpecificQuota[];
   formatCount: (count: number | null) => string;
   formatSize: (bytes: number | null) => string;
 }
 
-export default function UsersWithSpecificQuotas({ users, formatCount, formatSize }: UsersWithSpecificQuotasProps) {
+// The report scans every user: it is only fetched once the section is opened.
+export default function UsersWithSpecificQuotas({ formatCount, formatSize }: UsersWithSpecificQuotasProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
+  const { data, isLoading, error } = useFetchData(open ? getUsersWithSpecificQuotas : null);
+  const users = data ?? NO_USERS;
 
   const totalPages = Math.max(1, Math.ceil(users.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -35,9 +41,13 @@ export default function UsersWithSpecificQuotas({ users, formatCount, formatSize
         className="flex items-center gap-2 text-sm font-semibold hover:text-blue-600 transition"
       >
         {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        {t("globalQuota.usersSpecificTitle", { count: users.length })}
+        {data ? t("globalQuota.usersSpecificTitle", { count: users.length }) : t("globalQuota.usersSpecific")}
       </button>
-      {open && (users.length === 0 ? (
+      {open && (isLoading ? (
+        <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
+      ) : error ? (
+        <p className="text-sm text-red-500">{t("common.errorPrefix", { message: error })}</p>
+      ) : !data ? null : users.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("globalQuota.noSpecificQuotas")}</p>
       ) : (
         <>

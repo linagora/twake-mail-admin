@@ -42,8 +42,9 @@ public class GlobalQuotaPage {
         return value(currentQuota(), "Count");
     }
 
+    /** The "Aggregated extra quotas" block, once its section is opened. */
     public Locator aggregatedExtra() {
-        return heading("Aggregated extra quotas").locator("xpath=..");
+        return toggle("Aggregated extra quotas").locator("xpath=..");
     }
 
     public Locator button(String name) {

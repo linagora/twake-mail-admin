@@ -1,9 +1,8 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getGlobalQuota, updateGlobalQuota, deleteGlobalQuotaSize, getUsersWithSpecificQuotas, getQuotaExtraSummary } from "./api-client";
-import { GlobalQuotaValues, UserSpecificQuota, QuotaExtraSummary } from "./types";
+import { getGlobalQuota, updateGlobalQuota, deleteGlobalQuotaSize } from "./api-client";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -12,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import ExploreUserQuota from "@/components/custom/explore-user-quota";
 import QuotaUsageSumSection from "@/components/custom/quota-usage-sum";
 import UsersWithSpecificQuotas from "./users-with-specific-quotas";
+import AggregatedExtraQuotas from "./aggregated-extra-quotas";
 import i18n from "i18next";
 import { currentLocale } from "@/i18n/locale";
 import { formatByteSize } from "@/i18n/format-size";
@@ -46,21 +46,11 @@ export default function GlobalQuota() {
   const confirm = useConfirm();
   const canUpdate = useIsAllowed("PUT", "/quota");
   const canRemove = useIsAllowed("DELETE", "/quota/size");
+  const canViewSummary = useIsAllowed("GET", "/reports/quota/users/sum?hasSpecificQuota");
+  const canViewSpecificQuotas = useIsAllowed("GET", "/reports/quota/users?hasSpecificQuota");
 
-  const fetchAll = useCallback(async () => {
-    const [quota, users, summary] = await Promise.all([
-      getGlobalQuota(),
-      getUsersWithSpecificQuotas(),
-      getQuotaExtraSummary(),
-    ]);
-    return { quota, users, summary };
-  }, []);
-
-  const { data, isLoading, error, refresh } = useFetchData<{
-    quota: GlobalQuotaValues;
-    users: UserSpecificQuota[];
-    summary: QuotaExtraSummary;
-  }>(fetchAll);
+  // Only the global quota is loaded with the page: the reports are fetched when their section is opened
+  const { data: quota, isLoading, error, refresh } = useFetchData(getGlobalQuota);
 
   const [showSizeEdit, setShowSizeEdit] = useState(false);
   const [sizeInput, setSizeInput] = useState("");
@@ -75,7 +65,7 @@ export default function GlobalQuota() {
     const bytes = Math.round(toBytes(raw, sizeUnit));
     try {
       await updateGlobalQuota({
-        count: data?.quota.count ?? null,
+        count: quota?.count ?? null,
         size: bytes,
       });
       toast({ title: t("globalQuota.updated") });
@@ -115,18 +105,18 @@ export default function GlobalQuota() {
         )}
         {error && <p className="text-red-500 mt-2">{t("common.errorPrefix", { message: error })}</p>}
 
-        {data && (
+        {quota && (
           <div className="space-y-6">
             {/* Current global quota */}
             <div className="p-4 bg-gray-50 rounded-2 space-y-3">
               <h4 className="text-sm font-semibold">{t("globalQuota.currentQuota")}</h4>
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm text-gray-600">{t("globalQuota.count")}</span>
-                <strong className="text-sm">{formatCount(data.quota.count)}</strong>
+                <strong className="text-sm">{formatCount(quota.count)}</strong>
               </div>
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm text-gray-600">{t("globalQuota.size")}</span>
-                <strong className="text-sm">{formatSize(data.quota.size)}</strong>
+                <strong className="text-sm">{formatSize(quota.size)}</strong>
               </div>
 
               <hr className="border-gray-200" />
@@ -141,7 +131,7 @@ export default function GlobalQuota() {
                     {t("common.updateSizeLimit")}
                   </Button>
                 )}
-                {canRemove && data.quota.size != null && (
+                {canRemove && quota.size != null && (
                   <Button
                     variant="outline"
                     className="rounded-sm"
@@ -186,23 +176,11 @@ export default function GlobalQuota() {
               )}
             </div>
 
-            {/* Aggregated extra quotas */}
-            <div className="p-4 bg-gray-50 rounded-2 space-y-3">
-              <h4 className="text-sm font-semibold">{t("globalQuota.aggregatedExtra")}</h4>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                <span className="text-gray-600">{t("globalQuota.totalExtraStorage")}</span>
-                <strong>{formatSize(data.summary.totalExtraStorageLimit)}</strong>
-                <span className="text-gray-600">{t("globalQuota.totalExtraCount")}</span>
-                <strong>{formatCount(data.summary.totalExtraCountLimit)}</strong>
-                <span className="text-gray-600">{t("globalQuota.usersUnlimitedStorage")}</span>
-                <strong>{data.summary.totalUnlimitedStorage}</strong>
-                <span className="text-gray-600">{t("globalQuota.usersUnlimitedCount")}</span>
-                <strong>{data.summary.totalUnlimitedCount}</strong>
-              </div>
-            </div>
+            {canViewSummary && <AggregatedExtraQuotas formatCount={formatCount} formatSize={formatSize} />}
 
-            {/* Users with specific quotas */}
-            <UsersWithSpecificQuotas users={data.users} formatCount={formatCount} formatSize={formatSize} />
+            {canViewSpecificQuotas && (
+              <UsersWithSpecificQuotas formatCount={formatCount} formatSize={formatSize} />
+            )}
           </div>
         )}
 

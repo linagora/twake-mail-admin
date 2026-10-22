@@ -1312,6 +1312,7 @@
     "usersUnlimitedStorage": "Utilisateurs avec stockage illimité :",
     "usersUnlimitedCount": "Utilisateurs avec nombre illimité :",
     "usersSpecificTitle": "Utilisateurs avec quotas spécifiques ({{count}})",
+    "usersSpecific": "Utilisateurs avec quotas spécifiques",
     "noSpecificQuotas": "Aucun utilisateur avec quota spécifique."
   },
   "quotaUsage": {

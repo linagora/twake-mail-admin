@@ -1312,6 +1312,7 @@
     "usersUnlimitedStorage": "Usuarios con almacenamiento ilimitado:",
     "usersUnlimitedCount": "Usuarios con número ilimitado:",
     "usersSpecificTitle": "Usuarios con cuotas específicas ({{count}})",
+    "usersSpecific": "Usuarios con cuotas específicas",
     "noSpecificQuotas": "Ningún usuario tiene cuotas específicas."
   },
   "quotaUsage": {

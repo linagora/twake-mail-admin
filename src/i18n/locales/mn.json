@@ -1312,6 +1312,7 @@
     "usersUnlimitedStorage": "Хязгааргүй сантай хэрэглэгчид:",
     "usersUnlimitedCount": "Хязгааргүй тоотой хэрэглэгчид:",
     "usersSpecificTitle": "Тусгай квототой хэрэглэгчид ({{count}})",
+    "usersSpecific": "Тусгай квототой хэрэглэгчид",
     "noSpecificQuotas": "Ямар ч хэрэглэгч тусгай квотагүй."
   },
   "quotaUsage": {

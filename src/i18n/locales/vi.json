@@ -1311,6 +1311,7 @@
     "usersUnlimitedStorage": "Người dùng có dung lượng không giới hạn:",
     "usersUnlimitedCount": "Người dùng có số lượng không giới hạn:",
     "usersSpecificTitle": "Người dùng có hạn ngạch riêng ({{count}})",
+    "usersSpecific": "Người dùng có hạn ngạch riêng",
     "noSpecificQuotas": "Không có người dùng nào có hạn ngạch riêng."
   },
   "quotaUsage": {

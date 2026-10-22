@@ -1314,6 +1314,7 @@
     "usersUnlimitedStorage": "Пользователей с неограниченным хранилищем:",
     "usersUnlimitedCount": "Пользователей с неограниченным количеством:",
     "usersSpecificTitle": "Пользователи с особыми квотами ({{count}})",
+    "usersSpecific": "Пользователи с особыми квотами",
     "noSpecificQuotas": "Ни у одного пользователя нет особых квот."
   },
   "quotaUsage": {

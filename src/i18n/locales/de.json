@@ -1312,6 +1312,7 @@
     "usersUnlimitedStorage": "Benutzer mit unbegrenztem Speicher:",
     "usersUnlimitedCount": "Benutzer mit unbegrenzter Anzahl:",
     "usersSpecificTitle": "Benutzer mit eigenem Kontingent ({{count}})",
+    "usersSpecific": "Benutzer mit eigenem Kontingent",
     "noSpecificQuotas": "Kein Benutzer hat ein eigenes Kontingent."
   },
   "quotaUsage": {
