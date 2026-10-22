@@ -116,3 +116,12 @@ describe("ConfirmTaskContent: parameters already present in the command", () => 
     expect(preview()).toMatch(/curl -XPOST '\/calendars\?task=scheduleAlarms'$/);
   });
 });
+
+describe("ConfirmTaskContent: no parameter", () => {
+  it("shows the message directly followed by the command, without a stray 0", () => {
+    const { container } = render(<ConfirmTaskContent message={<p>message</p>} command={COMMAND} params={[]} />);
+
+    // "Command:" is the untranslated fallback of confirmTask.command
+    expect(container.textContent).toBe(`messageCommand:: ${COMMAND}`);
+  });
+});

@@ -28,10 +28,10 @@ const ConfirmTaskContent = ({
   return (
     <div className="overflow-hidden">
       {message}
-      {params?.length && (
+      {params && params.length > 0 && (
         <>
           <p>
-            {params?.length > 1
+            {params.length > 1
               ? t("confirmTask.modifyThese", "You can modify these parameters:")
               : t("confirmTask.modifyThis", "You can modify this parameter:")}
           </p>
