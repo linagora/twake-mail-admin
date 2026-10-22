@@ -34,6 +34,17 @@ describe("common tasks: platform-wide cleanup gates", () => {
     expect(screen.queryByText("commonTasks.cleanupSpamAll")).not.toBeNull();
   });
 
+  it.each([
+    ["commonTasks.cleanupTrashAll", `curl -XDELETE "/messages?olderThan=5d&mailbox=Trash&useSavedDate"`],
+    ["commonTasks.cleanupSpamAll", `curl -XDELETE "/messages?olderThan=5d&mailbox=Spam&useSavedDate"`],
+  ])("shows in the Run tooltip of %s the command its dialog previews", async (label, command) => {
+    renderWith([{ verb: ["DELETE"], endpoint: "/messages" }]);
+    const row = screen.getByText(label).parentElement!;
+    fireEvent.focus(within(row).getByRole("button", { name: "common.run" }));
+
+    expect((await screen.findByRole("tooltip")).textContent).toBe(command);
+  });
+
   it("hides them with the user-scoped rule, which does not cover a call without user", () => {
     renderWith([{ endpoint: "/messages?user=%@{domain}" }]);
     expect(screen.queryByText("commonTasks.cleanupTrashAll")).toBeNull();

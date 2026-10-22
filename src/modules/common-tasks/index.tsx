@@ -7,6 +7,7 @@ import { ReIndexMode, TaskKey, TaskProps } from "./types";
 import { reloadCertificates, cleanupOldTasks, repositionTeamMailboxSystemRights, cleanupMailbox, runAllUsersReindexTask, summarizeAllUsersReindex } from "./api-client";
 import { parseCleanupDays } from "./cleanup-days";
 import ConfirmTaskContent from "./components/confirm-task-content";
+import { defaultCommand } from "./components/command-preview";
 import { TaskParam } from "./types";
 import TaskContainer from "./task-container";
 import Header from "@/components/custom/header";
@@ -141,6 +142,10 @@ const TASKS: TaskProps[] = [
 const CLEANUP_PARAMS: TaskParam[] = [
   { key: "olderThan", defaultValue: "5d", type: "input" },
 ];
+
+// Shared by the dialog and the Run tooltip, so that both show the same command
+const cleanupCommand = (mailbox: "Trash" | "Spam") =>
+  `curl -XDELETE "/messages?olderThan=5d&mailbox=${mailbox}&useSavedDate"`;
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";
 
@@ -288,7 +293,7 @@ function MailCommonTasks() {
       message: (
         <ConfirmTaskContent
           message={<p>{t(`commonTasks.cleanup${mailbox}AllDesc`)}</p>}
-          command={`curl -XDELETE "/messages?olderThan=5d&mailbox=${mailbox}&useSavedDate"`}
+          command={cleanupCommand(mailbox)}
           params={CLEANUP_PARAMS}
           getParamValues={(key, value) => {
             if (key === "olderThan") olderThan = value as string;
@@ -458,7 +463,7 @@ function MailCommonTasks() {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="left">
-                  curl -XDELETE /messages?olderThan=5d&amp;mailbox=Trash&amp;useSavedDate
+                  {defaultCommand(cleanupCommand("Trash"), CLEANUP_PARAMS)}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -475,7 +480,7 @@ function MailCommonTasks() {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="left">
-                  curl -XDELETE /messages?olderThan=5d&amp;mailbox=Spam&amp;useSavedDate
+                  {defaultCommand(cleanupCommand("Spam"), CLEANUP_PARAMS)}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
