@@ -70,6 +70,9 @@ class HealthCheckTest extends MailAdminE2ETest {
         assertThat(healthCheck.componentsOf(HealthCheckPage.CORE)).containsExactlyInAnyOrderElementsOf(core);
         assertThat(healthCheck.componentsOf(HealthCheckPage.RABBITMQ)).containsExactlyInAnyOrderElementsOf(rabbitmq);
         assertThat(healthCheck.componentsOf(HealthCheckPage.OTHER)).containsExactlyInAnyOrderElementsOf(other);
+        // WebAdmin answers in completion order: the cards are sorted by name so their places stay stable
+        assertThat(healthCheck.componentsOf(HealthCheckPage.STORAGE))
+            .containsExactly("Cassandra backend", "OpenSearch Backend", "RabbitMQ backend", "Redis");
         // Every component exactly once
         assertThat(healthCheck.allComponents()).containsExactlyInAnyOrderElementsOf(statuses.keySet());
 

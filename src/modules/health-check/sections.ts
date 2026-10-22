@@ -70,9 +70,14 @@ const sectionOf = (
 ): HealthCheckSectionKey =>
   (definitions.find((definition) => definition.matches(check.componentName)) ?? CATCH_ALL).key;
 
+// WebAdmin lists the checks in completion order, which changes on every call
+const byComponentName = (a: HealthCheckType, b: HealthCheckType): number =>
+  a.componentName.localeCompare(b.componentName, "en");
+
 /**
  * Groups health checks into ordered sections, dropping empty ones.
  * Unknown components fall into the "other" catch-all section.
+ * Checks are sorted by component name inside each section.
  */
 export const groupHealthChecks = (
   checks: HealthCheckType[],
@@ -82,7 +87,9 @@ export const groupHealthChecks = (
   return [...definitions, CATCH_ALL]
     .map(({ key }) => ({
       key,
-      checks: checks.filter((check) => sectionOf(definitions, check) === key),
+      checks: checks
+        .filter((check) => sectionOf(definitions, check) === key)
+        .sort(byComponentName),
     }))
     .filter((section) => section.checks.length > 0);
 };

@@ -30,8 +30,8 @@ describe("groupHealthChecks", () => {
     ].map(check);
 
     expect(namesBySection(checks, false)).toEqual({
-      storage: ["Cassandra backend", "Redis", "LDAP User Server"],
-      core: ["MailReceptionCheck", "EmptyErrorMailRepository"],
+      storage: ["Cassandra backend", "LDAP User Server", "Redis"],
+      core: ["EmptyErrorMailRepository", "MailReceptionCheck"],
       rabbitmq: [
         "RabbitMQMailQueueDeadLetterQueueHealthCheck",
         "TMailEventBusConsumersHealthCheck",
@@ -47,6 +47,20 @@ describe("groupHealthChecks", () => {
       "storage",
       "core",
       "other",
+    ]);
+  });
+
+  it("sorts the checks of a section whatever the order of the response", () => {
+    const names = ["Redis", "OpenSearch Backend", "RabbitMQ backend", "Cassandra backend"];
+
+    expect(namesBySection(names.map(check), false).storage).toEqual(
+      namesBySection([...names].reverse().map(check), false).storage
+    );
+    expect(namesBySection(names.map(check), false).storage).toEqual([
+      "Cassandra backend",
+      "OpenSearch Backend",
+      "RabbitMQ backend",
+      "Redis",
     ]);
   });
 
