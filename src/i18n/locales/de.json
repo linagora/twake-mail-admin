@@ -358,7 +358,9 @@
     "domainSettings": {
       "title": "Domain-Einstellungen",
       "useDefault": "Systemstandard verwenden",
+      "useDefaultWithValue": "Systemstandard ({{value}})",
       "effective": "Wirksame Werte",
+      "notSaved": "(nicht gespeichert)",
       "userSearchMode": "Benutzersuchmodus",
       "userSearchModeOptions": {
         "enabled": "Aktiviert",
@@ -372,10 +374,16 @@
       },
       "defaultCalendarPublicVisibility": "Standardmäßige öffentliche Sichtbarkeit von Kalendern",
       "visibilityOptions": {
-        "read": "Lesen",
+        "read": "Öffentlich (Lesen)",
         "private": "Privat"
       },
       "calendarPublicVisibilitySettingEnabled": "Benutzern erlauben, die öffentliche Sichtbarkeit ihrer Kalender zu verwalten",
+      "hints": {
+        "userSearchMode": "Welche anderen Benutzer die Benutzer dieser Domain finden können, wenn sie Teilnehmer einladen oder einen Kalender teilen.",
+        "resourceSearchEnabled": "Ob die Benutzer dieser Domain Ressourcen (Räume, Geräte) suchen können, um sie zu buchen.",
+        "defaultCalendarPublicVisibility": "Sichtbarkeit des Hauptkalenders eines Benutzers bei seiner Erstellung. Bestehende Kalender bleiben unverändert.",
+        "calendarPublicVisibilitySettingEnabled": "Ob Benutzer ihre Kalender in Twake Calendar öffentlich oder privat machen können."
+      },
       "saved": "Domain-Einstellungen gespeichert",
       "errorSaving": "Fehler beim Speichern der Domain-Einstellungen"
     },

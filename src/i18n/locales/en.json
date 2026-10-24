@@ -358,7 +358,9 @@
     "domainSettings": {
       "title": "Domain settings",
       "useDefault": "Use system default",
+      "useDefaultWithValue": "System default ({{value}})",
       "effective": "Effective values",
+      "notSaved": "(not saved)",
       "userSearchMode": "User search mode",
       "userSearchModeOptions": {
         "enabled": "Enabled",
@@ -372,10 +374,16 @@
       },
       "defaultCalendarPublicVisibility": "Default calendar public visibility",
       "visibilityOptions": {
-        "read": "Read",
+        "read": "Public (read)",
         "private": "Private"
       },
       "calendarPublicVisibilitySettingEnabled": "Allow users to manage Calendar public visibility setting",
+      "hints": {
+        "userSearchMode": "Which other users the users of this domain can find when they invite attendees or share a calendar.",
+        "resourceSearchEnabled": "Whether the users of this domain can search the calendar resources (rooms, equipment) to book them.",
+        "defaultCalendarPublicVisibility": "Visibility given to the main calendar of a user when it is created. Existing calendars are not changed.",
+        "calendarPublicVisibilitySettingEnabled": "Whether users can make their own calendars public or private in Twake Calendar."
+      },
       "saved": "Domain settings saved",
       "errorSaving": "Error saving domain settings"
     },

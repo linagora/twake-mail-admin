@@ -358,7 +358,9 @@
     "domainSettings": {
       "title": "Réglages du domaine",
       "useDefault": "Valeur par défaut du système",
+      "useDefaultWithValue": "Valeur par défaut du système ({{value}})",
       "effective": "Valeurs effectives",
+      "notSaved": "(non enregistré)",
       "userSearchMode": "Mode de recherche d'utilisateurs",
       "userSearchModeOptions": {
         "enabled": "Activé",
@@ -372,10 +374,16 @@
       },
       "defaultCalendarPublicVisibility": "Visibilité publique par défaut du calendrier",
       "visibilityOptions": {
-        "read": "Lecture",
+        "read": "Public (lecture)",
         "private": "Privé"
       },
       "calendarPublicVisibilitySettingEnabled": "Autoriser les utilisateurs à gérer le réglage de visibilité publique du calendrier",
+      "hints": {
+        "userSearchMode": "Les autres utilisateurs que les utilisateurs de ce domaine peuvent trouver lorsqu'ils invitent des participants ou partagent un calendrier.",
+        "resourceSearchEnabled": "Si les utilisateurs de ce domaine peuvent rechercher les ressources (salles, équipements) pour les réserver.",
+        "defaultCalendarPublicVisibility": "Visibilité donnée au calendrier principal d'un utilisateur lors de sa création. Les calendriers existants ne changent pas.",
+        "calendarPublicVisibilitySettingEnabled": "Si les utilisateurs peuvent rendre leurs calendriers publics ou privés dans Twake Calendar."
+      },
       "saved": "Réglages du domaine enregistrés",
       "errorSaving": "Erreur lors de l'enregistrement des réglages du domaine"
     },

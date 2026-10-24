@@ -42,6 +42,7 @@ function toValues(s: DomainSettings): DomainSettingsValues {
 
 export function SettingRow({
   label,
+  hint,
   defaultLabel,
   value,
   options,
@@ -49,6 +50,8 @@ export function SettingRow({
   onChange,
 }: {
   label: string;
+  // What the setting changes for the users of the domain
+  hint?: string;
   defaultLabel: string;
   value: string;
   options: Option[];
@@ -56,11 +59,13 @@ export function SettingRow({
   onChange: (v: string) => void;
 }) {
   const triggerId = useId();
+  const hintId = useId();
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={triggerId} className="text-sm font-medium">{label}</label>
+      {hint && <p id={hintId} className="text-xs text-gray-500">{hint}</p>}
       <Select value={value} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger id={triggerId} className="w-[240px]">
+        <SelectTrigger id={triggerId} className="w-[240px]" aria-describedby={hint ? hintId : undefined}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -75,6 +80,23 @@ export function SettingRow({
     </div>
   );
 }
+
+type Field = keyof DomainSettingsValues;
+
+// Each setting: the key of its option labels, and its values as the select holds them
+const FIELDS: { field: Field; optionsKey: string; values: string[] }[] = [
+  { field: "userSearchMode", optionsKey: "userSearchModeOptions", values: ["enabled", "limited", "disabled"] },
+  { field: "resourceSearchEnabled", optionsKey: "booleanOptions", values: ["true", "false"] },
+  { field: "defaultCalendarPublicVisibility", optionsKey: "visibilityOptions", values: ["read", "private"] },
+  { field: "calendarPublicVisibilitySettingEnabled", optionsKey: "booleanOptions", values: ["true", "false"] },
+];
+
+const BOOLEAN_FIELDS: Field[] = ["resourceSearchEnabled", "calendarPublicVisibilitySettingEnabled"];
+
+const toSelect = (value: DomainSettingsValues[Field]): string => (value === null ? DEFAULT_SENTINEL : String(value));
+
+const fromSelect = (field: Field, value: string): DomainSettingsValues[Field] =>
+  value === DEFAULT_SENTINEL ? null : BOOLEAN_FIELDS.includes(field) ? value === "true" : (value as DomainSettingsValues[Field]);
 
 export default function CalendarDomainSettings({ domain, defaultOpen = false }: Props) {
   const { t } = useTranslation();
@@ -110,10 +132,7 @@ export default function CalendarDomainSettings({ domain, defaultOpen = false }: 
     }
   };
 
-  const updateField = <K extends keyof DomainSettingsValues>(
-    field: K,
-    val: DomainSettingsValues[K]
-  ) => {
+  const updateField = (field: Field, val: DomainSettingsValues[Field]) => {
     setValues((prev) => (prev ? { ...prev, [field]: val } : prev));
     setDirty(true);
   };
@@ -135,19 +154,27 @@ export default function CalendarDomainSettings({ domain, defaultOpen = false }: 
     }
   };
 
-  const userSearchModeOptions: Option[] = (["enabled", "limited", "disabled"] as const).map(
-    (v) => ({ value: v, label: t(`domains.domainSettings.userSearchModeOptions.${v}`) })
-  );
-  const visibilityOptions: Option[] = (["read", "private"] as const).map((v) => ({
-    value: v,
-    label: t(`domains.domainSettings.visibilityOptions.${v}`),
-  }));
-  const booleanOptions: Option[] = (["true", "false"] as const).map((v) => ({
-    value: v,
-    label: t(`domains.domainSettings.booleanOptions.${v}`),
-  }));
+  const optionLabel = (optionsKey: string, value: string) => t(`domains.domainSettings.${optionsKey}.${value}`);
 
-  const defaultLabel = t("domains.domainSettings.useDefault");
+  // The system default is known only while nothing is stored: the resolved value is then that default
+  const systemDefault = (field: Field, optionsKey: string): string | null =>
+    settings && settings[field] === null ? optionLabel(optionsKey, String(settings.resolved[field])) : null;
+
+  const defaultLabel = (field: Field, optionsKey: string) => {
+    const value = systemDefault(field, optionsKey);
+    return value ? t("domains.domainSettings.useDefaultWithValue", { value }) : t("domains.domainSettings.useDefault");
+  };
+
+  // What applies once saved: the value picked, or the system default it falls back to
+  const effective = (field: Field, optionsKey: string): { label: string; pending: boolean } => {
+    if (!settings || !values) return { label: "", pending: false };
+    const picked = values[field];
+    if (picked === settings[field]) return { label: optionLabel(optionsKey, String(settings.resolved[field])), pending: false };
+    const label = picked === null
+      ? systemDefault(field, optionsKey) ?? t("domains.domainSettings.useDefault")
+      : optionLabel(optionsKey, String(picked));
+    return { label, pending: true };
+  };
 
   return (
     <div className="mt-6">
@@ -164,104 +191,20 @@ export default function CalendarDomainSettings({ domain, defaultOpen = false }: 
 
           {settings && values && (
             <div className="mt-2 space-y-4 max-w-xl">
-              <SettingRow
-                label={t("domains.domainSettings.userSearchMode")}
-                defaultLabel={defaultLabel}
-                value={values.userSearchMode ?? DEFAULT_SENTINEL}
-                options={userSearchModeOptions}
-                disabled={!canUpdate}
-                onChange={(v) =>
-                  updateField(
-                    "userSearchMode",
-                    v === DEFAULT_SENTINEL ? null : (v as DomainSettingsValues["userSearchMode"])
-                  )
-                }
-              />
+              {FIELDS.map(({ field, optionsKey, values: choices }) => (
+                <SettingRow
+                  key={field}
+                  label={t(`domains.domainSettings.${field}`)}
+                  hint={t(`domains.domainSettings.hints.${field}`)}
+                  defaultLabel={defaultLabel(field, optionsKey)}
+                  value={toSelect(values[field])}
+                  options={choices.map((value) => ({ value, label: optionLabel(optionsKey, value) }))}
+                  disabled={!canUpdate}
+                  onChange={(v) => updateField(field, fromSelect(field, v))}
+                />
+              ))}
 
-              <SettingRow
-                label={t("domains.domainSettings.resourceSearchEnabled")}
-                defaultLabel={defaultLabel}
-                value={
-                  values.resourceSearchEnabled === null
-                    ? DEFAULT_SENTINEL
-                    : String(values.resourceSearchEnabled)
-                }
-                options={booleanOptions}
-                disabled={!canUpdate}
-                onChange={(v) =>
-                  updateField(
-                    "resourceSearchEnabled",
-                    v === DEFAULT_SENTINEL ? null : v === "true"
-                  )
-                }
-              />
-
-              <SettingRow
-                label={t("domains.domainSettings.defaultCalendarPublicVisibility")}
-                defaultLabel={defaultLabel}
-                value={values.defaultCalendarPublicVisibility ?? DEFAULT_SENTINEL}
-                options={visibilityOptions}
-                disabled={!canUpdate}
-                onChange={(v) =>
-                  updateField(
-                    "defaultCalendarPublicVisibility",
-                    v === DEFAULT_SENTINEL
-                      ? null
-                      : (v as DomainSettingsValues["defaultCalendarPublicVisibility"])
-                  )
-                }
-              />
-
-              <SettingRow
-                label={t("domains.domainSettings.calendarPublicVisibilitySettingEnabled")}
-                defaultLabel={defaultLabel}
-                value={
-                  values.calendarPublicVisibilitySettingEnabled === null
-                    ? DEFAULT_SENTINEL
-                    : String(values.calendarPublicVisibilitySettingEnabled)
-                }
-                options={booleanOptions}
-                disabled={!canUpdate}
-                onChange={(v) =>
-                  updateField(
-                    "calendarPublicVisibilitySettingEnabled",
-                    v === DEFAULT_SENTINEL ? null : v === "true"
-                  )
-                }
-              />
-
-              <div className="rounded-md border bg-gray-50 p-3 text-sm">
-                <p className="font-medium text-gray-700 mb-1">
-                  {t("domains.domainSettings.effective")}
-                </p>
-                <ul className="space-y-0.5 text-gray-600">
-                  <li className="flex justify-between gap-4">
-                    <span>{t("domains.domainSettings.userSearchMode")}</span>
-                    <span className="font-medium">
-                      {t(`domains.domainSettings.userSearchModeOptions.${settings.resolved.userSearchMode}`)}
-                    </span>
-                  </li>
-                  <li className="flex justify-between gap-4">
-                    <span>{t("domains.domainSettings.resourceSearchEnabled")}</span>
-                    <span className="font-medium">
-                      {t(`domains.domainSettings.booleanOptions.${String(settings.resolved.resourceSearchEnabled)}`)}
-                    </span>
-                  </li>
-                  <li className="flex justify-between gap-4">
-                    <span>{t("domains.domainSettings.defaultCalendarPublicVisibility")}</span>
-                    <span className="font-medium">
-                      {t(`domains.domainSettings.visibilityOptions.${settings.resolved.defaultCalendarPublicVisibility}`)}
-                    </span>
-                  </li>
-                  <li className="flex justify-between gap-4">
-                    <span>{t("domains.domainSettings.calendarPublicVisibilitySettingEnabled")}</span>
-                    <span className="font-medium">
-                      {t(`domains.domainSettings.booleanOptions.${String(settings.resolved.calendarPublicVisibilitySettingEnabled)}`)}
-                    </span>
-                  </li>
-                </ul>
-              </div>
-
+              {/* Right under the selects, visible as soon as a change is made */}
               {canUpdate && dirty && (
                 <div className="flex gap-2 pt-1">
                   <Button variant="outline" size="sm" onClick={handleReset} disabled={saving}>
@@ -278,6 +221,26 @@ export default function CalendarDomainSettings({ domain, defaultOpen = false }: 
                   </Button>
                 </div>
               )}
+
+              <div className="rounded-md border bg-gray-50 p-3 text-sm">
+                <p className="font-medium text-gray-700 mb-1">
+                  {t("domains.domainSettings.effective")}
+                </p>
+                <ul className="space-y-0.5 text-gray-600">
+                  {FIELDS.map(({ field, optionsKey }) => {
+                    const { label, pending } = effective(field, optionsKey);
+                    return (
+                      <li key={field} className="flex justify-between gap-4">
+                        <span>{t(`domains.domainSettings.${field}`)}</span>
+                        <span className="font-medium">
+                          {label}
+                          {pending && <> <span className="font-normal text-gray-500">{t("domains.domainSettings.notSaved")}</span></>}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             </div>
           )}
         </div>

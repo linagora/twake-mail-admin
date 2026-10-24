@@ -357,7 +357,9 @@
     "domainSettings": {
       "title": "Домэйны тохиргоо",
       "useDefault": "Системийн өгөгдмөлийг ашиглах",
+      "useDefaultWithValue": "Системийн өгөгдмөл ({{value}})",
       "effective": "Бодит утгууд",
+      "notSaved": "(хадгалаагүй)",
       "userSearchMode": "Хэрэглэгч хайх горим",
       "userSearchModeOptions": {
         "enabled": "Идэвхтэй",
@@ -371,10 +373,16 @@
       },
       "defaultCalendarPublicVisibility": "Календарийн өгөгдмөл нийтийн харагдац",
       "visibilityOptions": {
-        "read": "Унших",
+        "read": "Нийтийн (унших)",
         "private": "Хувийн"
       },
       "calendarPublicVisibilitySettingEnabled": "Хэрэглэгчдэд календарийн нийтийн харагдацын тохиргоог удирдахыг зөвшөөрөх",
+      "hints": {
+        "userSearchMode": "Энэ домэйны хэрэглэгчид оролцогч урих эсвэл хуанли хуваалцахдаа ямар хэрэглэгчдийг хайж олж болох.",
+        "resourceSearchEnabled": "Энэ домэйны хэрэглэгчид нөөцийг (өрөө, тоног төхөөрөмж) хайж захиалж болох эсэх.",
+        "defaultCalendarPublicVisibility": "Хэрэглэгчийн үндсэн хуанли үүсэх үед олгох харагдах байдал. Одоо байгаа хуанлиуд өөрчлөгдөхгүй.",
+        "calendarPublicVisibilitySettingEnabled": "Хэрэглэгчид Twake Calendar дээр өөрсдийн хуанлийг нийтийн эсвэл хувийн болгож болох эсэх."
+      },
       "saved": "Домэйны тохиргоо хадгалагдлаа",
       "errorSaving": "Домэйны тохиргоо хадгалахад алдаа гарлаа"
     },

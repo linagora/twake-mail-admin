@@ -356,7 +356,9 @@
     "domainSettings": {
       "title": "Cài đặt tên miền",
       "useDefault": "Dùng mặc định hệ thống",
+      "useDefaultWithValue": "Mặc định hệ thống ({{value}})",
       "effective": "Giá trị hiệu lực",
+      "notSaved": "(chưa lưu)",
       "userSearchMode": "Chế độ tìm người dùng",
       "userSearchModeOptions": {
         "enabled": "Bật",
@@ -370,10 +372,16 @@
       },
       "defaultCalendarPublicVisibility": "Mức hiển thị công khai mặc định của lịch",
       "visibilityOptions": {
-        "read": "Đọc",
+        "read": "Công khai (đọc)",
         "private": "Riêng tư"
       },
       "calendarPublicVisibilitySettingEnabled": "Cho phép người dùng quản lý cài đặt hiển thị công khai của lịch",
+      "hints": {
+        "userSearchMode": "Những người dùng khác mà người dùng của miền này có thể tìm thấy khi mời người tham dự hoặc chia sẻ lịch.",
+        "resourceSearchEnabled": "Người dùng của miền này có thể tìm kiếm tài nguyên (phòng, thiết bị) để đặt hay không.",
+        "defaultCalendarPublicVisibility": "Chế độ hiển thị của lịch chính của người dùng khi được tạo. Các lịch hiện có không thay đổi.",
+        "calendarPublicVisibilitySettingEnabled": "Người dùng có thể đặt lịch của mình là công khai hay riêng tư trong Twake Calendar hay không."
+      },
       "saved": "Đã lưu cài đặt tên miền",
       "errorSaving": "Lỗi khi lưu cài đặt tên miền"
     },

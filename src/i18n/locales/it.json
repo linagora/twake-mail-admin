@@ -358,7 +358,9 @@
     "domainSettings": {
       "title": "Impostazioni del dominio",
       "useDefault": "Usa il valore predefinito di sistema",
+      "useDefaultWithValue": "Valore predefinito di sistema ({{value}})",
       "effective": "Valori effettivi",
+      "notSaved": "(non salvato)",
       "userSearchMode": "Modalità di ricerca utenti",
       "userSearchModeOptions": {
         "enabled": "Attivata",
@@ -372,10 +374,16 @@
       },
       "defaultCalendarPublicVisibility": "Visibilità pubblica predefinita dei calendari",
       "visibilityOptions": {
-        "read": "Lettura",
+        "read": "Pubblico (lettura)",
         "private": "Privato"
       },
       "calendarPublicVisibilitySettingEnabled": "Consenti agli utenti di gestire la visibilità pubblica dei loro calendari",
+      "hints": {
+        "userSearchMode": "Quali altri utenti possono trovare gli utenti di questo dominio quando invitano partecipanti o condividono un calendario.",
+        "resourceSearchEnabled": "Se gli utenti di questo dominio possono cercare le risorse (sale, attrezzature) per prenotarle.",
+        "defaultCalendarPublicVisibility": "Visibilità data al calendario principale di un utente quando viene creato. I calendari esistenti non cambiano.",
+        "calendarPublicVisibilitySettingEnabled": "Se gli utenti possono rendere pubblici o privati i propri calendari in Twake Calendar."
+      },
       "saved": "Impostazioni del dominio salvate",
       "errorSaving": "Errore durante il salvataggio delle impostazioni del dominio"
     },

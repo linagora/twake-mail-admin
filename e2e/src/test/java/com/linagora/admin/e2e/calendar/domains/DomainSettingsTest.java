@@ -34,9 +34,11 @@ class DomainSettingsTest extends CalendarAdminE2ETest {
         String domain = fixtures.newDomain("settings");
         CalendarDomainPage detail = new CalendarDomainPage(app).open(domain).expand(CalendarDomainPage.SETTINGS);
 
-        for (String setting : List.of(USER_SEARCH, RESOURCE_SEARCH, VISIBILITY, VISIBILITY_SETTING)) {
-            assertThat(detail.setting(setting)).hasText("Use system default");
-        }
+        // Nothing stored: each select gives the value of the system default
+        assertThat(detail.setting(USER_SEARCH)).hasText("System default (Enabled)");
+        assertThat(detail.setting(RESOURCE_SEARCH)).hasText("System default (Enabled)");
+        assertThat(detail.setting(VISIBILITY)).hasText("System default (Private)");
+        assertThat(detail.setting(VISIBILITY_SETTING)).hasText("System default (Enabled)");
         assertThat(detail.effectiveValues()).hasText(new String[] {
             USER_SEARCH + "Enabled", RESOURCE_SEARCH + "Enabled", VISIBILITY + "Private", VISIBILITY_SETTING + "Enabled"});
         assertThat(detail.settingsButton("Save")).hasCount(0);
@@ -45,12 +47,14 @@ class DomainSettingsTest extends CalendarAdminE2ETest {
         detail.choose(USER_SEARCH, "Limited");
         assertThat(detail.settingsButton("Save")).isVisible();
         assertThat(detail.settingsButton("Cancel")).isVisible();
-        detail.choose(VISIBILITY, "Read");
+        // The effective values follow the form before it is saved
+        assertThat(detail.effectiveValues().first()).hasText(USER_SEARCH + "Limited (not saved)");
+        detail.choose(VISIBILITY, "Public (read)");
         detail.settingsButton("Save").click();
 
         app.expectToast("Domain settings saved");
         assertThat(detail.effectiveValues()).hasText(new String[] {
-            USER_SEARCH + "Limited", RESOURCE_SEARCH + "Enabled", VISIBILITY + "Read", VISIBILITY_SETTING + "Enabled"});
+            USER_SEARCH + "Limited", RESOURCE_SEARCH + "Enabled", VISIBILITY + "Public (read)", VISIBILITY_SETTING + "Enabled"});
         assertThat(detail.settingsButton("Save")).hasCount(0);
         JsonNode stored = webAdmin.get("/domains/" + domain + "/settings").expect(200).json();
         assertThat(stored.path("userSearchMode").asText()).isEqualTo("limited");
@@ -61,10 +65,10 @@ class DomainSettingsTest extends CalendarAdminE2ETest {
         page.reload();
         detail.expand(CalendarDomainPage.SETTINGS);
         assertThat(detail.setting(USER_SEARCH)).hasText("Limited");
-        assertThat(detail.setting(VISIBILITY)).hasText("Read");
-        assertThat(detail.setting(RESOURCE_SEARCH)).hasText("Use system default");
+        assertThat(detail.setting(VISIBILITY)).hasText("Public (read)");
+        assertThat(detail.setting(RESOURCE_SEARCH)).hasText("System default (Enabled)");
         assertThat(detail.effectiveValues()).hasText(new String[] {
-            USER_SEARCH + "Limited", RESOURCE_SEARCH + "Enabled", VISIBILITY + "Read", VISIBILITY_SETTING + "Enabled"});
+            USER_SEARCH + "Limited", RESOURCE_SEARCH + "Enabled", VISIBILITY + "Public (read)", VISIBILITY_SETTING + "Enabled"});
     }
 
     @Test
@@ -84,17 +88,18 @@ class DomainSettingsTest extends CalendarAdminE2ETest {
 
         detail.choose(RESOURCE_SEARCH, "Disabled");
         detail.settingsButton("Cancel").click();
-        assertThat(detail.setting(RESOURCE_SEARCH)).hasText("Use system default");
+        assertThat(detail.setting(RESOURCE_SEARCH)).hasText("System default (Enabled)");
         assertThat(detail.settingsButton("Save")).hasCount(0);
         assertThat(detail.settingsButton("Cancel")).hasCount(0);
         assertThat(writes).isEmpty();
 
+        // A value is stored: what the system default would be is not known yet
         detail.choose(USER_SEARCH, "Use system default");
         detail.settingsButton("Save").click();
 
         app.expectToast("Domain settings saved");
         assertThat(detail.effectiveValues().first()).hasText(USER_SEARCH + "Enabled");
-        assertThat(detail.setting(VISIBILITY)).hasText("Read");
+        assertThat(detail.setting(VISIBILITY)).hasText("Public (read)");
         JsonNode stored = webAdmin.get("/domains/" + domain + "/settings").expect(200).json();
         assertThat(stored.path("userSearchMode").isNull()).isTrue();
         assertThat(stored.path("resolved").path("userSearchMode").asText()).isEqualTo("enabled");
