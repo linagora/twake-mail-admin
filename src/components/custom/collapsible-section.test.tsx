@@ -37,14 +37,17 @@ describe("collapsible sections", () => {
     expect(screen.queryByText("common.expandAll")).toBeNull();
   });
 
-  it("exposes its state and points to its content once open", () => {
+  it("exposes its state and points to its content, open or closed", () => {
     page(<Section id="calendars-a" />);
     expect(toggle("calendars-a").getAttribute("aria-expanded")).toBe("false");
+    const closed = document.getElementById(toggle("calendars-a").getAttribute("aria-controls")!);
+    expect(closed?.hidden).toBe(true);
 
     fireEvent.click(toggle("calendars-a"));
 
     expect(toggle("calendars-a").getAttribute("aria-expanded")).toBe("true");
     expect(document.getElementById(toggle("calendars-a").getAttribute("aria-controls")!)?.textContent).toBe("content");
+    expect(document.querySelectorAll(`[id="${toggle("calendars-a").getAttribute("aria-controls")}"]`)).toHaveLength(1);
   });
 
   it("does not render its content, hence fetch, until opened", () => {
