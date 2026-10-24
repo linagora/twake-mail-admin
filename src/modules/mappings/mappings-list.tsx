@@ -10,6 +10,7 @@ import {
 } from "./api-client";
 import { GetMappingsResponseType, FlatMapping } from "./types";
 import { useEffect, useMemo, useState } from "react";
+import { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -30,6 +31,10 @@ const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 // A forward of an address to itself is how a copy is kept in its mailbox while it is forwarded
 const isKeptCopy = (mapping: FlatMapping) => mapping.type === "Forward" && mapping.source === mapping.destination;
+
+// The type as its cell reads it, which the search matches too
+const displayedType = (mapping: FlatMapping, t: TFunction) =>
+  (isKeptCopy(mapping) ? t("mappings.forwardCopyKept") : t(`mappings.typeNames.${mapping.type}`, { defaultValue: mapping.type }));
 
 export default function MappingsList() {
   const { t } = useTranslation();
@@ -181,7 +186,7 @@ export default function MappingsList() {
       (m) =>
         m.source.toLowerCase().includes(lower) ||
         m.type.toLowerCase().includes(lower) ||
-        t(`mappings.typeNames.${m.type}`, { defaultValue: m.type }).toLowerCase().includes(lower) ||
+        displayedType(m, t).toLowerCase().includes(lower) ||
         m.destination.toLowerCase().includes(lower)
     );
   }, [flatMappings, search, t]);
@@ -276,7 +281,7 @@ export default function MappingsList() {
                   {(page - 1) * PAGE_LIMIT + index + 1}
                 </td>
                 <td className="px-4 py-2 text-sm">{ADDRESS_TYPES.includes(mapping.type) ? <UserLink address={mapping.source} /> : mapping.source}</td>
-                <td className="px-4 py-2 text-sm">{isKeptCopy(mapping) ? t("mappings.forwardCopyKept") : typeName(mapping.type)}</td>
+                <td className="px-4 py-2 text-sm">{displayedType(mapping, t)}</td>
                 <td className="px-4 py-2 text-sm">{ADDRESS_TYPES.includes(mapping.type) ? <UserLink address={mapping.destination} /> : mapping.destination}</td>
                 <td className="px-4 py-2 text-sm">
                   {canDeleteMapping(mapping.type) && (

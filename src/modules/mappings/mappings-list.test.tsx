@@ -56,6 +56,19 @@ describe("mappings list: a forward kept as a copy", () => {
     expect(await screen.findByText("mappings.forwardCopyKept")).not.toBeNull();
     expect(screen.getAllByText("Forward")).toHaveLength(1);
   });
+
+  it("finds a kept copy by the type its row reads", async () => {
+    api.getMappings.mockResolvedValueOnce({
+      "bob@example.com": [{ type: "Forward", mapping: "bob@example.com" }, { type: "Forward", mapping: "emma@example.com" }],
+    } as never);
+    render(<MemoryRouter><MappingsList /></MemoryRouter>);
+    await screen.findByText("mappings.forwardCopyKept");
+
+    fireEvent.change(screen.getByPlaceholderText("mappings.searchPlaceholder"), { target: { value: "CopyKept" } });
+
+    expect(screen.getByText("mappings.forwardCopyKept")).not.toBeNull();
+    expect(screen.queryByText("Forward")).toBeNull();
+  });
 });
 
 describe("mappings list: an address mapping checks its addresses", () => {
