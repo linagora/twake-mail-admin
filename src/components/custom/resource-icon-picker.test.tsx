@@ -7,6 +7,7 @@ vi.mock("react-i18next", () => ({
 }));
 
 import ResourceIconPicker from "./resource-icon-picker";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 afterEach(cleanup);
 
@@ -53,5 +54,22 @@ describe("ResourceIconPicker", () => {
     fireEvent.click(screen.getByRole("button", { name: "projector" }));
 
     expect(onChange).toHaveBeenCalledWith("projector");
+  });
+
+  it("inside a dialog, closes only the list on Escape", () => {
+    const onOpenChange = vi.fn();
+    render(
+      <Dialog open onOpenChange={onOpenChange}>
+        <DialogContent aria-describedby={undefined}>
+          <DialogTitle>New</DialogTitle>
+          <ResourceIconPicker value="home" onChange={vi.fn()} />
+        </DialogContent>
+      </Dialog>
+    );
+    fireEvent.click(screen.getByRole("button", { name: "home" }));
+    fireEvent.keyDown(screen.getByRole("button", { name: "projector" }), { key: "Escape" });
+
+    expect(screen.queryByRole("button", { name: "projector" })).toBeNull();
+    expect(onOpenChange).not.toHaveBeenCalled();
   });
 });

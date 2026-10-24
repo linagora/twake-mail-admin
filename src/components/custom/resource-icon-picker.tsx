@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronDown } from "lucide-react";
+import { OWNS_ESCAPE } from "@/components/ui/dialog";
 
 export const RESOURCE_ICONS = [
   "access-point", "battery", "briefcase", "calculator", "camera", "car",
@@ -41,6 +42,7 @@ export default function ResourceIconPicker({ value, onChange, labelId }: Props) 
     <div
       ref={ref}
       className="relative"
+      {...{ [OWNS_ESCAPE]: open ? "true" : undefined }}
       onKeyDown={(e) => {
         if (e.key === "Escape" && open) {
           // Close the list only, not the dialog holding the picker.
