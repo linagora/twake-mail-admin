@@ -34,14 +34,23 @@ const DialogOverlay = React.forwardRef<
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
+/** Set to "true" on the element holding a popup while it is open: Escape then closes the popup, not the dialog. */
+export const OWNS_ESCAPE = "data-owns-escape"
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, onEscapeKeyDown, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
+      onEscapeKeyDown={(event) => {
+        // A list open inside the dialog (suggestions, a picker) closes first: Radix listens to
+        // Escape on the document, before any handler of the field could stop it
+        if (event.target instanceof Element && event.target.closest(`[${OWNS_ESCAPE}="true"]`)) event.preventDefault()
+        onEscapeKeyDown?.(event)
+      }}
       className={cn(
         // Never moves nor resizes on its own: anchored at a fixed top (a message appearing in it
         // grows it downwards instead of shifting it), a fixed width, a stable scrollbar gutter,

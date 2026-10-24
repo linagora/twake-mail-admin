@@ -13,6 +13,7 @@ vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: (_verb: string, p
 vi.mock("@/modules/domain-admin/domain-context", () => ({ useDomain: () => mocks.domain }));
 
 import UserSuggestInput from "./user-suggest-input";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 function Field({ onEnter }: { onEnter?: () => void }) {
   const [value, setValue] = useState("");
@@ -126,5 +127,26 @@ describe("user suggestions", () => {
     await new Promise((resolve) => setTimeout(resolve, 400));
     expect(mocks.listUsernames).not.toHaveBeenCalled();
     expect(screen.queryByRole("listbox")).toBeNull();
+  });
+
+  it("closes the suggestions on Escape, and the dialog around the field only on the next one", async () => {
+    const onOpenChange = vi.fn();
+    render(
+      <Dialog open onOpenChange={onOpenChange}>
+        <DialogContent aria-describedby={undefined}>
+          <DialogTitle>Add</DialogTitle>
+          <Field />
+        </DialogContent>
+      </Dialog>
+    );
+    type("ali");
+    await screen.findByRole("option", { name: "alice@example.com" });
+
+    fireEvent.keyDown(field(), { key: "Escape" });
+    expect(screen.queryByRole("listbox")).toBeNull();
+    expect(onOpenChange).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(field(), { key: "Escape" });
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });

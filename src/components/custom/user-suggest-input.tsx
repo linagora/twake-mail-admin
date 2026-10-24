@@ -1,6 +1,7 @@
 import { forwardRef, InputHTMLAttributes, KeyboardEvent, useId, useState } from "react";
 import { useUserSuggestions } from "@/hooks/use-user-suggestions";
 import { cn } from "@/lib/utils";
+import { OWNS_ESCAPE } from "@/components/ui/dialog";
 
 // The look of the Input component, for the fields that had it
 export const SUGGEST_INPUT_CLASS =
@@ -70,7 +71,7 @@ const UserSuggestInput = forwardRef<HTMLInputElement, Props>(
     };
 
     return (
-      <div className={cn("relative", wrapperClassName)}>
+      <div className={cn("relative", wrapperClassName)} {...{ [OWNS_ESCAPE]: shown ? "true" : undefined }}>
         <input
           ref={ref}
           {...props}
