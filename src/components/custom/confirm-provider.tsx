@@ -138,9 +138,10 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
       ? { ...current, ...(typeof appearance === "function" ? appearance(current) : appearance) }
       : current)));
 
+  // Only closes: the content stays as it was while the dialog fades out, until the next confirm replaces it
   const handleClose = (result: boolean) => {
     confirmState.resolve?.(result);
-    setConfirmState(CLOSED_STATE);
+    setConfirmState((current) => ({ ...current, isOpen: false, pending: false, resolve: null }));
   };
 
   const showError = (error: ReactNode) => setConfirmState((current) => ({ ...current, pending: false, error }));
