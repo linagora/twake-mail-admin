@@ -508,7 +508,6 @@
       "syncConfirm": "Sincronizzare i membri del dominio «{{domain}}» dalla rubrica?",
       "syncButton": "Sincronizza i membri del dominio",
       "syncDesc": "Sincronizza l'elenco dei membri del dominio dalla rubrica.",
-      "errorSyncing": "Errore durante la sincronizzazione dei membri del dominio",
       "republishContactsTitle": "Ripubblica i contatti comuni",
       "republishContactsConfirm": "Ripubblicare i contatti comuni di «{{domain}}» e dei suoi utenti?",
       "republishContactsButton": "Ripubblica i contatti comuni",

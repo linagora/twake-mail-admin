@@ -508,7 +508,6 @@
       "syncConfirm": "Synchroniser les membres du domaine « {{domain}} » depuis le carnet d'adresses ?",
       "syncButton": "Synchroniser les membres",
       "syncDesc": "Synchronise la liste des membres du domaine depuis le carnet d'adresses.",
-      "errorSyncing": "Erreur lors de la synchronisation des membres",
       "republishContactsTitle": "Republier les contacts communs",
       "republishContactsConfirm": "Republier les contacts communs du domaine « {{domain}} » et de ses utilisateurs ?",
       "republishContactsButton": "Republier les contacts communs",

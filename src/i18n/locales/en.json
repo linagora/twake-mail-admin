@@ -508,7 +508,6 @@
       "syncConfirm": "Synchronize domain members for \"{{domain}}\" from the address book?",
       "syncButton": "Sync domain members",
       "syncDesc": "Synchronize the domain member list from the address book.",
-      "errorSyncing": "Error syncing domain members",
       "republishContactsTitle": "Republish Common Contacts",
       "republishContactsConfirm": "Republish the common contacts of \"{{domain}}\" and of its users?",
       "republishContactsButton": "Republish common contacts",

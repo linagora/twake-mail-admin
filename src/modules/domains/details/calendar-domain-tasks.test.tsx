@@ -65,3 +65,23 @@ describe("calendar domain tasks: republish contacts dialog", () => {
     expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "common.taskCreated" }));
   });
 });
+
+describe("calendar domain tasks: sync domain members dialog", () => {
+  it("stays open and shows the refusal in the dialog, not in a toast", async () => {
+    api.syncDomainMembers.mockRejectedValueOnce(new Error("POST /addressbook/domain-members/open-paas.org can not be found"));
+    render(
+      <MemoryRouter>
+        <ConfirmProvider>
+          <CalendarDomainTasks domain={DOMAIN} defaultOpen />
+        </ConfirmProvider>
+      </MemoryRouter>
+    );
+    const row = screen.getByText("domains.calendarTasks.syncButton").closest("[data-task-row]") as HTMLElement;
+    fireEvent.click(within(row).getByRole("button", { name: "common.run" }));
+    fireEvent.click(screen.getByRole("button", { name: "common.confirm" }));
+
+    expect((await screen.findByRole("alert")).textContent).toContain("can not be found");
+    expect(screen.getByText("domains.calendarTasks.syncTitle")).not.toBeNull();
+    expect(toast).not.toHaveBeenCalled();
+  });
+});

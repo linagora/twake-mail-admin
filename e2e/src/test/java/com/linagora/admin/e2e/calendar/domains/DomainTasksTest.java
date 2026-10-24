@@ -40,13 +40,14 @@ class DomainTasksTest extends CalendarAdminE2ETest {
         detail.taskButton("Sync domain members").click();
         assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Sync Domain Members");
         assertThat(app.dialog()).containsText("Synchronize domain members for \"open-paas.org\" from the address book?");
-        Request request = page.waitForRequest(r -> r.url().contains("/addressbook/domain-members/"), app::confirm);
+        Request request = page.waitForRequest(r -> r.url().contains("/addressbook/domain-members/"), app::clickConfirm);
 
         assertThat(request.method()).isEqualTo("POST");
         assertThat(request.url()).endsWith("/addressbook/domain-members/open-paas.org?task=sync");
-        Locator error = app.toast("Error syncing domain members");
-        assertThat(error).isVisible();
-        assertThat(error).containsText("can not be found");
+        // Environment limitation: 404, shown inside the dialog, which stays open
+        assertThat(app.dialogError()).containsText("can not be found");
+        assertThat(app.dialog()).isVisible();
+        app.cancel();
         assertThat(detail.taskButton("Sync domain members")).isEnabled();
     }
 

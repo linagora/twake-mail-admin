@@ -507,7 +507,6 @@
       "syncConfirm": "Đồng bộ thành viên tên miền cho \"{{domain}}\" từ sổ địa chỉ?",
       "syncButton": "Đồng bộ thành viên tên miền",
       "syncDesc": "Đồng bộ danh sách thành viên tên miền từ sổ địa chỉ.",
-      "errorSyncing": "Lỗi khi đồng bộ thành viên tên miền",
       "republishContactsTitle": "Đăng lại liên hệ chung",
       "republishContactsConfirm": "Đăng lại liên hệ chung của tên miền \"{{domain}}\" và của người dùng thuộc tên miền?",
       "republishContactsButton": "Đăng lại liên hệ chung",

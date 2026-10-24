@@ -1,9 +1,6 @@
-import { useState } from "react";
 import { deleteAllUsersData, republishDomainContacts, syncDomainMembers } from "../api-client";
-import { useToast } from "@/hooks/use-toast";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
-import ErrorDisplayer from "@/components/custom/error-displayer";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 import { TaskParam } from "@/modules/common-tasks/types";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -24,55 +21,35 @@ interface Props {
 
 export default function CalendarDomainTasks({ domain, defaultOpen = false }: Props) {
   const { t } = useTranslation();
-  const { toast } = useToast();
   const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
   const canDeleteData = useIsAllowed("POST", "/domains/{domain}?action=deleteData");
   const canSyncMembers = useIsAllowed("POST", "/addressbook/domain-members/{domain}");
   const canRepublishContacts = useIsAllowed("POST", "/domains/{domain}/contacts?action=republish");
   const [open, setOpen, openContentId] = useSectionOpen("tasks", defaultOpen);
-  const [deleting, setDeleting] = useState(false);
-  const [syncing, setSyncing] = useState(false);
 
-  const handleDeleteAllUsersData = async () => {
-    const confirmed = await confirm({
-      header: t("domains.tasks.deleteAllDataTitle"),
-      destructive: true,
-      confirmLabel: t("confirm.deleteData"),
-      typeToConfirm: domain,
-      typeToConfirmIgnoreCase: true,
-      message: t("domains.tasks.deleteAllDataConfirm", { domain }),
-    });
-    if (!confirmed) return;
-
-    setDeleting(true);
-    try {
+  // The request is sent from the dialog, which stays open and shows a refusal in it
+  const handleDeleteAllUsersData = () => confirm({
+    header: t("domains.tasks.deleteAllDataTitle"),
+    destructive: true,
+    confirmLabel: t("confirm.deleteData"),
+    typeToConfirm: domain,
+    typeToConfirmIgnoreCase: true,
+    message: t("domains.tasks.deleteAllDataConfirm", { domain }),
+    action: async () => {
       const { taskId } = await deleteAllUsersData(domain);
       toastTaskCreated(taskId, undefined, taskTypeLabel(t, "DeleteUsersDataOfDomainTask"));
-    } catch (err) {
-      toast({ title: t("domains.tasks.errorDeletingData"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setDeleting(false);
-    }
-  };
+    },
+  });
 
-  const handleSyncDomainMembers = async () => {
-    const confirmed = await confirm({
-      header: t("domains.calendarTasks.syncTitle"),
-      message: t("domains.calendarTasks.syncConfirm", { domain }),
-    });
-    if (!confirmed) return;
-
-    setSyncing(true);
-    try {
+  const handleSyncDomainMembers = () => confirm({
+    header: t("domains.calendarTasks.syncTitle"),
+    message: t("domains.calendarTasks.syncConfirm", { domain }),
+    action: async () => {
       const { taskId } = await syncDomainMembers(domain);
       toastTaskCreated(taskId, undefined, taskTypeLabel(t, "sync-domain-members-contacts-ldap-to-dav"));
-    } catch (err) {
-      toast({ title: t("domains.calendarTasks.errorSyncing"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setSyncing(false);
-    }
-  };
+    },
+  });
 
   const handleRepublishContacts = async () => {
     const params: { contactsPerSecond?: string; scope?: string } = {};
@@ -109,8 +86,6 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
               description={t("domains.calendarTasks.syncDesc")}
               command={`curl -XPOST /addressbook/domain-members/${domain}?task=sync`}
               onRun={handleSyncDomainMembers}
-              disabled={syncing}
-              loading={syncing}
             />
           )}
           {canRepublishContacts && (
@@ -128,8 +103,6 @@ export default function CalendarDomainTasks({ domain, defaultOpen = false }: Pro
               risk="destructive"
               command={`curl -XPOST /domains/${domain}?action=deleteData`}
               onRun={handleDeleteAllUsersData}
-              disabled={deleting}
-              loading={deleting}
             />
           )}
         </div>

@@ -508,7 +508,6 @@
       "syncConfirm": "¿Sincronizar los miembros del dominio «{{domain}}» desde la libreta de direcciones?",
       "syncButton": "Sincronizar los miembros del dominio",
       "syncDesc": "Sincronizar la lista de miembros del dominio desde la libreta de direcciones.",
-      "errorSyncing": "Error al sincronizar los miembros del dominio",
       "republishContactsTitle": "Volver a publicar los contactos comunes",
       "republishContactsConfirm": "¿Volver a publicar los contactos comunes de «{{domain}}» y de sus usuarios?",
       "republishContactsButton": "Volver a publicar los contactos comunes",

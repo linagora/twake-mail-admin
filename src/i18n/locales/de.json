@@ -508,7 +508,6 @@
       "syncConfirm": "Domain-Mitglieder von „{{domain}}“ aus dem Adressbuch synchronisieren?",
       "syncButton": "Domain-Mitglieder synchronisieren",
       "syncDesc": "Die Mitgliederliste der Domain aus dem Adressbuch synchronisieren.",
-      "errorSyncing": "Fehler beim Synchronisieren der Domain-Mitglieder",
       "republishContactsTitle": "Gemeinsame Kontakte erneut veröffentlichen",
       "republishContactsConfirm": "Die gemeinsamen Kontakte von „{{domain}}“ und ihrer Benutzer erneut veröffentlichen?",
       "republishContactsButton": "Gemeinsame Kontakte erneut veröffentlichen",
