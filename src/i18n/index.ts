@@ -21,6 +21,12 @@ export const supportedLanguages = [
   { code: "it", label: "Italiano" },
 ] as const;
 
+// The page is announced in the language it is shown in, e.g. for screen readers and spell checkers
+const syncDocumentLang = () => {
+  if (typeof document !== "undefined") document.documentElement.lang = i18n.resolvedLanguage ?? i18n.language ?? "en";
+};
+i18n.on("languageChanged", syncDocumentLang);
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -43,5 +49,6 @@ i18n
       caches: ["localStorage"],
     },
   });
+syncDocumentLang();
 
 export default i18n;
