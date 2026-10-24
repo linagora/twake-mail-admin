@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
-import { getDomains, deleteDomain, getDomainAliases } from "./api-client";
+import { getDomains, deleteDomain, getDomainAliases, removeDomainAlias } from "./api-client";
 import { appConfig } from "@/lib/config";
 import { probeDomainUsers, USERS_PROBE_LIMIT } from "./details/domain-summary";
 import { GetDomainsResponseType } from "./types";
@@ -24,7 +24,8 @@ const EXAMPLE_USERS = 3;
 /** What a domain still holds, as far as the console could check it. */
 interface DomainContents {
   users: string[];
-  aliasCount: number;
+  // Sources of the domain aliases pointing to the domain
+  aliases: string[];
   // A lookup failed or is not allowed: the contents are not known for sure
   incomplete: boolean;
 }
@@ -38,6 +39,8 @@ export default function DomainsList() {
   const canListUsers = useIsAllowed("GET", "/users?domain={domain}&{params}");
   // Domain aliases are a mail feature
   const canListAliases = useIsAllowed("GET", "/domains/{domain}/aliases") && appConfig.application === "MAIL";
+  // WebAdmin keeps the aliases of a deleted domain as mappings to a domain it no longer hosts
+  const canRemoveAliases = useIsAllowed("DELETE", "/domains/{domain}/aliases/{source}");
   const [checking, setChecking] = useState<string | null>(null);
 
   const {
@@ -63,12 +66,13 @@ export default function DomainsList() {
     ]);
     return {
       users: users.status === "fulfilled" ? users.value : [],
-      aliasCount: aliases.status === "fulfilled" ? aliases.value.length : 0,
+      aliases: aliases.status === "fulfilled" ? aliases.value.map((alias) => alias.source) : [],
       incomplete: users.status === "rejected" || aliases.status === "rejected",
     };
   };
 
-  const deleteDialog = (domain: string, { users, aliasCount, incomplete }: DomainContents) => {
+  const deleteDialog = (domain: string, { users, aliases, incomplete }: DomainContents) => {
+    const aliasCount = aliases.length;
     const usersLabel = users.length === 0 ? "" : t(
       users.length >= USERS_PROBE_LIMIT ? "domains.delete.usersMore" : "domains.delete.users",
       { count: users.length, limit: USERS_PROBE_LIMIT - 1, examples: users.slice(0, EXAMPLE_USERS).join(", ") }
@@ -106,6 +110,9 @@ export default function DomainsList() {
       message: (
         <div className="space-y-2">
           <p>{t("domains.delete.confirmBusy", { domain })}</p>
+          {aliasCount > 0 && (
+            <p>{t(canRemoveAliases ? "domains.delete.aliasesRemoved" : "domains.delete.aliasesKept", { count: aliasCount, aliases: aliases.join(", ") })}</p>
+          )}
           {users.length > 0 && (
             <p>
               <Link to={`/users?domain=${encodeURIComponent(domain)}`} className="text-blue-600 hover:underline">
@@ -130,6 +137,10 @@ export default function DomainsList() {
     const confirmed = await confirm(deleteDialog(domain, contents));
     if (!confirmed) return;
     try {
+      // Before the domain, so that a refusal leaves no alias towards a deleted domain
+      if (canRemoveAliases) {
+        for (const alias of contents.aliases) await removeDomainAlias(domain, alias);
+      }
       await deleteDomain(domain);
       toast({ title: t("domains.deleted", { domain }) });
       refresh();

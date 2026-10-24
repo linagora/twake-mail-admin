@@ -6,6 +6,8 @@ import { MemoryRouter } from "react-router";
 const confirm = vi.hoisted(() => vi.fn<(options: Record<string, unknown>) => Promise<boolean>>(async () => false));
 const getUsers = vi.hoisted(() => vi.fn());
 const getDomainAliases = vi.hoisted(() => vi.fn());
+const deleteDomain = vi.hoisted(() => vi.fn());
+const removeDomainAlias = vi.hoisted(() => vi.fn());
 vi.mock("@/modules/users/api-client", () => ({ listUsernames: getUsers }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => confirm }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
@@ -13,8 +15,9 @@ vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }), toas
 vi.mock("./api-client", () => ({
   getDomains: vi.fn(async () => ["example.com", "example.org"]),
   createDomain: vi.fn(),
-  deleteDomain: vi.fn(),
+  deleteDomain,
   getDomainAliases,
+  removeDomainAlias,
 }));
 
 import DomainsList from "./domains-list";
@@ -115,6 +118,20 @@ describe("domains list: delete tells what the domain still holds", () => {
     render(<MemoryRouter>{options.consequence as never}{options.message as never}</MemoryRouter>);
     expect(screen.getByText(/domains.delete.stillBoth/)).not.toBeNull();
     expect(screen.getByRole("link", { name: "domains.delete.seeUsers" }).getAttribute("href")).toBe("/users?domain=example.org");
+  });
+
+  it("removes the domain aliases before the domain, and says so", async () => {
+    getUsers.mockResolvedValue([]);
+    getDomainAliases.mockResolvedValue([{ source: "example.net" }, { source: "example.info" }]);
+    const calls: string[] = [];
+    removeDomainAlias.mockImplementation(async (domain: string, alias: string) => { calls.push(`alias ${alias} -> ${domain}`); });
+    deleteDomain.mockImplementation(async (domain: string) => { calls.push(`domain ${domain}`); });
+    confirm.mockResolvedValueOnce(true);
+    const options = await openDelete("example.org");
+    await vi.waitFor(() => expect(calls).toEqual(["alias example.net -> example.org", "alias example.info -> example.org", "domain example.org"]));
+    cleanup();
+    render(<MemoryRouter>{options.message as never}</MemoryRouter>);
+    expect(screen.getByText("domains.delete.aliasesRemoved")).not.toBeNull();
   });
 
   it("still opens the dialog, saying it could not check, when the lookup fails", async () => {

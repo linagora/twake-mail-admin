@@ -577,6 +577,9 @@
       "stillBoth": "{{domain}} compte encore {{users}} et {{aliases}}.",
       "usersConsequence": "Leurs comptes et boîtes restent sur le serveur, mais le courrier adressé à @{{domain}} ne leur sera plus distribué.",
       "aliasesConsequence_other": "Le courrier adressé à ces alias de domaine ne sera plus distribué.",
+      "aliasesRemoved_one": "Son alias de domaine {{aliases}} est supprimé avec lui.",
+      "aliasesRemoved_other": "Ses alias de domaine {{aliases}} sont supprimés avec lui.",
+      "aliasesKept": "Ses alias de domaine ({{aliases}}) restent des mappings vers le domaine supprimé : supprimez-les depuis Mappings.",
       "aliasesConsequence_one": "Le courrier adressé à cet alias de domaine ne sera plus distribué.",
       "seeUsers": "Voir les utilisateurs de {{domain}}"
     }

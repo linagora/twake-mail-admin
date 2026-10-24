@@ -577,6 +577,9 @@
       "stillBoth": "{{domain}} todavía tiene {{users}} y {{aliases}}.",
       "usersConsequence": "Sus cuentas y buzones permanecen en el servidor, pero el correo dirigido a @{{domain}} ya no se les entregará.",
       "aliasesConsequence_other": "El correo dirigido a estos alias de dominio ya no se entregará.",
+      "aliasesRemoved_one": "Su alias de dominio {{aliases}} se elimina con él.",
+      "aliasesRemoved_other": "Sus alias de dominio {{aliases}} se eliminan con él.",
+      "aliasesKept": "Sus alias de dominio ({{aliases}}) quedan como asignaciones hacia el dominio eliminado: elimínelos desde Asignaciones.",
       "aliasesConsequence_one": "El correo dirigido a este alias de dominio ya no se entregará.",
       "seeUsers": "Ver los usuarios de {{domain}}"
     }

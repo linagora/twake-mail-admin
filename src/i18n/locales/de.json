@@ -577,6 +577,9 @@
       "stillBoth": "{{domain}} hat noch {{users}} und {{aliases}}.",
       "usersConsequence": "Ihre Konten und Postfächer bleiben auf dem Server, aber E-Mails an @{{domain}} werden ihnen nicht mehr zugestellt.",
       "aliasesConsequence_other": "E-Mails an diese Domain-Aliasse werden nicht mehr zugestellt.",
+      "aliasesRemoved_one": "Sein Domain-Alias {{aliases}} wird mit entfernt.",
+      "aliasesRemoved_other": "Seine Domain-Aliasse {{aliases}} werden mit entfernt.",
+      "aliasesKept": "Seine Domain-Aliasse ({{aliases}}) bleiben als Zuordnungen zur gelöschten Domain bestehen: Entfernen Sie sie unter Zuordnungen.",
       "aliasesConsequence_one": "E-Mails an diesen Domain-Alias werden nicht mehr zugestellt.",
       "seeUsers": "Benutzer von {{domain}} anzeigen"
     }

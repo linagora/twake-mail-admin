@@ -268,6 +268,7 @@ The usage figures come from the same call as the tab load; there is no second en
 | "Delete domain" button | DELETE | `/domains/{domain}` | MAY (do not show the button if missing) |
 | "Delete domain" button: users the domain still holds | GET | `/users?domain={domain}&{params}` (called with `limit=51`) | MAY (the dialog says it could not check what the domain holds) |
 | "Delete domain" button: domain aliases still pointing to it *(APPLICATION:"MAIL")* | GET | `/domains/{domain}/aliases` | MAY (aliases not counted) |
+| "Delete domain" button: removes the domain aliases pointing to it *(APPLICATION:"MAIL")* | DELETE | `/domains/{domain}/aliases/{source}` | MAY (the dialog says the aliases stay as mappings) |
 | "Delete all data" button | POST | `/domains/{domain}?action=deleteData` | MAY (do not show the button if missing) |
 
 #### Team mailbox detail — Deleted messages sub-tab

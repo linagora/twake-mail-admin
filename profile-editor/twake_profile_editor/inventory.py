@@ -98,6 +98,7 @@ DOMAINS = page(
                 may("DELETE", "/domains/{domain}"),
                 may("GET", "/users?domain={domain}&{params}", modes=GLOBAL),
                 may("GET", "/domains/{domain}/aliases"),
+                may("DELETE", "/domains/{domain}/aliases/{source}"),
             ],
         ),
         action(

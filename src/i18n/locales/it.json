@@ -577,6 +577,9 @@
       "stillBoth": "{{domain}} ha ancora {{users}} e {{aliases}}.",
       "usersConsequence": "I loro account e caselle restano sul server, ma la posta per @{{domain}} non verrà più recapitata.",
       "aliasesConsequence_other": "La posta per questi alias di dominio non verrà più recapitata.",
+      "aliasesRemoved_one": "Il suo alias di dominio {{aliases}} viene rimosso con esso.",
+      "aliasesRemoved_other": "I suoi alias di dominio {{aliases}} vengono rimossi con esso.",
+      "aliasesKept": "I suoi alias di dominio ({{aliases}}) restano come mappature verso il dominio eliminato: rimuovili da Mappature.",
       "aliasesConsequence_one": "La posta per questo alias di dominio non verrà più recapitata.",
       "seeUsers": "Vedi gli utenti di {{domain}}"
     }
