@@ -2128,6 +2128,7 @@
     "parentDomain": "der Domain",
     "parentGlobal": "globale",
     "invalid": "Ein Limit muss eine positive Zahl oder unbegrenzt sein.",
+    "invalidCount": "Eine Nachrichtenanzahl muss eine ganze Zahl von mindestens 1 sein oder unbegrenzt.",
     "updated": "Kontingentlimits aktualisiert",
     "removed": "Spezifische Limits entfernt",
     "removeSpecific": "Spezifische Limits entfernen",

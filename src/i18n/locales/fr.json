@@ -2128,6 +2128,7 @@
     "parentDomain": "du domaine",
     "parentGlobal": "globale",
     "invalid": "Une limite doit être un nombre positif, ou illimitée.",
+    "invalidCount": "Un nombre de messages doit être un nombre entier d'au moins 1, ou illimité.",
     "updated": "Limites de quota mises à jour",
     "removed": "Limites spécifiques supprimées",
     "removeSpecific": "Supprimer les limites spécifiques",

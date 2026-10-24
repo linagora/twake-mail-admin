@@ -163,7 +163,7 @@ class UserDetailTest extends MailAdminE2ETest {
 
         count.fill("0");
         detail.button(dialog, "Save").click();
-        assertThat(app.dialogError()).hasText("A limit must be a positive number, or unlimited.");
+        assertThat(app.dialogError()).hasText("A message count must be a whole number of at least 1, or unlimited.");
         count.fill("2000");
         size.fill("100");
         detail.button(dialog, "Save").click();

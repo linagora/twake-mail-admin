@@ -87,6 +87,23 @@ describe("quota limits: dialog", () => {
     expect(api.putCount).not.toHaveBeenCalled();
   });
 
+  it.each(["0.4", "1.5", "0"])("refuses the message count %s without sending it", async (value) => {
+    openLimits({ count: null, size: null });
+    fireEvent.change(screen.getByLabelText("quotaLimits.count"), { target: { value } });
+    save();
+
+    expect((await screen.findByRole("alert")).textContent).toBe("quotaLimits.invalidCount");
+    expect(api.putCount).not.toHaveBeenCalled();
+  });
+
+  it("keeps a fractional size, converted to bytes", async () => {
+    openLimits({ count: null, size: null });
+    fireEvent.change(screen.getByLabelText("quotaLimits.size"), { target: { value: "1.5" } });
+    save();
+
+    await waitFor(() => expect(api.putSize).toHaveBeenCalledWith(1.5 * MB));
+  });
+
   it("states the inherited limits and offers no removal without a specific limit", () => {
     renderLimits({ count: null, size: null });
     expect(screen.queryByRole("button", { name: "quotaLimits.removeSpecific" })).toBeNull();

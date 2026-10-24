@@ -2121,6 +2121,7 @@
     "parentDomain": "của miền",
     "parentGlobal": "toàn cục",
     "invalid": "Giới hạn phải là số dương, hoặc không giới hạn.",
+    "invalidCount": "Số lượng thư phải là số nguyên từ 1 trở lên, hoặc không giới hạn.",
     "updated": "Đã cập nhật giới hạn hạn mức",
     "removed": "Đã xóa giới hạn riêng",
     "removeSpecific": "Xóa giới hạn riêng",

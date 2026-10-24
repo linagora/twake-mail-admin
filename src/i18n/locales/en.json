@@ -2128,6 +2128,7 @@
     "parentDomain": "domain",
     "parentGlobal": "global",
     "invalid": "A limit must be a positive number, or unlimited.",
+    "invalidCount": "A message count must be a whole number of at least 1, or unlimited.",
     "updated": "Quota limits updated",
     "removed": "Specific limits removed",
     "removeSpecific": "Remove specific limits",

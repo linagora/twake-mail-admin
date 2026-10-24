@@ -57,8 +57,10 @@ function parse(field: LimitField, multiplier = 1): number | null | undefined {
   const raw = field.value.trim();
   if (raw === "") return null;
   const n = Number(raw);
-  if (!Number.isFinite(n) || n <= 0) return undefined;
-  return Math.round(n * multiplier);
+  // A message count is whole; a size may be fractional in its unit, but at least one byte
+  if (!Number.isFinite(n) || (multiplier === 1 && !Number.isInteger(n))) return undefined;
+  const limit = Math.round(n * multiplier);
+  return limit >= 1 ? limit : undefined;
 }
 
 // Sent only when the limit changed: a value is put, an emptied field removes the limit
@@ -168,7 +170,9 @@ export default function QuotaLimits({ target, current, parents = [], api, canEdi
   const nextCount = () => (canEditCount ? parse(count) : current.count);
   const nextSize = () => (canEditSize ? parse(size, UNITS[unit]) : current.size);
 
-  const validate = () => ([nextCount(), nextSize()].includes(undefined) ? t("quotaLimits.invalid") : null);
+  const validate = () => (nextCount() === undefined ? t("quotaLimits.invalidCount")
+    : nextSize() === undefined ? t("quotaLimits.invalid")
+    : null);
 
   const handleSave = async () => {
     await sendChange(nextCount(), current.count, api.putCount, api.deleteCount);
