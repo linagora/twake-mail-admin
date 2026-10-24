@@ -11,7 +11,7 @@ import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { useTranslation } from "react-i18next";
-import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
+import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
 
 const searchable = (admin: string) => [admin];
@@ -36,6 +36,8 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
   const { data: admins, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchAdmins : null);
 
   const [open, setOpen, openContentId] = useSectionOpen("admins", defaultOpen);
+  // For the summary of the page
+  useSectionFact("admins", admins?.length);
   const [showAddInput, setShowAddInput] = useState(false);
   const [newAdmin, setNewAdmin] = useState("");
   const adminStatus = useCheckUserExists(newAdmin);

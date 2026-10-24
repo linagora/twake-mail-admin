@@ -583,7 +583,10 @@
     "createHint": "Prüfen Sie, dass dies die gewünschte Domäne ist: Ihre Benutzer erhalten ihre Mails unter diesem Namen.",
     "createHintCalendar": "Stellen Sie sicher, dass dies die Domain ist, die Sie anlegen möchten: Ihre Benutzer, Ressourcen, Teamkalender und Domain-Adressbücher werden ihr zugeordnet.",
     "summary": {
-      "users": "Benutzer: {{count}}"
+      "users": "Benutzer: {{count}}",
+      "admins": "Admins: {{count}}",
+      "resources": "Ressourcen: {{count}}",
+      "teamCalendars": "Teamkalender: {{count}}"
     },
     "delete": {
       "confirmUnchecked": "„{{domain}}“ löschen? Die Domain kann danach neu angelegt werden.",

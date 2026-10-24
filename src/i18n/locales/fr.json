@@ -583,7 +583,10 @@
     "createHint": "Vérifiez qu'il s'agit bien du domaine voulu : ses utilisateurs recevront leurs mails sous ce nom.",
     "createHintCalendar": "Vérifiez qu'il s'agit bien du domaine à créer : ses utilisateurs, ressources, calendriers d'équipe et carnets d'adresses de domaine y seront rattachés.",
     "summary": {
-      "users": "Utilisateurs : {{count}}"
+      "users": "Utilisateurs : {{count}}",
+      "admins": "Administrateurs : {{count}}",
+      "resources": "Ressources : {{count}}",
+      "teamCalendars": "Calendriers d'équipe : {{count}}"
     },
     "delete": {
       "confirmUnchecked": "Supprimer « {{domain}} » ? Il pourra être recréé ensuite.",

@@ -581,7 +581,10 @@
     "createHint": "Hãy chắc chắn đây là miền bạn muốn tạo: người dùng của miền sẽ nhận thư dưới tên này.",
     "createHintCalendar": "Hãy chắc chắn đây là miền bạn muốn tạo: người dùng, tài nguyên, lịch nhóm và sổ địa chỉ miền sẽ gắn với miền này.",
     "summary": {
-      "users": "Người dùng: {{count}}"
+      "users": "Người dùng: {{count}}",
+      "admins": "Quản trị viên: {{count}}",
+      "resources": "Tài nguyên: {{count}}",
+      "teamCalendars": "Lịch nhóm: {{count}}"
     },
     "delete": {
       "confirmUnchecked": "Xóa \"{{domain}}\"? Có thể tạo lại sau.",

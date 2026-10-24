@@ -15,7 +15,7 @@ import ResourceIconPicker from "@/components/custom/resource-icon-picker";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { useTranslation } from "react-i18next";
-import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
+import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
 import { StagedChangesNotice, blocksSave } from "@/components/custom/staged-changes";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
 
@@ -68,6 +68,8 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
     return resources.filter((r) => !r.deleted).sort(compareResourcesByDisplayName);
   }, [resources]);
   const { search, setSearch, filtered, paginated, page, totalPages, offset, goToPage } = useSearchPagination(active, searchable);
+  // For the summary of the page
+  useSectionFact("resources", resources ? active.length : undefined);
 
   if (!canView) return null;
 
@@ -140,7 +142,7 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
       <div className="flex items-center gap-2">
         <SectionToggle open={open} onToggle={() => setOpen(!open)} controls={openContentId}>
           {t("domains.calendarResources.title")}
-          {active.length > 0 && (
+          {resources && (
             <span className="text-sm font-normal text-gray-500">({active.length})</span>
           )}
         </SectionToggle>

@@ -583,7 +583,10 @@
     "createHint": "Make sure this is the domain you intend to create: its users will receive mail under it.",
     "createHintCalendar": "Make sure this is the domain you intend to create: its users, resources, team calendars and domain address books will be attached to it.",
     "summary": {
-      "users": "Users: {{count}}"
+      "users": "Users: {{count}}",
+      "admins": "Admins: {{count}}",
+      "resources": "Resources: {{count}}",
+      "teamCalendars": "Team calendars: {{count}}"
     },
     "delete": {
       "confirmUnchecked": "Delete \"{{domain}}\"? It can be re-created afterwards.",

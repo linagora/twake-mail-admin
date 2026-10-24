@@ -15,7 +15,7 @@ import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useTranslation } from "react-i18next";
-import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
+import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
 import { StagedChangesNotice, blocksSave, useDiscardGuard } from "@/components/custom/staged-changes";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
 
@@ -77,6 +77,8 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
     return [...teamCalendars].sort((a, b) => a.name.localeCompare(b.name));
   }, [teamCalendars]);
   const { search, setSearch, filtered, paginated, page, totalPages, offset, goToPage } = useSearchPagination(sorted, searchable);
+  // For the summary of the page
+  useSectionFact("team-calendars", teamCalendars ? sorted.length : undefined);
 
   if (!canView) return null;
 
@@ -141,7 +143,7 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
       <div className="flex items-center gap-2">
         <SectionToggle open={open} onToggle={() => setOpen(!open)} controls={openContentId}>
           {t("domains.teamCalendars.title")}
-          {sorted.length > 0 && (
+          {teamCalendars && (
             <span className="text-sm font-normal text-gray-500">({sorted.length})</span>
           )}
         </SectionToggle>

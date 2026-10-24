@@ -583,7 +583,10 @@
     "createHint": "Verifica che sia il dominio voluto: i suoi utenti riceveranno la posta con questo nome.",
     "createHintCalendar": "Verifica che sia il dominio che intendi creare: i suoi utenti, risorse, calendari di team e rubriche di dominio vi saranno associati.",
     "summary": {
-      "users": "Utenti: {{count}}"
+      "users": "Utenti: {{count}}",
+      "admins": "Amministratori: {{count}}",
+      "resources": "Risorse: {{count}}",
+      "teamCalendars": "Calendari del team: {{count}}"
     },
     "delete": {
       "confirmUnchecked": "Eliminare «{{domain}}»? Potrà essere ricreato in seguito.",

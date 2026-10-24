@@ -1,35 +1,17 @@
-import { ReactNode, useCallback } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { formatByteSize } from "@/i18n/format-size";
 import { formatPercent } from "@/i18n/format-percent";
-import { useRevealSection, useSectionFacts } from "@/components/custom/collapsible-section";
+import { useSectionFacts } from "@/components/custom/collapsible-section";
+import { CountFact, Fact, Strip } from "@/components/custom/summary-facts";
 import { getUserQuota, getUserVacation } from "../api-client";
 import { UserQuota } from "../types";
 import type { ForwardsFact } from "./user-forwards";
 
 // Same thresholds as the quota bars of the sections
 const quotaBarClass = (ratio: number) => (ratio > 0.9 ? "bg-red-500" : ratio >= 0.7 ? "bg-amber-500" : "bg-green-500");
-
-function Fact({ section, children }: { section: string; children: ReactNode }) {
-  const reveal = useRevealSection();
-  return (
-    <button
-      type="button"
-      onClick={() => reveal(section)}
-      className="text-left text-sm px-3 py-1.5 rounded-md border bg-white hover:bg-gray-50 hover:border-blue-400 transition"
-    >
-      {children}
-    </button>
-  );
-}
-
-const Strip = ({ children }: { children: ReactNode }) => (
-  <div className="mt-3 flex flex-wrap items-center gap-2">{children}</div>
-);
-
-const countOf = (value: unknown) => (typeof value === "number" ? value : undefined);
 
 function QuotaFact({ quota }: { quota: UserQuota }) {
   const { t } = useTranslation();
@@ -58,13 +40,6 @@ function ForwardsFactChip({ forwards }: { forwards: ForwardsFact }) {
       ? t("users.summary.forwardsTo", { address: destinations[0].mailAddress })
       : t("users.summary.forwards", { count: destinations.length });
   return <Fact section="forwards">{label}</Fact>;
-}
-
-// A fact read from the section of the page that counted it
-function CountFact({ section, count, labelKey }: { section: string; count: unknown; labelKey: string }) {
-  const { t } = useTranslation();
-  const value = countOf(count);
-  return value === undefined ? null : <Fact section={section}>{t(labelKey, { count: value })}</Fact>;
 }
 
 // Once its section has loaded or saved it, the section's value is the latest one

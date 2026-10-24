@@ -135,7 +135,9 @@ too — gated by the domain Users page rather than by `GET /users`.
 ### Domain detail — Summary strip *(GLOBAL mode)*
 
 Under the domain, how many users it has (called with `limit=51`: "50+" beyond); the chip opens
-`/users?domain={domain}`.
+`/users?domain={domain}`. On the calendar domain page, chips then count the domain admins, the
+resources and the team calendars from the requests of their sections (see these sections): no
+request of their own.
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
