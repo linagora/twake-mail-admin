@@ -77,7 +77,7 @@ class TasksTest extends CalendarAdminE2ETest {
         for (String text : new String[] {"Submitted", "Started", "Executed on", "Submitted from", "Details"}) {
             assertThat(dialog.getByText(text, new Locator.GetByTextOptions().setExact(true)).first()).isVisible();
         }
-        assertThat(TasksPage.summaryValue(dialog, "importedEventCount")).hasText("1");
+        assertThat(TasksPage.summaryValue(dialog, "Imported events")).hasText("1");
         // The raw JSON is folded
         assertThat(TasksPage.rawJson(dialog)).isHidden();
         assertThat(TasksPage.showRawJson(dialog)).containsText("\"importedEventCount\": 1");
@@ -173,7 +173,7 @@ class TasksTest extends CalendarAdminE2ETest {
         assertThat(TasksPage.summaryValue(app.main(), "Status")).hasText("Completed");
         // Its name, then its type as WebAdmin names it
         assertThat(TasksPage.summaryValue(app.main(), "Type")).hasText("Import events (ICS)calendar-import");
-        assertThat(TasksPage.summaryValue(app.main(), "importedEventCount")).hasText("1");
+        assertThat(TasksPage.summaryValue(app.main(), "Imported events")).hasText("1");
         Locator json = TasksPage.showRawJson(app.main());
         assertThat(json).containsText("\"taskId\": \"" + completed + "\"");
         assertThat(json).containsText("\"status\": \"completed\"");

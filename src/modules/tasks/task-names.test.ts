@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from "vitest";
 import type { TFunction } from "i18next";
-import { cancelConfirmMessage, shortTaskId, taskHeading, taskTypeLabel } from "./task-summary";
+import { cancelConfirmMessage, shortTaskId, taskHeading, taskTargetInfo, taskTypeLabel } from "./task-summary";
 import { TaskDetailResponse } from "@/modules/common-tasks/types";
 
 // Returns the key and its options, to see what is said
@@ -30,5 +30,20 @@ describe("task names", () => {
 
   it("shortens a task ID to its first 8 characters", () => {
     expect(shortTaskId("58ae73fa-5585-417c-b320-1c19667b4743")).toBe("58ae73fa");
+  });
+});
+
+describe("task targets", () => {
+  it("reads the user of a calendar archival and the calendar of an import", () => {
+    expect(taskHeading(t, task("calendar-archival", { targetUser: "alice@open-paas.org" }))).toBe("commonTasks.calendarEventArchival — alice@open-paas.org");
+    expect(taskTargetInfo(task("domain-calendar-import", { domain: "open-paas.org", calendarType: "team-calendar", calendarId: "6adc" })))
+      .toEqual({ kind: "domain", value: "open-paas.org", calendar: { type: "team-calendar", id: "6adc" } });
+    expect(taskHeading(t, task("domain-calendar-import", { domain: "open-paas.org", calendarType: "resource", calendarId: "r1" })))
+      .toBe("users.calendars.importTitle — open-paas.org · tasks.targetCalendar.resource");
+  });
+
+  it("keeps the mail targets", () => {
+    expect(taskTargetInfo(task("x", { repositoryPath: "var/mail/error", username: "bob@example.com" }))).toEqual({ kind: "repository", value: "var/mail/error" });
+    expect(taskTargetInfo(task("x", { mailboxId: "42" }))).toEqual({ kind: "mailbox", value: "42" });
   });
 });

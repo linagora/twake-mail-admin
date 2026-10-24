@@ -1280,6 +1280,7 @@
     "desc": "Буурах ↓",
     "status": "Төлөв",
     "type": "Төрөл",
+    "target": "Хамаарах",
     "typePlaceholder": "жнь full-reindexing",
     "submittedAfter": "Дараа илгээсэн",
     "submittedBefore": "Өмнө илгээсэн",
@@ -1343,9 +1344,23 @@
       "mailboxesExpired": "Хугацаа нь дууссан захидалтай хайрцаг",
       "messagesDeleted": "Устгасан захидал",
       "subscribedCount": "Бүртгүүлсэн хайрцаг",
-      "unsubscribedCount": "Бүртгэлээс хассан хайрцаг"
+      "unsubscribedCount": "Бүртгэлээс хассан хайрцаг",
+      "calendarType": "Хуанлийн төрөл",
+      "calendarId": "Хуанлийн ID",
+      "totalEventCount": "Файл дахь үйл явдал",
+      "importedEventCount": "Импортолсон үйл явдал",
+      "archivedEventCount": "Архивласан үйл явдал",
+      "failedEventCount": "Амжилтгүй үйл явдал",
+      "calendarTypes": {
+        "team-calendar": "Багийн хуанли",
+        "resource": "Нөөц"
+      }
     },
     "cancelTarget": " ({{target}})",
+    "targetCalendar": {
+      "team-calendar": "багийн хуанли",
+      "resource": "нөөц"
+    },
     "outcome": {
       "completed": "Даалгавар дууссан",
       "failed": "Даалгавар амжилтгүй",

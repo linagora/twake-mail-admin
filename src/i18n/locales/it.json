@@ -1286,6 +1286,7 @@
     "desc": "Decresc. ↓",
     "status": "Stato",
     "type": "Tipo",
+    "target": "Riguarda",
     "typePlaceholder": "ad es. full-reindexing",
     "submittedAfter": "Inviata dopo",
     "submittedBefore": "Inviata prima",
@@ -1349,9 +1350,23 @@
       "mailboxesExpired": "Caselle con messaggi scaduti",
       "messagesDeleted": "Messaggi eliminati",
       "subscribedCount": "Caselle sottoscritte",
-      "unsubscribedCount": "Caselle non più sottoscritte"
+      "unsubscribedCount": "Caselle non più sottoscritte",
+      "calendarType": "Tipo di calendario",
+      "calendarId": "ID del calendario",
+      "totalEventCount": "Eventi nel file",
+      "importedEventCount": "Eventi importati",
+      "archivedEventCount": "Eventi archiviati",
+      "failedEventCount": "Eventi non riusciti",
+      "calendarTypes": {
+        "team-calendar": "Calendario del team",
+        "resource": "Risorsa"
+      }
     },
     "cancelTarget": " per {{target}}",
+    "targetCalendar": {
+      "team-calendar": "calendario del team",
+      "resource": "risorsa"
+    },
     "outcome": {
       "completed": "Attività completata",
       "failed": "Attività non riuscita",

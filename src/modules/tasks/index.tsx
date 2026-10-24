@@ -14,7 +14,7 @@ import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PaginationControls } from "@/components/custom/pagination-controls";
-import { cancelAndReport, cancelConfirmMessage, endDate, formatDate, shortTaskId, statusLabel, STATUS_COLORS, TaskDetails, taskTarget, TaskTarget, TaskSummary, taskHeading, taskTypeLabel } from "./task-summary";
+import { cancelAndReport, cancelConfirmMessage, endDate, formatDate, shortTaskId, statusLabel, STATUS_COLORS, TaskDetails, taskTargetInfo, TaskTarget, TaskSummary, taskHeading, taskTypeLabel } from "./task-summary";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -318,7 +318,7 @@ export default function Tasks() {
                     >
                       {taskTypeLabel(t, task.type)}
                     </button>
-                    {taskTarget(task) && (
+                    {taskTargetInfo(task) && (
                       // A user target links to its page, without opening the task
                       <span className="block text-xs text-gray-500 break-all" onClick={(e) => e.stopPropagation()}>
                         <TaskTarget task={task} />

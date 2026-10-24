@@ -1286,6 +1286,7 @@
     "desc": "Desc. ↓",
     "status": "Estado",
     "type": "Tipo",
+    "target": "Afecta a",
     "typePlaceholder": "p. ej. full-reindexing",
     "submittedAfter": "Enviada después de",
     "submittedBefore": "Enviada antes de",
@@ -1349,9 +1350,23 @@
       "mailboxesExpired": "Buzones con mensajes caducados",
       "messagesDeleted": "Mensajes eliminados",
       "subscribedCount": "Buzones suscritos",
-      "unsubscribedCount": "Buzones con suscripción cancelada"
+      "unsubscribedCount": "Buzones con suscripción cancelada",
+      "calendarType": "Tipo de calendario",
+      "calendarId": "ID del calendario",
+      "totalEventCount": "Eventos en el archivo",
+      "importedEventCount": "Eventos importados",
+      "archivedEventCount": "Eventos archivados",
+      "failedEventCount": "Eventos fallidos",
+      "calendarTypes": {
+        "team-calendar": "Calendario de equipo",
+        "resource": "Recurso"
+      }
     },
     "cancelTarget": " para {{target}}",
+    "targetCalendar": {
+      "team-calendar": "calendario de equipo",
+      "resource": "recurso"
+    },
     "outcome": {
       "completed": "Tarea completada",
       "failed": "Tarea fallida",

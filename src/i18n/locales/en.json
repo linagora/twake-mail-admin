@@ -1286,6 +1286,7 @@
     "desc": "Desc ↓",
     "status": "Status",
     "type": "Type",
+    "target": "Concerns",
     "typePlaceholder": "e.g. full-reindexing",
     "submittedAfter": "Submitted after",
     "submittedBefore": "Submitted before",
@@ -1349,9 +1350,23 @@
       "mailboxesExpired": "Mailboxes with expired messages",
       "messagesDeleted": "Messages deleted",
       "subscribedCount": "Mailboxes subscribed",
-      "unsubscribedCount": "Mailboxes unsubscribed"
+      "unsubscribedCount": "Mailboxes unsubscribed",
+      "calendarType": "Calendar type",
+      "calendarId": "Calendar ID",
+      "totalEventCount": "Events in the file",
+      "importedEventCount": "Imported events",
+      "archivedEventCount": "Archived events",
+      "failedEventCount": "Failed events",
+      "calendarTypes": {
+        "team-calendar": "Team calendar",
+        "resource": "Resource"
+      }
     },
     "cancelTarget": " for {{target}}",
+    "targetCalendar": {
+      "team-calendar": "team calendar",
+      "resource": "resource"
+    },
     "outcome": {
       "completed": "Task completed",
       "failed": "Task failed",

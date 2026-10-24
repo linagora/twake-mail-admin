@@ -1286,6 +1286,7 @@
     "desc": "Abst. ↓",
     "status": "Status",
     "type": "Typ",
+    "target": "Betrifft",
     "typePlaceholder": "z. B. full-reindexing",
     "submittedAfter": "Übermittelt nach",
     "submittedBefore": "Übermittelt vor",
@@ -1349,9 +1350,23 @@
       "mailboxesExpired": "Postfächer mit abgelaufenen Nachrichten",
       "messagesDeleted": "Gelöschte Nachrichten",
       "subscribedCount": "Abonnierte Postfächer",
-      "unsubscribedCount": "Abbestellte Postfächer"
+      "unsubscribedCount": "Abbestellte Postfächer",
+      "calendarType": "Kalendertyp",
+      "calendarId": "Kalender-ID",
+      "totalEventCount": "Termine in der Datei",
+      "importedEventCount": "Importierte Termine",
+      "archivedEventCount": "Archivierte Termine",
+      "failedEventCount": "Fehlgeschlagene Termine",
+      "calendarTypes": {
+        "team-calendar": "Teamkalender",
+        "resource": "Ressource"
+      }
     },
     "cancelTarget": " für {{target}}",
+    "targetCalendar": {
+      "team-calendar": "Teamkalender",
+      "resource": "Ressource"
+    },
     "outcome": {
       "completed": "Aufgabe abgeschlossen",
       "failed": "Aufgabe fehlgeschlagen",

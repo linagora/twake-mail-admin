@@ -1291,6 +1291,7 @@
     "desc": "По убыв. ↓",
     "status": "Статус",
     "type": "Тип",
+    "target": "Объект",
     "typePlaceholder": "напр. full-reindexing",
     "submittedAfter": "Отправлено после",
     "submittedBefore": "Отправлено до",
@@ -1354,9 +1355,23 @@
       "mailboxesExpired": "Ящики с устаревшими сообщениями",
       "messagesDeleted": "Удалено сообщений",
       "subscribedCount": "Ящиков с подпиской",
-      "unsubscribedCount": "Ящиков без подписки"
+      "unsubscribedCount": "Ящиков без подписки",
+      "calendarType": "Тип календаря",
+      "calendarId": "ID календаря",
+      "totalEventCount": "Событий в файле",
+      "importedEventCount": "Импортировано событий",
+      "archivedEventCount": "Архивировано событий",
+      "failedEventCount": "Событий с ошибкой",
+      "calendarTypes": {
+        "team-calendar": "Командный календарь",
+        "resource": "Ресурс"
+      }
     },
     "cancelTarget": " для {{target}}",
+    "targetCalendar": {
+      "team-calendar": "командный календарь",
+      "resource": "ресурс"
+    },
     "outcome": {
       "completed": "Задача выполнена",
       "failed": "Задача завершилась ошибкой",

@@ -1847,7 +1847,16 @@ TASKS = page(
                         may("DELETE", "/tasks/{id}", modes=GLOBAL),
                         may("DELETE", "/domains/{domain}/tasks/{id}", modes=DOMAIN),
                     ],
-                )
+                ),
+                action(
+                    "calendar-target-name",
+                    "See the name of the calendar a calendar task worked on",
+                    "Voir le nom du calendrier sur lequel a porté une tâche calendrier",
+                    endpoints=[
+                        may("GET", "/domains/{domain}/team-calendars", modes=GLOBAL),
+                        may("GET", "/domains/{domain}/resources/{resourceId}", modes=GLOBAL),
+                    ],
+                ),
             ],
         )
     ],

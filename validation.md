@@ -725,6 +725,8 @@ A left bar entry in both modes; the detail pattern differs, see the two snackbar
 | Page load | GET | `/tasks?{query_params}` | MUST | GLOBAL |
 | Task detail load | GET | `/tasks/{id}` | MUST | GLOBAL |
 | "Cancel task" button | DELETE | `/tasks/{id}` | MAY (do not show the button if missing) | GLOBAL |
+| Task detail: name of the team calendar a calendar task worked on *(APPLICATION:"CALENDAR")* | GET | `/domains/{domain}/team-calendars` | MAY (the target is shown without its name) | GLOBAL |
+| Task detail: name of the resource a calendar task worked on *(APPLICATION:"CALENDAR")* | GET | `/domains/{domain}/resources/{resourceId}` | MAY (the target is shown without its name) | GLOBAL |
 
 ## Tasks snackbar *(GLOBAL mode)*
 

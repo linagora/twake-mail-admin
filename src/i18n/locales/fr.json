@@ -1286,6 +1286,7 @@
     "desc": "Décroissant ↓",
     "status": "Statut",
     "type": "Type",
+    "target": "Concerne",
     "typePlaceholder": "ex. full-reindexing",
     "submittedAfter": "Soumise après",
     "submittedBefore": "Soumise avant",
@@ -1349,9 +1350,23 @@
       "mailboxesExpired": "Boîtes avec des messages expirés",
       "messagesDeleted": "Messages supprimés",
       "subscribedCount": "Boîtes abonnées",
-      "unsubscribedCount": "Boîtes désabonnées"
+      "unsubscribedCount": "Boîtes désabonnées",
+      "calendarType": "Type de calendrier",
+      "calendarId": "ID du calendrier",
+      "totalEventCount": "Événements dans le fichier",
+      "importedEventCount": "Événements importés",
+      "archivedEventCount": "Événements archivés",
+      "failedEventCount": "Événements en échec",
+      "calendarTypes": {
+        "team-calendar": "Calendrier d'équipe",
+        "resource": "Ressource"
+      }
     },
     "cancelTarget": " pour {{target}}",
+    "targetCalendar": {
+      "team-calendar": "calendrier d'équipe",
+      "resource": "ressource"
+    },
     "outcome": {
       "completed": "Tâche terminée",
       "failed": "Tâche en échec",

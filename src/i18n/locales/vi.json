@@ -1276,6 +1276,7 @@
     "desc": "Giảm ↓",
     "status": "Trạng thái",
     "type": "Loại",
+    "target": "Đối tượng",
     "typePlaceholder": "vd. full-reindexing",
     "submittedAfter": "Gửi sau",
     "submittedBefore": "Gửi trước",
@@ -1339,9 +1340,23 @@
       "mailboxesExpired": "Hộp thư có thư hết hạn",
       "messagesDeleted": "Thư đã xóa",
       "subscribedCount": "Hộp thư đã đăng ký",
-      "unsubscribedCount": "Hộp thư đã hủy đăng ký"
+      "unsubscribedCount": "Hộp thư đã hủy đăng ký",
+      "calendarType": "Loại lịch",
+      "calendarId": "ID lịch",
+      "totalEventCount": "Sự kiện trong tệp",
+      "importedEventCount": "Sự kiện đã nhập",
+      "archivedEventCount": "Sự kiện đã lưu trữ",
+      "failedEventCount": "Sự kiện lỗi",
+      "calendarTypes": {
+        "team-calendar": "Lịch nhóm",
+        "resource": "Tài nguyên"
+      }
     },
     "cancelTarget": " cho {{target}}",
+    "targetCalendar": {
+      "team-calendar": "lịch nhóm",
+      "resource": "tài nguyên"
+    },
     "outcome": {
       "completed": "Tác vụ đã hoàn tất",
       "failed": "Tác vụ thất bại",

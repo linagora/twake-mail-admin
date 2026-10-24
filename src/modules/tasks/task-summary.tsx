@@ -1,13 +1,17 @@
-import { Fragment } from "react";
+import { Fragment, useCallback } from "react";
+import { Link } from "react-router";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { TaskDetailResponse, TaskStatus } from "@/modules/common-tasks/types";
 import { cancelTask, getTaskDetail } from "@/modules/common-tasks/api-client";
 import { currentLocale } from "@/i18n/locale";
 import UserLink from "@/components/custom/user-link";
+import { useFetchData } from "@/hooks/use-fetch-data";
+import { useIsAllowed } from "@/lib/proxy-resolver-context";
+import { getResource, getTeamCalendars } from "@/modules/domains/api-client";
 
 // The additionalInformation keys holding a user, shown as a link to their page
-const USER_KEYS = new Set(["username", "user", "oldUser", "newUser"]);
+const USER_KEYS = new Set(["username", "user", "oldUser", "newUser", "targetUser"]);
 
 /**
  * A task as the operator reads it, shared by the detail dialog of the Tasks list and by the
@@ -108,6 +112,14 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   processedMessageCount: "tasks.info.processedMessageCount",
   failedMessageCount: "tasks.info.failedMessageCount",
   timestamp: "tasks.info.timestamp",
+  // Calendar tasks: archival, imports
+  targetUser: "tasks.info.username",
+  calendarType: "tasks.info.calendarType",
+  calendarId: "tasks.info.calendarId",
+  totalEventCount: "tasks.info.totalEventCount",
+  importedEventCount: "tasks.info.importedEventCount",
+  archivedEventCount: "tasks.info.archivedEventCount",
+  failedEventCount: "tasks.info.failedEventCount",
   // Recompute mailbox quota: a quota root is a user
   processedQuotaRoots: "tasks.info.processedUserCount",
   failedQuotaRoots: "tasks.info.failedUsers",
@@ -128,6 +140,12 @@ const isDetailShown = (key: string, value: unknown) =>
 
 // A list of names or ids, e.g. the failed users: its items, or a dash when empty
 const detailText = (value: unknown) => (Array.isArray(value) ? (value.length > 0 ? value.join(", ") : "—") : String(value));
+
+// Values of calendarType named in the UI language
+const CALENDAR_TYPE_KEYS: Record<string, string> = {
+  "team-calendar": "tasks.info.calendarTypes.team-calendar",
+  resource: "tasks.info.calendarTypes.resource",
+};
 
 /**
  * The name of each WebAdmin task type, as the button that starts it reads: the operator finds
@@ -199,24 +217,57 @@ export const taskTypeLabel = (t: TFunction, type: string): string =>
 /** The first characters of a task ID, enough to tell tasks apart on screen. */
 export const shortTaskId = (taskId: string) => taskId.slice(0, 8);
 
-// What a task worked on, shown under its type in the Tasks list
-export function taskTarget(task: TaskDetailResponse): string | null {
+/** What a task worked on: a repository, a user, a domain (or one of its calendars), a mailbox. */
+export type TaskTargetInfo =
+  | { kind: "repository" | "user" | "mailbox"; value: string }
+  | { kind: "domain"; value: string; calendar?: { type: "team-calendar" | "resource"; id: string } };
+
+const stringOf = (value: unknown) => (typeof value === "string" && value ? value : undefined);
+
+export function taskTargetInfo(task: TaskDetailResponse): TaskTargetInfo | null {
   const info = task.additionalInformation ?? {};
-  const target = info.repositoryPath ?? info.username ?? info.mailboxId ?? info.domain;
-  return typeof target === "string" && target ? target : null;
+  const repository = stringOf(info.repositoryPath);
+  if (repository) return { kind: "repository", value: repository };
+  const user = stringOf(info.targetUser) ?? stringOf(info.username) ?? stringOf(info.user);
+  if (user) return { kind: "user", value: user };
+  const domain = stringOf(info.domain);
+  if (domain) {
+    const calendarId = stringOf(info.calendarId);
+    const type = info.calendarType;
+    return calendarId && (type === "team-calendar" || type === "resource")
+      ? { kind: "domain", value: domain, calendar: { type, id: calendarId } }
+      : { kind: "domain", value: domain };
+  }
+  const mailbox = stringOf(info.mailboxId);
+  return mailbox ? { kind: "mailbox", value: mailbox } : null;
+}
+
+// "open-paas.org · team calendar": the kind of the calendar after its domain
+const calendarSuffix = (t: TFunction, target: TaskTargetInfo) =>
+  target.kind === "domain" && target.calendar ? ` · ${t(`tasks.targetCalendar.${target.calendar.type}`)}` : "";
+
+const hasCalendarTarget = (task: TaskDetailResponse) => {
+  const target = taskTargetInfo(task);
+  return target?.kind === "domain" && !!target.calendar;
+};
+
+/** What a task worked on, as text: in headings and confirmations. */
+export function taskTarget(t: TFunction, task: TaskDetailResponse): string | null {
+  const target = taskTargetInfo(task);
+  return target ? target.value + calendarSuffix(t, target) : null;
 }
 
 /** "Subscribe to all mailboxes — bob@example.com": the task named as the operator started it. */
 export function taskHeading(t: TFunction, task: TaskDetailResponse): string {
   if (!task.type) return t("common.taskLink", { taskId: task.taskId });
-  const target = taskTarget(task);
+  const target = taskTarget(t, task);
   const label = taskTypeLabel(t, task.type);
   return target ? `${label} — ${target}` : label;
 }
 
 /** The cancel confirmation, naming the task and its target rather than an ID alone. */
 export function cancelConfirmMessage(t: TFunction, task: TaskDetailResponse): string {
-  const target = taskTarget(task);
+  const target = taskTarget(t, task);
   return t("tasks.cancelConfirm", {
     name: taskTypeLabel(t, task.type),
     target: target ? t("tasks.cancelTarget", { target }) : "",
@@ -224,12 +275,51 @@ export function cancelConfirmMessage(t: TFunction, task: TaskDetailResponse): st
   });
 }
 
-/** The target of a task, a link when it is a user. */
-export function TaskTarget({ task }: { task: TaskDetailResponse }) {
-  const target = taskTarget(task);
+// The name of the team calendar or resource a task worked on, when it can be read
+function useCalendarName(domain: string, type: string | undefined, id: string | undefined, enabled: boolean): string | undefined {
+  const canListTeamCalendars = useIsAllowed("GET", "/domains/{domain}/team-calendars");
+  const canReadResource = useIsAllowed("GET", "/domains/{domain}/resources/{resourceId}");
+  const fetchName = useCallback(async (): Promise<string | undefined> => {
+    if (!id) return undefined;
+    if (type === "team-calendar") {
+      const found = (await getTeamCalendars(domain)).find((teamCalendar) => teamCalendar.id === id);
+      return found ? found.displayName || found.name : undefined;
+    }
+    return (await getResource(domain, id)).name ?? undefined;
+  }, [domain, type, id]);
+  const allowed = type === "team-calendar" ? canListTeamCalendars : canReadResource;
+  // A failed read, or a calendar removed since, leaves the target without a name
+  const { data } = useFetchData(enabled && id && allowed ? fetchName : null);
+  return data ?? undefined;
+}
+
+/**
+ * The target of a task, linked to its page: a user, a domain, a resource. `withName` also reads
+ * the name of the team calendar or resource, on the task page and in its dialog, not in the list.
+ */
+export function TaskTarget({ task, withName = false }: { task: TaskDetailResponse; withName?: boolean }) {
+  const { t } = useTranslation();
+  const target = taskTargetInfo(task);
+  const calendar = target?.kind === "domain" ? target.calendar : undefined;
+  const name = useCalendarName(target?.value ?? "", calendar?.type, calendar?.id, withName);
   if (!target) return null;
-  const info = task.additionalInformation ?? {};
-  return target === info.username && !info.repositoryPath ? <UserLink address={target} /> : <>{target}</>;
+  if (target.kind === "user") return <UserLink address={target.value} />;
+  if (target.kind !== "domain") return <>{target.value}</>;
+  const domainPage = `/domains/domain/${encodeURIComponent(target.value)}`;
+  return (
+    <>
+      <Link to={domainPage} className="text-blue-600 hover:underline">{target.value}</Link>
+      {calendar && (
+        <>
+          {" · "}
+          {calendar.type === "resource"
+            ? <Link to={`${domainPage}/resource/${encodeURIComponent(calendar.id)}`} className="text-blue-600 hover:underline">{t("tasks.targetCalendar.resource")}</Link>
+            : t("tasks.targetCalendar.team-calendar")}
+          {name && ` ${name}`}
+        </>
+      )}
+    </>
+  );
 }
 
 export function StatusPill({ status }: { status: TaskStatus }) {
@@ -259,6 +349,8 @@ export function TaskSummary({ task }: { task: TaskDetailResponse }) {
         {taskTypeLabel(t, task.type)}
         <span className="ml-2 font-mono text-xs text-gray-500">{task.type}</span>
       </Row>
+      {/* The team calendar or resource a calendar task worked on, by its name; other targets are in the details */}
+      {hasCalendarTarget(task) && <Row label={t("tasks.target")}><TaskTarget task={task} withName /></Row>}
       <Row label={t("tasks.submitted")}>{formatDate(task.submitDate)}</Row>
       <Row label={t("tasks.started")}>{formatDate(task.startedDate)}</Row>
       {task.failedDate ? <Row label={t("tasks.failedAt")}>{formatDate(task.failedDate)}</Row>
@@ -286,6 +378,8 @@ export function TaskDetails({ task, raw }: { task: TaskDetailResponse; raw: unkn
                 <span className="text-gray-500 font-medium">{DETAIL_LABEL_KEYS[key] ? t(DETAIL_LABEL_KEYS[key]) : key}</span>
                 {key === "timestamp" && typeof value === "string"
                   ? <span className="min-w-0 break-words">{formatDate(value)}</span>
+                  : key === "calendarType" && typeof value === "string" && CALENDAR_TYPE_KEYS[value]
+                  ? <span className="min-w-0 break-words">{t(CALENDAR_TYPE_KEYS[value])}</span>
                   : USER_KEYS.has(key) && typeof value === "string"
                   ? <span className="min-w-0"><UserLink address={value} /></span>
                   : <span className="min-w-0 break-words">{detailText(value)}</span>}
