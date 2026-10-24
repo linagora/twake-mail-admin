@@ -37,7 +37,7 @@ class DomainRateLimitsTest extends MailAdminE2ETest {
             assertThat(detail.rateLimit(label)).hasAttribute("placeholder", "default");
             assertThat(detail.rateLimit(label)).hasValue("");
         }
-        assertThat(detail.main().getByText("Leave empty to fall back to the default limit (null), -1 means unlimited.",
+        assertThat(detail.main().getByText("Leave empty to fall back to the default limit, -1 means unlimited.",
             new Locator.GetByTextOptions())).isVisible();
 
         detail.rateLimit("Mails sent / minute").fill("10");

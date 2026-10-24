@@ -2074,7 +2074,7 @@
     "mailsReceivedPerHours": "Email ricevute / ora",
     "mailsReceivedPerDays": "Email ricevute / giorno",
     "noLimit": "predefinito",
-    "noLimitHint": "Lascia vuoto per usare il limite predefinito (null); -1 significa illimitato. I limiti sui destinatari contano ogni destinatario di un'email inviata, i limiti sulle email contano l'email una sola volta.",
+    "noLimitHint": "Lascia vuoto per usare il limite predefinito; -1 significa illimitato. I limiti sui destinatari contano ogni destinatario di un'email inviata, i limiti sulle email contano l'email una sola volta.",
     "sectionTitle": "Limitazione della frequenza",
     "invalid": "Limite non valido",
     "invalidDesc": "Inserisci un numero intero positivo, -1 per illimitato, oppure lascia vuoto per il limite predefinito."
