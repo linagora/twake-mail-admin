@@ -106,6 +106,24 @@ describe("UserCalendars delete button", () => {
   });
 });
 
+describe("calendar creation", () => {
+  // jsdom does not submit a form on Enter: submitting the field's form is what the browser does then
+  it("creates the calendar on Enter in its name, closes and gives the focus back to the +", async () => {
+    mocks.api.createUserCalendar.mockResolvedValue(undefined);
+    await openCalendars();
+    const plus = screen.getByTitle("users.calendars.createTitle");
+    plus.focus();
+    fireEvent.click(plus);
+    const name = screen.getByLabelText("users.calendars.name *");
+    fireEvent.change(name, { target: { value: "QA Cal2" } });
+    fireEvent.submit(name.closest("form")!);
+
+    await waitFor(() => expect(mocks.api.createUserCalendar).toHaveBeenCalledWith("frank@open-paas.org", { "dav:name": "QA Cal2" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByTitle("users.calendars.createTitle")));
+  });
+});
+
 describe("calendar dialogs: field labels", () => {
   it.each([
     "users.calendars.name",

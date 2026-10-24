@@ -108,6 +108,22 @@ describe("address book dialogs: field labels", () => {
     },
   );
 
+  // jsdom does not submit a form on Enter: submitting the field's form is what the browser does then
+  it("creates the address book on Enter in its name, closes and gives the focus back to the +", async () => {
+    mocks.api.createUserAddressBook.mockResolvedValue(undefined);
+    await openSection();
+    const plus = screen.getByTitle("users.addressBooks.createTitle");
+    plus.focus();
+    fireEvent.click(plus);
+    const name = screen.getByLabelText("users.addressBooks.name", { exact: false });
+    fireEvent.change(name, { target: { value: "QA Book" } });
+    fireEvent.submit(name.closest("form")!);
+
+    await waitFor(() => expect(mocks.api.createUserAddressBook).toHaveBeenCalledWith(BOB, { "dav:name": "QA Book" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByTitle("users.addressBooks.createTitle")));
+  });
+
   it.each(["users.addressBooks.name", "users.addressBooks.description"])(
     "names the %s field of the edit dialog",
     async (label) => {

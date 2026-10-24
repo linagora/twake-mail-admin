@@ -16,6 +16,7 @@ import { getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
 import { buildOwnerEmailMap, ownerEmail } from "./calendar-owner";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DEFAULT_CALENDAR_COLOR, isValidCalendarColor, toColorPickerValue } from "./calendar-color";
@@ -340,7 +341,6 @@ export default function UserCalendars({ username, onCalendarsChanged, defaultOpe
   const [open, setOpen, openContentId] = useSectionOpen("calendars", defaultOpen);
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState<CreateUserCalendarPayload>({ ...EMPTY_CREATE });
-  const [creating, setCreating] = useState(false);
 
   const [editCalendar, setEditCalendar] = useState<UserCalendar | null>(null);
   const [editForm, setEditForm] = useState<UpdateUserCalendarPayload>({});
@@ -364,25 +364,15 @@ export default function UserCalendars({ username, onCalendarsChanged, defaultOpe
     items: calendars.filter((c) => categorize(c) === category),
   })).filter((group) => group.items.length > 0 || (group.category === "owner" && canCreate));
 
+  // A refusal throws: the modal shows it and keeps the typed values
   const handleCreate = async () => {
-    const name = createForm["dav:name"].trim();
-    if (!name || !isValidCalendarColor(createForm["apple:color"])) return;
-    setCreating(true);
-    try {
-      const payload: CreateUserCalendarPayload = { "dav:name": name };
-      if (createForm["apple:color"]?.trim()) payload["apple:color"] = createForm["apple:color"]!.trim();
-      if (createForm["caldav:description"]?.trim()) payload["caldav:description"] = createForm["caldav:description"]!.trim();
-      await createUserCalendar(username, payload);
-      toast({ title: t("users.calendars.created") });
-      setCreateForm({ ...EMPTY_CREATE });
-      setShowCreate(false);
-      onCalendarsChanged?.();
-      await refresh();
-    } catch (err) {
-      toast({ title: t("users.calendars.errorCreate"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setCreating(false);
-    }
+    const payload: CreateUserCalendarPayload = { "dav:name": createForm["dav:name"].trim() };
+    if (createForm["apple:color"]?.trim()) payload["apple:color"] = createForm["apple:color"]!.trim();
+    if (createForm["caldav:description"]?.trim()) payload["caldav:description"] = createForm["caldav:description"]!.trim();
+    await createUserCalendar(username, payload);
+    toast({ title: t("users.calendars.created") });
+    onCalendarsChanged?.();
+    refresh();
   };
 
   const openEdit = (calendar: UserCalendar) => {
@@ -484,7 +474,7 @@ export default function UserCalendars({ username, onCalendarsChanged, defaultOpe
                 </h5>
                 {group.category === "owner" && canCreate && (
                   <button
-                    onClick={() => setShowCreate(true)}
+                    onClick={() => { setCreateForm({ ...EMPTY_CREATE }); setShowCreate(true); }}
                     className="p-1 rounded-md hover:bg-gray-200 transition"
                     title={t("users.calendars.createTitle")}
                   >
@@ -517,53 +507,41 @@ export default function UserCalendars({ username, onCalendarsChanged, defaultOpe
         </div>
       )}
 
-      {/* Create modal */}
-      <Dialog open={showCreate} onOpenChange={(v) => { if (!v) { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); } }}>
-        <DialogContent className="max-w-md" aria-describedby={undefined}>
-          <DialogHeader>
-            <DialogTitle>{t("users.calendars.createTitle")}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div>
-              <label htmlFor={`${idPrefix}-create-name`} className="text-sm font-medium">{t("users.calendars.name")} *</label>
-              <input
-                id={`${idPrefix}-create-name`}
-                type="text"
-                value={createForm["dav:name"]}
-                onChange={(e) => setCreateForm((f) => ({ ...f, "dav:name": e.target.value }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <CalendarColorField
-              value={createForm["apple:color"]}
-              onChange={(color) => setCreateForm((f) => ({ ...f, "apple:color": color }))}
-            />
-            <div>
-              <label htmlFor={`${idPrefix}-create-description`} className="text-sm font-medium">{t("users.calendars.description")}</label>
-              <input
-                id={`${idPrefix}-create-description`}
-                type="text"
-                value={createForm["caldav:description"] ?? ""}
-                onChange={(e) => setCreateForm((f) => ({ ...f, "caldav:description": e.target.value }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={() => { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); }}>
-                {t("common.cancel")}
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleCreate}
-                disabled={creating || !createForm["dav:name"].trim() || !isValidCalendarColor(createForm["apple:color"])}
-              >
-                {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
-                {t("common.create")}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Create modal: Enter submits, and the focus goes back to the + once it closes */}
+      <FormDialog
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        title={t("users.calendars.createTitle")}
+        submitLabel={t("common.create")}
+        submitDisabled={!createForm["dav:name"].trim() || !isValidCalendarColor(createForm["apple:color"])}
+        onSubmit={handleCreate}
+      >
+        <div>
+          <label htmlFor={`${idPrefix}-create-name`} className="text-sm font-medium">{t("users.calendars.name")} *</label>
+          <input
+            id={`${idPrefix}-create-name`}
+            type="text"
+            autoFocus
+            value={createForm["dav:name"]}
+            onChange={(e) => setCreateForm((f) => ({ ...f, "dav:name": e.target.value }))}
+            className={FIELD_CLASS}
+          />
+        </div>
+        <CalendarColorField
+          value={createForm["apple:color"]}
+          onChange={(color) => setCreateForm((f) => ({ ...f, "apple:color": color }))}
+        />
+        <div>
+          <label htmlFor={`${idPrefix}-create-description`} className="text-sm font-medium">{t("users.calendars.description")}</label>
+          <input
+            id={`${idPrefix}-create-description`}
+            type="text"
+            value={createForm["caldav:description"] ?? ""}
+            onChange={(e) => setCreateForm((f) => ({ ...f, "caldav:description": e.target.value }))}
+            className={FIELD_CLASS}
+          />
+        </div>
+      </FormDialog>
 
       {/* Edit modal */}
       <Dialog open={!!editCalendar} onOpenChange={(v) => { if (!v) setEditCalendar(null); }}>

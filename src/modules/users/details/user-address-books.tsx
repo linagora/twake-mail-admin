@@ -19,6 +19,7 @@ import { useDomain } from "@/modules/domain-admin/domain-context";
 import { getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
@@ -290,7 +291,6 @@ export default function UserAddressBooks({ username, defaultOpen = false }: Prop
   const [open, setOpen, openContentId] = useSectionOpen("address-books", defaultOpen);
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState<CreateUserAddressBookPayload>({ ...EMPTY_CREATE });
-  const [creating, setCreating] = useState(false);
 
   const [editAddressBook, setEditAddressBook] = useState<UserAddressBook | null>(null);
   const [editForm, setEditForm] = useState<UpdateUserAddressBookPayload>({});
@@ -310,23 +310,13 @@ export default function UserAddressBooks({ username, defaultOpen = false }: Prop
   const addressBooks = data?._embedded?.["dav:addressbook"] ?? [];
   const rowKeys = addressBookKeys(addressBooks);
 
+  // A refusal throws: the modal shows it and keeps the typed values
   const handleCreate = async () => {
-    const name = createForm["dav:name"].trim();
-    if (!name) return;
-    setCreating(true);
-    try {
-      const payload: CreateUserAddressBookPayload = { "dav:name": name };
-      if (createForm["carddav:description"]?.trim()) payload["carddav:description"] = createForm["carddav:description"]!.trim();
-      await createUserAddressBook(username, payload);
-      toast({ title: t("users.addressBooks.created") });
-      setCreateForm({ ...EMPTY_CREATE });
-      setShowCreate(false);
-      await refresh();
-    } catch (err) {
-      toast({ title: t("users.addressBooks.errorCreate"), description: <ErrorDisplayer error={err} /> });
-    } finally {
-      setCreating(false);
-    }
+    const payload: CreateUserAddressBookPayload = { "dav:name": createForm["dav:name"].trim() };
+    if (createForm["carddav:description"]?.trim()) payload["carddav:description"] = createForm["carddav:description"]!.trim();
+    await createUserAddressBook(username, payload);
+    toast({ title: t("users.addressBooks.created") });
+    refresh();
   };
 
   const openEdit = (addressBook: UserAddressBook) => {
@@ -407,7 +397,7 @@ export default function UserAddressBooks({ username, defaultOpen = false }: Prop
         </SectionToggle>
         {canCreate && (
           <button
-            onClick={() => { setOpen(true); setShowCreate(true); }}
+            onClick={() => { setOpen(true); setCreateForm({ ...EMPTY_CREATE }); setShowCreate(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("users.addressBooks.createTitle")}
           >
@@ -450,49 +440,37 @@ export default function UserAddressBooks({ username, defaultOpen = false }: Prop
         </div>
       )}
 
-      {/* Create modal */}
-      <Dialog open={showCreate} onOpenChange={(v) => { if (!v) { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); } }}>
-        <DialogContent className="max-w-md" aria-describedby={undefined}>
-          <DialogHeader>
-            <DialogTitle>{t("users.addressBooks.createTitle")}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div>
-              <label htmlFor={`${idPrefix}-create-name`} className="text-sm font-medium">{t("users.addressBooks.name")} *</label>
-              <input
-                id={`${idPrefix}-create-name`}
-                type="text"
-                value={createForm["dav:name"]}
-                onChange={(e) => setCreateForm((f) => ({ ...f, "dav:name": e.target.value }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label htmlFor={`${idPrefix}-create-description`} className="text-sm font-medium">{t("users.addressBooks.description")}</label>
-              <input
-                id={`${idPrefix}-create-description`}
-                type="text"
-                value={createForm["carddav:description"] ?? ""}
-                onChange={(e) => setCreateForm((f) => ({ ...f, "carddav:description": e.target.value }))}
-                className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={() => { setShowCreate(false); setCreateForm({ ...EMPTY_CREATE }); }}>
-                {t("common.cancel")}
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleCreate}
-                disabled={creating || !createForm["dav:name"].trim()}
-              >
-                {creating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
-                {t("common.create")}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Create modal: Enter submits, and the focus goes back to the + once it closes */}
+      <FormDialog
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        title={t("users.addressBooks.createTitle")}
+        submitLabel={t("common.create")}
+        submitDisabled={!createForm["dav:name"].trim()}
+        onSubmit={handleCreate}
+      >
+        <div>
+          <label htmlFor={`${idPrefix}-create-name`} className="text-sm font-medium">{t("users.addressBooks.name")} *</label>
+          <input
+            id={`${idPrefix}-create-name`}
+            type="text"
+            autoFocus
+            value={createForm["dav:name"]}
+            onChange={(e) => setCreateForm((f) => ({ ...f, "dav:name": e.target.value }))}
+            className={FIELD_CLASS}
+          />
+        </div>
+        <div>
+          <label htmlFor={`${idPrefix}-create-description`} className="text-sm font-medium">{t("users.addressBooks.description")}</label>
+          <input
+            id={`${idPrefix}-create-description`}
+            type="text"
+            value={createForm["carddav:description"] ?? ""}
+            onChange={(e) => setCreateForm((f) => ({ ...f, "carddav:description": e.target.value }))}
+            className={FIELD_CLASS}
+          />
+        </div>
+      </FormDialog>
 
       {/* Edit modal */}
       <Dialog open={!!editAddressBook} onOpenChange={(v) => { if (!v) setEditAddressBook(null); }}>
