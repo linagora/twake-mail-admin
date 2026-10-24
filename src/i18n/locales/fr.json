@@ -1781,7 +1781,6 @@
     "removeMailHeader": "Retirer l'email",
     "removeMailConfirm": "Retirer cet email du dépôt ?",
     "removeMailSuccess": "Email retiré avec succès",
-    "runTaskHeader": "Exécuter la tâche",
     "subtitle": "Les dépôts de courrier stockent les emails avec leur contexte de traitement, permettant de reprendre le traitement ultérieurement.",
     "detailKind": "Dépôt de mails",
     "emptyActionDisabled": "Ce dépôt est vide",

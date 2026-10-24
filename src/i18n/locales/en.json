@@ -1781,7 +1781,6 @@
     "removeMailHeader": "Remove Email",
     "removeMailConfirm": "Remove this email from the repository?",
     "removeMailSuccess": "Email removed successfully",
-    "runTaskHeader": "Run Task",
     "subtitle": "Mail repositories store emails along with their processing context, allowing to later resume the mail processing.",
     "detailKind": "Mail repository",
     "emptyActionDisabled": "This repository is empty",

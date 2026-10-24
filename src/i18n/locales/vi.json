@@ -1778,7 +1778,6 @@
     "removeMailHeader": "Xóa email",
     "removeMailConfirm": "Xóa email này khỏi kho?",
     "removeMailSuccess": "Đã xóa email thành công",
-    "runTaskHeader": "Chạy tác vụ",
     "subtitle": "Kho lưu trữ thư lưu các email cùng với bối cảnh xử lý của chúng, cho phép tiếp tục xử lý thư sau này.",
     "detailKind": "Kho thư",
     "emptyActionDisabled": "Kho này trống",

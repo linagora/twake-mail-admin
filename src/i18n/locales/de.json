@@ -1781,7 +1781,6 @@
     "removeMailHeader": "E-Mail entfernen",
     "removeMailConfirm": "Diese E-Mail aus dem Repository entfernen?",
     "removeMailSuccess": "E-Mail erfolgreich entfernt",
-    "runTaskHeader": "Aufgabe ausführen",
     "subtitle": "Mail-Repositorys speichern E-Mails zusammen mit ihrem Verarbeitungskontext, sodass die Verarbeitung später fortgesetzt werden kann.",
     "detailKind": "Mail-Repository",
     "emptyActionDisabled": "Dieses Repository ist leer",

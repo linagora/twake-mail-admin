@@ -112,7 +112,7 @@ export default function MailRepositoriesList() {
     const paramValues: { [key: string]: string } = {};
     const command = `curl -XPATCH /mailRepositories/${path}/mails?action=reprocess`;
     await confirm({
-      header: t("mailRepositories.runTaskHeader"),
+      header: t("mailRepositories.reprocessAll"),
       message: (
         <ConfirmTaskContent
           message={<p>{t("mailRepositories.reprocessRepoConfirm", { path: repository })}</p>}
@@ -174,7 +174,7 @@ export default function MailRepositoriesList() {
 
   const handleClearTask = async ({ path, repository, size }: MailRepository & { size: number }) => {
     const result = await confirm({
-      header: t("mailRepositories.runTaskHeader"),
+      header: t("mailRepositories.clearAll"),
       destructive: true,
       confirmLabel: t("confirm.clear"),
       consequence: t("confirm.consequence.clearRepository", { count: size, path: repository }),

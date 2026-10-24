@@ -173,7 +173,7 @@ class MailRepositoriesTest extends MailAdminE2ETest {
 
         // Reprocess all: the mails go through the mailet container again, back to rrt-error
         repositories.action(source, MailRepositoriesPage.REPROCESS_ALL).click();
-        assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Run Task");
+        assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Reprocess all mails");
         assertThat(app.dialog().getByText("Reprocess all emails in repository " + source + "?", new Locator.GetByTextOptions().setExact(true))).isVisible();
         assertThat(repositories.param("queue")).hasValue("spool");
         assertThat(repositories.param("processor")).hasValue("root");

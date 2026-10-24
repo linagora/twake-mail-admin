@@ -1781,7 +1781,6 @@
     "removeMailHeader": "Quitar el correo",
     "removeMailConfirm": "¿Quitar este correo del repositorio?",
     "removeMailSuccess": "Correo quitado correctamente",
-    "runTaskHeader": "Ejecutar tarea",
     "subtitle": "Los repositorios de correo almacenan los correos junto con su contexto de procesamiento, lo que permite reanudar su procesamiento más adelante.",
     "detailKind": "Repositorio de correo",
     "emptyActionDisabled": "Este repositorio está vacío",

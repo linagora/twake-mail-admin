@@ -1781,7 +1781,6 @@
     "removeMailHeader": "Rimuovi l'email",
     "removeMailConfirm": "Rimuovere questa email dal repository?",
     "removeMailSuccess": "Email rimossa correttamente",
-    "runTaskHeader": "Esegui attività",
     "subtitle": "I repository di posta conservano le email insieme al loro contesto di elaborazione, consentendo di riprenderne l'elaborazione in seguito.",
     "detailKind": "Repository di posta",
     "emptyActionDisabled": "Questo repository è vuoto",
