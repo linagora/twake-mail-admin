@@ -362,7 +362,7 @@ export default function DomainContacts({ domain }: Props) {
 
       {/* View modal */}
       <Dialog open={!!viewContact || viewLoading} onOpenChange={(v) => { if (!v) { setViewContact(null); setViewLoading(false); } }}>
-        <DialogContent
+        <DialogContent aria-describedby={undefined}
           className="max-w-md"
           // Switching to the edit modal: the focus goes there, and back to the row once it closes
           onCloseAutoFocus={(e) => (editContact ? e.preventDefault() : restoreFocus(e))}
@@ -396,7 +396,7 @@ export default function DomainContacts({ domain }: Props) {
 
       {/* Edit modal */}
       <Dialog open={!!editContact} onOpenChange={(v) => { if (!v) setEditContact(null); }}>
-        <DialogContent className="max-w-md" onCloseAutoFocus={restoreFocus}>
+        <DialogContent aria-describedby={undefined} className="max-w-md" onCloseAutoFocus={restoreFocus}>
           <DialogHeader>
             <DialogTitle>{t("domains.contacts.editTitle", { email: editContact?.emailAddress })}</DialogTitle>
           </DialogHeader>

@@ -296,7 +296,7 @@ export default function UserIdentities({ username }: Props) {
 
       {/* Detail (read-only) modal */}
       <Dialog open={!!viewIdentity} onOpenChange={(v) => !v && setViewIdentity(null)}>
-        <DialogContent
+        <DialogContent aria-describedby={undefined}
           className="max-w-lg"
           // Switching to the edit modal: the focus goes there, and back to the row once it closes
           onCloseAutoFocus={(e) => (editIdentity ? e.preventDefault() : restoreFocus(e))}
@@ -356,7 +356,7 @@ export default function UserIdentities({ username }: Props) {
 
       {/* Edit modal */}
       <Dialog open={!!editIdentity} onOpenChange={(v) => { if (!v) { setEditIdentity(null); setEditForm({}); } }}>
-        <DialogContent className="max-w-lg" onCloseAutoFocus={restoreFocus}>
+        <DialogContent aria-describedby={undefined} className="max-w-lg" onCloseAutoFocus={restoreFocus}>
           <DialogHeader>
             <DialogTitle>{t("users.identities.editTitle", { name: editIdentity?.name })}</DialogTitle>
           </DialogHeader>

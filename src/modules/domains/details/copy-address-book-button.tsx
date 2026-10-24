@@ -104,7 +104,7 @@ export default function CopyAddressBookButton({ domain, addressBookId, onCopied 
       </button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) close(); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent aria-describedby={undefined} className="max-w-md">
           <DialogHeader>
             <DialogTitle>{t("domains.addressBookCounts.copy.title")} — {domain}</DialogTitle>
           </DialogHeader>

@@ -95,7 +95,7 @@ export default function ClearAddressBookButton({ domain, addressBookId, onCleare
       </button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) close(); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent aria-describedby={undefined} className="max-w-md">
           <DialogHeader>
             <DialogTitle>{t("domains.addressBookCounts.clear.title")} — {domain}</DialogTitle>
           </DialogHeader>

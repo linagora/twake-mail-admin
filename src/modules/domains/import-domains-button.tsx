@@ -97,7 +97,7 @@ export default function ImportDomainsButton({ onImported }: Props) {
         </DialogContent>
       </Dialog>
       <Dialog open={shownFailures !== null} onOpenChange={(open) => { if (!open) setShownFailures(null); }}>
-        <DialogContent className="max-w-lg">
+        <DialogContent aria-describedby={undefined} className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{t("domains.import.failuresTitle", { count: shownFailures?.length ?? 0 })}</DialogTitle>
           </DialogHeader>

@@ -280,7 +280,7 @@ export default function UserLabels({ username }: Props) {
 
       {/* Edit modal */}
       <Dialog open={!!editLabel} onOpenChange={(v) => { if (!v) setEditLabel(null); }}>
-        <DialogContent className="max-w-md">
+        <DialogContent aria-describedby={undefined} className="max-w-md">
           <DialogHeader>
             <DialogTitle>{t("users.labels.editTitle", { displayName: editLabel?.displayName })}</DialogTitle>
           </DialogHeader>

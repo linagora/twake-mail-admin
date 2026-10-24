@@ -101,7 +101,7 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
       </button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) close(); }}>
-        <DialogContent>
+        <DialogContent aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>{t("mailRepositories.createTitle")}</DialogTitle>
           </DialogHeader>

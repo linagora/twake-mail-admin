@@ -173,7 +173,7 @@ function PublicRightDialog({
 
   return (
     <Dialog open onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="max-w-md">
+      <DialogContent aria-describedby={undefined} className="max-w-md">
         <DialogHeader>
           <DialogTitle>{t(`${labels}.title`)} — {name}</DialogTitle>
         </DialogHeader>
