@@ -105,11 +105,11 @@ describe("create mail repository dialog", () => {
     fireEvent.change(protocolInput(), { target: { value: "nosuchproto" } });
     confirm();
 
-    await waitFor(() => expect(toast).toHaveBeenCalledWith({
-      title: "mailRepositories.createError",
-      description: "'nosuchproto' is an unsupported protocol",
-      variant: "destructive",
-    }));
+    // The server message, labelled and selectable as in every error display
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "mailRepositories.createError", variant: "destructive" })));
+    render(<>{toast.mock.calls[0][0].description}</>);
+    expect(screen.getByText("common.serverMessage")).not.toBeNull();
+    expect(screen.getByText("'nosuchproto' is an unsupported protocol")).not.toBeNull();
     expect(protocolInput().value).toBe("nosuchproto");
   });
 

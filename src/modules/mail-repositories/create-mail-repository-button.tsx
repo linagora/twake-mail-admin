@@ -1,10 +1,10 @@
 import { useState } from "react";
-import axios from "axios";
 import { Loader2, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import ErrorDisplayer from "@/components/custom/error-displayer";
 import { createMailRepository } from "./api-client";
 
 const INPUT_CLASS = "w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2";
@@ -19,9 +19,6 @@ const REQUIRED_KEYS: Record<Field, string> = {
 
 const missingFields = (values: Record<Field, string>): Field[] =>
   (Object.keys(values) as Field[]).filter((field) => values[field].trim() === "");
-
-const errorMessage = (err: unknown): string | undefined =>
-  (axios.isAxiosError(err) && err.response?.data?.message) || (err instanceof Error ? err.message : undefined);
 
 interface Props {
   // Called once the repository is created, so the list can be re-read.
@@ -64,7 +61,7 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
     } catch (err) {
       toast({
         title: t("mailRepositories.createError"),
-        description: errorMessage(err),
+        description: <ErrorDisplayer error={err} />,
         variant: "destructive",
       });
     } finally {

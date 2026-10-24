@@ -17,7 +17,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
 import { useTranslation } from "react-i18next";
 import CreateMailRepositoryButton from "./create-mail-repository-button";
-import { toErrorMessage } from "@/components/custom/error-message";
+import ErrorDisplayer from "@/components/custom/error-displayer";
 import ListToolbar from "@/components/custom/list-toolbar";
 import { cn } from "@/lib/utils";
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
@@ -95,7 +95,7 @@ export default function MailRepositoriesList() {
     } catch (err) {
       toast({
         title: t("mailRepositories.runTaskError"),
-        description: toErrorMessage(err).message,
+        description: <ErrorDisplayer error={err} />,
         variant: "destructive",
       });
     }
@@ -166,7 +166,7 @@ export default function MailRepositoriesList() {
     } catch (err) {
       toast({
         title: t("mailRepositories.errorMoving"),
-        description: toErrorMessage(err).message,
+        description: <ErrorDisplayer error={err} />,
         variant: "destructive",
       });
     }

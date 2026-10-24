@@ -94,11 +94,11 @@ describe("mail repositories list tasks", () => {
     api.clearMailRepository.mockRejectedValue(webAdminRefusal("repository not found"));
     await clickAction("mailRepositories.clearAll");
 
-    await waitFor(() => expect(toast).toHaveBeenCalledWith({
-      title: "mailRepositories.runTaskError",
-      description: "repository not found",
-      variant: "destructive",
-    }));
+    // The server message, labelled and selectable as in every error display
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "mailRepositories.runTaskError", variant: "destructive" })));
+    render(<>{toast.mock.calls[0][0].description}</>);
+    expect(screen.getByText("common.serverMessage")).not.toBeNull();
+    expect(screen.getByText("repository not found")).not.toBeNull();
   });
 
   it("links the started task on success", async () => {
