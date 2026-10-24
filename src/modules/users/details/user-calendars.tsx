@@ -156,13 +156,14 @@ function CalendarRow({
   const [countKey, setCountKey] = useState(0);
 
   return (
-    <div className="group flex items-start gap-3 py-1 -mx-2 px-2 rounded-md transition-colors hover:bg-gray-50">
+    // On a phone the actions wrap under the name together, instead of squeezing it into a word per line
+    <div className="group flex flex-wrap items-start gap-3 py-1 -mx-2 px-2 rounded-md transition-colors hover:bg-gray-50">
       <span
         className="inline-block w-4 h-4 rounded-full border border-gray-200 shrink-0 mt-0.5"
         style={{ backgroundColor: color || "#cccccc" }}
         title={color}
       />
-      <div className="min-w-0 flex-1">
+      <div className="min-w-48 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <p className="font-medium min-w-0 break-words" title={name !== displayName ? name : undefined}>{displayName}</p>
           {permissions.count && (
@@ -194,78 +195,80 @@ function CalendarRow({
           </p>
         )}
       </div>
-      {isOwned && permissions.export && (
-        <ExportCollectionButton
-          owner={username}
-          collectionId={id}
-          // "Main calendar", not the "#default" the server names it
-          name={displayName}
-          extension="ics"
-          exportCollection={exportUserCalendar}
-          title={t("users.calendars.exportTitle")}
-          errorTitle={t("users.calendars.errorExport")}
-        />
-      )}
-      {isOwned && permissions.import && (
-        <ImportCollectionButton
-          owner={username}
-          collectionId={id}
-          accept=".ics,text/calendar"
-          importCollection={importUserCalendar}
-          title={t("users.calendars.importTitle")}
-          taskType="calendar-import"
-          errorTitle={t("users.calendars.errorImport")}
-          onImported={() => setCountKey((key) => key + 1)}
-        />
-      )}
-      {isOwned && permissions.invitees && (
-        <button
-          onClick={() => onInvitees(calendar)}
-          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-          title={t("users.calendars.invitees.title")}
-        >
-          <Users className="w-3.5 h-3.5 text-gray-600" />
-        </button>
-      )}
-      {isOwned && permissions.publicRight && (
-        <button
-          onClick={() => onPublicRight(calendar)}
-          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-          title={isPublicCalendar ? t("users.calendars.publicRight.publicTitle") : t("users.calendars.publicRight.privateTitle")}
-        >
-          {isPublicCalendar
-            ? <Eye className="w-3.5 h-3.5 text-green-600" />
-            : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
-        </button>
-      )}
-      {permissions.edit && (
-        <button
-          onClick={() => onEdit(calendar)}
-          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-          title={t("users.calendars.editTitle")}
-        >
-          <Pencil className="w-3.5 h-3.5 text-blue-600" />
-        </button>
-      )}
-      {permissions.remove && isMain && (
-        <button
-          disabled
-          aria-label={t("users.calendars.deleteTitle")}
-          className="p-1.5 rounded-md opacity-40 cursor-not-allowed"
-          title={t("users.calendars.mainCalendarUndeletable")}
-        >
-          <Trash2 className="w-3.5 h-3.5 text-gray-400" />
-        </button>
-      )}
-      {permissions.remove && !isMain && (
-        <button
-          onClick={() => onDelete(calendar)}
-          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-          title={t("users.calendars.deleteTitle")}
-        >
-          <Trash2 className="w-3.5 h-3.5 text-red-600" />
-        </button>
-      )}
+      <div className="flex items-center gap-3 ml-auto">
+        {isOwned && permissions.export && (
+          <ExportCollectionButton
+            owner={username}
+            collectionId={id}
+            // "Main calendar", not the "#default" the server names it
+            name={displayName}
+            extension="ics"
+            exportCollection={exportUserCalendar}
+            title={t("users.calendars.exportTitle")}
+            errorTitle={t("users.calendars.errorExport")}
+          />
+        )}
+        {isOwned && permissions.import && (
+          <ImportCollectionButton
+            owner={username}
+            collectionId={id}
+            accept=".ics,text/calendar"
+            importCollection={importUserCalendar}
+            title={t("users.calendars.importTitle")}
+            taskType="calendar-import"
+            errorTitle={t("users.calendars.errorImport")}
+            onImported={() => setCountKey((key) => key + 1)}
+          />
+        )}
+        {isOwned && permissions.invitees && (
+          <button
+            onClick={() => onInvitees(calendar)}
+            className="p-1.5 rounded-md hover:bg-gray-200 transition"
+            title={t("users.calendars.invitees.title")}
+          >
+            <Users className="w-3.5 h-3.5 text-gray-600" />
+          </button>
+        )}
+        {isOwned && permissions.publicRight && (
+          <button
+            onClick={() => onPublicRight(calendar)}
+            className="p-1.5 rounded-md hover:bg-gray-200 transition"
+            title={isPublicCalendar ? t("users.calendars.publicRight.publicTitle") : t("users.calendars.publicRight.privateTitle")}
+          >
+            {isPublicCalendar
+              ? <Eye className="w-3.5 h-3.5 text-green-600" />
+              : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
+          </button>
+        )}
+        {permissions.edit && (
+          <button
+            onClick={() => onEdit(calendar)}
+            className="p-1.5 rounded-md hover:bg-gray-200 transition"
+            title={t("users.calendars.editTitle")}
+          >
+            <Pencil className="w-3.5 h-3.5 text-blue-600" />
+          </button>
+        )}
+        {permissions.remove && isMain && (
+          <button
+            disabled
+            aria-label={t("users.calendars.deleteTitle")}
+            className="p-1.5 rounded-md opacity-40 cursor-not-allowed"
+            title={t("users.calendars.mainCalendarUndeletable")}
+          >
+            <Trash2 className="w-3.5 h-3.5 text-gray-400" />
+          </button>
+        )}
+        {permissions.remove && !isMain && (
+          <button
+            onClick={() => onDelete(calendar)}
+            className="p-1.5 rounded-md hover:bg-gray-200 transition"
+            title={t("users.calendars.deleteTitle")}
+          >
+            <Trash2 className="w-3.5 h-3.5 text-red-600" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

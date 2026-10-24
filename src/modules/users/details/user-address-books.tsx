@@ -147,8 +147,9 @@ function AddressBookRow({
   const [countKey, setCountKey] = useState(0);
 
   return (
-    <div className="group flex items-start gap-3 py-1 -mx-2 px-2 rounded-md transition-colors hover:bg-gray-50">
-      <div className="min-w-0 flex-1">
+    // On a phone the actions wrap under the name together, instead of squeezing it into a word per line
+    <div className="group flex flex-wrap items-start gap-3 py-1 -mx-2 px-2 rounded-md transition-colors hover:bg-gray-50">
+      <div className="min-w-48 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <p className="font-medium min-w-0 break-words">{name}</p>
           {system && (
@@ -189,67 +190,69 @@ function AddressBookRow({
           </p>
         )}
       </div>
-      {owned && permissions.export && (
-        <ExportCollectionButton
-          owner={username}
-          collectionId={id}
-          name={name}
-          extension="vcf"
-          exportCollection={exportUserAddressBook}
-          title={t("users.addressBooks.exportTitle")}
-          errorTitle={t("users.addressBooks.errorExport")}
-        />
-      )}
-      {owned && permissions.import && (
-        <ImportCollectionButton
-          owner={username}
-          collectionId={id}
-          accept=".vcf,text/vcard"
-          importCollection={importUserAddressBook}
-          title={t("users.addressBooks.importTitle")}
-          taskType="addressbook-import"
-          errorTitle={t("users.addressBooks.errorImport")}
-          onImported={() => setCountKey((key) => key + 1)}
-        />
-      )}
-      {sharingManageable && permissions.invitees && (
-        <button
-          onClick={() => onInvitees(addressBook)}
-          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-          title={t("users.addressBooks.invitees.title")}
-        >
-          <Users className="w-3.5 h-3.5 text-gray-600" />
-        </button>
-      )}
-      {sharingManageable && permissions.publicRight && (
-        <button
-          onClick={() => onPublicRight(addressBook)}
-          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-          title={isPublicAb ? t("users.addressBooks.publicRight.publicTitle") : t("users.addressBooks.publicRight.privateTitle")}
-        >
-          {isPublicAb
-            ? <Eye className="w-3.5 h-3.5 text-green-600" />
-            : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
-        </button>
-      )}
-      {owned && !system && permissions.edit && (
-        <button
-          onClick={() => onEdit(addressBook)}
-          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-          title={t("users.addressBooks.editTitle")}
-        >
-          <Pencil className="w-3.5 h-3.5 text-blue-600" />
-        </button>
-      )}
-      {!system && permissions.remove && (
-        <button
-          onClick={() => onDelete(addressBook)}
-          className="p-1.5 rounded-md hover:bg-gray-200 transition"
-          title={t("users.addressBooks.deleteTitle")}
-        >
-          <Trash2 className="w-3.5 h-3.5 text-red-600" />
-        </button>
-      )}
+      <div className="flex items-center gap-3 ml-auto">
+        {owned && permissions.export && (
+          <ExportCollectionButton
+            owner={username}
+            collectionId={id}
+            name={name}
+            extension="vcf"
+            exportCollection={exportUserAddressBook}
+            title={t("users.addressBooks.exportTitle")}
+            errorTitle={t("users.addressBooks.errorExport")}
+          />
+        )}
+        {owned && permissions.import && (
+          <ImportCollectionButton
+            owner={username}
+            collectionId={id}
+            accept=".vcf,text/vcard"
+            importCollection={importUserAddressBook}
+            title={t("users.addressBooks.importTitle")}
+            taskType="addressbook-import"
+            errorTitle={t("users.addressBooks.errorImport")}
+            onImported={() => setCountKey((key) => key + 1)}
+          />
+        )}
+        {sharingManageable && permissions.invitees && (
+          <button
+            onClick={() => onInvitees(addressBook)}
+            className="p-1.5 rounded-md hover:bg-gray-200 transition"
+            title={t("users.addressBooks.invitees.title")}
+          >
+            <Users className="w-3.5 h-3.5 text-gray-600" />
+          </button>
+        )}
+        {sharingManageable && permissions.publicRight && (
+          <button
+            onClick={() => onPublicRight(addressBook)}
+            className="p-1.5 rounded-md hover:bg-gray-200 transition"
+            title={isPublicAb ? t("users.addressBooks.publicRight.publicTitle") : t("users.addressBooks.publicRight.privateTitle")}
+          >
+            {isPublicAb
+              ? <Eye className="w-3.5 h-3.5 text-green-600" />
+              : <EyeOff className="w-3.5 h-3.5 text-gray-400" />}
+          </button>
+        )}
+        {owned && !system && permissions.edit && (
+          <button
+            onClick={() => onEdit(addressBook)}
+            className="p-1.5 rounded-md hover:bg-gray-200 transition"
+            title={t("users.addressBooks.editTitle")}
+          >
+            <Pencil className="w-3.5 h-3.5 text-blue-600" />
+          </button>
+        )}
+        {!system && permissions.remove && (
+          <button
+            onClick={() => onDelete(addressBook)}
+            className="p-1.5 rounded-md hover:bg-gray-200 transition"
+            title={t("users.addressBooks.deleteTitle")}
+          >
+            <Trash2 className="w-3.5 h-3.5 text-red-600" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }
