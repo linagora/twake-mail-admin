@@ -148,7 +148,7 @@ export default function UserForwards({ username, noMailbox = false }: Props) {
         {canAdd && (
           <button
             type="button"
-            onClick={() => { setOpen(true); setKeepCopy(true); setShowAddDialog(true); }}
+            onClick={() => { setOpen(true); setNewForward(""); setKeepCopy(true); setShowAddDialog(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("users.forwards.addTooltip")}
           >

@@ -102,7 +102,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
         </SectionToggle>
         {canCreate && (
           <button
-            onClick={() => { setOpen(true); setShowCreate(true); }}
+            onClick={() => { setOpen(true); setNewFolder(""); setShowCreate(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("domains.folders.createTooltip")}
           >

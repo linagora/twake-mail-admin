@@ -156,7 +156,7 @@ export default function UserMailboxes({ username }: Props) {
         {canCreate && (
           <button
             type="button"
-            onClick={() => { setOpen(true); setShowCreateDialog(true); }}
+            onClick={() => { setOpen(true); setNewMailbox(""); setShowCreateDialog(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("users.mailboxes.createTooltip")}
           >

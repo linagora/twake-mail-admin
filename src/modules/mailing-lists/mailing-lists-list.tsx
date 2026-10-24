@@ -180,7 +180,7 @@ function CreateMailingListButton({ onCreated }: { onCreated: () => void }) {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>
+      <Button onClick={() => { resetForm(); setOpen(true); }}>
         <Plus className="w-4 h-4" aria-hidden="true" />
         {t("mailingLists.createButton")}
       </Button>

@@ -22,4 +22,15 @@ describe("Create a domain", () => {
 
     expect(screen.getByText(hint)).not.toBeNull();
   });
+
+  it("reopens empty after being closed without creating", () => {
+    render(<CreateDomainButton onCreated={() => {}} />);
+    fireEvent.click(screen.getByText("domains.createButton"));
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "qa-x.test" } });
+    fireEvent.click(screen.getByText("common.cancel"));
+
+    fireEvent.click(screen.getByText("domains.createButton"));
+
+    expect((screen.getByRole("textbox") as HTMLInputElement).value).toBe("");
+  });
 });

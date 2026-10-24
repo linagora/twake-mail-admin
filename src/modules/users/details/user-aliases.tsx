@@ -88,7 +88,7 @@ export default function UserAliases({ username }: Props) {
         {canAdd && (
           <button
             type="button"
-            onClick={() => { setOpen(true); setShowAddDialog(true); }}
+            onClick={() => { setOpen(true); setNewAlias(""); setShowAddDialog(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("users.aliases.addTooltip")}
           >

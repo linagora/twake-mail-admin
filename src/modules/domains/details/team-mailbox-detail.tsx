@@ -118,7 +118,7 @@ export default function TeamMailboxDetail() {
           </SectionToggle>
           {canAddMember && (
             <button
-              onClick={() => { setMembersOpen(true); setShowAdd(true); }}
+              onClick={() => { setMembersOpen(true); setNewMember(""); setRole("member"); setShowAdd(true); }}
               className="p-1 rounded-md hover:bg-gray-200 transition"
               title={t("domains.teamMailbox.addMember")}
             >

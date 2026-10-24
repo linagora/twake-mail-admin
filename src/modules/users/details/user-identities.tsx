@@ -148,7 +148,7 @@ export default function UserIdentities({ username }: Props) {
         {canCreate && (
           <button
             type="button"
-            onClick={() => { setOpen(true); setShowCreate(true); }}
+            onClick={() => { setOpen(true); setCreateForm({ ...EMPTY_CREATE }); setShowCreate(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("users.identities.createButton")}
           >

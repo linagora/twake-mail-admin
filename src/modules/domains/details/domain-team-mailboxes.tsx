@@ -92,7 +92,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
         </SectionToggle>
         {canCreate && (
           <button
-            onClick={() => { setOpen(true); setShowCreate(true); }}
+            onClick={() => { setOpen(true); setNewName(""); setShowCreate(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("domains.teamMailboxes.addTooltip")}
           >

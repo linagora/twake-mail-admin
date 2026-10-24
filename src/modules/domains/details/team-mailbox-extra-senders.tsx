@@ -104,7 +104,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
         </SectionToggle>
         {canAdd && (
           <button
-            onClick={() => { setOpen(true); setShowAdd(true); }}
+            onClick={() => { setOpen(true); setNewSender(""); setShowAdd(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("domains.extraSenders.addTooltip")}
           >

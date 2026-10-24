@@ -86,7 +86,7 @@ export default function DomainAliases({ domain, defaultOpen }: Props) {
         </SectionToggle>
         {canAdd && (
           <button
-            onClick={() => { setOpen(true); setShowCreate(true); }}
+            onClick={() => { setOpen(true); setNewAlias(""); setShowCreate(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("domains.aliases.addTooltip")}
           >

@@ -167,7 +167,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
         </SectionToggle>
         {canAddAcl && (
           <button
-            onClick={() => { setOpen(true); setShowAddForm(true); }}
+            onClick={() => { setOpen(true); setNewUser(""); setSelectedRights(new Set(["l", "r"])); setShowAddForm(true); }}
             className="p-1 rounded-md hover:bg-gray-200 transition"
             title={t("domains.extraAcl.addEntry")}
           >

@@ -25,7 +25,7 @@ export default function CreateDomainButton({ onCreated }: { onCreated: () => voi
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>
+      <Button onClick={() => { setName(""); setOpen(true); }}>
         <Plus className="w-4 h-4" aria-hidden="true" />
         {t("domains.createButton")}
       </Button>
