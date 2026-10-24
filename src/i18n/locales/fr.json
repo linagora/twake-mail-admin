@@ -644,6 +644,7 @@
       "searchPlaceholder": "Rechercher des boîtes…",
       "createTooltip": "Créer une boîte",
       "created": "Boîte créée avec succès",
+      "alreadyExists": "Une boîte nommée {{name}} existe déjà.",
       "deleteTitle": "Supprimer la boîte",
       "deleteConfirm": "Supprimer la boîte « {{mailboxName}} » et tous ses enfants ?",
       "deleted": "Boîte supprimée avec succès",

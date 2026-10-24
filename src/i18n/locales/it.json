@@ -644,6 +644,7 @@
       "searchPlaceholder": "Cerca caselle di posta...",
       "createTooltip": "Crea casella di posta",
       "created": "Casella di posta creata correttamente",
+      "alreadyExists": "Esiste già una casella denominata {{name}}.",
       "deleteTitle": "Elimina casella di posta",
       "deleteConfirm": "Vuoi davvero eliminare la casella «{{mailboxName}}» e tutte le sue sottocaselle?",
       "deleted": "Casella di posta eliminata correttamente",

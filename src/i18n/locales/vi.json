@@ -639,6 +639,7 @@
       "searchPlaceholder": "Tìm hộp thư...",
       "createTooltip": "Tạo hộp thư",
       "created": "Đã tạo hộp thư thành công",
+      "alreadyExists": "Hộp thư có tên {{name}} đã tồn tại.",
       "deleteTitle": "Xóa hộp thư",
       "deleteConfirm": "Bạn có chắc muốn xóa hộp thư \"{{mailboxName}}\" và tất cả hộp thư con của nó?",
       "deleted": "Đã xóa hộp thư thành công",

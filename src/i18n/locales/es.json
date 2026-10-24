@@ -644,6 +644,7 @@
       "searchPlaceholder": "Buscar buzones...",
       "createTooltip": "Crear buzón",
       "created": "Buzón creado correctamente",
+      "alreadyExists": "Ya existe un buzón llamado {{name}}.",
       "deleteTitle": "Eliminar buzón",
       "deleteConfirm": "¿Seguro que desea eliminar el buzón «{{mailboxName}}» y todos sus buzones secundarios?",
       "deleted": "Buzón eliminado correctamente",

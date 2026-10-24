@@ -84,6 +84,13 @@ export default function UserMailboxes({ username }: Props) {
     setPage(newPage);
   };
 
+  // WebAdmin answers 204 to an existing mailbox too: names are case sensitive, except INBOX
+  const sameMailbox = (a: string, b: string) => a === b || (a.toUpperCase() === "INBOX" && b.toUpperCase() === "INBOX");
+  const validateCreate = () => {
+    const name = newMailbox.trim();
+    return mailboxes?.some((m) => sameMailbox(m.mailboxName, name)) ? t("users.mailboxes.alreadyExists", { name }) : null;
+  };
+
   // A refusal throws: the modal shows it and keeps the typed name
   const handleCreate = async () => {
     await createUserMailbox(username, newMailbox.trim());
@@ -171,6 +178,7 @@ export default function UserMailboxes({ username }: Props) {
         title={t("users.mailboxes.createTooltip")}
         submitLabel={t("common.create")}
         submitDisabled={!newMailbox.trim()}
+        validate={validateCreate}
         onSubmit={handleCreate}
       >
         <div>

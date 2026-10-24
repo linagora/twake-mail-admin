@@ -644,6 +644,7 @@
       "searchPlaceholder": "Search mailboxes...",
       "createTooltip": "Create mailbox",
       "created": "Mailbox created successfully",
+      "alreadyExists": "A mailbox named {{name}} already exists.",
       "deleteTitle": "Delete Mailbox",
       "deleteConfirm": "Are you sure you want to delete mailbox \"{{mailboxName}}\" and all its children?",
       "deleted": "Mailbox deleted successfully",

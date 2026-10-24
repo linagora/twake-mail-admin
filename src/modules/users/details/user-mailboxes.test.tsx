@@ -67,4 +67,16 @@ describe("user mailboxes: create a mailbox", () => {
     expect((screen.getByLabelText("users.mailboxes.nameLabel") as HTMLInputElement).value).toBe("INBOX");
     expect(mocks.toast).not.toHaveBeenCalled();
   });
+
+  it.each(["INBOX", "inbox"])("refuses %s when INBOX exists, without sending it", async (name) => {
+    mocks.api.getUserMailboxes.mockResolvedValue([{ mailboxName: "INBOX", mailboxId: "1" }]);
+    renderMailboxes();
+    await waitFor(() => expect(mocks.api.getUserMailboxes).toHaveBeenCalled());
+    fireEvent.click(screen.getByTitle("users.mailboxes.createTooltip"));
+    fireEvent.change(await screen.findByLabelText("users.mailboxes.nameLabel"), { target: { value: name } });
+    fireEvent.click(screen.getByRole("button", { name: "common.create" }));
+
+    expect((await screen.findByRole("alert")).textContent).toContain("users.mailboxes.alreadyExists");
+    expect(mocks.api.createUserMailbox).not.toHaveBeenCalled();
+  });
 });

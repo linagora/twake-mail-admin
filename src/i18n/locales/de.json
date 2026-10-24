@@ -644,6 +644,7 @@
       "searchPlaceholder": "Postfächer suchen...",
       "createTooltip": "Postfach erstellen",
       "created": "Postfach erfolgreich erstellt",
+      "alreadyExists": "Ein Postfach namens {{name}} existiert bereits.",
       "deleteTitle": "Postfach löschen",
       "deleteConfirm": "Möchten Sie das Postfach „{{mailboxName}}“ und alle untergeordneten Postfächer wirklich löschen?",
       "deleted": "Postfach erfolgreich gelöscht",
