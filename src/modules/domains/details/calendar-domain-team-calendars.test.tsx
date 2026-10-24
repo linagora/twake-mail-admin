@@ -70,6 +70,13 @@ describe("team calendars: field labels", () => {
 });
 
 describe("team calendars: members dialog", () => {
+  it("counts the members of each team calendar on its row, the chip opening the dialog", async () => {
+    await openSection();
+    const chip = await screen.findByRole("button", { name: /domains.teamCalendars.membersCount/ });
+    fireEvent.click(chip);
+    expect(await screen.findByRole("dialog")).not.toBeNull();
+  });
+
   it("describes the role picked for a new member, as the description of its select", async () => {
     await openSection();
     fireEvent.click(screen.getByTitle("domains.teamCalendars.members.tooltip"));

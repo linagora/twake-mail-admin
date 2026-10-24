@@ -452,7 +452,9 @@
       "addAdminTooltip": "Añadir administrador",
       "searchPlaceholder": "Buscar recursos...",
       "detailKind": "Calendario de recurso",
-      "noAdmins": "Ningún administrador."
+      "noAdmins": "Ningún administrador.",
+      "administeredBy_one": "{{count}} administrador",
+      "administeredBy_other": "{{count}} administradores"
     },
     "teamCalendars": {
       "title": "Calendarios de equipo",
@@ -514,7 +516,9 @@
         "roleOf": "Rol de {{email}}",
         "add": "Añadir miembro"
       },
-      "searchPlaceholder": "Buscar calendarios de equipo..."
+      "searchPlaceholder": "Buscar calendarios de equipo...",
+      "membersCount_one": "{{count}} miembro",
+      "membersCount_other": "{{count}} miembros"
     },
     "calendarTasks": {
       "title": "Tareas",

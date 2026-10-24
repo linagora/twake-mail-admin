@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useTranslation } from "react-i18next";
 import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
+import SharedWithChip from "@/components/custom/shared-with-chip";
 import { StagedChangesNotice, blocksSave, useDiscardGuard } from "@/components/custom/staged-changes";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
 
@@ -71,6 +72,8 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDisplayName, setEditDisplayName] = useState("");
   const [membersCalendar, setMembersCalendar] = useState<TeamCalendar | null>(null);
+  // Bumped once members are saved: the chips of the rows read them again
+  const [membersRevision, setMembersRevision] = useState(0);
 
   const sorted = useMemo(() => {
     if (!teamCalendars) return [];
@@ -196,6 +199,11 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
                         {teamCalendar.displayName && teamCalendar.displayName !== teamCalendar.name && (
                           <span className="text-xs text-muted-foreground ml-2">{teamCalendar.displayName}</span>
                         )}
+                        {canViewMembers && (
+                          <span className="ml-2 align-middle">
+                            <MembersChip domain={domain} teamCalendar={teamCalendar} revision={membersRevision} onOpen={() => setMembersCalendar(teamCalendar)} />
+                          </span>
+                        )}
                       </h4>
                     )}
                   </div>
@@ -256,6 +264,7 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
           domain={domain}
           teamCalendar={membersCalendar}
           canManage={canManageMembers}
+          onSaved={() => setMembersRevision((revision) => revision + 1)}
           onClose={() => setMembersCalendar(null)}
         />
       )}
@@ -283,15 +292,40 @@ export default function CalendarDomainTeamCalendars({ domain, defaultOpen = fals
   );
 }
 
+/**
+ * How many members a team calendar has, on its row, listing them with their role on hover and
+ * opening the Members dialog. Read once per listed row; nothing shown while loading or on error.
+ */
+function MembersChip({ domain, teamCalendar, revision, onOpen }: {
+  domain: string;
+  teamCalendar: TeamCalendar;
+  revision: number;
+  onOpen: () => void;
+}) {
+  const { t } = useTranslation();
+  const fetchMembers = useCallback(() => getTeamCalendarMembers(domain, teamCalendar.id), [domain, teamCalendar.id]);
+  const { data: members } = useFetchData<TeamCalendarMember[]>(fetchMembers, revision);
+  if (!members) return null;
+  return (
+    <SharedWithChip
+      sharees={members.map((member) => ({ label: member.username, right: t(`domains.teamCalendars.members.roles.${member.role}`) }))}
+      text={t("domains.teamCalendars.membersCount", { count: members.length })}
+      onOpen={onOpen}
+    />
+  );
+}
+
 function MembersModal({
   domain,
   teamCalendar,
   canManage,
+  onSaved,
   onClose,
 }: {
   domain: string;
   teamCalendar: TeamCalendar;
   canManage: boolean;
+  onSaved: () => void;
   onClose: () => void;
 }) {
   const { t } = useTranslation();
@@ -371,6 +405,7 @@ function MembersModal({
       await updateTeamCalendarMembers(domain, teamCalendar.id, share);
       toast({ title: t("domains.teamCalendars.members.updated") });
       // Saved: the dialog closes, as the Delegation and Sharing dialogs do
+      onSaved();
       onClose();
     } catch (err) {
       toast({ title: t("domains.teamCalendars.members.errorUpdate"), description: <ErrorDisplayer error={err} /> });

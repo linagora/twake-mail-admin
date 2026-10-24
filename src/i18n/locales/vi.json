@@ -450,7 +450,8 @@
       "addAdminTooltip": "Thêm quản trị viên",
       "searchPlaceholder": "Tìm tài nguyên...",
       "detailKind": "Lịch tài nguyên",
-      "noAdmins": "Không có quản trị viên."
+      "noAdmins": "Không có quản trị viên.",
+      "administeredBy": "{{count}} quản trị viên"
     },
     "teamCalendars": {
       "title": "Lịch nhóm",
@@ -512,7 +513,8 @@
         "roleOf": "Vai trò của {{email}}",
         "add": "Thêm thành viên"
       },
-      "searchPlaceholder": "Tìm lịch nhóm..."
+      "searchPlaceholder": "Tìm lịch nhóm...",
+      "membersCount": "{{count}} thành viên"
     },
     "calendarTasks": {
       "title": "Tác vụ",

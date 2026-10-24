@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
 import { StagedChangesNotice, blocksSave } from "@/components/custom/staged-changes";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
+import SharedWithChip from "@/components/custom/shared-with-chip";
 
 const searchable = (resource: Resource) => [resourceDisplayName(resource), resource.description];
 
@@ -72,6 +73,9 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
   useSectionFact("resources", resources ? active.length : undefined);
 
   if (!canView) return null;
+
+  const resourcePage = (resourceId: string) =>
+    resourceLink ? resourceLink(resourceId) : `/domains/domain/${encodeURIComponent(domain)}/resource/${encodeURIComponent(resourceId)}`;
 
   const handleAddAdmin = () => {
     const email = newAdminInput.trim();
@@ -179,11 +183,18 @@ export default function CalendarDomainResources({ domain, defaultOpen = false, r
                   {/* Wide enough to stay readable: on a phone the actions wrap under the name instead of squeezing it */}
                   <h4 className="flex-1 min-w-48 text-sm font-medium leading-snug break-words">
                     <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
-                    <a href={resourceLink ? resourceLink(resource.id) : `/domains/domain/${encodeURIComponent(domain)}/resource/${encodeURIComponent(resource.id)}`}
-                      className="text-blue-600 hover:underline">{resourceDisplayName(resource)}</a>
+                    <a href={resourcePage(resource.id)} className="text-blue-600 hover:underline">{resourceDisplayName(resource)}</a>
                     {resource.description && (
                       <span className="text-xs text-muted-foreground ml-2">{resource.description}</span>
                     )}
+                    {/* Who manages it, without opening its page; the chip opens it */}
+                    <span className="ml-2 align-middle">
+                      <SharedWithChip
+                        sharees={(resource.administrators ?? []).map((admin) => ({ label: admin.email, right: "" }))}
+                        text={t("domains.calendarResources.administeredBy", { count: resource.administrators?.length ?? 0 })}
+                        href={resourcePage(resource.id)}
+                      />
+                    </span>
                   </h4>
                   <div className="flex items-center gap-1 shrink-0 ml-auto">
                     <DomainCalendarControls

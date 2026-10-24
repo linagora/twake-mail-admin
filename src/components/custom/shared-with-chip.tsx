@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 export interface ShareeSummary {
   label: string;
+  // Their right or role; empty when the chip only lists people, e.g. administrators
   right: string;
 }
 
@@ -15,22 +16,30 @@ const CHIP_CLASS = "inline-flex items-center gap-1 text-xs rounded bg-blue-50 te
  * Who a calendar or an address book is shared with, on its row: "Shared with 2", listing
  * the sharees on hover or focus, and opening the sharing dialog when clicked.
  */
-// Without the right to change the sharing, the chip only lists the sharees.
-export default function SharedWithChip({ sharees, onOpen }: { sharees: ShareeSummary[]; onOpen?: () => void }) {
+// Without the right to change the sharing, the chip only lists the sharees. `text` replaces
+// "Shared with n" (e.g. "2 members"), and `href` makes the chip a link instead of a button.
+export default function SharedWithChip({ sharees, onOpen, href, text }: {
+  sharees: ShareeSummary[];
+  onOpen?: () => void;
+  href?: string;
+  text?: string;
+}) {
   const { t } = useTranslation();
   if (sharees.length === 0) return null;
   const hidden = sharees.length - LISTED;
   const content = (
     <>
       <Users className="w-3 h-3" aria-hidden="true" />
-      {t("common.sharedWith", { count: sharees.length })}
+      {text ?? t("common.sharedWith", { count: sharees.length })}
     </>
   );
   return (
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          {onOpen ? (
+          {href ? (
+            <a href={href} className={`${CHIP_CLASS} hover:bg-blue-100`}>{content}</a>
+          ) : onOpen ? (
             <button type="button" onClick={onOpen} className={`${CHIP_CLASS} hover:bg-blue-100`}>{content}</button>
           ) : (
             <span tabIndex={0} className={CHIP_CLASS}>{content}</span>
@@ -39,7 +48,7 @@ export default function SharedWithChip({ sharees, onOpen }: { sharees: ShareeSum
         <TooltipContent>
           <ul className="text-xs space-y-0.5">
             {sharees.slice(0, LISTED).map((sharee) => (
-              <li key={sharee.label}>{sharee.label} — {sharee.right}</li>
+              <li key={sharee.label}>{sharee.right ? `${sharee.label} — ${sharee.right}` : sharee.label}</li>
             ))}
             {hidden > 0 && <li>{t("common.andMore", { count: hidden })}</li>}
           </ul>

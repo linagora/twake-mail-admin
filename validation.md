@@ -321,7 +321,7 @@ Note: if none are present, hide the deleted message vault.
 | "Import events" button (upload) | POST | `/domains/{domain}/team-calendars/{teamCalendarId}?action=import` | MAY (do not show the upload icon if missing) |
 | "Public visibility" button | POST | `/domains/{domain}/team-calendars/{teamCalendarId}/publicRight` | MAY (do not show the globe icon if missing) |
 | Event counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the section is reopened) |
-| "Manage members" button | GET | `/domains/{domain}/team-calendars/{teamCalendarId}/members` | MAY (do not show the button if missing) |
+| "Manage members" button, and the members chip of each listed row | GET | `/domains/{domain}/team-calendars/{teamCalendarId}/members` | MAY (do not show the button nor the chips if missing) |
 | "Add/change/remove member" apply | POST | `/domains/{domain}/team-calendars/{teamCalendarId}/members/invitee` | MAY (read-only members view if missing) |
 
 ### Domain detail — Calendar: Sync members *(APPLICATION:"CALENDAR" only)*

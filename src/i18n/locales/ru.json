@@ -456,7 +456,11 @@
       "addAdminTooltip": "Добавить администратора",
       "searchPlaceholder": "Поиск ресурсов...",
       "detailKind": "Календарь ресурса",
-      "noAdmins": "Нет администраторов."
+      "noAdmins": "Нет администраторов.",
+      "administeredBy_one": "{{count}} администратор",
+      "administeredBy_few": "{{count}} администратора",
+      "administeredBy_many": "{{count}} администраторов",
+      "administeredBy_other": "{{count}} администратора"
     },
     "teamCalendars": {
       "title": "Командные календари",
@@ -518,7 +522,11 @@
         "roleOf": "Роль {{email}}",
         "add": "Добавить участника"
       },
-      "searchPlaceholder": "Поиск командных календарей..."
+      "searchPlaceholder": "Поиск командных календарей...",
+      "membersCount_one": "{{count}} участник",
+      "membersCount_few": "{{count}} участника",
+      "membersCount_many": "{{count}} участников",
+      "membersCount_other": "{{count}} участника"
     },
     "calendarTasks": {
       "title": "Задачи",

@@ -19,6 +19,7 @@ import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
+import UserLink from "@/components/custom/user-link";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -203,7 +204,7 @@ export default function CalendarResourceDetail() {
                 </p>
               )}
               {resource.creator && (
-                <p><span className="text-gray-500 font-medium">{t("domains.calendarResources.fieldCreator")}:</span> {resource.creator}</p>
+                <p><span className="text-gray-500 font-medium">{t("domains.calendarResources.fieldCreator")}:</span> <UserLink address={resource.creator} /></p>
               )}
             </div>
           )}
@@ -236,7 +237,7 @@ export default function CalendarResourceDetail() {
                 <div key={admin.email} className="space-y-1 p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center transition-colors hover:bg-gray-100">
                   <h4 className="text-sm font-medium leading-none">
                     <span className="text-gray-500 mr-2">{(page - 1) * PAGE_LIMIT + index + 1}/</span>
-                    {admin.email}
+                    <UserLink address={admin.email} />
                   </h4>
                   {canEdit && (
                     <button onClick={() => handleRemoveAdmin(admin.email)} className="p-2 rounded-md hover:bg-gray-200" title={t("domains.calendarResources.removeAdminTooltip")}>

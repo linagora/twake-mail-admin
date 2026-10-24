@@ -18,6 +18,7 @@ vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => true }));
 const userCheck = vi.hoisted(() => ({ status: "idle" }));
 vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: () => userCheck.status }));
 vi.mock("../api-client", () => api);
+vi.mock("@/hooks/use-managed-domains", () => ({ useManagedDomains: () => new Set(["open-paas.org"]) }));
 
 import CalendarResourceDetail from "./calendar-resource-detail";
 

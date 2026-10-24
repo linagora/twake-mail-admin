@@ -451,7 +451,9 @@
       "addAdminTooltip": "Администратор нэмэх",
       "searchPlaceholder": "Нөөц хайх...",
       "detailKind": "Нөөцийн хуанли",
-      "noAdmins": "Администратор алга."
+      "noAdmins": "Администратор алга.",
+      "administeredBy_one": "{{count}} админ",
+      "administeredBy_other": "{{count}} админ"
     },
     "teamCalendars": {
       "title": "Багийн календарь",
@@ -513,7 +515,9 @@
         "roleOf": "{{email}}-ийн үүрэг",
         "add": "Гишүүн нэмэх"
       },
-      "searchPlaceholder": "Багийн календарь хайх..."
+      "searchPlaceholder": "Багийн календарь хайх...",
+      "membersCount_one": "{{count}} гишүүн",
+      "membersCount_other": "{{count}} гишүүн"
     },
     "calendarTasks": {
       "title": "Даалгаврууд",

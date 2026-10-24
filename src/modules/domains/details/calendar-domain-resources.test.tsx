@@ -53,6 +53,19 @@ describe("CalendarDomainResources", () => {
     expect(links.map((link) => link.textContent)).toEqual(["abc-nameless", "QA Room 2"]);
   });
 
+  it("shows who administers a resource, the chip opening the resource page", async () => {
+    api.getResources.mockResolvedValue([
+      { ...resource("room-2", "QA Room 2"), administrators: [{ email: "bob@open-paas.org" }] },
+      resource("room-3", "QA Room 3"),
+    ]);
+    render(<CalendarDomainResources domain="open-paas.org" defaultOpen />);
+
+    const chip = await screen.findByRole("link", { name: /domains.calendarResources.administeredBy/ });
+    expect(chip.getAttribute("href")).toBe("/domains/domain/open-paas.org/resource/room-2");
+    // No chip for a resource without administrators
+    expect(screen.getAllByRole("link", { name: /domains.calendarResources.administeredBy/ })).toHaveLength(1);
+  });
+
   it("ties every field of the creation form to its caption", async () => {
     api.getResources.mockResolvedValue([]);
     render(<CalendarDomainResources domain="open-paas.org" defaultOpen />);

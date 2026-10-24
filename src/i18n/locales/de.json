@@ -452,7 +452,9 @@
       "addAdminTooltip": "Administrator hinzufügen",
       "searchPlaceholder": "Ressourcen suchen...",
       "detailKind": "Ressourcenkalender",
-      "noAdmins": "Keine Administratoren."
+      "noAdmins": "Keine Administratoren.",
+      "administeredBy_one": "{{count}} Administrator",
+      "administeredBy_other": "{{count}} Administratoren"
     },
     "teamCalendars": {
       "title": "Teamkalender",
@@ -514,7 +516,9 @@
         "roleOf": "Rolle von {{email}}",
         "add": "Mitglied hinzufügen"
       },
-      "searchPlaceholder": "Teamkalender suchen..."
+      "searchPlaceholder": "Teamkalender suchen...",
+      "membersCount_one": "{{count}} Mitglied",
+      "membersCount_other": "{{count}} Mitglieder"
     },
     "calendarTasks": {
       "title": "Aufgaben",
