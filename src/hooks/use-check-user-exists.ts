@@ -4,6 +4,8 @@ import { apiClient } from "@/lib/apiClient";
 // No user name holds a space or more than one "@": the calendar server answers 404, not 400, for these
 const USERNAME_PATTERN = /^[^\s@]+(@[^\s@]+)?$/;
 
+export const isWellFormedUsername = (username: string): boolean => USERNAME_PATTERN.test(username);
+
 export type UserExistsStatus = "idle" | "checking" | "exists" | "not_found" | "invalid";
 
 // "not_found" stays submittable: callers ask for an explicit confirmation instead.
@@ -30,7 +32,7 @@ export function useCheckUserExists(username: string, { checkSyntax = true }: { c
     setStatus("checking");
 
     timerRef.current = setTimeout(async () => {
-      if (checkSyntax && !USERNAME_PATTERN.test(trimmed)) {
+      if (checkSyntax && !isWellFormedUsername(trimmed)) {
         setStatus("invalid");
         return;
       }

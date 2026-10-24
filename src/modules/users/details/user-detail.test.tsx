@@ -64,9 +64,18 @@ describe("user detail: account state", () => {
     expect(screen.getByRole("link", { name: "users.noAccount.search" }).getAttribute("href")).toBe("/users?q=nobody");
   });
 
-  it("shows no section for an invalid address", async () => {
+  it("shows no section for an address WebAdmin refuses", async () => {
     head.mockRejectedValue(statusError(400));
+    renderPage("a@b@c");
+    expect((await screen.findByRole("alert")).textContent).toContain("users.noAccount.invalid");
+    expect(screen.queryByText(/Forwards/)).toBeNull();
+  });
+
+  it("shows no section, without asking WebAdmin, for a name no account can have", async () => {
+    // WebAdmin answers 404 to a name with spaces, as to a missing account
+    head.mockRejectedValue(statusError(404));
     renderPage("not an address");
+    expect(head).not.toHaveBeenCalled();
     expect((await screen.findByRole("alert")).textContent).toContain("users.noAccount.invalid");
     expect(screen.queryByText(/Forwards/)).toBeNull();
     expect(screen.queryByText("Mappings")).toBeNull();
