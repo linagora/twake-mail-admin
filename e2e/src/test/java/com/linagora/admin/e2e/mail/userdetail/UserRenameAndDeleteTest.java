@@ -42,7 +42,7 @@ class UserRenameAndDeleteTest extends MailAdminE2ETest {
         MailUserDetailPage detail = new MailUserDetailPage(app).open(ren1);
         UserTasksSection tasks = detail.tasks().open();
         Locator dialog = tasks.run("Rename user");
-        assertThat(dialog.getByRole(com.microsoft.playwright.options.AriaRole.HEADING)).hasText("Rename User");
+        assertThat(dialog.getByRole(com.microsoft.playwright.options.AriaRole.HEADING)).hasText("Rename user");
         assertThat(dialog).containsText("Current username: " + ren1);
         assertThat(dialog).containsText("The new username must be an existing account: renaming only migrates "
             + "the data of the current user to it.");

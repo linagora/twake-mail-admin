@@ -259,7 +259,7 @@ export default function UserTasks({ username }: Props) {
     let olderThan = "5d";
 
     await confirm({
-      header: t(`users.tasks.cleanup${mailbox}Title`),
+      header: t(`users.tasks.cleanup${mailbox}`),
       message: (
         <ConfirmTaskContent
           message={<p>{t(`users.tasks.cleanup${mailbox}Desc`, { username })}</p>}
@@ -281,7 +281,7 @@ export default function UserTasks({ username }: Props) {
     let currentValues = INITIAL_RENAME_VALUES;
 
     await confirm({
-      header: t("users.tasks.renameTitle"),
+      header: t("users.tasks.renameUser"),
       message: (
         <FormTaskContent
           initialValues={currentValues}

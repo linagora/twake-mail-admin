@@ -326,7 +326,7 @@ function MailCommonTasks() {
   const handleCleanupMailbox = async (mailbox: "Trash" | "Spam") => {
     let olderThan = "5d";
     await confirm({
-      header: t(`users.tasks.cleanup${mailbox}Title`),
+      header: t(`commonTasks.cleanup${mailbox}All`),
       message: (
         <ConfirmTaskContent
           message={<p>{t(`commonTasks.cleanup${mailbox}AllDesc`)}</p>}
