@@ -7,6 +7,7 @@ import { ReactElement } from "react";
 
 const mocks = vi.hoisted(() => ({
   toast: vi.fn(),
+  confirm: vi.fn(),
   api: {
     getUserForwards: vi.fn(),
     addUserForward: vi.fn(),
@@ -20,7 +21,7 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
-vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
+vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => mocks.confirm }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("../api-client", () => mocks.api);
 vi.mock("@/hooks/use-managed-domains", () => ({ useManagedDomains: () => new Set(["example.com"]) }));
@@ -140,5 +141,28 @@ describe("user forwards: destinations", () => {
 
     expect((await screen.findByRole("link", { name: "emma@example.com" })).getAttribute("href")).toBe("/users/user/emma%40example.com");
     expect(screen.getByText("someone@gmail.com").closest("a")).toBeNull();
+  });
+});
+
+describe("user forwards: remove a forward", () => {
+  const removeEmma = async () => {
+    render(<UserForwards username={ALICE} />);
+    fireEvent.click(screen.getByText("users.forwards.title"));
+    await screen.findByText("emma@example.com");
+    mocks.confirm.mockResolvedValue(true);
+    fireEvent.click(screen.getAllByTitle("users.forwards.removeTooltip")[0]);
+    await waitFor(() => expect(mocks.toast).toHaveBeenCalledWith({ title: "users.forwards.removed" }));
+  };
+
+  it("also removes the copy kept for the user with the last forward", async () => {
+    mocks.api.getUserForwards.mockResolvedValue([{ mailAddress: ALICE }, { mailAddress: "emma@example.com" }]);
+    await removeEmma();
+    expect(mocks.api.removeUserForward.mock.calls).toEqual([[ALICE, "emma@example.com"], [ALICE, ALICE]]);
+  });
+
+  it("keeps the copy while another forward remains", async () => {
+    mocks.api.getUserForwards.mockResolvedValue([{ mailAddress: ALICE }, { mailAddress: "emma@example.com" }, { mailAddress: "zoe@example.com" }]);
+    await removeEmma();
+    expect(mocks.api.removeUserForward.mock.calls).toEqual([[ALICE, "emma@example.com"]]);
   });
 });

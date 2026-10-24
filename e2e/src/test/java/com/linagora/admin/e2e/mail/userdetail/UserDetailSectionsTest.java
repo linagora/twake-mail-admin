@@ -80,10 +80,11 @@ class UserDetailSectionsTest extends MailAdminE2ETest {
         detail.iconButton("Remove forward").click();
         detail.confirm("Remove");
         app.expectToast("Forward removed successfully");
+        // The last forward gone, the copy kept for the user goes too: plain delivery, no mapping left
         assertThat(forwardRow).hasCount(0);
-        assertThat(copyRow).hasCount(1);
-        assertThat(detail.sectionToggle("Mappings", 2)).isVisible();
-        assertThat(webAdmin.get("/mappings/user/" + user).json().size()).isEqualTo(1);
+        assertThat(copyRow).hasCount(0);
+        assertThat(detail.sectionToggle("Mappings", 0)).isVisible();
+        assertThat(webAdmin.get("/mappings/user/" + user).json().size()).isZero();
     }
 
     private static Locator dialogButton(MailUserDetailPage detail, String name) {

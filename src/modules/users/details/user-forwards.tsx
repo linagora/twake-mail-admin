@@ -124,6 +124,10 @@ export default function UserForwards({ username, noMailbox = false }: Props) {
     if (!confirmed) return;
     try {
       await removeUserForward(username, destination);
+      // Without any other forward, the user's own entry only kept a copy: plain delivery again
+      if (userInForwards && destinations.every((d) => d.mailAddress === destination)) {
+        await removeUserForward(username, username);
+      }
       toast({ title: t("users.forwards.removed") });
       notifyMappingsChanged();
     } catch (err) {
