@@ -1,7 +1,8 @@
 import { useCallback, useId, useState } from "react";
 import UserLink from "@/components/custom/user-link";
 import { CalendarDays, Plus, Minus, Pencil, Trash2, Save, Eye, EyeOff, Users, Loader2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
+import { Trans, useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { createUserCalendar, deleteUserCalendar, exportUserCalendar, getUserCalendarEventCount, getUserCalendars, importUserCalendar, setUserCalendarPublicRight, updateUserCalendar, updateUserCalendarInvitees } from "../api-client";
@@ -14,7 +15,7 @@ import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
-import { buildOwnerEmailMap, ownerEmail } from "./calendar-owner";
+import { buildOwnerEmailMap, ownerEmail, teamCalendarSourceId } from "./calendar-owner";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,9 @@ interface Props {
 type CalendarCategory = "owner" | "delegated" | "subscription" | "resource";
 
 const CATEGORY_ORDER: CalendarCategory[] = ["owner", "delegated", "subscription", "resource"];
+
+// The domain of a user, whose page manages its team calendars
+const domainOf = (username: string) => username.slice(username.lastIndexOf("@") + 1);
 
 const EMPTY_CREATE: CreateUserCalendarPayload = {
   "dav:name": "",
@@ -189,7 +193,13 @@ function CalendarRow({
         {description && (
           <p className="text-xs text-gray-400">{description}</p>
         )}
-        {owner && (
+        {/* A team calendar names its domain, where its members are managed; another user's calendar, its owner */}
+        {teamCalendarSourceId(calendar) ? (
+          <p className="text-xs text-gray-400">
+            {t("users.calendars.teamCalendarOf")}{" "}
+            <Link to={`/domains/domain/${encodeURIComponent(domainOf(username))}`} className="text-blue-600 hover:underline">{domainOf(username)}</Link>
+          </p>
+        ) : owner && (
           <p className="text-xs text-gray-400">
             {t("users.calendars.ownerLabel")}{" "}
             <UserLink address={owner} known />
@@ -261,12 +271,13 @@ function CalendarRow({
           </button>
         )}
         {permissions.remove && !isMain && (
+          // Another user's or a team calendar is only removed from this user's calendars: grey, not red
           <button
             onClick={() => onDelete(calendar)}
             className="p-1.5 rounded-md hover:bg-gray-200 transition"
-            title={t("users.calendars.deleteTitle")}
+            title={isOwned ? t("users.calendars.deleteTitle") : t("users.calendars.removeSharedTitle")}
           >
-            <Trash2 className="w-3.5 h-3.5 text-red-600" />
+            <Trash2 className={`w-3.5 h-3.5 ${isOwned ? "text-red-600" : "text-gray-600"}`} />
           </button>
         )}
       </div>
@@ -427,7 +438,46 @@ export default function UserCalendars({ username, onCalendarsChanged, defaultOpe
     }
   };
 
+  // The copy of another user's or of a team calendar: the DELETE removes it from this user only
+  const removeSharedMessage = (calendar: UserCalendar, name: string) => {
+    const domain = domainOf(username);
+    if (teamCalendarSourceId(calendar)) {
+      return (
+        <p>
+          <Trans
+            i18nKey="users.calendars.removeTeamCalendarConfirm"
+            values={{ name, user: username, domain }}
+            components={{ domainLink: <Link to={`/domains/domain/${encodeURIComponent(domain)}`} className="text-blue-600 hover:underline" /> }}
+          />
+        </p>
+      );
+    }
+    return t("users.calendars.removeSharedConfirm", { name, user: username, owner: ownerEmail(calendar, ownerEmails) ?? t("users.calendars.theOwner") });
+  };
+
+  const handleRemoveShared = async (calendar: UserCalendar) => {
+    const name = calendarDisplayName(calendar, t, ownerEmail(calendar, ownerEmails)) || calendarId(calendar);
+    const confirmed = await confirm({
+      header: t("users.calendars.removeSharedTitle"),
+      confirmLabel: t("common.remove"),
+      message: removeSharedMessage(calendar, name),
+    });
+    if (!confirmed) return;
+    try {
+      await deleteUserCalendar(username, calendarId(calendar));
+      toast({ title: t("users.calendars.removedShared", { user: username }) });
+      onCalendarsChanged?.();
+      await refresh();
+    } catch (err) {
+      toast({ title: t("users.calendars.errorDelete"), description: <ErrorDisplayer error={err} /> });
+    }
+  };
+
   const handleDelete = async (calendar: UserCalendar) => {
+    if (categorize(calendar) !== "owner") {
+      await handleRemoveShared(calendar);
+      return;
+    }
     const confirmed = await confirm({
       header: t("users.calendars.deleteTitle"),
       destructive: true,

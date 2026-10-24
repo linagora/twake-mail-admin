@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildOwnerEmailMap, ownerEmail } from "./calendar-owner";
+import { buildOwnerEmailMap, ownerEmail, teamCalendarSourceId } from "./calendar-owner";
 import { UserCalendar } from "../types";
 
 const delegated = {
@@ -32,5 +32,17 @@ describe("calendar owner", () => {
 
   it("has no owner for a calendar of the user", () => {
     expect(ownerEmail({ "dav:name": "Own" } as UserCalendar, { "alice-id": "alice@example.com" })).toBeNull();
+  });
+});
+
+describe("team calendar copies", () => {
+  it("recognises the copy of a team calendar by its source and its team calendar principal", () => {
+    const copy = {
+      "calendarserver:delegatedsource": "/calendars/team1/team1.json",
+      invite: [{ href: "mailto:team1@open-paas.org", principal: "principals/team-calendars/team1", access: 2, comment: null, inviteStatus: 0 }],
+    };
+    expect(teamCalendarSourceId(copy)).toBe("team1");
+    expect(teamCalendarSourceId({ "calendarserver:delegatedsource": "/calendars/alice/work.json", invite: [] })).toBeNull();
+    expect(teamCalendarSourceId({})).toBeNull();
   });
 });

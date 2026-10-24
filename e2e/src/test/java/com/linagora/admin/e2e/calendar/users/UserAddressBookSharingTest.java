@@ -58,7 +58,9 @@ class UserAddressBookSharingTest extends CalendarAdminE2ETest {
         assertThat(shared.getByText("owner:")).isVisible();
         assertThat(books.ownerLink(alice)).hasAttribute("href", UserDetailPage.path(alice));
         assertThat(CollectionSection.counter(shared, "Contacts")).hasText("0");
-        assertThat(CollectionSection.button(shared, "Delete address book")).isVisible();
+        // Removed from bob only: alice's address book is kept
+        assertThat(CollectionSection.button(shared, "Remove from this user's address books")).isVisible();
+        assertThat(CollectionSection.button(shared, "Delete address book")).hasCount(0);
         for (String absent : new String[] {"Export the address book (vCard)", "Import contacts (vCard)", "Edit address book",
             "Sharing", "Private address book", "Public address book (read)"}) {
             assertThat(CollectionSection.button(shared, absent)).hasCount(0);
@@ -146,10 +148,11 @@ class UserAddressBookSharingTest extends CalendarAdminE2ETest {
         CollectionSection books = new UserDetailPage(app).open(sharee).addressBooks().expand();
         Locator shared = books.rowOwnedBy(name, owner);
         assertThat(shared).hasCount(1);
-        CollectionSection.button(shared, "Delete address book").click();
-        CollectionSection.confirmWith(app, "Delete");
+        CollectionSection.button(shared, "Remove from this user's address books").click();
+        assertThat(app.dialog()).containsText("The address book of " + owner + " and its contacts are kept.");
+        CollectionSection.confirmWith(app, "Remove");
 
-        app.expectToast("Address book deleted");
+        app.expectToast("Address book removed from " + sharee);
         assertThat(books.rowOwnedBy(name, owner)).hasCount(0);
         assertThat(seeds.sharedAddressBooks(sharee)).isEmpty();
         assertThat(seeds.addressBookNamed(owner, name)).isPresent();

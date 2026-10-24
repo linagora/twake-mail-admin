@@ -75,7 +75,15 @@ describe("user address books: shared address books", () => {
 
     expect(row.queryByTitle("users.addressBooks.invitees.title")).toBeNull();
     expect(row.queryByTitle("users.addressBooks.publicRight.privateTitle")).toBeNull();
-    expect(row.getByTitle("users.addressBooks.deleteTitle")).not.toBeNull();
+    // Removed from this user only: the owner's address book is kept
+    expect(row.getByTitle("users.addressBooks.removeSharedTitle")).not.toBeNull();
+    expect(row.queryByTitle("users.addressBooks.deleteTitle")).toBeNull();
+  });
+
+  it("keeps deleting an owned address book", async () => {
+    renderOpened();
+
+    expect((await rowOf("Own")).getByTitle("users.addressBooks.deleteTitle")).not.toBeNull();
   });
 
   it("offers sharing and visibility on a mirror shared with the administration right", async () => {

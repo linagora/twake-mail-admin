@@ -36,6 +36,18 @@ export function buildOwnerEmailMap(
   return Object.fromEntries([...fromInvites, ...fromRegisteredUsers]);
 }
 
+/**
+ * The id of the team calendar a delegated calendar is the copy of: its delegated source is
+ * /calendars/{id}/{id}.json and it is shared by the team calendar principal. Null otherwise.
+ */
+export function teamCalendarSourceId(calendar: UserCalendar): string | null {
+  const sourceHref = calendar["calendarserver:delegatedsource"];
+  if (!sourceHref) return null;
+  const id = sourceHref.split("/").filter(Boolean)[1];
+  if (!id) return null;
+  return (calendar.invite ?? []).some((invite) => invite.principal === `principals/team-calendars/${id}`) ? id : null;
+}
+
 export function ownerEmail(calendar: UserCalendar, ownerEmails: Record<string, string>): string | null {
   const sourceHref =
     calendar["calendarserver:delegatedsource"] ?? calendar["calendarserver:source"]?._links?.self?.href;

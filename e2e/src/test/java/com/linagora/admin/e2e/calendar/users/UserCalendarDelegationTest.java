@@ -173,10 +173,11 @@ class UserCalendarDelegationTest extends CalendarAdminE2ETest {
         assertThat(seeds.calendarNamed(owner, name)).isPresent();
         assertThat(seeds.calendarNamed(owner, renamed)).isEmpty();
 
-        // Delete: only the sharee's copy is removed
-        CollectionSection.button(calendars.rowInGroup("Delegated", renamed), "Delete calendar").click();
-        CollectionSection.confirmWith(app, "Delete");
-        app.expectToast("Calendar deleted");
+        // Remove: only the sharee's copy is removed, as the button and its confirmation say
+        CollectionSection.button(calendars.rowInGroup("Delegated", renamed), "Remove from this user's calendars").click();
+        assertThat(app.dialog()).containsText("The calendar of " + owner + " and its events are kept.");
+        CollectionSection.confirmWith(app, "Remove");
+        app.expectToast("Calendar removed from " + sharee);
         assertThat(calendars.groupHeading("Delegated")).hasCount(0);
         assertThat(seeds.calendars(sharee)).noneMatch(c -> c.path("dav:name").asText().startsWith(name));
         assertThat(seeds.calendarNamed(owner, name)).isPresent();

@@ -245,12 +245,13 @@ function AddressBookRow({
           </button>
         )}
         {!system && permissions.remove && (
+          // Another user's address book is only removed from this user's: grey, not red
           <button
             onClick={() => onDelete(addressBook)}
             className="p-1.5 rounded-md hover:bg-gray-200 transition"
-            title={t("users.addressBooks.deleteTitle")}
+            title={owned ? t("users.addressBooks.deleteTitle") : t("users.addressBooks.removeSharedTitle")}
           >
-            <Trash2 className="w-3.5 h-3.5 text-red-600" />
+            <Trash2 className={`w-3.5 h-3.5 ${owned ? "text-red-600" : "text-gray-600"}`} />
           </button>
         )}
       </div>
@@ -368,7 +369,33 @@ export default function UserAddressBooks({ username, defaultOpen = false }: Prop
     }
   };
 
+  // The copy of another user's address book: the DELETE removes it from this user only
+  const handleRemoveShared = async (addressBook: UserAddressBook) => {
+    const owner = ownerEmail(parseAddressBookSource(addressBook["openpaas:source"]), registeredUsers);
+    const confirmed = await confirm({
+      header: t("users.addressBooks.removeSharedTitle"),
+      confirmLabel: t("common.remove"),
+      message: t("users.addressBooks.removeSharedConfirm", {
+        name: addressBookName(addressBook, t),
+        user: username,
+        owner: owner ?? t("users.calendars.theOwner"),
+      }),
+    });
+    if (!confirmed) return;
+    try {
+      await deleteUserAddressBook(username, addressBookId(addressBook));
+      toast({ title: t("users.addressBooks.removedShared", { user: username }) });
+      await refresh();
+    } catch (err) {
+      toast({ title: t("users.addressBooks.errorDelete"), description: <ErrorDisplayer error={err} /> });
+    }
+  };
+
   const handleDelete = async (addressBook: UserAddressBook) => {
+    if (!isOwned(addressBook)) {
+      await handleRemoveShared(addressBook);
+      return;
+    }
     const confirmed = await confirm({
       header: t("users.addressBooks.deleteTitle"),
       destructive: true,

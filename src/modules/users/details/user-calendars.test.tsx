@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import type { UserExistsStatus } from "@/hooks/use-check-user-exists";
 
 const mocks = vi.hoisted(() => ({
@@ -24,6 +25,7 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, unknown>) => (options?.email ? `${key} ${options.email}` : key),
   }),
+  Trans: ({ i18nKey }: { i18nKey: string }) => i18nKey,
 }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => mocks.confirm }));
@@ -285,5 +287,49 @@ describe("UserCalendars export", () => {
 
     await waitFor(() => expect(names).toEqual(["users.calendars.mainCalendar.ics"]));
     click.mockRestore();
+  });
+});
+
+describe("calendars shared with the user: removed, not deleted", () => {
+  const TEAM = "6adcb34cba47760f66fe6baa";
+  const renderWithTeamCopy = async () => {
+    mocks.api.getUserCalendars.mockResolvedValue({
+      _embedded: {
+        "dav:calendar": [
+          { _links: { self: { href: `/calendars/${HOME}/${HOME}.json` } }, "dav:name": "#default" },
+          {
+            _links: { self: { href: `/calendars/${HOME}/copy1.json` } },
+            "dav:name": "UX Audit Support Team",
+            "calendarserver:delegatedsource": `/calendars/${TEAM}/${TEAM}.json`,
+            invite: [{ href: `mailto:${TEAM}@open-paas.org`, principal: `principals/team-calendars/${TEAM}`, access: 2 }],
+          },
+        ],
+      },
+    });
+    render(<MemoryRouter><UserCalendars username="alice@open-paas.org" /></MemoryRouter>);
+    fireEvent.click(screen.getByText("users.calendars.title"));
+    await screen.findByText("UX Audit Support Team");
+  };
+
+  it("names the domain of a team calendar copy, linking to its page", async () => {
+    await renderWithTeamCopy();
+    expect(screen.getByText("users.calendars.teamCalendarOf")).not.toBeNull();
+    expect(screen.getByRole("link", { name: "open-paas.org" }).getAttribute("href")).toBe("/domains/domain/open-paas.org");
+  });
+
+  it("removes the copy from the user with a non-destructive confirmation", async () => {
+    mocks.confirm.mockResolvedValue(true);
+    mocks.api.deleteUserCalendar.mockResolvedValue(undefined);
+    await renderWithTeamCopy();
+    const remove = screen.getByTitle("users.calendars.removeSharedTitle");
+    expect(remove.querySelector("svg")!.getAttribute("class")).toContain("text-gray-600");
+    fireEvent.click(remove);
+
+    await waitFor(() => expect(mocks.api.deleteUserCalendar).toHaveBeenCalledWith("alice@open-paas.org", "copy1"));
+    const options = mocks.confirm.mock.calls[0][0];
+    expect(options.header).toBe("users.calendars.removeSharedTitle");
+    expect(options.destructive).toBeUndefined();
+    expect(options.confirmLabel).toBe("common.remove");
+    expect(mocks.toast).toHaveBeenCalledWith({ title: "users.calendars.removedShared" });
   });
 });
