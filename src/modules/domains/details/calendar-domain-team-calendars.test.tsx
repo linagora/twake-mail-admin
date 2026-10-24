@@ -70,6 +70,17 @@ describe("team calendars: field labels", () => {
 });
 
 describe("team calendars: members dialog", () => {
+  it("describes the role picked for a new member, as the description of its select", async () => {
+    await openSection();
+    fireEvent.click(screen.getByTitle("domains.teamCalendars.members.tooltip"));
+    const role = await screen.findByRole("combobox", { name: "domains.teamCalendars.members.role" });
+    const hint = () => document.getElementById(role.getAttribute("aria-describedby")!)!.textContent;
+
+    expect(hint()).toBe("domains.teamCalendars.members.roleHints.viewer");
+    fireEvent.change(role, { target: { value: "manager" } });
+    expect(hint()).toBe("domains.teamCalendars.members.roleHints.manager");
+  });
+
   it("closes once the changes are saved", async () => {
     updateTeamCalendarMembers.mockResolvedValue(undefined);
     await openSection();

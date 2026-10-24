@@ -293,6 +293,7 @@ function MembersModal({
   onClose: () => void;
 }) {
   const { t } = useTranslation();
+  const roleHintId = useId();
   const { toast } = useToast();
 
   const fetchMembers = useCallback(
@@ -408,7 +409,7 @@ function MembersModal({
                       className={`px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
                     >
                       {ROLE_OPTIONS.map((r) => (
-                        <option key={r} value={r}>{t(`domains.teamCalendars.members.roles.${r}`)}</option>
+                        <option key={r} value={r} title={t(`domains.teamCalendars.members.roleHints.${r}`)}>{t(`domains.teamCalendars.members.roles.${r}`)}</option>
                       ))}
                     </select>
                     {canManage && (
@@ -460,17 +461,20 @@ function MembersModal({
                 <select
                   value={newRole}
                   aria-label={t("domains.teamCalendars.members.role")}
+                  aria-describedby={roleHintId}
                   onChange={(e) => setNewRole(e.target.value as TeamCalendarMemberRole)}
                   className="max-w-full px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 >
                   {ROLE_OPTIONS.map((r) => (
-                    <option key={r} value={r}>{t(`domains.teamCalendars.members.roles.${r}`)}</option>
+                    <option key={r} value={r} title={t(`domains.teamCalendars.members.roleHints.${r}`)}>{t(`domains.teamCalendars.members.roles.${r}`)}</option>
                   ))}
                 </select>
                 <Button size="sm" onClick={handleStageAdd} disabled={!canAdd} aria-label={t("domains.teamCalendars.members.add")}>
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
+              {/* What the role picked lets the member do */}
+              <p id={roleHintId} className="text-xs text-muted-foreground">{t(`domains.teamCalendars.members.roleHints.${newRole}`)}</p>
               <div className="h-4">
                 {trimmedUser && status === "checking" && (
                   <span className="text-xs text-gray-400">{t("common.checking")}</span>

@@ -482,7 +482,7 @@
         "title": "Thành viên",
         "tooltip": "Quản lý thành viên",
         "empty": "Không có thành viên.",
-        "placeholder": "user@domain.com",
+        "placeholder": "user@domain.tld",
         "apply": "Áp dụng",
         "remove": "Xóa",
         "undoRemove": "Hoàn tác xóa",
@@ -493,6 +493,11 @@
           "viewer": "Người xem",
           "member": "Thành viên",
           "manager": "Người quản lý"
+        },
+        "roleHints": {
+          "viewer": "Xem các sự kiện.",
+          "member": "Xem, tạo, sửa và xóa sự kiện.",
+          "manager": "Như đọc/ghi, và còn có thể chia sẻ lịch."
         },
         "email": "Email thành viên",
         "role": "Vai trò",
@@ -1035,6 +1040,11 @@
           "read-write": "Đọc/ghi",
           "administration": "Quản trị"
         },
+        "rightHints": {
+          "read": "Xem các sự kiện.",
+          "read-write": "Xem, tạo, sửa và xóa sự kiện.",
+          "administration": "Như đọc/ghi, và còn có thể chia sẻ lịch."
+        },
         "email": "Email người được mời",
         "right": "Quyền",
         "rightOf": "Quyền của {{email}}",
@@ -1103,6 +1113,11 @@
           "read": "Đọc",
           "read-write": "Đọc/ghi",
           "administration": "Quản trị"
+        },
+        "rightHints": {
+          "read": "Xem các liên hệ.",
+          "read-write": "Xem, thêm, sửa và xóa liên hệ.",
+          "administration": "Như đọc/ghi, và còn có thể chia sẻ sổ địa chỉ."
         },
         "email": "Email người được chia sẻ",
         "right": "Quyền",

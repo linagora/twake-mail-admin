@@ -484,7 +484,7 @@
         "title": "Members",
         "tooltip": "Manage members",
         "empty": "No member.",
-        "placeholder": "user@domain.com",
+        "placeholder": "user@domain.tld",
         "apply": "Apply",
         "remove": "Remove",
         "undoRemove": "Undo removal",
@@ -495,6 +495,11 @@
           "viewer": "Viewer",
           "member": "Member",
           "manager": "Manager"
+        },
+        "roleHints": {
+          "viewer": "Sees the events.",
+          "member": "Sees, creates, edits and deletes events.",
+          "manager": "Same as read/write, and can also share the calendar with others."
         },
         "email": "Member email",
         "role": "Role",
@@ -1041,6 +1046,11 @@
           "read-write": "Read/write",
           "administration": "Administration"
         },
+        "rightHints": {
+          "read": "Sees the events.",
+          "read-write": "Sees, creates, edits and deletes events.",
+          "administration": "Same as read/write, and can also share the calendar with others."
+        },
         "email": "Invitee email",
         "right": "Right",
         "rightOf": "Right of {{email}}",
@@ -1109,6 +1119,11 @@
           "read": "Read",
           "read-write": "Read/write",
           "administration": "Administration"
+        },
+        "rightHints": {
+          "read": "Sees the contacts.",
+          "read-write": "Sees, adds, edits and deletes contacts.",
+          "administration": "Same as read/write, and can also share the address book with others."
         },
         "email": "Sharee email",
         "right": "Right",

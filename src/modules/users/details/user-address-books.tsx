@@ -598,6 +598,7 @@ function InviteesModal({
   onSaved: () => void | Promise<void>;
 }) {
   const { t } = useTranslation();
+  const rightHintId = useId();
   const { toast } = useToast();
 
   const [removals, setRemovals] = useState<Set<string>>(new Set());
@@ -719,7 +720,7 @@ function InviteesModal({
                     className={`px-2 py-1 border rounded-md text-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${changed ? "border-blue-400 text-blue-700" : ""}`}
                   >
                     {RIGHT_OPTIONS.map((r) => (
-                      <option key={r} value={r}>{t(`users.addressBooks.invitees.rights.${r}`)}</option>
+                      <option key={r} value={r} title={t(`users.addressBooks.invitees.rightHints.${r}`)}>{t(`users.addressBooks.invitees.rights.${r}`)}</option>
                     ))}
                   </select>
                   <button
@@ -766,17 +767,20 @@ function InviteesModal({
               <select
                 value={newRight}
                 aria-label={t("users.addressBooks.invitees.right")}
+                aria-describedby={rightHintId}
                 onChange={(e) => setNewRight(e.target.value as AddressBookRight)}
                 className="max-w-full px-2 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               >
                 {RIGHT_OPTIONS.map((r) => (
-                  <option key={r} value={r}>{t(`users.addressBooks.invitees.rights.${r}`)}</option>
+                  <option key={r} value={r} title={t(`users.addressBooks.invitees.rightHints.${r}`)}>{t(`users.addressBooks.invitees.rights.${r}`)}</option>
                 ))}
               </select>
               <Button size="sm" onClick={handleStageAdd} disabled={!canAdd} aria-label={t("users.addressBooks.invitees.add")}>
                 <Plus className="w-4 h-4" />
               </Button>
             </div>
+            {/* What the right picked lets the sharee do */}
+            <p id={rightHintId} className="text-xs text-muted-foreground">{t(`users.addressBooks.invitees.rightHints.${newRight}`)}</p>
             <div className="h-4">
               {trimmedEmail && status === "checking" && (
                 <span className="text-xs text-gray-400">{t("common.checking")}</span>

@@ -484,7 +484,7 @@
         "title": "Mitglieder",
         "tooltip": "Mitglieder verwalten",
         "empty": "Kein Mitglied.",
-        "placeholder": "user@domain.com",
+        "placeholder": "user@domain.tld",
         "apply": "Anwenden",
         "remove": "Entfernen",
         "undoRemove": "Entfernen rückgängig machen",
@@ -495,6 +495,11 @@
           "viewer": "Betrachter",
           "member": "Mitglied",
           "manager": "Verwalter"
+        },
+        "roleHints": {
+          "viewer": "Sieht die Termine.",
+          "member": "Sieht, erstellt, bearbeitet und löscht Termine.",
+          "manager": "Wie Lesen/Schreiben und kann den Kalender zusätzlich teilen."
         },
         "email": "E-Mail des Mitglieds",
         "role": "Rolle",
@@ -1041,6 +1046,11 @@
           "read-write": "Lesen/Schreiben",
           "administration": "Verwaltung"
         },
+        "rightHints": {
+          "read": "Sieht die Termine.",
+          "read-write": "Sieht, erstellt, bearbeitet und löscht Termine.",
+          "administration": "Wie Lesen/Schreiben und kann den Kalender zusätzlich teilen."
+        },
         "email": "E-Mail des Eingeladenen",
         "right": "Recht",
         "rightOf": "Recht von {{email}}",
@@ -1109,6 +1119,11 @@
           "read": "Lesen",
           "read-write": "Lesen/Schreiben",
           "administration": "Verwaltung"
+        },
+        "rightHints": {
+          "read": "Sieht die Kontakte.",
+          "read-write": "Sieht, erstellt, bearbeitet und löscht Kontakte.",
+          "administration": "Wie Lesen/Schreiben und kann das Adressbuch zusätzlich teilen."
         },
         "email": "E-Mail des Freigabeempfängers",
         "right": "Recht",

@@ -484,7 +484,7 @@
         "title": "Membri",
         "tooltip": "Gestisci i membri",
         "empty": "Nessun membro.",
-        "placeholder": "utente@dominio.com",
+        "placeholder": "utente@dominio.tld",
         "apply": "Applica",
         "remove": "Rimuovi",
         "undoRemove": "Annulla la rimozione",
@@ -495,6 +495,11 @@
           "viewer": "Lettore",
           "member": "Membro",
           "manager": "Gestore"
+        },
+        "roleHints": {
+          "viewer": "Vede gli eventi.",
+          "member": "Vede, crea, modifica ed elimina gli eventi.",
+          "manager": "Come lettura/scrittura e può anche condividere il calendario."
         },
         "email": "E-mail del membro",
         "role": "Ruolo",
@@ -1041,6 +1046,11 @@
           "read-write": "Lettura/scrittura",
           "administration": "Amministrazione"
         },
+        "rightHints": {
+          "read": "Vede gli eventi.",
+          "read-write": "Vede, crea, modifica ed elimina gli eventi.",
+          "administration": "Come lettura/scrittura e può anche condividere il calendario."
+        },
         "email": "E-mail dell'invitato",
         "right": "Diritto",
         "rightOf": "Diritto di {{email}}",
@@ -1109,6 +1119,11 @@
           "read": "Lettura",
           "read-write": "Lettura/scrittura",
           "administration": "Amministrazione"
+        },
+        "rightHints": {
+          "read": "Vede i contatti.",
+          "read-write": "Vede, aggiunge, modifica ed elimina i contatti.",
+          "administration": "Come lettura/scrittura e può anche condividere la rubrica."
         },
         "email": "E-mail del destinatario della condivisione",
         "right": "Diritto",
