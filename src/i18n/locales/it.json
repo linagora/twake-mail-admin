@@ -89,7 +89,7 @@
     "sharedWith_other": "Condiviso con {{count}}",
     "andMore": "+{{count}} altri",
     "addOrClearPending": "Aggiungi o cancella l'indirizzo qui sopra prima di salvare.",
-    "pendingChanges": "{{count}} modifica/e in sospeso: fai clic su Applica per salvare.",
+    "pendingChanges_other": "{{count}} modifiche in sospeso: fai clic su Applica per salvare.",
     "discardTitle": "Scartare le modifiche?",
     "discardMessage": "{{count}} modifica/e non verranno salvate.",
     "discard": "Scarta",
@@ -101,7 +101,8 @@
     "viewJson": "Vedi il JSON",
     "sourceIsAccount": "{{source}} è un account esistente: un alias devierebbe la sua posta verso {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} è un account esistente: un alias devierebbe la sua posta.",
-    "taskCreatedNamed": "{{name}} — Attività {{taskId}}"
+    "taskCreatedNamed": "{{name}} — Attività {{taskId}}",
+    "pendingChanges_one": "{{count}} modifica in sospeso: fai clic su Applica per salvare."
   },
   "sidebar": {
     "healthCheck": "Stato del sistema",

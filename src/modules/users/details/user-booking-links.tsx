@@ -694,7 +694,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
           {/* A form, so that Enter in a field submits like Create; the fields are validated in place, not by the browser */}
           <form noValidate className="space-y-3" onSubmit={(e) => { e.preventDefault(); if (!isCreateDisabled()) handleCreate(); }}>
             <div>
-              <label htmlFor="create-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} *</label>
+              <label htmlFor="create-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} <span className="text-red-500">*</span></label>
               <CalendarSelect
                 id="create-calendar"
                 value={createForm.calendarUrl}
@@ -725,7 +725,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
               />
             </div>
             <div>
-              <label htmlFor="create-duration" className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")} *</label>
+              <label htmlFor="create-duration" className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")} <span className="text-red-500">*</span></label>
               <DurationInput id="create-duration" value={createDuration} onChange={setCreateDuration} />
             </div>
             <div className="flex items-center gap-2">
@@ -794,7 +794,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
           {editLink && (
             <form noValidate className="space-y-3" onSubmit={(e) => { e.preventDefault(); if (!isEditDisabled()) handleUpdate(); }}>
               <div>
-                <label htmlFor="edit-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} *</label>
+                <label htmlFor="edit-calendar" className="text-sm font-medium">{t("users.bookingLinks.calendarUrl")} <span className="text-red-500">*</span></label>
                 <CalendarSelect
                   id="edit-calendar"
                   value={editForm.calendarUrl ?? ""}
@@ -825,7 +825,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
                 />
               </div>
               <div>
-                <label htmlFor="edit-duration" className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")} *</label>
+                <label htmlFor="edit-duration" className="text-sm font-medium">{t("users.bookingLinks.durationMinutes")} <span className="text-red-500">*</span></label>
                 <DurationInput id="edit-duration" value={editDuration} onChange={setEditDuration} />
               </div>
               <div className="flex items-center gap-2">

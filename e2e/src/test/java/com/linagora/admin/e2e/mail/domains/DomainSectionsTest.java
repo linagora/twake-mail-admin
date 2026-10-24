@@ -101,7 +101,7 @@ class DomainSectionsTest extends MailAdminE2ETest {
         detail.button("Create contact").click();
         assertThat(detail.dialog()).containsText("New Contact");
         detail.dialogField("Email").fill(email);
-        detail.dialogField("Firstname").fill("Qa");
+        detail.dialogField("First name").fill("Qa");
         detail.dialogField("Surname").fill("Contact");
         detail.dialogButton("Create").click();
         app.expectToast("Contact created");
@@ -114,7 +114,7 @@ class DomainSectionsTest extends MailAdminE2ETest {
         // Details, then edit from there
         detail.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(email).setExact(true)).click();
         assertThat(app.dialog()).containsText("Contact Details");
-        assertThat(app.dialog()).containsText("Firstname:Qa");
+        assertThat(app.dialog()).containsText("First name:Qa");
         assertThat(app.dialog()).containsText("Surname:Contact");
         app.dialog().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Edit").setExact(true)).click();
         assertThat(app.dialog()).containsText("Edit Contact — " + email);

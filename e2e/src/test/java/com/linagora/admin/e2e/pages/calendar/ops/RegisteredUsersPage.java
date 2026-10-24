@@ -90,7 +90,7 @@ public class RegisteredUsersPage {
         return app.main().getByText(Pattern.compile("^(Page \\d+ / \\d+ — )?Total: \\d+$"));
     }
 
-    /** A field of the open Register / Edit dialog: "Email", "Firstname", "Lastname". */
+    /** A field of the open Register / Edit dialog: "Email", "First name", "Last name". */
     public Locator field(String label) {
         return app.dialog().getByLabel(label + " *", new Locator.GetByLabelOptions().setExact(true));
     }

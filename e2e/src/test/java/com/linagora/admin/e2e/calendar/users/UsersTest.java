@@ -174,17 +174,17 @@ class UsersTest extends CalendarAdminE2ETest {
         assertThat(dialog.getByRole(AriaRole.HEADING, new Locator.GetByRoleOptions().setName("Register user"))).isVisible();
         assertThat(dialog.getByText("Registering \"" + user + "\" on the DAV server.")).isVisible();
         assertThat(dialog.getByText("Your deployment may include a periodic LDAP import")).isVisible();
-        Locator firstname = dialog.getByLabel("Firstname");
-        Locator lastname = dialog.getByLabel("Lastname");
+        Locator firstname = dialog.getByLabel("First name");
+        Locator lastname = dialog.getByLabel("Last name");
         assertThat(firstname).hasValue(localPart);
         assertThat(lastname).hasValue("");
 
         firstname.fill("");
         app.clickConfirm();
-        assertThat(app.dialogError()).hasText("Firstname is required");
+        assertThat(app.dialogError()).hasText("First name is required");
         firstname.fill("Frank");
         app.clickConfirm();
-        assertThat(app.dialogError()).hasText("Lastname is required");
+        assertThat(app.dialogError()).hasText("Last name is required");
         assertThat(dialog).isVisible();
         assertThat(registrations.get()).isZero();
 

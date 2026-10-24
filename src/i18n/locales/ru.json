@@ -91,7 +91,7 @@
     "sharedWith_other": "Общий доступ: {{count}}",
     "andMore": "ещё {{count}}",
     "addOrClearPending": "Добавьте или очистите адрес выше перед сохранением.",
-    "pendingChanges": "Изменений в ожидании: {{count}}. Нажмите «Применить», чтобы сохранить.",
+    "pendingChanges_other": "{{count}} изменения ожидают сохранения: нажмите «Применить».",
     "discardTitle": "Отменить изменения?",
     "discardMessage": "Изменения не будут сохранены: {{count}}.",
     "discard": "Отменить",
@@ -103,7 +103,10 @@
     "viewJson": "Показать JSON",
     "sourceIsAccount": "{{source}} — существующая учётная запись: псевдоним перенаправит её почту на {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} — существующая учётная запись: псевдоним перенаправит её почту.",
-    "taskCreatedNamed": "{{name}} — Задача {{taskId}}"
+    "taskCreatedNamed": "{{name}} — Задача {{taskId}}",
+    "pendingChanges_one": "{{count}} изменение ожидает сохранения: нажмите «Применить».",
+    "pendingChanges_few": "{{count}} изменения ожидают сохранения: нажмите «Применить».",
+    "pendingChanges_many": "{{count}} изменений ожидают сохранения: нажмите «Применить»."
   },
   "sidebar": {
     "healthCheck": "Проверка состояния",

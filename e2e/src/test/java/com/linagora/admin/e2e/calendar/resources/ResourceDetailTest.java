@@ -57,8 +57,9 @@ class ResourceDetailTest extends CalendarAdminE2ETest {
         assertThat(detail.field("Resource ID", id)).isVisible();
         assertThat(detail.field("Domain", DOMAIN)).isVisible();
         assertThat(detail.field("Description", description)).isVisible();
-        assertThat(detail.field("Icon", "laptop")).isVisible();
-        assertThat(detail.field("Icon", "laptop").getByRole(AriaRole.IMG, new Locator.GetByRoleOptions().setName("laptop"))).isVisible();
+        // The icon named as the picker names it, its image decorative next to the name
+        assertThat(detail.field("Icon", "Laptop")).isVisible();
+        assertThat(detail.field("Icon", "Laptop").locator("img[src='/icons/resources/laptop.svg']")).isVisible();
         assertThat(detail.field("Creator", creator)).isVisible();
         assertThat(app.main().getByRole(AriaRole.HEADING, new Locator.GetByRoleOptions()
             .setName("Administrators").setExact(true))).isVisible();
@@ -81,7 +82,7 @@ class ResourceDetailTest extends CalendarAdminE2ETest {
         assertThat(detail.heading(newName)).isVisible();
         assertThat(detail.field("Name", newName)).isVisible();
         assertThat(detail.field("Description", newDescription)).isVisible();
-        assertThat(detail.field("Icon", "camera")).isVisible();
+        assertThat(detail.field("Icon", "Camera")).isVisible();
         JsonNode saved = backend.resource(id);
         assertThat(saved.path("name").asText()).isEqualTo(newName);
         assertThat(saved.path("description").asText()).isEqualTo(newDescription);

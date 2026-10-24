@@ -99,7 +99,7 @@ class RegisteredUsersTest extends CalendarAdminE2ETest {
         users.typeNewUser(Ids.unique("nobody") + "@open-paas.org");
         assertThat(users.accountLine("User not found")).isVisible();
         assertThat(users.submitButton()).isDisabled();
-        assertThat(users.field("Firstname")).hasCount(0);
+        assertThat(users.field("First name")).hasCount(0);
 
         users.typeNewUser(user);
         assertThat(users.accountLine("User exists")).isVisible();
@@ -113,15 +113,15 @@ class RegisteredUsersTest extends CalendarAdminE2ETest {
         users.typeNewUser(user);
         assertThat(users.registerDialog()).containsText("Registering \"" + user + "\" on the DAV server.");
         assertThat(users.registerDialog()).containsText("Your deployment may include a periodic LDAP import");
-        assertThat(users.field("Firstname")).hasValue(localPart);
-        assertThat(users.field("Lastname")).hasValue("");
+        assertThat(users.field("First name")).hasValue(localPart);
+        assertThat(users.field("Last name")).hasValue("");
         users.submitButton().click();
-        assertThat(app.dialogError()).hasText("Lastname is required");
+        assertThat(app.dialogError()).hasText("Last name is required");
         assertThat(users.registerDialog()).isVisible();
         assertThat(writes).isEmpty();
 
-        users.field("Firstname").fill("Frank");
-        users.field("Lastname").fill("QA");
+        users.field("First name").fill("Frank");
+        users.field("Last name").fill("QA");
         users.submitButton().click();
 
         app.expectToast("User \"" + user + "\" registered");
@@ -154,10 +154,10 @@ class RegisteredUsersTest extends CalendarAdminE2ETest {
         assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Edit Registered User");
         assertThat(app.dialog()).containsText("Your deployment may include a periodic LDAP import");
         assertThat(users.field("Email")).hasValue(user);
-        assertThat(users.field("Firstname")).hasValue(localPart);
-        assertThat(users.field("Lastname")).hasValue(localPart);
-        users.field("Firstname").fill("Charlotte");
-        users.field("Lastname").fill("QA");
+        assertThat(users.field("First name")).hasValue(localPart);
+        assertThat(users.field("Last name")).hasValue(localPart);
+        users.field("First name").fill("Charlotte");
+        users.field("Last name").fill("QA");
         app.confirm();
 
         app.expectToast("User updated");
@@ -198,18 +198,18 @@ class RegisteredUsersTest extends CalendarAdminE2ETest {
         RegisteredUsersPage users = RegisteredUsersPage.open(app).searchFor(user);
         users.rowAction(user, "Edit user").click();
 
-        users.field("Lastname").fill("");
+        users.field("Last name").fill("");
         app.clickConfirm();
-        assertThat(app.dialogError()).hasText("Lastname is required");
-        assertThat(users.field("Lastname")).hasValue("");
+        assertThat(app.dialogError()).hasText("Last name is required");
+        assertThat(users.field("Last name")).hasValue("");
 
-        users.field("Lastname").fill(localPart);
-        users.field("Firstname").fill("");
+        users.field("Last name").fill(localPart);
+        users.field("First name").fill("");
         app.clickConfirm();
-        assertThat(app.dialogError()).hasText("Firstname is required");
-        assertThat(users.field("Lastname")).hasValue(localPart);
+        assertThat(app.dialogError()).hasText("First name is required");
+        assertThat(users.field("Last name")).hasValue(localPart);
 
-        users.field("Firstname").fill(localPart);
+        users.field("First name").fill(localPart);
         users.field("Email").fill("not-an-email");
         app.clickConfirm();
         assertThat(app.dialogError()).hasText("Email must be a valid address, like user@domain.tld");

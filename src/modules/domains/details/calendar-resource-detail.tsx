@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ResourceIconPicker from "@/components/custom/resource-icon-picker";
+import { Button } from "@/components/ui/button";
 import { isKnownResourceIcon, resourceDisplayName } from "../resource-display";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
@@ -139,11 +140,10 @@ export default function CalendarResourceDetail() {
       headerSubTitle={t("domains.calendarResources.detailKind")}
       breadcrumb={breadcrumbs.resources(domain)}
       actions={resource && !editing && canEdit && (
-        <button onClick={startEdit}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition">
-          <Pencil className="w-4 h-4" />
+        <Button variant="outline" size="sm" onClick={startEdit}>
+          <Pencil className="w-4 h-4" aria-hidden="true" />
           {t("common.edit")}
-        </button>
+        </Button>
       )}
     />
     <div className="mt-4 p-4 bg-white rounded-2">
@@ -196,9 +196,10 @@ export default function CalendarResourceDetail() {
                 <p className="flex items-center gap-2">
                   <span className="text-gray-500 font-medium">{t("domains.calendarResources.iconLabel")}:</span>
                   {isKnownResourceIcon(resource.icon) && (
-                    <img src={`/icons/resources/${resource.icon}.svg`} alt={resource.icon} className="w-5 h-5 inline-block" />
+                    <img src={`/icons/resources/${resource.icon}.svg`} alt="" className="w-5 h-5 inline-block" />
                   )}
-                  {resource.icon}
+                  {/* The name the picker gives it; an icon the console does not know, under its key */}
+                  {t(`resourceIcons.${resource.icon}`, { defaultValue: resource.icon })}
                 </p>
               )}
               {resource.creator && (

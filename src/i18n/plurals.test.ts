@@ -19,4 +19,15 @@ describe("plural forms", () => {
     expect(i18n.t("domains.delete.aliasesConsequence", { count: 1 })).toBe("Почта на эти псевдонимы домена больше не будет доставляться.");
     expect(i18n.t("domains.delete.aliases", { count: 2 })).toBe("псевдонимов домена: 2");
   });
+
+  it("counts the pending changes of a staged dialog", async () => {
+    await i18n.changeLanguage("en");
+    expect(i18n.t("common.pendingChanges", { count: 1 })).toBe("1 pending change: click Apply to save.");
+    expect(i18n.t("common.pendingChanges", { count: 2 })).toBe("2 pending changes: click Apply to save.");
+    await i18n.changeLanguage("fr");
+    expect(i18n.t("common.pendingChanges", { count: 2 })).toBe("2 modifications en attente : cliquez sur Appliquer pour enregistrer.");
+    await i18n.changeLanguage("ru");
+    expect(i18n.t("common.pendingChanges", { count: 2 })).toBe("2 изменения ожидают сохранения: нажмите «Применить».");
+    expect(i18n.t("common.pendingChanges", { count: 5 })).toBe("5 изменений ожидают сохранения: нажмите «Применить».");
+  });
 });
