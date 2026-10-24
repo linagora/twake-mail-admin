@@ -72,6 +72,30 @@ describe("CalendarResourceDetail", () => {
     expect(input).toHaveProperty("value", "bob@open-paas.org");
   });
 
+  it("keeps an icon the console does not list when only the name is edited", async () => {
+    api.getResource.mockResolvedValue({ ...resource, icon: "space-shuttle" });
+    render(<CalendarResourceDetail />);
+
+    fireEvent.click(await screen.findByText("common.edit"));
+    fireEvent.change(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName" }), { target: { value: "QA Room renamed" } });
+    fireEvent.click(screen.getByRole("button", { name: "common.save" }));
+
+    await waitFor(() => expect(api.updateResource).toHaveBeenCalledWith("open-paas.org", "room-2", {
+      name: "QA Room renamed", description: "Big meeting room",
+    }));
+  });
+
+  it("sends the icon once another one is picked", async () => {
+    render(<CalendarResourceDetail />);
+
+    fireEvent.click(await screen.findByText("common.edit"));
+    fireEvent.click(screen.getByRole("button", { expanded: false, name: /projector/ }));
+    fireEvent.click(screen.getByRole("button", { name: "resourceIcons.meeting-room" }));
+    fireEvent.click(screen.getByRole("button", { name: "common.save" }));
+
+    await waitFor(() => expect(api.updateResource).toHaveBeenCalledWith("open-paas.org", "room-2", expect.objectContaining({ icon: "meeting-room" })));
+  });
+
   it("ties the Name and Description fields of the edit form to their labels", async () => {
     render(<CalendarResourceDetail />);
 

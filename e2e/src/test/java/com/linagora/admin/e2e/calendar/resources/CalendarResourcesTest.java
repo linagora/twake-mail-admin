@@ -119,15 +119,15 @@ class CalendarResourcesTest extends CalendarAdminE2ETest {
         ResourcesSection section = domainPage.resources().search(nameless.substring(6, 18));
         assertThat(section.link(nameless)).isVisible();
 
-        // The odd icon is shown as text, without a broken image; Edit falls back to Home
+        // The odd icon is shown as text, without a broken image; Edit keeps it rather than replacing it with Home
         section.search(oddName);
         section.link(oddName).click();
         ResourceDetailPage detail = new ResourceDetailPage(app);
         assertThat(detail.heading(oddName)).isVisible();
         assertThat(detail.field("Icon", "not-an-icon")).isVisible();
-        assertThat(detail.field("Icon", "not-an-icon").getByRole(AriaRole.IMG)).hasCount(0);
+        assertThat(detail.field("Icon", "not-an-icon").locator("img")).hasCount(0);
         detail.edit();
-        assertThat(detail.iconPicker().trigger()).hasAccessibleName("Icon Home");
+        assertThat(detail.iconPicker().trigger()).hasAccessibleName("Icon not-an-icon");
         detail.cancelButton().click();
         assertThat(detail.nameBox()).isHidden();
 

@@ -3,12 +3,14 @@ import { useTranslation } from "react-i18next";
 import { ChevronDown } from "lucide-react";
 import { OWNS_ESCAPE } from "@/components/ui/dialog";
 
+// The icons the calendar side service accepts (ResourceIcons.SUPPORTED), each with its image
 export const RESOURCE_ICONS = [
-  "access-point", "battery", "briefcase", "calculator", "camera", "car",
-  "caravan", "cellphone", "coffee", "credit-card", "deskphone", "fax",
-  "guitar-acoustic", "home", "kettle", "laptop", "microphone", "motorbike",
-  "office", "parking", "phone", "projector", "radio", "remote", "soccer",
-  "sofa", "tablet", "train", "umbrella", "video", "wifi",
+  "access-point", "battery", "briefcase", "calculator", "calendar-month", "camera", "car",
+  "caravan", "cellphone", "coffee", "credit-card", "description", "deskphone", "fax",
+  "guitar-acoustic", "home", "kettle", "laptop", "layers", "meeting-room", "microphone",
+  "motorbike", "office", "parking", "people-alt", "phone", "phone-iphone", "projector",
+  "radio", "remote", "soccer", "sofa", "tablet", "train", "tv", "umbrella", "video",
+  "video-camera-back", "view-comfy-alt", "wifi",
 ];
 
 interface Props {
@@ -62,8 +64,9 @@ export default function ResourceIconPicker({ value, onChange, labelId }: Props) 
         aria-labelledby={labelId ? `${labelId} ${valueId}` : undefined}
         className="w-full flex items-center gap-2 px-3 py-2 border rounded-md text-sm bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 hover:bg-gray-50"
       >
-        <img src={`/icons/resources/${value}.svg`} alt="" className="w-5 h-5 shrink-0" />
-        <span id={valueId} className="flex-1 text-left">{t(`resourceIcons.${value}`)}</span>
+        {/* An icon the console does not know (set elsewhere) is kept, under its key */}
+        {RESOURCE_ICONS.includes(value) && <img src={`/icons/resources/${value}.svg`} alt="" className="w-5 h-5 shrink-0" />}
+        <span id={valueId} className="flex-1 text-left">{t(`resourceIcons.${value}`, { defaultValue: value })}</span>
         <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
       </button>
 

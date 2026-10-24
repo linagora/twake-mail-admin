@@ -21,6 +21,9 @@ import UserSuggestInput from "@/components/custom/user-suggest-input";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
+// The icon the edit form starts from: the resource's own, even one the console does not list
+const initialIcon = (resource: Resource) => resource.icon || "home";
+
 export default function CalendarResourceDetail() {
   const { t } = useTranslation();
   const idPrefix = useId();
@@ -105,7 +108,7 @@ export default function CalendarResourceDetail() {
     if (!resource) return;
     setEditName(resource.name ?? "");
     setEditDescription(resource.description || "");
-    setEditIcon(isKnownResourceIcon(resource.icon) ? resource.icon : "home");
+    setEditIcon(initialIcon(resource));
     setEditing(true);
   };
 
@@ -116,7 +119,8 @@ export default function CalendarResourceDetail() {
       await updateResource(domain, resource.id, {
         name: editName.trim(),
         description: editDescription.trim(),
-        icon: editIcon.trim(),
+        // Only when picked: an edit of the name keeps an icon the console does not know
+        ...(editIcon !== initialIcon(resource) && { icon: editIcon }),
       });
       toast({ title: t("domains.calendarResources.updated") });
       setEditing(false);
