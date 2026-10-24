@@ -70,6 +70,9 @@ class TeamCalendarMembersTest extends CalendarAdminE2ETest {
         members.applyButton().click();
 
         app.expectToast("Members updated");
+        // Saved: the dialog closes, and reopens with the saved members
+        assertThat(members.root()).isHidden();
+        members = section.openMembers(name, displayName);
         assertThat(members.roleOf(alice)).hasValue("viewer");
         assertThat(members.roleOf(bob)).hasValue("manager");
         assertThat(members.applyButton()).isDisabled();
@@ -90,6 +93,8 @@ class TeamCalendarMembersTest extends CalendarAdminE2ETest {
         members.applyButton().click();
 
         app.expectToast("Members updated");
+        assertThat(members.root()).isHidden();
+        members = section.openMembers(name, displayName);
         assertThat(members.memberAddress(bob)).hasCount(0);
         assertThat(members.roleOf(alice)).hasValue("member");
 

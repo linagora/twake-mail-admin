@@ -299,7 +299,7 @@ function MembersModal({
     () => getTeamCalendarMembers(domain, teamCalendar.id),
     [domain, teamCalendar.id],
   );
-  const { data: members, isLoading, error, refresh } = useFetchData<TeamCalendarMember[]>(fetchMembers);
+  const { data: members, isLoading, error } = useFetchData<TeamCalendarMember[]>(fetchMembers);
 
   const [removals, setRemovals] = useState<Set<string>>(new Set());
   const [changes, setChanges] = useState<Record<string, TeamCalendarMemberRole>>({});
@@ -367,10 +367,8 @@ function MembersModal({
     try {
       await updateTeamCalendarMembers(domain, teamCalendar.id, share);
       toast({ title: t("domains.teamCalendars.members.updated") });
-      setRemovals(new Set());
-      setChanges({});
-      setAdditions([]);
-      await refresh();
+      // Saved: the dialog closes, as the Delegation and Sharing dialogs do
+      onClose();
     } catch (err) {
       toast({ title: t("domains.teamCalendars.members.errorUpdate"), description: <ErrorDisplayer error={err} /> });
     } finally {

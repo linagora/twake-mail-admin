@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -12,6 +12,7 @@ vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => false }));
 vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: () => "idle" }));
 const createTeamCalendar = vi.hoisted(() => vi.fn());
+const updateTeamCalendarMembers = vi.hoisted(() => vi.fn());
 vi.mock("../api-client", () => ({
   getTeamCalendars: async () => [{
     id: "sales", domainId: "1", domainName: "example.com", name: "sales", displayName: "Sales", creation: "", updated: "",
@@ -21,7 +22,7 @@ vi.mock("../api-client", () => ({
   createTeamCalendar,
   updateTeamCalendar: vi.fn(),
   deleteTeamCalendar: vi.fn(),
-  updateTeamCalendarMembers: vi.fn(),
+  updateTeamCalendarMembers,
   exportTeamCalendar: vi.fn(),
   importTeamCalendar: vi.fn(),
   setTeamCalendarPublicRight: vi.fn(),
@@ -65,6 +66,20 @@ describe("team calendars: field labels", () => {
     expect(email.parentElement!.parentElement!.className).toContain("flex-wrap");
     // The shrinking is on the wrapper that anchors its suggestions
     expect(email.parentElement!.className).toContain("min-w-0");
+  });
+});
+
+describe("team calendars: members dialog", () => {
+  it("closes once the changes are saved", async () => {
+    updateTeamCalendarMembers.mockResolvedValue(undefined);
+    await openSection();
+    fireEvent.click(screen.getByTitle("domains.teamCalendars.members.tooltip"));
+    const role = await screen.findByRole("combobox", { name: "domains.teamCalendars.members.roleOf alice@example.com" });
+    fireEvent.change(role, { target: { value: "manager" } });
+    fireEvent.click(screen.getByRole("button", { name: "domains.teamCalendars.members.apply" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(updateTeamCalendarMembers).toHaveBeenCalled();
   });
 });
 
