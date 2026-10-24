@@ -82,6 +82,8 @@ describe("header: sticky bar of a detail page", () => {
     expect(bar.textContent).toContain("Users");
     expect(bar.textContent).toContain("bob@example.com");
     expect(bar.textContent).toContain("Expand all");
+    // Shortened on a phone, the object stays readable in full
+    expect(bar.querySelector('[title="bob@example.com"]')).not.toBeNull();
 
     await act(async () => report(false));
     expect(container.querySelector("[data-sticky-header]")).toBeNull();

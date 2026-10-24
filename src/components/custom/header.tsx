@@ -68,8 +68,9 @@ const Header: React.FC<HeaderProps> = ({
               <ChevronLeft className="w-4 h-4" aria-hidden="true" />
               {back.label}
             </Link>
-            <span className="min-w-0 truncate text-lg font-semibold">{headerTitle}</span>
-            {actions && <div className="ml-auto shrink-0">{actions}</div>}
+            <span className="min-w-0 truncate text-lg font-semibold" title={typeof headerTitle === "string" ? headerTitle : undefined}>{headerTitle}</span>
+            {/* On a phone the actions shrink to their icons, leaving the room to the object */}
+            {actions && <div className="ml-auto shrink-0 max-md:[&_[data-action-label]]:sr-only max-md:[&_[data-compact-icon]]:inline">{actions}</div>}
           </div>
         )}
       </div>
