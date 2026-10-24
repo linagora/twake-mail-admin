@@ -138,13 +138,17 @@ export default function RegisteredUsersList() {
       (a.email ?? "").localeCompare(b.email ?? "")
     );
     if (!search) return sorted;
-    const lower = search.toLowerCase();
+    const lower = search.trim().toLowerCase();
+    // The full name as the row shows it, and the other way round
+    const fullNames = (u: (typeof sorted)[number]) => [
+      `${u.firstname ?? ""} ${u.lastname ?? ""}`,
+      `${u.lastname ?? ""} ${u.firstname ?? ""}`,
+    ];
     return sorted.filter(
       (u) =>
         (u.id ?? "").toLowerCase().includes(lower) ||
         (u.email ?? "").toLowerCase().includes(lower) ||
-        (u.firstname ?? "").toLowerCase().includes(lower) ||
-        (u.lastname ?? "").toLowerCase().includes(lower)
+        fullNames(u).some((name) => name.toLowerCase().includes(lower))
     );
   }, [usersResult, search]);
 

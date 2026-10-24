@@ -199,6 +199,13 @@ describe("registered users list: search", () => {
     expect(screen.queryByText("registeredUsers.noMatch")).toBeNull();
   });
 
+  it.each(["Alice Smith", "smith alice", "Alice", "Smith"])("finds a user by the full name its row shows: %s", async (query) => {
+    await renderList();
+    search(query);
+    expect(screen.getByText("alice@example.com")).not.toBeNull();
+    expect(screen.queryByText("bob@example.com")).toBeNull();
+  });
+
   it("tells when no registered user matches the search", async () => {
     await renderList();
     search("zzz");
