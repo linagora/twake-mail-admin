@@ -2122,7 +2122,7 @@
     "unlimited": "Unlimited",
     "inheritHint": "Leave empty to use the {{parent}} limit ({{value}}).",
     "noLimitHint": "Leave empty for no limit.",
-    "parentDomain": "of the domain",
+    "parentDomain": "domain",
     "parentGlobal": "global",
     "invalid": "A limit must be a positive number, or unlimited.",
     "updated": "Quota limits updated",
