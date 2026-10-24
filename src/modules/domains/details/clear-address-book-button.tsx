@@ -4,7 +4,8 @@ import { Eraser, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { waitForTask } from "@/components/custom/dav-collection-actions";
+import { ActionLabel, waitForTask } from "@/components/custom/dav-collection-actions";
+import { matchesTypeToConfirm } from "@/components/custom/confirm-provider";
 import { useToast } from "@/hooks/use-toast";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useDomain } from "@/modules/domain-admin/domain-context";
@@ -38,7 +39,7 @@ interface Props {
 /**
  * Deletes the contacts of a domain address book, all of them or only those having a
  * mail address within a given domain. Destructive: the admin confirms by typing the
- * address book id.
+ * domain name.
  */
 export default function ClearAddressBookButton({ domain, addressBookId, onCleared }: Props) {
   const { t } = useTranslation();
@@ -58,7 +59,8 @@ export default function ClearAddressBookButton({ domain, addressBookId, onCleare
 
   const trimmedSourceDomain = sourceDomain.trim();
   const sourceDomainValid = isValidSourceDomain(trimmedSourceDomain);
-  const canSubmit = confirmation === addressBookId && sourceDomainValid && !clearing;
+  // Confirmed with the name of the domain emptied, as the other wipes are, not with a technical id
+  const canSubmit = matchesTypeToConfirm(confirmation, domain, true) && sourceDomainValid && !clearing;
 
   const close = () => {
     setOpen(false);
@@ -86,12 +88,14 @@ export default function ClearAddressBookButton({ domain, addressBookId, onCleare
       <button
         onClick={() => setOpen(true)}
         disabled={clearing}
-        className="p-1.5 rounded-md hover:bg-gray-200 transition disabled:opacity-50"
+        className="inline-flex items-center p-1.5 rounded-md hover:bg-gray-200 transition disabled:opacity-50"
         title={t("domains.addressBookCounts.clear.title")}
+        aria-label={t("domains.addressBookCounts.clear.title")}
       >
         {clearing
           ? <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-600" />
           : <Eraser className="w-3.5 h-3.5 text-red-600" />}
+        <ActionLabel label={t("domains.addressBookCounts.actions.clear")} />
       </button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) close(); }}>
@@ -119,7 +123,7 @@ export default function ClearAddressBookButton({ domain, addressBookId, onCleare
             </div>
             <div>
               <label className="text-sm font-medium" htmlFor="clear-confirmation">
-                {t("domains.addressBookCounts.clear.confirmation", { addressBookId })}
+                {t("confirm.typeToConfirm", { value: domain })}
               </label>
               <input
                 id="clear-confirmation"

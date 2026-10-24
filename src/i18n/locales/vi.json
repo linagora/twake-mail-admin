@@ -515,8 +515,18 @@
     },
     "addressBookCounts": {
       "title": "Liên hệ của tên miền",
-      "dab": "Sổ địa chỉ của tên miền (dab)",
+      "dab": "Sổ địa chỉ chung của miền",
       "domainMembers": "Thành viên tên miền",
+      "hints": {
+        "dab": "Liên hệ được chia sẻ với mọi người dùng của miền, do quản trị viên miền quản lý hoặc được nhập tại đây.",
+        "domainMembers": "Mọi người dùng của miền, được điền bởi tác vụ “{{task}}”."
+      },
+      "actions": {
+        "export": "Xuất",
+        "import": "Nhập",
+        "copy": "Sao chép người dùng",
+        "clear": "Xóa"
+      },
       "contactCount": "Liên hệ",
       "exportTitle": "Xuất sổ địa chỉ (vCard)",
       "errorExport": "Lỗi khi xuất sổ địa chỉ",
@@ -527,7 +537,6 @@
         "warning": "Thao tác này xóa vĩnh viễn các liên hệ của sổ địa chỉ. Không thể hoàn tác.",
         "sourceDomain": "Chỉ các liên hệ có địa chỉ thư trong miền (tùy chọn)",
         "invalidSourceDomain": "Miền không hợp lệ",
-        "confirmation": "Nhập {{addressBookId}} để xác nhận",
         "submit": "Xóa danh bạ",
         "error": "Lỗi khi xóa danh bạ",
         "error400": "Miền, miền nguồn hoặc sổ địa chỉ không hợp lệ.",

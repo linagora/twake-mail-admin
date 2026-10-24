@@ -109,6 +109,16 @@ describe("domain address book contact counts", () => {
     expect(api.exportDomainAddressBook).toHaveBeenCalledWith("linagora.com", "dab");
   });
 
+  it("says what each address book holds, the shared one with its technical id", () => {
+    api.getDomainAddressBookContactCount.mockResolvedValue({ count: 3 });
+    renderWith(ALL);
+    unfold();
+
+    expect(screen.getByText("dab").className).toContain("font-mono");
+    expect(screen.getByText("domains.addressBookCounts.hints.dab")).not.toBeNull();
+    expect(screen.getByText("domains.addressBookCounts.hints.domainMembers")).not.toBeNull();
+  });
+
   it("offers to clear the domain address book only", () => {
     api.getDomainAddressBookContactCount.mockResolvedValue({ count: 3 });
     renderWith(ALL);
@@ -117,7 +127,7 @@ describe("domain address book contact counts", () => {
     expect(screen.getAllByTitle("domains.addressBookCounts.clear.title")).toHaveLength(1);
   });
 
-  it("clears only once the address book id is typed", async () => {
+  it("clears only once the domain name is typed", async () => {
     api.clearDomainAddressBook.mockResolvedValue({ taskId: "6d3bb34e" });
     renderWith([{ endpoint: "/domains/{domain}/addressbooks/dab/contacts" }]);
     unfold();
@@ -126,7 +136,10 @@ describe("domain address book contact counts", () => {
 
     expect(submit.disabled).toBe(true);
     fireEvent.change(screen.getByLabelText("domains.addressBookCounts.clear.sourceDomain"), { target: { value: " student.school.org " } });
-    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.clear.confirmation"), { target: { value: "dab" } });
+    // The technical id no longer confirms it: the name of the domain emptied does
+    fireEvent.change(screen.getByLabelText("confirm.typeToConfirm"), { target: { value: "dab" } });
+    expect(submit.disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText("confirm.typeToConfirm"), { target: { value: "linagora.com" } });
     expect(submit.disabled).toBe(false);
     fireEvent.click(submit);
 
@@ -138,7 +151,7 @@ describe("domain address book contact counts", () => {
     unfold();
     fireEvent.click(screen.getByTitle("domains.addressBookCounts.clear.title"));
     fireEvent.change(screen.getByLabelText("domains.addressBookCounts.clear.sourceDomain"), { target: { value: "not a domain" } });
-    fireEvent.change(screen.getByLabelText("domains.addressBookCounts.clear.confirmation"), { target: { value: "dab" } });
+    fireEvent.change(screen.getByLabelText("confirm.typeToConfirm"), { target: { value: "linagora.com" } });
 
     expect(screen.getByText("domains.addressBookCounts.clear.invalidSourceDomain")).not.toBeNull();
     expect((screen.getByRole("button", { name: "domains.addressBookCounts.clear.submit" }) as HTMLButtonElement).disabled).toBe(true);

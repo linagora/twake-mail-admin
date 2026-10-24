@@ -517,8 +517,18 @@
     },
     "addressBookCounts": {
       "title": "Domain-Kontakte",
-      "dab": "Domain-Adressbuch (dab)",
+      "dab": "Gemeinsames Adressbuch der Domain",
       "domainMembers": "Domain-Mitglieder",
+      "hints": {
+        "dab": "Kontakte, die mit allen Benutzern der Domain geteilt werden, von den Domain-Admins gepflegt oder hier importiert.",
+        "domainMembers": "Alle Benutzer der Domain, befüllt durch die Aufgabe „{{task}}“."
+      },
+      "actions": {
+        "export": "Exportieren",
+        "import": "Importieren",
+        "copy": "Benutzer kopieren",
+        "clear": "Leeren"
+      },
       "contactCount": "Kontakte",
       "exportTitle": "Adressbuch exportieren (vCard)",
       "errorExport": "Fehler beim Exportieren des Adressbuchs",
@@ -529,7 +539,6 @@
         "warning": "Dadurch werden die Kontakte des Adressbuchs endgültig gelöscht. Dies kann nicht rückgängig gemacht werden.",
         "sourceDomain": "Nur Kontakte mit einer E-Mail-Adresse in der Domain (optional)",
         "invalidSourceDomain": "Ungültige Domain",
-        "confirmation": "Geben Sie {{addressBookId}} zur Bestätigung ein",
         "submit": "Kontakte leeren",
         "error": "Fehler beim Leeren der Kontakte",
         "error400": "Die Domain, die Quelldomain oder das Adressbuch ist ungültig.",

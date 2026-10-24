@@ -30,7 +30,7 @@ import com.microsoft.playwright.options.FilePayload;
  */
 @ResourceLock(DomainLocks.OPEN_PAAS)
 class DomainContactsTest extends CalendarAdminE2ETest {
-    private static final String DAB = "Domain address book (dab)";
+    private static final String DAB = "Shared domain address book";
     private static final String MEMBERS = "Domain members";
 
     @Test
@@ -120,19 +120,20 @@ class DomainContactsTest extends CalendarAdminE2ETest {
         Locator dialog = app.dialog();
         assertThat(dialog).containsText("This permanently deletes the contacts of the address book. This cannot be undone.");
         Locator submit = dialog.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Clear contacts"));
-        Locator confirmation = dialog.getByLabel("Type dab to confirm");
+        Locator confirmation = dialog.getByLabel("Type " + CalendarFixtures.DOMAIN + " to confirm");
         Locator sourceDomain = dialog.getByLabel("Only contacts with a mail address in domain (optional)");
         assertThat(submit).isDisabled();
 
         sourceDomain.fill("bad domain");
         assertThat(dialog.getByText("Invalid domain", new Locator.GetByTextOptions().setExact(true))).isVisible();
-        confirmation.fill("dab");
+        confirmation.fill(CalendarFixtures.DOMAIN);
         assertThat(submit).isDisabled();
         sourceDomain.fill("");
         assertThat(dialog.getByText("Invalid domain", new Locator.GetByTextOptions().setExact(true))).hasCount(0);
-        confirmation.fill("da");
-        assertThat(submit).isDisabled();
+        // The technical id no longer confirms it: the name of the domain emptied does
         confirmation.fill("dab");
+        assertThat(submit).isDisabled();
+        confirmation.fill(CalendarFixtures.DOMAIN);
         assertThat(submit).isEnabled();
 
         Request request = page.waitForRequest(r -> r.url().contains("/addressbooks/dab/contacts"), submit::click);

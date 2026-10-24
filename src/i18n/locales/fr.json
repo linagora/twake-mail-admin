@@ -517,8 +517,18 @@
     },
     "addressBookCounts": {
       "title": "Contacts du domaine",
-      "dab": "Carnet d'adresses du domaine (dab)",
+      "dab": "Carnet d'adresses partagé du domaine",
       "domainMembers": "Membres du domaine",
+      "hints": {
+        "dab": "Contacts partagés avec tous les utilisateurs du domaine, gérés par les administrateurs du domaine ou importés ici.",
+        "domainMembers": "Tous les utilisateurs du domaine, remplis par la tâche « {{task}} »."
+      },
+      "actions": {
+        "export": "Exporter",
+        "import": "Importer",
+        "copy": "Copier des utilisateurs",
+        "clear": "Vider"
+      },
       "contactCount": "Contacts",
       "exportTitle": "Exporter le carnet d'adresses (vCard)",
       "errorExport": "Erreur lors de l'export du carnet d'adresses",
@@ -529,7 +539,6 @@
         "warning": "Cette action supprime définitivement les contacts du carnet d'adresses. Elle est irréversible.",
         "sourceDomain": "Uniquement les contacts ayant une adresse mail dans le domaine (facultatif)",
         "invalidSourceDomain": "Domaine invalide",
-        "confirmation": "Saisissez {{addressBookId}} pour confirmer",
         "submit": "Vider les contacts",
         "error": "Erreur lors de la suppression des contacts",
         "error400": "Le domaine, le domaine source ou le carnet d'adresses est invalide.",

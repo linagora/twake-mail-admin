@@ -195,9 +195,10 @@ public class CalendarDomainPage {
 
     // ---- Domain contacts
 
-    /** A row of the "Domain contacts" section: "Domain address book (dab)" or "Domain members". */
+    /** A row of the "Domain contacts" section: "Shared domain address book" or "Domain members". */
     public Locator addressBookRow(String label) {
-        return app.main().getByText(label, new Locator.GetByTextOptions().setExact(true)).locator("xpath=..");
+        return app.main().getByText(label, new Locator.GetByTextOptions().setExact(true))
+            .locator("xpath=ancestor::*[@data-address-book-row][1]");
     }
 
     // ---- Tasks

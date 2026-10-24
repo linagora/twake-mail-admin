@@ -517,8 +517,18 @@
     },
     "addressBookCounts": {
       "title": "Contactos del dominio",
-      "dab": "Libreta de direcciones del dominio (dab)",
+      "dab": "Libreta de direcciones compartida del dominio",
       "domainMembers": "Miembros del dominio",
+      "hints": {
+        "dab": "Contactos compartidos con todos los usuarios del dominio, gestionados por sus administradores o importados aquí.",
+        "domainMembers": "Todos los usuarios del dominio, rellenados por la tarea «{{task}}»."
+      },
+      "actions": {
+        "export": "Exportar",
+        "import": "Importar",
+        "copy": "Copiar usuarios",
+        "clear": "Vaciar"
+      },
       "contactCount": "Contactos",
       "exportTitle": "Exportar la libreta de direcciones (vCard)",
       "errorExport": "Error al exportar la libreta de direcciones",
@@ -529,7 +539,6 @@
         "warning": "Esta acción elimina definitivamente los contactos de la libreta de direcciones. No se puede deshacer.",
         "sourceDomain": "Solo los contactos con una dirección de correo en el dominio (opcional)",
         "invalidSourceDomain": "Dominio no válido",
-        "confirmation": "Escriba {{addressBookId}} para confirmar",
         "submit": "Vaciar los contactos",
         "error": "Error al vaciar los contactos",
         "error400": "El dominio, el dominio de origen o la libreta de direcciones no es válido.",

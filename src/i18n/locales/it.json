@@ -517,8 +517,18 @@
     },
     "addressBookCounts": {
       "title": "Contatti del dominio",
-      "dab": "Rubrica del dominio (dab)",
+      "dab": "Rubrica condivisa del dominio",
       "domainMembers": "Membri del dominio",
+      "hints": {
+        "dab": "Contatti condivisi con tutti gli utenti del dominio, gestiti dagli amministratori del dominio o importati qui.",
+        "domainMembers": "Tutti gli utenti del dominio, compilati dall'attività «{{task}}»."
+      },
+      "actions": {
+        "export": "Esporta",
+        "import": "Importa",
+        "copy": "Copia utenti",
+        "clear": "Svuota"
+      },
       "contactCount": "Contatti",
       "exportTitle": "Esporta la rubrica (vCard)",
       "errorExport": "Errore durante l'esportazione della rubrica",
@@ -529,7 +539,6 @@
         "warning": "Questa azione elimina definitivamente i contatti della rubrica. Non può essere annullata.",
         "sourceDomain": "Solo i contatti con un indirizzo email nel dominio (facoltativo)",
         "invalidSourceDomain": "Dominio non valido",
-        "confirmation": "Digita {{addressBookId}} per confermare",
         "submit": "Svuota i contatti",
         "error": "Errore durante lo svuotamento dei contatti",
         "error400": "Il dominio, il dominio di origine o la rubrica non è valido.",

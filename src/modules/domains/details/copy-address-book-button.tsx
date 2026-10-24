@@ -4,7 +4,7 @@ import { Loader2, UserPlus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { waitForTask } from "@/components/custom/dav-collection-actions";
+import { ActionLabel, waitForTask } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useDomain } from "@/modules/domain-admin/domain-context";
@@ -95,12 +95,14 @@ export default function CopyAddressBookButton({ domain, addressBookId, onCopied 
       <button
         onClick={() => setOpen(true)}
         disabled={copying}
-        className="p-1.5 rounded-md hover:bg-gray-200 transition disabled:opacity-50"
+        className="inline-flex items-center p-1.5 rounded-md hover:bg-gray-200 transition disabled:opacity-50"
         title={t("domains.addressBookCounts.copy.title")}
+        aria-label={t("domains.addressBookCounts.copy.title")}
       >
         {copying
           ? <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-600" />
           : <UserPlus className="w-3.5 h-3.5 text-gray-600" />}
+        <ActionLabel label={t("domains.addressBookCounts.actions.copy")} />
       </button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) close(); }}>

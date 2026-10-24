@@ -14,6 +14,15 @@ const LABEL_KEYS: Record<DomainAddressBookId, string> = {
   "domain-members": "domains.addressBookCounts.domainMembers",
 };
 
+// What each address book holds and who fills it
+const HINT_KEYS: Record<DomainAddressBookId, string> = {
+  dab: "domains.addressBookCounts.hints.dab",
+  "domain-members": "domains.addressBookCounts.hints.domainMembers",
+};
+
+// The technical id shown after the name, where it differs from the name
+const SHOWS_ID: Record<DomainAddressBookId, boolean> = { dab: true, "domain-members": false };
+
 // Stable references: the badge re-reads its counter whenever its function changes.
 const countContacts = (domain: string, addressBookId: string): Promise<CollectionCount> =>
   getDomainAddressBookContactCount(domain, addressBookId as DomainAddressBookId);
@@ -49,49 +58,58 @@ function AddressBookRow({
   const [countKey, setCountKey] = useState(0);
   const refreshCount = () => setCountKey((key) => key + 1);
 
+  const label = t(LABEL_KEYS[addressBookId]);
   return (
-    <div className="flex items-center gap-2 py-1">
-      <p className="font-medium">{t(LABEL_KEYS[addressBookId])}</p>
-      {permissions.count && (
-        <CollectionCountBadge
-          key={countKey}
-          owner={domain}
-          collectionId={addressBookId}
-          count={countContacts}
-          icon={Contact}
-          title={t("domains.addressBookCounts.contactCount")}
-        />
-      )}
-      {permissions.export && (
-        <ExportCollectionButton
-          owner={domain}
-          collectionId={addressBookId}
-          // "example.com-Domain_address_book.vcf": named as shown, not by its id
-          name={`${domain}-${t(LABEL_KEYS[addressBookId])}`}
-          extension="vcf"
-          exportCollection={exportContacts}
-          title={t("domains.addressBookCounts.exportTitle")}
-          errorTitle={t("domains.addressBookCounts.errorExport")}
-        />
-      )}
-      {permissions.import && (
-        <ImportCollectionButton
-          owner={domain}
-          collectionId={addressBookId}
-          accept=".vcf,text/vcard"
-          importCollection={importContacts}
-          title={t("domains.addressBookCounts.importTitle")}
-          taskType="domain-addressbook-import"
-          errorTitle={t("domains.addressBookCounts.errorImport")}
-          onImported={refreshCount}
-        />
-      )}
-      {permissions.copy && (
-        <CopyAddressBookButton domain={domain} addressBookId={addressBookId} onCopied={refreshCount} />
-      )}
-      {permissions.clear && (
-        <ClearAddressBookButton domain={domain} addressBookId={addressBookId} onCleared={refreshCount} />
-      )}
+    <div className="py-1">
+      <div data-address-book-row className="flex flex-wrap items-center gap-2">
+        <p className="font-medium">
+          <span>{label}</span>
+          {SHOWS_ID[addressBookId] && <span className="ml-2 font-mono text-xs font-normal text-gray-500">{addressBookId}</span>}
+        </p>
+        {permissions.count && (
+          <CollectionCountBadge
+            key={countKey}
+            owner={domain}
+            collectionId={addressBookId}
+            count={countContacts}
+            icon={Contact}
+            title={t("domains.addressBookCounts.contactCount")}
+          />
+        )}
+        {permissions.export && (
+          <ExportCollectionButton
+            owner={domain}
+            collectionId={addressBookId}
+            // "example.com-Shared_domain_address_book_dab.vcf": named as shown, not by its id alone
+            name={`${domain}-${label}${SHOWS_ID[addressBookId] ? ` ${addressBookId}` : ""}`}
+            extension="vcf"
+            exportCollection={exportContacts}
+            title={t("domains.addressBookCounts.exportTitle")}
+            errorTitle={t("domains.addressBookCounts.errorExport")}
+            label={t("domains.addressBookCounts.actions.export")}
+          />
+        )}
+        {permissions.import && (
+          <ImportCollectionButton
+            owner={domain}
+            collectionId={addressBookId}
+            accept=".vcf,text/vcard"
+            importCollection={importContacts}
+            title={t("domains.addressBookCounts.importTitle")}
+            taskType="domain-addressbook-import"
+            errorTitle={t("domains.addressBookCounts.errorImport")}
+            onImported={refreshCount}
+            label={t("domains.addressBookCounts.actions.import")}
+          />
+        )}
+        {permissions.copy && (
+          <CopyAddressBookButton domain={domain} addressBookId={addressBookId} onCopied={refreshCount} />
+        )}
+        {permissions.clear && (
+          <ClearAddressBookButton domain={domain} addressBookId={addressBookId} onCleared={refreshCount} />
+        )}
+      </div>
+      <p className="text-xs text-gray-500">{t(HINT_KEYS[addressBookId], { task: t("domains.calendarTasks.syncButton") })}</p>
     </div>
   );
 }

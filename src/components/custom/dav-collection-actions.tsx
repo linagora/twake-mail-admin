@@ -22,7 +22,7 @@ export interface CollectionCount {
   count: number;
 }
 
-const BUTTON_CLASS = "p-1.5 rounded-md hover:bg-gray-200 transition disabled:opacity-50";
+const BUTTON_CLASS = "inline-flex items-center p-1.5 rounded-md hover:bg-gray-200 transition disabled:opacity-50";
 
 // An import lands asynchronously, so the counter is read again once its task has
 // run. Long enough for the imports an operator triggers by hand, and bounded:
@@ -71,6 +71,14 @@ export function CollectionCountBadge({
   );
 }
 
+/**
+ * The name of an icon action, written next to it from md up; below, the icon and its title only.
+ * The button keeps its title as accessible name, which starts with this shorter label.
+ */
+export function ActionLabel({ label }: { label?: string }) {
+  return label ? <span className="hidden md:inline ml-1 text-sm text-gray-700">{label}</span> : null;
+}
+
 export function ExportCollectionButton({
   owner,
   collectionId,
@@ -79,12 +87,15 @@ export function ExportCollectionButton({
   exportCollection,
   title,
   errorTitle,
+  label,
 }: CollectionProps & {
   name: string;
   extension: string;
   exportCollection: (owner: string, collectionId: string) => Promise<Blob>;
   title: string;
   errorTitle: string;
+  // A short name shown next to the icon on wide screens
+  label?: string;
 }) {
   const { toast } = useToast();
   const [exporting, setExporting] = useState(false);
@@ -101,10 +112,11 @@ export function ExportCollectionButton({
   };
 
   return (
-    <button onClick={handleExport} disabled={exporting} className={BUTTON_CLASS} title={title}>
+    <button onClick={handleExport} disabled={exporting} className={BUTTON_CLASS} title={title} aria-label={title}>
       {exporting
         ? <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-600" />
         : <Download className="w-3.5 h-3.5 text-gray-600" />}
+      <ActionLabel label={label} />
     </button>
   );
 }
@@ -118,6 +130,7 @@ export function ImportCollectionButton({
   taskType,
   errorTitle,
   onImported,
+  label,
 }: CollectionProps & {
   accept: string;
   importCollection: (
@@ -131,6 +144,8 @@ export function ImportCollectionButton({
   errorTitle: string;
   // Called once the import task is over, so the row can re-read its counter.
   onImported: () => void;
+  // A short name shown next to the icon on wide screens
+  label?: string;
 }) {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -171,10 +186,12 @@ export function ImportCollectionButton({
         disabled={importing}
         className={BUTTON_CLASS}
         title={title}
+        aria-label={title}
       >
         {importing
           ? <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-600" />
           : <Upload className="w-3.5 h-3.5 text-gray-600" />}
+        <ActionLabel label={label} />
       </button>
     </>
   );
