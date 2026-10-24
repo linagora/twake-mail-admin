@@ -165,6 +165,10 @@ export default function UserJmapSettings({ username }: Props) {
                       type="text"
                       value={row.key}
                       onChange={(e) => updateRow(row.id, "key", e.target.value)}
+                      // The placeholder is only an example: the field keeps a name once filled
+                      aria-label={t("users.jmapSettings.key")}
+                      aria-invalid={!!validationErrors[row.id]}
+                      aria-describedby={validationErrors[row.id] ? `jmap-setting-${row.id}-error` : undefined}
                       placeholder={t("users.jmapSettings.keyPlaceholder")}
                       disabled={!canUpdate}
                       className={`w-full px-3 py-1.5 border rounded-md text-sm font-mono focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-600 ${
@@ -172,7 +176,7 @@ export default function UserJmapSettings({ username }: Props) {
                       }`}
                     />
                     {validationErrors[row.id] && (
-                      <p className="text-xs text-red-500 mt-0.5">{validationErrors[row.id]}</p>
+                      <p id={`jmap-setting-${row.id}-error`} className="text-xs text-red-500 mt-0.5">{validationErrors[row.id]}</p>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -180,6 +184,7 @@ export default function UserJmapSettings({ username }: Props) {
                       type="text"
                       value={row.value}
                       onChange={(e) => updateRow(row.id, "value", e.target.value)}
+                      aria-label={t("users.jmapSettings.value")}
                       placeholder={t("users.jmapSettings.valuePlaceholder")}
                       disabled={!canUpdate}
                       className="w-full px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-600"
