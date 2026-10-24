@@ -1308,7 +1308,11 @@
       "failedMailboxes": "Buzones fallidos",
       "processedMessageCount": "Mensajes procesados",
       "failedMessageCount": "Mensajes fallidos",
-      "timestamp": "Registrado el"
+      "timestamp": "Registrado el",
+      "mailboxesExpired": "Buzones con mensajes caducados",
+      "messagesDeleted": "Mensajes eliminados",
+      "subscribedCount": "Buzones suscritos",
+      "unsubscribedCount": "Buzones con suscripción cancelada"
     },
     "cancelTarget": " para {{target}}",
     "outcome": {

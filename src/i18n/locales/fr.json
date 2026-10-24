@@ -1308,7 +1308,11 @@
       "failedMailboxes": "Boîtes en échec",
       "processedMessageCount": "Messages traités",
       "failedMessageCount": "Messages en échec",
-      "timestamp": "Enregistré le"
+      "timestamp": "Enregistré le",
+      "mailboxesExpired": "Boîtes avec des messages expirés",
+      "messagesDeleted": "Messages supprimés",
+      "subscribedCount": "Boîtes abonnées",
+      "unsubscribedCount": "Boîtes désabonnées"
     },
     "cancelTarget": " pour {{target}}",
     "outcome": {

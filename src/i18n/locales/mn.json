@@ -1303,7 +1303,11 @@
       "failedMailboxes": "Амжилтгүй хайрцаг",
       "processedMessageCount": "Боловсруулсан мессеж",
       "failedMessageCount": "Амжилтгүй мессеж",
-      "timestamp": "Бүртгэсэн"
+      "timestamp": "Бүртгэсэн",
+      "mailboxesExpired": "Хугацаа нь дууссан захидалтай хайрцаг",
+      "messagesDeleted": "Устгасан захидал",
+      "subscribedCount": "Бүртгүүлсэн хайрцаг",
+      "unsubscribedCount": "Бүртгэлээс хассан хайрцаг"
     },
     "cancelTarget": " ({{target}})",
     "outcome": {

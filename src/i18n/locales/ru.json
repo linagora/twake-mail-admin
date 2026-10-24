@@ -1307,7 +1307,11 @@
       "failedMailboxes": "Ящики с ошибкой",
       "processedMessageCount": "Обработано сообщений",
       "failedMessageCount": "Сообщения с ошибкой",
-      "timestamp": "Записано"
+      "timestamp": "Записано",
+      "mailboxesExpired": "Ящики с устаревшими сообщениями",
+      "messagesDeleted": "Удалено сообщений",
+      "subscribedCount": "Ящиков с подпиской",
+      "unsubscribedCount": "Ящиков без подписки"
     },
     "cancelTarget": " для {{target}}",
     "outcome": {

@@ -1308,7 +1308,11 @@
       "failedMailboxes": "Failed mailboxes",
       "processedMessageCount": "Processed messages",
       "failedMessageCount": "Failed messages",
-      "timestamp": "Recorded at"
+      "timestamp": "Recorded at",
+      "mailboxesExpired": "Mailboxes with expired messages",
+      "messagesDeleted": "Messages deleted",
+      "subscribedCount": "Mailboxes subscribed",
+      "unsubscribedCount": "Mailboxes unsubscribed"
     },
     "cancelTarget": " for {{target}}",
     "outcome": {

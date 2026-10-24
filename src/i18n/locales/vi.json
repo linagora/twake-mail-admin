@@ -1301,7 +1301,11 @@
       "failedMailboxes": "Hộp thư lỗi",
       "processedMessageCount": "Thư đã xử lý",
       "failedMessageCount": "Thư lỗi",
-      "timestamp": "Ghi nhận lúc"
+      "timestamp": "Ghi nhận lúc",
+      "mailboxesExpired": "Hộp thư có thư hết hạn",
+      "messagesDeleted": "Thư đã xóa",
+      "subscribedCount": "Hộp thư đã đăng ký",
+      "unsubscribedCount": "Hộp thư đã hủy đăng ký"
     },
     "cancelTarget": " cho {{target}}",
     "outcome": {

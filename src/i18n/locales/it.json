@@ -1308,7 +1308,11 @@
       "failedMailboxes": "Caselle non riuscite",
       "processedMessageCount": "Messaggi elaborati",
       "failedMessageCount": "Messaggi non riusciti",
-      "timestamp": "Registrato il"
+      "timestamp": "Registrato il",
+      "mailboxesExpired": "Caselle con messaggi scaduti",
+      "messagesDeleted": "Messaggi eliminati",
+      "subscribedCount": "Caselle sottoscritte",
+      "unsubscribedCount": "Caselle non più sottoscritte"
     },
     "cancelTarget": " per {{target}}",
     "outcome": {

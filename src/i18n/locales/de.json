@@ -1308,7 +1308,11 @@
       "failedMailboxes": "Fehlgeschlagene Postfächer",
       "processedMessageCount": "Verarbeitete Nachrichten",
       "failedMessageCount": "Fehlgeschlagene Nachrichten",
-      "timestamp": "Erfasst am"
+      "timestamp": "Erfasst am",
+      "mailboxesExpired": "Postfächer mit abgelaufenen Nachrichten",
+      "messagesDeleted": "Gelöschte Nachrichten",
+      "subscribedCount": "Abonnierte Postfächer",
+      "unsubscribedCount": "Abbestellte Postfächer"
     },
     "cancelTarget": " für {{target}}",
     "outcome": {

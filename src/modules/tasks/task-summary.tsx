@@ -108,7 +108,26 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   processedMessageCount: "tasks.info.processedMessageCount",
   failedMessageCount: "tasks.info.failedMessageCount",
   timestamp: "tasks.info.timestamp",
+  // Recompute mailbox quota: a quota root is a user
+  processedQuotaRoots: "tasks.info.processedUserCount",
+  failedQuotaRoots: "tasks.info.failedUsers",
+  // Trash and Spam cleanups (ExpireMailboxTask)
+  mailboxesProcessed: "tasks.info.processedMailboxes",
+  mailboxesFailed: "tasks.info.failedMailboxes",
+  mailboxesExpired: "tasks.info.mailboxesExpired",
+  messagesDeleted: "tasks.info.messagesDeleted",
+  // Subscribe to all mailboxes
+  subscribedCount: "tasks.info.subscribedCount",
+  unsubscribedCount: "tasks.info.unsubscribedCount",
 };
+
+// Shown above the details already, or nested values left to the raw JSON
+const isDetailShown = (key: string, value: unknown) =>
+  value !== null && value !== undefined && key !== "type"
+  && !(typeof value === "object" && !(Array.isArray(value) && value.every((item) => typeof item !== "object")));
+
+// A list of names or ids, e.g. the failed users: its items, or a dash when empty
+const detailText = (value: unknown) => (Array.isArray(value) ? (value.length > 0 ? value.join(", ") : "—") : String(value));
 
 /**
  * The name of each WebAdmin task type, as the button that starts it reads: the operator finds
@@ -255,7 +274,7 @@ export function TaskSummary({ task }: { task: TaskDetailResponse }) {
 /** additionalInformation as labelled values, then the raw JSON on demand. */
 export function TaskDetails({ task, raw }: { task: TaskDetailResponse; raw: unknown }) {
   const { t } = useTranslation();
-  const entries = Object.entries(task.additionalInformation ?? {}).filter(([, value]) => value !== null && value !== undefined);
+  const entries = Object.entries(task.additionalInformation ?? {}).filter(([key, value]) => isDetailShown(key, value));
   return (
     <div className="space-y-3">
       {entries.length > 0 && (
@@ -269,9 +288,7 @@ export function TaskDetails({ task, raw }: { task: TaskDetailResponse; raw: unkn
                   ? <span className="min-w-0 break-words">{formatDate(value)}</span>
                   : USER_KEYS.has(key) && typeof value === "string"
                   ? <span className="min-w-0"><UserLink address={value} /></span>
-                  : typeof value === "object"
-                  ? <pre className="text-xs bg-gray-50 p-2 rounded overflow-x-auto">{JSON.stringify(value, null, 2)}</pre>
-                  : <span className="min-w-0 break-words">{String(value)}</span>}
+                  : <span className="min-w-0 break-words">{detailText(value)}</span>}
               </Fragment>
             ))}
           </div>
