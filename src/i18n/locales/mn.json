@@ -568,10 +568,11 @@
       "confirmBusy": "«{{domain}}»-г ямар ч байсан устгах уу?",
       "couldNotCheck": "Энэ домэйнд юу үлдсэнийг консол шалгаж чадсангүй.",
       "users": "{{count}} хэрэглэгч (жишээ нь {{examples}})",
+      "aliases": "{{count}} домэйн алиас",
       "usersMore": "{{limit}}-аас олон хэрэглэгч (жишээ нь {{examples}})",
       "stillUsers": "{{domain}}-д {{users}} үлдсэн байна.",
-      "stillAliases": "{{domain}}-д {{aliasCount}} домэйн алиас үлдсэн байна.",
-      "stillBoth": "{{domain}}-д {{users}} болон {{aliasCount}} домэйн алиас үлдсэн байна.",
+      "stillAliases": "{{domain}}-д {{aliases}} үлдсэн байна.",
+      "stillBoth": "{{domain}}-д {{users}} болон {{aliases}} үлдсэн байна.",
       "usersConsequence": "Тэдний бүртгэл ба хайрцаг серверт үлдэнэ, гэхдээ @{{domain}} руу ирэх захидал тэдэнд хүргэгдэхээ болино.",
       "aliasesConsequence": "Эдгээр домэйн алиас руу ирэх захидал хүргэгдэхээ болино.",
       "seeUsers": "{{domain}}-ийн хэрэглэгчдийг харах"

@@ -567,10 +567,11 @@
       "confirmBusy": "Vẫn xóa \"{{domain}}\"?",
       "couldNotCheck": "Bảng điều khiển không thể kiểm tra miền này còn chứa gì.",
       "users": "{{count}} người dùng (ví dụ {{examples}})",
+      "aliases": "{{count}} bí danh miền",
       "usersMore": "hơn {{limit}} người dùng (ví dụ {{examples}})",
       "stillUsers": "{{domain}} vẫn còn {{users}}.",
-      "stillAliases": "{{domain}} vẫn còn {{aliasCount}} bí danh miền.",
-      "stillBoth": "{{domain}} vẫn còn {{users}} và {{aliasCount}} bí danh miền.",
+      "stillAliases": "{{domain}} vẫn còn {{aliases}}.",
+      "stillBoth": "{{domain}} vẫn còn {{users}} và {{aliases}}.",
       "usersConsequence": "Tài khoản và hộp thư của họ vẫn còn trên máy chủ, nhưng thư gửi tới @{{domain}} sẽ không còn được gửi tới họ.",
       "aliasesConsequence": "Thư gửi tới các bí danh miền này sẽ không còn được gửi.",
       "seeUsers": "Xem người dùng của {{domain}}"

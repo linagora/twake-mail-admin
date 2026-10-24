@@ -103,7 +103,7 @@ class DomainsListTest extends MailAdminE2ETest {
         assertThat(dialog).containsText(domain + " still has 2 users (e.g. ");
         assertThat(dialog).containsText(alice);
         assertThat(dialog).containsText(bob);
-        assertThat(dialog).containsText(") and 1 domain aliases.");
+        assertThat(dialog).containsText(") and 1 domain alias.");
         assertThat(dialog).containsText("Their accounts and mailboxes stay on the server, but mail to @" + domain
             + " will no longer be delivered to them.");
         assertThat(dialog).containsText("Delete \"" + domain + "\" anyway?");

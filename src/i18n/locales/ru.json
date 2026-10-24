@@ -570,10 +570,11 @@
       "confirmBusy": "Всё равно удалить «{{domain}}»?",
       "couldNotCheck": "Консоли не удалось проверить, что ещё содержит этот домен.",
       "users": "пользователей: {{count}} (напр. {{examples}})",
+      "aliases": "псевдонимов домена: {{count}}",
       "usersMore": "более {{limit}} пользователей (напр. {{examples}})",
       "stillUsers": "В {{domain}} ещё есть {{users}}.",
-      "stillAliases": "В {{domain}} ещё есть псевдонимов домена: {{aliasCount}}.",
-      "stillBoth": "В {{domain}} ещё есть {{users}} и псевдонимов домена: {{aliasCount}}.",
+      "stillAliases": "В {{domain}} ещё есть {{aliases}}.",
+      "stillBoth": "В {{domain}} ещё есть {{users}} и {{aliases}}.",
       "usersConsequence": "Их учётные записи и ящики остаются на сервере, но почта на @{{domain}} больше не будет им доставляться.",
       "aliasesConsequence": "Почта на эти псевдонимы домена больше не будет доставляться.",
       "seeUsers": "Пользователи {{domain}}"

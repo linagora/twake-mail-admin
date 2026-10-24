@@ -97,8 +97,8 @@ export default function DomainsList() {
       confirmLabel: t("common.delete"),
       consequence: (
         <>
-          {t(holds, { domain, users: usersLabel, aliasCount })}{" "}
-          {t(users.length > 0 ? "domains.delete.usersConsequence" : "domains.delete.aliasesConsequence", { domain })}
+          {t(holds, { domain, users: usersLabel, aliases: t("domains.delete.aliases", { count: aliasCount }) })}{" "}
+          {t(users.length > 0 ? "domains.delete.usersConsequence" : "domains.delete.aliasesConsequence", { domain, count: aliasCount })}
         </>
       ),
       typeToConfirm: domain,
