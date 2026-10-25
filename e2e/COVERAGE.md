@@ -125,7 +125,7 @@ origin app cannot read them
 | MAP-01 | MappingsTest.addAndRemoveAddressMapping |
 | MAP-02 | MappingsTest.regexAndDomainMappings |
 | MAP-03 | MappingsTest.removeAliasAndForwardMappings |
-| MAP-04 | MappingsTest.deleteDisplayedPage (table filtered to the test's own domain) |
+| MAP-04 | MappingsTest.deleteMatchingMappings (search on the test's own domain, count typed to confirm) |
 
 ### Mail repositories, event dead letters, tasks, common tasks
 

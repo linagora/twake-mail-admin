@@ -11,7 +11,8 @@ import com.microsoft.playwright.options.AriaRole;
 /**
  * The global Mappings page ({@code /mappings}). The table lists the mappings of the whole server:
  * tests filter it on their own domain before looking at, or deleting, rows. Its toolbar holds the
- * search, "Add a mapping" (a modal where the kind of mapping is chosen) and "Delete page".
+ * search and "Add a mapping" (a modal where the kind of mapping is chosen). After a search, "Delete
+ * the n matching mappings" sits on the total line.
  */
 public class MappingsPage {
     private final AdminApp app;
@@ -121,7 +122,8 @@ public class MappingsPage {
         return row.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(Pattern.compile("^Remove \\w+ Mapping$")));
     }
 
-    public Locator deletePageButton() {
-        return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(Pattern.compile("^Delete page \\(\\d+\\)$")));
+    /** "Delete the 3 matching mappings": only shown while the search finds rows. */
+    public Locator deleteMatchingButton() {
+        return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(Pattern.compile("^Delete (the )?\\d+ matching mappings?$")));
     }
 }

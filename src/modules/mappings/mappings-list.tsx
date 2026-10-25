@@ -59,10 +59,7 @@ export default function MappingsList() {
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-
-
-
-  const [deletingPage, setDeletingPage] = useState(false);
+  const [deletingMatching, setDeletingMatching] = useState(false);
   const [creating, setCreating] = useState(false);
   const { toast } = useToast();
   const confirm = useConfirm();
@@ -111,18 +108,22 @@ export default function MappingsList() {
     }
   };
 
-  const handleDeletePage = async () => {
-    if (deletablePageMappings.length === 0) return;
+  // Every mapping the search found, on all its pages: the count the operator types to confirm
+  const handleDeleteMatching = async () => {
+    const targets = deletableMatchingMappings;
+    const count = targets.length;
+    if (count === 0) return;
     const confirmed = await confirm({
-      header: t("mappings.removePageTitle"),
+      header: t("mappings.removeMatchingTitle"),
       destructive: true,
-      confirmLabel: t("common.remove"),
+      confirmLabel: t("mappings.removeMatchingAction", { count }),
+      typeToConfirm: String(count),
       className: "max-w-2xl",
       message: (
         <div className="flex flex-col gap-3">
-          <p>{t("mappings.removePageConfirm", { total: deletablePageMappings.length })}</p>
+          <p>{t("mappings.removeMatchingConfirm", { count })}</p>
           <ul className="max-h-72 overflow-y-auto border rounded-md divide-y">
-            {deletablePageMappings.map((mapping, index) => (
+            {targets.map((mapping, index) => (
               <li
                 key={`${mapping.source}-${mapping.type}-${mapping.destination}-${index}`}
                 className="px-3 py-2 text-sm flex items-center gap-2"
@@ -138,17 +139,17 @@ export default function MappingsList() {
       ),
     });
     if (!confirmed) return;
-    setDeletingPage(true);
+    setDeletingMatching(true);
     try {
       const failures: unknown[] = [];
-      for (const mapping of deletablePageMappings) {
+      for (const mapping of targets) {
         try {
           await deleteMapping(mapping);
         } catch (err) {
           failures.push(err);
         }
       }
-      const removed = deletablePageMappings.length - failures.length;
+      const removed = count - failures.length;
       if (failures.length > 0) {
         toast({
           title: t("mappings.errorRemovingPage", { failed: failures.length, removed }),
@@ -156,10 +157,13 @@ export default function MappingsList() {
         });
       } else {
         toast({ title: t("mappings.removedPage", { total: removed }) });
+        // Nothing left to find: back to the full list
+        setSearch("");
+        setPage(1);
       }
       await refresh();
     } finally {
-      setDeletingPage(false);
+      setDeletingMatching(false);
     }
   };
 
@@ -197,7 +201,10 @@ export default function MappingsList() {
     page * PAGE_LIMIT
   );
 
-  const deletablePageMappings = paginatedMappings.filter((m) => canDeleteMapping(m.type));
+  // Offered only after a search: on the full list, a bulk deletion is a slip away from the Add button
+  const deletableMatchingMappings = search.trim()
+    ? filteredMappings.filter((m) => canDeleteMapping(m.type))
+    : [];
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -224,19 +231,6 @@ export default function MappingsList() {
             {t("mappings.addTitle")}
           </Button>
         )}
-        {deletablePageMappings.length > 0 && (
-          <Button
-            variant="outline"
-            onClick={handleDeletePage}
-            disabled={deletingPage}
-            className="border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
-          >
-            <Trash2 className="w-4 h-4" aria-hidden="true" />
-            {deletingPage
-              ? t("mappings.removingPage")
-              : t("mappings.removePage", { total: deletablePageMappings.length })}
-          </Button>
-        )}
       </ListToolbar>
       <CreateMappingDialog open={creating} kinds={creatableKinds} onClose={() => setCreating(false)} onCreated={refresh} />
 
@@ -258,6 +252,20 @@ export default function MappingsList() {
           disabledNext={page >= totalPages}
           label={t("common.page", { page, totalPages, total: filteredMappings.length })}
           total={filteredMappings.length}
+          actions={deletableMatchingMappings.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDeleteMatching}
+              disabled={deletingMatching}
+              className="border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
+            >
+              <Trash2 className="w-4 h-4" aria-hidden="true" />
+              {deletingMatching
+                ? t("mappings.removingPage")
+                : t("mappings.removeMatching", { count: deletableMatchingMappings.length })}
+            </Button>
+          )}
         />
       )}
       <div className="mt-4 overflow-x-auto">

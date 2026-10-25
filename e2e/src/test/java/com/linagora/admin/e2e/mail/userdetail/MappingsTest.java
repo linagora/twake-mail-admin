@@ -165,15 +165,15 @@ class MappingsTest extends MailAdminE2ETest {
     }
 
     @Test
-    @DisplayName("MAP-04 Delete the displayed page of mappings")
-    void deleteDisplayedPage(AdminApp app, MailFixtures fixtures, WebAdmin webAdmin) {
+    @DisplayName("MAP-04 Delete the mappings a search found, confirmed by typing their count")
+    void deleteMatchingMappings(AdminApp app, MailFixtures fixtures, WebAdmin webAdmin) {
         String domain = fixtures.domain();
         String bob = fixtures.newUser("bob");
         String alice = fixtures.newUser("alice");
         String alias = "alice.alias@" + domain;
         webAdmin.put("/address/aliases/" + alice + "/sources/" + alias).expect(204);
         webAdmin.put("/address/forwards/" + alice + "/targets/" + bob).expect(204);
-        // The page to delete lives in a domain of its own: filtering on it shows these 3 rows only
+        // The mappings to delete live in a domain of their own: filtering on it shows these 3 rows only
         String pageDomain = fixtures.newDomain("qa-p");
         List<String> sources = List.of("qa.p1@" + pageDomain, "qa.p2@" + pageDomain, "qa.p3@" + pageDomain);
         for (String source : sources) {
@@ -181,22 +181,29 @@ class MappingsTest extends MailAdminE2ETest {
         }
 
         MappingsPage mappings = new MappingsPage(app).open();
+        // No bulk deletion on the unfiltered list
+        assertThat(mappings.deleteMatchingButton()).hasCount(0);
         mappings.filter("@" + pageDomain);
         assertThat(mappings.rows()).hasCount(3);
-        assertThat(mappings.deletePageButton()).hasText("Delete page (3)");
-        mappings.deletePageButton().click();
+        assertThat(mappings.deleteMatchingButton()).hasText("Delete the 3 matching mappings");
+        mappings.deleteMatchingButton().click();
 
-        assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Delete Displayed Mappings");
-        assertThat(app.dialog()).containsText("The following 3 mapping(s) displayed on this page will be permanently removed:");
+        assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Delete the matching mappings");
+        assertThat(app.dialog()).containsText("These 3 mappings will be permanently removed. Mail sent to their sources will no longer be redirected:");
         Locator items = app.dialog().getByRole(AriaRole.LISTITEM);
         // Never confirm unless the dialog lists exactly the rows of this test
         assertThat(items).hasCount(3);
         for (int i = 0; i < 3; i++) {
             assertThat(items.nth(i)).hasText("Address" + sources.get(i) + "→" + bob);
         }
-        mappings.confirmRemove();
+        Locator confirm = app.dialog().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Delete 3 mappings").setExact(true));
+        assertThat(confirm).isDisabled();
+        app.dialog().getByLabel("Type 3 to confirm", new Locator.GetByLabelOptions().setExact(true)).fill("3");
+        confirm.click();
+        assertThat(app.dialog()).isHidden();
         app.expectToast("3 mapping(s) removed successfully");
-        assertThat(app.main().getByText("No mappings found.")).isVisible();
+        // Nothing left to find: the search is cleared
+        assertThat(mappings.search()).hasValue("");
 
         for (String source : sources) {
             assertThat(mappingsOf(webAdmin, source).isMissingNode()).as(source).isTrue();
