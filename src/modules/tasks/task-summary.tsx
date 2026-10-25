@@ -11,7 +11,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getResource, getTeamCalendars } from "@/modules/domains/api-client";
 
 // The additionalInformation keys holding a user, shown as a link to their page
-const USER_KEYS = new Set(["username", "user", "oldUser", "newUser", "targetUser"]);
+const USER_KEYS = new Set(["username", "user", "oldUser", "newUser", "targetUser", "sourceUser"]);
 
 /**
  * A task as the operator reads it, shared by the detail dialog of the Tasks list and by the
@@ -120,6 +120,29 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   importedEventCount: "tasks.info.importedEventCount",
   archivedEventCount: "tasks.info.archivedEventCount",
   failedEventCount: "tasks.info.failedEventCount",
+  processedEventCount: "tasks.info.processedEventCount",
+  addressBookId: "tasks.info.addressBookId",
+  totalContactCount: "tasks.info.totalContactCount",
+  importedContactCount: "tasks.info.importedContactCount",
+  failedContactCount: "tasks.info.failedContactCount",
+  // Add missing fields of registered users
+  processedUsers: "tasks.info.processedUserCount",
+  upgradedUsers: "tasks.info.upgradedUsers",
+  errorCount: "tasks.info.errorCount",
+  // Reindexing and vault restores
+  successfullyReprocessedMailCount: "tasks.info.reprocessedMailCount",
+  failedReprocessedMailCount: "tasks.info.failedReprocessedMailCount",
+  successfulRestoreCount: "tasks.info.restoredCount",
+  errorRestoreCount: "tasks.info.failedRestoreCount",
+  // Templates provisioning of a user or a domain: its options as the dialog names them
+  sourceUser: "provisionTemplates.sourceUser",
+  folderName: "provisionTemplates.folderName",
+  overwriteExisting: "provisionTemplates.overwriteExisting",
+  prune: "provisionTemplates.prune",
+  usersPerSecond: "provisionTemplates.usersPerSecond",
+  appliedTemplates: "tasks.info.appliedTemplates",
+  skippedTemplates: "tasks.info.skippedTemplates",
+  removedTemplates: "tasks.info.removedTemplates",
   // Recompute mailbox quota: a quota root is a user
   processedQuotaRoots: "tasks.info.processedUserCount",
   failedQuotaRoots: "tasks.info.failedUsers",
@@ -150,8 +173,10 @@ const CALENDAR_TYPE_KEYS: Record<string, string> = {
 /**
  * The name of each WebAdmin task type, as the button that starts it reads: the operator finds
  * on the Tasks list the words they clicked, not the internal key (BlobGCTask, user-reindexing).
+ * Keys are the `type` WebAdmin reports in GET /tasks/{id}, values i18n keys. Several types may
+ * share a name: the same button starts a different task on James and on TMail.
  */
-const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
+export const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
   // Common Tasks (mail)
   "full-reindexing": "taskTypes.fullReindexing",
   "solve-mailbox-inconsistencies": "commonTasks.fixMailboxInconsistencies",
@@ -164,6 +189,8 @@ const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
   ContactIndexing: "commonTasks.reindexContacts",
   DeletedMessageVaultDeleteExpiredMessagesTask: "commonTasks.purgeDeletedMessages",
   "deleted-messages-delete": "commonTasks.purgeDeletedMessages",
+  // TMail purges the expired messages of the vault by removing whole blob buckets
+  "tmail-deleted-messages-blob-store-based-garbage-collection": "commonTasks.purgeDeletedMessages",
   PopulateEmailQueryViewTask: "commonTasks.populateEmailQueryView",
   ExpireMailboxTask: "taskTypes.expireMailbox",
   "tasks-cleanup": "commonTasks.cleaningUpOldTasks",
