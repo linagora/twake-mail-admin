@@ -58,7 +58,8 @@ class RegisteredUsersTest extends CalendarAdminE2ETest {
         assertThat(users.registerButton()).isVisible();
 
         users.searchFor(tag);
-        assertThat(users.rowHeadings()).hasText(new String[] {"1/" + first, "2/" + second});
+        assertThat(users.rowAddresses()).hasText(new String[] {first, second});
+        assertThat(users.row(first)).containsText("1.");
         assertThat(users.pagination()).hasText("Total: 2");
         Locator row = users.row(first);
         // Each address links to its user page
@@ -70,11 +71,11 @@ class RegisteredUsersTest extends CalendarAdminE2ETest {
         assertThat(users.rowAction(first, "Delete user")).isVisible();
 
         users.searchFor(firstId);
-        assertThat(users.rowHeadings()).hasText(new String[] {"1/" + first});
+        assertThat(users.rowAddresses()).hasText(new String[] {first});
 
         String nothing = "zzz" + Ids.suffix(8);
         users.searchFor(nothing);
-        assertThat(users.rowHeadings()).hasCount(0);
+        assertThat(users.rowAddresses()).hasCount(0);
         assertThat(app.main().getByText("No registered user matches \"" + nothing + "\".")).isVisible();
 
         users.searchFor(first);
@@ -180,7 +181,7 @@ class RegisteredUsersTest extends CalendarAdminE2ETest {
         assertThat(app.dialog()).isHidden();
 
         app.expectToast("User \"" + user + "\" deleted");
-        assertThat(users.rowHeadings()).hasCount(0);
+        assertThat(users.rowAddresses()).hasCount(0);
         assertThat(backend.registeredUser(user)).isNull();
 
         app.open("/users/user/" + URLEncoder.encode(user, StandardCharsets.UTF_8));

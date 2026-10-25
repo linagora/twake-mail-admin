@@ -70,19 +70,24 @@ public class RegisteredUsersPage {
         return this;
     }
 
-    /** The e-mail heading of every listed row ("1/alice@..."). */
-    public Locator rowHeadings() {
-        return app.main().getByRole(AriaRole.HEADING, new Locator.GetByRoleOptions().setLevel(4));
+    /** One list item per user: {@code "1."}, the address, the full name, then {@code "ID: ..."}. */
+    public Locator rows() {
+        return app.main().getByRole(AriaRole.LISTITEM);
+    }
+
+    /** The address of every listed row, a link to the user page. */
+    public Locator rowAddresses() {
+        return rows().getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(Pattern.compile("@")));
     }
 
     public Locator row(String email) {
-        return app.main().getByRole(AriaRole.HEADING, new Locator.GetByRoleOptions().setLevel(4)
-                .setName(Pattern.compile("^\\d+.\\s*" + Regex.quote(email) + "$")))
-            .locator("xpath=ancestor::div[.//button][1]");
+        return rows().filter(new Locator.FilterOptions().setHas(app.page().getByRole(AriaRole.LINK,
+            new Page.GetByRoleOptions().setName(email).setExact(true))));
     }
 
-    public Locator rowAction(String email, String title) {
-        return row(email).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(title).setExact(true));
+    /** "Edit user" / "Delete user" of a row: each button is named after its user ("Edit user alice@..."). */
+    public Locator rowAction(String email, String action) {
+        return row(email).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(action + " " + email).setExact(true));
     }
 
     /** "Page 1 / 3 — Total: 120" with its buttons, or only "Total: 2" when everything fits on one page. */
