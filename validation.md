@@ -426,6 +426,7 @@ forwards are counted by their sections, whose own rows below apply; the strip it
 |---------|------|---------|----------|
 | Tab load | GET | `/address/aliases/{username}` | MUST |
 | "Add alias" button | PUT | `/address/aliases/{username}/sources/{alias}` | MAY (do not show the button if missing) |
+| "Add alias": the typed address checked against the accounts | HEAD | `/users/{username}` | MAY (not gated, like the delegation form: refused, the dialog shows no warning and an existing account is no longer stopped) |
 | "Remove alias" button | DELETE | `/address/aliases/{username}/sources/{alias}` | MAY (do not show the button if missing)|
 
 ### User detail — Forwards tab *(APPLICATION:"MAIL")*
@@ -769,6 +770,7 @@ A left bar entry in both modes; the detail pattern differs, see the two snackbar
 |---------|------|---------|----------|
 | Page load | GET | `/mappings` | MUST |
 | "Add mapping" button | POST | `/mappings/address/{source}/targets/{destination}` | MAY (do not show the button if missing)|
+| "Add mapping", Address type: source and destination checked against the accounts | HEAD | `/users/{username}` | MAY (not gated: refused, an existing account as source is no longer stopped, and the destination reads as not local) |
 | "Remove mapping" button | DELETE | `/mappings/address/{source}/targets/{destination}` | MAY (do not show the button if missing)|
 | "Remove alias mapping" button | DELETE | `/address/aliases/{userAddress}/sources/{aliasSource}` | MAY (do not show the button if missing)|
 | "Remove forward mapping" button | DELETE | `/address/forwards/{userAddress}/targets/{targetAddress}` | MAY (do not show the button if missing)|

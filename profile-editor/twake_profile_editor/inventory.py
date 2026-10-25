@@ -983,7 +983,9 @@ USERS = page(
                     "Add an alias",
                     "Ajouter un alias",
                     endpoints=[
-                        may("PUT", "/address/aliases/{username}/sources/{alias}")
+                        may("PUT", "/address/aliases/{username}/sources/{alias}"),
+                        # The typed address must not be an account: its mail would be diverted
+                        may("HEAD", _U),
                     ],
                 ),
                 action(
@@ -1937,7 +1939,9 @@ MAPPINGS = page(
             "Add an address mapping",
             "Ajouter une réécriture d'adresse",
             endpoints=[
-                may("POST", "/mappings/address/{source}/targets/{destination}")
+                may("POST", "/mappings/address/{source}/targets/{destination}"),
+                # The source must not be an account; the destination is told local or not
+                may("HEAD", _U),
             ],
         ),
         action(
