@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { ConfirmProvider } from "@/components/custom/confirm-provider";
 
 const CHARLOTTE = { id: "6ad1aa3f53839e067b41b8c3", email: "charlotte@open-paas.org", firstname: "Charlotte", lastname: "QA" };
@@ -257,5 +257,34 @@ describe("registered users list: link to the user page", () => {
     const link = await screen.findByRole("link", { name: "alice@example.com" });
     expect(link.getAttribute("href")).toBe("/users/user/alice%40example.com");
     expect(screen.getByTitle("registeredUsers.editTooltip")).toBeTruthy();
+  });
+});
+
+describe("registered users list: compact and accessible", () => {
+  it("lists the users as list items with their actions, without headings", async () => {
+    api.getRegisteredUsers.mockResolvedValue([
+      { id: "2", email: "bob@example.com", firstname: "Bob", lastname: "Jones" },
+      { id: "1", email: "alice@example.com", firstname: "Alice", lastname: "Smith" },
+    ]);
+    render(
+      <MemoryRouter>
+        <ConfirmProvider>
+          <RegisteredUsersList />
+        </ConfirmProvider>
+      </MemoryRouter>
+    );
+    await screen.findByText("alice@example.com");
+
+    const items = screen.getAllByRole("listitem");
+    expect(items.map((li) => li.textContent)).toEqual([
+      "1.alice@example.comAlice SmithregisteredUsers.id 1",
+      "2.bob@example.comBob JonesregisteredUsers.id 2",
+    ]);
+    expect(screen.queryAllByRole("heading", { level: 4 })).toHaveLength(0);
+    // Each row carries its own named buttons
+    for (const item of items) {
+      expect(within(item).getByRole("button", { name: "registeredUsers.editTooltip" })).toBeTruthy();
+      expect(within(item).getByRole("button", { name: "registeredUsers.deleteTooltip" })).toBeTruthy();
+    }
   });
 });
