@@ -48,13 +48,13 @@ interface UserQuotaEntry {
 
 function formatSize(bytes: number | null): string {
   if (bytes === null) return "—";
-  if (bytes === -1) return i18n.t("common.unlimited");
+  if (bytes === -1) return i18n.t("quotaLimits.unlimited");
   return formatByteSize(bytes);
 }
 
 function formatCount(count: number | null): string {
   if (count === null) return "—";
-  if (count === -1) return i18n.t("common.unlimited");
+  if (count === -1) return i18n.t("quotaLimits.unlimited");
   return count.toLocaleString(currentLocale());
 }
 

@@ -53,9 +53,10 @@ function Row({ label, count, size }: { label: string; count: React.ReactNode; si
   return (
     <div className="flex flex-wrap justify-between items-center gap-x-4 py-1">
       <span className="inline-block text-sm text-gray-600 first-letter:uppercase">{label}</span>
-      <span className="text-sm">
-        <span className="mr-4">{t("common.count")} <strong>{count}</strong></span>
-        {t("common.size")} <strong>{size}</strong>
+      {/* On a narrow screen the size wraps under the count, each label kept with its value */}
+      <span className="ml-auto text-sm flex flex-wrap justify-end gap-x-4">
+        <span>{t("common.count")} <strong>{count}</strong></span>
+        <span>{t("common.size")} <strong>{size}</strong></span>
       </span>
     </div>
   );
@@ -104,10 +105,10 @@ export function QuotaOccupation({ occupation, limited }: { occupation: Occupatio
         <>
           <div className="flex flex-wrap justify-between items-center gap-x-4 py-1">
             <span className="text-sm text-gray-600">{t("common.ratio")}</span>
-            <span className="text-sm">
-              <span className="mr-4">{t("common.count")} <strong>{formatPercent(ratio.count)}</strong></span>
-              <span className="mr-4">{t("common.size")} <strong>{formatPercent(ratio.size)}</strong></span>
-              {t("common.max")} <strong>{formatPercent(ratio.max)}</strong>
+            <span className="ml-auto text-sm flex flex-wrap justify-end gap-x-4">
+              <span>{t("common.count")} <strong>{formatPercent(ratio.count)}</strong></span>
+              <span>{t("common.size")} <strong>{formatPercent(ratio.size)}</strong></span>
+              <span>{t("common.max")} <strong>{formatPercent(ratio.max)}</strong></span>
             </span>
           </div>
           <div className="mt-1 w-full bg-gray-200 rounded-full h-2">
