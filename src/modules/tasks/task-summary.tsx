@@ -11,7 +11,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getResource, getTeamCalendars } from "@/modules/domains/api-client";
 
 // The additionalInformation keys holding a user, shown as a link to their page
-const USER_KEYS = new Set(["username", "user", "oldUser", "newUser", "targetUser"]);
+const USER_KEYS = new Set(["username", "user", "oldUser", "newUser", "targetUser", "sourceUser"]);
 
 /**
  * A task as the operator reads it, shared by the detail dialog of the Tasks list and by the
@@ -120,6 +120,29 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   importedEventCount: "tasks.info.importedEventCount",
   archivedEventCount: "tasks.info.archivedEventCount",
   failedEventCount: "tasks.info.failedEventCount",
+  processedEventCount: "tasks.info.processedEventCount",
+  addressBookId: "tasks.info.addressBookId",
+  totalContactCount: "tasks.info.totalContactCount",
+  importedContactCount: "tasks.info.importedContactCount",
+  failedContactCount: "tasks.info.failedContactCount",
+  // Add missing fields of registered users
+  processedUsers: "tasks.info.processedUserCount",
+  upgradedUsers: "tasks.info.upgradedUsers",
+  errorCount: "tasks.info.errorCount",
+  // Reindexing and vault restores
+  successfullyReprocessedMailCount: "tasks.info.reprocessedMailCount",
+  failedReprocessedMailCount: "tasks.info.failedReprocessedMailCount",
+  successfulRestoreCount: "tasks.info.restoredCount",
+  errorRestoreCount: "tasks.info.failedRestoreCount",
+  // Templates provisioning of a user or a domain: its options as the dialog names them
+  sourceUser: "provisionTemplates.sourceUser",
+  folderName: "provisionTemplates.folderName",
+  overwriteExisting: "provisionTemplates.overwriteExisting",
+  prune: "provisionTemplates.prune",
+  usersPerSecond: "provisionTemplates.usersPerSecond",
+  appliedTemplates: "tasks.info.appliedTemplates",
+  skippedTemplates: "tasks.info.skippedTemplates",
+  removedTemplates: "tasks.info.removedTemplates",
   // Recompute mailbox quota: a quota root is a user
   processedQuotaRoots: "tasks.info.processedUserCount",
   failedQuotaRoots: "tasks.info.failedUsers",
@@ -139,7 +162,11 @@ const isDetailShown = (key: string, value: unknown) =>
   && !(typeof value === "object" && !(Array.isArray(value) && value.every((item) => typeof item !== "object")));
 
 // A list of names or ids, e.g. the failed users: its items, or a dash when empty
-const detailText = (value: unknown) => (Array.isArray(value) ? (value.length > 0 ? value.join(", ") : "—") : String(value));
+// Options such as overwriteExisting read "Yes" / "No", as the dialog that set them
+const detailText = (t: TFunction, value: unknown) =>
+  typeof value === "boolean" ? t(value ? "common.yes" : "common.no")
+    : Array.isArray(value) ? (value.length > 0 ? value.join(", ") : "—")
+    : String(value);
 
 // Values of calendarType named in the UI language
 const CALENDAR_TYPE_KEYS: Record<string, string> = {
@@ -150,8 +177,10 @@ const CALENDAR_TYPE_KEYS: Record<string, string> = {
 /**
  * The name of each WebAdmin task type, as the button that starts it reads: the operator finds
  * on the Tasks list the words they clicked, not the internal key (BlobGCTask, user-reindexing).
+ * Keys are the `type` WebAdmin reports in GET /tasks/{id}, values i18n keys. Several types may
+ * share a name: the same button starts a different task on James and on TMail.
  */
-const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
+export const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
   // Common Tasks (mail)
   "full-reindexing": "taskTypes.fullReindexing",
   "solve-mailbox-inconsistencies": "commonTasks.fixMailboxInconsistencies",
@@ -164,6 +193,8 @@ const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
   ContactIndexing: "commonTasks.reindexContacts",
   DeletedMessageVaultDeleteExpiredMessagesTask: "commonTasks.purgeDeletedMessages",
   "deleted-messages-delete": "commonTasks.purgeDeletedMessages",
+  // TMail purges the expired messages of the vault by removing whole blob buckets
+  "tmail-deleted-messages-blob-store-based-garbage-collection": "commonTasks.purgeDeletedMessages",
   PopulateEmailQueryViewTask: "commonTasks.populateEmailQueryView",
   ExpireMailboxTask: "taskTypes.expireMailbox",
   "tasks-cleanup": "commonTasks.cleaningUpOldTasks",
@@ -228,7 +259,8 @@ export function taskTargetInfo(task: TaskDetailResponse): TaskTargetInfo | null 
   const info = task.additionalInformation ?? {};
   const repository = stringOf(info.repositoryPath);
   if (repository) return { kind: "repository", value: repository };
-  const user = stringOf(info.targetUser) ?? stringOf(info.username) ?? stringOf(info.user);
+  // A rename worked on the user it was started from
+  const user = stringOf(info.targetUser) ?? stringOf(info.username) ?? stringOf(info.user) ?? stringOf(info.oldUser);
   if (user) return { kind: "user", value: user };
   const domain = stringOf(info.domain);
   if (domain) {
@@ -382,7 +414,7 @@ export function TaskDetails({ task, raw }: { task: TaskDetailResponse; raw: unkn
                   ? <span className="min-w-0 break-words">{t(CALENDAR_TYPE_KEYS[value])}</span>
                   : USER_KEYS.has(key) && typeof value === "string"
                   ? <span className="min-w-0"><UserLink address={value} /></span>
-                  : <span className="min-w-0 break-words">{detailText(value)}</span>}
+                  : <span className="min-w-0 break-words">{detailText(t, value)}</span>}
               </Fragment>
             ))}
           </div>
