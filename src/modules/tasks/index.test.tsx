@@ -92,7 +92,7 @@ describe("tasks list", () => {
     api.listTasks.mockResolvedValue([
       {
         taskId: TASK_ID,
-        type: "tmail-deleted-messages-blob-store-based-garbage-collection",
+        type: "a-newer-server-task-with-a-very-long-unknown-type-name",
         status: "completed",
         submitDate: "2026-10-10T06:00:00Z",
         startedDate: "2026-10-10T06:00:01Z",
@@ -102,7 +102,7 @@ describe("tasks list", () => {
     renderTasks();
 
     const startedCompleted = await screen.findByTestId("task-started-completed");
-    const typeCell = screen.getByText("tmail-deleted-messages-blob-store-based-garbage-collection").parentElement!;
+    const typeCell = screen.getByText("a-newer-server-task-with-a-very-long-unknown-type-name").parentElement!;
 
     // The type column truncates from md on; the dates are never cut, they wrap
     expect(typeCell.classList).not.toContain("truncate");
