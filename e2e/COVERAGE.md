@@ -19,7 +19,6 @@ default (`-De2e.excludedGroups=` runs them).
 | `mail.shell.KeyboardTest.contactDismissedWhileLoadingStaysClosed` | Domain contact dialog closed with Escape while loading reopens when the data arrives |
 | `mail.shell.HealthCheckTest.healthCheckStatusIsNotColourOnly` | Health check status is conveyed by colour only |
 | `mail.domains.TeamMailboxFolderTest.extraAclForAnotherDomainIsRefusedWithAReason` | Backend answers 500 on a team mailbox extra ACL for a user of another domain |
-| `mail.ops.TasksTest.staleListDoesNotOverwriteFilter` | `useFetchData` keeps the last response to arrive, not the answer to the last request: a slow unfiltered `GET /tasks` overwrites a filtered one |
 
 Not tagged, backend side: the Event Dead Letter search shows `Group: N/A / Insertion ID: N/A`,
 WebAdmin sends `X-Group` / `X-Insertion-Id` without `Access-Control-Expose-Headers`, so a cross
@@ -139,7 +138,7 @@ origin app cannot read them
 | EDL-02 | `EventDeadLetterTest.groupDetailRedeliverAndDelete` |
 | EDL-03 | `EventDeadLetterTest.redeliverDialog` |
 | TSK-01 | `TasksTest.listDetailAndFullDetails` |
-| TSK-02 | `TasksTest.filtersAndSort`; known-bug `TasksTest.staleListDoesNotOverwriteFilter`. Step 5 (sort across pages of > 50 tasks) not automated: the global list moves all the time |
+| TSK-02 | `TasksTest.filtersAndSort`, `TasksTest.staleListDoesNotOverwriteFilter`. Step 5 (sort across pages of > 50 tasks) not automated: the global list moves all the time |
 | TSK-03 | `TasksTest.cancelRunningTask` |
 | TSK-04 | `TasksTest.endDateOfCancelledTasks` (failed tasks: only the ones that happen to exist) |
 | TSK-05 | `TasksTest.unknownOrMalformedTaskId` |

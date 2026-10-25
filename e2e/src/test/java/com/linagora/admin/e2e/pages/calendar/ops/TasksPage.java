@@ -96,6 +96,22 @@ public class TasksPage {
         return app.main().getByLabel(label, new Locator.GetByLabelOptions().setExact(true));
     }
 
+    /** A quick status chip, "Failed (2)", by its name without the count. */
+    public Locator statusChip(String name) {
+        return app.main().getByRole(AriaRole.GROUP, new Locator.GetByRoleOptions().setName("Status").setExact(true))
+            .getByRole(AriaRole.BUTTON).filter(new Locator.FilterOptions().setHasText(
+                java.util.regex.Pattern.compile("^" + name + "( \\(\\d+\\))?$")));
+    }
+
+    /** Unfolds "Date filters" in the open filters panel. */
+    public TasksPage openDateFilters() {
+        Locator details = app.main().getByTestId("tasks-date-filters");
+        if (details.getAttribute("open") == null) {
+            details.locator("summary").click();
+        }
+        return this;
+    }
+
     public TasksPage showFilters() {
         button("Filters").click();
         assertThat(button("Apply")).isVisible();

@@ -241,6 +241,30 @@ export const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
   "delete-unsent-mails": "unsentMails.deleteAllTitle",
 };
 
+/** The task types of Twake Calendar's WebAdmin; the others are run by James or TMail. */
+export const CALENDAR_TASK_TYPES: ReadonlySet<string> = new Set([
+  "import-ldap-users",
+  "sync-domain-members-contacts-ldap-to-dav",
+  "reindex-calendar-events",
+  "calendar-archival",
+  "schedule-alarms",
+  "add-missing-fields",
+  "republish-common-contacts",
+  "clear-domain-members-contacts-dav",
+  "calendar-import",
+  "domain-calendar-import",
+  "addressbook-import",
+  "domain-addressbook-import",
+  "domain-addressbook-copy",
+  "domain-addressbook-clear",
+  "booking-link-event-deletion",
+  "resend-unsent-mails",
+  "delete-unsent-mails",
+]);
+
+/** The task types both WebAdmins run: deleting the data of a user or of a whole domain. */
+export const SHARED_TASK_TYPES: ReadonlySet<string> = new Set(["DeleteUserDataTask", "DeleteUsersDataOfDomainTask"]);
+
 /** The name of a task type in the UI language; an unknown type as WebAdmin names it. */
 export const taskTypeLabel = (t: TFunction, type: string): string =>
   TASK_TYPE_LABEL_KEYS[type] ? t(TASK_TYPE_LABEL_KEYS[type]) : type;

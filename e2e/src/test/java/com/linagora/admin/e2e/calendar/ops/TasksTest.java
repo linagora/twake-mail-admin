@@ -42,6 +42,20 @@ class TasksTest extends CalendarAdminE2ETest {
         return new String[] {completed, failed};
     }
 
+    private static void assertSorted(AdminApp app, TasksPage list, boolean ascending) {
+        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> {
+            List<String> types = list.types();
+            assertThat(sorted(app, types, ascending)).as("%s %s", ascending ? "ascending" : "descending", types).isTrue();
+        });
+    }
+
+    private static void assertBefore(TasksPage list, String first, String second) {
+        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(10)).untilAsserted(() -> {
+            List<String> ids = list.ids();
+            assertThat(ids.indexOf(first)).as("%s in %s", first, ids).isNotNegative().isLessThan(ids.indexOf(second));
+        });
+    }
+
     /** Whether the values follow the order of the page: String.localeCompare of the browser. */
     private static boolean sorted(AdminApp app, List<String> values, boolean ascending) {
         return (Boolean) app.page().evaluate("([v, asc]) => v.every((t, i) => i === 0 || (asc ? 1 : -1) * v[i - 1].localeCompare(t) <= 0)",
@@ -111,14 +125,21 @@ class TasksTest extends CalendarAdminE2ETest {
         String completed = tasks[0];
         String failed = tasks[1];
 
-        TasksPage list = TasksPage.open(app).showFilters();
-        for (String label : new String[] {"Status", "Type", "Submitted after", "Submitted before", "Started after", "Started before",
+        TasksPage list = TasksPage.open(app);
+        // Quick status chips, always visible
+        for (String chip : new String[] {"All", "Running", "Failed", "Completed", "Cancelled"}) {
+            assertThat(list.statusChip(chip)).isVisible();
+        }
+        list.showFilters().openDateFilters();
+        for (String label : new String[] {"Type", "Submitted after", "Submitted before", "Started after", "Started before",
             "Completed after", "Completed before", "Failed after", "Failed before"}) {
             assertThat(list.field(label)).isVisible();
         }
-        list.field("Status").selectOption(new SelectOption().setLabel("Completed"));
-        list.field("Type").fill("calendar-import");
+        // A picker of the calendar task names: no mail type among them
+        assertThat(list.field("Type").locator("option[value='user-reindexing']")).hasCount(0);
+        list.field("Type").selectOption("calendar-import");
         list.button("Apply").click();
+        list.statusChip("Completed").click();
         assertThat(list.row(failed)).hasCount(0);
         assertThat(list.row(completed)).isVisible();
         assertThat(list.rows().filter(new Locator.FilterOptions().setHasNotText("calendar-import"))).hasCount(0);
@@ -129,6 +150,7 @@ class TasksTest extends CalendarAdminE2ETest {
         assertThat(list.row(failed)).isVisible();
 
         // Only the recent tasks: the sorted pages hold the tasks of this test
+        list.openDateFilters();
         list.field("Submitted after").fill(since);
         list.button("Apply").click();
         assertThat(list.row(failed)).isVisible();
@@ -136,18 +158,17 @@ class TasksTest extends CalendarAdminE2ETest {
         list.sort().selectOption(new SelectOption().setLabel("Type"));
         assertThat(list.button("Desc ↓")).isVisible();
         assertThat(list.pagination()).hasText(Pattern.compile("^(Page 1 — |Total: )"));
-        assertThat(sorted(app, list.types(), false)).as("descending %s", list.types()).isTrue();
+        assertSorted(app, list, false);
         list.button("Desc ↓").click();
         assertThat(list.button("Asc ↑")).isVisible();
-        assertThat(sorted(app, list.types(), true)).as("ascending %s", list.types()).isTrue();
+        assertSorted(app, list, true);
 
+        // The sort goes through the URL: the rows follow a render later
         list.sort().selectOption(new SelectOption().setLabel("Completed"));
-        List<String> ascending = list.ids();
-        assertThat(ascending.indexOf(completed)).isNotNegative().isLessThan(ascending.indexOf(failed));
+        assertBefore(list, completed, failed);
         list.button("Asc ↑").click();
         assertThat(list.button("Desc ↓")).isVisible();
-        List<String> descending = list.ids();
-        assertThat(descending.indexOf(failed)).isNotNegative().isLessThan(descending.indexOf(completed));
+        assertBefore(list, failed, completed);
 
         String user = fixtures.newRegisteredUser("tasks");
         String newTask = backend.importEvents(user, OpsBackend.lastSegment(backend.defaultCalendarUrl(user)), OpsBackend.event("late"));

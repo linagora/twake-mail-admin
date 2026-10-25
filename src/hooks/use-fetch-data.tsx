@@ -1,6 +1,6 @@
 import axios from "axios";
 import { toErrorMessage } from "@/components/custom/error-message";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 // WebAdmin's message and details are preferred over the generic "Request failed with status code ..." of Axios.
@@ -19,20 +19,32 @@ export function useFetchData<T>(getter: (() => Promise<T>) | null, refreshKey?: 
   // HTTP status of the failure: a 404 tells a feature the server does not offer from an error
   const [status, setStatus] = useState<number | null>(null);
 
-  const fetchData = async () => {
+  // Only the latest request is shown: an earlier one answering late (a periodic refresh sent
+  // before the filters changed) does not replace its result
+  const latestRequest = useRef(0);
+
+  // A silent fetch (a periodic refresh) keeps the data and the error on screen, with no loading state
+  const fetchData = async (silent = false) => {
     if (!getter) return;
-    setIsLoading(true);
-    setFailureMessage(null);
-    setStatus(null);
+    const request = ++latestRequest.current;
+    if (!silent) {
+      setIsLoading(true);
+      setFailureMessage(null);
+      setStatus(null);
+    }
     try {
       const result = await getter();
+      if (request !== latestRequest.current) return;
       setData(result);
+      setFailureMessage(null);
+      setStatus(null);
     } catch (error: unknown) {
+      if (request !== latestRequest.current) return;
       setData(null);
       setFailureMessage(toFailureMessage(error));
       setStatus(axios.isAxiosError(error) ? error.response?.status ?? null : null);
     } finally {
-      setIsLoading(false);
+      if (request === latestRequest.current) setIsLoading(false);
     }
   };
 
@@ -43,5 +55,5 @@ export function useFetchData<T>(getter: (() => Promise<T>) | null, refreshKey?: 
 
   const error = failureMessage === null ? null : t("common.fetchFailed", { message: failureMessage });
 
-  return { data, isLoading, error, status, refresh: fetchData };
+  return { data, isLoading, error, status, refresh: () => fetchData(), refreshSilently: () => fetchData(true) };
 }

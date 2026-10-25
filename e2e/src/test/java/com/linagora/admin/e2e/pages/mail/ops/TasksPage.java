@@ -9,7 +9,10 @@ import com.linagora.admin.e2e.pages.AdminApp;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.AriaRole;
 
-/** The Tasks page: list of WebAdmin tasks, filters, sort and the task detail dialog. */
+/**
+ * The Tasks page: list of WebAdmin tasks, status chips, the filters panel (type, then the dates
+ * folded in "Date filters"), sort and the task detail dialog. Filters, sort and page live in the URL.
+ */
 public class TasksPage {
     private final AdminApp app;
 
@@ -33,19 +36,36 @@ public class TasksPage {
     }
 
     public Locator filtersButton() {
-        return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(Pattern.compile("^(Filters|Hide Filters)$")));
+        return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(Pattern.compile("^(Filters( \\(\\d+ active\\))?|Hide Filters)$")));
     }
 
     public Locator button(String name) {
         return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(name).setExact(true));
     }
 
-    public Locator statusFilter() {
-        return app.main().getByLabel("Status", new Locator.GetByLabelOptions().setExact(true));
+    /** The quick status chips: All, Running, Failed, Completed, Cancelled, each with its count. */
+    public Locator statusChips() {
+        return app.main().getByRole(AriaRole.GROUP, new Locator.GetByRoleOptions().setName("Status").setExact(true))
+            .getByRole(AriaRole.BUTTON);
     }
 
+    /** A status chip, "Failed (2)", by its name without the count. */
+    public Locator statusChip(String name) {
+        return statusChips().filter(new Locator.FilterOptions().setHasText(Pattern.compile("^" + name + "( \\(\\d+\\))?$")));
+    }
+
+    /** The type picker: task names, the raw WebAdmin type as value. */
     public Locator typeFilter() {
         return app.main().getByLabel("Type", new Locator.GetByLabelOptions().setExact(true));
+    }
+
+    /** Unfolds "Date filters" in the open filters panel. */
+    public TasksPage openDateFilters() {
+        Locator details = app.main().getByTestId("tasks-date-filters");
+        if (details.getAttribute("open") == null) {
+            details.locator("summary").click();
+        }
+        return this;
     }
 
     public Locator dateFilter(String label) {

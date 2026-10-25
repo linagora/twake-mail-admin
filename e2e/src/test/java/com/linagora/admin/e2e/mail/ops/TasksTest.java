@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 
@@ -161,55 +160,69 @@ class TasksTest extends MailAdminE2ETest {
         assertThat(webAdmin.awaitTask(clear).path("status").asText()).isEqualTo("completed");
 
         TasksPage tasks = TasksPage.open(app);
+        // Quick status chips, always visible, each with its count
+        assertThat(tasks.statusChips()).hasText(new Pattern[] {
+            Pattern.compile("^All \\(\\d+\\)$"), Pattern.compile("^Running \\(\\d+\\)$"), Pattern.compile("^Failed \\(\\d+\\)$"),
+            Pattern.compile("^Completed \\(\\d+\\)$"), Pattern.compile("^Cancelled \\(\\d+\\)$")});
         tasks.filtersButton().click();
         assertThat(tasks.filtersButton()).hasText("Hide Filters");
-        assertThat(tasks.statusFilter().locator("option")).hasText(new String[] {
-            "All", "Waiting", "In Progress", "Cancel Requested", "Completed", "Cancelled", "Failed"});
+        // The dates are folded away
+        assertThat(tasks.dateFilter("Submitted after")).isHidden();
+        tasks.openDateFilters();
         for (String date : List.of("Submitted after", "Submitted before", "Started after", "Started before",
             "Completed after", "Completed before", "Failed after", "Failed before")) {
             assertThat(tasks.dateFilter(date)).isVisible();
         }
 
         tasks.dateFilter("Submitted after").fill(submittedAfter);
-        tasks.statusFilter().selectOption("completed");
         tasks.applyFilters();
+        tasks.statusChip("Completed").click();
+        assertThat(tasks.statusChip("Completed")).hasAttribute("aria-pressed", "true");
         assertThat(tasks.row(cancelled)).hasCount(0);
         assertThat(tasks.row(reindex)).isVisible();
         assertThat(tasks.row(clear)).isVisible();
         assertThat(tasks.rows().filter(new Locator.FilterOptions().setHasNot(
             page.getByText("Completed", new Page.GetByTextOptions().setExact(true))))).hasCount(0);
 
-        tasks.typeFilter().fill("user-reindexing");
+        // The type picker lists task names; the raw type goes to WebAdmin
+        assertThat(tasks.typeFilter().locator("option[value='user-reindexing']")).not().hasText("user-reindexing");
+        tasks.typeFilter().selectOption("user-reindexing");
         tasks.applyFilters();
         assertThat(tasks.row(clear)).hasCount(0);
         assertThat(tasks.row(reindex)).isVisible();
         assertThat(tasks.rowTypes().filter(new Locator.FilterOptions().setHasNotText("user-reindexing"))).hasCount(0);
 
-        // Cancelled and Cancel Requested are accepted by WebAdmin
-        tasks.statusFilter().selectOption("canceled");
-        tasks.applyFilters();
+        tasks.statusChip("Cancelled").click();
         assertThat(tasks.row(cancelled)).isVisible();
         assertThat(tasks.row(cancelled)).containsText("Cancelled");
         assertThat(tasks.row(reindex)).hasCount(0);
         assertThat(app.main().getByText(Pattern.compile("^Error:"))).hasCount(0);
-        tasks.statusFilter().selectOption("canceledRequested");
-        tasks.applyFilters();
+        // The filters are in the URL: kept on reload
+        assertThat(page).hasURL(Pattern.compile("[?&]status=canceled(&|$)"));
+        assertThat(page).hasURL(Pattern.compile("[?&]type=user-reindexing(&|$)"));
+        page.reload();
+        assertThat(tasks.statusChip("Cancelled")).hasAttribute("aria-pressed", "true");
+        assertThat(tasks.row(cancelled)).isVisible();
+        assertThat(tasks.row(reindex)).hasCount(0);
+        // Running covers waiting, in progress and cancel requested
+        tasks.statusChip("Running").click();
         assertThat(tasks.row(cancelled)).hasCount(0);
         assertThat(app.main().getByText(Pattern.compile("^Error:"))).hasCount(0);
 
-        tasks.statusFilter().selectOption("");
-        tasks.typeFilter().fill("no-such-task-type");
-        tasks.applyFilters();
+        // A type nobody ran, read back from the URL
+        app.open("/tasks?type=no-such-task-type");
         assertThat(tasks.emptyMessage()).isVisible();
 
+        tasks.filtersButton().click();
         tasks.button("Reset").click();
         assertThat(tasks.row(reindex)).isVisible();
         assertThat(tasks.row(clear)).isVisible();
         assertThat(tasks.row(cancelled)).isVisible();
         assertThat(tasks.typeFilter()).hasValue("");
+        assertThat(tasks.statusChip("All")).hasAttribute("aria-pressed", "true");
         tasks.filtersButton().click();
         assertThat(tasks.filtersButton()).hasText("Filters");
-        assertThat(tasks.statusFilter()).hasCount(0);
+        assertThat(tasks.typeFilter()).hasCount(0);
 
         // Sort by type, both ways: compare with the order of the browser (localeCompare)
         tasks.sortField().selectOption("type");
@@ -221,9 +234,8 @@ class TasksTest extends MailAdminE2ETest {
     }
 
     @Test
-    @Tag("known-bug")
-    // useFetchData keeps the last response to arrive, not the answer to the last request: a slow
-    // unfiltered list (thousands of tasks) lands after the filtered one and replaces it
+    // useFetchData keeps the answer to the last request: a slow unfiltered list (thousands of
+    // tasks) landing after the filtered one is ignored
     @DisplayName("TSK-02 A filter applied while the previous list loads is not overwritten by it")
     void staleListDoesNotOverwriteFilter(AdminApp app, Page page, MailFixtures fixtures, WebAdmin webAdmin) {
         String user = fixtures.newUser();
@@ -239,7 +251,7 @@ class TasksTest extends MailAdminE2ETest {
         page.waitForRequest(request -> request.url().endsWith("/tasks"), () -> tasks.refreshButton().click());
 
         tasks.filtersButton().click();
-        tasks.typeFilter().fill("user-reindexing");
+        tasks.typeFilter().selectOption("user-reindexing");
         tasks.applyFilters();
         assertThat(tasks.row(reindex)).isVisible();
         assertThat(tasks.row(clear)).hasCount(0);
@@ -308,16 +320,15 @@ class TasksTest extends MailAdminE2ETest {
         assertThat(tasks.startedCompleted(cancelledId)).hasAttribute("title", expected);
 
         // Failed tasks, if any, show their end date too
-        tasks.filtersButton().click();
-        tasks.statusFilter().selectOption("failed");
-        tasks.applyFilters();
+        tasks.statusChip("Failed").click();
         assertThat(tasks.row(cancelledId)).hasCount(0);
         assertThat(tasks.rows().getByTestId("task-started-completed").filter(new Locator.FilterOptions().setHasNotText("→"))).hasCount(0);
 
-        // Sorted by end date, the cancelled task sits among the others by its cancellation date.
-        // One request at a time: the list keeps the last response to arrive (see staleListDoesNotOverwriteFilter)
-        tasks.statusFilter().selectOption("");
-        tasks.typeFilter().fill("user-reindexing");
+        // Sorted by end date, the cancelled task sits among the others by its cancellation date
+        tasks.statusChip("All").click();
+        tasks.filtersButton().click();
+        tasks.typeFilter().selectOption("user-reindexing");
+        tasks.openDateFilters();
         tasks.dateFilter("Submitted after").fill(submittedAfter);
         tasks.applyFilters();
         assertThat(tasks.dateFilter("Submitted after")).hasValue(submittedAfter);
