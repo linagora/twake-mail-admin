@@ -1,5 +1,5 @@
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { getTaskDetail } from "../api-client";
@@ -12,9 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { TaskDetailResponse, TaskStatus } from "../types";
 import { cancelAndReport, cancelConfirmMessage, isRunning, TaskDetails, TaskSummary, taskHeading } from "@/modules/tasks/task-summary";
-
-// A running task is read again this often, until it is over
-const AUTO_REFRESH_MS = 2000;
+import { TASK_AUTO_REFRESH_MS, useAutoRefresh } from "@/modules/tasks/use-auto-refresh";
 import Header from "@/components/custom/header";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
@@ -42,13 +40,10 @@ export default function TaskDetail() {
     refresh,
   } = useFetchData<TaskDetailResponse>(fetchTaskDetail);
 
-  // Follows a waiting or running task by itself; no request once it completed, failed or was cancelled
+  // Follows a waiting or running task by itself; no request once it completed, failed or was
+  // cancelled, nor while the browser tab is hidden
   const running = !!taskDetail && isRunning(taskDetail.status);
-  useEffect(() => {
-    if (!running) return;
-    const timer = window.setInterval(refresh, AUTO_REFRESH_MS);
-    return () => window.clearInterval(timer);
-  }, [running, refresh]);
+  useAutoRefresh(running, refresh, TASK_AUTO_REFRESH_MS);
 
   // Same confirmation and feedback as the Tasks list
   const handleCancelTask = async () => {

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { AxiosError, AxiosResponse } from "axios";
 import i18n from "@/i18n";
@@ -114,5 +114,37 @@ describe("useFetchData status", () => {
     const { result: loaded } = renderHook(() => useFetchData(ok));
     await waitFor(() => expect(loaded.current.data).toBe(1));
     expect(loaded.current.status).toBeNull();
+  });
+});
+
+describe("useFetchData refreshes", () => {
+  it("keeps the data on screen without a loading state on a silent refresh", async () => {
+    let resolveSecond: (value: number) => void = () => {};
+    const getter = vi.fn<() => Promise<number>>()
+      .mockResolvedValueOnce(1)
+      .mockImplementationOnce(() => new Promise((resolve) => { resolveSecond = resolve; }));
+    const { result } = renderHook(() => useFetchData(getter));
+    await waitFor(() => expect(result.current.data).toBe(1));
+
+    act(() => { result.current.refreshSilently(); });
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.data).toBe(1);
+
+    await act(async () => resolveSecond(2));
+    expect(result.current.data).toBe(2);
+  });
+
+  it("ignores an earlier request answering after a later one", async () => {
+    const resolvers: ((value: string) => void)[] = [];
+    const getter = vi.fn(() => new Promise<string>((resolve) => { resolvers.push(resolve); }));
+    const { result } = renderHook(() => useFetchData(getter));
+    await waitFor(() => expect(resolvers).toHaveLength(1));
+
+    act(() => { result.current.refresh(); });
+    await act(async () => resolvers[1]("latest"));
+    await act(async () => resolvers[0]("stale"));
+
+    expect(result.current.data).toBe("latest");
+    expect(result.current.isLoading).toBe(false);
   });
 });
