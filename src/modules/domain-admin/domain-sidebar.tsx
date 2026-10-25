@@ -4,9 +4,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -14,7 +11,8 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { useLocation } from "react-router";
-import { SidebarNavItem } from "@/components/sidebar-nav-item";
+import { SidebarNavGroups } from "@/components/sidebar-nav-item";
+import { type NavGroup, visibleNavGroups } from "@/components/nav-groups";
 import { useTranslation } from "react-i18next";
 import { useDomain } from "./domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -73,14 +71,21 @@ export function DomainSidebar() {
   const canMailingLists = useIsAllowed("GET", "/mailingLists");
   const canTasks = useIsAllowed("GET", "/tasks");
 
-  const ALL_ITEMS = [
-    { title: t("domainAdminPages.users"),        url: "/users",         icon: Users },
-    { title: t("domainAdminPages.domainAliases"), url: "/aliases",        icon: BookMarked },
-    { title: t("domainAdminPages.teamMailboxes"), url: "/team-mailboxes", icon: Mailbox },
-    { title: t("domainAdminPages.quota"),         url: "/quota",          icon: Gauge },
-    { title: t("domainAdminPages.rateLimiting"),  url: "/rate-limiting",  icon: Zap },
-    { title: t("domainAdminPages.mailingLists"),  url: "/mailing-lists",  icon: Mails },
-    { title: t("domainAdminPages.tasks"),         url: "/tasks",          icon: ListChecks },
+  // Grouped like the global sidebar, by what the operator comes to do
+  const GROUPS: NavGroup[] = [
+    { label: t("sidebar.groupDirectory"), items: [
+      { title: t("domainAdminPages.users"),         url: "/users",          icon: Users },
+      { title: t("domainAdminPages.teamMailboxes"), url: "/team-mailboxes", icon: Mailbox },
+      { title: t("domainAdminPages.mailingLists"),  url: "/mailing-lists",  icon: Mails },
+      { title: t("domainAdminPages.domainAliases"), url: "/aliases",        icon: BookMarked },
+    ] },
+    { label: t("sidebar.groupDomainSettings"), items: [
+      { title: t("domainAdminPages.quota"),         url: "/quota",          icon: Gauge },
+      { title: t("domainAdminPages.rateLimiting"),  url: "/rate-limiting",  icon: Zap },
+    ] },
+    { label: t("sidebar.groupMaintenance"), items: [
+      { title: t("domainAdminPages.tasks"),         url: "/tasks",          icon: ListChecks },
+    ] },
   ];
 
   const VISIBILITY: Record<string, boolean> = {
@@ -93,7 +98,7 @@ export function DomainSidebar() {
     "/tasks": canTasks,
   };
 
-  const items = ALL_ITEMS.filter(item => VISIBILITY[item.url] !== false);
+  const groups = visibleNavGroups(GROUPS, VISIBILITY);
 
   return (
     <Sidebar variant="inset">
@@ -108,16 +113,7 @@ export function DomainSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>{t("domainAdminPages.administration")}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarNavItem key={item.url} item={item} isActive={location.pathname.startsWith(item.url)} />
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <SidebarNavGroups groups={groups} isActive={(url) => location.pathname.startsWith(url)} />
       </SidebarContent>
       <SidebarSeparator />
       <SidebarFooter>

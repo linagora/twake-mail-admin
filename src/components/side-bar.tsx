@@ -1,13 +1,10 @@
-import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages, BarChart2, Mails, Send, LucideIcon } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages, BarChart2, Mails, Send } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -16,17 +13,13 @@ import {
 } from "@/components/ui/sidebar";
 import Logo from '../assets/images/logo.svg';
 import { useLocation } from "react-router";
-import { SidebarNavItem } from "@/components/sidebar-nav-item";
+import { SidebarNavGroups } from "@/components/sidebar-nav-item";
+import { type NavGroup, visibleNavGroups } from "@/components/nav-groups";
 import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useOIDC } from "@/components/custom/oidc-provider";
 import { supportedLanguages } from "@/i18n";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-interface NavGroup {
-  label: string;
-  items: { title: string; url: string; icon: LucideIcon }[];
-}
 
 function LanguageSelector() {
   const { i18n, t } = useTranslation();
@@ -150,9 +143,7 @@ export function AppSidebar() {
   };
 
   // A group none of whose entries is allowed is not shown
-  const groups = (appConfig.application === 'CALENDAR' ? CALENDAR_GROUPS : MAIL_GROUPS)
-    .map((group) => ({ ...group, items: group.items.filter((item) => VISIBILITY[item.url] !== false) }))
-    .filter((group) => group.items.length > 0);
+  const groups = visibleNavGroups(appConfig.application === 'CALENDAR' ? CALENDAR_GROUPS : MAIL_GROUPS, VISIBILITY);
 
   return (
     <Sidebar variant="inset">
@@ -169,18 +160,7 @@ export function AppSidebar() {
         )}
       </SidebarHeader>
       <SidebarContent>
-        {groups.map((group) => (
-          <SidebarGroup key={group.label}>
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarNavItem key={item.url} item={item} isActive={location.pathname.includes(item.url)} />
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        <SidebarNavGroups groups={groups} isActive={(url) => location.pathname.includes(url)} />
       </SidebarContent>
       <SidebarSeparator />
       <SidebarFooter>

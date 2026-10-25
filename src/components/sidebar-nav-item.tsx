@@ -1,6 +1,13 @@
 import type { LucideIcon } from "lucide-react";
 import { Link } from "react-router";
-import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 
 export interface SidebarNavEntry {
   title: string;
@@ -27,5 +34,33 @@ export function SidebarNavItem({ item, isActive }: SidebarNavItemProps) {
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
+  );
+}
+
+interface SidebarNavGroupsProps {
+  groups: { label: string; items: SidebarNavEntry[] }[];
+  isActive: (url: string) => boolean;
+}
+
+/**
+ * The sidebar entries, one labelled group per block, in the given order. The
+ * same markup serves the desktop sidebar and the mobile "Navigation" sheet.
+ */
+export function SidebarNavGroups({ groups, isActive }: SidebarNavGroupsProps) {
+  return (
+    <>
+      {groups.map((group) => (
+        <SidebarGroup key={group.label}>
+          <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {group.items.map((item) => (
+                <SidebarNavItem key={item.url} item={item} isActive={isActive(item.url)} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      ))}
+    </>
   );
 }

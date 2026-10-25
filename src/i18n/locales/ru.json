@@ -133,7 +133,8 @@
     "description": "Меню навигации приложения",
     "groupMonitoring": "Мониторинг",
     "groupDirectory": "Учётные записи и адреса",
-    "groupMaintenance": "Обслуживание"
+    "groupMaintenance": "Обслуживание",
+    "groupDomainSettings": "Настройки домена"
   },
   "domains": {
     "searchPlaceholder": "Поиск доменов...",
@@ -2136,7 +2137,6 @@
     "calendarSettings": "Настройки",
     "domainAliases": "Псевдонимы домена",
     "resources": "Ресурсы",
-    "administration": "Администрирование",
     "domainAdmin": "Администратор домена",
     "users": "Пользователи",
     "registeredUsers": "Зарегистрированные пользователи"

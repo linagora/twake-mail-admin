@@ -128,7 +128,8 @@
     "description": "Програмын навигацийн цэс",
     "groupMonitoring": "Хяналт",
     "groupDirectory": "Бүртгэл ба хаяг",
-    "groupMaintenance": "Засвар үйлчилгээ"
+    "groupMaintenance": "Засвар үйлчилгээ",
+    "groupDomainSettings": "Домэйны тохиргоо"
   },
   "domains": {
     "searchPlaceholder": "Домэйн хайх...",
@@ -2125,7 +2126,6 @@
     "calendarSettings": "Тохиргоо",
     "domainAliases": "Домэйны өөр нэрс",
     "resources": "Нөөц",
-    "administration": "Удирдлага",
     "domainAdmin": "Домэйны администратор",
     "users": "Хэрэглэгчид",
     "registeredUsers": "Бүртгэгдсэн хэрэглэгчид"

@@ -127,7 +127,8 @@
     "description": "Menu điều hướng của ứng dụng",
     "groupMonitoring": "Giám sát",
     "groupDirectory": "Tài khoản và địa chỉ",
-    "groupMaintenance": "Bảo trì"
+    "groupMaintenance": "Bảo trì",
+    "groupDomainSettings": "Cài đặt tên miền"
   },
   "domains": {
     "searchPlaceholder": "Tìm tên miền...",
@@ -2121,7 +2122,6 @@
     "calendarSettings": "Cài đặt",
     "domainAliases": "Bí danh tên miền",
     "resources": "Tài nguyên",
-    "administration": "Quản trị",
     "domainAdmin": "Quản trị viên tên miền",
     "users": "Người dùng",
     "registeredUsers": "Người dùng đã đăng ký"

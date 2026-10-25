@@ -129,7 +129,8 @@
     "description": "Navigationsmenü der Anwendung",
     "groupMonitoring": "Überwachung",
     "groupDirectory": "Konten und Adressen",
-    "groupMaintenance": "Wartung"
+    "groupMaintenance": "Wartung",
+    "groupDomainSettings": "Domain-Einstellungen"
   },
   "domains": {
     "searchPlaceholder": "Domains suchen...",
@@ -2131,7 +2132,6 @@
     "calendarSettings": "Einstellungen",
     "domainAliases": "Domain-Aliasse",
     "resources": "Ressourcen",
-    "administration": "Verwaltung",
     "domainAdmin": "Domain-Verwaltung",
     "users": "Benutzer",
     "registeredUsers": "Registrierte Benutzer"
