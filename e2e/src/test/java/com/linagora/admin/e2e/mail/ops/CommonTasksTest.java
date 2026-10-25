@@ -98,8 +98,9 @@ class CommonTasksTest extends MailAdminE2ETest {
             .hasText("Use when the unread or total counts of mailboxes look wrong. Recounts every mailbox.");
         assertThat(commonTasks.riskBadge("Recompute mailbox counters")).hasCount(0);
         assertThat(commonTasks.riskBadge("Fix mailbox inconsistencies")).hasText("Modifies data");
-        assertThat(commonTasks.riskBadge("Blob garbage collection")).hasText("Deletes data");
-        assertThat(commonTasks.riskBadge("Purge Deleted Messages")).hasText("Deletes data");
+        // Only unreferenced or expired data: run with care, without a word to type
+        assertThat(commonTasks.riskBadge("Blob garbage collection")).hasText("Modifies data");
+        assertThat(commonTasks.riskBadge("Purge Deleted Messages")).hasText("Modifies data");
         // The filter matches the names and the descriptions
         commonTasks.filter().fill("unread");
         assertThat(commonTasks.label("Recompute mailbox counters")).isVisible();
@@ -171,16 +172,12 @@ class CommonTasksTest extends MailAdminE2ETest {
                 assertThat(app.dialog().getByText(commonTask.description(), new Locator.GetByTextOptions().setExact(true))).isVisible();
                 assertThat(page.commandPreview()).hasText("Command: " + commonTask.preview());
                 String path = commonTask.request().substring(0, commonTask.request().indexOf('?') + 1);
-                Response response;
                 if (commonTask.name().equals("Purge Deleted Messages")) {
-                    // Irreversible: the consequence is spelled out, "Delete data" waits for DELETE to be typed
+                    // The consequence is spelled out, no word to type
                     assertThat(app.dialog()).containsText("can no longer be restored");
-                    assertThat(Dialogs.button(app, "Delete data")).isDisabled();
-                    Dialogs.typeToConfirmField(app).fill(Dialogs.DELETE_WORD);
-                    response = confirmTask(app, commonTask.method(), path, "Delete data");
-                } else {
-                    response = confirmTask(app, commonTask.method(), path);
+                    assertThat(Dialogs.typeToConfirmField(app)).hasCount(0);
                 }
+                Response response = confirmTask(app, commonTask.method(), path);
                 assertThat(pathOf(response)).isEqualTo(commonTask.request());
                 String taskId = taskIdOf(response);
                 started.add(taskId);
@@ -291,15 +288,10 @@ class CommonTasksTest extends MailAdminE2ETest {
         assertThat(app.dialog()).containsText("Stored blobs that no message references any more are permanently deleted from the object storage.");
         assertThat(page.param("expectedBlobCount")).hasValue("1000000");
         assertThat(page.param("associatedProbability")).hasValue("0.01");
-        // Irreversible: "Delete data" stays disabled until DELETE is typed
-        Locator deleteData = Dialogs.button(app, "Delete data");
-        assertThat(deleteData).isDisabled();
-        Dialogs.typeToConfirmField(app).fill("delete");
-        assertThat(deleteData).isDisabled();
-        Dialogs.typeToConfirmField(app).fill(Dialogs.DELETE_WORD);
-        assertThat(deleteData).isEnabled();
+        // Only unreferenced blobs: started like any task, without a word to type
+        assertThat(Dialogs.typeToConfirmField(app)).hasCount(0);
         Response refused = app.page().waitForResponse(
-            r -> r.request().method().equals("DELETE") && r.url().contains("/blobs?"), deleteData::click);
+            r -> r.request().method().equals("DELETE") && r.url().contains("/blobs?"), Dialogs.button(app, Dialogs.START_TASK)::click);
         assertThat(pathOf(refused)).isEqualTo("/blobs?scope=unreferenced&associatedProbability=0.01&expectedBlobCount=1000000");
         if (refused.status() == 201) {
             assertThat(app.dialog()).isHidden();

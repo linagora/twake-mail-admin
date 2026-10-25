@@ -2,12 +2,18 @@ import { ReactNode, useId, useState } from "react";
 import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { TaskGroup, taskDescriptionKey } from "./types";
+import type { TaskRisk } from "@/components/custom/run-task-button";
 
 export interface TaskEntry {
   nameKey: string;
   group: TaskGroup;
+  // Orders the rows of a group: the safe ones first, then caution, then destructive
+  risk?: TaskRisk;
   node: ReactNode;
 }
+
+const RISK_ORDER: Record<TaskRisk, number> = { safe: 0, caution: 1, destructive: 2 };
+const riskRank = (entry: TaskEntry) => RISK_ORDER[entry.risk ?? "safe"];
 
 interface Props {
   entries: TaskEntry[];
@@ -15,8 +21,9 @@ interface Props {
 }
 
 /**
- * Common Tasks grouped by purpose, with a filter on names and descriptions. A group whose
- * tasks are all hidden by the permissions disappears with them.
+ * Common Tasks grouped by purpose, with a filter on names and descriptions. Within a group the
+ * safe tasks come first, then the ones to run with care. A group whose tasks are all hidden by
+ * the permissions disappears with them.
  */
 export default function TaskGroups({ entries, order }: Props) {
   const { t } = useTranslation();
@@ -45,7 +52,8 @@ export default function TaskGroups({ entries, order }: Props) {
         <p className="text-sm text-muted-foreground">{t("commonTasks.noMatch", { q: query.trim() })}</p>
       )}
       {order.map((group) => {
-        const groupEntries = visible.filter((entry) => entry.group === group);
+        // Stable: within a risk, the rows keep their order
+        const groupEntries = visible.filter((entry) => entry.group === group).sort((a, b) => riskRank(a) - riskRank(b));
         if (groupEntries.length === 0) return null;
         return (
           // Hidden when the permissions leave none of its rows

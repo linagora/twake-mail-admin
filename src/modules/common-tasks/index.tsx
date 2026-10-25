@@ -21,7 +21,8 @@ import { CALENDAR_WEBADMIN_DOC_URL, calendarWebadminDoc } from "@/lib/calendar-d
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
 
 // How a task's risk is set: safe = reads or rebuilds derived data; caution = changes stored
-// data or needs a maintenance window; destructive = permanently deletes user data or stored objects.
+// data, needs a maintenance window or deletes only unreferenced or expired data; destructive =
+// permanently deletes user data.
 const TASKS: TaskProps[] = [
   {
     nameKey: 'commonTasks.reindexFixOutdated',
@@ -124,9 +125,9 @@ const TASKS: TaskProps[] = [
     ],
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_running_blob_garbage_collection',
     allowanceCheck: { verb: 'DELETE', pattern: '/blobs' },
-    risk: 'destructive',
+    // Only unreferenced or expired data: no word to type
+    risk: 'caution',
     consequenceKey: 'confirm.consequence.blobGarbageCollection',
-    typeToConfirmKey: 'confirm.deleteWord',
   },
   {
     nameKey: 'commonTasks.reindexContacts',
@@ -146,9 +147,9 @@ const TASKS: TaskProps[] = [
     command: 'curl -XDELETE /deletedMessages?scope=expired',
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_purging_expired_deleted_messages',
     allowanceCheck: { verb: 'DELETE', pattern: '/deletedMessages' },
-    risk: 'destructive',
+    // Only unreferenced or expired data: no word to type
+    risk: 'caution',
     consequenceKey: 'confirm.consequence.purgeDeletedMessages',
-    typeToConfirmKey: 'confirm.deleteWord',
   },
   {
     nameKey: 'commonTasks.populateEmailQueryView',
@@ -277,7 +278,7 @@ export default function CommonTasks() {
         <Header headerTitle={t("commonTasks.title")} headerSubTitle={t("commonTasks.subtitleCalendar")} docuUrl={CALENDAR_WEBADMIN_DOC_URL} />
         <TaskGroups
           order={CALENDAR_GROUPS}
-          entries={CALENDAR_TASKS.map((task) => ({ nameKey: task.nameKey, group: task.group!, node: <TaskContainer {...task} /> }))}
+          entries={CALENDAR_TASKS.map((task) => ({ nameKey: task.nameKey, group: task.group!, risk: task.risk, node: <TaskContainer {...task} /> }))}
         />
       </div>
     );
@@ -414,7 +415,7 @@ function MailCommonTasks() {
 
   const entries: TaskEntry[] = [
     ...TASKS.flatMap((task): TaskEntry[] => [
-      { nameKey: task.nameKey, group: task.group!, node: <TaskContainer {...task} /> },
+      { nameKey: task.nameKey, group: task.group!, risk: task.risk, node: <TaskContainer {...task} /> },
       // Listed right after the full reindex it splits per user
       ...(task.nameKey === "commonTasks.reindexRebuildAll" && canReindexUsers ? [{
         nameKey: "commonTasks.perUserReindex",
@@ -445,6 +446,7 @@ function MailCommonTasks() {
     ...(canCleanupMailbox ? (["Trash", "Spam"] as const).map((mailbox) => ({
       nameKey: `commonTasks.cleanup${mailbox}All`,
       group: "cleanup" as const,
+      risk: "caution" as const,
       node: (
         <TaskRow
           title={t(`commonTasks.cleanup${mailbox}All`)}
@@ -458,6 +460,7 @@ function MailCommonTasks() {
     ...(canCleanupOldTasks ? [{
       nameKey: "commonTasks.cleaningUpOldTasks",
       group: "cleanup" as const,
+      risk: "caution" as const,
       node: (
         <TaskRow
           title={t("commonTasks.cleaningUpOldTasks")}
