@@ -209,7 +209,7 @@ export default function DomainsList() {
               <button
                 onClick={() => handleDelete(domain)}
                 disabled={checking !== null}
-                className="ml-auto shrink-0 p-1.5 rounded-md hover:bg-gray-200 disabled:opacity-60"
+                className="ml-auto shrink-0 -my-1.5 p-1.5 rounded-md hover:bg-gray-200 disabled:opacity-60"
                 title={t("domains.deleteDomain", { domain })}
                 aria-label={t("domains.deleteDomain", { domain })}
               >

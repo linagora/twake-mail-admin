@@ -15,6 +15,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { CompactList, CompactRow } from "@/components/custom/compact-list";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -192,52 +193,44 @@ export default function RegisteredUsersList() {
         />
       )}
 
-      <div>
+      <CompactList>
         {paginated.map((user, index) => (
-          <div
-            key={user.id}
-            className="space-y-1 p-4 bg-white rounded-2 my-4 flex justify-between items-center transition-colors hover:bg-gray-50"
-          >
-            <div>
-              <h4 className="min-w-0 text-sm font-medium leading-none break-all">
-                <span className="text-gray-500 mr-2">
-                  {(page - 1) * PAGE_LIMIT + index + 1}/
-                </span>
-                {/* Like the Users list: the page of the user, with their calendars and address books */}
-                {user.email ? (
-                  <UserLink address={user.email} known />
-                ) : user.email}
-              </h4>
-              <p className="text-xs text-gray-500 mt-1">
-                {user.firstname} {user.lastname}
-              </p>
-              <p className="text-xs text-gray-400 mt-1">
-                {t("registeredUsers.id")} {user.id}
-              </p>
-            </div>
-            <div className="flex gap-1">
-              {canEdit && (
-                <button
-                  onClick={() => handleEdit(user)}
-                  className="p-2 rounded-md hover:bg-gray-200"
-                  title={t("registeredUsers.editTooltip")}
-                >
-                  <Pencil className="w-4 h-4 text-blue-600" />
-                </button>
-              )}
-              {canDelete && (
-                <button
-                  onClick={() => handleDelete(user)}
-                  className="p-2 rounded-md hover:bg-gray-200"
-                  title={t("registeredUsers.deleteTooltip")}
-                >
-                  <Trash2 className="w-4 h-4 text-red-600" />
-                </button>
-              )}
-            </div>
-          </div>
+          <CompactRow key={user.id} number={(page - 1) * PAGE_LIMIT + index + 1}>
+            <span className="min-w-0 flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+              {/* Like the Users list: the page of the user, with their calendars and address books */}
+              <span className="break-all">
+                {user.email ? <UserLink address={user.email} known /> : user.id}
+              </span>
+              <span className="text-gray-600">{user.firstname} {user.lastname}</span>
+              <span className="text-xs text-gray-400 break-all">{t("registeredUsers.id")} {user.id}</span>
+            </span>
+            {(canEdit || canDelete) && (
+              <span className="ml-auto -my-1.5 flex shrink-0 gap-1">
+                {canEdit && (
+                  <button
+                    onClick={() => handleEdit(user)}
+                    className="p-1.5 rounded-md hover:bg-gray-200"
+                    title={t("registeredUsers.editTooltip", { email: user.email ?? user.id })}
+                    aria-label={t("registeredUsers.editTooltip", { email: user.email ?? user.id })}
+                  >
+                    <Pencil className="w-4 h-4 text-blue-600" aria-hidden="true" />
+                  </button>
+                )}
+                {canDelete && (
+                  <button
+                    onClick={() => handleDelete(user)}
+                    className="p-1.5 rounded-md hover:bg-gray-200"
+                    title={t("registeredUsers.deleteTooltip", { email: user.email ?? user.id })}
+                    aria-label={t("registeredUsers.deleteTooltip", { email: user.email ?? user.id })}
+                  >
+                    <Trash2 className="w-4 h-4 text-red-600" aria-hidden="true" />
+                  </button>
+                )}
+              </span>
+            )}
+          </CompactRow>
         ))}
-      </div>
+      </CompactList>
       {search && usersResult && filtered.length === 0 && (
         <p className="text-gray-500 mt-4">{t("registeredUsers.noMatch", { query: search })}</p>
       )}

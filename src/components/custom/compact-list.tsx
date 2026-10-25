@@ -9,7 +9,8 @@ export function CompactList({ children }: { children: ReactNode }) {
 export function CompactRow({ number, children }: { number: number; children: ReactNode }) {
   return (
     <li className="flex items-center gap-3 px-3 py-2 border-b last:border-b-0 text-sm transition-colors hover:bg-gray-50">
-      <span className="w-10 shrink-0 text-right text-gray-500 tabular-nums">{number}.</span>
+      {/* On the first line of the object, should it wrap */}
+      <span className="w-10 shrink-0 self-start text-right text-gray-500 tabular-nums">{number}.</span>
       {children}
     </li>
   );
