@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({
     {back && (
       <div className="sticky top-12 md:top-0 z-20 h-0" aria-hidden={!scrolledPast}>
         {scrolledPast && (
-          <div data-sticky-header className="-mx-4 px-4 h-12 flex items-center gap-3 bg-white/95 backdrop-blur border-b">
+          <div data-sticky-header className="-mx-4 px-4 h-12 flex items-center gap-3 bg-background/95 backdrop-blur border-b">
             <Link to={back.to} className="inline-flex items-center gap-1 shrink-0 text-sm text-blue-600 hover:underline">
               <ChevronLeft className="w-4 h-4" aria-hidden="true" />
               {back.label}

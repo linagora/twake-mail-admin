@@ -25,7 +25,16 @@ import UserSuggestInput from "@/components/custom/user-suggest-input";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
+// The provider wraps the whole page, so that Expand all / Collapse all also reach the members section
 export default function TeamMailboxDetail() {
+  return (
+    <SectionsProvider page="teamMailbox">
+      <TeamMailboxDetailContent />
+    </SectionsProvider>
+  );
+}
+
+function TeamMailboxDetailContent() {
   const { t } = useTranslation();
   const { domain, mailbox } = useParams();
   const breadcrumbs = useBreadcrumbs();
@@ -107,7 +116,7 @@ export default function TeamMailboxDetail() {
   };
 
   return (
-    <SectionsProvider page="teamMailbox">
+    <>
     <Header headerTitle={`${mailbox}@${domain}`} headerSubTitle={t("domains.teamMailbox.detailKind")} breadcrumb={breadcrumbs.teamMailboxes(domain!)} actions={<ExpandCollapseAll />} />
     <div className="mt-4 p-4 bg-white rounded-2">
 
@@ -232,6 +241,6 @@ export default function TeamMailboxDetail() {
         />
       )}
     </div>
-    </SectionsProvider>
+    </>
   );
 }
