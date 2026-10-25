@@ -19,8 +19,9 @@ export default function SectionToggle({ open, onToggle, controls, children }: Se
       onClick={onToggle}
       aria-expanded={open}
       aria-controls={controls}
-      // Revealed from the summary strip: its title stays clear of the sticky header of the page
-      className="flex items-center gap-2 text-md font-semibold text-left hover:text-blue-600 transition scroll-mt-16"
+      // Revealed from the summary strip: its title stays clear of the sticky header of the page,
+      // which sits under the 48 px menu bar on a phone
+      className="flex items-center gap-2 text-md font-semibold text-left hover:text-blue-600 transition scroll-mt-28 md:scroll-mt-16"
     >
       <Chevron className="w-4 h-4 shrink-0" aria-hidden="true" />
       {children}

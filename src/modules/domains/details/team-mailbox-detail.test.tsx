@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import type { ReactNode } from "react";
 import type { UserExistsStatus } from "@/hooks/use-check-user-exists";
 
 const mocks = vi.hoisted(() => ({
@@ -16,8 +17,8 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-// The page header is covered by its own tests
-vi.mock("@/components/custom/header", () => ({ default: () => null }));
+// The page header is covered by its own tests; only its actions (Expand all / Collapse all) matter here
+vi.mock("@/components/custom/header", () => ({ default: ({ actions }: { actions?: ReactNode }) => actions ?? null }));
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, unknown>) => (options ? `${key} ${JSON.stringify(options)}` : key),
@@ -58,7 +59,24 @@ beforeEach(() => {
   mocks.api.addTeamMailboxMember.mockResolvedValue(undefined);
 });
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  localStorage.clear();
+});
+
+describe("team mailbox: Expand all / Collapse all", () => {
+  it("also folds and unfolds the members section", async () => {
+    render(<TeamMailboxDetail />);
+    const members = () => screen.getByRole("button", { name: /domains.teamMailbox.members/ });
+    expect(members().getAttribute("aria-expanded")).toBe("true");
+
+    fireEvent.click(await screen.findByRole("button", { name: "common.collapseAll" }));
+    await waitFor(() => expect(members().getAttribute("aria-expanded")).toBe("false"));
+
+    fireEvent.click(screen.getByRole("button", { name: "common.expandAll" }));
+    await waitFor(() => expect(members().getAttribute("aria-expanded")).toBe("true"));
+  });
+});
 
 describe("team mailbox members: add a member", () => {
   it("adds an existing user typed in the modal of the + button, without confirmation", async () => {
