@@ -69,6 +69,8 @@ const ConfirmAppearanceContext = createContext<((appearance: AppearanceUpdate) =
 
 const FocusCancelContext = createContext<(() => void) | null>(null);
 
+const ContentChangeContext = createContext<(() => void) | null>(null);
+
 /**
  * Called by a dialog content whose fields are all optional, e.g. task parameters: the
  * dialog opens with the focus on "Cancel" rather than in the first field.
@@ -88,6 +90,17 @@ export function useFocusCancelOnOpen(enabled = true): void {
 export function useConfirmAppearance(): (appearance: AppearanceUpdate) => void {
   return useContext(ConfirmAppearanceContext) ?? (() => {});
 }
+
+/**
+ * Lets the content of a confirm dialog report an edit that is not typed in a native field,
+ * e.g. a "Remove criterion" click: the dialog clears its error, re-checked on the next confirm.
+ */
+export function useConfirmContentChange(): () => void {
+  return useContext(ContentChangeContext) ?? ignoreContentChange;
+}
+
+// Stable, as it ends up in the dependencies of the content's callbacks
+const ignoreContentChange = () => {};
 
 export const matchesTypeToConfirm = (typed: string, expected: string, ignoreCase = false): boolean =>
   ignoreCase ? typed.trim().toLowerCase() === expected.trim().toLowerCase() : typed.trim() === expected.trim();
@@ -186,7 +199,8 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
   latestCancel.current = handleCancel;
 
   // Any edit of the content may fix the reported problem: the error is re-checked on the next confirm.
-  const clearError = () => setConfirmState((current) => (current.error ? { ...current, error: null } : current));
+  const [clearError] = useState(() => () =>
+    setConfirmState((current) => (current.error ? { ...current, error: null } : current)));
 
   // A destructive dialog never opens with the focus on a field or on the confirm button
   const handleOpenAutoFocus = (event: Event) => {
@@ -217,11 +231,13 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
           )}
           <ConfirmAppearanceContext.Provider value={setAppearance}>
             <FocusCancelContext.Provider value={requestFocusCancel}>
-              <div className="contents" onChange={clearError}>
-                { typeof confirmState.message === 'string'
-                  ? <DialogPrimitive.Description asChild><p>{confirmState.message}</p></DialogPrimitive.Description>
-                  : confirmState.message }
-              </div>
+              <ContentChangeContext.Provider value={clearError}>
+                <div className="contents" onChange={clearError}>
+                  { typeof confirmState.message === 'string'
+                    ? <DialogPrimitive.Description asChild><p>{confirmState.message}</p></DialogPrimitive.Description>
+                    : confirmState.message }
+                </div>
+              </ContentChangeContext.Provider>
             </FocusCancelContext.Provider>
           </ConfirmAppearanceContext.Provider>
           {confirmState.typeToConfirm !== undefined && (

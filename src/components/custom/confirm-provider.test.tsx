@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ConfirmOptions, ConfirmProvider, ConfirmValidator, matchesTypeToConfirm } from "./confirm-provider";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Link, MemoryRouter } from "react-router";
+import FormTaskContent from "@/modules/common-tasks/components/form-task-content";
 
 function NameForm({ onChange }: { onChange: (value: string) => void }) {
   const [name, setName] = useState("");
@@ -232,6 +233,45 @@ describe("confirm dialog validation without message", () => {
     expect(screen.queryByRole("dialog")).not.toBeNull();
     expect(screen.getAllByRole("alert").map((alert) => alert.textContent)).toEqual(["Complete the criteria"]);
     expect(silentResults).toEqual([]);
+  });
+});
+
+describe("confirm dialog edited by a click", () => {
+  function ItemsForm({ onChange }: { onChange: (items: string[]) => void }) {
+    const [items, setItems] = useState([""]);
+    const remove = () => { setItems([]); onChange([]); };
+    return <ul>{items.map((_, index) => <li key={index}><button onClick={remove}>remove</button></li>)}</ul>;
+  }
+
+  function ItemsOpener() {
+    const confirm = useConfirm();
+    const open = () => {
+      let items = [""];
+      confirm({
+        header: "Restore",
+        message: (
+          <FormTaskContent
+            initialValues={items}
+            renderForm={(onChange) => <ItemsForm onChange={onChange} />}
+            buildCommand={(values) => `items: ${values.length}`}
+            onChange={(values) => { items = values; }}
+          />
+        ),
+        validate: () => (items.every(Boolean) ? null : "Complete or remove every item"),
+      });
+    };
+    return <button onClick={open}>open</button>;
+  }
+
+  it("clears the error once the content reports a change that is not typed in a field", async () => {
+    render(<ConfirmProvider><ItemsOpener /></ConfirmProvider>);
+    fireEvent.click(screen.getByText("open"));
+    fireEvent.click(await screen.findByText("confirmTask.start"));
+    expect(screen.getByRole("alert").textContent).toBe("Complete or remove every item");
+
+    fireEvent.click(screen.getByText("remove"));
+
+    expect(screen.queryByRole("alert")).toBeNull();
   });
 });
 

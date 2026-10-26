@@ -1,4 +1,5 @@
 import { ReactNode, useCallback, useState } from "react";
+import { useConfirmContentChange } from "@/components/custom/confirm-provider";
 import ConfirmTaskContent from "./confirm-task-content";
 
 interface Props<V> {
@@ -12,12 +13,15 @@ interface Props<V> {
 // values the operator is typing, so that it shows the WebAdmin call that will actually be made.
 export default function FormTaskContent<V>({ initialValues, renderForm, buildCommand, onChange }: Props<V>) {
   const [values, setValues] = useState(initialValues);
+  // Edits made by clicking, e.g. removing a criterion, are not seen by the dialog's own change listener
+  const reportContentChange = useConfirmContentChange();
 
   // Stable, as some forms report their values from an effect depending on their `onChange`
   const handleChange = useCallback((next: V) => {
     setValues(next);
     onChange(next);
-  }, [onChange]);
+    reportContentChange();
+  }, [onChange, reportContentChange]);
 
   return <ConfirmTaskContent message={renderForm(handleChange)} command={buildCommand(values)} />;
 }
