@@ -17,7 +17,7 @@ import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PaginationControls } from "@/components/custom/pagination-controls";
-import { cancelAndReport, cancelConfirmMessage, CALENDAR_TASK_TYPES, endDate, formatDate, isRunning, shortTaskId, statusLabel, SHARED_TASK_TYPES, STATUS_COLORS, TASK_TYPE_LABEL_KEYS, TaskDetails, taskTargetInfo, TaskTarget, TaskSummary, taskHeading, taskTypeLabel } from "./task-summary";
+import { cancelAndReport, cancelConfirmMessage, CALENDAR_TASK_TYPES, endDate, formatDate, isRunning, shortTaskId, statusLabel, SHARED_TASK_TYPES, STATUS_COLORS, TASK_TYPE_LABEL_KEYS, TaskDetails, taskTargetInfo, TaskTarget, TaskSummary, taskHeading, taskName, taskTypeLabel } from "./task-summary";
 import { TASK_LIST_AUTO_REFRESH_MS, useAutoRefresh } from "./use-auto-refresh";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
@@ -407,7 +407,7 @@ export default function Tasks() {
                       className="text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                       onClick={() => openTask(task)}
                     >
-                      {taskTypeLabel(t, task.type)}
+                      {taskName(t, task)}
                     </button>
                     {taskTargetInfo(task) && (
                       // A user target links to its page, without opening the task

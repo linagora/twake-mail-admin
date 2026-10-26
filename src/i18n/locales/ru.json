@@ -1371,6 +1371,8 @@
       "timestamp": "Записано",
       "mailboxesExpired": "Ящики с устаревшими сообщениями",
       "messagesDeleted": "Удалено сообщений",
+      "folder": "Папка",
+      "olderThan": "Старше чем",
       "subscribedCount": "Ящиков с подпиской",
       "unsubscribedCount": "Ящиков без подписки",
       "calendarType": "Тип календаря",

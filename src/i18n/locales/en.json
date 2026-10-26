@@ -1366,6 +1366,8 @@
       "timestamp": "Recorded at",
       "mailboxesExpired": "Mailboxes with expired messages",
       "messagesDeleted": "Messages deleted",
+      "folder": "Folder",
+      "olderThan": "Older than",
       "subscribedCount": "Mailboxes subscribed",
       "unsubscribedCount": "Mailboxes unsubscribed",
       "calendarType": "Calendar type",

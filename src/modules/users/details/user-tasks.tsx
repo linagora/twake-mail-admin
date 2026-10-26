@@ -27,7 +27,7 @@ import {
 import { TaskParam } from "@/modules/common-tasks/types";
 import { defaultCommand } from "@/modules/common-tasks/components/command-preview";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
-import { taskTypeLabel } from "@/modules/tasks/task-summary";
+import { cleanupTaskLabel, taskTypeLabel } from "@/modules/tasks/task-summary";
 
 const REINDEX_PARAMS: TaskParam[] = [
   { key: "messagesPerSecond", defaultValue: "50", type: "input" },
@@ -272,7 +272,7 @@ export default function UserTasks({ username }: Props) {
       ),
       action: async () => {
         const data = await cleanupUserMailbox(username, mailbox, olderThan);
-        toastTaskCreated(data.taskId, undefined, taskTypeLabel(t, "ExpireMailboxTask"));
+        toastTaskCreated(data.taskId, undefined, cleanupTaskLabel(t, mailbox, true));
       },
     });
   };

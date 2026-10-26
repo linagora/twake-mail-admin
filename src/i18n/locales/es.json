@@ -1366,6 +1366,8 @@
       "timestamp": "Registrado el",
       "mailboxesExpired": "Buzones con mensajes caducados",
       "messagesDeleted": "Mensajes eliminados",
+      "folder": "Carpeta",
+      "olderThan": "Más antiguo que",
       "subscribedCount": "Buzones suscritos",
       "unsubscribedCount": "Buzones con suscripción cancelada",
       "calendarType": "Tipo de calendario",

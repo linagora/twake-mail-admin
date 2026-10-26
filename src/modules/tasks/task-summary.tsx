@@ -105,6 +105,7 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   processedUserCount: "tasks.info.processedUserCount",
   failedUsers: "tasks.info.failedUsers",
   username: "tasks.info.username",
+  user: "tasks.info.username",
   mailboxId: "tasks.info.mailboxId",
   domain: "tasks.info.domain",
   processedMailboxes: "tasks.info.processedMailboxes",
@@ -151,6 +152,8 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   mailboxesFailed: "tasks.info.failedMailboxes",
   mailboxesExpired: "tasks.info.mailboxesExpired",
   messagesDeleted: "tasks.info.messagesDeleted",
+  mailbox: "tasks.info.folder",
+  olderThan: "tasks.info.olderThan",
   // Populate email query view: counted per mailbox, per user on older backends
   processedMailboxCount: "tasks.info.processedMailboxes",
   failedMailboxCount: "tasks.info.failedMailboxes",
@@ -164,6 +167,24 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
 const isDetailShown = (key: string, value: unknown) =>
   value !== null && value !== undefined && key !== "type"
   && !(typeof value === "object" && !(Array.isArray(value) && value.every((item) => typeof item !== "object")));
+
+// A Trash or Spam cleanup (ExpireMailboxTask) nests its user, folder and age under runningOptions
+const EXPIRE_MAILBOX_TASK: string = "ExpireMailboxTask";
+const EXPIRE_OPTION_KEYS = ["user", "mailbox", "olderThan"] as const;
+
+const expireOptions = (task: TaskDetailResponse): Record<string, unknown> => {
+  const options = task.type === EXPIRE_MAILBOX_TASK ? task.additionalInformation?.runningOptions : undefined;
+  return options && typeof options === "object" ? options : {};
+};
+
+// The details of a task, its cleanup options first: they tell what the counters are about
+const detailEntries = (task: TaskDetailResponse): [string, unknown][] => {
+  const options = expireOptions(task);
+  return [
+    ...EXPIRE_OPTION_KEYS.map((key): [string, unknown] => [key, options[key]]),
+    ...Object.entries(task.additionalInformation ?? {}),
+  ].filter(([key, value]) => isDetailShown(key, value));
+};
 
 // A list of names or ids, e.g. the failed users: its items, or a dash when empty
 // Options such as overwriteExisting read "Yes" / "No", as the dialog that set them
@@ -273,6 +294,26 @@ export const SHARED_TASK_TYPES: ReadonlySet<string> = new Set(["DeleteUserDataTa
 export const taskTypeLabel = (t: TFunction, type: string): string =>
   TASK_TYPE_LABEL_KEYS[type] ? t(TASK_TYPE_LABEL_KEYS[type]) : type;
 
+type CleanedFolder = "Trash" | "Spam";
+
+const isCleanedFolder = (mailbox: unknown): mailbox is CleanedFolder => mailbox === "Trash" || mailbox === "Spam";
+
+/** The cleanup of a folder named as the button that started it: of a user, or of all users. */
+export const cleanupTaskLabel = (t: TFunction, mailbox: CleanedFolder, forOneUser: boolean): string =>
+  t(forOneUser ? `users.tasks.cleanup${mailbox}` : `commonTasks.cleanup${mailbox}All`);
+
+/**
+ * The name of a task in the UI language: as its type reads, except a Trash or Spam cleanup,
+ * named after the folder it cleaned, so that the cleanups of a user, of all users and of the
+ * Spam folder read apart.
+ */
+export function taskName(t: TFunction, task: TaskDetailResponse): string {
+  const { mailbox, user } = expireOptions(task);
+  return isCleanedFolder(mailbox)
+    ? cleanupTaskLabel(t, mailbox, !!stringOf(user))
+    : taskTypeLabel(t, task.type);
+}
+
 /** The first characters of a task ID, enough to tell tasks apart on screen. */
 export const shortTaskId = (taskId: string) => taskId.slice(0, 8);
 
@@ -287,8 +328,9 @@ export function taskTargetInfo(task: TaskDetailResponse): TaskTargetInfo | null 
   const info = task.additionalInformation ?? {};
   const repository = stringOf(info.repositoryPath);
   if (repository) return { kind: "repository", value: repository };
-  // A rename worked on the user it was started from
-  const user = stringOf(info.targetUser) ?? stringOf(info.username) ?? stringOf(info.user) ?? stringOf(info.oldUser);
+  // A rename worked on the user it was started from; a user's Trash cleanup nests them in its options
+  const user = stringOf(info.targetUser) ?? stringOf(info.username) ?? stringOf(info.user) ?? stringOf(info.oldUser)
+    ?? stringOf(expireOptions(task).user);
   if (user) return { kind: "user", value: user };
   const domain = stringOf(info.domain);
   if (domain) {
@@ -321,7 +363,7 @@ export function taskTarget(t: TFunction, task: TaskDetailResponse): string | nul
 export function taskHeading(t: TFunction, task: TaskDetailResponse): string {
   if (!task.type) return t("common.taskLink", { taskId: task.taskId });
   const target = taskTarget(t, task);
-  const label = taskTypeLabel(t, task.type);
+  const label = taskName(t, task);
   return target ? `${label} — ${target}` : label;
 }
 
@@ -329,7 +371,7 @@ export function taskHeading(t: TFunction, task: TaskDetailResponse): string {
 export function cancelConfirmMessage(t: TFunction, task: TaskDetailResponse): string {
   const target = taskTarget(t, task);
   return t("tasks.cancelConfirm", {
-    name: taskTypeLabel(t, task.type),
+    name: taskName(t, task),
     target: target ? t("tasks.cancelTarget", { target }) : "",
     taskId: task.taskId,
   });
@@ -426,7 +468,7 @@ export function TaskSummary({ task }: { task: TaskDetailResponse }) {
 /** additionalInformation as labelled values, then the raw JSON on demand. */
 export function TaskDetails({ task, raw }: { task: TaskDetailResponse; raw: unknown }) {
   const { t } = useTranslation();
-  const entries = Object.entries(task.additionalInformation ?? {}).filter(([key, value]) => isDetailShown(key, value));
+  const entries = detailEntries(task);
   return (
     <div className="space-y-3">
       {entries.length > 0 && (

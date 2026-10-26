@@ -1366,6 +1366,8 @@
       "timestamp": "Registrato il",
       "mailboxesExpired": "Caselle con messaggi scaduti",
       "messagesDeleted": "Messaggi eliminati",
+      "folder": "Cartella",
+      "olderThan": "Più vecchio di",
       "subscribedCount": "Caselle sottoscritte",
       "unsubscribedCount": "Caselle non più sottoscritte",
       "calendarType": "Tipo di calendario",

@@ -68,6 +68,21 @@ describe("task details", () => {
     expect(grid.textContent).not.toContain("failedUserCount");
   });
 
+  it("shows the user, folder and age of a Trash cleanup before its counters", () => {
+    const task = {
+      taskId: "t1", type: "ExpireMailboxTask", status: "completed",
+      additionalInformation: {
+        type: "ExpireMailboxTask", mailboxesExpired: 0, mailboxesFailed: 0, mailboxesProcessed: 0, messagesDeleted: 0,
+        runningOptions: { usersPerSecond: 1, mailbox: "Trash", useSavedDate: true, user: "bob@example.com", byExpiresHeader: false, olderThan: "5d" },
+      },
+    } as unknown as TaskDetailResponse;
+    const { container } = render(<MemoryRouter><TaskDetails task={task} raw={task} /></MemoryRouter>);
+    const text = container.querySelector(".grid")!.textContent;
+    expect(text).toMatch(/^tasks\.info\.usernamebob@example\.comtasks\.info\.folderTrashtasks\.info\.olderThan5d/);
+    expect(text).toContain("tasks.info.messagesDeleted0");
+    expect(screen.getByRole("link", { name: "bob@example.com" }).getAttribute("href")).toBe("/users/user/bob%40example.com");
+  });
+
   it("leaves the nested values to the raw JSON", () => {
     renderDetails({ runningOptions: { user: null } });
     expect(screen.getByText("tasks.rawJson")).not.toBeNull();

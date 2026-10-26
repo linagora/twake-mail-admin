@@ -1366,6 +1366,8 @@
       "timestamp": "Enregistré le",
       "mailboxesExpired": "Boîtes avec des messages expirés",
       "messagesDeleted": "Messages supprimés",
+      "folder": "Dossier",
+      "olderThan": "Plus ancien que",
       "subscribedCount": "Boîtes abonnées",
       "unsubscribedCount": "Boîtes désabonnées",
       "calendarType": "Type de calendrier",

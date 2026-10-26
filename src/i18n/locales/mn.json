@@ -1360,6 +1360,8 @@
       "timestamp": "Бүртгэсэн",
       "mailboxesExpired": "Хугацаа нь дууссан захидалтай хайрцаг",
       "messagesDeleted": "Устгасан захидал",
+      "folder": "Хавтас",
+      "olderThan": "Үүнээс хуучин",
       "subscribedCount": "Бүртгүүлсэн хайрцаг",
       "unsubscribedCount": "Бүртгэлээс хассан хайрцаг",
       "calendarType": "Хуанлийн төрөл",

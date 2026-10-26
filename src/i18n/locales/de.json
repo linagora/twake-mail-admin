@@ -1366,6 +1366,8 @@
       "timestamp": "Erfasst am",
       "mailboxesExpired": "Postfächer mit abgelaufenen Nachrichten",
       "messagesDeleted": "Gelöschte Nachrichten",
+      "folder": "Ordner",
+      "olderThan": "Älter als",
       "subscribedCount": "Abonnierte Postfächer",
       "unsubscribedCount": "Abbestellte Postfächer",
       "calendarType": "Kalendertyp",

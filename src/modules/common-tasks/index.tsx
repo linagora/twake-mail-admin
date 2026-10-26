@@ -18,7 +18,7 @@ import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { appConfig } from "@/lib/config";
 import { CALENDAR_WEBADMIN_DOC_URL, calendarWebadminDoc } from "@/lib/calendar-docs";
-import { taskTypeLabel } from "@/modules/tasks/task-summary";
+import { cleanupTaskLabel } from "@/modules/tasks/task-summary";
 
 // How a task's risk is set: safe = reads or rebuilds derived data; caution = changes stored
 // data, needs a maintenance window or deletes only unreferenced or expired data; destructive =
@@ -340,7 +340,7 @@ function MailCommonTasks() {
       ),
       action: async () => {
         const data = await cleanupMailbox(mailbox, olderThan);
-        toastTaskCreated(data.taskId, undefined, taskTypeLabel(t, "ExpireMailboxTask"));
+        toastTaskCreated(data.taskId, undefined, cleanupTaskLabel(t, mailbox, false));
       },
     });
   };

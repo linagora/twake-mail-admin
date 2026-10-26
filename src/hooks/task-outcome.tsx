@@ -4,7 +4,7 @@ import i18n from "i18next";
 import { toast } from "@/hooks/use-toast";
 import { awaitTask } from "@/modules/common-tasks/api-client";
 import { TaskDetailResponse, TaskStatus } from "@/modules/common-tasks/types";
-import { endDate, formatDuration, isRunning, statusLabel, taskTypeLabel } from "@/modules/tasks/task-summary";
+import { endDate, formatDuration, isRunning, statusLabel, taskName } from "@/modules/tasks/task-summary";
 
 // Stops following a task after about two hours of 25 s rounds; its page still tells how it ended
 const MAX_ROUNDS = 300;
@@ -32,7 +32,7 @@ export function showTaskOutcome(task: TaskDetailResponse, name?: string) {
     duration: failed ? Infinity : 15_000,
     description: (
       <p>
-        {name ?? taskTypeLabel(t, task.type)} — {statusLabel(t, task.status)}
+        {name ?? taskName(t, task)} — {statusLabel(t, task.status)}
         {took && <> · {t("tasks.outcome.took", { duration: took })}</>}
         {" · "}
         <Link className="text-blue-500 hover:underline" to={`/task/${task.taskId}`} title={task.taskId}>

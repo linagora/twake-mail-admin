@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from "vitest";
 import type { TFunction } from "i18next";
-import { cancelConfirmMessage, shortTaskId, TASK_TYPE_LABEL_KEYS, taskHeading, taskTargetInfo, taskTypeLabel } from "./task-summary";
+import { cancelConfirmMessage, shortTaskId, TASK_TYPE_LABEL_KEYS, taskHeading, taskName, taskTargetInfo, taskTypeLabel } from "./task-summary";
 import en from "@/i18n/locales/en.json";
 import { TaskDetailResponse } from "@/modules/common-tasks/types";
 
@@ -69,6 +69,17 @@ describe("task targets", () => {
   it("keeps the mail targets", () => {
     expect(taskTargetInfo(task("x", { repositoryPath: "var/mail/error", username: "bob@example.com" }))).toEqual({ kind: "repository", value: "var/mail/error" });
     expect(taskTargetInfo(task("x", { mailboxId: "42" }))).toEqual({ kind: "mailbox", value: "42" });
+  });
+
+  it("names a Trash or Spam cleanup after its folder, and its user from its options", () => {
+    const expire = (runningOptions: Record<string, unknown>) =>
+      task("ExpireMailboxTask", { mailboxesExpired: 0, messagesDeleted: 0, runningOptions });
+    const ofBob = expire({ usersPerSecond: 1, mailbox: "Trash", useSavedDate: true, user: "bob@example.com", olderThan: "5d" });
+    expect(taskTargetInfo(ofBob)).toEqual({ kind: "user", value: "bob@example.com" });
+    expect(taskHeading(t, ofBob)).toBe("users.tasks.cleanupTrash — bob@example.com");
+    expect(taskHeading(t, expire({ mailbox: "Trash", user: null, olderThan: "5d" }))).toBe("commonTasks.cleanupTrashAll");
+    expect(taskName(t, expire({ mailbox: "Spam", user: null }))).toBe("commonTasks.cleanupSpamAll");
+    expect(taskName(t, expire({ mailbox: "Archive", user: null }))).toBe("taskTypes.expireMailbox");
   });
 
   it("names a rename after the user it was started from", () => {
