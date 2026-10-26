@@ -1,4 +1,4 @@
-import { useCallback, useId } from "react";
+import { useCallback, useId, useRef } from "react";
 import { useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -23,20 +23,26 @@ export default function TeamMailboxFolderDetail() {
     () => getTeamMailboxFolderSubaddressing(domain!, mailbox!, folder!),
     [domain, mailbox, folder]
   );
-  const { data, isLoading, error, refresh } = useFetchData<{ enabled: boolean }>(fetchSubaddressing);
+  const { data, isLoading, error, refreshSilently } = useFetchData<{ enabled: boolean }>(fetchSubaddressing);
+  // A second press while a change is being saved would send the same value again
+  const isSaving = useRef(false);
 
+  // The switch is reloaded silently: it stays mounted, so it keeps the keyboard focus after a change
   const handleToggle = async () => {
-    if (data === undefined || data === null) return;
+    if (data === undefined || data === null || isSaving.current) return;
     const next = !data.enabled;
+    isSaving.current = true;
     try {
       await setTeamMailboxFolderSubaddressing(domain!, mailbox!, folder!, next);
       toast({ title: next ? t("domains.folders.subaddressingEnabled") : t("domains.folders.subaddressingDisabled") });
-      await refresh();
+      await refreshSilently();
     } catch (err) {
       toast({
         title: t("domains.folders.errorSubaddressing"),
         description: <ErrorDisplayer error={err} />,
       });
+    } finally {
+      isSaving.current = false;
     }
   };
 

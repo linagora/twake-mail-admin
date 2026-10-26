@@ -49,6 +49,28 @@ describe("team mailbox folder: sub-addressing switch", () => {
     expect(api.setTeamMailboxFolderSubaddressing).toHaveBeenCalledWith("example.com", "sales", "INBOX", true);
   });
 
+  it("keeps the focus on the switch after a change, so that it can be toggled back", async () => {
+    api.getTeamMailboxFolderSubaddressing
+      .mockResolvedValueOnce({ enabled: false })
+      .mockResolvedValueOnce({ enabled: true })
+      .mockResolvedValue({ enabled: false });
+    renderFolder();
+
+    const toggle = await screen.findByRole("switch");
+    toggle.focus();
+    fireEvent.click(toggle);
+
+    await waitFor(() => expect(toggle.getAttribute("aria-checked")).toBe("true"));
+    expect(screen.getByRole("switch")).toBe(toggle);
+    expect(document.activeElement).toBe(toggle);
+
+    fireEvent.click(document.activeElement!);
+
+    await waitFor(() => expect(toggle.getAttribute("aria-checked")).toBe("false"));
+    expect(api.setTeamMailboxFolderSubaddressing).toHaveBeenLastCalledWith("example.com", "sales", "INBOX", false);
+    expect(document.activeElement).toBe(toggle);
+  });
+
   it("disables the switch when the toggle is not allowed", async () => {
     proxy.allowed = false;
     api.getTeamMailboxFolderSubaddressing.mockResolvedValue({ enabled: true });
