@@ -136,10 +136,12 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         assertThat(repositories.pathField()).hasAttribute("aria-invalid", "false");
         assertThat(app.dialog().getByText("Protocol is required")).isVisible();
 
-        // Refused protocol: the dialog keeps the values, the toast gives the WebAdmin reason
+        // Refused protocol: the dialog keeps the values and gives the WebAdmin reason, where it can be selected
         repositories.protocolField().fill("nope");
         app.clickConfirm();
-        assertThat(app.toast("Failed to create the mail repository")).containsText("'nope' is an unsupported protocol");
+        assertThat(app.dialogError()).containsText("Failed to create the mail repository");
+        assertThat(app.dialogError()).containsText("'nope' is an unsupported protocol");
+        assertThat(app.toasts().getByText("Failed to create the mail repository")).hasCount(0);
         assertThat(app.dialog()).isVisible();
         assertThat(repositories.pathField()).hasValue(bad);
         assertThat(repositories.protocolField()).hasValue("nope");

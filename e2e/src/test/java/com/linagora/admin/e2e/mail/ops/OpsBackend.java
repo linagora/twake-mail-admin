@@ -17,7 +17,7 @@ import com.linagora.admin.e2e.backend.WebAdmin;
  * WebAdmin side helpers of the server wide screens (mail repositories, dead letters, tasks):
  * they produce data that only the running test owns, and read it back.
  */
-final class OpsBackend {
+public final class OpsBackend {
     static final String RRT_ERROR = "var/mail/rrt-error";
     /** The listener failing on a quota ratio of 0 / 0 (domain size quota 0, empty mailbox). */
     static final String QUOTA_GROUP = "org.apache.james.quota.search.opensearch.events.OpenSearchQuotaMailboxListener$OpenSearchQuotaMailboxListenerGroup";
@@ -32,7 +32,7 @@ final class OpsBackend {
     // ---- Mail repositories --------------------------------------------------------------
 
     /** Creates a repository {@code var/mail/<prefix>-xxxxxx} (cassandra), returns its path. */
-    static String createRepository(WebAdmin webAdmin, String prefix) {
+    public static String createRepository(WebAdmin webAdmin, String prefix) {
         String path = "var/mail/" + Ids.unique(prefix);
         webAdmin.put("/mailRepositories/" + WebAdmin.encode(path) + "?protocol=cassandra").expect(204);
         return path;
@@ -61,7 +61,7 @@ final class OpsBackend {
      * recipient rewrite table. (A mail to an unknown user is refused at RCPT time, and the
      * address-error processor bounces without storing.)
      */
-    static String rrtErrorRecipient(MailFixtures fixtures) {
+    public static String rrtErrorRecipient(MailFixtures fixtures) {
         String base = Ids.unique("chain");
         String domain = fixtures.domain();
         for (int i = 1; i <= 12; i++) {
@@ -75,7 +75,7 @@ final class OpsBackend {
      * Sends {@code count} mails from {@code sender} to an rrt-error recipient and moves them, once
      * stored in var/mail/rrt-error, into {@code repository}. Returns their keys.
      */
-    static List<String> injectMails(MailFixtures fixtures, String sender, String recipient, String repository, int count) {
+    public static List<String> injectMails(MailFixtures fixtures, String sender, String recipient, String repository, int count) {
         WebAdmin webAdmin = fixtures.webAdmin();
         for (int i = 0; i < count; i++) {
             fixtures.sendMail(sender, recipient, "ops " + i, "Mail " + i + " of " + sender);

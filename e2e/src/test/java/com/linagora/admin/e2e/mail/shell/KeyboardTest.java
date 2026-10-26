@@ -11,12 +11,17 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import com.linagora.admin.e2e.MailAdminE2ETest;
 import com.linagora.admin.e2e.backend.Ids;
 import com.linagora.admin.e2e.backend.MailFixtures;
 import com.linagora.admin.e2e.backend.WebAdmin;
+import com.linagora.admin.e2e.docker.Locks;
+import com.linagora.admin.e2e.mail.ops.OpsBackend;
 import com.linagora.admin.e2e.pages.AdminApp;
+import com.linagora.admin.e2e.pages.mail.ops.Dialogs;
+import com.linagora.admin.e2e.pages.mail.ops.MailRepositoryDetailPage;
 import com.linagora.admin.e2e.pages.mail.shell.Shell;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -123,27 +128,24 @@ class KeyboardTest extends MailAdminE2ETest {
 
     @Test
     @DisplayName("NAV-10 Toasts stay accessible while a dialog is open")
-    void toastsAccessibleOverDialog(AdminApp app, WebAdmin webAdmin) {
-        String path = "var/mail/" + Ids.unique("qa-bad");
+    @ResourceLock(Locks.MAIL_REPOSITORIES)
+    void toastsAccessibleOverDialog(AdminApp app, MailFixtures fixtures, WebAdmin webAdmin) {
+        String repository = OpsBackend.createRepository(webAdmin, "qa-toast");
+        String key = OpsBackend.injectMails(fixtures, fixtures.newUser("toast"), OpsBackend.rrtErrorRecipient(fixtures), repository, 1).get(0);
 
-        app.open("/mail-repositories");
-        app.button("New repository").click();
+        // The JSON dialog of a mail stays open once its Copy button toasts
+        app.open("/mail-repositories/repository/" + WebAdmin.encode(repository));
+        new MailRepositoryDetailPage(app).viewJson(key).click();
         assertThat(app.dialog()).isVisible();
-        app.dialog().getByLabel("Repository path").fill(path);
-        app.dialog().getByLabel("Protocol").fill("nope");
-        app.clickConfirm();
+        Dialogs.button(app, "Copy").click();
 
         // Located by role: an aria-hidden toast (hidden by the modal) would not be found
-        Locator toast = app.toast("Failed to create the mail repository");
+        Locator toast = app.toast("Copied to clipboard");
         assertThat(toast).isVisible();
-        assertThat(toast).containsText("'nope' is an unsupported protocol");
-        assertThat(app.page().locator("body").ariaSnapshot()).contains("Failed to create the mail repository");
+        assertThat(app.page().locator("body").ariaSnapshot()).contains("Copied to clipboard");
 
-        // The dialog stays open with its values
+        // Closed by its button: Escape goes to the topmost layer, the toast, not the dialog
         assertThat(app.dialog()).isVisible();
-        assertThat(app.dialog().getByLabel("Repository path")).hasValue(path);
-        assertThat(app.dialog().getByLabel("Protocol")).hasValue("nope");
-        assertThat(webAdmin.get("/mailRepositories/" + WebAdmin.encode(path)).status()).isEqualTo(404);
-        app.cancel();
+        app.cancel("Close");
     }
 }
