@@ -91,7 +91,7 @@ public class DetailPage {
         return rowHeading(item).locator("xpath=ancestor::div[.//button][1]");
     }
 
-    /** An action button of a row, by its tooltip ("Remove alias", "Remove member"...). */
+    /** An action button of a row, by its accessible name ("Remove alias \"a@b.org\"", "Remove member"...). */
     public Locator rowButton(String item, String name) {
         return row(item).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(name).setExact(true));
     }

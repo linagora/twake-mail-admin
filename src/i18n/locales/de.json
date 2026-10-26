@@ -166,7 +166,8 @@
       "errorRemoving": "Fehler beim Entfernen des Domain-Alias",
       "empty": "Keine Domain-Aliasse konfiguriert.",
       "addTooltip": "Domain-Alias hinzufügen",
-      "removeTooltip": "Alias entfernen"
+      "removeTooltip": "Alias entfernen",
+      "removeNamed": "Alias „{{item}}“ entfernen"
     },
     "quota": {
       "title": "Kontingent",
@@ -216,6 +217,7 @@
       "errorDeleting": "Fehler beim Löschen des Team-Postfachs",
       "addTooltip": "Team-Postfach hinzufügen",
       "deleteTooltip": "Team-Postfach löschen",
+      "deleteNamed": "Team-Postfach „{{item}}“ löschen",
       "empty": "Keine Team-Postfächer konfiguriert.",
       "searchPlaceholder": "Team-Postfächer suchen..."
     },
@@ -265,6 +267,7 @@
       "deleteConfirm": "Möchten Sie den Ordner „{{folderName}}“ wirklich löschen?",
       "deleted": "Ordner erfolgreich gelöscht",
       "deleteTooltip": "Ordner löschen",
+      "deleteNamed": "Ordner „{{item}}“ löschen",
       "empty": "Keine Ordner.",
       "subaddressing": "Subadressierung",
       "subaddressingEnabledDesc": "E-Mails an {{mailbox}}+{{folder}}@{{domain}} werden in diesen Ordner zugestellt",
@@ -641,6 +644,7 @@
       "empty": "Keine Aliasse konfiguriert.",
       "addTooltip": "Alias hinzufügen",
       "removeTooltip": "Alias entfernen",
+      "removeNamed": "Alias „{{item}}“ entfernen",
       "fieldLabel": "Alias-Adresse"
     },
     "quota": {
@@ -660,6 +664,7 @@
       "empty": "Keine Weiterleitungen konfiguriert.",
       "addTooltip": "Weiterleitung hinzufügen",
       "removeTooltip": "Weiterleitung entfernen",
+      "removeNamed": "Weiterleitung an „{{item}}“ entfernen",
       "errorUpdating": "Fehler beim Aktualisieren der Weiterleitung",
       "fieldLabel": "Zieladresse",
       "keepCopyIn": "Eine Kopie im Postfach von {{username}} behalten",
@@ -683,7 +688,9 @@
       "clearConfirm": "Möchten Sie wirklich alle Nachrichten in „{{mailboxName}}“ löschen?",
       "errorClearing": "Fehler beim Leeren des Postfachs",
       "clearTooltip": "Postfachinhalt leeren",
+      "clearNamed": "Inhalt des Postfachs „{{item}}“ leeren",
       "deleteTooltip": "Postfach löschen",
+      "deleteNamed": "Postfach „{{item}}“ löschen",
       "empty": "Keine Postfächer gefunden.",
       "creationDate": "Erstellungsdatum:",
       "searchMessages": "Nachrichten suchen",
@@ -1821,8 +1828,11 @@
     "protocolLabel": "Protokoll",
     "newRepository": "Neues Repository",
     "reprocessAll": "Alle E-Mails erneut verarbeiten",
+    "reprocessAllOf": "Alle E-Mails von „{{repository}}“ erneut verarbeiten",
     "moveAll": "Alle E-Mails in ein anderes Repository verschieben",
+    "moveAllOf": "Alle E-Mails von „{{repository}}“ in ein anderes Repository verschieben",
     "clearAll": "Alle E-Mails löschen",
+    "clearAllOf": "Alle E-Mails von „{{repository}}“ löschen",
     "createTitle": "Mail-Repository erstellen",
     "pathRequired": "Repository-Pfad ist erforderlich",
     "protocolRequired": "Protokoll ist erforderlich",
@@ -1925,6 +1935,7 @@
     "domainCreated": "Domain-Zuordnung erfolgreich erstellt",
     "errorCreatingDomain": "Fehler beim Erstellen der Domain-Zuordnung",
     "removeTitle": "Zuordnung vom Typ {{type}} entfernen",
+    "removeNamed": "Zuordnung vom Typ {{type}} von „{{source}}“ zu „{{destination}}“ entfernen",
     "removeConfirm": "Zuordnung vom Typ {{typeLabel}} „{{source}}“ → „{{destination}}“ entfernen?",
     "removed": "Zuordnung vom Typ {{type}} erfolgreich entfernt",
     "errorRemoving": "Fehler beim Entfernen der Zuordnung vom Typ {{typeLabel}}",

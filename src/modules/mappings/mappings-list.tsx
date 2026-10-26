@@ -297,6 +297,7 @@ export default function MappingsList() {
                       onClick={() => handleDelete(mapping)}
                       className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
                       title={t("mappings.removeTitle", { type: typeName(mapping.type) })}
+                      aria-label={t("mappings.removeNamed", { type: typeName(mapping.type), source: mapping.source, destination: mapping.destination })}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

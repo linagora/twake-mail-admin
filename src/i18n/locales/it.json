@@ -166,7 +166,8 @@
       "errorRemoving": "Errore durante la rimozione dell'alias di dominio",
       "empty": "Nessun alias di dominio configurato.",
       "addTooltip": "Aggiungi alias di dominio",
-      "removeTooltip": "Rimuovi alias"
+      "removeTooltip": "Rimuovi alias",
+      "removeNamed": "Rimuovi l'alias «{{item}}»"
     },
     "quota": {
       "title": "Quota",
@@ -216,6 +217,7 @@
       "errorDeleting": "Errore durante l'eliminazione della casella condivisa",
       "addTooltip": "Aggiungi casella condivisa",
       "deleteTooltip": "Elimina casella condivisa",
+      "deleteNamed": "Elimina la casella condivisa «{{item}}»",
       "empty": "Nessuna casella condivisa configurata.",
       "searchPlaceholder": "Cerca caselle condivise..."
     },
@@ -265,6 +267,7 @@
       "deleteConfirm": "Vuoi davvero eliminare la cartella «{{folderName}}»?",
       "deleted": "Cartella eliminata correttamente",
       "deleteTooltip": "Elimina cartella",
+      "deleteNamed": "Elimina la cartella «{{item}}»",
       "empty": "Nessuna cartella.",
       "subaddressing": "Sottoindirizzamento",
       "subaddressingEnabledDesc": "Le email inviate a {{mailbox}}+{{folder}}@{{domain}} vengono recapitate in questa cartella",
@@ -641,6 +644,7 @@
       "empty": "Nessun alias configurato.",
       "addTooltip": "Aggiungi alias",
       "removeTooltip": "Rimuovi alias",
+      "removeNamed": "Rimuovi l'alias «{{item}}»",
       "fieldLabel": "Indirizzo dell'alias"
     },
     "quota": {
@@ -660,6 +664,7 @@
       "empty": "Nessun inoltro configurato.",
       "addTooltip": "Aggiungi inoltro",
       "removeTooltip": "Rimuovi inoltro",
+      "removeNamed": "Rimuovi l'inoltro a «{{item}}»",
       "errorUpdating": "Errore durante l'aggiornamento dell'inoltro",
       "fieldLabel": "Indirizzo di destinazione",
       "keepCopyIn": "Conserva una copia nella casella di {{username}}",
@@ -683,7 +688,9 @@
       "clearConfirm": "Vuoi davvero eliminare tutti i messaggi in «{{mailboxName}}»?",
       "errorClearing": "Errore durante lo svuotamento della casella di posta",
       "clearTooltip": "Svuota la casella di posta",
+      "clearNamed": "Svuota la casella di posta «{{item}}»",
       "deleteTooltip": "Elimina casella di posta",
+      "deleteNamed": "Elimina la casella di posta «{{item}}»",
       "empty": "Nessuna casella di posta trovata.",
       "creationDate": "Data di creazione:",
       "searchMessages": "Cerca messaggi",
@@ -1821,8 +1828,11 @@
     "protocolLabel": "Protocollo",
     "newRepository": "Nuovo repository",
     "reprocessAll": "Rielabora tutte le email",
+    "reprocessAllOf": "Rielabora tutte le email di «{{repository}}»",
     "moveAll": "Sposta tutte le email in un altro repository",
+    "moveAllOf": "Sposta tutte le email di «{{repository}}» in un altro repository",
     "clearAll": "Elimina tutte le email",
+    "clearAllOf": "Elimina tutte le email di «{{repository}}»",
     "createTitle": "Crea repository di posta",
     "pathRequired": "Il percorso del repository è obbligatorio",
     "protocolRequired": "Il protocollo è obbligatorio",
@@ -1925,6 +1935,7 @@
     "domainCreated": "Mappatura di dominio creata correttamente",
     "errorCreatingDomain": "Errore durante la creazione della mappatura di dominio",
     "removeTitle": "Rimuovi mappatura di tipo {{type}}",
+    "removeNamed": "Rimuovi la mappatura di tipo {{type}} da «{{source}}» a «{{destination}}»",
     "removeConfirm": "Rimuovere la mappatura di tipo {{typeLabel}} «{{source}}» → «{{destination}}»?",
     "removed": "Mappatura di tipo {{type}} rimossa correttamente",
     "errorRemoving": "Errore durante la rimozione della mappatura di tipo {{typeLabel}}",

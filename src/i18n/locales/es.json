@@ -166,7 +166,8 @@
       "errorRemoving": "Error al quitar el alias de dominio",
       "empty": "No hay alias de dominio configurados.",
       "addTooltip": "Añadir alias de dominio",
-      "removeTooltip": "Quitar alias"
+      "removeTooltip": "Quitar alias",
+      "removeNamed": "Quitar el alias «{{item}}»"
     },
     "quota": {
       "title": "Cuota",
@@ -216,6 +217,7 @@
       "errorDeleting": "Error al eliminar el buzón compartido",
       "addTooltip": "Añadir buzón compartido",
       "deleteTooltip": "Eliminar buzón compartido",
+      "deleteNamed": "Eliminar el buzón compartido «{{item}}»",
       "empty": "No hay buzones compartidos configurados.",
       "searchPlaceholder": "Buscar buzones compartidos..."
     },
@@ -265,6 +267,7 @@
       "deleteConfirm": "¿Seguro que desea eliminar la carpeta «{{folderName}}»?",
       "deleted": "Carpeta eliminada correctamente",
       "deleteTooltip": "Eliminar carpeta",
+      "deleteNamed": "Eliminar la carpeta «{{item}}»",
       "empty": "No hay carpetas.",
       "subaddressing": "Subdireccionamiento",
       "subaddressingEnabledDesc": "Los correos enviados a {{mailbox}}+{{folder}}@{{domain}} se entregan en esta carpeta",
@@ -641,6 +644,7 @@
       "empty": "No hay alias configurados.",
       "addTooltip": "Añadir alias",
       "removeTooltip": "Quitar alias",
+      "removeNamed": "Quitar el alias «{{item}}»",
       "fieldLabel": "Dirección del alias"
     },
     "quota": {
@@ -660,6 +664,7 @@
       "empty": "No hay reenvíos configurados.",
       "addTooltip": "Añadir reenvío",
       "removeTooltip": "Quitar reenvío",
+      "removeNamed": "Quitar el reenvío a «{{item}}»",
       "errorUpdating": "Error al actualizar el reenvío",
       "fieldLabel": "Dirección de destino",
       "keepCopyIn": "Conservar una copia en el buzón de {{username}}",
@@ -683,7 +688,9 @@
       "clearConfirm": "¿Seguro que desea eliminar todos los mensajes de «{{mailboxName}}»?",
       "errorClearing": "Error al vaciar el buzón",
       "clearTooltip": "Vaciar el contenido del buzón",
+      "clearNamed": "Vaciar el contenido del buzón «{{item}}»",
       "deleteTooltip": "Eliminar buzón",
+      "deleteNamed": "Eliminar el buzón «{{item}}»",
       "empty": "No se han encontrado buzones.",
       "creationDate": "Fecha de creación:",
       "searchMessages": "Buscar mensajes",
@@ -1821,8 +1828,11 @@
     "protocolLabel": "Protocolo",
     "newRepository": "Nuevo repositorio",
     "reprocessAll": "Volver a procesar todos los correos",
+    "reprocessAllOf": "Volver a procesar todos los correos de «{{repository}}»",
     "moveAll": "Mover todos los correos a otro repositorio",
+    "moveAllOf": "Mover todos los correos de «{{repository}}» a otro repositorio",
     "clearAll": "Eliminar todos los correos",
+    "clearAllOf": "Eliminar todos los correos de «{{repository}}»",
     "createTitle": "Crear repositorio de correo",
     "pathRequired": "La ruta del repositorio es obligatoria",
     "protocolRequired": "El protocolo es obligatorio",
@@ -1925,6 +1935,7 @@
     "domainCreated": "Asignación de dominio creada correctamente",
     "errorCreatingDomain": "Error al crear la asignación de dominio",
     "removeTitle": "Quitar asignación de tipo {{type}}",
+    "removeNamed": "Quitar la asignación de tipo {{type}} de «{{source}}» a «{{destination}}»",
     "removeConfirm": "¿Quitar la asignación de tipo {{typeLabel}} «{{source}}» → «{{destination}}»?",
     "removed": "Asignación de tipo {{type}} quitada correctamente",
     "errorRemoving": "Error al quitar la asignación de tipo {{typeLabel}}",

@@ -66,7 +66,7 @@ class UserDetailMiscTest extends MailAdminE2ETest {
         assertThat(app.main().getByRole(AriaRole.CHECKBOX)).hasCount(0);
         assertThat(app.main().getByTitle("Add forward")).hasCount(0);
         assertThat(app.main().getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName(bob).setExact(true))).isVisible();
-        detail.iconButton("Remove forward").click();
+        detail.iconButton("Remove forward to \"" + bob + "\"").click();
         detail.confirm("Remove");
         app.expectToast("Forward removed successfully");
         assertThat(app.main().getByText("No forwards configured.")).isVisible();

@@ -53,7 +53,7 @@ class UserDetailTest extends MailAdminE2ETest {
         assertThat(detail.toggle("Mailboxes", 1)).isVisible();
         Locator mailboxes = detail.expand("Mailboxes");
         String inboxId = webAdmin.get("/users/" + bob + "/mailboxes").expect(200).json().get(0).path("mailboxId").asText();
-        Locator inbox = detail.itemRow(mailboxes, "INBOX", "Delete mailbox");
+        Locator inbox = detail.itemRow(mailboxes, "INBOX", "Delete mailbox \"INBOX\"");
         assertThat(inbox).containsText(inboxId);
         // Local date and time of the browser (en-US, Europe/Paris), not a GMT string
         assertThat(inbox).containsText(Pattern.compile("Creation date: \\d{1,2}/\\d{1,2}/\\d{4} \\d{1,2}:\\d{2}:\\d{2} [AP]M"));
@@ -78,7 +78,7 @@ class UserDetailTest extends MailAdminE2ETest {
         assertThat(detail.items(mailboxes)).hasCount(1);
         assertThat(detail.item(mailboxes, "INBOX.qa-folder")).isVisible();
 
-        detail.clickItemButton(mailboxes, "INBOX.qa-folder", "Delete mailbox");
+        detail.clickItemButton(mailboxes, "INBOX.qa-folder", "Delete mailbox \"INBOX.qa-folder\"");
         assertThat(app.dialog()).containsText("Are you sure you want to delete mailbox \"INBOX.qa-folder\" and all its children?");
         assertThat(app.dialog()).containsText("\"INBOX.qa-folder\", its sub-folders and all their messages are permanently deleted.");
         detail.confirm("Delete");
@@ -89,7 +89,7 @@ class UserDetailTest extends MailAdminE2ETest {
 
         // Deleting the INBOX takes typing its name
         mailboxes.getByPlaceholder("Search mailboxes...").clear();
-        detail.clickItemButton(mailboxes, "INBOX", "Delete mailbox");
+        detail.clickItemButton(mailboxes, "INBOX", "Delete mailbox \"INBOX\"");
         Locator delete = detail.button(app.dialog(), "Delete");
         assertThat(delete).isDisabled();
         app.dialog().getByLabel("Type INBOX to confirm", new Locator.GetByLabelOptions().setExact(true)).fill("INBOX");
@@ -107,9 +107,9 @@ class UserDetailTest extends MailAdminE2ETest {
 
         UserDetailPage detail = UserDetailPage.open(app, alice);
         Locator mailboxes = detail.expand("Mailboxes");
-        assertThat(detail.itemRow(mailboxes, "INBOX", "Clear mailbox content").getByTitle("Total messages")).hasText("2");
+        assertThat(detail.itemRow(mailboxes, "INBOX", "Clear content of mailbox \"INBOX\"").getByTitle("Total messages")).hasText("2");
 
-        detail.clickItemButton(mailboxes, "INBOX", "Clear mailbox content");
+        detail.clickItemButton(mailboxes, "INBOX", "Clear content of mailbox \"INBOX\"");
         assertThat(app.dialog()).containsText("Are you sure you want to delete all messages in \"INBOX\"?");
         assertThat(app.dialog()).containsText("All messages of \"INBOX\" are permanently deleted; the folder is kept.");
         detail.confirm("Clear");
@@ -125,7 +125,7 @@ class UserDetailTest extends MailAdminE2ETest {
         assertThat(fixtures.messageCount(alice, "INBOX")).isZero();
         detail = UserDetailPage.open(app, alice);
         mailboxes = detail.expand("Mailboxes");
-        assertThat(detail.itemRow(mailboxes, "INBOX", "Clear mailbox content").getByTitle("Total messages")).hasText("0");
+        assertThat(detail.itemRow(mailboxes, "INBOX", "Clear content of mailbox \"INBOX\"").getByTitle("Total messages")).hasText("0");
     }
 
     @Test
@@ -237,7 +237,7 @@ class UserDetailTest extends MailAdminE2ETest {
         assertThat(texts(webAdmin.get("/address/aliases/" + alice).expect(200).json(), "source"))
             .containsExactlyInAnyOrder(existingAlias, newAlias);
 
-        detail.clickItemButton(aliases, newAlias, "Remove alias");
+        detail.clickItemButton(aliases, newAlias, "Remove alias \"" + newAlias + "\"");
         assertThat(app.dialog()).containsText("Remove alias \"" + newAlias + "\" from " + alice + "?");
         detail.confirm("Remove");
         app.expectToast("Alias removed successfully");
@@ -325,7 +325,7 @@ class UserDetailTest extends MailAdminE2ETest {
         assertThat(texts(webAdmin.get("/address/forwards/" + brian).expect(200).json(), "mailAddress"))
             .containsExactlyInAnyOrder(brian, charlotte, david);
 
-        detail.clickItemButton(forwards, david, "Remove forward");
+        detail.clickItemButton(forwards, david, "Remove forward to \"" + david + "\"");
         assertThat(app.dialog()).containsText("Remove forward to \"" + david + "\" from " + brian + "?");
         detail.confirm("Remove");
         app.expectToast("Forward removed successfully");

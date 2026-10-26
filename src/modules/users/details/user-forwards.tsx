@@ -243,6 +243,7 @@ export default function UserForwards({ username, noMailbox = false }: Props) {
                       onClick={() => handleRemove(fwd.mailAddress)}
                       className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                       title={t("users.forwards.removeTooltip")}
+                      aria-label={t("users.forwards.removeNamed", { item: fwd.mailAddress })}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>

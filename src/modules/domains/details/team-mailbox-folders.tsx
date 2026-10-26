@@ -161,6 +161,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                           onClick={() => handleDelete(folder.mailboxName)}
                           className="p-2 rounded-md hover:bg-gray-200"
                           title={t("domains.folders.deleteTooltip")}
+                          aria-label={t("domains.folders.deleteNamed", { item: folder.mailboxName })}
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </button>

@@ -258,6 +258,7 @@ export default function UserMailboxes({ username }: Props) {
                           onClick={() => handleClearMailbox(mailbox.mailboxName)}
                           className="p-2 rounded-md hover:bg-gray-200"
                           title={t("users.mailboxes.clearTooltip")}
+                          aria-label={t("users.mailboxes.clearNamed", { item: mailbox.mailboxName })}
                         >
                           <Eraser className="w-4 h-4 text-red-600" />
                         </button>
@@ -267,6 +268,7 @@ export default function UserMailboxes({ username }: Props) {
                           onClick={() => handleDelete(mailbox.mailboxName)}
                           className="p-2 rounded-md hover:bg-gray-200"
                           title={t("users.mailboxes.deleteTooltip")}
+                          aria-label={t("users.mailboxes.deleteNamed", { item: mailbox.mailboxName })}
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </button>

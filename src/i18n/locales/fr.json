@@ -166,7 +166,8 @@
       "errorRemoving": "Erreur lors de la suppression de l'alias",
       "empty": "Aucun alias de domaine configuré.",
       "addTooltip": "Ajouter un alias de domaine",
-      "removeTooltip": "Supprimer l'alias"
+      "removeTooltip": "Supprimer l'alias",
+      "removeNamed": "Supprimer l'alias « {{item}} »"
     },
     "quota": {
       "title": "Quota",
@@ -216,6 +217,7 @@
       "errorDeleting": "Erreur lors de la suppression de la boîte partagée",
       "addTooltip": "Ajouter une boîte partagée",
       "deleteTooltip": "Supprimer la boîte partagée",
+      "deleteNamed": "Supprimer la boîte partagée « {{item}} »",
       "empty": "Aucune boîte partagée configurée.",
       "searchPlaceholder": "Rechercher des boîtes partagées…"
     },
@@ -265,6 +267,7 @@
       "deleteConfirm": "Supprimer le dossier « {{folderName}} » ?",
       "deleted": "Dossier supprimé avec succès",
       "deleteTooltip": "Supprimer le dossier",
+      "deleteNamed": "Supprimer le dossier « {{item}} »",
       "empty": "Aucun dossier.",
       "subaddressing": "Sous-adressage",
       "subaddressingEnabledDesc": "Les emails à {{mailbox}}+{{folder}}@{{domain}} sont livrés dans ce dossier",
@@ -641,6 +644,7 @@
       "empty": "Aucun alias configuré.",
       "addTooltip": "Ajouter un alias",
       "removeTooltip": "Supprimer l'alias",
+      "removeNamed": "Supprimer l'alias « {{item}} »",
       "fieldLabel": "Adresse de l'alias"
     },
     "quota": {
@@ -660,6 +664,7 @@
       "empty": "Aucune redirection configurée.",
       "addTooltip": "Ajouter une redirection",
       "removeTooltip": "Supprimer la redirection",
+      "removeNamed": "Supprimer la redirection vers « {{item}} »",
       "errorUpdating": "Erreur lors de la mise à jour de la redirection",
       "fieldLabel": "Adresse de destination",
       "keepCopyIn": "Conserver une copie dans la boîte de {{username}}",
@@ -683,7 +688,9 @@
       "clearConfirm": "Supprimer tous les messages de « {{mailboxName}} » ?",
       "errorClearing": "Erreur lors du vidage de la boîte",
       "clearTooltip": "Vider la boîte",
+      "clearNamed": "Vider la boîte « {{item}} »",
       "deleteTooltip": "Supprimer la boîte",
+      "deleteNamed": "Supprimer la boîte « {{item}} »",
       "empty": "Aucune boîte trouvée.",
       "creationDate": "Date de création :",
       "searchMessages": "Rechercher des messages",
@@ -1821,8 +1828,11 @@
     "protocolLabel": "Protocole",
     "newRepository": "Nouveau dépôt",
     "reprocessAll": "Retraiter tous les emails",
+    "reprocessAllOf": "Retraiter tous les emails de « {{repository}} »",
     "moveAll": "Déplacer tous les emails vers un autre dépôt",
+    "moveAllOf": "Déplacer tous les emails de « {{repository}} » vers un autre dépôt",
     "clearAll": "Vider tous les emails",
+    "clearAllOf": "Vider tous les emails de « {{repository}} »",
     "createTitle": "Créer un dépôt de courrier",
     "pathRequired": "Le chemin du dépôt est obligatoire",
     "protocolRequired": "Le protocole est obligatoire",
@@ -1925,6 +1935,7 @@
     "domainCreated": "Réécriture de domaine créée",
     "errorCreatingDomain": "Erreur lors de la création de la réécriture de domaine",
     "removeTitle": "Supprimer la réécriture d'adresse {{type}}",
+    "removeNamed": "Supprimer la réécriture d'adresse {{type}} de « {{source}} » vers « {{destination}} »",
     "removeConfirm": "Supprimer la réécriture d'adresse {{typeLabel}} « {{source}} » → « {{destination}} » ?",
     "removed": "Réécriture d'adresse {{type}} supprimée",
     "errorRemoving": "Erreur lors de la suppression de la réécriture d'adresse {{typeLabel}}",

@@ -10,9 +10,10 @@ import com.microsoft.playwright.options.AriaRole;
 
 /** Mail Repositories: the list of repositories, their bulk actions and the creation dialog. */
 public class MailRepositoriesPage {
-    public static final String REPROCESS_ALL = "Reprocess all mails";
-    public static final String MOVE_ALL = "Move all mails to another repository";
-    public static final String CLEAR_ALL = "Clear all mails";
+    /** Names of the bulk actions of a repository, {@code %s} being its path. */
+    public static final String REPROCESS_ALL = "Reprocess all mails of \"%s\"";
+    public static final String MOVE_ALL = "Move all mails of \"%s\" to another repository";
+    public static final String CLEAR_ALL = "Clear all mails of \"%s\"";
 
     private final AdminApp app;
 
@@ -63,8 +64,9 @@ public class MailRepositoriesPage {
         return link(path).locator("xpath=ancestor::div[.//button][1]");
     }
 
+    /** A bulk action of a repository ({@link #REPROCESS_ALL}...), named after its path. */
     public Locator action(String path, String action) {
-        return row(path).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(action).setExact(true));
+        return row(path).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(String.format(action, path)).setExact(true));
     }
 
     public Locator newRepositoryButton() {

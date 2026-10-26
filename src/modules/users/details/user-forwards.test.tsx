@@ -144,6 +144,20 @@ describe("user forwards: destinations", () => {
   });
 });
 
+describe("user forwards: row buttons", () => {
+  it("names each remove button after its destination", async () => {
+    mocks.api.getUserForwards.mockResolvedValue([{ mailAddress: "emma@example.com" }, { mailAddress: "zoe@example.com" }]);
+    render(<UserForwards username={ALICE} />);
+    fireEvent.click(screen.getByText("users.forwards.title"));
+
+    await screen.findByText("emma@example.com");
+    expect(screen.getAllByRole("button", { name: /^users\.forwards\.removeNamed / }).map((button) => button.getAttribute("aria-label"))).toEqual([
+      `users.forwards.removeNamed ${JSON.stringify({ item: "emma@example.com" })}`,
+      `users.forwards.removeNamed ${JSON.stringify({ item: "zoe@example.com" })}`,
+    ]);
+  });
+});
+
 describe("user forwards: remove a forward", () => {
   const removeEmma = async () => {
     render(<UserForwards username={ALICE} />);

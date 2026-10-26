@@ -75,7 +75,7 @@ class DomainSectionsTest extends MailAdminE2ETest {
         assertThat(detail.rowHeading(source)).isVisible();
         assertThat(aliases(webAdmin, domain)).contains(source);
 
-        detail.rowButton(source, "Remove alias").click();
+        detail.rowButton(source, "Remove alias \"" + source + "\"").click();
         assertThat(app.dialog()).containsText("Remove alias \"" + source + "\" from " + domain + "?");
         detail.confirmWith("Remove");
         app.expectToast("Domain alias removed successfully");

@@ -58,7 +58,7 @@ class TeamMailboxesTest extends MailAdminE2ETest {
         assertThat(page).hasURL(Pattern.compile("/domains/domain/" + Regex.quote(WebAdmin.encode(domain)) + "$"));
         detail = DomainDetailPage.open(app, domain).openSection("Team Mailboxes");
         Locator row = link.locator("xpath=ancestor::div[.//button][1]");
-        row.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Delete team mailbox").setExact(true)).click();
+        row.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Delete team mailbox \"" + SALES + "\"").setExact(true)).click();
         assertThat(app.dialog()).containsText("Delete team mailbox \"" + SALES + "@" + domain + "\"?");
         detail.confirmWith("Delete");
         app.expectToast("Team mailbox deleted");
@@ -171,7 +171,7 @@ class TeamMailboxesTest extends MailAdminE2ETest {
         assertThat(folderLink(teamMailbox, "INBOX.archive")).isVisible();
         assertThat(folders(webAdmin, domain, SALES)).contains("INBOX.archive");
 
-        teamMailbox.rowButton("INBOX.archive", "Delete folder").click();
+        teamMailbox.rowButton("INBOX.archive", "Delete folder \"INBOX.archive\"").click();
         assertThat(app.dialog()).containsText("Are you sure you want to delete folder \"INBOX.archive\"?");
         assertThat(app.dialog()).containsText("\"INBOX.archive\", its sub-folders and all their messages are permanently deleted.");
         teamMailbox.confirmWith("Delete");

@@ -117,9 +117,9 @@ public class MappingsPage {
         assertThat(dialog()).isHidden();
     }
 
-    /** The remove action of a row, "Remove Address Mapping". */
+    /** The remove action of a row, "Remove Address Mapping from "source" to "destination"". */
     public Locator removeButton(Locator row) {
-        return row.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(Pattern.compile("^Remove \\w+ Mapping$")));
+        return row.getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(Pattern.compile("^Remove [\\w ]+ Mapping from \".+\" to \".+\"$")));
     }
 
     /** "Delete the 3 matching mappings": only shown while the search finds rows. */

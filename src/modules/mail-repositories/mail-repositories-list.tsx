@@ -234,7 +234,7 @@ export default function MailRepositoriesList() {
                     // Nothing to reprocess, move or clear in an empty repository
                     disabled={result.size === 0}
                     title={result.size === 0 ? t("mailRepositories.emptyActionDisabled") : t("mailRepositories.reprocessAll")}
-                    aria-label={t("mailRepositories.reprocessAll")}
+                    aria-label={t("mailRepositories.reprocessAllOf", { repository: result.repository })}
                     onClick={() => {
                       handleReprocessTask(result);
                     }}
@@ -249,7 +249,7 @@ export default function MailRepositoriesList() {
                     // Nothing to reprocess, move or clear in an empty repository
                     disabled={result.size === 0}
                     title={result.size === 0 ? t("mailRepositories.emptyActionDisabled") : t("mailRepositories.moveAll")}
-                    aria-label={t("mailRepositories.moveAll")}
+                    aria-label={t("mailRepositories.moveAllOf", { repository: result.repository })}
                     onClick={() => {
                       handleMoveAll(result);
                     }}
@@ -264,7 +264,7 @@ export default function MailRepositoriesList() {
                     // Nothing to reprocess, move or clear in an empty repository
                     disabled={result.size === 0}
                     title={result.size === 0 ? t("mailRepositories.emptyActionDisabled") : t("mailRepositories.clearAll")}
-                    aria-label={t("mailRepositories.clearAll")}
+                    aria-label={t("mailRepositories.clearAllOf", { repository: result.repository })}
                     onClick={() => {
                       handleClearTask(result);
                     }}

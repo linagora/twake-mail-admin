@@ -145,6 +145,7 @@ export default function UserAliases({ username }: Props) {
                       onClick={() => handleRemove(alias.source)}
                       className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                       title={t("users.aliases.removeTooltip")}
+                      aria-label={t("users.aliases.removeNamed", { item: alias.source })}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>

@@ -164,7 +164,8 @@
       "errorRemoving": "Lỗi khi xóa bí danh tên miền",
       "empty": "Chưa cấu hình bí danh tên miền nào.",
       "addTooltip": "Thêm bí danh tên miền",
-      "removeTooltip": "Xóa bí danh"
+      "removeTooltip": "Xóa bí danh",
+      "removeNamed": "Xóa bí danh \"{{item}}\""
     },
     "quota": {
       "title": "Hạn ngạch",
@@ -214,6 +215,7 @@
       "errorDeleting": "Lỗi khi xóa hộp thư nhóm",
       "addTooltip": "Thêm hộp thư nhóm",
       "deleteTooltip": "Xóa hộp thư nhóm",
+      "deleteNamed": "Xóa hộp thư nhóm \"{{item}}\"",
       "empty": "Chưa cấu hình hộp thư nhóm nào.",
       "searchPlaceholder": "Tìm hộp thư nhóm..."
     },
@@ -263,6 +265,7 @@
       "deleteConfirm": "Bạn có chắc muốn xóa thư mục \"{{folderName}}\"?",
       "deleted": "Đã xóa thư mục thành công",
       "deleteTooltip": "Xóa thư mục",
+      "deleteNamed": "Xóa thư mục \"{{item}}\"",
       "empty": "Không có thư mục.",
       "subaddressing": "Địa chỉ phụ",
       "subaddressingEnabledDesc": "Thư gửi đến {{mailbox}}+{{folder}}@{{domain}} sẽ được chuyển vào thư mục này",
@@ -633,6 +636,7 @@
       "empty": "Chưa cấu hình bí danh nào.",
       "addTooltip": "Thêm bí danh",
       "removeTooltip": "Xóa bí danh",
+      "removeNamed": "Xóa bí danh \"{{item}}\"",
       "fieldLabel": "Địa chỉ bí danh"
     },
     "quota": {
@@ -652,6 +656,7 @@
       "empty": "Chưa cấu hình chuyển tiếp nào.",
       "addTooltip": "Thêm chuyển tiếp",
       "removeTooltip": "Xóa chuyển tiếp",
+      "removeNamed": "Xóa chuyển tiếp đến \"{{item}}\"",
       "errorUpdating": "Lỗi khi cập nhật chuyển tiếp",
       "fieldLabel": "Địa chỉ đích",
       "keepCopyIn": "Giữ một bản sao trong hộp thư của {{username}}",
@@ -675,7 +680,9 @@
       "clearConfirm": "Bạn có chắc muốn xóa tất cả thư trong \"{{mailboxName}}\"?",
       "errorClearing": "Lỗi khi xóa nội dung hộp thư",
       "clearTooltip": "Xóa nội dung hộp thư",
+      "clearNamed": "Xóa nội dung hộp thư \"{{item}}\"",
       "deleteTooltip": "Xóa hộp thư",
+      "deleteNamed": "Xóa hộp thư \"{{item}}\"",
       "empty": "Không tìm thấy hộp thư.",
       "creationDate": "Ngày tạo:",
       "searchMessages": "Tìm thư",
@@ -1811,8 +1818,11 @@
     "protocolLabel": "Giao thức",
     "newRepository": "Kho mới",
     "reprocessAll": "Xử lý lại tất cả thư",
+    "reprocessAllOf": "Xử lý lại tất cả thư của \"{{repository}}\"",
     "moveAll": "Chuyển tất cả thư sang kho khác",
+    "moveAllOf": "Chuyển tất cả thư của \"{{repository}}\" sang kho khác",
     "clearAll": "Xóa tất cả thư",
+    "clearAllOf": "Xóa tất cả thư của \"{{repository}}\"",
     "createTitle": "Tạo kho lưu trữ thư",
     "pathRequired": "Đường dẫn kho là bắt buộc",
     "protocolRequired": "Giao thức là bắt buộc",
@@ -1915,6 +1925,7 @@
     "domainCreated": "Đã tạo ánh xạ tên miền thành công",
     "errorCreatingDomain": "Lỗi khi tạo ánh xạ tên miền",
     "removeTitle": "Xóa ánh xạ {{type}}",
+    "removeNamed": "Xóa ánh xạ {{type}} từ \"{{source}}\" đến \"{{destination}}\"",
     "removeConfirm": "Xóa ánh xạ {{typeLabel}} \"{{source}}\" → \"{{destination}}\"?",
     "removed": "Đã xóa ánh xạ {{type}} thành công",
     "errorRemoving": "Lỗi khi xóa ánh xạ {{typeLabel}}",

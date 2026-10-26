@@ -143,6 +143,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
                       onClick={(e) => { e.preventDefault(); handleRemove(mb.name); }}
                       className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                       title={t("domains.teamMailboxes.deleteTooltip")}
+                      aria-label={t("domains.teamMailboxes.deleteNamed", { item: mb.name })}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>

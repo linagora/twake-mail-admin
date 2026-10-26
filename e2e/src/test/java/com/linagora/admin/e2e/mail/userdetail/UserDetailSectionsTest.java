@@ -77,7 +77,7 @@ class UserDetailSectionsTest extends MailAdminE2ETest {
         assertThat(detail.sectionToggle("Mappings", 3)).isVisible();
         assertThat(webAdmin.get("/mappings/user/" + user).body()).contains(david);
 
-        detail.iconButton("Remove forward").click();
+        detail.iconButton("Remove forward to \"" + david + "\"").click();
         detail.confirm("Remove");
         app.expectToast("Forward removed successfully");
         // The last forward gone, the copy kept for the user goes too: plain delivery, no mapping left

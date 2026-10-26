@@ -166,7 +166,8 @@
       "errorRemoving": "Error removing domain alias",
       "empty": "No domain aliases configured.",
       "addTooltip": "Add domain alias",
-      "removeTooltip": "Remove alias"
+      "removeTooltip": "Remove alias",
+      "removeNamed": "Remove alias \"{{item}}\""
     },
     "quota": {
       "title": "Quota",
@@ -216,6 +217,7 @@
       "errorDeleting": "Error deleting team mailbox",
       "addTooltip": "Add team mailbox",
       "deleteTooltip": "Delete team mailbox",
+      "deleteNamed": "Delete team mailbox \"{{item}}\"",
       "empty": "No team mailboxes configured.",
       "searchPlaceholder": "Search team mailboxes..."
     },
@@ -265,6 +267,7 @@
       "deleteConfirm": "Are you sure you want to delete folder \"{{folderName}}\"?",
       "deleted": "Folder deleted successfully",
       "deleteTooltip": "Delete folder",
+      "deleteNamed": "Delete folder \"{{item}}\"",
       "empty": "No folders.",
       "subaddressing": "Sub-addressing",
       "subaddressingEnabledDesc": "Emails to {{mailbox}}+{{folder}}@{{domain}} are delivered to this folder",
@@ -641,6 +644,7 @@
       "empty": "No aliases configured.",
       "addTooltip": "Add alias",
       "removeTooltip": "Remove alias",
+      "removeNamed": "Remove alias \"{{item}}\"",
       "fieldLabel": "Alias address"
     },
     "quota": {
@@ -660,6 +664,7 @@
       "empty": "No forwards configured.",
       "addTooltip": "Add forward",
       "removeTooltip": "Remove forward",
+      "removeNamed": "Remove forward to \"{{item}}\"",
       "errorUpdating": "Error updating forward",
       "fieldLabel": "Destination address",
       "keepCopyIn": "Keep a copy in {{username}}'s mailbox",
@@ -683,7 +688,9 @@
       "clearConfirm": "Are you sure you want to delete all messages in \"{{mailboxName}}\"?",
       "errorClearing": "Error clearing mailbox",
       "clearTooltip": "Clear mailbox content",
+      "clearNamed": "Clear content of mailbox \"{{item}}\"",
       "deleteTooltip": "Delete mailbox",
+      "deleteNamed": "Delete mailbox \"{{item}}\"",
       "empty": "No mailboxes found.",
       "creationDate": "Creation date:",
       "searchMessages": "Search messages",
@@ -1821,8 +1828,11 @@
     "protocolLabel": "Protocol",
     "newRepository": "New repository",
     "reprocessAll": "Reprocess all mails",
+    "reprocessAllOf": "Reprocess all mails of \"{{repository}}\"",
     "moveAll": "Move all mails to another repository",
+    "moveAllOf": "Move all mails of \"{{repository}}\" to another repository",
     "clearAll": "Clear all mails",
+    "clearAllOf": "Clear all mails of \"{{repository}}\"",
     "createTitle": "Create Mail Repository",
     "pathRequired": "Repository path is required",
     "protocolRequired": "Protocol is required",
@@ -1925,6 +1935,7 @@
     "domainCreated": "Domain mapping created successfully",
     "errorCreatingDomain": "Error creating domain mapping",
     "removeTitle": "Remove {{type}} Mapping",
+    "removeNamed": "Remove {{type}} Mapping from \"{{source}}\" to \"{{destination}}\"",
     "removeConfirm": "Remove {{typeLabel}} mapping \"{{source}}\" → \"{{destination}}\"?",
     "removed": "{{type}} mapping removed successfully",
     "errorRemoving": "Error removing {{typeLabel}} mapping",

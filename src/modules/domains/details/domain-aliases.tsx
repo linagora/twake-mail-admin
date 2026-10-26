@@ -120,6 +120,7 @@ export default function DomainAliases({ domain, defaultOpen }: Props) {
                       onClick={() => handleRemove(alias.source)}
                       className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                       title={t("domains.aliases.removeTooltip")}
+                      aria-label={t("domains.aliases.removeNamed", { item: alias.source })}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
