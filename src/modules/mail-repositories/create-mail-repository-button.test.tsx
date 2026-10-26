@@ -84,9 +84,9 @@ describe("create mail repository dialog", () => {
     fireEvent.change(pathInput(), { target: { value: "var/mail/new" } });
     confirm();
 
-    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({
-      title: "mailRepositories.createError",
-    })));
+    // In the dialog, not in a toast: the dialog keeps the focus, a toast over it cannot be selected
+    expect((await screen.findByRole("alert")).textContent).toContain("mailRepositories.createError");
+    expect(toast).not.toHaveBeenCalled();
     expect(pathInput().value).toBe("var/mail/new");
     expect(onCreated).not.toHaveBeenCalled();
   });
@@ -106,11 +106,35 @@ describe("create mail repository dialog", () => {
     confirm();
 
     // The server message, labelled and selectable as in every error display
-    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "mailRepositories.createError", variant: "destructive" })));
-    render(<>{toast.mock.calls[0][0].description}</>);
-    expect(screen.getByText("common.serverMessage")).not.toBeNull();
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain("common.serverMessage");
     expect(screen.getByText("'nosuchproto' is an unsupported protocol")).not.toBeNull();
     expect(protocolInput().value).toBe("nosuchproto");
+  });
+
+  it("clears the refusal once a field is edited", async () => {
+    api.createMailRepository.mockRejectedValue(new Error("boom"));
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/new" } });
+    confirm();
+    await screen.findByRole("alert");
+
+    fireEvent.change(protocolInput(), { target: { value: "memory" } });
+
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("forgets the refusal once the dialog is cancelled", async () => {
+    api.createMailRepository.mockRejectedValue(new Error("boom"));
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/new" } });
+    confirm();
+    await screen.findByRole("alert");
+
+    fireEvent.click(screen.getByText("common.cancel"));
+    fireEvent.click(screen.getByText("mailRepositories.newRepository"));
+
+    expect(screen.queryByRole("alert")).toBeNull();
   });
 
   // jsdom does not submit a form on Enter: submitting the field's form is what the browser does then

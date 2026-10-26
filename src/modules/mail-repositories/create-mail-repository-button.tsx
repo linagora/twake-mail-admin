@@ -27,7 +27,9 @@ interface Props {
 
 /**
  * Creates a mail repository. The dialog only closes once the repository is created or the
- * creation is cancelled: a missing field is flagged in place and keeps the typed values.
+ * creation is cancelled: a missing field is flagged in place and keeps the typed values, and
+ * a refusal is shown in the dialog, where its text can be selected: the dialog keeps the focus
+ * inside it, so a toast over it could not be.
  */
 export default function CreateMailRepositoryButton({ onCreated }: Props) {
   const { t } = useTranslation();
@@ -36,16 +38,19 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
   const [values, setValues] = useState<Record<Field, string>>({ path: "", protocol: DEFAULT_PROTOCOL });
   const [missing, setMissing] = useState<Field[]>([]);
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<unknown>(null);
 
   const close = () => {
     setOpen(false);
     setValues({ path: "", protocol: DEFAULT_PROTOCOL });
     setMissing([]);
+    setError(null);
   };
 
   const update = (field: Field, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
     setMissing((current) => current.filter((f) => f !== field));
+    setError(null);
   };
 
   const handleCreate = async () => {
@@ -53,17 +58,14 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
     setMissing(invalid);
     if (invalid.length > 0) return;
     setCreating(true);
+    setError(null);
     try {
       await createMailRepository(encodeURIComponent(values.path.trim()), values.protocol.trim());
       close();
       toast({ title: t("mailRepositories.created") });
       onCreated();
     } catch (err) {
-      toast({
-        title: t("mailRepositories.createError"),
-        description: <ErrorDisplayer error={err} />,
-        variant: "destructive",
-      });
+      setError(err);
     } finally {
       setCreating(false);
     }
@@ -110,6 +112,12 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
             <div className="space-y-3 py-2">
               {renderField("path", t("mailRepositories.pathLabel"), t("mailRepositories.pathPlaceholder"))}
               {renderField("protocol", t("mailRepositories.protocolLabel"))}
+              {error !== null && (
+                <div role="alert" className="text-sm text-red-600">
+                  <p className="font-medium">{t("mailRepositories.createError")}</p>
+                  <ErrorDisplayer error={error} />
+                </div>
+              )}
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={close}>{t("common.cancel")}</Button>
