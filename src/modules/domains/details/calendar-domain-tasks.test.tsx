@@ -28,7 +28,7 @@ const openRepublishDialog = () => {
     </MemoryRouter>
   );
   const row = screen.getByText("domains.calendarTasks.republishContactsButton").closest("[data-task-row]") as HTMLElement;
-  fireEvent.click(within(row).getByRole("button", { name: "common.run" }));
+  fireEvent.click(within(row).getByRole("button", { name: /^common\.run / }));
 };
 
 const contactsPerSecondInput = () => screen.getByLabelText("contactsPerSecond (common.optional)") as HTMLInputElement;
@@ -77,7 +77,7 @@ describe("calendar domain tasks: sync domain members dialog", () => {
       </MemoryRouter>
     );
     const row = screen.getByText("domains.calendarTasks.syncButton").closest("[data-task-row]") as HTMLElement;
-    fireEvent.click(within(row).getByRole("button", { name: "common.run" }));
+    fireEvent.click(within(row).getByRole("button", { name: /^common\.run / }));
     fireEvent.click(screen.getByRole("button", { name: "common.confirm" }));
 
     expect((await screen.findByRole("alert")).textContent).toContain("can not be found");

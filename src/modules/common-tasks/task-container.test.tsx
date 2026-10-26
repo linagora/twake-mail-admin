@@ -51,7 +51,7 @@ const renderBlobGc = () => {
       />
     </MemoryRouter>
   );
-  fireEvent.click(screen.getByRole("button", { name: "common.run" }));
+  fireEvent.click(screen.getByRole("button", { name: /^common\.run / }));
 };
 
 describe("task container: run task", () => {
@@ -104,7 +104,7 @@ describe("task container: command tooltip", () => {
   it("opens the command on the side of the Run button, where it covers no other task", async () => {
     renderTaskWithDoc("");
 
-    fireEvent.focus(screen.getByRole("button", { name: "common.run" }));
+    fireEvent.focus(screen.getByRole("button", { name: /^common\.run / }));
 
     const tooltip = await screen.findByRole("tooltip");
     expect(tooltip.textContent).toBe("POST /calendars?task=scheduleAlarms");
@@ -127,7 +127,7 @@ describe("task container: command tooltip", () => {
       </MemoryRouter>
     );
 
-    fireEvent.focus(screen.getByRole("button", { name: "common.run" }));
+    fireEvent.focus(screen.getByRole("button", { name: /^common\.run / }));
 
     const tooltip = await screen.findByRole("tooltip");
     expect(tooltip.textContent).toBe("curl -XPOST /calendars?task=archive&eventsPerSecond=100");

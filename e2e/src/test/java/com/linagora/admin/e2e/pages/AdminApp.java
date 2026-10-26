@@ -110,6 +110,9 @@ public class AdminApp {
             .or(toasts().locator("li").filter(new Locator.FilterOptions().setHasText(text))).first();
     }
 
+    /** The Run button of a task row, named after its task: "Run <task>". */
+    public static final Pattern RUN_TASK_BUTTON = Pattern.compile("^Run ");
+
     /** The link of a "Task created" toast: "<task name> — Task <first 8 characters of its id>". */
     public static final Pattern TASK_TOAST_LINK = Pattern.compile("^.+ — Task [0-9a-f]{8}$");
 

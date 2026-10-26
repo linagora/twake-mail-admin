@@ -92,7 +92,7 @@ class CommonTasksTest extends CalendarAdminE2ETest {
         // Grouped by purpose, each task saying what it does
         assertThat(tasks.groupHeadings()).hasText(CommonTasksPage.GROUPS);
         assertThat(tasks.group("Users and contacts").getByRole(AriaRole.BUTTON,
-            new Locator.GetByRoleOptions().setName("Run").setExact(true))).hasCount(4);
+            new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON))).hasCount(4);
         assertThat(tasks.group("Cleanup")).containsText("Calendar event archival");
         assertThat(tasks.row("Alarm rescheduling")).containsText("Use when event reminders are not sent.");
         assertThat(tasks.row("Calendar event archival")).containsText("Modifies data");

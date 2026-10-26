@@ -61,7 +61,7 @@ public class CommonTasksPage {
     }
 
     public Locator runButton(String name) {
-        return row(name).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Run").setExact(true));
+        return row(name).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON));
     }
 
     public CommonTasksPage run(String name) {

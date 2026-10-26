@@ -117,6 +117,6 @@ public class CalendarUserPage {
     }
 
     public Locator runButton(String name) {
-        return taskRow(name).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Run").setExact(true));
+        return taskRow(name).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON));
     }
 }

@@ -34,7 +34,8 @@ class DomainTasksTest extends MailAdminE2ETest {
         for (String row : new String[] {"Provision templates", "Apply signature templates", "Delete all users data"}) {
             assertThat(detail.text(row)).isVisible();
         }
-        assertThat(detail.button("Run")).hasCount(3);
+        assertThat(detail.main().getByRole(AriaRole.BUTTON,
+            new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON))).hasCount(3);
 
         // Apply signature templates: this backend has no such route (see DOM-11), the refusal is shown as text
         runButton(detail, "Apply signature templates").click();
@@ -109,7 +110,7 @@ class DomainTasksTest extends MailAdminE2ETest {
     /** The Run button of a task row. */
     private static Locator runButton(DomainDetailPage detail, String row) {
         return detail.text(row).locator("xpath=ancestor::div[.//button][1]")
-            .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Run").setExact(true));
+            .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON));
     }
 
     private static String taskIdOfToast(AdminApp app, String title) {

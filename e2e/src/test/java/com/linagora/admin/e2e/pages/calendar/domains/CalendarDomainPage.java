@@ -211,6 +211,6 @@ public class CalendarDomainPage {
 
     /** The Run button of a task, by the title of its row. */
     public Locator taskButton(String name) {
-        return taskRow(name).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Run").setExact(true));
+        return taskRow(name).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON));
     }
 }

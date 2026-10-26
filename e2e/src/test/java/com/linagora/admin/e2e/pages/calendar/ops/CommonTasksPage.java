@@ -60,11 +60,11 @@ public class CommonTasksPage {
 
     /** The Run button of a task, by its name. */
     public Locator runButton(String task) {
-        return row(task).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Run").setExact(true));
+        return row(task).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON));
     }
 
     public Locator runButtons() {
-        return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Run").setExact(true));
+        return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON));
     }
 
     /** Clicks Run next to a task and returns its dialog, titled after the task. */

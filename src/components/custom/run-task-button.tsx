@@ -49,11 +49,11 @@ const BADGE_CLASS = {
   destructive: "bg-red-100 text-red-800",
 } as const;
 
-export function RiskBadge({ risk }: { risk: TaskRisk }) {
+export function RiskBadge({ risk, id }: { risk: TaskRisk; id?: string }) {
   const { t } = useTranslation();
   if (risk === "safe") return null;
   return (
-    <span className={cn("inline-block text-xs font-medium rounded px-1.5 py-0.5 whitespace-nowrap", BADGE_CLASS[risk])}>
+    <span id={id} className={cn("inline-block text-xs font-medium rounded px-1.5 py-0.5 whitespace-nowrap", BADGE_CLASS[risk])}>
       {t(`tasks.risk.${risk}`)}
     </span>
   );

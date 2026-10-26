@@ -4,6 +4,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 import java.util.List;
 
+import com.linagora.admin.e2e.pages.AdminApp;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.AriaRole;
 
@@ -31,7 +32,7 @@ public class UserTasksSection {
         return detail.main().locator("div")
             .filter(new Locator.FilterOptions().setHas(detail.page().getByText(label, new com.microsoft.playwright.Page.GetByTextOptions().setExact(true))))
             .filter(new Locator.FilterOptions().setHas(detail.page().getByRole(AriaRole.BUTTON,
-                new com.microsoft.playwright.Page.GetByRoleOptions().setName("Run").setExact(true))))
+                new com.microsoft.playwright.Page.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON))))
             .last();
     }
 
@@ -41,7 +42,7 @@ public class UserTasksSection {
     }
 
     public Locator runButton(String label) {
-        return row(label).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Run").setExact(true));
+        return row(label).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON));
     }
 
     /** Clicks "Run" on a row and waits for its dialog. */
