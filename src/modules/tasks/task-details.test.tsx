@@ -38,6 +38,36 @@ describe("task details", () => {
     expect(grid.textContent).not.toContain("recomputeSingleQuotaComponentResults");
   });
 
+  it("labels the mailbox counters of a populate email query view", () => {
+    const grid = renderDetails({
+      type: "PopulateEmailQueryViewTask",
+      processedMailboxCount: 12,
+      failedMailboxCount: 1,
+      processedMessageCount: 340,
+      failedMessageCount: 2,
+      runningOptions: { messagesPerSecond: 50 },
+    });
+    expect(grid.textContent).toContain("tasks.info.processedMailboxes12");
+    expect(grid.textContent).toContain("tasks.info.failedMailboxes1");
+    expect(grid.textContent).toContain("tasks.info.processedMessageCount340");
+    expect(grid.textContent).toContain("tasks.info.failedMessageCount2");
+    expect(grid.textContent).not.toContain("MailboxCount");
+  });
+
+  it("labels the user counters of a populate email query view from an older backend", () => {
+    const grid = renderDetails({
+      type: "PopulateEmailQueryViewTask",
+      processedUserCount: 3,
+      failedUserCount: 0,
+      processedMessageCount: 340,
+      failedMessageCount: 0,
+      runningOptions: { messagesPerSecond: 50 },
+    });
+    expect(grid.textContent).toContain("tasks.info.processedUserCount3");
+    expect(grid.textContent).toContain("tasks.info.failedUsers0");
+    expect(grid.textContent).not.toContain("failedUserCount");
+  });
+
   it("leaves the nested values to the raw JSON", () => {
     renderDetails({ runningOptions: { user: null } });
     expect(screen.getByText("tasks.rawJson")).not.toBeNull();

@@ -151,6 +151,10 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   mailboxesFailed: "tasks.info.failedMailboxes",
   mailboxesExpired: "tasks.info.mailboxesExpired",
   messagesDeleted: "tasks.info.messagesDeleted",
+  // Populate email query view: counted per mailbox, per user on older backends
+  processedMailboxCount: "tasks.info.processedMailboxes",
+  failedMailboxCount: "tasks.info.failedMailboxes",
+  failedUserCount: "tasks.info.failedUsers",
   // Subscribe to all mailboxes
   subscribedCount: "tasks.info.subscribedCount",
   unsubscribedCount: "tasks.info.unsubscribedCount",
