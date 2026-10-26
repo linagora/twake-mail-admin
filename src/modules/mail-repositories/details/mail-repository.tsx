@@ -4,6 +4,7 @@ import i18n from "i18next";
 import { useJsonDialog } from "@/components/custom/json-dialog";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import {
+  downloadMailFromRepository,
   getMailRepositories,
   getMailsInRepository,
   moveSingleMail,
@@ -41,42 +42,31 @@ interface JsonMailResponse {
   lastUpdated: string | null;
 }
 
-type MailResponse = JsonMailResponse | Blob;
+const toastFetchMailError = (error: unknown): void => {
+  toast({
+    title: i18n.t("mailRepositories.fetchMailError"),
+    description: <ErrorDisplayer error={error} />,
+  });
+};
 
-const fetchMailData = async (
+const showMailJson = async (
   repo: string,
   mailKey: string,
-  acceptType: "application/json" | "message/rfc822",
-  // Shows the JSON of the mail in the console
-  showJson: (json: unknown) => void
+  showJson: (json: JsonMailResponse) => void
 ): Promise<void> => {
-  const repositoryPath = encodeURIComponent(repo);
-  const endpoint = `/mailRepositories/${repositoryPath}/mails/${mailKey}`;
-
   try {
-    const response = (await apiClient.get<MailResponse>(endpoint, {
-      headers: { Accept: acceptType },
-      responseType: acceptType === "message/rfc822" ? "blob" : "json",
-    })) as any;
-
-    if (acceptType === "application/json") {
-      showJson(response);
-    } else if (acceptType === "message/rfc822") {
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${mailKey}.eml`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    }
+    const response = await apiClient.get<unknown, JsonMailResponse>(
+      `/mailRepositories/${encodeURIComponent(repo)}/mails/${mailKey}`,
+      { headers: { Accept: "application/json" }, responseType: "json" }
+    );
+    showJson(response);
   } catch (error) {
-    toast({
-      title: i18n.t("mailRepositories.fetchMailError"),
-      description: <ErrorDisplayer error={error} />,
-    });
+    toastFetchMailError(error);
   }
 };
+
+const downloadMail = (repo: string, mailKey: string): Promise<void> =>
+  downloadMailFromRepository(encodeURIComponent(repo), mailKey).catch(toastFetchMailError);
 
 export default function MailRepositoryDetail() {
   const { t } = useTranslation();
@@ -340,7 +330,7 @@ export default function MailRepositoryDetail() {
                     <Button
                       variant="link"
                       className="px-1 h-auto"
-                      onClick={() => fetchMailData(id!, mailKey, "application/json", (json) => jsonDialog.show(mailKey, json))}
+                      onClick={() => showMailJson(id!, mailKey, (json) => jsonDialog.show(mailKey, json))}
                     >
                       {t("common.viewJson")}
                     </Button>
@@ -350,7 +340,7 @@ export default function MailRepositoryDetail() {
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        fetchMailData(id!, mailKey, "message/rfc822", () => {});
+                        downloadMail(id!, mailKey);
                       }}
                       className="hover:text-blue-500 hover:underline transition"
                     >

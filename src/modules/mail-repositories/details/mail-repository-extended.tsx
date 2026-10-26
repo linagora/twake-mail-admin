@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Download, MoveHorizontal, Trash2, RefreshCw, Loader2 } from "lucide-react";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
 import {
+  downloadMailFromRepository,
   getMailRepositories,
   getMailsInRepository,
   getMailDetail,
@@ -12,7 +13,6 @@ import {
   reprocessSingleMail,
 } from "../api-client";
 import { GetMailRepositoriesResponseType, MailDetail, MailRepository } from "../types";
-import { apiClient } from "@/lib/apiClient";
 import { useToast } from "@/hooks/use-toast";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -219,17 +219,7 @@ export default function MailRepositoryExtended() {
 
   const handleDownload = async (mailKey: string) => {
     try {
-      const response = await apiClient.get(
-        `/mailRepositories/${encodedRepo}/mails/${mailKey}`,
-        { headers: { Accept: "message/rfc822" }, responseType: "blob" }
-      ) as any;
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${mailKey}.eml`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      await downloadMailFromRepository(encodedRepo, mailKey);
     } catch (err) {
       toast({ title: "Error downloading mail", description: <ErrorDisplayer error={err} /> });
     }

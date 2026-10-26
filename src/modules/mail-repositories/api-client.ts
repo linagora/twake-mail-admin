@@ -268,3 +268,32 @@ export const removeSingleMailFromRepository = async (
   );
   return response;
 };
+
+/**
+ * Downloads a mail of a repository as `<mailKey>.eml`.
+ *
+ * API: `GET http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails/{mailKey}`
+ * with `Accept: message/rfc822`.
+ *
+ * The object URL is revoked once the download is triggered, so the browser releases the Blob.
+ *
+ * @param encodedPathOfTheRepository - The URL-encoded path of the mail repository.
+ * @param mailKey - The key of the mail to download.
+ */
+export const downloadMailFromRepository = async (
+  encodedPathOfTheRepository: string,
+  mailKey: string,
+): Promise<void> => {
+  const response = await apiClient.get<unknown, Blob>(
+    `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}`,
+    { headers: { Accept: "message/rfc822" }, responseType: "blob" }
+  );
+  const url = window.URL.createObjectURL(new Blob([response]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `${mailKey}.eml`);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+};
