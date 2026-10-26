@@ -29,6 +29,7 @@ import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
 import EmptyState from "@/components/custom/empty-state";
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
+import { downloadBlob } from "@/lib/download-blob";
 
 const PAGE_LIMIT = EXTENDED_PAGE_LIMIT;
 
@@ -223,13 +224,7 @@ export default function MailRepositoryExtended() {
         `/mailRepositories/${encodedRepo}/mails/${mailKey}`,
         { headers: { Accept: "message/rfc822" }, responseType: "blob" }
       ) as any;
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${mailKey}.eml`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      downloadBlob(new Blob([response]), `${mailKey}.eml`);
     } catch (err) {
       toast({ title: "Error downloading mail", description: <ErrorDisplayer error={err} /> });
     }

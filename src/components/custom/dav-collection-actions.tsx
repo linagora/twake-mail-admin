@@ -15,6 +15,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import { getTaskDetail } from "@/modules/common-tasks/api-client";
 import { TaskStatus, type RunTaskResponse } from "@/modules/common-tasks/types";
 import { useDomain } from "@/modules/domain-admin/domain-context";
+import { downloadBlob } from "@/lib/download-blob";
 
 // Number of resources held by a DAV collection: events for a calendar,
 // contacts for an address book.
@@ -103,7 +104,7 @@ export function ExportCollectionButton({
   const handleExport = async () => {
     setExporting(true);
     try {
-      download(await exportCollection(owner, collectionId), fileName(name, extension));
+      downloadBlob(await exportCollection(owner, collectionId), fileName(name, extension));
     } catch (err) {
       toast({ title: errorTitle, description: <ErrorDisplayer error={err} /> });
     } finally {
@@ -226,13 +227,3 @@ function fileName(name: string, extension: string): string {
   return `${safe || "export"}.${extension}`;
 }
 
-function download(blob: Blob, name: string): void {
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", name);
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.URL.revokeObjectURL(url);
-}

@@ -13,6 +13,7 @@ import {
 import { GetMailRepositoriesResponseType, MailKeysResponseType, MailRepository } from "../types";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
+import { downloadBlob } from "@/lib/download-blob";
 import { toast, useToast } from "@/hooks/use-toast";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -62,13 +63,7 @@ const fetchMailData = async (
     if (acceptType === "application/json") {
       showJson(response);
     } else if (acceptType === "message/rfc822") {
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${mailKey}.eml`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      downloadBlob(new Blob([response]), `${mailKey}.eml`);
     }
   } catch (error) {
     toast({
