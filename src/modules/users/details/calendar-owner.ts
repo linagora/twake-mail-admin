@@ -36,16 +36,30 @@ export function buildOwnerEmailMap(
   return Object.fromEntries([...fromInvites, ...fromRegisteredUsers]);
 }
 
+// The id a delegated calendar comes from, when its delegated source is /calendars/{id}/{id}.json
+// and it is shared by the principal of that id under the given prefix. Null otherwise.
+function delegatedSourceId(calendar: UserCalendar, principalPrefix: string): string | null {
+  const sourceHref = calendar["calendarserver:delegatedsource"];
+  if (!sourceHref) return null;
+  const id = sourceHref.split("/").filter(Boolean)[1];
+  if (!id) return null;
+  return (calendar.invite ?? []).some((invite) => invite.principal === `${principalPrefix}${id}`) ? id : null;
+}
+
 /**
  * The id of the team calendar a delegated calendar is the copy of: its delegated source is
  * /calendars/{id}/{id}.json and it is shared by the team calendar principal. Null otherwise.
  */
 export function teamCalendarSourceId(calendar: UserCalendar): string | null {
-  const sourceHref = calendar["calendarserver:delegatedsource"];
-  if (!sourceHref) return null;
-  const id = sourceHref.split("/").filter(Boolean)[1];
-  if (!id) return null;
-  return (calendar.invite ?? []).some((invite) => invite.principal === `principals/team-calendars/${id}`) ? id : null;
+  return delegatedSourceId(calendar, "principals/team-calendars/");
+}
+
+/**
+ * The id of the resource whose calendar is delegated to one of its administrators: its delegated
+ * source is /calendars/{id}/{id}.json and it is shared by the resource principal. Null otherwise.
+ */
+export function resourceSourceId(calendar: UserCalendar): string | null {
+  return delegatedSourceId(calendar, "principals/resources/");
 }
 
 export function ownerEmail(calendar: UserCalendar, ownerEmails: Record<string, string>): string | null {

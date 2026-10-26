@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildOwnerEmailMap, ownerEmail, teamCalendarSourceId } from "./calendar-owner";
+import { buildOwnerEmailMap, ownerEmail, resourceSourceId, teamCalendarSourceId } from "./calendar-owner";
 import { UserCalendar } from "../types";
 
 const delegated = {
@@ -44,5 +44,21 @@ describe("team calendar copies", () => {
     expect(teamCalendarSourceId(copy)).toBe("team1");
     expect(teamCalendarSourceId({ "calendarserver:delegatedsource": "/calendars/alice/work.json", invite: [] })).toBeNull();
     expect(teamCalendarSourceId({})).toBeNull();
+  });
+});
+
+describe("resource calendars delegated to their administrators", () => {
+  it("recognises the calendar of a resource by its source and its resource principal", () => {
+    const resourceCalendar = {
+      "calendarserver:delegatedsource": "/calendars/room1/room1.json",
+      invite: [
+        { href: "mailto:room1@open-paas.org", principal: "principals/resources/room1", access: 1, comment: null, inviteStatus: 0 },
+        { href: "mailto:bob@open-paas.org", principal: "principals/users/bob", access: 5, comment: null, inviteStatus: 0 },
+      ],
+    };
+    expect(resourceSourceId(resourceCalendar)).toBe("room1");
+    expect(teamCalendarSourceId(resourceCalendar)).toBeNull();
+    expect(resourceSourceId({ "calendarserver:delegatedsource": "/calendars/alice/work.json", invite: [] })).toBeNull();
+    expect(resourceSourceId({})).toBeNull();
   });
 });

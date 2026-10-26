@@ -15,7 +15,7 @@ import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
-import { buildOwnerEmailMap, ownerEmail, teamCalendarSourceId } from "./calendar-owner";
+import { buildOwnerEmailMap, ownerEmail, resourceSourceId, teamCalendarSourceId } from "./calendar-owner";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,12 @@ const CATEGORY_ORDER: CalendarCategory[] = ["owner", "delegated", "subscription"
 
 // The domain of a user, whose page manages its team calendars
 const domainOf = (username: string) => username.slice(username.lastIndexOf("@") + 1);
+
+// The page of a calendar resource: among the resources of the administered domain, or under its domain
+const resourcePath = (resourceId: string, domain: string, administeredDomain: string) =>
+  administeredDomain
+    ? `/resources/resource/${encodeURIComponent(resourceId)}`
+    : `/domains/domain/${encodeURIComponent(domain)}/resource/${encodeURIComponent(resourceId)}`;
 
 const EMPTY_CREATE: CreateUserCalendarPayload = {
   "dav:name": "",
@@ -157,6 +163,8 @@ function CalendarRow({
   const id = calendarId(calendar);
   // esn-sabre always refuses to delete the main calendar of a user.
   const isMain = isOwned && isMainCalendar(calendar);
+  const resourceId = resourceSourceId(calendar);
+  const administeredDomain = useDomain();
   // Bumped once an import task is over: a new key re-reads the event counter.
   const [countKey, setCountKey] = useState(0);
 
@@ -193,11 +201,16 @@ function CalendarRow({
         {description && (
           <p className="text-xs text-gray-400">{description}</p>
         )}
-        {/* A team calendar names its domain, where its members are managed; another user's calendar, its owner */}
+        {/* A team calendar names its domain, where its members are managed; a resource links to its page; another user's calendar, its owner */}
         {teamCalendarSourceId(calendar) ? (
           <p className="text-xs text-gray-400">
             {t("users.calendars.teamCalendarOf")}{" "}
             <Link to={`/domains/domain/${encodeURIComponent(domainOf(username))}`} className="text-blue-600 hover:underline">{domainOf(username)}</Link>
+          </p>
+        ) : resourceId ? (
+          <p className="text-xs text-gray-400">
+            {t("users.calendars.resourceOf")}{" "}
+            <Link to={resourcePath(resourceId, domainOf(username), administeredDomain)} className="text-blue-600 hover:underline">{domainOf(username)}</Link>
           </p>
         ) : owner && (
           <p className="text-xs text-gray-400">

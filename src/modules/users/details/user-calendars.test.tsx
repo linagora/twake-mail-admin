@@ -333,3 +333,33 @@ describe("calendars shared with the user: removed, not deleted", () => {
     expect(mocks.toast).toHaveBeenCalledWith({ title: "users.calendars.removedShared" });
   });
 });
+
+describe("resource calendars delegated to their administrators", () => {
+  const ROOM = "6adf93a15ad990042c0824e1";
+
+  it("names the domain of the resource, linking to the resource page", async () => {
+    mocks.api.getUserCalendars.mockResolvedValue({
+      _embedded: {
+        "dav:calendar": [
+          {
+            _links: { self: { href: `/calendars/${HOME}/room-copy.json` } },
+            "dav:name": "QA Room 2",
+            "calendarserver:delegatedsource": `/calendars/${ROOM}/${ROOM}.json`,
+            invite: [
+              { href: `mailto:${ROOM}@open-paas.org`, principal: `principals/resources/${ROOM}`, access: 1 },
+              { href: `mailto:${BOB}`, principal: `principals/users/${HOME}`, access: 5 },
+            ],
+          },
+        ],
+      },
+    });
+    render(<MemoryRouter><UserCalendars username={BOB} /></MemoryRouter>);
+    fireEvent.click(screen.getByText("users.calendars.title"));
+    await screen.findByText("QA Room 2");
+
+    expect(screen.getByText("users.calendars.resourceOf")).not.toBeNull();
+    expect(screen.queryByText("users.calendars.teamCalendarOf")).toBeNull();
+    expect(screen.getByRole("link", { name: "open-paas.org" }).getAttribute("href"))
+      .toBe(`/domains/domain/open-paas.org/resource/${ROOM}`);
+  });
+});

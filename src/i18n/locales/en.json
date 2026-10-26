@@ -1017,6 +1017,7 @@
       "empty": "No calendar.",
       "ownerLabel": "owner:",
       "teamCalendarOf": "team calendar of",
+      "resourceOf": "resource of",
       "createTitle": "Create calendar",
       "name": "Name",
       "color": "Color",
