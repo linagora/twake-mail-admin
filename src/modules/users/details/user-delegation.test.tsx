@@ -109,3 +109,13 @@ describe("user delegation: add a delegated user", () => {
     expect(field().value).toBe("ghost@example.com");
   });
 });
+
+describe("user delegation: a long address fits a phone screen", () => {
+  it("lets the description break inside the user's address", async () => {
+    render(<UserDelegation username="a.very.long.qa.address.for.the.bar@example.com" />);
+    fireEvent.click(screen.getByText("users.delegation.title"));
+
+    const description = await screen.findByText(/^users\.delegation\.description/);
+    expect(description.className).toContain("[overflow-wrap:anywhere]");
+  });
+});

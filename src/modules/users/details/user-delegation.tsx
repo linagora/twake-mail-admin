@@ -146,7 +146,7 @@ export default function UserDelegation({ username }: Props) {
 
       {open && (
         <div id={openContentId} className="mt-2">
-          <p className="text-sm text-gray-500 mb-2">{t("users.delegation.description", { username })}</p>
+          <p className="text-sm text-gray-500 mb-2 [overflow-wrap:anywhere]">{t("users.delegation.description", { username })}</p>
           {isLoading && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
               <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
