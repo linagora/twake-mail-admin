@@ -1362,6 +1362,8 @@
       "processedUserCount": "Обработано пользователей",
       "failedUsers": "Пользователи с ошибкой",
       "username": "Пользователь",
+      "oldUser": "Прежнее имя пользователя",
+      "newUser": "Новое имя пользователя",
       "mailboxId": "Ящик",
       "domain": "Домен",
       "processedMailboxes": "Обработано ящиков",

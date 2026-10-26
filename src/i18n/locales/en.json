@@ -1357,6 +1357,8 @@
       "processedUserCount": "Users processed",
       "failedUsers": "Failed users",
       "username": "User",
+      "oldUser": "Old username",
+      "newUser": "New username",
       "mailboxId": "Mailbox",
       "domain": "Domain",
       "processedMailboxes": "Processed mailboxes",

@@ -106,6 +106,9 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   failedUsers: "tasks.info.failedUsers",
   username: "tasks.info.username",
   user: "tasks.info.username",
+  // Rename user (UsernameChangeTask)
+  oldUser: "tasks.info.oldUser",
+  newUser: "tasks.info.newUser",
   mailboxId: "tasks.info.mailboxId",
   domain: "tasks.info.domain",
   processedMailboxes: "tasks.info.processedMailboxes",
@@ -133,6 +136,7 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   // Reindexing and vault restores
   successfullyReprocessedMailCount: "tasks.info.reprocessedMailCount",
   failedReprocessedMailCount: "tasks.info.failedReprocessedMailCount",
+  mailboxFailures: "tasks.info.failedMailboxes",
   successfulRestoreCount: "tasks.info.restoredCount",
   errorRestoreCount: "tasks.info.failedRestoreCount",
   // Templates provisioning of a user or a domain: its options as the dialog names them

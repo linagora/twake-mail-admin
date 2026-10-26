@@ -1357,6 +1357,8 @@
       "processedUserCount": "Verarbeitete Benutzer",
       "failedUsers": "Fehlgeschlagene Benutzer",
       "username": "Benutzer",
+      "oldUser": "Alter Benutzername",
+      "newUser": "Neuer Benutzername",
       "mailboxId": "Postfach",
       "domain": "Domäne",
       "processedMailboxes": "Verarbeitete Postfächer",

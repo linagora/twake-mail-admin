@@ -1357,6 +1357,8 @@
       "processedUserCount": "Utilisateurs traités",
       "failedUsers": "Utilisateurs en échec",
       "username": "Utilisateur",
+      "oldUser": "Ancien nom d'utilisateur",
+      "newUser": "Nouveau nom d'utilisateur",
       "mailboxId": "Boîte",
       "domain": "Domaine",
       "processedMailboxes": "Boîtes traitées",

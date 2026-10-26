@@ -1357,6 +1357,8 @@
       "processedUserCount": "Usuarios procesados",
       "failedUsers": "Usuarios con error",
       "username": "Usuario",
+      "oldUser": "Nombre de usuario anterior",
+      "newUser": "Nuevo nombre de usuario",
       "mailboxId": "Buzón",
       "domain": "Dominio",
       "processedMailboxes": "Buzones procesados",

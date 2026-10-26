@@ -1347,6 +1347,8 @@
       "processedUserCount": "Người dùng đã xử lý",
       "failedUsers": "Người dùng bị lỗi",
       "username": "Người dùng",
+      "oldUser": "Tên người dùng cũ",
+      "newUser": "Tên người dùng mới",
       "mailboxId": "Hộp thư",
       "domain": "Miền",
       "processedMailboxes": "Hộp thư đã xử lý",

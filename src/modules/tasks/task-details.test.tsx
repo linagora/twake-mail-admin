@@ -83,6 +83,31 @@ describe("task details", () => {
     expect(screen.getByRole("link", { name: "bob@example.com" }).getAttribute("href")).toBe("/users/user/bob%40example.com");
   });
 
+  it("labels the old and new usernames of a user rename", () => {
+    const grid = renderDetails({
+      type: "UsernameChangeTask",
+      oldUser: "qa-ren1@example.com",
+      newUser: "qa-ren2@example.com",
+      status: { A: "DONE" },
+      fromStep: null,
+    });
+    expect(grid.textContent).toContain("tasks.info.oldUserqa-ren1@example.com");
+    expect(grid.textContent).toContain("tasks.info.newUserqa-ren2@example.com");
+  });
+
+  it("labels the failed mailboxes of a reindexing", () => {
+    const grid = renderDetails({
+      type: "user-reindexing",
+      username: "bob@example.com",
+      successfullyReprocessedMailCount: 2,
+      failedReprocessedMailCount: 0,
+      messageFailures: {},
+      mailboxFailures: [],
+    });
+    expect(grid.textContent).toContain("tasks.info.failedMailboxes—");
+    expect(grid.textContent).not.toContain("mailboxFailures");
+  });
+
   it("leaves the nested values to the raw JSON", () => {
     renderDetails({ runningOptions: { user: null } });
     expect(screen.getByText("tasks.rawJson")).not.toBeNull();

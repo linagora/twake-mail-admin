@@ -1357,6 +1357,8 @@
       "processedUserCount": "Utenti elaborati",
       "failedUsers": "Utenti con errore",
       "username": "Utente",
+      "oldUser": "Vecchio nome utente",
+      "newUser": "Nuovo nome utente",
       "mailboxId": "Casella",
       "domain": "Dominio",
       "processedMailboxes": "Caselle elaborate",
