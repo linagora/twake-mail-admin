@@ -1229,6 +1229,7 @@
     },
     "noAccount": {
       "kind": "Địa chỉ không có tài khoản",
+      "invalidKind": "Địa chỉ không hợp lệ",
       "missing": "Không có tài khoản nào tên {{username}} trên máy chủ này.",
       "invalid": "{{username}} không phải là địa chỉ hợp lệ.",
       "search": "Tìm người dùng",

@@ -1238,6 +1238,7 @@
     },
     "noAccount": {
       "kind": "Dirección sin cuenta",
+      "invalidKind": "Dirección no válida",
       "missing": "No existe ninguna cuenta llamada {{username}} en este servidor.",
       "invalid": "{{username}} no es una dirección válida.",
       "search": "Buscar los usuarios",

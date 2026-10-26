@@ -1238,6 +1238,7 @@
     },
     "noAccount": {
       "kind": "Adresse sans compte",
+      "invalidKind": "Adresse invalide",
       "missing": "Aucun compte nommé {{username}} n'existe sur ce serveur.",
       "invalid": "{{username}} n'est pas une adresse valide.",
       "search": "Rechercher les utilisateurs",

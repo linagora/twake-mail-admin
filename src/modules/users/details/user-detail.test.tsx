@@ -68,6 +68,8 @@ describe("user detail: account state", () => {
     head.mockRejectedValue(statusError(400));
     renderPage("a@b@c");
     expect((await screen.findByRole("alert")).textContent).toContain("users.noAccount.invalid");
+    expect(screen.getByText("users.noAccount.invalidKind")).not.toBeNull();
+    expect(screen.queryByText("users.noAccount.kind")).toBeNull();
     expect(screen.queryByText(/Forwards/)).toBeNull();
   });
 
@@ -77,6 +79,7 @@ describe("user detail: account state", () => {
     renderPage("not an address");
     expect(head).not.toHaveBeenCalled();
     expect((await screen.findByRole("alert")).textContent).toContain("users.noAccount.invalid");
+    expect(screen.getByText("users.noAccount.invalidKind")).not.toBeNull();
     expect(screen.queryByText(/Forwards/)).toBeNull();
     expect(screen.queryByText("Mappings")).toBeNull();
   });

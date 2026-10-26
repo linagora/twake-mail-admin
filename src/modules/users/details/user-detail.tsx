@@ -26,7 +26,7 @@ import { appConfig } from "@/lib/config";
 import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
 import { ExpandCollapseAll, SectionsProvider } from "@/components/custom/collapsible-section";
-import { useAccountState } from "./use-account-state";
+import { type AccountState, useAccountState } from "./use-account-state";
 
 /** The page of an address that is no account: what it is, and where to look instead. */
 function NoAccount({ username, invalid }: { username: string; invalid: boolean }) {
@@ -46,6 +46,13 @@ function NoAccount({ username, invalid }: { username: string; invalid: boolean }
   );
 }
 
+/** What the page is about: an account, an address without one, or a name that is no address at all. */
+function kindKey(account: AccountState): string {
+  if (account === "invalid") return "users.noAccount.invalidKind";
+  if (account === "missing") return "users.noAccount.kind";
+  return "users.detailKind";
+}
+
 export default function UserDetail() {
   const { t } = useTranslation();
   const { username } = useParams();
@@ -63,7 +70,7 @@ export default function UserDetail() {
     <SectionsProvider page="user">
     <Header
       headerTitle={username}
-      headerSubTitle={account === "missing" || account === "invalid" ? t("users.noAccount.kind") : t("users.detailKind")}
+      headerSubTitle={t(kindKey(account))}
       breadcrumb={breadcrumbs.users()}
       actions={account === "missing" || account === "invalid" ? undefined : <ExpandCollapseAll />}
     />
