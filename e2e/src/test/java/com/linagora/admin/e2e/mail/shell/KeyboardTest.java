@@ -144,8 +144,8 @@ class KeyboardTest extends MailAdminE2ETest {
         assertThat(toast).isVisible();
         assertThat(app.page().locator("body").ariaSnapshot()).contains("Copied to clipboard");
 
+        // Closed by its button: Escape goes to the topmost layer, the toast, not the dialog
         assertThat(app.dialog()).isVisible();
-        app.page().keyboard().press("Escape");
-        assertThat(app.dialog()).isHidden();
+        app.cancel("Close");
     }
 }
