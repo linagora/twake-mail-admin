@@ -23,6 +23,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { DEFAULT_CALENDAR_COLOR, isValidCalendarColor, toColorPickerValue } from "./calendar-color";
 import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
 import SharedWithChip from "@/components/custom/shared-with-chip";
+import HintTooltip from "@/components/custom/hint-tooltip";
 import { StagedChangesNotice, blocksSave, useDiscardGuard } from "@/components/custom/staged-changes";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
 
@@ -274,14 +275,15 @@ function CalendarRow({
           </button>
         )}
         {permissions.remove && isMain && (
-          <button
-            disabled
-            aria-label={t("users.calendars.deleteTitle")}
-            className="p-1.5 rounded-md opacity-40 cursor-not-allowed"
-            title={t("users.calendars.mainCalendarUndeletable")}
-          >
-            <Trash2 className="w-3.5 h-3.5 text-gray-400" />
-          </button>
+          <HintTooltip hint={t("users.calendars.mainCalendarUndeletable")} className="inline-flex rounded-md cursor-not-allowed">
+            <button
+              disabled
+              aria-label={t("users.calendars.deleteTitle")}
+              className="p-1.5 rounded-md opacity-40 pointer-events-none"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-gray-400" />
+            </button>
+          </HintTooltip>
         )}
         {permissions.remove && !isMain && (
           // Another user's or a team calendar is only removed from this user's calendars: grey, not red
