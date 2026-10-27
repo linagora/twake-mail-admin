@@ -198,13 +198,15 @@ export default function ChannelGrid({
                   onClick={() => openChannel(channel)}
                 >
                   <span className="text-muted-foreground w-10">{globalIndex}.</span>
-                  {/* A real button so the detail opens from the keyboard */}
+                  {/* A real button so the detail opens from the keyboard; a channel not authenticated
+                      yet has no username, its button is then named after its remote address */}
                   <button
                     type="button"
                     className="font-mono truncate text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    aria-label={channel.username ? undefined : t("networkChannels.channelDetail", { address: channel.remoteAddress ?? "-" })}
                     onClick={(e) => { e.stopPropagation(); openChannel(channel); }}
                   >
-                    {channel.username}
+                    {channel.username || "-"}
                   </button>
                   <span className="truncate">{channel.protocol}</span>
                   <span className="font-mono truncate">{channel.remoteAddress ?? "-"}</span>

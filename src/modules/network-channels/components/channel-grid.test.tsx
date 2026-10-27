@@ -40,6 +40,14 @@ describe("channel grid: details", () => {
     expect(await screen.findByRole("dialog")).not.toBeNull();
   });
 
+  // A connection not authenticated yet (another client of the server) has no username
+  it("names the button of a channel without username after the channel", () => {
+    render(<ChannelGrid channels={[{ ...CHANNEL, username: null as unknown as string }]} />);
+
+    const channelButton = screen.getByRole("button", { name: "networkChannels.channelDetail" });
+    expect(channelButton.textContent).toBe("-");
+  });
+
   it("returns the focus to the channel that opened the details once they are closed", async () => {
     render(<ChannelGrid channels={[CHANNEL]} />);
 
