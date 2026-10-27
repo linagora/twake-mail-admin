@@ -236,6 +236,7 @@
       "user": "User",
       "removeMemberTooltip": "Remove member",
       "role": "Role",
+      "otherDomainHint": "This user belongs to another domain than the team mailbox ({{domain}}). The server will refuse it unless cross-domain sharing is enabled.",
       "detailKind": "Team mailbox"
     },
     "teamMailboxQuota": {
