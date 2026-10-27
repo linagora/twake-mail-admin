@@ -280,7 +280,9 @@
       "errorRemoving": "Fehler beim Entfernen des zusätzlichen Absenders",
       "empty": "Keine zusätzlichen Absender.",
       "addTooltip": "Zusätzlichen Absender hinzufügen",
-      "removeTooltip": "Zusätzlichen Absender entfernen"
+      "removeTooltip": "Zusätzlichen Absender entfernen",
+      "invalidAddress": "Ungültige E-Mail-Adresse",
+      "otherDomainWarning": "Diese Adresse gehört nicht zu {{domain}}; der Server lehnt sie ab, sofern die domänenübergreifende Freigabe nicht aktiviert ist."
     },
     "folders": {
       "title": "Ordner",

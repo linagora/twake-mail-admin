@@ -280,7 +280,9 @@
       "errorRemoving": "Error al quitar el remitente adicional",
       "empty": "No hay remitentes adicionales.",
       "addTooltip": "Añadir remitente adicional",
-      "removeTooltip": "Quitar remitente adicional"
+      "removeTooltip": "Quitar remitente adicional",
+      "invalidAddress": "Dirección de correo no válida",
+      "otherDomainWarning": "Esta dirección no pertenece a {{domain}}; el servidor la rechaza salvo que el uso compartido entre dominios esté activado."
     },
     "folders": {
       "title": "Carpetas",

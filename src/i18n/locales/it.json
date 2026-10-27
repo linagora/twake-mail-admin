@@ -280,7 +280,9 @@
       "errorRemoving": "Errore durante la rimozione del mittente aggiuntivo",
       "empty": "Nessun mittente aggiuntivo.",
       "addTooltip": "Aggiungi mittente aggiuntivo",
-      "removeTooltip": "Rimuovi mittente aggiuntivo"
+      "removeTooltip": "Rimuovi mittente aggiuntivo",
+      "invalidAddress": "Indirizzo email non valido",
+      "otherDomainWarning": "Questo indirizzo non appartiene a {{domain}}; il server lo rifiuta a meno che la condivisione tra domini non sia abilitata."
     },
     "folders": {
       "title": "Cartelle",

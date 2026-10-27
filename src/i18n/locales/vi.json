@@ -277,7 +277,9 @@
       "errorRemoving": "Lỗi khi xóa người gửi bổ sung",
       "empty": "Không có người gửi bổ sung.",
       "addTooltip": "Thêm người gửi bổ sung",
-      "removeTooltip": "Xóa người gửi bổ sung"
+      "removeTooltip": "Xóa người gửi bổ sung",
+      "invalidAddress": "Địa chỉ email không hợp lệ",
+      "otherDomainWarning": "Địa chỉ này không thuộc {{domain}}; máy chủ sẽ từ chối trừ khi bật chia sẻ giữa các tên miền."
     },
     "folders": {
       "title": "Thư mục",

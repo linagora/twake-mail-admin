@@ -280,7 +280,9 @@
       "errorRemoving": "Error removing extra sender",
       "empty": "No extra senders.",
       "addTooltip": "Add extra sender",
-      "removeTooltip": "Remove extra sender"
+      "removeTooltip": "Remove extra sender",
+      "invalidAddress": "Invalid mail address",
+      "otherDomainWarning": "This address does not belong to {{domain}}; the server refuses it unless cross-domain sharing is enabled."
     },
     "folders": {
       "title": "Folders",

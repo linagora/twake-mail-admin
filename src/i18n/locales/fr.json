@@ -280,7 +280,9 @@
       "errorRemoving": "Erreur lors du retrait de l'expéditeur",
       "empty": "Aucun expéditeur supplémentaire.",
       "addTooltip": "Ajouter un expéditeur supplémentaire",
-      "removeTooltip": "Retirer l'expéditeur"
+      "removeTooltip": "Retirer l'expéditeur",
+      "invalidAddress": "Adresse mail invalide",
+      "otherDomainWarning": "Cette adresse n'appartient pas à {{domain}} ; le serveur la refuse sauf si le partage inter-domaines est activé."
     },
     "folders": {
       "title": "Dossiers",
