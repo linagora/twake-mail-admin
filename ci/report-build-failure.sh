@@ -16,7 +16,7 @@
 #   BUILD_LOG               Captured build output            (default: newest log of CI_LOG_DIR)
 #   REPORT_FILE             Where the markdown is written    (default: $WORKSPACE/ci-failure-report.md)
 #   GITHUB_API              GitHub API base URL              (default: https://api.github.com)
-#   GITHUB_REPO             owner/repo to comment on         (default: linagora/tmail-backend)
+#   GITHUB_REPO             owner/repo to comment on         (default: linagora/twake-mail-admin)
 #   GITHUB_TOKEN            Token used to post the review    (no post when empty)
 #   CHANGE_ID               PR number                        (no post when empty)
 #   BUILD_URL, JOB_NAME, BUILD_NUMBER, STAGE_NAME, BRANCH_NAME
@@ -30,7 +30,7 @@ CI_LOG_DIR="${CI_LOG_DIR:-$WORKSPACE/ci-logs}"
 BUILD_LOG="${BUILD_LOG:-}"
 REPORT_FILE="${REPORT_FILE:-$WORKSPACE/ci-failure-report.md}"
 GITHUB_API="${GITHUB_API:-https://api.github.com}"
-GITHUB_REPO="${GITHUB_REPO:-linagora/tmail-backend}"
+GITHUB_REPO="${GITHUB_REPO:-linagora/twake-mail-admin}"
 GITHUB_TOKEN="${GITHUB_TOKEN:-}"
 CHANGE_ID="${CHANGE_ID:-}"
 BUILD_URL="${BUILD_URL:-}"
