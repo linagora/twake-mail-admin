@@ -1649,8 +1649,7 @@
       "consistency": "Konsistenzreparatur",
       "cleanup": "Bereinigung",
       "server": "Server",
-      "directory": "Benutzer und Kontakte",
-      "space": "Twake Space"
+      "directory": "Benutzer und Kontakte"
     },
     "filter": "Aufgaben filtern…",
     "noMatch": "Keine Aufgabe passt zu „{{q}}“.",

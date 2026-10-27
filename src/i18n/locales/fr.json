@@ -1649,8 +1649,7 @@
       "consistency": "Réparation de cohérence",
       "cleanup": "Nettoyage",
       "server": "Serveur",
-      "directory": "Utilisateurs et contacts",
-      "space": "Twake Space"
+      "directory": "Utilisateurs et contacts"
     },
     "filter": "Filtrer les tâches…",
     "noMatch": "Aucune tâche ne correspond à « {{q}} ».",

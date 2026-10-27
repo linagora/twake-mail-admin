@@ -1649,8 +1649,7 @@
       "consistency": "Riparazione della coerenza",
       "cleanup": "Pulizia",
       "server": "Server",
-      "directory": "Utenti e contatti",
-      "space": "Twake Space"
+      "directory": "Utenti e contatti"
     },
     "filter": "Filtra attività…",
     "noMatch": "Nessuna attività corrisponde a «{{q}}».",

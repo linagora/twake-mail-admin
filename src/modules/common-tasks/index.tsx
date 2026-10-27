@@ -169,7 +169,7 @@ const TASKS: TaskProps[] = [
   },
   {
     nameKey: 'commonTasks.twakeSpaceReindex',
-    group: 'space',
+    group: 'consistency',
     taskKey: TaskKey.TWAKE_SPACE_REINDEX,
     command: 'curl -XPOST /spaces?action=reindex',
     doc: tmailWebadminDoc('rebuilding-the-space-index'),
@@ -179,14 +179,14 @@ const TASKS: TaskProps[] = [
   },
   {
     nameKey: 'commonTasks.twakeSpacePurge',
-    group: 'space',
+    group: 'cleanup',
     taskKey: TaskKey.TWAKE_SPACE_PURGE,
     command: 'curl -XPOST /spaces?action=purge',
     doc: tmailWebadminDoc('purging-the-team-mailboxes-of-deleted-spaces'),
     allowanceCheck: { verb: 'POST', pattern: '/spaces?action=purge' },
-    risk: 'destructive',
+    // Deletes only the team mailboxes of spaces deleted for longer than the retention
+    risk: 'caution',
     consequenceKey: 'confirm.consequence.twakeSpacePurge',
-    typeToConfirmKey: 'confirm.deleteWord',
     unavailableKey: 'commonTasks.twakeSpaceUnavailable',
   },
 ];
@@ -199,7 +199,7 @@ const CLEANUP_PARAMS: TaskParam[] = [
 const cleanupCommand = (mailbox: "Trash" | "Spam") =>
   `curl -XDELETE "/messages?olderThan=5d&mailbox=${mailbox}&useSavedDate"`;
 
-const MAIL_GROUPS: TaskGroup[] = ["search", "consistency", "cleanup", "space", "server"];
+const MAIL_GROUPS: TaskGroup[] = ["search", "consistency", "cleanup", "server"];
 const CALENDAR_GROUPS: TaskGroup[] = ["directory", "search", "consistency", "cleanup"];
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";

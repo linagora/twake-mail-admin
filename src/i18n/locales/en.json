@@ -1649,8 +1649,7 @@
       "consistency": "Consistency repair",
       "cleanup": "Cleanup",
       "server": "Server",
-      "directory": "Users and contacts",
-      "space": "Twake Space"
+      "directory": "Users and contacts"
     },
     "filter": "Filter tasks…",
     "noMatch": "No task matches \"{{q}}\".",

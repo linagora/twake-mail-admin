@@ -1649,8 +1649,7 @@
       "consistency": "Reparación de coherencia",
       "cleanup": "Limpieza",
       "server": "Servidor",
-      "directory": "Usuarios y contactos",
-      "space": "Twake Space"
+      "directory": "Usuarios y contactos"
     },
     "filter": "Filtrar tareas…",
     "noMatch": "Ninguna tarea coincide con «{{q}}».",

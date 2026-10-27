@@ -1638,8 +1638,7 @@
       "consistency": "Sửa tính nhất quán",
       "cleanup": "Dọn dẹp",
       "server": "Máy chủ",
-      "directory": "Người dùng và liên hệ",
-      "space": "Twake Space"
+      "directory": "Người dùng và liên hệ"
     },
     "filter": "Lọc tác vụ…",
     "noMatch": "Không có tác vụ nào khớp với \"{{q}}\".",

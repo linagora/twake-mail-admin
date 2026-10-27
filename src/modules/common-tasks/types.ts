@@ -82,7 +82,7 @@ export type TaskProps = {
   unavailableKey?: string;
 }
 
-export type TaskGroup = "search" | "consistency" | "cleanup" | "space" | "server" | "directory";
+export type TaskGroup = "search" | "consistency" | "cleanup" | "server" | "directory";
 
 // One line saying when to use a task and what it costs, next to its name
 export const taskDescriptionKey = (nameKey: string) => nameKey.replace(/^commonTasks\./, "commonTasks.desc.");
