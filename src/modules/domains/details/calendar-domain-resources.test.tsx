@@ -34,6 +34,7 @@ const resource = (id: string, name: string | null): Resource => ({
 
 beforeEach(() => {
   api.getResources.mockReset();
+  api.createResource.mockReset();
   userStatus.byUser = {};
 });
 
@@ -126,6 +127,35 @@ describe("CalendarDomainResources creation modal", () => {
 
     expect((await within(dialog).findByRole("alert")).textContent).toContain("Resource already exists");
     expect(within(dialog).getByRole("textbox", { name: "domains.calendarResources.fieldName *" })).toHaveProperty("value", "Room");
+  });
+
+  it("sends the name trimmed and the icon without its extension", async () => {
+    api.getResources.mockResolvedValue([]);
+    api.createResource.mockResolvedValue(undefined);
+    userStatus.byUser = { "alice@open-paas.org": "exists" };
+    render(<CalendarDomainResources domain="open-paas.org" defaultOpen />);
+
+    fireEvent.click(await screen.findByTitle("domains.calendarResources.addTooltip"));
+    fireEvent.change(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName *" }), { target: { value: "  Room  " } });
+    fireEvent.change(screen.getByLabelText(/domains.calendarResources.creatorLabel/), { target: { value: "alice@open-paas.org" } });
+    fireEvent.click(screen.getByRole("button", { name: "common.create" }));
+
+    await vi.waitFor(() => expect(api.createResource).toHaveBeenCalledWith(expect.objectContaining({ name: "Room", icon: "home" })));
+  });
+
+  it.each(["", "   "])("keeps Create disabled for the blank name %j", async (blank) => {
+    api.getResources.mockResolvedValue([]);
+    userStatus.byUser = { "alice@open-paas.org": "exists" };
+    render(<CalendarDomainResources domain="open-paas.org" defaultOpen />);
+
+    fireEvent.click(await screen.findByTitle("domains.calendarResources.addTooltip"));
+    fireEvent.change(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName *" }), { target: { value: blank } });
+    fireEvent.change(screen.getByLabelText(/domains.calendarResources.creatorLabel/), { target: { value: "alice@open-paas.org" } });
+    const create = screen.getByText("common.create").closest("button") as HTMLButtonElement;
+    fireEvent.click(create);
+
+    expect(create.disabled).toBe(true);
+    expect(api.createResource).not.toHaveBeenCalled();
   });
 });
 

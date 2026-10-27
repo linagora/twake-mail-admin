@@ -6,10 +6,34 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key.replace("resourceIcons.", "") }),
 }));
 
-import ResourceIconPicker from "./resource-icon-picker";
+import ResourceIconPicker, { RESOURCE_ICONS } from "./resource-icon-picker";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 afterEach(cleanup);
+
+// The icons the calendar side service serves under calendar-rest-api/src/main/resources/icons/resources:
+// any other one is refused with a 400 on creation and update.
+const SERVER_ICONS = [
+  "access-point", "battery", "briefcase", "calculator", "calendar-month", "camera", "car",
+  "caravan", "cellphone", "coffee", "credit-card", "description", "deskphone", "fax",
+  "guitar-acoustic", "home", "kettle", "laptop", "layers", "meeting-room", "microphone",
+  "motorbike", "office", "parking", "people-alt", "phone", "phone-iphone", "projector",
+  "radio", "remote", "soccer", "sofa", "tablet", "train", "tv", "umbrella", "video",
+  "video-camera-back", "view-comfy-alt", "wifi",
+];
+
+describe("RESOURCE_ICONS", () => {
+  it("offers exactly the icons the side service accepts", () => {
+    expect([...RESOURCE_ICONS].sort()).toEqual([...SERVER_ICONS].sort());
+  });
+
+  it("has an image for every icon, and no image for an icon it does not offer", () => {
+    const images = Object.keys(import.meta.glob("/public/icons/resources/*.svg"))
+      .map((path) => path.replace(/^.*\/(.+)\.svg$/, "$1"));
+
+    expect(images.sort()).toEqual([...RESOURCE_ICONS].sort());
+  });
+});
 
 const renderPicker = (onChange = vi.fn()) =>
   render(

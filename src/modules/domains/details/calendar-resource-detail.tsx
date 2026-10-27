@@ -115,11 +115,14 @@ export default function CalendarResourceDetail() {
   };
 
   const handleSave = async () => {
-    if (!resource) return;
+    const name = editName.trim();
+    // The side service refuses a blank name (400)
+    if (!resource || !name) return;
     setSaving(true);
     try {
       await updateResource(domain, resource.id, {
-        name: editName.trim(),
+        // Only when changed: an edit of another field leaves the name untouched
+        ...(name !== (resource.name ?? "") && { name }),
         description: editDescription.trim(),
         // Only when picked: an edit of the name keeps an icon the console does not know
         ...(editIcon !== initialIcon(resource) && { icon: editIcon }),
@@ -162,7 +165,7 @@ export default function CalendarResourceDetail() {
           {editing ? (
             <div className="mt-2 space-y-2">
               <div>
-                <label htmlFor={`${idPrefix}-name`} className="text-sm font-medium text-gray-500">{t("domains.calendarResources.fieldName")}</label>
+                <label htmlFor={`${idPrefix}-name`} className="text-sm font-medium text-gray-500">{t("domains.calendarResources.fieldName")} <span className="text-red-500">*</span></label>
                 <input id={`${idPrefix}-name`} type="text" value={editName} onChange={(e) => setEditName(e.target.value)}
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500" />
               </div>
