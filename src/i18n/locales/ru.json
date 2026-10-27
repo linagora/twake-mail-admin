@@ -1916,6 +1916,7 @@
     "detailKind": "Хранилище писем",
     "emptyActionDisabled": "Это хранилище пусто",
     "filterPlaceholder": "Фильтр хранилищ…",
+    "noMatch": "Нет хранилищ, соответствующих «{{query}}».",
     "mailCount": "Писем: {{count}}",
     "describe": {
       "address-error": "Письма на несуществующие локальные адреса.",
