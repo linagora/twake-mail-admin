@@ -1307,6 +1307,7 @@
     "hideFilters": "Hide Filters",
     "sort": "Sort:",
     "submitted": "Submitted",
+    "labelled": "{{label}}:",
     "started": "Started",
     "completed": "Completed",
     "asc": "Asc ↑",

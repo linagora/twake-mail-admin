@@ -1312,6 +1312,7 @@
     "hideFilters": "Скрыть фильтры",
     "sort": "Сортировка:",
     "submitted": "Отправлено",
+    "labelled": "{{label}}:",
     "started": "Начато",
     "completed": "Завершено",
     "asc": "По возр. ↑",

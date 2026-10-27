@@ -1307,6 +1307,7 @@
     "hideFilters": "Ocultar filtros",
     "sort": "Orden:",
     "submitted": "Enviada",
+    "labelled": "{{label}}:",
     "started": "Iniciada",
     "completed": "Completada",
     "asc": "Asc. ↑",

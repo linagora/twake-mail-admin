@@ -1301,6 +1301,7 @@
     "hideFilters": "Шүүлтүүр нуух",
     "sort": "Эрэмбэ:",
     "submitted": "Илгээсэн",
+    "labelled": "{{label}}:",
     "started": "Эхэлсэн",
     "completed": "Дууссан",
     "asc": "Өсөх ↑",

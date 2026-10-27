@@ -14,9 +14,12 @@ vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => false }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock("@/modules/common-tasks/api-client", () => ({ cancelTask: vi.fn() }));
 vi.mock("./api-client", () => ({ listTasks: api.listTasks }));
-// The keys as text; the chip label and its count, to read the count
-const t = vi.hoisted(() => (key: string, options?: Record<string, unknown>) =>
-  key === "tasks.chipCount" ? `${options?.label} (${options?.count})` : key);
+// The keys as text; the chip label and its count, to read the count; the labelled key wraps its label
+const t = vi.hoisted(() => (key: string, options?: Record<string, unknown>) => {
+  if (key === "tasks.chipCount") return `${options?.label} (${options?.count})`;
+  if (key === "tasks.labelled") return `labelled(${options?.label})`;
+  return key;
+});
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t }) }));
 
 import Tasks from "./index";
@@ -95,6 +98,27 @@ describe("tasks list", () => {
 
     expect(columnClasses(row)).not.toEqual([]);
     expect(columnClasses(screen.getByTestId("tasks-header"))).toEqual(columnClasses(row));
+  });
+
+  it("lets the locale place the colon of the stacked date labels", async () => {
+    api.listTasks.mockResolvedValue([
+      {
+        taskId: TASK_ID,
+        type: "full-reindexing",
+        status: "completed",
+        submitDate: "2026-10-10T06:00:00Z",
+        startedDate: "2026-10-10T06:00:01Z",
+        completedDate: "2026-10-10T06:00:02Z",
+      },
+    ]);
+    renderTasks();
+
+    const row = await screen.findByTestId("task-row");
+
+    expect(within(row).getByText("labelled(tasks.submitted)")).not.toBeNull();
+    expect(within(row).getByText("labelled(tasks.startedCompleted)")).not.toBeNull();
+    expect(row.textContent).not.toContain("tasks.submitted:");
+    expect(row.textContent).not.toContain("tasks.startedCompleted:");
   });
 
   it("only truncates the task type from the md breakpoint, and never the dates", async () => {

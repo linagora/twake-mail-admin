@@ -425,7 +425,7 @@ export default function Tasks() {
                       {labelOf(task.status)}
                     </span>
                     <span className="text-xs max-w-full break-words">
-                      <span className="md:hidden text-gray-500">{t("tasks.submitted")}: </span>
+                      <span className="md:hidden text-gray-500">{t("tasks.labelled", { label: t("tasks.submitted") })} </span>
                       {formatDate(task.submitDate)}
                     </span>
                     <div
@@ -433,7 +433,7 @@ export default function Tasks() {
                       className="text-xs max-w-full break-words"
                       title={startedCompletedText(task)}
                     >
-                      <span className="md:hidden text-gray-500">{t("tasks.startedCompleted")}: </span>
+                      <span className="md:hidden text-gray-500">{t("tasks.labelled", { label: t("tasks.startedCompleted") })} </span>
                       <span>{formatDate(task.startedDate)}</span>
                       {endDate(task) && (
                         <span className="text-gray-400"> → {formatDate(endDate(task))}</span>

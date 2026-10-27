@@ -1307,6 +1307,7 @@
     "hideFilters": "Masquer les filtres",
     "sort": "Tri :",
     "submitted": "Soumise",
+    "labelled": "{{label}} :",
     "started": "Démarrée",
     "completed": "Terminée",
     "asc": "Croissant ↑",

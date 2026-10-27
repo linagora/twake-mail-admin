@@ -1307,6 +1307,7 @@
     "hideFilters": "Filter ausblenden",
     "sort": "Sortierung:",
     "submitted": "Übermittelt",
+    "labelled": "{{label}}:",
     "started": "Gestartet",
     "completed": "Abgeschlossen",
     "asc": "Aufst. ↑",
