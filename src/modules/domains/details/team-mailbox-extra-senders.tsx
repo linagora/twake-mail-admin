@@ -12,6 +12,8 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
+import { domainOf } from "@/components/custom/quota-levels";
+import { isValidEmail } from "@/modules/registered-users/validation";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -40,7 +42,13 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
   const fieldId = useId();
   const [newSender, setNewSender] = useState("");
   const senderStatus = useCheckUserExists(newSender);
-  const canSubmit = !!newSender.trim() && isSubmittableUserStatus(senderStatus);
+  const trimmedSender = newSender.trim();
+  // The server answers 400 to anything but a mail address: no need to send it
+  const isMailAddress = isValidEmail(trimmedSender);
+  const showInvalidAddress = !!trimmedSender && senderStatus !== "checking" && !isMailAddress;
+  // Refused unless cross-domain sharing is enabled, a setting the console cannot read: a warning only
+  const isOtherDomain = isMailAddress && domainOf(trimmedSender).toLowerCase() !== domain.toLowerCase();
+  const canSubmit = isMailAddress && isSubmittableUserStatus(senderStatus);
 
   const sorted = useMemo(() => {
     if (!senders) return [];
@@ -184,11 +192,20 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
           />
           {/* Reserved height: the status appearing does not resize the modal */}
           <p className="h-4 mt-1 text-xs">
-            {senderStatus === "checking" && <span className="text-gray-400">{t("common.checking")}</span>}
-            {senderStatus === "exists" && <span className="text-green-700">{t("common.userExists")}</span>}
-            {senderStatus === "not_found" && <span className="text-orange-600">{t("common.userNotFound")}</span>}
-            {senderStatus === "invalid" && <span className="text-red-600">{t("common.invalidUsername")}</span>}
+            {showInvalidAddress ? (
+              <span className="text-red-600">{t("domains.extraSenders.invalidAddress")}</span>
+            ) : (
+              <>
+                {senderStatus === "checking" && <span className="text-gray-400">{t("common.checking")}</span>}
+                {senderStatus === "exists" && <span className="text-green-700">{t("common.userExists")}</span>}
+                {senderStatus === "not_found" && <span className="text-orange-600">{t("common.userNotFound")}</span>}
+                {senderStatus === "invalid" && <span className="text-red-600">{t("common.invalidUsername")}</span>}
+              </>
+            )}
           </p>
+          {isOtherDomain && (
+            <p className="mt-1 text-xs text-orange-600">{t("domains.extraSenders.otherDomainWarning", { domain })}</p>
+          )}
         </div>
       </FormDialog>
     </div>
