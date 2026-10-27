@@ -16,6 +16,13 @@ def isTrustedContributor() {
     }
 
     def forkOwner = env.CHANGE_FORK.split('/')[0]
+    // The GitHub plugin sets CHANGE_FORK even for pull requests from this
+    // repository itself, and an organisation is not a member of itself, so a
+    // same-repo branch would fail the membership check below. Such a branch
+    // can already be pushed only by someone with write access: trusted.
+    if (forkOwner == 'linagora') {
+        return true
+    }
     def status = null
     withCredentials([usernamePassword(credentialsId: 'github',
             usernameVariable: 'GITHUB_CREDENTIAL_USR', passwordVariable: 'GITHUB_CREDENTIAL_PSW')]) {
@@ -218,8 +225,8 @@ Please drop these changes from the pull request, or ask a linagora member to car
             // against real backends: Mail over a distributed tmail-backend, Calendar over
             // the twake-calendar side service. See e2e/README.md.
             steps {
-                dir('e2e') {
-                    tee('ci-logs/End to end tests.log') {
+                tee('ci-logs/End to end tests.log') {
+                    dir('e2e') {
                         sh './pre-build.sh'
                         sh 'mvn clean test'
                     }
@@ -243,8 +250,8 @@ Please drop these changes from the pull request, or ask a linagora member to car
             // Standard library only — no venv, no pip, nothing to install. The
             // agent needs python3 >= 3.10 and nothing else.
             steps {
-                dir('profile-editor') {
-                    tee('ci-logs/Profile editor.log') {
+                tee('ci-logs/Profile editor.log') {
+                    dir('profile-editor') {
                         sh 'PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -t . -v'
                     }
                 }
