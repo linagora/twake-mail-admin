@@ -16,6 +16,17 @@ describe("restore criteria builder", () => {
     expect(remove.getAttribute("title")).toBe("users.deletedVault.criteria.removeCriterion");
   });
 
+  it("lets the value and its remove button wrap together below the selects on a narrow screen", () => {
+    render(<RestoreCriteriaBuilder onChange={vi.fn()} />);
+    fireEvent.click(screen.getByText("users.deletedVault.criteria.addCriterion"));
+
+    const valueGroup = screen.getByPlaceholderText("users.deletedVault.criteria.valuePlaceholder").parentElement!;
+    const row = valueGroup.parentElement!;
+    expect(row.classList.contains("flex-wrap")).toBe(true);
+    expect(valueGroup.contains(screen.getByRole("button", { name: "users.deletedVault.criteria.removeCriterion" }))).toBe(true);
+    expect(valueGroup.contains(screen.getByRole("combobox", { name: "users.deletedVault.criteria.fieldPlaceholder" }))).toBe(false);
+  });
+
   it("removes the criterion when its remove button is clicked", () => {
     render(<RestoreCriteriaBuilder onChange={vi.fn()} />);
     fireEvent.click(screen.getByText("users.deletedVault.criteria.addCriterion"));
