@@ -13,8 +13,41 @@ import {
   exportDomainAddressBook,
   getDomainAddressBookContactCount,
   getDomainSignatureTemplates,
+  getTeamMailboxSpace,
   importDomainAddressBook,
+  TWAKE_SPACE_UNAVAILABLE,
 } from "./api-client";
+
+describe("team mailbox space", () => {
+  const notFound = (message: string) => Object.assign(new Error(message), { response: { status: 404, data: { statusCode: 404, type: "notFound", message } } });
+
+  beforeEach(() => {
+    http.get.mockReset();
+  });
+
+  it("reads the space of the team mailbox", async () => {
+    const space = { organizationId: "org-1", spaceId: "11111111-1111-1111-1111-111111111111", deletedAt: null };
+    http.get.mockResolvedValue(space);
+    await expect(getTeamMailboxSpace("example.com", "sales")).resolves.toEqual(space);
+    expect(http.get).toHaveBeenCalledWith("/domains/example.com/team-mailboxes/sales/space");
+  });
+
+  it("reads the 404 of the extension as a team mailbox bound to no space", async () => {
+    http.get.mockRejectedValue(notFound("The team mailbox is bound to no space"));
+    await expect(getTeamMailboxSpace("example.com", "sales")).resolves.toBeNull();
+  });
+
+  it("reads the 404 of a missing route as a server without the Twake Space extension", async () => {
+    http.get.mockRejectedValue(notFound("GET /domains/example.com/team-mailboxes/sales/space can not be found"));
+    await expect(getTeamMailboxSpace("example.com", "sales")).resolves.toBe(TWAKE_SPACE_UNAVAILABLE);
+  });
+
+  it("lets any other failure through", async () => {
+    const failure = Object.assign(new Error("boom"), { response: { status: 500, data: {} } });
+    http.get.mockRejectedValue(failure);
+    await expect(getTeamMailboxSpace("example.com", "sales")).rejects.toBe(failure);
+  });
+});
 
 describe("domain signature templates", () => {
   const template = { language: "en", textSignature: "Regards", htmlSignature: "<p>Regards</p>" };

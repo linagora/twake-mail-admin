@@ -146,11 +146,19 @@ export const removeTeamMailboxExtraSender = async (domain: string, mailbox: stri
   await apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/extraSenders/${encodeURIComponent(username)}`);
 };
 
-// A team mailbox bound to no space, or a server without the Twake Space extension, answers 404
-export const getTeamMailboxSpace = async (domain: string, mailbox: string): Promise<TeamMailboxSpace | null> => {
+// What WebAdmin answers for a route it does not have, e.g. "GET /domains/d/team-mailboxes/m/space can not be found"
+const isMissingRoute = (err: any): boolean =>
+  err?.response?.status === 404 && /^[A-Z]+ \S+ can not be found$/.test(err.response.data?.message ?? "");
+
+export const TWAKE_SPACE_UNAVAILABLE = "unavailable";
+
+// A team mailbox bound to no space answers 404 with its own message; a server without the Twake
+// Space extension, the 404 of a missing route
+export const getTeamMailboxSpace = async (domain: string, mailbox: string): Promise<TeamMailboxSpace | null | typeof TWAKE_SPACE_UNAVAILABLE> => {
   try {
     return await apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/space`);
   } catch (err: any) {
+    if (isMissingRoute(err)) return TWAKE_SPACE_UNAVAILABLE;
     if (err?.response?.status === 404) return null;
     throw err;
   }

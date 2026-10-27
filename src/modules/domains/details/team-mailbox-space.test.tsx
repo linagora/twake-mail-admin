@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   api: {
     getTeamMailboxSpace: vi.fn(),
     bindTeamMailboxSpace: vi.fn(),
+    TWAKE_SPACE_UNAVAILABLE: "unavailable",
   },
   spaces: {
     requestSpacesSync: vi.fn(),
@@ -80,7 +81,16 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("team mailbox Twake Space: the space shown", () => {
-  it("reads a 404, no space or no extension, as not bound rather than as an error", async () => {
+  it("hides the section on a server without the Twake Space extension", async () => {
+    mocks.api.getTeamMailboxSpace.mockResolvedValue("unavailable");
+    const { container } = renderSection();
+
+    await waitFor(() => expect(mocks.api.getTeamMailboxSpace).toHaveBeenCalled());
+    await waitFor(() => expect(container.textContent).toBe(""));
+    expect(screen.queryByRole("button", { name: "domains.teamMailboxSpace.bind" })).toBeNull();
+  });
+
+  it("reads the 404 of a team mailbox bound to no space as not bound rather than as an error", async () => {
     renderSection();
 
     expect(await screen.findByText("domains.teamMailboxSpace.notBound")).not.toBeNull();

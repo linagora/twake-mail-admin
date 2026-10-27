@@ -201,7 +201,7 @@ The usage figures come from the same call as the tab load; there is no second en
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
-| Sub-tab load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MUST (a 404, no space or no Twake Space extension, reads "Not bound to any Twake space") |
+| Sub-tab load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MUST (do not show the sub-tab if missing, nor on a server without the Twake Space extension, whose WebAdmin answers "GET ... can not be found"; the 404 of a mailbox bound to no space reads "Not bound to any Twake space") |
 | "Bind to a space" / "Reopen space" dialog, optionally to a deleted space | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MAY (do not show the button if missing) |
 | "Sync this space" button | POST | `/spaces?action=sync` | MAY (do not show the button if missing) |
 

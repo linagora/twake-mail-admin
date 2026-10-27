@@ -10,7 +10,7 @@ import { currentLocale } from "@/i18n/locale";
 import { Button } from "@/components/ui/button";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
-import { bindTeamMailboxSpace, getTeamMailboxSpace } from "../api-client";
+import { bindTeamMailboxSpace, getTeamMailboxSpace, TWAKE_SPACE_UNAVAILABLE } from "../api-client";
 import { TeamMailboxSpace as Space } from "../types";
 import { bindSpaceCommand, isUuid, SpaceBindingValues, toSpaceBinding, toUtcInstant } from "./team-mailbox-space-commands";
 import { useSyncSpaces } from "@/modules/twake-space/use-sync-spaces";
@@ -35,14 +35,15 @@ export default function TeamMailboxSpace({ domain, mailbox, onBound }: Props) {
   const syncSpaces = useSyncSpaces();
 
   const fetchSpace = useCallback(() => getTeamMailboxSpace(domain, mailbox), [domain, mailbox]);
-  const { data: space, isLoading, error, refresh } = useFetchData<Space | null>(canView ? fetchSpace : null);
+  const { data: space, isLoading, error, refresh } = useFetchData<Space | null | typeof TWAKE_SPACE_UNAVAILABLE>(canView ? fetchSpace : null);
 
   const [open, setOpen, openContentId] = useSectionOpen("twake-space", true);
   const [showBind, setShowBind] = useState(false);
   // Remounts the dialog on each opening, so that it starts from the current space
   const [dialogKey, setDialogKey] = useState(0);
 
-  if (!canView) return null;
+  // No Twake Space extension on this server: nothing to show nor bind
+  if (!canView || space === TWAKE_SPACE_UNAVAILABLE) return null;
 
   const reopen = !!space?.deletedAt;
   const bindLabel = reopen ? t("domains.teamMailboxSpace.reopen") : t("domains.teamMailboxSpace.bind");
