@@ -1905,6 +1905,7 @@
     "detailKind": "Захидлын агуулах",
     "emptyActionDisabled": "Энэ агуулах хоосон байна",
     "filterPlaceholder": "Сангуудыг шүүх…",
+    "noMatch": "\"{{query}}\"-д тохирох сан алга.",
     "mailCount": "Захидал: {{count}}",
     "describe": {
       "address-error": "Байхгүй дотоод хаяг руу илгээсэн захидлууд.",

@@ -1912,6 +1912,7 @@
     "detailKind": "Mail-Repository",
     "emptyActionDisabled": "Dieses Repository ist leer",
     "filterPlaceholder": "Repositorys filtern…",
+    "noMatch": "Kein Repository entspricht „{{query}}“.",
     "mailCount": "E-Mails: {{count}}",
     "describe": {
       "address-error": "E-Mails an lokale Adressen, die nicht existieren.",

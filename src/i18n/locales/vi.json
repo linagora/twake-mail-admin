@@ -1901,6 +1901,7 @@
     "detailKind": "Kho thư",
     "emptyActionDisabled": "Kho này trống",
     "filterPlaceholder": "Lọc kho thư…",
+    "noMatch": "Không có kho thư nào khớp với \"{{query}}\".",
     "mailCount": "Thư: {{count}}",
     "describe": {
       "address-error": "Thư gửi tới các địa chỉ nội bộ không tồn tại.",

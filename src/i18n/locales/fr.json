@@ -1912,6 +1912,7 @@
     "detailKind": "Dépôt de mails",
     "emptyActionDisabled": "Ce dépôt est vide",
     "filterPlaceholder": "Filtrer les dépôts…",
+    "noMatch": "Aucun dépôt ne correspond à « {{query}} ».",
     "mailCount": "Courriers : {{count}}",
     "describe": {
       "address-error": "Courriers adressés à des adresses locales inexistantes.",

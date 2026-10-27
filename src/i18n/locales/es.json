@@ -1912,6 +1912,7 @@
     "detailKind": "Repositorio de correo",
     "emptyActionDisabled": "Este repositorio está vacío",
     "filterPlaceholder": "Filtrar repositorios…",
+    "noMatch": "Ningún repositorio coincide con «{{query}}».",
     "mailCount": "Correos: {{count}}",
     "describe": {
       "address-error": "Correos dirigidos a direcciones locales que no existen.",

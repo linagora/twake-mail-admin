@@ -150,6 +150,21 @@ describe("mail repositories list: order and filter", () => {
     fireEvent.change(screen.getByLabelText("mailRepositories.filterPlaceholder"), { target: { value: "error" } });
 
     expect(screen.getAllByRole("link").map((l) => l.textContent)).toEqual(["var/mail/address-error", "var/mail/error"]);
+    expect(screen.queryByText("mailRepositories.noMatch")).toBeNull();
+  });
+
+  it("says so when the filter matches no repository", async () => {
+    render(
+      <MemoryRouter>
+        <MailRepositoriesList />
+      </MemoryRouter>
+    );
+    await screen.findByRole("link", { name: "var/mail/error" });
+
+    fireEvent.change(screen.getByLabelText("mailRepositories.filterPlaceholder"), { target: { value: "zzz" } });
+
+    expect(screen.queryAllByRole("link")).toEqual([]);
+    expect(screen.getByText("mailRepositories.noMatch")).not.toBeNull();
   });
 });
 

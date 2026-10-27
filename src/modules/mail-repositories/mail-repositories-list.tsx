@@ -276,6 +276,9 @@ export default function MailRepositoriesList() {
             </div>
           ))}
         </div>
+        {search.trim() && repositoriesWithSize.length > 0 && shown.length === 0 && (
+          <p className="text-gray-500 mt-4">{t("mailRepositories.noMatch", { query: search })}</p>
+        )}
       </div>
     </>
   );
