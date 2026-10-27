@@ -204,7 +204,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -216,7 +216,8 @@ const Sidebar = React.forwardRef<
               <SheetTitle>{t("sidebar.title")}</SheetTitle>
               <SheetDescription>{t("sidebar.description")}</SheetDescription>
             </SheetHeader>
-            <div className="flex h-full w-full flex-col">{children}</div>
+            {/* Leaves room for the corner close button above the sidebar header */}
+            <div className="flex h-full w-full flex-col pt-10">{children}</div>
           </SheetContent>
         </Sheet>
       )

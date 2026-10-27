@@ -74,4 +74,16 @@ describe("mobile sidebar bar", () => {
     expect(dialog.getAttribute("aria-describedby")).not.toBeNull();
     expect(screen.getByText("sidebar.description").id).toBe(dialog.getAttribute("aria-describedby"));
   });
+
+  it("shows a named close button that closes the mobile sidebar", () => {
+    renderLayout();
+    openSidebar();
+
+    const close = screen.getByRole("button", { name: "common.close" });
+    expect(screen.getByRole("dialog").className).not.toContain("[&>button]:hidden");
+
+    fireEvent.click(close);
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
 });
