@@ -1764,6 +1764,7 @@
     "occupationCount": "Occupation Count",
     "ratioMax": "Ratio Max",
     "computedLimit": "Computed Limit",
+    "labelled": "{{label}}:",
     "page": "Page {{page}} — {{count}} result(s)"
   },
   "cassandra": {

@@ -1764,6 +1764,7 @@
     "occupationCount": "Belegte Anzahl",
     "ratioMax": "Max. Verhältnis",
     "computedLimit": "Berechneter Grenzwert",
+    "labelled": "{{label}}:",
     "page": "Seite {{page}} — {{count}} Ergebnis(se)"
   },
   "cassandra": {

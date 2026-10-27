@@ -1764,6 +1764,7 @@
     "occupationCount": "Número ocupado",
     "ratioMax": "Proporción máx.",
     "computedLimit": "Límite calculado",
+    "labelled": "{{label}}:",
     "page": "Página {{page}} — {{count}} resultado(s)"
   },
   "cassandra": {

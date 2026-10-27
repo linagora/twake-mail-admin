@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { AxiosError, AxiosHeaders } from "axios";
 
@@ -9,9 +9,13 @@ const api = vi.hoisted(() => ({ get: vi.fn() }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/lib/config", () => ({ appConfig: { application: "MAIL" } }));
 vi.mock("@/lib/apiClient", () => ({ apiClient: api }));
+// The keys as text; the labelled key wraps its label, to tell it from the header
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
-    t: (key: string, options?: { message?: string }) => (options?.message ? `${key} ${options.message}` : key),
+    t: (key: string, options?: { message?: string; label?: string }) => {
+      if (key === "exploreQuota.labelled") return `labelled(${options?.label})`;
+      return options?.message ? `${key} ${options.message}` : key;
+    },
   }),
 }));
 
@@ -149,4 +153,49 @@ describe("explore user quota: keyboard", () => {
     await waitFor(() => expect(api.get).toHaveBeenCalledWith(
       "/quota/users?minOccupationRatio=0&maxOccupationRatio=1&limit=50&offset=0&domain=example.com"));
   });
+});
+
+describe("explore user quota: phone layout", () => {
+  const entry = {
+    username: "alice@example.com",
+    detail: {
+      global: { count: null, size: null },
+      domain: { count: null, size: null },
+      user: { count: null, size: null },
+      computed: { count: 1000, size: 52428800 },
+      occupation: { size: 1126, count: 2, ratio: { size: 0.0001, count: 0.002, max: 0.002 } },
+    },
+  };
+  const gridColumns = (element: HTMLElement) =>
+    element.className.split(" ").filter((name) => name.includes("grid-cols-"));
+
+  const searchOneUser = async () => {
+    api.get.mockResolvedValue([entry]);
+    renderOpened();
+    search("0", "100");
+    return screen.findByTestId("explore-quota-row");
+  };
+
+  it("gives the username a shrinkable column instead of fixed columns before it", async () => {
+    const row = await searchOneUser();
+
+    expect(gridColumns(row)).toContain("grid-cols-[2rem_minmax(0,1fr)]");
+    expect(within(row).getByText("alice@example.com").className).toContain("min-w-0");
+  });
+
+  it("only shows the header from the sm breakpoint, with the same columns as the rows", async () => {
+    const row = await searchOneUser();
+    const header = screen.getByTestId("explore-quota-header");
+
+    expect(header.className.split(" ")).toEqual(expect.arrayContaining(["hidden", "sm:grid"]));
+    expect(gridColumns(header)).toEqual(gridColumns(row));
+  });
+
+  it.each(["exploreQuota.occupationSize", "exploreQuota.occupationCount", "exploreQuota.ratioMax", "exploreQuota.computedLimit"])(
+    "labels the %s figure of a row below the sm breakpoint",
+    async (label) => {
+      const row = await searchOneUser();
+
+      expect(within(row).getByText(`labelled(${label})`).className.split(" ")).toContain("sm:hidden");
+    });
 });

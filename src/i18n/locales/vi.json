@@ -1753,6 +1753,7 @@
     "occupationCount": "Mức sử dụng theo số lượng",
     "ratioMax": "Tỷ lệ tối đa",
     "computedLimit": "Giới hạn được tính",
+    "labelled": "{{label}}:",
     "page": "Trang {{page}} — {{count}} kết quả"
   },
   "cassandra": {
