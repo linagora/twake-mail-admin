@@ -93,7 +93,7 @@
     "addOrClearPending": "Добавьте или очистите адрес выше перед сохранением.",
     "pendingChanges_other": "{{count}} изменения ожидают сохранения: нажмите «Применить».",
     "discardTitle": "Отменить изменения?",
-    "discardMessage": "Изменения не будут сохранены: {{count}}.",
+    "discardMessage_other": "{{count}} изменения не будут сохранены.",
     "discard": "Отменить",
     "keepEditing": "Продолжить",
     "totalOnly": "Всего: {{count}}",
@@ -106,7 +106,10 @@
     "taskCreatedNamed": "{{name}} — Задача {{taskId}}",
     "pendingChanges_one": "{{count}} изменение ожидает сохранения: нажмите «Применить».",
     "pendingChanges_few": "{{count}} изменения ожидают сохранения: нажмите «Применить».",
-    "pendingChanges_many": "{{count}} изменений ожидают сохранения: нажмите «Применить»."
+    "pendingChanges_many": "{{count}} изменений ожидают сохранения: нажмите «Применить».",
+    "discardMessage_one": "{{count}} изменение не будет сохранено.",
+    "discardMessage_few": "{{count}} изменения не будут сохранены.",
+    "discardMessage_many": "{{count}} изменений не будут сохранены."
   },
   "sidebar": {
     "healthCheck": "Проверка состояния",
