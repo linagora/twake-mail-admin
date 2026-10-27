@@ -1653,13 +1653,15 @@
       "calendarEventArchival": "Déplace les événements correspondant aux critères dans un calendrier « Archival » de chaque utilisateur.",
       "clearDomainMembersContacts": "Vide le carnet « Membres du domaine » de chaque domaine. Lancez une synchronisation pour le remplir à nouveau.",
       "twakeSpacePurge": "Supprime les boîtes partagées des espaces supprimés depuis plus longtemps que la rétention définie dans space.properties, ce qui libère leurs adresses. TMail ne la lance plus de lui-même : planifiez-la avec un cron externe, ou lancez-la ici.",
-      "twakeSpaceReindex": "À lancer après avoir lié des boîtes partagées en dehors de l'extension (p. ex. migration depuis le service annexe Twake Mail), ou si la boîte d'index a été perdue. Parcourt toutes les boîtes partagées."
+      "twakeSpaceReindex": "À lancer après avoir lié des boîtes partagées en dehors de l'extension (p. ex. migration depuis le service annexe Twake Mail), ou si la boîte d'index a été perdue. Parcourt toutes les boîtes partagées.",
+      "syncTwakeSpaces": "Demande à ldap-rest l'état actuel des espaces Twake, appliqué à leurs boîtes partagées : tous, ceux d'une organisation, ou un seul espace."
     },
     "archiveAllEvents": "Archiver tous les événements",
     "archiveAllWarning": "Aucun critère : tous les événements de tous les utilisateurs enregistrés seront déplacés dans un calendrier « Archival ».",
     "twakeSpacePurge": "Purger les boîtes partagées des espaces supprimés",
     "twakeSpaceReindex": "Reconstruire l'index des espaces",
-    "twakeSpaceUnavailable": "Twake Space n'est pas disponible sur ce serveur : il n'expose pas les routes /spaces, qui nécessitent l'extension Twake Space de tmail-backend."
+    "twakeSpaceUnavailable": "Twake Space n'est pas disponible sur ce serveur : il n'expose pas les routes /spaces, qui nécessitent l'extension Twake Space de tmail-backend.",
+    "syncTwakeSpaces": "Synchroniser les espaces Twake"
   },
   "healthCheck": {
     "checking": "Vérification des composants, cela peut prendre un moment…",
@@ -2286,5 +2288,34 @@
     "bookingLinkEventDeletion": "Supprimer les événements d'un lien de réservation",
     "twakeSpacePurge": "Purge Twake Space",
     "twakeSpaceReindex": "Réindexation Twake Space"
+  },
+  "twakeSpace": {
+    "title": "Espace Twake",
+    "organizationId": "ID d'organisation",
+    "spaceId": "ID d'espace",
+    "organizationIdOptional": "ID d'organisation (facultatif)",
+    "spaceIdOptional": "ID d'espace (facultatif)",
+    "notBound": "Rattachée à aucun espace Twake.",
+    "deletedOn": "Espace supprimé le {{date}}",
+    "invalidSpaceId": "L'ID d'espace doit être un UUID, par ex. 11111111-1111-1111-1111-111111111111",
+    "organizationRequired": "L'ID d'organisation est requis",
+    "spaceRequired": "L'ID d'espace est requis",
+    "unavailable": "Les espaces Twake ne sont pas disponibles sur ce serveur (l'extension Twake Space n'est pas activée).",
+    "bind": {
+      "title": "Rattacher à un espace",
+      "reopen": "Rouvrir l'espace",
+      "help": "Le rattachement écrit les annotations d'organisation et d'espace de la boîte partagée, efface sa date de suppression et demande une synchronisation de cet espace, qui en définit les membres.",
+      "conflict": "Cette boîte partagée appartient déjà à un autre espace.",
+      "success": "Boîte partagée rattachée à l'espace"
+    },
+    "sync": {
+      "title": "Demander une synchronisation des espaces Twake",
+      "confirmLabel": "Demander la synchronisation",
+      "help": "Laissez les deux champs vides pour synchroniser tous les espaces de toutes les organisations. La synchronisation est asynchrone : aucune tâche n'est créée.",
+      "spaceHint": "Nécessite un ID d'organisation.",
+      "spaceNeedsOrganization": "Un ID d'espace nécessite son ID d'organisation",
+      "requested": "Synchronisation demandée",
+      "thisSpace": "Synchroniser cet espace"
+    }
   }
 }

@@ -213,6 +213,16 @@ The usage figures come from the same call as the tab load; there is no second en
 | "Add sender" button | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/extraSenders/{username}` | MAY (do not show the button if missing) |
 | "Remove sender" button | DELETE | `/domains/{domain}/team-mailboxes/{mailbox}/extraSenders/{username}` | MAY (do not show the button if missing) |
 
+#### Team mailbox detail — Twake Space section
+
+Only on backends with the Twake Space extension: elsewhere the routes answer 404, shown as "Not bound to any Twake space".
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Section load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MUST (do not show the section if forbidden) |
+| "Bind to a space" / "Reopen space" button | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MAY (do not show the button if missing) |
+| "Sync this space" button | POST | `/spaces?action=sync` | MAY (do not show the button if missing) |
+
 #### Team mailbox detail — Quota sub-tab
 
 | Trigger | Verb | Pattern | MUST/MAY |
@@ -870,6 +880,7 @@ the task never covers more than what is being looked at.
 | "Cleanup old messages" button | DELETE | `/messages?mailbox={mailbox}&olderThan={date}&useSavedDate` | MAY |
 | "Delete old tasks" button | DELETE | `/tasks?olderThan={days}day` | MAY |
 | "Reposition system rights" button | POST | `/team-mailboxes?action=repositionSystemRights` | MAY |
+| "Sync Twake spaces" button | POST | `/spaces?action=sync` | MAY |
 | "Reindex users" button | POST | `/users?{params}` | MAY |
 | "Rebuild the space index" button (Twake Space extension) | POST | `/spaces?action=reindex` | MAY |
 | "Purge team mailboxes of deleted spaces" button (Twake Space extension) | POST | `/spaces?action=purge` | MAY |

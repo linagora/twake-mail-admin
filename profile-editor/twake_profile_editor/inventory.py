@@ -272,6 +272,26 @@ DOMAINS = page(
                     ],
                 ),
                 section(
+                    "twake-space",
+                    "Twake Space section",
+                    "Section Espace Twake",
+                    endpoints=[must("GET", f"{_TM}/space")],
+                    children=[
+                        action(
+                            "bind",
+                            "Bind to a space or reopen it",
+                            "Rattacher à un espace ou le rouvrir",
+                            endpoints=[may("PUT", f"{_TM}/space")],
+                        ),
+                        action(
+                            "sync",
+                            "Sync this space",
+                            "Synchroniser cet espace",
+                            endpoints=[may("POST", "/spaces?action=sync")],
+                        ),
+                    ],
+                ),
+                section(
                     "quota",
                     "Quota sub-tab",
                     "Sous-onglet Quota",
@@ -2351,6 +2371,13 @@ COMMON_TASKS = page(
             "Purger les boîtes partagées des espaces supprimés",
             applications=MAIL,
             endpoints=[may("POST", "/spaces?action=purge")],
+        ),
+        action(
+            "sync-twake-spaces",
+            "Sync Twake spaces",
+            "Synchroniser les espaces Twake",
+            applications=MAIL,
+            endpoints=[may("POST", "/spaces?action=sync")],
         ),
         action(
             "import-ldap-users",

@@ -1653,13 +1653,15 @@
       "calendarEventArchival": "Mueve los eventos que cumplen los criterios a un calendario «Archival» de cada usuario.",
       "clearDomainMembersContacts": "Vacía la libreta «Miembros del dominio» de cada dominio. Ejecute una sincronización para volver a llenarla.",
       "twakeSpacePurge": "Elimina los buzones de equipo de los espacios eliminados hace más tiempo que la retención definida en space.properties, liberando sus direcciones. TMail ya no la ejecuta por sí mismo: prográmela con un cron externo o ejecútela aquí.",
-      "twakeSpaceReindex": "Úselo tras vincular buzones de equipo fuera de la extensión (p. ej. migración desde el servicio auxiliar de Twake Mail) o si se perdió el buzón de índice. Recorre todos los buzones de equipo."
+      "twakeSpaceReindex": "Úselo tras vincular buzones de equipo fuera de la extensión (p. ej. migración desde el servicio auxiliar de Twake Mail) o si se perdió el buzón de índice. Recorre todos los buzones de equipo.",
+      "syncTwakeSpaces": "Pide a ldap-rest el estado actual de los espacios Twake, aplicado a sus buzones de equipo: todos, los de una organización o un solo espacio."
     },
     "archiveAllEvents": "Archivar todos los eventos",
     "archiveAllWarning": "Sin criterios: todos los eventos de todos los usuarios registrados se moverán a un calendario «Archival».",
     "twakeSpacePurge": "Purgar los buzones de equipo de los espacios eliminados",
     "twakeSpaceReindex": "Reconstruir el índice de espacios",
-    "twakeSpaceUnavailable": "Twake Space no está disponible en este servidor: no expone las rutas /spaces, que requieren la extensión Twake Space de tmail-backend."
+    "twakeSpaceUnavailable": "Twake Space no está disponible en este servidor: no expone las rutas /spaces, que requieren la extensión Twake Space de tmail-backend.",
+    "syncTwakeSpaces": "Sincronizar los espacios Twake"
   },
   "healthCheck": {
     "checking": "Comprobando los componentes, esto puede tardar un poco…",
@@ -2286,5 +2288,34 @@
     "bookingLinkEventDeletion": "Eliminar los eventos de un enlace de reserva",
     "twakeSpacePurge": "Purga de Twake Space",
     "twakeSpaceReindex": "Reindexación de Twake Space"
+  },
+  "twakeSpace": {
+    "title": "Espacio Twake",
+    "organizationId": "ID de organización",
+    "spaceId": "ID de espacio",
+    "organizationIdOptional": "ID de organización (opcional)",
+    "spaceIdOptional": "ID de espacio (opcional)",
+    "notBound": "No vinculado a ningún espacio Twake.",
+    "deletedOn": "Espacio eliminado el {{date}}",
+    "invalidSpaceId": "El ID de espacio debe ser un UUID, p. ej. 11111111-1111-1111-1111-111111111111",
+    "organizationRequired": "El ID de organización es obligatorio",
+    "spaceRequired": "El ID de espacio es obligatorio",
+    "unavailable": "Los espacios Twake no están disponibles en este servidor (la extensión Twake Space no está activada).",
+    "bind": {
+      "title": "Vincular a un espacio",
+      "reopen": "Reabrir espacio",
+      "help": "La vinculación escribe las anotaciones de organización y espacio del buzón de equipo, borra su fecha de eliminación y solicita una sincronización de ese espacio, que define sus miembros.",
+      "conflict": "Este buzón de equipo ya pertenece a otro espacio.",
+      "success": "Buzón de equipo vinculado al espacio"
+    },
+    "sync": {
+      "title": "Solicitar una sincronización de los espacios Twake",
+      "confirmLabel": "Solicitar sincronización",
+      "help": "Deje ambos campos vacíos para sincronizar todos los espacios de todas las organizaciones. La sincronización es asíncrona: no se crea ninguna tarea.",
+      "spaceHint": "Requiere un ID de organización.",
+      "spaceNeedsOrganization": "Un ID de espacio necesita su ID de organización",
+      "requested": "Sincronización solicitada",
+      "thisSpace": "Sincronizar este espacio"
+    }
   }
 }

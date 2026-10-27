@@ -19,6 +19,8 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import { appConfig } from "@/lib/config";
 import { CALENDAR_WEBADMIN_DOC_URL, calendarWebadminDoc } from "@/lib/calendar-docs";
 import { cleanupTaskLabel } from "@/modules/tasks/task-summary";
+import { useSyncSpaces } from "@/modules/twake-space/use-sync-spaces";
+import { EVERY_SPACE, syncSpacesCommand } from "@/modules/twake-space/space";
 
 // How a task's risk is set: safe = reads or rebuilds derived data; caution = changes stored
 // data, needs a maintenance window or deletes only unreferenced or expired data; destructive =
@@ -322,6 +324,8 @@ function MailCommonTasks() {
   const canCleanupMailbox = useIsAllowed("DELETE", "/messages");
   const canCleanupOldTasks = useIsAllowed("DELETE", "/tasks");
   const canReindexUsers = useIsAllowed("POST", "/users");
+  const canSyncSpaces = useIsAllowed("POST", "/spaces?action=sync");
+  const syncSpaces = useSyncSpaces();
   const [reloadLoading, setReloadLoading] = useState(false);
   const [reloadPort, setReloadPort] = useState("");
   const [cleanupLoading, setCleanupLoading] = useState(false);
@@ -465,6 +469,18 @@ function MailCommonTasks() {
           command="curl -XPOST /team-mailboxes?action=repositionSystemRights"
           onRun={handleRepositionSystemRights}
           loading={repositionLoading}
+        />
+      ),
+    }] : []),
+    ...(canSyncSpaces ? [{
+      nameKey: "commonTasks.syncTwakeSpaces",
+      group: "consistency" as const,
+      node: (
+        <TaskRow
+          title={t("commonTasks.syncTwakeSpaces")}
+          description={t(taskDescriptionKey("commonTasks.syncTwakeSpaces"))}
+          command={syncSpacesCommand(EVERY_SPACE)}
+          onRun={() => syncSpaces()}
         />
       ),
     }] : []),

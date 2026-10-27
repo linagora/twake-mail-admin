@@ -1653,13 +1653,15 @@
       "calendarEventArchival": "Moves the events matching the criteria into an \"Archival\" calendar of each user.",
       "clearDomainMembersContacts": "Empties the \"Domain members\" address book of every domain. Run a synchronization to fill it again.",
       "twakeSpacePurge": "Deletes the team mailboxes of the spaces deleted for longer than the retention set in space.properties, freeing their addresses. TMail no longer runs it on its own: schedule it with an external cron, or run it here.",
-      "twakeSpaceReindex": "Use after binding team mailboxes outside of the extension (e.g. a migration from the Twake Mail side service), or if the index mailbox was lost. Scans every team mailbox."
+      "twakeSpaceReindex": "Use after binding team mailboxes outside of the extension (e.g. a migration from the Twake Mail side service), or if the index mailbox was lost. Scans every team mailbox.",
+      "syncTwakeSpaces": "Asks ldap-rest for the current state of the Twake spaces, applied to their team mailboxes: all of them, one organization's, or a single space."
     },
     "archiveAllEvents": "Archive all events",
     "archiveAllWarning": "No criterion set: every event of every registered user will be moved to an \"Archival\" calendar.",
     "twakeSpacePurge": "Purge team mailboxes of deleted spaces",
     "twakeSpaceReindex": "Rebuild the space index",
-    "twakeSpaceUnavailable": "Twake Space is not available on this server: it does not expose the /spaces routes, which require the Twake Space extension of tmail-backend."
+    "twakeSpaceUnavailable": "Twake Space is not available on this server: it does not expose the /spaces routes, which require the Twake Space extension of tmail-backend.",
+    "syncTwakeSpaces": "Sync Twake spaces"
   },
   "healthCheck": {
     "checking": "Checking the components, this can take a while…",
@@ -2286,5 +2288,34 @@
     "bookingLinkEventDeletion": "Delete the events of a booking link",
     "twakeSpacePurge": "Twake Space purge",
     "twakeSpaceReindex": "Twake Space reindex"
+  },
+  "twakeSpace": {
+    "title": "Twake Space",
+    "organizationId": "Organization ID",
+    "spaceId": "Space ID",
+    "organizationIdOptional": "Organization ID (optional)",
+    "spaceIdOptional": "Space ID (optional)",
+    "notBound": "Not bound to any Twake space.",
+    "deletedOn": "Space deleted on {{date}}",
+    "invalidSpaceId": "The space ID must be a UUID, e.g. 11111111-1111-1111-1111-111111111111",
+    "organizationRequired": "The organization ID is required",
+    "spaceRequired": "The space ID is required",
+    "unavailable": "Twake Space is not available on this server (the Twake Space extension is not enabled).",
+    "bind": {
+      "title": "Bind to a space",
+      "reopen": "Reopen space",
+      "help": "Binding writes the organization and space annotations of the team mailbox, clears its deletion date, and requests a sync of that space, which sets its members.",
+      "conflict": "This team mailbox already belongs to another space.",
+      "success": "Team mailbox bound to the space"
+    },
+    "sync": {
+      "title": "Request a sync of the Twake spaces",
+      "confirmLabel": "Request sync",
+      "help": "Leave both fields empty to sync every space of every organization. The sync runs asynchronously: no task is created.",
+      "spaceHint": "Requires an organization ID.",
+      "spaceNeedsOrganization": "A space ID needs its organization ID",
+      "requested": "Sync requested",
+      "thisSpace": "Sync this space"
+    }
   }
 }
