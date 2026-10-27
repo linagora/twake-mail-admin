@@ -9,7 +9,9 @@ import ConfirmTaskContent from "./components/confirm-task-content";
 import { defaultCommand } from "./components/command-preview";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 
-export default function TaskContainer({ nameKey, taskKey, mode, command, doc, params, allowanceCheck, risk = "safe", consequenceKey, typeToConfirmKey }: TaskProps) {
+const isNotFound = (error: unknown) => (error as { response?: { status?: number } })?.response?.status === 404;
+
+export default function TaskContainer({ nameKey, taskKey, mode, command, doc, params, allowanceCheck, risk = "safe", consequenceKey, typeToConfirmKey, unavailableKey }: TaskProps) {
   const { t } = useTranslation();
   const name = t(nameKey);
   const toastTaskCreated = useTaskCreatedToast();
@@ -29,6 +31,7 @@ export default function TaskContainer({ nameKey, taskKey, mode, command, doc, pa
         confirmLabel: t("confirm.deleteData"),
         typeToConfirm: typeToConfirmKey && t(typeToConfirmKey),
       }),
+      describeError: (error) => (unavailableKey && isNotFound(error) ? t(unavailableKey) : null),
       message: (
         <ConfirmTaskContent
           message={<p>{t(taskDescriptionKey(nameKey))}</p>}

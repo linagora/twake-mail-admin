@@ -80,6 +80,11 @@ export const runPopulateEmailQueryViewTask = async (payload?: AdditionalParams):
   return apiClient.post<any, any>(`/mailboxes?${params}`);
 }
 
+export type TwakeSpaceAction = 'purge' | 'reindex';
+
+export const runTwakeSpaceTask = async (action: TwakeSpaceAction): Promise<any> =>
+  apiClient.post<any, any>(`/spaces?action=${action}`);
+
 export interface AllUsersReindexResponse {
   taskIds?: Record<string, string>;
   erroredUsers?: string[];

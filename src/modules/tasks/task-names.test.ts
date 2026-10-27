@@ -33,6 +33,7 @@ describe("task names", () => {
     "UsernameChangeTask", "DeleteUserDataTask", "UserDataTieringTask", "UserTemplatesProvisionTask", "ClearMailboxContentTask",
     "DomainTemplatesProvisionTask", "DeleteUsersDataOfDomainTask",
     "reprocessing-all", "clear-mail-repository", "event-dead-letters-redeliver-group",
+    "twake-space-purge", "twake-space-reindex",
     // Calendar
     "reindex-calendar-events", "schedule-alarms", "add-missing-fields", "calendar-archival", "calendar-import",
     "addressbook-import", "domain-calendar-import", "resend-unsent-mails", "delete-unsent-mails",

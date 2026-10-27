@@ -23,6 +23,9 @@ export enum TaskKey {
   CONTACT_INDEXING = 'ContactIndexing',
   PURGE_DELETED_MESSAGES = 'DeletedMessageVaultDeleteExpiredMessagesTask',
   POPULATE_EMAIL_QUERY_VIEW = 'PopulateEmailQueryViewTask',
+  // Twake Space extension of TMail
+  TWAKE_SPACE_PURGE = 'twake-space-purge',
+  TWAKE_SPACE_REINDEX = 'twake-space-reindex',
   // Calendar-specific tasks
   IMPORT_LDAP_USERS = 'importFromLDAP',
   DOMAIN_MEMBER_SYNC = 'domainMemberSync',
@@ -75,9 +78,11 @@ export type TaskProps = {
   // Heading of Common Tasks the task is listed under
   group?: TaskGroup;
   typeToConfirmKey?: string;
+  // Optional backend extension: a 404 tells the operator it is not installed, not a raw error
+  unavailableKey?: string;
 }
 
-export type TaskGroup = "search" | "consistency" | "cleanup" | "server" | "directory";
+export type TaskGroup = "search" | "consistency" | "cleanup" | "space" | "server" | "directory";
 
 // One line saying when to use a task and what it costs, next to its name
 export const taskDescriptionKey = (nameKey: string) => nameKey.replace(/^commonTasks\./, "commonTasks.desc.");

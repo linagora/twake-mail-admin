@@ -48,6 +48,8 @@ export interface ConfirmOptions extends ConfirmAppearance {
   typeToConfirmIgnoreCase?: boolean;
   /** Replaces "Cancel", e.g. with "Keep editing". */
   cancelLabel?: string;
+  /** Explains a failure of the action better than the server message, e.g. a missing feature; null to show it as-is. */
+  describeError?: (error: unknown) => ReactNode | null;
 }
 
 export interface ConfirmState extends ConfirmOptions {
@@ -159,13 +161,13 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
 
   const showError = (error: ReactNode) => setConfirmState((current) => ({ ...current, pending: false, error }));
 
-  const runAction = async (action: ConfirmAction) => {
+  const runAction = async (action: ConfirmAction, describeError?: ConfirmOptions["describeError"]) => {
     setConfirmState((current) => ({ ...current, pending: true, error: null }));
     try {
       await action();
       handleClose(true);
     } catch (err) {
-      showError(<ErrorDisplayer error={err} />);
+      showError(describeError?.(err) ?? <ErrorDisplayer error={err} />);
     }
   };
 
@@ -181,7 +183,7 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
       return;
     }
     if (confirmState.action) {
-      runAction(confirmState.action);
+      runAction(confirmState.action, confirmState.describeError);
       return;
     }
     handleClose(true);

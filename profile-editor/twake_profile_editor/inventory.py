@@ -2339,6 +2339,20 @@ COMMON_TASKS = page(
             ],
         ),
         action(
+            "rebuild-space-index",
+            "Rebuild the Twake Space index",
+            "Reconstruire l'index des espaces Twake Space",
+            applications=MAIL,
+            endpoints=[may("POST", "/spaces?action=reindex")],
+        ),
+        action(
+            "purge-deleted-spaces",
+            "Purge the team mailboxes of deleted spaces",
+            "Purger les boîtes partagées des espaces supprimés",
+            applications=MAIL,
+            endpoints=[may("POST", "/spaces?action=purge")],
+        ),
+        action(
             "import-ldap-users",
             "Import users from LDAP",
             "Importer les utilisateurs depuis LDAP",
