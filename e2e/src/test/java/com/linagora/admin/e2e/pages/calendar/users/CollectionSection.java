@@ -11,6 +11,7 @@ import com.linagora.admin.e2e.pages.AdminApp;
 import com.microsoft.playwright.Download;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Response;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.FilePayload;
 
@@ -20,6 +21,8 @@ import com.microsoft.playwright.options.FilePayload;
  * tooltip).
  */
 public class CollectionSection {
+
+    private static final double IMPORT_TIMEOUT_MS = 60_000;
 
     private final AdminApp app;
     private final Locator toggle;
@@ -149,8 +152,16 @@ public class CollectionSection {
      * returns the id of the task announced by the "Task created" toast.
      */
     public String importFile(Locator row, String fileName, String mimeType, String content) {
-        row.locator("input[type=file]").setInputFiles(
-            new FilePayload(fileName, mimeType, content.getBytes(StandardCharsets.UTF_8)));
+        // The toast only shows once WebAdmin answered the upload, which can take more than the default
+        // 5 seconds of an assertion on a loaded CI agent: wait for the answer itself
+        Response response = app.page().waitForResponse(
+            r -> r.request().method().equals("POST") && r.url().contains("?action=import"),
+            new Page.WaitForResponseOptions().setTimeout(IMPORT_TIMEOUT_MS),
+            () -> row.locator("input[type=file]").setInputFiles(
+                new FilePayload(fileName, mimeType, content.getBytes(StandardCharsets.UTF_8))));
+        if (!response.ok()) {
+            throw new AssertionError("Import refused: " + response.status() + " " + response.text());
+        }
         Locator toast = app.toast("Task created");
         assertThat(toast).isVisible();
         Locator link = toast.getByRole(AriaRole.LINK);
