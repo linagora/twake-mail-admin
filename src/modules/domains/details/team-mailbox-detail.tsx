@@ -26,6 +26,14 @@ import UserSuggestInput from "@/components/custom/user-suggest-input";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
+const domainOf = (username: string) => username.trim().split("@").slice(1).pop()?.toLowerCase() ?? "";
+
+// Only a hint: the console cannot know whether the server allows cross-domain sharing
+const isOtherDomain = (username: string, mailboxDomain: string) => {
+  const userDomain = domainOf(username);
+  return userDomain !== "" && userDomain !== mailboxDomain.toLowerCase();
+};
+
 // The provider wraps the whole page, so that Expand all / Collapse all also reach the members section
 export default function TeamMailboxDetail() {
   return (
@@ -60,6 +68,8 @@ function TeamMailboxDetailContent() {
   const [role, setRole] = useState<"member" | "manager">("member");
   const memberStatus = useCheckUserExists(newMember);
   const canSubmit = !!newMember.trim() && isSubmittableUserStatus(memberStatus);
+  const otherDomain = isOtherDomain(newMember, domain!);
+  const otherDomainHintId = `${fieldId}-other-domain`;
 
   const sorted = useMemo(() => {
     if (!members) return [];
@@ -207,6 +217,7 @@ function TeamMailboxDetailContent() {
               onValueChange={setNewMember}
               placeholder="user@domain.tld"
               className={FIELD_CLASS}
+              aria-describedby={otherDomain ? otherDomainHintId : undefined}
             />
             {/* Reserved height: the status appearing does not resize the modal */}
             <p className="h-4 mt-1 text-xs">
@@ -215,6 +226,11 @@ function TeamMailboxDetailContent() {
               {memberStatus === "not_found" && <span className="text-orange-600">{t("common.userNotFound")}</span>}
               {memberStatus === "invalid" && <span className="text-red-600">{t("common.invalidUsername")}</span>}
             </p>
+            {otherDomain && (
+              <p id={otherDomainHintId} className="mt-1 text-xs text-orange-600">
+                {t("domains.teamMailbox.otherDomainHint", { domain })}
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor={`${fieldId}-role`} className="text-sm font-medium">{t("domains.teamMailbox.role")}</label>

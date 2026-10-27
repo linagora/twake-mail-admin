@@ -234,6 +234,7 @@
       "user": "Người dùng",
       "removeMemberTooltip": "Xóa thành viên",
       "role": "Vai trò",
+      "otherDomainHint": "Người dùng này thuộc một miền khác với hộp thư nhóm ({{domain}}). Máy chủ sẽ từ chối trừ khi bật chia sẻ giữa các miền.",
       "detailKind": "Hộp thư nhóm"
     },
     "teamMailboxSpace": {

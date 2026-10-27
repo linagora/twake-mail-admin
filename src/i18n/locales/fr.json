@@ -237,6 +237,7 @@
       "user": "Utilisateur",
       "removeMemberTooltip": "Retirer le membre",
       "role": "Rôle",
+      "otherDomainHint": "Cet utilisateur appartient à un autre domaine que la boîte partagée ({{domain}}). Le serveur le refusera, sauf si le partage entre domaines est activé.",
       "detailKind": "Boîte partagée"
     },
     "teamMailboxSpace": {

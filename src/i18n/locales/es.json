@@ -237,6 +237,7 @@
       "user": "Usuario",
       "removeMemberTooltip": "Quitar miembro",
       "role": "Rol",
+      "otherDomainHint": "Este usuario pertenece a un dominio distinto del buzón de equipo ({{domain}}). El servidor lo rechazará salvo que el uso compartido entre dominios esté habilitado.",
       "detailKind": "Buzón de equipo"
     },
     "teamMailboxSpace": {

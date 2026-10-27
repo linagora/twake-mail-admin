@@ -237,6 +237,7 @@
       "user": "Benutzer",
       "removeMemberTooltip": "Mitglied entfernen",
       "role": "Rolle",
+      "otherDomainHint": "Dieser Benutzer gehört zu einer anderen Domain als das Team-Postfach ({{domain}}). Der Server lehnt ihn ab, sofern die domänenübergreifende Freigabe nicht aktiviert ist.",
       "detailKind": "Team-Postfach"
     },
     "teamMailboxSpace": {

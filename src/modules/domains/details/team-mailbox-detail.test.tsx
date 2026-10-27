@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import type { ReactNode } from "react";
+import { AxiosError, AxiosHeaders } from "axios";
 import type { UserExistsStatus } from "@/hooks/use-check-user-exists";
 
 const mocks = vi.hoisted(() => ({
@@ -53,6 +54,15 @@ const typeMember = (user: string, status: UserExistsStatus) => {
   fireEvent.click(screen.getByTitle("domains.teamMailbox.addMember"));
   fireEvent.change(input(), { target: { value: user } });
 };
+
+const webAdminError = (message: string) =>
+  new AxiosError("Request failed with status code 400", "ERR_BAD_REQUEST", undefined, undefined, {
+    status: 400,
+    statusText: "Bad Request",
+    headers: {},
+    config: { headers: new AxiosHeaders() },
+    data: { statusCode: 400, type: "InvalidArgument", message, details: message },
+  });
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -132,6 +142,18 @@ describe("team mailbox members: add a member", () => {
     expect(input().value).toBe("ghost@example.com");
   });
 
+  it("shows the server message of a 400 refusing a member of another domain, the list unchanged", async () => {
+    mocks.api.addTeamMailboxMember.mockRejectedValue(webAdminError("User bob@other.org does not belong to domain example.com"));
+    typeMember("bob@other.org", "exists");
+    fireEvent.click(addButton());
+
+    expect(await within(dialog()).findByText("User bob@other.org does not belong to domain example.com")).not.toBeNull();
+    expect(input().value).toBe("bob@other.org");
+    expect(mocks.toast).not.toHaveBeenCalled();
+    expect(mocks.api.getTeamMailboxMembers).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("domains.teamMailbox.noMembers")).not.toBeNull();
+  });
+
   it("resets the role to member after an addition", async () => {
     typeMember("alice@example.com", "exists");
     fireEvent.change(roleSelect(), { target: { value: "manager" } });
@@ -143,5 +165,25 @@ describe("team mailbox members: add a member", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     fireEvent.click(screen.getByTitle("domains.teamMailbox.addMember"));
     expect(roleSelect().value).toBe("member");
+  });
+});
+
+describe("team mailbox members: member of another domain", () => {
+  const hint = () => within(dialog()).queryByText(/domains.teamMailbox.otherDomainHint/);
+
+  it("warns, tied to the field, that the server may refuse a user of another domain", () => {
+    typeMember("bob@other.org", "exists");
+
+    expect(hint()?.textContent).toBe('domains.teamMailbox.otherDomainHint {"domain":"example.com"}');
+    expect(input().getAttribute("aria-describedby")).toBe(hint()?.id);
+    // Cross-domain sharing may be enabled: the operator can still try
+    expect(addButton().disabled).toBe(false);
+  });
+
+  it.each(["alice@example.com", "alice@EXAMPLE.com", "alice"])("does not warn for %s", (user) => {
+    typeMember(user, "exists");
+
+    expect(hint()).toBeNull();
+    expect(input().getAttribute("aria-describedby")).toBeNull();
   });
 });

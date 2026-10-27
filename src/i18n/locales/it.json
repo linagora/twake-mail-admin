@@ -237,6 +237,7 @@
       "user": "Utente",
       "removeMemberTooltip": "Rimuovi membro",
       "role": "Ruolo",
+      "otherDomainHint": "Questo utente appartiene a un dominio diverso da quello della casella di team ({{domain}}). Il server lo rifiuterà a meno che la condivisione tra domini non sia abilitata.",
       "detailKind": "Casella di team"
     },
     "teamMailboxSpace": {
