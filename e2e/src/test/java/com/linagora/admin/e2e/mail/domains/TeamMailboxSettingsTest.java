@@ -86,10 +86,10 @@ class TeamMailboxSettingsTest extends MailAdminE2ETest {
         assertThat(teamMailbox.text("No extra senders.")).isVisible();
         assertThat(extraSenders(webAdmin, domain)).isEmpty();
 
-        // Invalid username
+        // Invalid mail address
         teamMailbox.addExtraSenderButton().click();
         teamMailbox.usernameInput().fill("a@b@c");
-        assertThat(teamMailbox.dialog().getByText("Invalid username")).isVisible();
+        assertThat(teamMailbox.dialog().getByText("Invalid mail address")).isVisible();
         assertThat(teamMailbox.addButton()).isDisabled();
 
         // Unknown user: asks first, Cancel keeps the modal and adds nothing, Confirm adds it
