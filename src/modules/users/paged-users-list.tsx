@@ -1,5 +1,5 @@
-import { useSearchParams } from "react-router";
-import { useMemo, useRef } from "react";
+import { NavigationType, useNavigationType, useSearchParams } from "react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
@@ -25,12 +25,23 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
   // The search and the domain filter live in the URL, so that Back from a user page, a bookmark
   // or a link (/users?domain=example.org) restores them; the page anchor stays in memory
   const [searchParams, setSearchParams] = useSearchParams();
-  const search = searchParams.get("q") ?? "";
+  const urlSearch = searchParams.get("q") ?? "";
+  // The field holds its own text: the router applies a navigation asynchronously, so an input
+  // bound to the URL would be rendered back with a stale value and lose a key typed in a burst.
+  // The URL only mirrors the text, and is read back when it changes from outside (Back, a link)
+  const [search, setSearchText] = useState(urlSearch);
+  const navigationType = useNavigationType();
+  useEffect(() => {
+    if (navigationType !== NavigationType.Replace) setSearchText(urlSearch);
+  }, [urlSearch, navigationType]);
   const selectedDomain = searchParams.get("domain") ?? "";
   // Two changes before a render (clearing the search, then picking a domain) must not undo one
-  // another: each starts from the parameters the previous one wrote, not from the last render
+  // another: each starts from the parameters the previous one wrote, not from the last render,
+  // which the typed text renders before the URL changes
   const latestParams = useRef(searchParams);
-  latestParams.current = searchParams;
+  useEffect(() => {
+    latestParams.current = searchParams;
+  }, [searchParams]);
   const updateParam = (key: "q" | "domain", value: string, replace: boolean) => {
     const next = new URLSearchParams(latestParams.current);
     if (value) next.set(key, value); else next.delete(key);
@@ -38,7 +49,10 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
     setSearchParams(next, { replace });
   };
   // Typing replaces the history entry, a new domain pushes one
-  const setSearch = (value: string) => updateParam("q", value, true);
+  const setSearch = (value: string) => {
+    setSearchText(value);
+    updateParam("q", value, true);
+  };
   const setSelectedDomain = (value: string) => updateParam("domain", value, false);
   const query = useDebouncedValue(search, SEARCH_DEBOUNCE_MS);
   const pages = useUsersPages(source, { query, domain: domain ?? selectedDomain }, PAGE_LIMIT);

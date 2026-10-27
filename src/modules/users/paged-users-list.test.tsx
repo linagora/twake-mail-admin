@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from "vitest";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { MemoryRouter, useLocation } from "react-router";
+import { MemoryRouter, useLocation, useNavigate } from "react-router";
 import { PagedUsersList } from "./paged-users-list";
 import { UsernamesSource } from "./users-paging";
 
@@ -191,5 +191,47 @@ describe("paged users list: quick successive filter changes", () => {
       fireEvent.change(screen.getByLabelText("common.domain"), { target: { value: "example.org" } });
     });
     expect(screen.getByTestId("location").textContent).toBe("?domain=example.org");
+  });
+});
+
+describe("paged users list: search typed in a burst", () => {
+  function BackButton() {
+    const navigate = useNavigate();
+    return <button onClick={() => navigate(-1)}>back</button>;
+  }
+
+  function renderAt(...entries: string[]) {
+    render(
+      <MemoryRouter initialEntries={entries} initialIndex={entries.length - 1}>
+        <PagedUsersList source={sourceOf(["charlotte@example.com"])} />
+        <BackButton />
+      </MemoryRouter>
+    );
+  }
+
+  const searchField = () => screen.getByPlaceholderText("users.searchPlaceholder") as HTMLInputElement;
+
+  it("keeps every key typed before the URL catches up", async () => {
+    renderAt("/users");
+    await screen.findByText("charlotte@example.com");
+
+    act(() => {
+      fireEvent.change(searchField(), { target: { value: "c" } });
+      expect(searchField().value).toBe("c");
+      fireEvent.change(searchField(), { target: { value: "ch" } });
+      expect(searchField().value).toBe("ch");
+    });
+
+    expect(searchField().value).toBe("ch");
+    expect(await screen.findByText("charlotte@example.com")).not.toBeNull();
+  });
+
+  it("shows the search of the URL reached by Back", async () => {
+    renderAt("/users?q=bo", "/users?q=ch");
+    await screen.findByText("charlotte@example.com");
+
+    fireEvent.click(screen.getByRole("button", { name: "back" }));
+
+    await waitFor(() => expect(searchField().value).toBe("bo"));
   });
 });
