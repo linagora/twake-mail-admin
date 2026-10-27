@@ -410,19 +410,20 @@ export default function MailRepositoryExtended() {
                     <br />
                     <span className="text-xs text-gray-500">{mail.sender}</span>
                   </div>
-                  {/* Below md the header is hidden: recipients, date and size stack, labelled, under the name */}
+                  {/* Below md the header is hidden: recipients, date and size stack, labelled, under the name.
+                      Each value keeps its own element, so that it reads without its label. */}
                   <div className="col-start-2 min-w-0 flex flex-col gap-1 md:contents">
                     <span className={`text-xs min-w-0 ${WRAP_BELOW_MD}`}>
                       <StackedLabel label={t("mailRepositories.colRecipients")} />
-                      {mail.recipients.join(", ") || "—"}
+                      <span>{mail.recipients.join(", ") || "—"}</span>
                     </span>
                     <span className={`text-xs min-w-0 ${WRAP_BELOW_MD}`}>
                       <StackedLabel label={t("mailRepositories.colLastUpdated")} />
-                      {formatDate(mail.lastUpdated)}
+                      <span>{formatDate(mail.lastUpdated)}</span>
                     </span>
                     <span className="text-xs md:text-right">
                       <StackedLabel label={t("mailRepositories.colSize")} />
-                      {formatSize(mail.size)}
+                      <span>{formatSize(mail.size)}</span>
                     </span>
                   </div>
                   <div className="col-start-2 md:col-auto flex flex-wrap md:justify-center gap-1" onClick={(e) => e.stopPropagation()}>

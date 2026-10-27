@@ -90,6 +90,16 @@ describe("mail repository extended view: layout", () => {
       .toContain("bob@example.com");
   });
 
+  it("keeps each stacked value in an element of its own, apart from its label", async () => {
+    renderExtended();
+
+    const row = await screen.findByTestId("mail-repository-extended-row");
+
+    // The e2e suite reads the size as /^\d+ B$/: the label must not be part of its element
+    expect(within(row).getByText(/^\d+ /).textContent).toMatch(/^\d+ /);
+    expect(within(row).getByText("bob@example.com").textContent).toBe("bob@example.com");
+  });
+
   it("only truncates the name, sender and recipients from the md breakpoint", async () => {
     renderExtended();
 
