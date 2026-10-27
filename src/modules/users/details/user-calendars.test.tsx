@@ -89,8 +89,13 @@ describe("UserCalendars delete button", () => {
   it("is disabled on the main calendar and explains why", async () => {
     await openCalendars();
 
-    const mainDelete = screen.getByTitle("users.calendars.mainCalendarUndeletable");
+    const mainDelete = screen.getByText("users.calendars.mainCalendarUndeletable", { selector: "[hidden]" })
+      .previousElementSibling!.querySelector("button")!;
     expect(mainDelete).toHaveProperty("disabled", true);
+    const hint = mainDelete.parentElement!;
+    expect(hint.tabIndex).toBe(0);
+    expect(document.getElementById(hint.getAttribute("aria-describedby")!)!.textContent)
+      .toBe("users.calendars.mainCalendarUndeletable");
     fireEvent.click(mainDelete);
     expect(mocks.confirm).not.toHaveBeenCalled();
   });

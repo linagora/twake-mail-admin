@@ -140,8 +140,12 @@ class UserAddressBooksTest extends CalendarAdminE2ETest {
         for (String system : new String[] {"Collected contacts", "My contacts"}) {
             Locator row = books.row(system);
             Locator badge = row.getByText("System", new Locator.GetByTextOptions().setExact(true));
-            assertThat(badge).hasAttribute("title", SYSTEM_HINT);
+            assertThat(badge).hasAccessibleDescription(SYSTEM_HINT);
             badge.hover();
+            assertThat(app.page().getByRole(AriaRole.TOOLTIP)).hasText(SYSTEM_HINT);
+            // A Radix tooltip stays open when the pointer jumps straight to the next badge
+            app.page().keyboard().press("Escape");
+            assertThat(app.page().getByRole(AriaRole.TOOLTIP)).hasCount(0);
             for (String present : new String[] {"Export the address book (vCard)", "Import contacts (vCard)", "Sharing",
                 "Private address book"}) {
                 assertThat(CollectionSection.button(row, present)).isVisible();

@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
 import SharedWithChip from "@/components/custom/shared-with-chip";
+import HintTooltip from "@/components/custom/hint-tooltip";
 import { StagedChangesNotice, blocksSave, useDiscardGuard } from "@/components/custom/staged-changes";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
 
@@ -154,12 +155,12 @@ function AddressBookRow({
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <p className="font-medium min-w-0 break-words">{name}</p>
           {system && (
-            <span
+            <HintTooltip
+              hint={t("users.addressBooks.system.hint")}
               className="px-1.5 py-0.5 rounded-sm bg-gray-100 text-xs text-gray-600"
-              title={t("users.addressBooks.system.hint")}
             >
               {t("users.addressBooks.system.badge")}
-            </span>
+            </HintTooltip>
           )}
           {permissions.count && (
             <CollectionCountBadge
