@@ -32,6 +32,14 @@ import { taskTypeLabel } from "@/modules/tasks/task-summary";
 
 const PAGE_LIMIT = EXTENDED_PAGE_LIMIT;
 
+// Shared by the header and every row: the tracks never depend on content, so they stay aligned.
+// Below md: index | name / sender, with recipients, date, size and actions stacked under it.
+const MAIL_GRID_COLUMNS =
+  "grid-cols-[2.5rem_minmax(0,1fr)] md:grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_4rem_9rem]";
+
+// Stacked phone cards have room to wrap; desktop columns keep a single truncated line
+const WRAP_BELOW_MD = "break-words md:truncate";
+
 type SortField = "name" | "sender" | "recipients" | "size" | "lastUpdated";
 
 interface MailRow extends MailDetail {
@@ -60,6 +68,12 @@ function formatDate(d: string | null): string {
   } catch {
     return d;
   }
+}
+
+// Names the field of a stacked phone card; the desktop header names the columns
+function StackedLabel({ label }: { label: string }) {
+  const { t } = useTranslation();
+  return <span className="md:hidden text-gray-500">{t("tasks.labelled", { label })} </span>;
 }
 
 export default function MailRepositoryExtended() {
@@ -330,7 +344,7 @@ export default function MailRepositoryExtended() {
       <MailFiltersPanel filters={activeFilters} onApply={handleApplyFilters} />
 
       {/* Sort controls */}
-      <div className="flex items-center gap-2 mt-4 mb-3">
+      <div className="flex flex-wrap items-center gap-2 mt-4 mb-3">
         <label htmlFor={sortFieldId} className="text-sm font-medium">{t("mailRepositories.sortBy")}</label>
         <select
           id={sortFieldId}
@@ -360,15 +374,17 @@ export default function MailRepositoryExtended() {
 
       {!loading && mails.length > 0 && (
         <>
-          {/* Legend */}
-          <div className="grid grid-cols-[auto_1fr_1fr_1fr_auto_auto_auto] gap-2 text-xs font-semibold text-muted-foreground px-3 pb-2 border-b mb-1">
-            <span className="w-10">#</span>
-            <span>{t("mailRepositories.colNameSender")}</span>
-            <span>{t("mailRepositories.colRecipients")}</span>
-            <span>{t("mailRepositories.colLastUpdated")}</span>
-            <span className="w-16 text-right">{t("mailRepositories.colSize")}</span>
-            <span className="w-36 text-center">{t("mailRepositories.colActions")}</span>
-            <span className="w-0" />
+          {/* Legend: below md the rows stack their fields, each one labelled, so the header is hidden */}
+          <div
+            data-testid="mail-repository-extended-header"
+            className={`hidden md:grid ${MAIL_GRID_COLUMNS} gap-2 text-xs font-semibold text-muted-foreground px-3 pb-2 border-b mb-1`}
+          >
+            <span>#</span>
+            <span className="truncate">{t("mailRepositories.colNameSender")}</span>
+            <span className="truncate">{t("mailRepositories.colRecipients")}</span>
+            <span className="truncate">{t("mailRepositories.colLastUpdated")}</span>
+            <span className="text-right truncate">{t("mailRepositories.colSize")}</span>
+            <span className="text-center truncate">{t("mailRepositories.colActions")}</span>
           </div>
 
           <div className="space-y-1">
@@ -377,11 +393,12 @@ export default function MailRepositoryExtended() {
               return (
                 <div
                   key={mail.name}
-                  className="grid grid-cols-[auto_1fr_1fr_1fr_auto_auto_auto] gap-2 items-center p-3 bg-gray-50 rounded-2 cursor-pointer hover:bg-gray-100 transition text-sm"
+                  data-testid="mail-repository-extended-row"
+                  className={`grid ${MAIL_GRID_COLUMNS} gap-x-2 gap-y-1 items-center p-3 bg-gray-50 rounded-2 cursor-pointer hover:bg-gray-100 transition text-sm`}
                   onClick={() => openMail(mail)}
                 >
-                  <span className="text-muted-foreground w-10">{globalIndex}.</span>
-                  <div className="truncate">
+                  <span className="text-muted-foreground">{globalIndex}.</span>
+                  <div className={`min-w-0 ${WRAP_BELOW_MD}`}>
                     {/* A real button (the row itself holds the action buttons) so the detail opens from the keyboard */}
                     <button
                       type="button"
@@ -393,10 +410,23 @@ export default function MailRepositoryExtended() {
                     <br />
                     <span className="text-xs text-gray-500">{mail.sender}</span>
                   </div>
-                  <span className="truncate text-xs">{mail.recipients.join(", ") || "—"}</span>
-                  <span className="truncate text-xs">{formatDate(mail.lastUpdated)}</span>
-                  <span className="w-16 text-right text-xs">{formatSize(mail.size)}</span>
-                  <div className="w-36 flex justify-center gap-1" onClick={(e) => e.stopPropagation()}>
+                  {/* Below md the header is hidden: recipients, date and size stack, labelled, under the name.
+                      Each value keeps its own element, so that it reads without its label. */}
+                  <div className="col-start-2 min-w-0 flex flex-col gap-1 md:contents">
+                    <span className={`text-xs min-w-0 ${WRAP_BELOW_MD}`}>
+                      <StackedLabel label={t("mailRepositories.colRecipients")} />
+                      <span>{mail.recipients.join(", ") || "—"}</span>
+                    </span>
+                    <span className={`text-xs min-w-0 ${WRAP_BELOW_MD}`}>
+                      <StackedLabel label={t("mailRepositories.colLastUpdated")} />
+                      <span>{formatDate(mail.lastUpdated)}</span>
+                    </span>
+                    <span className="text-xs md:text-right">
+                      <StackedLabel label={t("mailRepositories.colSize")} />
+                      <span>{formatSize(mail.size)}</span>
+                    </span>
+                  </div>
+                  <div className="col-start-2 md:col-auto flex flex-wrap md:justify-center gap-1" onClick={(e) => e.stopPropagation()}>
                     {canViewMail && (
                       <button
                         onClick={() => handleDownload(mail.name)}
@@ -434,7 +464,6 @@ export default function MailRepositoryExtended() {
                       </button>
                     )}
                   </div>
-                  <span className="w-0" />
                 </div>
               );
             })}
