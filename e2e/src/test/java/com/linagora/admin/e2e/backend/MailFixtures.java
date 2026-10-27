@@ -6,9 +6,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+
+import org.awaitility.Awaitility;
 
 import com.linagora.admin.e2e.docker.MailStack;
 
@@ -132,5 +135,15 @@ public class MailFixtures {
     public long messageCount(String user, String mailbox) {
         return webAdmin.get("/users/" + user + "/mailboxes/" + WebAdmin.encode(mailbox) + "/messageCount")
             .expect(200).json().asLong();
+    }
+
+    /**
+     * Waits until a mailbox of a user holds {@code count} messages. Delivery is asynchronous and
+     * creates the mailbox it delivers to: until then WebAdmin answers 404, waited out like a lower count.
+     */
+    public void awaitMessageCount(String user, String mailbox, long count) {
+        Awaitility.await().atMost(Duration.ofSeconds(30)).pollInterval(Duration.ofMillis(200))
+            .ignoreExceptions()
+            .until(() -> messageCount(user, mailbox) == count);
     }
 }

@@ -1,10 +1,7 @@
 package com.linagora.admin.e2e.mail.shell;
 
-import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.awaitility.Awaitility;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.linagora.admin.e2e.backend.MailFixtures;
@@ -25,9 +22,7 @@ final class MailSeeds {
     static UserWithMail userWithMail(MailFixtures fixtures, String prefix) {
         String user = fixtures.newUser(prefix);
         fixtures.sendMail(user, user, "shell " + prefix, "A mail for the shell tests");
-        Awaitility.await().atMost(Duration.ofSeconds(30)).pollInterval(Duration.ofMillis(300))
-            .ignoreExceptions()
-            .until(() -> fixtures.messageCount(user, "INBOX") == 1);
+        fixtures.awaitMessageCount(user, "INBOX", 1);
         return new UserWithMail(user, inboxId(fixtures.webAdmin(), user));
     }
 

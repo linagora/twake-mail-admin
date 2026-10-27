@@ -48,9 +48,7 @@ class TasksTest extends MailAdminE2ETest {
         for (int i = 0; i < 30; i++) {
             fixtures.sendMail(user, user, "slow " + i, "body " + i);
         }
-        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(30))
-            .until(() -> fixtures.webAdmin().get("/users/" + user + "/mailboxes/INBOX/messageCount").status() == 200
-                && fixtures.messageCount(user, "INBOX") == 30);
+        fixtures.awaitMessageCount(user, "INBOX", 30);
         return OpsBackend.startTask(fixtures.webAdmin(), "POST",
             "/users/" + WebAdmin.encode(user) + "/mailboxes?task=reIndex&messagesPerSecond=1");
     }

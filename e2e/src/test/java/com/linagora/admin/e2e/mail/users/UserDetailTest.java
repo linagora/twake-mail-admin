@@ -3,12 +3,10 @@ package com.linagora.admin.e2e.mail.users;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,8 +37,7 @@ class UserDetailTest extends MailAdminE2ETest {
         for (int i = 0; i < count; i++) {
             fixtures.sendMail(sender, user, "Hello " + i, "Body " + i);
         }
-        Awaitility.await().atMost(Duration.ofSeconds(30)).pollInterval(Duration.ofMillis(200))
-            .until(() -> fixtures.messageCount(user, "INBOX") == count);
+        fixtures.awaitMessageCount(user, "INBOX", count);
     }
 
     @Test

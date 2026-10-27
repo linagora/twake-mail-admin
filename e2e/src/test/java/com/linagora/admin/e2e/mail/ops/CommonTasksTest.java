@@ -279,8 +279,7 @@ class CommonTasksTest extends MailAdminE2ETest {
     void blobGarbageCollectionAndCleanups(AdminApp app, MailFixtures fixtures, WebAdmin webAdmin) {
         String user = fixtures.newUser();
         fixtures.sendMail(user, user, "kept", "Untouched by the cleanups");
-        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(30))
-            .until(() -> fixtures.messageCount(user, "INBOX") == 1);
+        fixtures.awaitMessageCount(user, "INBOX", 1);
 
         CommonTasksPage page = CommonTasksPage.open(app);
         page.run("Blob garbage collection");

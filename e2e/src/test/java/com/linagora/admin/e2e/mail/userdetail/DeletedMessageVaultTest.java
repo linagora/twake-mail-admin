@@ -32,8 +32,7 @@ class DeletedMessageVaultTest extends MailAdminE2ETest {
         // A deleted message: in this environment the deletion dead-letters instead of reaching the vault
         webAdmin.put("/users/" + user + "/mailboxes/INBOX").expect(204);
         fixtures.sendMail("sender@e2e.test", user, "Quarterly report", "numbers");
-        org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(30))
-            .until(() -> fixtures.messageCount(user, "INBOX") == 1);
+        fixtures.awaitMessageCount(user, "INBOX", 1);
         JsonNode clear = webAdmin.runTask("DELETE", "/users/" + user + "/mailboxes/INBOX/messages", null);
         assertThat(clear.path("status").asText()).isEqualTo("completed");
         // The vault may or may not get the message: this environment dead-letters part of the
@@ -72,8 +71,7 @@ class DeletedMessageVaultTest extends MailAdminE2ETest {
         int restored = task.path("additionalInformation").path("successfulRestoreCount").asInt();
         assertThat(restored).as(task.toString()).isEqualTo(Integer.parseInt(count));
         if (restored > 0) {
-            org.awaitility.Awaitility.await().atMost(java.time.Duration.ofSeconds(20)).until(() ->
-                fixtures.messageCount(user, "Restored-Messages") == restored);
+            fixtures.awaitMessageCount(user, "Restored-Messages", restored);
         }
     }
 

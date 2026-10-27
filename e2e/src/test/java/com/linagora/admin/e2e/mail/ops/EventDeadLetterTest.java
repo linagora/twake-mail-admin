@@ -73,9 +73,7 @@ class EventDeadLetterTest extends MailAdminE2ETest {
             fixtures.sendMail(user, user, "seed 1", "Dead letter seed");
             fixtures.sendMail(user, user, "seed 2", "Dead letter seed");
         }
-        for (String user : users) {
-            Awaitility.await().atMost(Duration.ofSeconds(30)).until(() -> fixtures.messageCount(user, "INBOX") == 2);
-        }
+        users.forEach(user -> fixtures.awaitMessageCount(user, "INBOX", 2));
         webAdmin.put("/quota/domains/" + domain + "/size", "0").expect(204);
         try {
             for (String user : users) {
