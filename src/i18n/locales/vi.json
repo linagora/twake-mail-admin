@@ -1315,6 +1315,11 @@
     "apply": "Áp dụng",
     "reset": "Đặt lại",
     "all": "Tất cả",
+    "chips": {
+      "failed": "Thất bại",
+      "completed": "Đã hoàn thành",
+      "cancelled": "Đã hủy"
+    },
     "waiting": "Đang chờ",
     "inProgress": "Đang xử lý",
     "cancelRequested": "Đã yêu cầu hủy",

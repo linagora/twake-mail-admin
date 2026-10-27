@@ -225,7 +225,7 @@ describe("tasks: quick status chips", () => {
     { taskId: "t-completed", type: "completed-task", status: "completed", submitDate: "2026-10-10T06:00:01Z" },
     { taskId: "t-cancelled", type: "cancelled-task", status: "canceled", submitDate: "2026-10-10T06:00:00Z" },
   ];
-  const chip = (label: string) => screen.getByRole("button", { name: new RegExp(`^${label.replace(".", "\\.")}`) });
+  const chip = (label: string) => screen.getByRole("button", { name: new RegExp(`^${label.replace(/\./g, "\\.")}`) });
 
   it("counts the fetched tasks of each status", async () => {
     api.listTasks.mockResolvedValue(listed);
@@ -234,9 +234,19 @@ describe("tasks: quick status chips", () => {
 
     expect(chip("tasks.all").textContent).toBe("tasks.all (6)");
     expect(chip("tasks.running").textContent).toBe("tasks.running (3)");
-    expect(chip("tasks.failed").textContent).toBe("tasks.failed (1)");
-    expect(chip("tasks.completed").textContent).toBe("tasks.completed (1)");
-    expect(chip("tasks.cancelled").textContent).toBe("tasks.cancelled (1)");
+    expect(chip("tasks.chips.failed").textContent).toBe("tasks.chips.failed (1)");
+    expect(chip("tasks.chips.completed").textContent).toBe("tasks.chips.completed (1)");
+    expect(chip("tasks.chips.cancelled").textContent).toBe("tasks.chips.cancelled (1)");
+  });
+
+  it("names the status chips by their own keys, apart from the status pill of a task", async () => {
+    api.listTasks.mockResolvedValue(listed);
+    renderTasks();
+    await screen.findAllByTestId("task-row");
+
+    expect(screen.queryByRole("button", { name: /^tasks\.failed / })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^tasks\.completed / })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^tasks\.cancelled / })).toBeNull();
   });
 
   it("lists only the failed tasks at once, without a new request, and keeps the choice in the URL", async () => {
@@ -244,10 +254,10 @@ describe("tasks: quick status chips", () => {
     renderTasks();
     await screen.findAllByTestId("task-row");
 
-    fireEvent.click(chip("tasks.failed"));
+    fireEvent.click(chip("tasks.chips.failed"));
 
     expect(rowTypes()).toEqual(["failed-task"]);
-    expect(chip("tasks.failed").getAttribute("aria-pressed")).toBe("true");
+    expect(chip("tasks.chips.failed").getAttribute("aria-pressed")).toBe("true");
     expect(screen.getByTestId("location").textContent).toBe("/tasks?status=failed");
     expect(api.listTasks).toHaveBeenCalledTimes(1);
     expect(api.listTasks).toHaveBeenLastCalledWith(expect.not.objectContaining({ status: expect.anything() }));

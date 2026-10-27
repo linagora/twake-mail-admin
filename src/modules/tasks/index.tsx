@@ -38,9 +38,9 @@ type StatusChip = "" | "running" | TaskStatus.FAILED | TaskStatus.COMPLETED | Ta
 const STATUS_CHIPS: { key: StatusChip; labelKey: string; matches: (status: TaskStatus) => boolean }[] = [
   { key: "", labelKey: "tasks.all", matches: () => true },
   { key: "running", labelKey: "tasks.running", matches: isRunning },
-  { key: TaskStatus.FAILED, labelKey: "tasks.failed", matches: (s) => s === TaskStatus.FAILED },
-  { key: TaskStatus.COMPLETED, labelKey: "tasks.completed", matches: (s) => s === TaskStatus.COMPLETED },
-  { key: TaskStatus.CANCELLED, labelKey: "tasks.cancelled", matches: (s) => s === TaskStatus.CANCELLED },
+  { key: TaskStatus.FAILED, labelKey: "tasks.chips.failed", matches: (s) => s === TaskStatus.FAILED },
+  { key: TaskStatus.COMPLETED, labelKey: "tasks.chips.completed", matches: (s) => s === TaskStatus.COMPLETED },
+  { key: TaskStatus.CANCELLED, labelKey: "tasks.chips.cancelled", matches: (s) => s === TaskStatus.CANCELLED },
 ];
 const chipOf = (value: string | null) => STATUS_CHIPS.find((chip) => chip.key === value) ?? STATUS_CHIPS[0];
 

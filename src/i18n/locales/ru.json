@@ -1330,6 +1330,11 @@
     "apply": "Применить",
     "reset": "Сбросить",
     "all": "Все",
+    "chips": {
+      "failed": "Со сбоем",
+      "completed": "Завершённые",
+      "cancelled": "Отменённые"
+    },
     "waiting": "Ожидание",
     "inProgress": "Выполняется",
     "cancelRequested": "Запрошена отмена",

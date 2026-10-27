@@ -1325,6 +1325,11 @@
     "apply": "Appliquer",
     "reset": "Réinitialiser",
     "all": "Toutes",
+    "chips": {
+      "failed": "Échouées",
+      "completed": "Terminées",
+      "cancelled": "Annulées"
+    },
     "waiting": "En attente",
     "inProgress": "En cours",
     "cancelRequested": "Annulation demandée",
