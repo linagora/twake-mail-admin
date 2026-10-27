@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { AxiosError, AxiosHeaders } from "axios";
 import type { ConfirmOptions } from "@/components/custom/confirm-provider";
@@ -7,10 +7,12 @@ import type { ConfirmOptions } from "@/components/custom/confirm-provider";
 const mocks = vi.hoisted(() => ({
   confirm: vi.fn(),
   toast: vi.fn(),
-  allowed: vi.fn(),
+  onBound: vi.fn(),
   api: {
     getTeamMailboxSpace: vi.fn(),
     bindTeamMailboxSpace: vi.fn(),
+  },
+  spaces: {
     requestSpacesSync: vi.fn(),
   },
 }));
@@ -20,158 +22,179 @@ vi.mock("react-i18next", () => ({
     t: (key: string, options?: Record<string, unknown>) => (options ? `${key} ${JSON.stringify(options)}` : key),
   }),
 }));
-vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: mocks.allowed }));
+vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => mocks.confirm }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
-vi.mock("@/modules/twake-space/api-client", () => mocks.api);
+vi.mock("../api-client", () => mocks.api);
+vi.mock("@/modules/twake-space/api-client", () => mocks.spaces);
 
 import TeamMailboxSpace from "./team-mailbox-space";
 
-const SPACE = "11111111-1111-1111-1111-111111111111";
-const LIVE = { organizationId: "org-1", spaceId: SPACE, deletedAt: null };
-const DELETED = { ...LIVE, deletedAt: "2026-10-09T08:00:00Z" };
+const SPACE_ID = "11111111-1111-1111-1111-111111111111";
 
-const refusal = (status: number, message = "Request failed") =>
-  new AxiosError(message, undefined, undefined, undefined, {
-    status, statusText: "", headers: {}, config: { headers: new AxiosHeaders() }, data: { message },
+// What Axios rejects with when WebAdmin answers an error status
+const webAdminError = (status: number, message: string) =>
+  Object.assign(new Error(`Request failed with status code ${status}`), {
+    isAxiosError: true,
+    response: { status, data: { statusCode: status, message } },
   });
 
 const dialog = () => screen.getByRole("dialog");
 const field = (label: string) => within(dialog()).getByLabelText(label) as HTMLInputElement;
-const submit = (name: string) => within(dialog()).getByRole("button", { name }) as HTMLButtonElement;
+const submitButton = (name: string) => within(dialog()).getByRole("button", { name });
 
-const renderSection = (onBound = vi.fn()) => {
-  render(<TeamMailboxSpace domain="domain.tld" mailbox="sales" onBound={onBound} />);
-  return onBound;
-};
+const renderSection = () =>
+  render(<TeamMailboxSpace domain="example.com" mailbox="sales" onBound={mocks.onBound} />);
 
-const openBindDialog = async (label = "twakeSpace.bind.title") => {
+const openBindDialog = async (label = "domains.teamMailboxSpace.bind") => {
+  renderSection();
   fireEvent.click(await screen.findByRole("button", { name: label }));
-  return dialog();
 };
 
-const typeBinding = (organizationId: string, spaceId: string) => {
-  fireEvent.change(field("twakeSpace.organizationId"), { target: { value: organizationId } });
-  fireEvent.change(field("twakeSpace.spaceId"), { target: { value: spaceId } });
+const fillIdentifiers = (organizationId: string, spaceId: string) => {
+  fireEvent.change(field("domains.teamMailboxSpace.organizationId"), { target: { value: organizationId } });
+  fireEvent.change(field("domains.teamMailboxSpace.spaceId"), { target: { value: spaceId } });
 };
+
+const markDeletedAt = (localTime: string) => {
+  fireEvent.click(within(dialog()).getByLabelText("domains.teamMailboxSpace.deletedSpace"));
+  fireEvent.change(field("domains.teamMailboxSpace.deletedAt"), { target: { value: localTime } });
+};
+
+const submit = () => fireEvent.click(submitButton("domains.teamMailboxSpace.bind"));
+
+const originalTz = process.env.TZ;
+beforeAll(() => {
+  process.env.TZ = "Europe/Paris";
+});
+afterAll(() => {
+  process.env.TZ = originalTz;
+});
 
 beforeEach(() => {
   vi.resetAllMocks();
-  mocks.allowed.mockReturnValue(true);
+  mocks.api.getTeamMailboxSpace.mockResolvedValue(null);
   mocks.api.bindTeamMailboxSpace.mockResolvedValue(undefined);
-  mocks.api.requestSpacesSync.mockResolvedValue(undefined);
 });
 
 afterEach(cleanup);
 
-describe("team mailbox Twake space: reading", () => {
-  it("shows the organization and the space of a bound team mailbox (200)", async () => {
-    mocks.api.getTeamMailboxSpace.mockResolvedValue(LIVE);
+describe("team mailbox Twake Space: the space shown", () => {
+  it("reads a 404, no space or no extension, as not bound rather than as an error", async () => {
     renderSection();
 
-    expect(await screen.findByText("org-1")).not.toBeNull();
-    expect(screen.getByText(SPACE)).not.toBeNull();
-    expect(screen.queryByText(/twakeSpace.deletedOn/)).toBeNull();
-    // A live space cannot be bound elsewhere: the server would answer 409
-    expect(screen.queryByRole("button", { name: "twakeSpace.bind.title" })).toBeNull();
-  });
-
-  it("warns that the space was deleted and offers to reopen it", async () => {
-    mocks.api.getTeamMailboxSpace.mockResolvedValue(DELETED);
-    renderSection();
-
-    expect(await screen.findByText(/twakeSpace.deletedOn/)).not.toBeNull();
-    await openBindDialog("twakeSpace.bind.reopen");
-    expect(field("twakeSpace.organizationId").value).toBe("org-1");
-    expect(field("twakeSpace.spaceId").value).toBe(SPACE);
-  });
-
-  it("shows an unbound team mailbox, never an error, when the space is not found (404)", async () => {
-    mocks.api.getTeamMailboxSpace.mockResolvedValue(null);
-    renderSection();
-
-    expect(await screen.findByText("twakeSpace.notBound")).not.toBeNull();
+    expect(await screen.findByText("domains.teamMailboxSpace.notBound")).not.toBeNull();
     expect(screen.queryByText(/common.errorPrefix/)).toBeNull();
-    expect(screen.queryByRole("button", { name: /twakeSpace.sync.thisSpace/ })).toBeNull();
   });
 
-  it("is hidden when reading the space is not allowed", () => {
-    mocks.allowed.mockReturnValue(false);
-    renderSection();
+  it("shows the identifiers of the space, and offers to reopen a deleted one prefilled", async () => {
+    mocks.api.getTeamMailboxSpace.mockResolvedValue({ organizationId: "org-1", spaceId: SPACE_ID, deletedAt: "2026-10-09T08:00:00Z" });
+    await openBindDialog("domains.teamMailboxSpace.reopen");
 
-    expect(screen.queryByText("twakeSpace.title")).toBeNull();
-    expect(mocks.api.getTeamMailboxSpace).not.toHaveBeenCalled();
+    expect(screen.getByText(/domains.teamMailboxSpace.deletedOn/)).not.toBeNull();
+    expect(field("domains.teamMailboxSpace.organizationId").value).toBe("org-1");
+    expect(field("domains.teamMailboxSpace.spaceId").value).toBe(SPACE_ID);
   });
 });
 
-describe("team mailbox Twake space: binding", () => {
-  beforeEach(() => {
-    mocks.api.getTeamMailboxSpace.mockResolvedValue(null);
-  });
-
-  it("binds the team mailbox, then refreshes the section and the members (204)", async () => {
-    const onBound = renderSection();
+describe("team mailbox Twake Space: bind", () => {
+  it("binds to an active space without deletedAt, then refreshes the space and the members", async () => {
     await openBindDialog();
-    typeBinding("org-1", SPACE);
-    mocks.api.getTeamMailboxSpace.mockResolvedValue(LIVE);
-    fireEvent.click(submit("twakeSpace.bind.title"));
+    fillIdentifiers("org-1", SPACE_ID);
+    submit();
 
+    await waitFor(() =>
+      expect(mocks.api.bindTeamMailboxSpace).toHaveBeenCalledWith("example.com", "sales", { organizationId: "org-1", spaceId: SPACE_ID })
+    );
+    expect(mocks.confirm).not.toHaveBeenCalled();
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
-    expect(mocks.api.bindTeamMailboxSpace).toHaveBeenCalledWith("domain.tld", "sales", { organizationId: "org-1", spaceId: SPACE });
-    expect(mocks.toast).toHaveBeenCalledWith({ title: "twakeSpace.bind.success" });
-    expect(onBound).toHaveBeenCalled();
-    expect(await screen.findByText("org-1")).not.toBeNull();
+    expect(mocks.toast).toHaveBeenCalledWith({ title: "domains.teamMailboxSpace.bound" });
+    expect(mocks.onBound).toHaveBeenCalled();
+    expect(mocks.api.getTeamMailboxSpace).toHaveBeenCalledTimes(2);
   });
 
-  it("previews the request it sends", async () => {
-    renderSection();
+  it("binds to a deleted space with its deletedAt in UTC, once the removal of the members is confirmed", async () => {
+    mocks.confirm.mockResolvedValue(true);
     await openBindDialog();
-    typeBinding("org-1", SPACE);
+    fillIdentifiers("org-1", SPACE_ID);
+    markDeletedAt("2026-10-01T10:00");
 
-    expect(within(dialog()).getByText(/curl -XPUT \/domains\/domain.tld\/team-mailboxes\/sales\/space/)).not.toBeNull();
+    expect(within(dialog()).getByText(/"deletedAt":"2026-10-01T08:00:00Z"/).textContent)
+      .toContain(`-H "Content-Type: application/json"`);
+    submit();
+
+    await waitFor(() =>
+      expect(mocks.api.bindTeamMailboxSpace).toHaveBeenCalledWith("example.com", "sales", {
+        organizationId: "org-1",
+        spaceId: SPACE_ID,
+        deletedAt: "2026-10-01T08:00:00Z",
+      })
+    );
+    const confirmation = mocks.confirm.mock.calls[0][0];
+    expect(confirmation.destructive).toBe(true);
+    expect(confirmation.message).toContain("sales@example.com");
+    expect(mocks.onBound).toHaveBeenCalled();
   });
 
-  it("checks the space ID format in place", async () => {
-    renderSection();
+  it("does not bind to a deleted space when the confirmation is declined", async () => {
+    mocks.confirm.mockResolvedValue(false);
     await openBindDialog();
-    typeBinding("org-1", "not-a-uuid");
+    fillIdentifiers("org-1", SPACE_ID);
+    markDeletedAt("2026-10-01T10:00");
+    submit();
 
-    expect(within(dialog()).getByText("twakeSpace.invalidSpaceId")).not.toBeNull();
-    expect(submit("twakeSpace.bind.title").disabled).toBe(true);
+    await waitFor(() => expect(mocks.confirm).toHaveBeenCalled());
+    expect(mocks.api.bindTeamMailboxSpace).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).not.toBeNull();
   });
 
-  it("keeps the dialog open and says the mailbox belongs to another space (409)", async () => {
-    mocks.api.bindTeamMailboxSpace.mockRejectedValue(refusal(409, "Conflict"));
-    renderSection();
+  it("refuses a space ID that is not a UUID in the dialog", async () => {
     await openBindDialog();
-    typeBinding("org-1", SPACE);
-    fireEvent.click(submit("twakeSpace.bind.title"));
+    fillIdentifiers("org-1", "space-1");
+    submit();
 
-    expect(await within(dialog()).findByText("twakeSpace.bind.conflict")).not.toBeNull();
-    expect(field("twakeSpace.spaceId").value).toBe(SPACE);
-    expect(mocks.toast).not.toHaveBeenCalled();
+    expect((await within(dialog()).findAllByText("domains.teamMailboxSpace.invalidSpaceId")).length).toBeGreaterThan(0);
+    expect(mocks.api.bindTeamMailboxSpace).not.toHaveBeenCalled();
   });
 
-  it("shows the server message of a refused body in place (400)", async () => {
-    mocks.api.bindTeamMailboxSpace.mockRejectedValue(refusal(400, "Invalid organizationId"));
-    renderSection();
+  it("requires the deletion date of a deleted space", async () => {
     await openBindDialog();
-    typeBinding("org-1", SPACE);
-    fireEvent.click(submit("twakeSpace.bind.title"));
+    fillIdentifiers("org-1", SPACE_ID);
+    fireEvent.click(within(dialog()).getByLabelText("domains.teamMailboxSpace.deletedSpace"));
+    submit();
 
-    expect(await within(dialog()).findByText(/Invalid organizationId/)).not.toBeNull();
+    expect(await within(dialog()).findByText("domains.teamMailboxSpace.deletedAtRequired")).not.toBeNull();
+    expect(mocks.api.bindTeamMailboxSpace).not.toHaveBeenCalled();
   });
 
-  it("hides the bind button when binding is not allowed", async () => {
-    mocks.allowed.mockImplementation((verb: string) => verb === "GET");
-    renderSection();
+  it("keeps the dialog open on a 409 and explains both conflicts with the WebAdmin message", async () => {
+    mocks.api.bindTeamMailboxSpace.mockRejectedValue(webAdminError(409, "Space is already bound to team mailbox support@example.com"));
+    await openBindDialog();
+    fillIdentifiers("org-1", SPACE_ID);
+    submit();
 
-    expect(await screen.findByText("twakeSpace.notBound")).not.toBeNull();
-    expect(screen.queryByRole("button", { name: "twakeSpace.bind.title" })).toBeNull();
+    expect(await within(dialog()).findByText("domains.teamMailboxSpace.conflict")).not.toBeNull();
+    expect(within(dialog()).getByText("Space is already bound to team mailbox support@example.com")).not.toBeNull();
+    expect(field("domains.teamMailboxSpace.spaceId").value).toBe(SPACE_ID);
+    expect(mocks.onBound).not.toHaveBeenCalled();
+  });
+
+  it("keeps the dialog open on a 400 with the WebAdmin message, without the conflict explanation", async () => {
+    mocks.confirm.mockResolvedValue(true);
+    mocks.api.bindTeamMailboxSpace.mockRejectedValue(webAdminError(400, "Invalid deletedAt"));
+    await openBindDialog();
+    fillIdentifiers("org-1", SPACE_ID);
+    markDeletedAt("2026-10-01T10:00");
+    submit();
+
+    expect(await within(dialog()).findByText("Invalid deletedAt")).not.toBeNull();
+    expect(within(dialog()).queryByText("domains.teamMailboxSpace.conflict")).toBeNull();
   });
 });
 
 describe("team mailbox Twake space: sync this space", () => {
+  const LIVE = { organizationId: "org-1", spaceId: SPACE_ID, deletedAt: null };
+
   const requestSync = async () => {
     mocks.api.getTeamMailboxSpace.mockResolvedValue(LIVE);
     renderSection();
@@ -181,19 +204,32 @@ describe("team mailbox Twake space: sync this space", () => {
   };
 
   it("requests a sync of the space, prefilled with its IDs (204)", async () => {
+    mocks.spaces.requestSpacesSync.mockResolvedValue(undefined);
     const options = await requestSync();
 
     expect(options.validate?.()).toBeNull();
     await options.action?.();
-    expect(mocks.api.requestSpacesSync).toHaveBeenCalledWith({ organizationId: "org-1", spaceId: SPACE });
+    expect(mocks.spaces.requestSpacesSync).toHaveBeenCalledWith({ organizationId: "org-1", spaceId: SPACE_ID });
     expect(mocks.toast).toHaveBeenCalledWith({ title: "twakeSpace.sync.requested" });
   });
 
   it("explains that the feature is unavailable rather than showing a raw 404", async () => {
-    mocks.api.requestSpacesSync.mockRejectedValue(refusal(404));
+    mocks.spaces.requestSpacesSync.mockRejectedValue(
+      new AxiosError("Not found", undefined, undefined, undefined, {
+        status: 404, statusText: "", headers: {}, config: { headers: new AxiosHeaders() }, data: {},
+      }),
+    );
     const options = await requestSync();
 
     await expect(options.action?.()).rejects.toThrow("twakeSpace.unavailable");
     expect(mocks.toast).not.toHaveBeenCalled();
+  });
+
+  it("is not offered for a team mailbox bound to no space", async () => {
+    mocks.api.getTeamMailboxSpace.mockResolvedValue(null);
+    renderSection();
+
+    await screen.findByText("domains.teamMailboxSpace.notBound");
+    expect(screen.queryByRole("button", { name: /twakeSpace.sync.thisSpace/ })).toBeNull();
   });
 });

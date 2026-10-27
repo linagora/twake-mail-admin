@@ -239,6 +239,31 @@
       "role": "Role",
       "detailKind": "Team mailbox"
     },
+    "teamMailboxSpace": {
+      "title": "Twake Space",
+      "notBound": "Not bound to any Twake space.",
+      "organizationId": "Organization ID",
+      "spaceId": "Space ID",
+      "copy": "Copy {{item}}",
+      "deletedOn": "Space deleted on {{date}}",
+      "bind": "Bind to a space",
+      "reopen": "Reopen space",
+      "bound": "Team mailbox bound to the space",
+      "bindHelp": "Binding writes the organization and space annotations of the team mailbox, clears its deletion date and requests a sync of that space, which sets its members.",
+      "organizationIdRequired": "Enter the organization ID.",
+      "invalidSpaceId": "The space ID must be a UUID, e.g. 11111111-1111-1111-1111-111111111111.",
+      "deletedSpace": "The space was deleted (migration)",
+      "deletedSpaceHelp": "Use for spaces the Twake Mail side service deleted but did not purge yet. The members are removed, no sync is requested, and the team mailbox is purged once the retention has passed since this date.",
+      "deletedAt": "Deleted at (your local time)",
+      "deletedAtHint": "Converted from your local time and sent in UTC.",
+      "deletedAtUtc": "Sent in UTC as {{instant}}.",
+      "deletedAtRequired": "Enter the date and time the space was deleted.",
+      "deletedSpaceWarning": "Every member of {{mailbox}} is removed.",
+      "bindDeletedTitle": "Bind to a deleted space",
+      "bindDeletedConfirmLabel": "Bind and remove the members",
+      "bindDeletedConfirm": "Bind {{mailbox}} to a space deleted on {{date}}? All its members are removed, and the team mailbox is purged once the retention has passed since that date.",
+      "conflict": "Either this team mailbox already belongs to another space, or the space is already bound to another team mailbox."
+    },
     "teamMailboxQuota": {
       "title": "Quota",
       "teamMailbox": "Team Mailbox",
@@ -2290,24 +2315,10 @@
     "twakeSpaceReindex": "Twake Space reindex"
   },
   "twakeSpace": {
-    "title": "Twake Space",
-    "organizationId": "Organization ID",
-    "spaceId": "Space ID",
     "organizationIdOptional": "Organization ID (optional)",
     "spaceIdOptional": "Space ID (optional)",
-    "notBound": "Not bound to any Twake space.",
-    "deletedOn": "Space deleted on {{date}}",
     "invalidSpaceId": "The space ID must be a UUID, e.g. 11111111-1111-1111-1111-111111111111",
-    "organizationRequired": "The organization ID is required",
-    "spaceRequired": "The space ID is required",
     "unavailable": "Twake Space is not available on this server (the Twake Space extension is not enabled).",
-    "bind": {
-      "title": "Bind to a space",
-      "reopen": "Reopen space",
-      "help": "Binding writes the organization and space annotations of the team mailbox, clears its deletion date, and requests a sync of that space, which sets its members.",
-      "conflict": "This team mailbox already belongs to another space.",
-      "success": "Team mailbox bound to the space"
-    },
     "sync": {
       "title": "Request a sync of the Twake spaces",
       "confirmLabel": "Request sync",

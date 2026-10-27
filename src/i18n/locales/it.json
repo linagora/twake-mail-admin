@@ -239,6 +239,31 @@
       "role": "Ruolo",
       "detailKind": "Casella di team"
     },
+    "teamMailboxSpace": {
+      "title": "Spazio Twake",
+      "notBound": "Non collegata ad alcuno spazio Twake.",
+      "organizationId": "ID dell'organizzazione",
+      "spaceId": "ID dello spazio",
+      "copy": "Copia {{item}}",
+      "deletedOn": "Spazio eliminato il {{date}}",
+      "bind": "Collega a uno spazio",
+      "reopen": "Riapri lo spazio",
+      "bound": "Casella condivisa collegata allo spazio",
+      "bindHelp": "Il collegamento scrive le annotazioni di organizzazione e di spazio della casella condivisa, cancella la sua data di eliminazione e richiede una sincronizzazione di quello spazio, che ne imposta i membri.",
+      "organizationIdRequired": "Inserisci l'ID dell'organizzazione.",
+      "invalidSpaceId": "L'ID dello spazio deve essere un UUID, ad es. 11111111-1111-1111-1111-111111111111.",
+      "deletedSpace": "Lo spazio è stato eliminato (migrazione)",
+      "deletedSpaceHelp": "Da usare per gli spazi che il servizio ausiliario di Twake Mail ha eliminato ma non ancora eliminato definitivamente. I membri vengono rimossi, non viene richiesta alcuna sincronizzazione e la casella condivisa viene eliminata definitivamente una volta trascorsa la conservazione da questa data.",
+      "deletedAt": "Eliminato il (ora locale)",
+      "deletedAtHint": "Convertito dalla tua ora locale e inviato in UTC.",
+      "deletedAtUtc": "Inviato in UTC come {{instant}}.",
+      "deletedAtRequired": "Inserisci la data e l'ora di eliminazione dello spazio.",
+      "deletedSpaceWarning": "Tutti i membri di {{mailbox}} vengono rimossi.",
+      "bindDeletedTitle": "Collega a uno spazio eliminato",
+      "bindDeletedConfirmLabel": "Collega e rimuovi i membri",
+      "bindDeletedConfirm": "Collegare {{mailbox}} a uno spazio eliminato il {{date}}? Tutti i suoi membri vengono rimossi e la casella condivisa viene eliminata definitivamente una volta trascorsa la conservazione da quella data.",
+      "conflict": "Questa casella condivisa appartiene già a un altro spazio, oppure lo spazio è già collegato a un'altra casella condivisa."
+    },
     "teamMailboxQuota": {
       "title": "Quota",
       "teamMailbox": "Casella condivisa",
@@ -2290,24 +2315,10 @@
     "twakeSpaceReindex": "Reindicizzazione Twake Space"
   },
   "twakeSpace": {
-    "title": "Spazio Twake",
-    "organizationId": "ID organizzazione",
-    "spaceId": "ID spazio",
     "organizationIdOptional": "ID organizzazione (facoltativo)",
     "spaceIdOptional": "ID spazio (facoltativo)",
-    "notBound": "Non associata ad alcuno spazio Twake.",
-    "deletedOn": "Spazio eliminato il {{date}}",
     "invalidSpaceId": "L'ID spazio deve essere un UUID, ad es. 11111111-1111-1111-1111-111111111111",
-    "organizationRequired": "L'ID organizzazione è obbligatorio",
-    "spaceRequired": "L'ID spazio è obbligatorio",
     "unavailable": "Gli spazi Twake non sono disponibili su questo server (l'estensione Twake Space non è attiva).",
-    "bind": {
-      "title": "Associa a uno spazio",
-      "reopen": "Riapri lo spazio",
-      "help": "L'associazione scrive le annotazioni di organizzazione e spazio della casella condivisa, cancella la sua data di eliminazione e richiede una sincronizzazione di quello spazio, che ne imposta i membri.",
-      "conflict": "Questa casella condivisa appartiene già a un altro spazio.",
-      "success": "Casella condivisa associata allo spazio"
-    },
     "sync": {
       "title": "Richiedi una sincronizzazione degli spazi Twake",
       "confirmLabel": "Richiedi sincronizzazione",

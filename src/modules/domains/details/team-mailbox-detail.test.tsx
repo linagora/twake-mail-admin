@@ -36,6 +36,7 @@ vi.mock("../api-client", () => mocks.api);
 vi.mock("./team-mailbox-folders", () => ({ default: () => null }));
 vi.mock("./team-mailbox-quota", () => ({ default: () => null }));
 vi.mock("./team-mailbox-extra-senders", () => ({ default: () => null }));
+vi.mock("./team-mailbox-space", () => ({ default: () => null }));
 vi.mock("@/modules/users/details/user-deleted-message-vault", () => ({ default: () => null }));
 
 import TeamMailboxDetail from "./team-mailbox-detail";

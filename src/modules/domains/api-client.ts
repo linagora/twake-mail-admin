@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/apiClient";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
-import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues, TeamCalendar, TeamCalendarMember, TeamCalendarShareUpdate } from "./types";
+import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, TeamMailboxSpace, TeamMailboxSpaceBinding, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues, TeamCalendar, TeamCalendarMember, TeamCalendarShareUpdate } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits";
 import { CollectionCount } from "@/components/custom/dav-collection-actions";
 import { DeletedMessage, RestoreDeletedMessagesRequest } from "@/modules/users/types";
@@ -144,6 +144,24 @@ export const addTeamMailboxExtraSender = async (domain: string, mailbox: string,
 
 export const removeTeamMailboxExtraSender = async (domain: string, mailbox: string, username: string): Promise<void> => {
   await apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/extraSenders/${encodeURIComponent(username)}`);
+};
+
+// A team mailbox bound to no space, or a server without the Twake Space extension, answers 404
+export const getTeamMailboxSpace = async (domain: string, mailbox: string): Promise<TeamMailboxSpace | null> => {
+  try {
+    return await apiClient.get(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/space`);
+  } catch (err: any) {
+    if (err?.response?.status === 404) return null;
+    throw err;
+  }
+};
+
+export const bindTeamMailboxSpace = async (domain: string, mailbox: string, binding: TeamMailboxSpaceBinding): Promise<void> => {
+  await apiClient.put(
+    `/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/space`,
+    binding,
+    { headers: { "Content-Type": "application/json" } }
+  );
 };
 
 export const getTeamMailboxQuota = async (domain: string, mailbox: string): Promise<TeamMailboxQuota> => {

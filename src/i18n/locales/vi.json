@@ -236,6 +236,31 @@
       "role": "Vai trò",
       "detailKind": "Hộp thư nhóm"
     },
+    "teamMailboxSpace": {
+      "title": "Không gian Twake",
+      "notBound": "Chưa liên kết với không gian Twake nào.",
+      "organizationId": "ID tổ chức",
+      "spaceId": "ID không gian",
+      "copy": "Sao chép {{item}}",
+      "deletedOn": "Không gian đã bị xóa vào {{date}}",
+      "bind": "Liên kết với một không gian",
+      "reopen": "Mở lại không gian",
+      "bound": "Hộp thư nhóm đã được liên kết với không gian",
+      "bindHelp": "Việc liên kết ghi các chú thích tổ chức và không gian của hộp thư nhóm, xóa ngày xóa của nó và yêu cầu đồng bộ không gian đó, việc này sẽ đặt các thành viên.",
+      "organizationIdRequired": "Nhập ID tổ chức.",
+      "invalidSpaceId": "ID không gian phải là UUID, ví dụ 11111111-1111-1111-1111-111111111111.",
+      "deletedSpace": "Không gian đã bị xóa (di chuyển)",
+      "deletedSpaceHelp": "Dùng cho các không gian mà dịch vụ phụ của Twake Mail đã xóa nhưng chưa dọn sạch. Các thành viên bị gỡ bỏ, không yêu cầu đồng bộ, và hộp thư nhóm sẽ bị dọn sạch khi thời gian lưu giữ kể từ ngày này đã qua.",
+      "deletedAt": "Xóa lúc (giờ địa phương của bạn)",
+      "deletedAtHint": "Được chuyển đổi từ giờ địa phương của bạn và gửi theo UTC.",
+      "deletedAtUtc": "Gửi theo UTC là {{instant}}.",
+      "deletedAtRequired": "Nhập ngày và giờ không gian bị xóa.",
+      "deletedSpaceWarning": "Mọi thành viên của {{mailbox}} đều bị gỡ bỏ.",
+      "bindDeletedTitle": "Liên kết với một không gian đã xóa",
+      "bindDeletedConfirmLabel": "Liên kết và gỡ bỏ thành viên",
+      "bindDeletedConfirm": "Liên kết {{mailbox}} với một không gian đã bị xóa vào {{date}}? Mọi thành viên đều bị gỡ bỏ, và hộp thư nhóm sẽ bị dọn sạch khi thời gian lưu giữ kể từ ngày đó đã qua.",
+      "conflict": "Hoặc hộp thư nhóm này đã thuộc về một không gian khác, hoặc không gian đã được liên kết với một hộp thư nhóm khác."
+    },
     "teamMailboxQuota": {
       "title": "Hạn ngạch",
       "teamMailbox": "Hộp thư nhóm",
@@ -2276,24 +2301,10 @@
     "twakeSpaceReindex": "Lập chỉ mục lại Twake Space"
   },
   "twakeSpace": {
-    "title": "Không gian Twake",
-    "organizationId": "ID tổ chức",
-    "spaceId": "ID không gian",
     "organizationIdOptional": "ID tổ chức (tùy chọn)",
     "spaceIdOptional": "ID không gian (tùy chọn)",
-    "notBound": "Chưa gắn với không gian Twake nào.",
-    "deletedOn": "Không gian đã bị xóa lúc {{date}}",
     "invalidSpaceId": "ID không gian phải là UUID, ví dụ 11111111-1111-1111-1111-111111111111",
-    "organizationRequired": "Cần có ID tổ chức",
-    "spaceRequired": "Cần có ID không gian",
     "unavailable": "Không gian Twake không khả dụng trên máy chủ này (tiện ích Twake Space chưa được bật).",
-    "bind": {
-      "title": "Gắn với một không gian",
-      "reopen": "Mở lại không gian",
-      "help": "Việc gắn sẽ ghi chú thích tổ chức và không gian của hộp thư nhóm, xóa ngày xóa của nó và yêu cầu đồng bộ không gian đó, để thiết lập các thành viên.",
-      "conflict": "Hộp thư nhóm này đã thuộc về một không gian khác.",
-      "success": "Đã gắn hộp thư nhóm với không gian"
-    },
     "sync": {
       "title": "Yêu cầu đồng bộ các không gian Twake",
       "confirmLabel": "Yêu cầu đồng bộ",

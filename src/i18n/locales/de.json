@@ -239,6 +239,31 @@
       "role": "Rolle",
       "detailKind": "Team-Postfach"
     },
+    "teamMailboxSpace": {
+      "title": "Twake Space",
+      "notBound": "Mit keinem Twake Space verknüpft.",
+      "organizationId": "Organisations-ID",
+      "spaceId": "Space-ID",
+      "copy": "{{item}} kopieren",
+      "deletedOn": "Space gelöscht am {{date}}",
+      "bind": "Mit einem Space verknüpfen",
+      "reopen": "Space wieder öffnen",
+      "bound": "Team-Postfach mit dem Space verknüpft",
+      "bindHelp": "Die Verknüpfung schreibt die Organisations- und Space-Annotationen des Team-Postfachs, entfernt sein Löschdatum und fordert eine Synchronisierung dieses Space an, die seine Mitglieder festlegt.",
+      "organizationIdRequired": "Geben Sie die Organisations-ID ein.",
+      "invalidSpaceId": "Die Space-ID muss eine UUID sein, z. B. 11111111-1111-1111-1111-111111111111.",
+      "deletedSpace": "Der Space wurde gelöscht (Migration)",
+      "deletedSpaceHelp": "Für Spaces, die der Twake-Mail-Nebendienst gelöscht, aber noch nicht bereinigt hat. Die Mitglieder werden entfernt, es wird keine Synchronisierung angefordert, und das Team-Postfach wird bereinigt, sobald die Aufbewahrungsfrist seit diesem Datum abgelaufen ist.",
+      "deletedAt": "Gelöscht am (Ihre Ortszeit)",
+      "deletedAtHint": "Aus Ihrer Ortszeit umgerechnet und in UTC gesendet.",
+      "deletedAtUtc": "In UTC gesendet als {{instant}}.",
+      "deletedAtRequired": "Geben Sie Datum und Uhrzeit der Löschung des Space ein.",
+      "deletedSpaceWarning": "Alle Mitglieder von {{mailbox}} werden entfernt.",
+      "bindDeletedTitle": "Mit einem gelöschten Space verknüpfen",
+      "bindDeletedConfirmLabel": "Verknüpfen und Mitglieder entfernen",
+      "bindDeletedConfirm": "{{mailbox}} mit einem am {{date}} gelöschten Space verknüpfen? Alle Mitglieder werden entfernt, und das Team-Postfach wird bereinigt, sobald die Aufbewahrungsfrist seit diesem Datum abgelaufen ist.",
+      "conflict": "Entweder gehört dieses Team-Postfach bereits zu einem anderen Space, oder der Space ist bereits mit einem anderen Team-Postfach verknüpft."
+    },
     "teamMailboxQuota": {
       "title": "Kontingent",
       "teamMailbox": "Team-Postfach",
@@ -2290,24 +2315,10 @@
     "twakeSpaceReindex": "Twake-Space-Neuindizierung"
   },
   "twakeSpace": {
-    "title": "Twake-Bereich",
-    "organizationId": "Organisations-ID",
-    "spaceId": "Bereichs-ID",
     "organizationIdOptional": "Organisations-ID (optional)",
     "spaceIdOptional": "Bereichs-ID (optional)",
-    "notBound": "An keinen Twake-Bereich gebunden.",
-    "deletedOn": "Bereich gelöscht am {{date}}",
     "invalidSpaceId": "Die Bereichs-ID muss eine UUID sein, z. B. 11111111-1111-1111-1111-111111111111",
-    "organizationRequired": "Die Organisations-ID ist erforderlich",
-    "spaceRequired": "Die Bereichs-ID ist erforderlich",
     "unavailable": "Twake-Bereiche sind auf diesem Server nicht verfügbar (die Twake-Space-Erweiterung ist nicht aktiviert).",
-    "bind": {
-      "title": "An einen Bereich binden",
-      "reopen": "Bereich wieder öffnen",
-      "help": "Das Binden schreibt die Organisations- und Bereichsannotationen des Team-Postfachs, entfernt sein Löschdatum und fordert eine Synchronisierung dieses Bereichs an, die seine Mitglieder festlegt.",
-      "conflict": "Dieses Team-Postfach gehört bereits zu einem anderen Bereich.",
-      "success": "Team-Postfach an den Bereich gebunden"
-    },
     "sync": {
       "title": "Synchronisierung der Twake-Bereiche anfordern",
       "confirmLabel": "Synchronisierung anfordern",

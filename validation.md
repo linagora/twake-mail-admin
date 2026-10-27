@@ -197,6 +197,14 @@ The usage figures come from the same call as the tab load; there is no second en
 | "Create team mailbox" button | PUT | `/domains/{domain}/team-mailboxes/{name}` | MAY (do not show the button if missing) |
 | "Delete team mailbox" button | DELETE | `/domains/{domain}/team-mailboxes/{name}` | MAY (do not show the button if missing) |
 
+#### Team mailbox detail — Twake Space sub-tab
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Sub-tab load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MUST (a 404, no space or no Twake Space extension, reads "Not bound to any Twake space") |
+| "Bind to a space" / "Reopen space" dialog, optionally to a deleted space | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MAY (do not show the button if missing) |
+| "Sync this space" button | POST | `/spaces?action=sync` | MAY (do not show the button if missing) |
+
 #### Team mailbox detail — Members sub-tab
 
 | Trigger | Verb | Pattern | MUST/MAY |
@@ -212,16 +220,6 @@ The usage figures come from the same call as the tab load; there is no second en
 | Sub-tab load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/extraSenders` | MUST |
 | "Add sender" button | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/extraSenders/{username}` | MAY (do not show the button if missing) |
 | "Remove sender" button | DELETE | `/domains/{domain}/team-mailboxes/{mailbox}/extraSenders/{username}` | MAY (do not show the button if missing) |
-
-#### Team mailbox detail — Twake Space section
-
-Only on backends with the Twake Space extension: elsewhere the routes answer 404, shown as "Not bound to any Twake space".
-
-| Trigger | Verb | Pattern | MUST/MAY |
-|---------|------|---------|----------|
-| Section load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MUST (do not show the section if forbidden) |
-| "Bind to a space" / "Reopen space" button | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MAY (do not show the button if missing) |
-| "Sync this space" button | POST | `/spaces?action=sync` | MAY (do not show the button if missing) |
 
 #### Team mailbox detail — Quota sub-tab
 

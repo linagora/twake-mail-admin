@@ -239,6 +239,31 @@
       "role": "Rôle",
       "detailKind": "Boîte partagée"
     },
+    "teamMailboxSpace": {
+      "title": "Espace Twake",
+      "notBound": "Rattachée à aucun espace Twake.",
+      "organizationId": "ID de l'organisation",
+      "spaceId": "ID de l'espace",
+      "copy": "Copier {{item}}",
+      "deletedOn": "Espace supprimé le {{date}}",
+      "bind": "Rattacher à un espace",
+      "reopen": "Rouvrir l'espace",
+      "bound": "Boîte partagée rattachée à l'espace",
+      "bindHelp": "Le rattachement écrit les annotations d'organisation et d'espace de la boîte partagée, efface sa date de suppression et demande une synchronisation de cet espace, qui en définit les membres.",
+      "organizationIdRequired": "Saisissez l'ID de l'organisation.",
+      "invalidSpaceId": "L'ID de l'espace doit être un UUID, par exemple 11111111-1111-1111-1111-111111111111.",
+      "deletedSpace": "L'espace a été supprimé (migration)",
+      "deletedSpaceHelp": "À utiliser pour les espaces que le service annexe de Twake Mail a supprimés sans les avoir encore purgés. Les membres sont retirés, aucune synchronisation n'est demandée et la boîte partagée est purgée une fois la rétention écoulée depuis cette date.",
+      "deletedAt": "Supprimé le (votre heure locale)",
+      "deletedAtHint": "Converti depuis votre heure locale et envoyé en UTC.",
+      "deletedAtUtc": "Envoyé en UTC : {{instant}}.",
+      "deletedAtRequired": "Saisissez la date et l'heure de suppression de l'espace.",
+      "deletedSpaceWarning": "Tous les membres de {{mailbox}} sont retirés.",
+      "bindDeletedTitle": "Rattacher à un espace supprimé",
+      "bindDeletedConfirmLabel": "Rattacher et retirer les membres",
+      "bindDeletedConfirm": "Rattacher {{mailbox}} à un espace supprimé le {{date}} ? Tous ses membres sont retirés et la boîte partagée est purgée une fois la rétention écoulée depuis cette date.",
+      "conflict": "Soit cette boîte partagée appartient déjà à un autre espace, soit l'espace est déjà rattaché à une autre boîte partagée."
+    },
     "teamMailboxQuota": {
       "title": "Quota",
       "teamMailbox": "Boîte partagée",
@@ -2290,24 +2315,10 @@
     "twakeSpaceReindex": "Réindexation Twake Space"
   },
   "twakeSpace": {
-    "title": "Espace Twake",
-    "organizationId": "ID d'organisation",
-    "spaceId": "ID d'espace",
     "organizationIdOptional": "ID d'organisation (facultatif)",
     "spaceIdOptional": "ID d'espace (facultatif)",
-    "notBound": "Rattachée à aucun espace Twake.",
-    "deletedOn": "Espace supprimé le {{date}}",
     "invalidSpaceId": "L'ID d'espace doit être un UUID, par ex. 11111111-1111-1111-1111-111111111111",
-    "organizationRequired": "L'ID d'organisation est requis",
-    "spaceRequired": "L'ID d'espace est requis",
     "unavailable": "Les espaces Twake ne sont pas disponibles sur ce serveur (l'extension Twake Space n'est pas activée).",
-    "bind": {
-      "title": "Rattacher à un espace",
-      "reopen": "Rouvrir l'espace",
-      "help": "Le rattachement écrit les annotations d'organisation et d'espace de la boîte partagée, efface sa date de suppression et demande une synchronisation de cet espace, qui en définit les membres.",
-      "conflict": "Cette boîte partagée appartient déjà à un autre espace.",
-      "success": "Boîte partagée rattachée à l'espace"
-    },
     "sync": {
       "title": "Demander une synchronisation des espaces Twake",
       "confirmLabel": "Demander la synchronisation",

@@ -120,6 +120,7 @@ function TeamMailboxDetailContent() {
     <>
     <Header headerTitle={`${mailbox}@${domain}`} headerSubTitle={t("domains.teamMailbox.detailKind")} breadcrumb={breadcrumbs.teamMailboxes(domain!)} actions={<ExpandCollapseAll />} />
     <div className="mt-4 p-4 bg-white rounded-2">
+      <TeamMailboxSpace domain={domain!} mailbox={mailbox!} onBound={refresh} />
 
       <div className="mt-6">
         <div className="flex items-center gap-2">
@@ -229,7 +230,6 @@ function TeamMailboxDetailContent() {
           </div>
         </FormDialog>
       </div>
-      <TeamMailboxSpace domain={domain!} mailbox={mailbox!} onBound={refresh} />
       <TeamMailboxFolders domain={domain!} mailbox={mailbox!} />
       <TeamMailboxQuota domain={domain!} mailbox={mailbox!} />
       <TeamMailboxExtraSenders domain={domain!} mailbox={mailbox!} />

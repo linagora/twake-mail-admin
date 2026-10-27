@@ -50,6 +50,21 @@ export interface TeamMailboxQuota {
   occupation: TeamMailboxQuotaOccupation;
 }
 
+// The Twake space a team mailbox belongs to, read from the annotations of its root mailbox
+export interface TeamMailboxSpace {
+  organizationId: string;
+  spaceId: string;
+  // ISO 8601 instant, null unless the space was deleted
+  deletedAt: string | null;
+}
+
+// Without deletedAt the team mailbox is bound to an active space; with it, to a deleted one
+export interface TeamMailboxSpaceBinding {
+  organizationId: string;
+  spaceId: string;
+  deletedAt?: string;
+}
+
 export interface DomainContact {
   id: string;
   emailAddress: string;
