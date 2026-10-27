@@ -230,6 +230,20 @@ DOMAINS = page(
                     ],
                 ),
                 section(
+                    "twake-space",
+                    "Twake Space sub-tab",
+                    "Sous-onglet Espace Twake",
+                    endpoints=[must("GET", f"{_TM}/space")],
+                    children=[
+                        action(
+                            "bind",
+                            "Bind to a space, or reopen it",
+                            "Rattacher à un espace, ou le rouvrir",
+                            endpoints=[may("PUT", f"{_TM}/space")],
+                        ),
+                    ],
+                ),
+                section(
                     "members",
                     "Members sub-tab",
                     "Sous-onglet Membres",

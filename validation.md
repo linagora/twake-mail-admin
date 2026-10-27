@@ -197,6 +197,13 @@ The usage figures come from the same call as the tab load; there is no second en
 | "Create team mailbox" button | PUT | `/domains/{domain}/team-mailboxes/{name}` | MAY (do not show the button if missing) |
 | "Delete team mailbox" button | DELETE | `/domains/{domain}/team-mailboxes/{name}` | MAY (do not show the button if missing) |
 
+#### Team mailbox detail — Twake Space sub-tab
+
+| Trigger | Verb | Pattern | MUST/MAY |
+|---------|------|---------|----------|
+| Sub-tab load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MUST (a 404, no space or no Twake Space extension, reads "Not bound to any Twake space") |
+| "Bind to a space" / "Reopen space" dialog, optionally to a deleted space | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MAY (do not show the button if missing) |
+
 #### Team mailbox detail — Members sub-tab
 
 | Trigger | Verb | Pattern | MUST/MAY |

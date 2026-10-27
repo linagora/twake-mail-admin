@@ -15,6 +15,7 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 import TeamMailboxFolders from "./team-mailbox-folders";
 import TeamMailboxQuota from "./team-mailbox-quota";
 import TeamMailboxExtraSenders from "./team-mailbox-extra-senders";
+import TeamMailboxSpace from "./team-mailbox-space";
 import UserDeletedMessageVault from "@/modules/users/details/user-deleted-message-vault";
 import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
@@ -119,6 +120,7 @@ function TeamMailboxDetailContent() {
     <>
     <Header headerTitle={`${mailbox}@${domain}`} headerSubTitle={t("domains.teamMailbox.detailKind")} breadcrumb={breadcrumbs.teamMailboxes(domain!)} actions={<ExpandCollapseAll />} />
     <div className="mt-4 p-4 bg-white rounded-2">
+      <TeamMailboxSpace domain={domain!} mailbox={mailbox!} onBound={refresh} />
 
       <div className="mt-6">
         <div className="flex items-center gap-2">
