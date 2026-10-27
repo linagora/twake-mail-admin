@@ -131,107 +131,113 @@ export default function RestoreCriteriaBuilder({ onChange, flagIncomplete = fals
         const operators = getOperators(criterion.fieldName);
         const flagged = flagIncomplete && !isComplete(criterion);
 
+        // The value and its remove button wrap to their own line when the selects leave them too little room
         return (
-          <div key={index} className="flex items-center gap-2 min-w-0">
-            <Select
-              value={criterion.fieldName}
-              onValueChange={(v) => updateCriterion(index, "fieldName", v)}
-            >
-              <SelectTrigger
-                className="w-[160px] shrink-0 aria-invalid:border-red-500"
-                aria-invalid={flagged && !criterion.fieldName}
-                aria-label={t("users.deletedVault.criteria.fieldPlaceholder")}
+          <div key={index} className="flex flex-wrap items-center gap-2 min-w-0">
+            <div className="flex gap-2 min-w-0">
+              <Select
+                value={criterion.fieldName}
+                onValueChange={(v) => updateCriterion(index, "fieldName", v)}
               >
-                <SelectValue placeholder={t("users.deletedVault.criteria.fieldPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {FIELD_NAMES.map((name) => (
-                  <SelectItem key={name} value={name}>
-                    {t(`users.deletedVault.${name}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <SelectTrigger
+                  className="w-[160px] min-w-0 aria-invalid:border-red-500"
+                  aria-invalid={flagged && !criterion.fieldName}
+                  aria-label={t("users.deletedVault.criteria.fieldPlaceholder")}
+                >
+                  <SelectValue placeholder={t("users.deletedVault.criteria.fieldPlaceholder")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {FIELD_NAMES.map((name) => (
+                    <SelectItem key={name} value={name}>
+                      {t(`users.deletedVault.${name}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={criterion.operator}
-              onValueChange={(v) => updateCriterion(index, "operator", v)}
-              disabled={!criterion.fieldName}
-            >
-              <SelectTrigger
-                className="w-[180px] shrink-0 aria-invalid:border-red-500"
-                aria-invalid={flagged && !criterion.operator}
-                aria-label={t("users.deletedVault.criteria.operatorPlaceholder")}
+              <Select
+                value={criterion.operator}
+                onValueChange={(v) => updateCriterion(index, "operator", v)}
+                disabled={!criterion.fieldName}
               >
-                <SelectValue placeholder={t("users.deletedVault.criteria.operatorPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {operators.map((op) => (
-                  <SelectItem key={op} value={op}>
-                    {t(`users.deletedVault.operators.${op}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <SelectTrigger
+                  className="w-[180px] min-w-0 aria-invalid:border-red-500"
+                  aria-invalid={flagged && !criterion.operator}
+                  aria-label={t("users.deletedVault.criteria.operatorPlaceholder")}
+                >
+                  <SelectValue placeholder={t("users.deletedVault.criteria.operatorPlaceholder")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {operators.map((op) => (
+                    <SelectItem key={op} value={op}>
+                      {t(`users.deletedVault.operators.${op}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-            {inputType === "checkbox" ? (
-              <div className="flex items-center gap-2 min-w-[100px]">
-                <Checkbox
-                  checked={criterion.value === "true"}
-                  onCheckedChange={(checked) =>
+            <div className="flex flex-1 basis-48 items-center gap-2 min-w-0">
+              {inputType === "checkbox" ? (
+                <div className="flex flex-1 items-center gap-2">
+                  <Checkbox
+                    checked={criterion.value === "true"}
+                    onCheckedChange={(checked) =>
+                      updateCriterion(
+                        index,
+                        "value",
+                        checked ? "true" : "false"
+                      )
+                    }
+                    disabled={!criterion.operator}
+                    aria-invalid={flagged && !criterion.value}
+                    aria-label={t("users.deletedVault.criteria.valuePlaceholder")}
+                  />
+                  <span className="text-sm" aria-hidden="true">
+                    {criterion.value === "true" ? "true" : "false"}
+                  </span>
+                </div>
+              ) : inputType === "datetime-local" ? (
+                <Input
+                  type="datetime-local"
+                  className="flex-1 min-w-0 aria-invalid:border-red-500"
+                  aria-label={t("users.deletedVault.criteria.valuePlaceholder")}
+                  aria-invalid={flagged && !criterion.value}
+                  disabled={!criterion.operator}
+                  value={isoToDatetimeLocal(criterion.value)}
+                  onChange={(e) =>
                     updateCriterion(
                       index,
                       "value",
-                      checked ? "true" : "false"
+                      datetimeLocalToIso(e.target.value)
                     )
                   }
-                  disabled={!criterion.operator}
-                  aria-invalid={flagged && !criterion.value}
-                  aria-label={t("users.deletedVault.criteria.valuePlaceholder")}
                 />
-                <span className="text-sm" aria-hidden="true">
-                  {criterion.value === "true" ? "true" : "false"}
-                </span>
-              </div>
-            ) : inputType === "datetime-local" ? (
-              <Input
-                type="datetime-local"
-                className="flex-1 min-w-0 aria-invalid:border-red-500"
-                aria-label={t("users.deletedVault.criteria.valuePlaceholder")}
-                aria-invalid={flagged && !criterion.value}
-                disabled={!criterion.operator}
-                value={isoToDatetimeLocal(criterion.value)}
-                onChange={(e) =>
-                  updateCriterion(
-                    index,
-                    "value",
-                    datetimeLocalToIso(e.target.value)
-                  )
-                }
-              />
-            ) : (
-              <Input
-                type="text"
-                className="flex-1 aria-invalid:border-red-500"
-                placeholder={t("users.deletedVault.criteria.valuePlaceholder")}
-                aria-invalid={flagged && !criterion.value}
-                disabled={!criterion.operator}
-                value={criterion.value}
-                onChange={(e) =>
-                  updateCriterion(index, "value", e.target.value)
-                }
-              />
-            )}
+              ) : (
+                <Input
+                  type="text"
+                  className="flex-1 min-w-0 aria-invalid:border-red-500"
+                  placeholder={t("users.deletedVault.criteria.valuePlaceholder")}
+                  aria-invalid={flagged && !criterion.value}
+                  disabled={!criterion.operator}
+                  value={criterion.value}
+                  onChange={(e) =>
+                    updateCriterion(index, "value", e.target.value)
+                  }
+                />
+              )}
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => removeCriterion(index)}
-              aria-label={t("users.deletedVault.criteria.removeCriterion")}
-              title={t("users.deletedVault.criteria.removeCriterion")}
-            >
-              <Trash2 className="w-4 h-4 text-red-500" />
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="shrink-0"
+                onClick={() => removeCriterion(index)}
+                aria-label={t("users.deletedVault.criteria.removeCriterion")}
+                title={t("users.deletedVault.criteria.removeCriterion")}
+              >
+                <Trash2 className="w-4 h-4 text-red-500" />
+              </Button>
+            </div>
           </div>
         );
       })}
