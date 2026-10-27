@@ -91,7 +91,7 @@
     "addOrClearPending": "Add or clear the address above before saving.",
     "pendingChanges_other": "{{count}} pending changes: click Apply to save.",
     "discardTitle": "Discard changes?",
-    "discardMessage": "{{count}} change(s) will not be saved.",
+    "discardMessage_other": "{{count}} changes will not be saved.",
     "discard": "Discard",
     "keepEditing": "Keep editing",
     "totalOnly": "Total: {{count}}",
@@ -102,7 +102,8 @@
     "sourceIsAccount": "{{source}} is an existing account: an alias would divert its mail to {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} is an existing account: an alias would divert its mail.",
     "taskCreatedNamed": "{{name}} — Task {{taskId}}",
-    "pendingChanges_one": "{{count}} pending change: click Apply to save."
+    "pendingChanges_one": "{{count}} pending change: click Apply to save.",
+    "discardMessage_one": "{{count}} change will not be saved."
   },
   "sidebar": {
     "healthCheck": "Health Check",

@@ -91,7 +91,7 @@
     "addOrClearPending": "Aggiungi o cancella l'indirizzo qui sopra prima di salvare.",
     "pendingChanges_other": "{{count}} modifiche in sospeso: fai clic su Applica per salvare.",
     "discardTitle": "Scartare le modifiche?",
-    "discardMessage": "{{count}} modifica/e non verranno salvate.",
+    "discardMessage_other": "{{count}} modifiche non verranno salvate.",
     "discard": "Scarta",
     "keepEditing": "Continua a modificare",
     "totalOnly": "Totale: {{count}}",
@@ -102,7 +102,8 @@
     "sourceIsAccount": "{{source}} è un account esistente: un alias devierebbe la sua posta verso {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} è un account esistente: un alias devierebbe la sua posta.",
     "taskCreatedNamed": "{{name}} — Attività {{taskId}}",
-    "pendingChanges_one": "{{count}} modifica in sospeso: fai clic su Applica per salvare."
+    "pendingChanges_one": "{{count}} modifica in sospeso: fai clic su Applica per salvare.",
+    "discardMessage_one": "{{count}} modifica non verrà salvata."
   },
   "sidebar": {
     "healthCheck": "Stato del sistema",

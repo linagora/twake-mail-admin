@@ -91,7 +91,7 @@
     "addOrClearPending": "Fügen Sie die Adresse oben hinzu oder löschen Sie sie vor dem Speichern.",
     "pendingChanges_other": "{{count}} ausstehende Änderungen: Klicken Sie auf Übernehmen, um zu speichern.",
     "discardTitle": "Änderungen verwerfen?",
-    "discardMessage": "{{count}} Änderung(en) werden nicht gespeichert.",
+    "discardMessage_other": "{{count}} Änderungen werden nicht gespeichert.",
     "discard": "Verwerfen",
     "keepEditing": "Weiter bearbeiten",
     "totalOnly": "Gesamt: {{count}}",
@@ -102,7 +102,8 @@
     "sourceIsAccount": "{{source}} ist ein bestehendes Konto: Ein Alias würde seine E-Mails an {{destination}} umleiten.",
     "sourceIsAccountNoDestination": "{{source}} ist ein bestehendes Konto: Ein Alias würde seine E-Mails umleiten.",
     "taskCreatedNamed": "{{name}} — Aufgabe {{taskId}}",
-    "pendingChanges_one": "{{count}} ausstehende Änderung: Klicken Sie auf Übernehmen, um zu speichern."
+    "pendingChanges_one": "{{count}} ausstehende Änderung: Klicken Sie auf Übernehmen, um zu speichern.",
+    "discardMessage_one": "{{count}} Änderung wird nicht gespeichert."
   },
   "sidebar": {
     "healthCheck": "Systemzustand",

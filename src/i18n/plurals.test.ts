@@ -30,4 +30,16 @@ describe("plural forms", () => {
     expect(i18n.t("common.pendingChanges", { count: 2 })).toBe("2 изменения ожидают сохранения: нажмите «Применить».");
     expect(i18n.t("common.pendingChanges", { count: 5 })).toBe("5 изменений ожидают сохранения: нажмите «Применить».");
   });
+
+  it("counts the changes a discarded staged dialog drops", async () => {
+    await i18n.changeLanguage("en");
+    expect(i18n.t("common.discardMessage", { count: 1 })).toBe("1 change will not be saved.");
+    expect(i18n.t("common.discardMessage", { count: 2 })).toBe("2 changes will not be saved.");
+    await i18n.changeLanguage("fr");
+    expect(i18n.t("common.discardMessage", { count: 1 })).toBe("1 modification ne sera pas enregistrée.");
+    expect(i18n.t("common.discardMessage", { count: 2 })).toBe("2 modifications ne seront pas enregistrées.");
+    await i18n.changeLanguage("ru");
+    expect(i18n.t("common.discardMessage", { count: 1 })).toBe("1 изменение не будет сохранено.");
+    expect(i18n.t("common.discardMessage", { count: 5 })).toBe("5 изменений не будут сохранены.");
+  });
 });

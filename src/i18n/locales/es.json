@@ -91,7 +91,7 @@
     "addOrClearPending": "Añada o borre la dirección de arriba antes de guardar.",
     "pendingChanges_other": "{{count}} cambios pendientes: haga clic en Aplicar para guardar.",
     "discardTitle": "¿Descartar los cambios?",
-    "discardMessage": "{{count}} cambio(s) no se guardarán.",
+    "discardMessage_other": "{{count}} cambios no se guardarán.",
     "discard": "Descartar",
     "keepEditing": "Seguir editando",
     "totalOnly": "Total: {{count}}",
@@ -102,7 +102,8 @@
     "sourceIsAccount": "{{source}} es una cuenta existente: un alias desviaría su correo a {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} es una cuenta existente: un alias desviaría su correo.",
     "taskCreatedNamed": "{{name}} — Tarea {{taskId}}",
-    "pendingChanges_one": "{{count}} cambio pendiente: haga clic en Aplicar para guardar."
+    "pendingChanges_one": "{{count}} cambio pendiente: haga clic en Aplicar para guardar.",
+    "discardMessage_one": "{{count}} cambio no se guardará."
   },
   "sidebar": {
     "healthCheck": "Estado del sistema",

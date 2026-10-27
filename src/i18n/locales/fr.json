@@ -91,7 +91,7 @@
     "addOrClearPending": "Ajoutez ou effacez l'adresse ci-dessus avant d'enregistrer.",
     "pendingChanges_other": "{{count}} modifications en attente : cliquez sur Appliquer pour enregistrer.",
     "discardTitle": "Abandonner les modifications ?",
-    "discardMessage": "{{count}} modification(s) ne seront pas enregistrées.",
+    "discardMessage_other": "{{count}} modifications ne seront pas enregistrées.",
     "discard": "Abandonner",
     "keepEditing": "Continuer",
     "totalOnly": "Total : {{count}}",
@@ -102,7 +102,8 @@
     "sourceIsAccount": "{{source}} est un compte existant : un alias détournerait son courrier vers {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} est un compte existant : un alias détournerait son courrier.",
     "taskCreatedNamed": "{{name}} — Tâche {{taskId}}",
-    "pendingChanges_one": "{{count}} modification en attente : cliquez sur Appliquer pour enregistrer."
+    "pendingChanges_one": "{{count}} modification en attente : cliquez sur Appliquer pour enregistrer.",
+    "discardMessage_one": "{{count}} modification ne sera pas enregistrée."
   },
   "sidebar": {
     "healthCheck": "Contrôle de santé",
