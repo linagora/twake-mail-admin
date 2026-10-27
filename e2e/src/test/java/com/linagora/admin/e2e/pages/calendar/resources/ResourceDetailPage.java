@@ -64,7 +64,7 @@ public class ResourceDetailPage {
     }
 
     public Locator nameBox() {
-        return textbox("Name");
+        return textbox("Name *");
     }
 
     public Locator descriptionBox() {
