@@ -15,6 +15,7 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 import TeamMailboxFolders from "./team-mailbox-folders";
 import TeamMailboxQuota from "./team-mailbox-quota";
 import TeamMailboxExtraSenders from "./team-mailbox-extra-senders";
+import TeamMailboxSpace from "./team-mailbox-space";
 import UserDeletedMessageVault from "@/modules/users/details/user-deleted-message-vault";
 import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
@@ -228,6 +229,7 @@ function TeamMailboxDetailContent() {
           </div>
         </FormDialog>
       </div>
+      <TeamMailboxSpace domain={domain!} mailbox={mailbox!} onBound={refresh} />
       <TeamMailboxFolders domain={domain!} mailbox={mailbox!} />
       <TeamMailboxQuota domain={domain!} mailbox={mailbox!} />
       <TeamMailboxExtraSenders domain={domain!} mailbox={mailbox!} />
