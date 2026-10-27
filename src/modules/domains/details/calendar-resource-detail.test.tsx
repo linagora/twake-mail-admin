@@ -78,7 +78,7 @@ describe("CalendarResourceDetail", () => {
     render(<CalendarResourceDetail />);
 
     fireEvent.click(await screen.findByText("common.edit"));
-    fireEvent.change(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName" }), { target: { value: "QA Room renamed" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName *" }), { target: { value: "QA Room renamed" } });
     fireEvent.click(screen.getByRole("button", { name: "common.save" }));
 
     await waitFor(() => expect(api.updateResource).toHaveBeenCalledWith("open-paas.org", "room-2", {
@@ -102,7 +102,52 @@ describe("CalendarResourceDetail", () => {
 
     fireEvent.click(await screen.findByText("common.edit"));
 
-    expect(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName" })).toHaveProperty("value", "QA Room 2");
+    expect(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName *" })).toHaveProperty("value", "QA Room 2");
     expect(screen.getByRole("textbox", { name: "domains.calendarResources.fieldDescription" })).toHaveProperty("value", "Big meeting room");
+  });
+
+  it("leaves the name out of the update when it is not changed", async () => {
+    render(<CalendarResourceDetail />);
+
+    fireEvent.click(await screen.findByText("common.edit"));
+    fireEvent.change(screen.getByRole("textbox", { name: "domains.calendarResources.fieldDescription" }), { target: { value: "Small room" } });
+    fireEvent.click(screen.getByRole("button", { name: "common.save" }));
+
+    await waitFor(() => expect(api.updateResource).toHaveBeenCalledWith("open-paas.org", "room-2", { description: "Small room" }));
+  });
+
+  it("sends the name trimmed", async () => {
+    render(<CalendarResourceDetail />);
+
+    fireEvent.click(await screen.findByText("common.edit"));
+    fireEvent.change(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName *" }), { target: { value: "  QA Room 3  " } });
+    fireEvent.click(screen.getByRole("button", { name: "common.save" }));
+
+    await waitFor(() => expect(api.updateResource).toHaveBeenCalledWith("open-paas.org", "room-2", expect.objectContaining({ name: "QA Room 3" })));
+  });
+
+  it.each(["", "   "])("does not save the blank name %j", async (blank) => {
+    render(<CalendarResourceDetail />);
+
+    fireEvent.click(await screen.findByText("common.edit"));
+    fireEvent.change(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName *" }), { target: { value: blank } });
+    const save = screen.getByRole("button", { name: "common.save" }) as HTMLButtonElement;
+    fireEvent.click(save);
+
+    expect(save.disabled).toBe(true);
+    expect(api.updateResource).not.toHaveBeenCalled();
+  });
+
+  it("keeps the edit form with the typed values when the update is refused", async () => {
+    api.updateResource.mockRejectedValue(new Error("Unsupported icon"));
+    render(<CalendarResourceDetail />);
+
+    fireEvent.click(await screen.findByText("common.edit"));
+    fireEvent.change(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName *" }), { target: { value: "QA Room renamed" } });
+    fireEvent.click(screen.getByRole("button", { name: "common.save" }));
+
+    await waitFor(() => expect(api.updateResource).toHaveBeenCalled());
+    await waitFor(() => expect((screen.getByRole("button", { name: "common.save" }) as HTMLButtonElement).disabled).toBe(false));
+    expect(screen.getByRole("textbox", { name: "domains.calendarResources.fieldName *" })).toHaveProperty("value", "QA Room renamed");
   });
 });
