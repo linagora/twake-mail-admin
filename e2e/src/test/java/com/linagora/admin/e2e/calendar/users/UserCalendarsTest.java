@@ -29,6 +29,7 @@ import com.microsoft.playwright.options.AriaRole;
 class UserCalendarsTest extends CalendarAdminE2ETest {
     private static final String[] OWNED_ROW_BUTTONS = {"Export the calendar (ICS)", "Import events (ICS)",
         "Delegation (invitees)", "Private calendar", "Edit calendar", "Delete calendar"};
+    private static final String MAIN_CALENDAR_UNDELETABLE = "The main calendar cannot be deleted";
 
     @Test
     @DisplayName("UCAL-01 Create a calendar")
@@ -226,7 +227,11 @@ class UserCalendarsTest extends CalendarAdminE2ETest {
 
         Locator mainDelete = CollectionSection.button(calendars.row("Main calendar"), "Delete calendar");
         assertThat(mainDelete).isDisabled();
-        assertThat(mainDelete).hasAttribute("title", "The main calendar cannot be deleted");
+        // The disabled button gets no pointer event: its wrapper carries the hint
+        Locator mainDeleteHint = mainDelete.locator("xpath=..");
+        assertThat(mainDeleteHint).hasAccessibleDescription(MAIN_CALENDAR_UNDELETABLE);
+        mainDeleteHint.hover();
+        assertThat(page.getByRole(AriaRole.TOOLTIP)).hasText(MAIN_CALENDAR_UNDELETABLE);
         mainDelete.click(new Locator.ClickOptions().setForce(true));
         assertThat(app.dialog()).hasCount(0);
 
