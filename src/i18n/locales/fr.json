@@ -287,10 +287,6 @@
       "subaddressingDisabledToast": "Sous-adressage désactivé",
       "errorUpdating": "Erreur lors de la mise à jour du sous-adressage"
     },
-    "folderCounts": {
-      "totalMessages": "Messages totaux",
-      "unseenMessages": "Messages non lus"
-    },
     "extraAcl": {
       "title": "ACL supplémentaires",
       "addEntry": "Ajouter une entrée ACL",
@@ -1260,8 +1256,8 @@
     "countRange": "Utilisateurs {{from}}–{{to}}"
   },
   "mailboxCounts": {
-    "totalMessages": "Messages totaux",
-    "unseenMessages": "Messages non lus"
+    "total": "Total : {{value}}",
+    "unseen": "Non lus : {{value}}"
   },
   "renameUserForm": {
     "currentUsername": "Nom d'utilisateur actuel",

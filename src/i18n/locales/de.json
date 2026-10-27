@@ -287,10 +287,6 @@
       "subaddressingDisabledToast": "Subadressierung deaktiviert",
       "errorUpdating": "Fehler beim Aktualisieren der Subadressierung"
     },
-    "folderCounts": {
-      "totalMessages": "Nachrichten insgesamt",
-      "unseenMessages": "Ungelesene Nachrichten"
-    },
     "extraAcl": {
       "title": "Zusätzliche ACL",
       "addEntry": "ACL-Eintrag hinzufügen",
@@ -1260,8 +1256,8 @@
     "countRange": "Benutzer {{from}}–{{to}}"
   },
   "mailboxCounts": {
-    "totalMessages": "Nachrichten insgesamt",
-    "unseenMessages": "Ungelesene Nachrichten"
+    "total": "Gesamt: {{value}}",
+    "unseen": "Ungelesen: {{value}}"
   },
   "renameUserForm": {
     "currentUsername": "Aktueller Benutzername",

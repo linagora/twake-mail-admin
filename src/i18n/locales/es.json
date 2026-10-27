@@ -287,10 +287,6 @@
       "subaddressingDisabledToast": "Subdireccionamiento desactivado",
       "errorUpdating": "Error al actualizar el subdireccionamiento"
     },
-    "folderCounts": {
-      "totalMessages": "Mensajes en total",
-      "unseenMessages": "Mensajes no leídos"
-    },
     "extraAcl": {
       "title": "ACL adicionales",
       "addEntry": "Añadir entrada ACL",
@@ -1260,8 +1256,8 @@
     "countRange": "Usuarios {{from}}–{{to}}"
   },
   "mailboxCounts": {
-    "totalMessages": "Mensajes en total",
-    "unseenMessages": "Mensajes no leídos"
+    "total": "Total: {{value}}",
+    "unseen": "No leídos: {{value}}"
   },
   "renameUserForm": {
     "currentUsername": "Nombre de usuario actual",

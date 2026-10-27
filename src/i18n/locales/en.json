@@ -287,10 +287,6 @@
       "subaddressingDisabledToast": "Sub-addressing disabled",
       "errorUpdating": "Error updating sub-addressing"
     },
-    "folderCounts": {
-      "totalMessages": "Total messages",
-      "unseenMessages": "Unseen messages"
-    },
     "extraAcl": {
       "title": "Extra ACL",
       "addEntry": "Add ACL entry",
@@ -1260,8 +1256,8 @@
     "countRange": "Users {{from}}–{{to}}"
   },
   "mailboxCounts": {
-    "totalMessages": "Total messages",
-    "unseenMessages": "Unseen messages"
+    "total": "Total: {{value}}",
+    "unseen": "Unseen: {{value}}"
   },
   "renameUserForm": {
     "currentUsername": "Current username",

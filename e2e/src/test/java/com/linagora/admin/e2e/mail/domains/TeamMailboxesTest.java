@@ -152,8 +152,8 @@ class TeamMailboxesTest extends MailAdminE2ETest {
         for (String folder : defaults) {
             assertThat(folderLink(teamMailbox, folder)).isVisible();
             Locator row = teamMailbox.row(folder);
-            assertThat(row.getByTitle("Total messages")).hasText("0");
-            assertThat(row.getByTitle("Unseen messages")).hasText("0");
+            assertThat(row.getByText("Total: 0", new Locator.GetByTextOptions().setExact(true))).isVisible();
+            assertThat(row.getByText("Unseen: 0", new Locator.GetByTextOptions().setExact(true))).isVisible();
         }
         // The team mailbox root itself is not listed
         assertThat(folderLink(teamMailbox, SALES)).hasCount(0);

@@ -293,10 +293,6 @@
       "subaddressingDisabledToast": "Субадресация отключена",
       "errorUpdating": "Ошибка при обновлении субадресации"
     },
-    "folderCounts": {
-      "totalMessages": "Всего сообщений",
-      "unseenMessages": "Непрочитанные сообщения"
-    },
     "extraAcl": {
       "title": "Дополнительный ACL",
       "addEntry": "Добавить запись ACL",
@@ -1267,8 +1263,8 @@
     "countRange": "Пользователи {{from}}–{{to}}"
   },
   "mailboxCounts": {
-    "totalMessages": "Всего сообщений",
-    "unseenMessages": "Непрочитанные сообщения"
+    "total": "Всего: {{value}}",
+    "unseen": "Непрочитанных: {{value}}"
   },
   "renameUserForm": {
     "currentUsername": "Текущее имя пользователя",

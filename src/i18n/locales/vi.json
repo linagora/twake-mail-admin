@@ -284,10 +284,6 @@
       "subaddressingDisabledToast": "Đã tắt địa chỉ phụ",
       "errorUpdating": "Lỗi khi cập nhật địa chỉ phụ"
     },
-    "folderCounts": {
-      "totalMessages": "Tổng số thư",
-      "unseenMessages": "Thư chưa đọc"
-    },
     "extraAcl": {
       "title": "ACL bổ sung",
       "addEntry": "Thêm mục ACL",
@@ -1249,8 +1245,8 @@
     "countRange": "Người dùng {{from}}–{{to}}"
   },
   "mailboxCounts": {
-    "totalMessages": "Tổng số thư",
-    "unseenMessages": "Thư chưa đọc"
+    "total": "Tổng: {{value}}",
+    "unseen": "Chưa đọc: {{value}}"
   },
   "renameUserForm": {
     "currentUsername": "Tên người dùng hiện tại",
