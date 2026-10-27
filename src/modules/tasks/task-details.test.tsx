@@ -38,6 +38,31 @@ describe("task details", () => {
     expect(grid.textContent).not.toContain("recomputeSingleQuotaComponentResults");
   });
 
+  it("labels the counters of a Twake Space purge and links the team mailboxes it could not delete", () => {
+    const grid = renderDetails({
+      type: "twake-space-purge",
+      timestamp: "2026-10-09T08:00:00Z",
+      deletedTeamMailboxes: 2,
+      failedTeamMailboxes: ["sales@acme.com", "ops@acme.com"],
+    });
+    expect(grid.textContent).toContain("tasks.info.deletedTeamMailboxes2");
+    expect(grid.textContent).toContain("tasks.info.failedTeamMailboxes");
+    expect(grid.textContent).toContain("tasks.info.failedTeamMailboxesRetried");
+    expect(screen.getByRole("link", { name: "sales@acme.com" }).getAttribute("href")).toBe("/domains/domain/acme.com/team-mailbox/sales");
+    expect(screen.getByRole("link", { name: "ops@acme.com" }).getAttribute("href")).toBe("/domains/domain/acme.com/team-mailbox/ops");
+  });
+
+  it("shows a dash, without the retry hint, when the purge deleted every team mailbox", () => {
+    const grid = renderDetails({ type: "twake-space-purge", deletedTeamMailboxes: 2, failedTeamMailboxes: [] });
+    expect(grid.textContent).toContain("tasks.info.failedTeamMailboxes—");
+    expect(grid.textContent).not.toContain("tasks.info.failedTeamMailboxesRetried");
+  });
+
+  it("labels the counter of a Twake Space reindex", () => {
+    const grid = renderDetails({ type: "twake-space-reindex", timestamp: "2026-10-09T08:00:00Z", indexedSpaces: 12 });
+    expect(grid.textContent).toContain("tasks.info.indexedSpaces12");
+  });
+
   it("labels the mailbox counters of a populate email query view", () => {
     const grid = renderDetails({
       type: "PopulateEmailQueryViewTask",

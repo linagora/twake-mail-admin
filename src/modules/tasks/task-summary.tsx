@@ -165,6 +165,10 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   // Subscribe to all mailboxes
   subscribedCount: "tasks.info.subscribedCount",
   unsubscribedCount: "tasks.info.unsubscribedCount",
+  // Twake Space purge and reindex
+  deletedTeamMailboxes: "tasks.info.deletedTeamMailboxes",
+  failedTeamMailboxes: "tasks.info.failedTeamMailboxes",
+  indexedSpaces: "tasks.info.indexedSpaces",
 };
 
 // Shown above the details already, or nested values left to the raw JSON
@@ -227,6 +231,8 @@ export const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
   PopulateEmailQueryViewTask: "commonTasks.populateEmailQueryView",
   ExpireMailboxTask: "taskTypes.expireMailbox",
   "tasks-cleanup": "commonTasks.cleaningUpOldTasks",
+  "twake-space-purge": "taskTypes.twakeSpacePurge",
+  "twake-space-reindex": "taskTypes.twakeSpaceReindex",
   "cassandra-migration": "cassandra.upgradeTitle",
   // User tasks
   "user-reindexing": "users.tasks.reindexAll",
@@ -437,6 +443,34 @@ export function StatusPill({ status }: { status: TaskStatus }) {
   );
 }
 
+// The page of a team mailbox, from its address: sales@acme.com is the team mailbox sales of acme.com
+const teamMailboxPage = (address: string): string | null => {
+  const at = address.lastIndexOf("@");
+  return at > 0 && at < address.length - 1
+    ? `/domains/domain/${encodeURIComponent(address.slice(at + 1))}/team-mailbox/${encodeURIComponent(address.slice(0, at))}`
+    : null;
+};
+
+/** The team mailboxes a purge could not delete, each linked to its page; the next run retries them. */
+function FailedTeamMailboxes({ addresses }: { addresses: unknown[] }) {
+  const { t } = useTranslation();
+  if (addresses.length === 0) return <span>—</span>;
+  return (
+    <span className="min-w-0 break-words">
+      {addresses.map(String).map((address, index) => {
+        const page = teamMailboxPage(address);
+        return (
+          <Fragment key={address}>
+            {index > 0 && ", "}
+            {page ? <Link to={page} className="text-blue-600 hover:underline">{address}</Link> : address}
+          </Fragment>
+        );
+      })}
+      <span className="block text-xs text-muted-foreground">{t("tasks.info.failedTeamMailboxesRetried")}</span>
+    </span>
+  );
+}
+
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <>
     <span className="text-gray-500 font-medium">{label}</span>
@@ -488,6 +522,8 @@ export function TaskDetails({ task, raw }: { task: TaskDetailResponse; raw: unkn
                   ? <span className="min-w-0 break-words">{t(CALENDAR_TYPE_KEYS[value])}</span>
                   : USER_KEYS.has(key) && typeof value === "string"
                   ? <span className="min-w-0"><UserLink address={value} /></span>
+                  : key === "failedTeamMailboxes" && Array.isArray(value)
+                  ? <FailedTeamMailboxes addresses={value} />
                   : <span className="min-w-0 break-words">{detailText(t, value)}</span>}
               </Fragment>
             ))}

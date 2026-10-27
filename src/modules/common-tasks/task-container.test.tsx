@@ -88,6 +88,58 @@ const renderTaskWithDoc = (doc: string) => {
   );
 };
 
+describe("task container: optional backend extension", () => {
+  const renderSpacePurge = () => {
+    render(
+      <MemoryRouter>
+        <TaskContainer
+          nameKey="commonTasks.twakeSpacePurge"
+          taskKey={TaskKey.TWAKE_SPACE_PURGE}
+          command="curl -XPOST /spaces?action=purge"
+          doc=""
+          risk="destructive"
+          typeToConfirmKey="confirm.deleteWord"
+          unavailableKey="commonTasks.twakeSpaceUnavailable"
+        />
+      </MemoryRouter>
+    );
+    fireEvent.click(screen.getByRole("button", { name: /^common\.run / }));
+  };
+
+  const confirmOptions = async () => {
+    await waitFor(() => expect(mocks.confirm).toHaveBeenCalledTimes(1));
+    return mocks.confirm.mock.calls[0][0];
+  };
+
+  it("explains a 404 as the extension missing from the server", async () => {
+    renderSpacePurge();
+
+    const { describeError } = await confirmOptions();
+    expect(describeError({ response: { status: 404 } })).toBe("commonTasks.twakeSpaceUnavailable");
+  });
+
+  it("leaves any other failure to the server message", async () => {
+    renderSpacePurge();
+
+    const { describeError } = await confirmOptions();
+    expect(describeError({ response: { status: 500 } })).toBeNull();
+  });
+
+  it("asks to type the confirmation word before deleting team mailboxes", async () => {
+    renderSpacePurge();
+
+    expect(await confirmOptions()).toMatchObject({ destructive: true, typeToConfirm: "confirm.deleteWord" });
+  });
+
+  it("starts the purge task", async () => {
+    mocks.runTask.mockResolvedValue("task-id");
+
+    renderSpacePurge();
+
+    await waitFor(() => expect(mocks.runTask).toHaveBeenCalledWith(TaskKey.TWAKE_SPACE_PURGE, undefined, {}));
+  });
+});
+
 describe("task container: doc link", () => {
   it("links to the task documentation", () => {
     renderTaskWithDoc("https://example.com/doc");

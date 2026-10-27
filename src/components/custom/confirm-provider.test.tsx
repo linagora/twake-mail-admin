@@ -157,6 +157,25 @@ describe("confirm dialog action", () => {
     expect(actionResults).toHaveLength(0);
   });
 
+  it("reports a refusal as the caller describes it", async () => {
+    function DescribedOpener() {
+      const confirm = useConfirm();
+      const open = () => confirm({
+        header: "Purge",
+        message: "Purge?",
+        action: async () => { throw new Error("Not found"); },
+        describeError: () => "Not installed",
+      });
+      return <button onClick={open}>open</button>;
+    }
+    render(<ConfirmProvider><DescribedOpener /></ConfirmProvider>);
+
+    fireEvent.click(screen.getByText("open"));
+    await screen.findByText("Purge");
+    clickConfirm();
+    expect((await screen.findByRole("alert")).textContent).toBe("Not installed");
+  });
+
   it("sends the corrected content when confirmed again after a refusal", async () => {
     const sent: string[] = [];
     openActionDialog(async (name) => {

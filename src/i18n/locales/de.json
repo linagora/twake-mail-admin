@@ -1407,7 +1407,11 @@
       "calendarTypes": {
         "team-calendar": "Teamkalender",
         "resource": "Ressource"
-      }
+      },
+      "deletedTeamMailboxes": "Gelöschte Team-Postfächer",
+      "failedTeamMailboxes": "Fehlgeschlagene Team-Postfächer",
+      "failedTeamMailboxesRetried": "Der nächste Lauf versucht sie erneut.",
+      "indexedSpaces": "Indizierte Spaces"
     },
     "cancelTarget": " für {{target}}",
     "targetCalendar": {
@@ -1616,7 +1620,8 @@
       "consistency": "Konsistenzreparatur",
       "cleanup": "Bereinigung",
       "server": "Server",
-      "directory": "Benutzer und Kontakte"
+      "directory": "Benutzer und Kontakte",
+      "space": "Twake Space"
     },
     "filter": "Aufgaben filtern…",
     "noMatch": "Keine Aufgabe passt zu „{{q}}“.",
@@ -1646,10 +1651,15 @@
       "calendarEventReindex": "Wenn Termine in der Kalendersuche fehlen. Baut den Suchindex der Termine neu.",
       "alarmRescheduling": "Wenn Terminerinnerungen nicht gesendet werden. Plant die Alarme aller Termine neu.",
       "calendarEventArchival": "Verschiebt die Termine, die den Kriterien entsprechen, in einen Kalender „Archival“ jedes Benutzers.",
-      "clearDomainMembersContacts": "Leert das Adressbuch „Domänenmitglieder“ jeder Domäne. Eine Synchronisierung füllt es wieder."
+      "clearDomainMembersContacts": "Leert das Adressbuch „Domänenmitglieder“ jeder Domäne. Eine Synchronisierung füllt es wieder.",
+      "twakeSpacePurge": "Löscht die Team-Postfächer der Spaces, die länger als die in space.properties festgelegte Aufbewahrungsdauer gelöscht sind, und gibt ihre Adressen frei. TMail führt dies nicht mehr selbst aus: per externem Cron planen oder hier starten.",
+      "twakeSpaceReindex": "Nach dem Verknüpfen von Team-Postfächern außerhalb der Erweiterung (z. B. Migration vom Twake-Mail-Nebendienst) oder bei Verlust des Index-Postfachs ausführen. Durchsucht alle Team-Postfächer."
     },
     "archiveAllEvents": "Alle Termine archivieren",
-    "archiveAllWarning": "Kein Kriterium gesetzt: Alle Termine aller registrierten Benutzer werden in einen Kalender „Archival“ verschoben."
+    "archiveAllWarning": "Kein Kriterium gesetzt: Alle Termine aller registrierten Benutzer werden in einen Kalender „Archival“ verschoben.",
+    "twakeSpacePurge": "Team-Postfächer gelöschter Spaces bereinigen",
+    "twakeSpaceReindex": "Space-Index neu aufbauen",
+    "twakeSpaceUnavailable": "Twake Space ist auf diesem Server nicht verfügbar: Er stellt die /spaces-Routen nicht bereit, die die Twake-Space-Erweiterung von tmail-backend erfordern."
   },
   "healthCheck": {
     "checking": "Komponenten werden geprüft, dies kann eine Weile dauern…",
@@ -2233,7 +2243,8 @@
       "clearDomainMembersContacts": "Das Adressbuch „Domänenmitglieder“ jeder Domäne, außer den übersprungenen, wird geleert. Dies kann nicht rückgängig gemacht werden.",
       "fixMailboxInconsistencies": "Beenden Sie alle anderen Twake-Mail-Dienste, bevor Sie diese Aufgabe starten.",
       "blobGarbageCollection": "Gespeicherte Blobs, auf die keine Nachricht mehr verweist, werden endgültig aus dem Objektspeicher gelöscht. Dies kann nicht rückgängig gemacht werden.",
-      "purgeDeletedMessages": "Die Nachrichten des Tresors gelöschter Nachrichten, deren Aufbewahrungsfrist abgelaufen ist, werden endgültig gelöscht und können nicht mehr wiederhergestellt werden."
+      "purgeDeletedMessages": "Die Nachrichten des Tresors gelöschter Nachrichten, deren Aufbewahrungsfrist abgelaufen ist, werden endgültig gelöscht und können nicht mehr wiederhergestellt werden.",
+      "twakeSpacePurge": "Die Team-Postfächer der Spaces, die länger als die Aufbewahrungsdauer aus space.properties gelöscht sind, werden mit allen Nachrichten endgültig gelöscht. Dies kann nicht rückgängig gemacht werden."
     },
     "deleteData": "Daten löschen",
     "deleteWord": "LÖSCHEN"
@@ -2272,6 +2283,8 @@
     "expireMailbox": "Alte Nachrichten eines Ordners bereinigen",
     "redeliverOneEvent": "Ein Ereignis erneut zustellen",
     "domainAddressBookClear": "Kontakte leeren",
-    "bookingLinkEventDeletion": "Die Termine eines Buchungslinks löschen"
+    "bookingLinkEventDeletion": "Die Termine eines Buchungslinks löschen",
+    "twakeSpacePurge": "Twake-Space-Bereinigung",
+    "twakeSpaceReindex": "Twake-Space-Neuindizierung"
   }
 }

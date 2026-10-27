@@ -23,6 +23,9 @@ import { cleanupTaskLabel } from "@/modules/tasks/task-summary";
 // How a task's risk is set: safe = reads or rebuilds derived data; caution = changes stored
 // data, needs a maintenance window or deletes only unreferenced or expired data; destructive =
 // permanently deletes user data.
+const tmailWebadminDoc = (anchor: string) =>
+  `https://github.com/linagora/tmail-backend/blob/master/docs/modules/ROOT/pages/tmail-backend/webadmin.adoc#${anchor}`;
+
 const TASKS: TaskProps[] = [
   {
     nameKey: 'commonTasks.reindexFixOutdated',
@@ -162,6 +165,28 @@ const TASKS: TaskProps[] = [
     doc: 'https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_populate_email_query_view',
     allowanceCheck: { verb: 'POST', pattern: '/mailboxes' },
   },
+  {
+    nameKey: 'commonTasks.twakeSpaceReindex',
+    group: 'space',
+    taskKey: TaskKey.TWAKE_SPACE_REINDEX,
+    command: 'curl -XPOST /spaces?action=reindex',
+    doc: tmailWebadminDoc('rebuilding-the-space-index'),
+    // Granted apart from the purge, which deletes team mailboxes
+    allowanceCheck: { verb: 'POST', pattern: '/spaces?action=reindex' },
+    unavailableKey: 'commonTasks.twakeSpaceUnavailable',
+  },
+  {
+    nameKey: 'commonTasks.twakeSpacePurge',
+    group: 'space',
+    taskKey: TaskKey.TWAKE_SPACE_PURGE,
+    command: 'curl -XPOST /spaces?action=purge',
+    doc: tmailWebadminDoc('purging-the-team-mailboxes-of-deleted-spaces'),
+    allowanceCheck: { verb: 'POST', pattern: '/spaces?action=purge' },
+    risk: 'destructive',
+    consequenceKey: 'confirm.consequence.twakeSpacePurge',
+    typeToConfirmKey: 'confirm.deleteWord',
+    unavailableKey: 'commonTasks.twakeSpaceUnavailable',
+  },
 ];
 
 const CLEANUP_PARAMS: TaskParam[] = [
@@ -172,7 +197,7 @@ const CLEANUP_PARAMS: TaskParam[] = [
 const cleanupCommand = (mailbox: "Trash" | "Spam") =>
   `curl -XDELETE "/messages?olderThan=5d&mailbox=${mailbox}&useSavedDate"`;
 
-const MAIL_GROUPS: TaskGroup[] = ["search", "consistency", "cleanup", "server"];
+const MAIL_GROUPS: TaskGroup[] = ["search", "consistency", "cleanup", "space", "server"];
 const CALENDAR_GROUPS: TaskGroup[] = ["directory", "search", "consistency", "cleanup"];
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";

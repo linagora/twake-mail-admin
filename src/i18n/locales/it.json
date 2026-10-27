@@ -1407,7 +1407,11 @@
       "calendarTypes": {
         "team-calendar": "Calendario del team",
         "resource": "Risorsa"
-      }
+      },
+      "deletedTeamMailboxes": "Caselle di team eliminate",
+      "failedTeamMailboxes": "Caselle di team non riuscite",
+      "failedTeamMailboxesRetried": "La prossima esecuzione le riprova.",
+      "indexedSpaces": "Spazi indicizzati"
     },
     "cancelTarget": " per {{target}}",
     "targetCalendar": {
@@ -1616,7 +1620,8 @@
       "consistency": "Riparazione della coerenza",
       "cleanup": "Pulizia",
       "server": "Server",
-      "directory": "Utenti e contatti"
+      "directory": "Utenti e contatti",
+      "space": "Twake Space"
     },
     "filter": "Filtra attività…",
     "noMatch": "Nessuna attività corrisponde a «{{q}}».",
@@ -1646,10 +1651,15 @@
       "calendarEventReindex": "Quando degli eventi mancano dalle ricerche del calendario. Ricostruisce l'indice di ricerca degli eventi.",
       "alarmRescheduling": "Quando i promemoria degli eventi non vengono inviati. Riprogramma gli avvisi di ogni evento.",
       "calendarEventArchival": "Sposta gli eventi che soddisfano i criteri in un calendario «Archival» di ogni utente.",
-      "clearDomainMembersContacts": "Svuota la rubrica «Membri del dominio» di ogni dominio. Esegui una sincronizzazione per riempirla di nuovo."
+      "clearDomainMembersContacts": "Svuota la rubrica «Membri del dominio» di ogni dominio. Esegui una sincronizzazione per riempirla di nuovo.",
+      "twakeSpacePurge": "Elimina le caselle di team degli spazi eliminati da più tempo della conservazione impostata in space.properties, liberandone gli indirizzi. TMail non la esegue più da solo: pianificala con un cron esterno o eseguila qui.",
+      "twakeSpaceReindex": "Da eseguire dopo aver collegato caselle di team al di fuori dell'estensione (ad es. migrazione dal servizio ausiliario di Twake Mail) o se la casella dell'indice è andata persa. Analizza tutte le caselle di team."
     },
     "archiveAllEvents": "Archivia tutti gli eventi",
-    "archiveAllWarning": "Nessun criterio: tutti gli eventi di tutti gli utenti registrati verranno spostati in un calendario «Archival»."
+    "archiveAllWarning": "Nessun criterio: tutti gli eventi di tutti gli utenti registrati verranno spostati in un calendario «Archival».",
+    "twakeSpacePurge": "Elimina le caselle di team degli spazi eliminati",
+    "twakeSpaceReindex": "Ricostruisci l'indice degli spazi",
+    "twakeSpaceUnavailable": "Twake Space non è disponibile su questo server: non espone le rotte /spaces, che richiedono l'estensione Twake Space di tmail-backend."
   },
   "healthCheck": {
     "checking": "Verifica dei componenti in corso, potrebbe richiedere un po' di tempo…",
@@ -2233,7 +2243,8 @@
       "clearDomainMembersContacts": "La rubrica «Membri del dominio» di ogni dominio, tranne quelli esclusi, viene svuotata. Operazione irreversibile.",
       "fixMailboxInconsistencies": "Arresta tutti gli altri servizi Twake Mail prima di eseguire questa attività.",
       "blobGarbageCollection": "I blob memorizzati a cui nessun messaggio fa più riferimento vengono eliminati definitivamente dall'object storage. L'operazione è irreversibile.",
-      "purgeDeletedMessages": "I messaggi dell'archivio dei messaggi eliminati il cui periodo di conservazione è scaduto vengono eliminati definitivamente e non potranno più essere ripristinati."
+      "purgeDeletedMessages": "I messaggi dell'archivio dei messaggi eliminati il cui periodo di conservazione è scaduto vengono eliminati definitivamente e non potranno più essere ripristinati.",
+      "twakeSpacePurge": "Le caselle di team degli spazi eliminati da più tempo della conservazione di space.properties, e tutta la loro posta, vengono eliminate definitivamente. L'operazione è irreversibile."
     },
     "deleteData": "Elimina dati",
     "deleteWord": "ELIMINA"
@@ -2272,6 +2283,8 @@
     "expireMailbox": "Pulisci i vecchi messaggi di una cartella",
     "redeliverOneEvent": "Riconsegna un evento",
     "domainAddressBookClear": "Cancella i contatti",
-    "bookingLinkEventDeletion": "Elimina gli eventi di un link di prenotazione"
+    "bookingLinkEventDeletion": "Elimina gli eventi di un link di prenotazione",
+    "twakeSpacePurge": "Pulizia Twake Space",
+    "twakeSpaceReindex": "Reindicizzazione Twake Space"
   }
 }

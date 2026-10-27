@@ -1396,7 +1396,11 @@
       "calendarTypes": {
         "team-calendar": "Lịch nhóm",
         "resource": "Tài nguyên"
-      }
+      },
+      "deletedTeamMailboxes": "Hộp thư nhóm đã xóa",
+      "failedTeamMailboxes": "Hộp thư nhóm thất bại",
+      "failedTeamMailboxesRetried": "Lần chạy tiếp theo sẽ thử lại.",
+      "indexedSpaces": "Không gian đã lập chỉ mục"
     },
     "cancelTarget": " cho {{target}}",
     "targetCalendar": {
@@ -1605,7 +1609,8 @@
       "consistency": "Sửa tính nhất quán",
       "cleanup": "Dọn dẹp",
       "server": "Máy chủ",
-      "directory": "Người dùng và liên hệ"
+      "directory": "Người dùng và liên hệ",
+      "space": "Twake Space"
     },
     "filter": "Lọc tác vụ…",
     "noMatch": "Không có tác vụ nào khớp với \"{{q}}\".",
@@ -1635,10 +1640,15 @@
       "calendarEventReindex": "Khi tìm kiếm lịch bỏ sót sự kiện. Dựng lại chỉ mục tìm kiếm sự kiện.",
       "alarmRescheduling": "Khi lời nhắc sự kiện không được gửi. Lên lịch lại báo thức của mọi sự kiện.",
       "calendarEventArchival": "Chuyển các sự kiện khớp tiêu chí vào lịch \"Archival\" của mỗi người dùng.",
-      "clearDomainMembersContacts": "Làm trống sổ địa chỉ \"Thành viên miền\" của mọi miền. Chạy đồng bộ để điền lại."
+      "clearDomainMembersContacts": "Làm trống sổ địa chỉ \"Thành viên miền\" của mọi miền. Chạy đồng bộ để điền lại.",
+      "twakeSpacePurge": "Xóa hộp thư nhóm của các không gian đã bị xóa lâu hơn thời gian lưu giữ trong space.properties, giải phóng địa chỉ của chúng. TMail không còn tự chạy tác vụ này: hãy lên lịch bằng cron bên ngoài hoặc chạy tại đây.",
+      "twakeSpaceReindex": "Dùng sau khi liên kết hộp thư nhóm bên ngoài tiện ích mở rộng (ví dụ: di chuyển từ dịch vụ phụ của Twake Mail) hoặc khi hộp thư chỉ mục bị mất. Quét mọi hộp thư nhóm."
     },
     "archiveAllEvents": "Lưu trữ mọi sự kiện",
-    "archiveAllWarning": "Chưa đặt tiêu chí: mọi sự kiện của mọi người dùng đã đăng ký sẽ được chuyển sang lịch \"Archival\"."
+    "archiveAllWarning": "Chưa đặt tiêu chí: mọi sự kiện của mọi người dùng đã đăng ký sẽ được chuyển sang lịch \"Archival\".",
+    "twakeSpacePurge": "Xóa hộp thư nhóm của các không gian đã xóa",
+    "twakeSpaceReindex": "Xây dựng lại chỉ mục không gian",
+    "twakeSpaceUnavailable": "Twake Space không khả dụng trên máy chủ này: máy chủ không cung cấp các route /spaces, vốn cần tiện ích mở rộng Twake Space của tmail-backend."
   },
   "healthCheck": {
     "checking": "Đang kiểm tra các thành phần, việc này có thể mất một lúc…",
@@ -2219,7 +2229,8 @@
       "clearDomainMembersContacts": "Sổ địa chỉ \"Thành viên miền\" của mọi miền, trừ các miền bỏ qua, sẽ bị làm trống. Không thể hoàn tác.",
       "fixMailboxInconsistencies": "Hãy dừng mọi dịch vụ Twake Mail khác trước khi chạy tác vụ này.",
       "blobGarbageCollection": "Các blob đã lưu không còn được thư nào tham chiếu sẽ bị xóa vĩnh viễn khỏi kho lưu trữ đối tượng. Không thể hoàn tác.",
-      "purgeDeletedMessages": "Các thư trong kho thư đã xóa đã hết thời hạn lưu giữ sẽ bị xóa vĩnh viễn và không thể khôi phục nữa."
+      "purgeDeletedMessages": "Các thư trong kho thư đã xóa đã hết thời hạn lưu giữ sẽ bị xóa vĩnh viễn và không thể khôi phục nữa.",
+      "twakeSpacePurge": "Hộp thư nhóm của các không gian đã bị xóa lâu hơn thời gian lưu giữ trong space.properties, cùng toàn bộ thư, sẽ bị xóa vĩnh viễn. Không thể hoàn tác."
     },
     "deleteData": "Xóa dữ liệu",
     "deleteWord": "XÓA"
@@ -2258,6 +2269,8 @@
     "expireMailbox": "Dọn thư cũ của một thư mục",
     "redeliverOneEvent": "Gửi lại một sự kiện",
     "domainAddressBookClear": "Xóa danh bạ",
-    "bookingLinkEventDeletion": "Xóa các sự kiện của một liên kết đặt lịch"
+    "bookingLinkEventDeletion": "Xóa các sự kiện của một liên kết đặt lịch",
+    "twakeSpacePurge": "Dọn dẹp Twake Space",
+    "twakeSpaceReindex": "Lập chỉ mục lại Twake Space"
   }
 }

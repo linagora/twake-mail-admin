@@ -1407,7 +1407,11 @@
       "calendarTypes": {
         "team-calendar": "Team calendar",
         "resource": "Resource"
-      }
+      },
+      "deletedTeamMailboxes": "Team mailboxes deleted",
+      "failedTeamMailboxes": "Team mailboxes that failed",
+      "failedTeamMailboxesRetried": "The next run tries them again.",
+      "indexedSpaces": "Spaces indexed"
     },
     "cancelTarget": " for {{target}}",
     "targetCalendar": {
@@ -1616,7 +1620,8 @@
       "consistency": "Consistency repair",
       "cleanup": "Cleanup",
       "server": "Server",
-      "directory": "Users and contacts"
+      "directory": "Users and contacts",
+      "space": "Twake Space"
     },
     "filter": "Filter tasks…",
     "noMatch": "No task matches \"{{q}}\".",
@@ -1646,10 +1651,15 @@
       "calendarEventReindex": "Use when events are missing from calendar searches. Rebuilds the event search index.",
       "alarmRescheduling": "Use when event reminders are not sent. Schedules the alarms of every event again.",
       "calendarEventArchival": "Moves the events matching the criteria into an \"Archival\" calendar of each user.",
-      "clearDomainMembersContacts": "Empties the \"Domain members\" address book of every domain. Run a synchronization to fill it again."
+      "clearDomainMembersContacts": "Empties the \"Domain members\" address book of every domain. Run a synchronization to fill it again.",
+      "twakeSpacePurge": "Deletes the team mailboxes of the spaces deleted for longer than the retention set in space.properties, freeing their addresses. TMail no longer runs it on its own: schedule it with an external cron, or run it here.",
+      "twakeSpaceReindex": "Use after binding team mailboxes outside of the extension (e.g. a migration from the Twake Mail side service), or if the index mailbox was lost. Scans every team mailbox."
     },
     "archiveAllEvents": "Archive all events",
-    "archiveAllWarning": "No criterion set: every event of every registered user will be moved to an \"Archival\" calendar."
+    "archiveAllWarning": "No criterion set: every event of every registered user will be moved to an \"Archival\" calendar.",
+    "twakeSpacePurge": "Purge team mailboxes of deleted spaces",
+    "twakeSpaceReindex": "Rebuild the space index",
+    "twakeSpaceUnavailable": "Twake Space is not available on this server: it does not expose the /spaces routes, which require the Twake Space extension of tmail-backend."
   },
   "healthCheck": {
     "checking": "Checking the components, this can take a while…",
@@ -2233,7 +2243,8 @@
       "clearDomainMembersContacts": "The \"Domain members\" address book of every domain, except the skipped ones, is emptied. This cannot be undone.",
       "fixMailboxInconsistencies": "Stop every other Twake Mail service before running this task.",
       "blobGarbageCollection": "Stored blobs that no message references any more are permanently deleted from the object storage. This cannot be undone.",
-      "purgeDeletedMessages": "The messages of the Deleted Messages Vault whose retention period is over are permanently deleted and can no longer be restored."
+      "purgeDeletedMessages": "The messages of the Deleted Messages Vault whose retention period is over are permanently deleted and can no longer be restored.",
+      "twakeSpacePurge": "The team mailboxes of the spaces deleted for longer than the retention of space.properties, and all their mail, are permanently deleted. This cannot be undone."
     },
     "deleteData": "Delete data",
     "deleteWord": "DELETE"
@@ -2272,6 +2283,8 @@
     "expireMailbox": "Cleanup old messages of a folder",
     "redeliverOneEvent": "Redeliver an event",
     "domainAddressBookClear": "Clear contacts",
-    "bookingLinkEventDeletion": "Delete the events of a booking link"
+    "bookingLinkEventDeletion": "Delete the events of a booking link",
+    "twakeSpacePurge": "Twake Space purge",
+    "twakeSpaceReindex": "Twake Space reindex"
   }
 }

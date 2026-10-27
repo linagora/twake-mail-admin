@@ -871,6 +871,8 @@ the task never covers more than what is being looked at.
 | "Delete old tasks" button | DELETE | `/tasks?olderThan={days}day` | MAY |
 | "Reposition system rights" button | POST | `/team-mailboxes?action=repositionSystemRights` | MAY |
 | "Reindex users" button | POST | `/users?{params}` | MAY |
+| "Rebuild the space index" button (Twake Space extension) | POST | `/spaces?action=reindex` | MAY |
+| "Purge team mailboxes of deleted spaces" button (Twake Space extension) | POST | `/spaces?action=purge` | MAY |
 
 Note: Hide tasks button that are not allowed
 

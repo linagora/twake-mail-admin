@@ -88,17 +88,34 @@ describe("common tasks: groups and filter", () => {
   const groupHeadings = () => screen.queryAllByRole("heading", { level: 2 }).map((h) => h.textContent).filter((text) => text?.startsWith("commonTasks.group."));
   const ALL: ProxyRule[] = [{ verb: ["GET", "POST", "PUT", "PATCH", "DELETE"], endpoint: "/**" }];
 
-  it("lists the tasks under the four headings, in order", () => {
+  it("lists the tasks under the five headings, in order", () => {
     renderWith(ALL);
     expect(groupHeadings()).toEqual([
       "commonTasks.group.search",
       "commonTasks.group.consistency",
       "commonTasks.group.cleanup",
+      "commonTasks.group.space",
       "commonTasks.group.server",
     ]);
     const cleanupGroup = screen.getByRole("region", { name: "commonTasks.group.cleanup" });
     expect(within(cleanupGroup).queryByText("commonTasks.blobGarbageCollection")).not.toBeNull();
     expect(within(cleanupGroup).queryByText("commonTasks.cleaningUpOldTasks")).not.toBeNull();
+  });
+
+  it("lists the Twake Space tasks, the reindex before the destructive purge", () => {
+    renderWith(ALL);
+    const spaceGroup = screen.getByRole("region", { name: "commonTasks.group.space" });
+    const names = within(spaceGroup).queryAllByText(/^commonTasks\.twakeSpace(Reindex|Purge)$/).map((node) => node.textContent);
+    expect(names).toEqual(["commonTasks.twakeSpaceReindex", "commonTasks.twakeSpacePurge"]);
+  });
+
+  it.each([
+    ["purge", "commonTasks.twakeSpacePurge", "commonTasks.twakeSpaceReindex"],
+    ["reindex", "commonTasks.twakeSpaceReindex", "commonTasks.twakeSpacePurge"],
+  ])("grants the Twake Space %s on its own", (action, shown, hidden) => {
+    renderWith([{ verb: ["POST"], endpoint: `/spaces?action=${action}` }]);
+    expect(screen.queryByText(shown)).not.toBeNull();
+    expect(screen.queryByText(hidden)).toBeNull();
   });
 
   it("describes every task", () => {
