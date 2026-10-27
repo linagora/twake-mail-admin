@@ -1772,6 +1772,7 @@
     "occupationCount": "Заполнение по количеству",
     "ratioMax": "Макс. соотношение",
     "computedLimit": "Вычисленный лимит",
+    "labelled": "{{label}}:",
     "page": "Страница {{page}} — результатов: {{count}}"
   },
   "cassandra": {

@@ -1761,6 +1761,7 @@
     "occupationCount": "Эзэлхүүний тоо",
     "ratioMax": "Хамгийн их харьцаа",
     "computedLimit": "Тооцоолсон хязгаар",
+    "labelled": "{{label}}:",
     "page": "Хуудас {{page}} — {{count}} үр дүн"
   },
   "cassandra": {

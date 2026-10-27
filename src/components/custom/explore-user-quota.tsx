@@ -16,6 +16,10 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
+// From sm: index | username | occupation size | occupation count | ratio max | computed limit.
+// Below sm: index | username (the labelled figures stacked under it).
+const QUOTA_GRID_COLUMNS = "grid-cols-[2rem_minmax(0,1fr)] sm:grid-cols-[2rem_minmax(0,1fr)_6rem_6rem_5rem_7rem]";
+
 interface QuotaValues {
   count: number | null;
   size: number | null;
@@ -44,6 +48,12 @@ interface UserQuotaDetail {
 interface UserQuotaEntry {
   username: string;
   detail: UserQuotaDetail;
+}
+
+// The column name of a figure, shown before it when the rows are stacked below sm
+function FigureLabel({ label }: { label: string }) {
+  const { t } = useTranslation();
+  return <span className="sm:hidden font-sans font-normal text-gray-500">{t("exploreQuota.labelled", { label })} </span>;
 }
 
 function formatSize(bytes: number | null): string {
@@ -223,13 +233,16 @@ export default function ExploreUserQuota({ domain }: Props) {
                 ) : (
                   <>
                     {/* Legend */}
-                    <div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-2 text-xs font-semibold text-muted-foreground px-2 pb-2 border-b mb-1">
-                      <span className="w-8">#</span>
+                    <div
+                      data-testid="explore-quota-header"
+                      className={`hidden sm:grid ${QUOTA_GRID_COLUMNS} gap-2 text-xs font-semibold text-muted-foreground px-2 pb-2 border-b mb-1`}
+                    >
+                      <span>#</span>
                       <span>{t("exploreQuota.username")}</span>
-                      <span className="w-24 text-right">{t("exploreQuota.occupationSize")}</span>
-                      <span className="w-24 text-right">{t("exploreQuota.occupationCount")}</span>
-                      <span className="w-20 text-right">{t("exploreQuota.ratioMax")}</span>
-                      <span className="w-28 text-right">{t("exploreQuota.computedLimit")}</span>
+                      <span className="text-right">{t("exploreQuota.occupationSize")}</span>
+                      <span className="text-right">{t("exploreQuota.occupationCount")}</span>
+                      <span className="text-right">{t("exploreQuota.ratioMax")}</span>
+                      <span className="text-right">{t("exploreQuota.computedLimit")}</span>
                     </div>
 
                     <div className="space-y-1">
@@ -240,24 +253,32 @@ export default function ExploreUserQuota({ domain }: Props) {
                         return (
                           <div
                             key={entry.username}
-                            className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-2 items-center px-2 py-2 bg-white rounded hover:bg-gray-100 transition text-sm"
+                            data-testid="explore-quota-row"
+                            className={`grid ${QUOTA_GRID_COLUMNS} gap-x-2 gap-y-1 items-center px-2 py-2 bg-white rounded hover:bg-gray-100 transition text-sm`}
                           >
-                            <span className="text-muted-foreground w-8">{globalIndex}.</span>
-                            <UserLink address={entry.username} known className="truncate" />
-                            <span className="w-24 text-right font-mono text-xs">
-                              {formatSize(occ.size)}
-                              <span className="text-gray-400 ml-1">({formatPercent(occ.ratio.size)})</span>
-                            </span>
-                            <span className="w-24 text-right font-mono text-xs">
-                              {formatCount(occ.count)}
-                              <span className="text-gray-400 ml-1">({formatPercent(occ.ratio.count)})</span>
-                            </span>
-                            <span className="w-20 text-right font-semibold text-xs">
-                              {formatPercent(occ.ratio.max)}
-                            </span>
-                            <span className="w-28 text-right text-xs text-gray-500">
-                              {formatSize(comp.size)} / {formatCount(comp.count)}
-                            </span>
+                            <span className="text-muted-foreground">{globalIndex}.</span>
+                            <UserLink address={entry.username} known className="min-w-0 sm:truncate" />
+                            {/* Below sm the header is hidden: the labelled figures stack under the username */}
+                            <div className="col-start-2 min-w-0 flex flex-col gap-0.5 text-xs sm:contents">
+                              <span className="font-mono sm:text-right">
+                                <FigureLabel label={t("exploreQuota.occupationSize")} />
+                                {formatSize(occ.size)}
+                                <span className="text-gray-400 ml-1">({formatPercent(occ.ratio.size)})</span>
+                              </span>
+                              <span className="font-mono sm:text-right">
+                                <FigureLabel label={t("exploreQuota.occupationCount")} />
+                                {formatCount(occ.count)}
+                                <span className="text-gray-400 ml-1">({formatPercent(occ.ratio.count)})</span>
+                              </span>
+                              <span className="font-semibold sm:text-right">
+                                <FigureLabel label={t("exploreQuota.ratioMax")} />
+                                {formatPercent(occ.ratio.max)}
+                              </span>
+                              <span className="text-gray-500 sm:text-right">
+                                <FigureLabel label={t("exploreQuota.computedLimit")} />
+                                {formatSize(comp.size)} / {formatCount(comp.count)}
+                              </span>
+                            </div>
                           </div>
                         );
                       })}
