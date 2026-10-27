@@ -4,6 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
+import { isValidFolderName } from "@/lib/mailbox-path";
 import { getTeamMailboxFolders, createTeamMailboxFolder, deleteTeamMailboxFolder } from "../api-client";
 import { GetTeamMailboxFoldersResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
@@ -41,6 +42,10 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
   const [newFolder, setNewFolder] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const fieldId = useId();
+  const nameErrorId = useId();
+  const newFolderValid = isValidFolderName(newFolder.trim());
+  // An empty field is not yet an error: the disabled Create button says enough
+  const showNameError = newFolder.trim() !== "" && !newFolderValid;
 
   // WebAdmin lists the team mailbox root under its bare name, but folder routes are relative to that root
   const sorted = useMemo(() => {
@@ -184,7 +189,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
         onClose={() => setShowCreate(false)}
         title={t("domains.folders.createTooltip")}
         submitLabel={t("common.create")}
-        submitDisabled={!newFolder.trim()}
+        submitDisabled={!newFolderValid}
         onSubmit={handleCreate}
       >
         <div>
@@ -196,8 +201,15 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
             value={newFolder}
             onChange={(e) => setNewFolder(e.target.value)}
             placeholder={t("domains.folders.namePlaceholder")}
-            className={FIELD_CLASS}
+            aria-invalid={showNameError}
+            aria-describedby={showNameError ? nameErrorId : undefined}
+            className={`${FIELD_CLASS} aria-invalid:border-red-500`}
           />
+          {showNameError && (
+            <p id={nameErrorId} role="alert" className="mt-1 text-xs text-red-600">
+              {t("domains.folders.invalidName")}
+            </p>
+          )}
         </div>
       </FormDialog>
     </div>
