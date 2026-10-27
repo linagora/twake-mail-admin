@@ -289,6 +289,7 @@
       "createTooltip": "Crea cartella",
       "nameLabel": "Nome della cartella",
       "namePlaceholder": "Nome della nuova cartella (usa . per annidare, ad es. INBOX.work)",
+      "invalidName": "Ogni parte del nome tra i punti deve essere compilata (ad es. non \"a..b\", \".a\" o \"a.\")",
       "errorCreating": "Errore durante la creazione della cartella",
       "created": "Cartella creata correttamente",
       "errorDeleting": "Errore durante l'eliminazione della cartella",

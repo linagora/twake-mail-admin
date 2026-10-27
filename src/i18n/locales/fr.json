@@ -289,6 +289,7 @@
       "createTooltip": "Créer un dossier",
       "nameLabel": "Nom du dossier",
       "namePlaceholder": "Nom du dossier (utiliser . pour l'imbrication, ex. INBOX.travail)",
+      "invalidName": "Chaque partie du nom entre les points doit être renseignée (ex. pas \"a..b\", \".a\" ni \"a.\")",
       "errorCreating": "Erreur lors de la création du dossier",
       "created": "Dossier créé avec succès",
       "errorDeleting": "Erreur lors de la suppression du dossier",

@@ -289,6 +289,7 @@
       "createTooltip": "Create folder",
       "nameLabel": "Folder name",
       "namePlaceholder": "New folder name (use . for nesting, e.g. INBOX.work)",
+      "invalidName": "Each part of the name between dots must be filled in (e.g. not \"a..b\", \".a\" or \"a.\")",
       "errorCreating": "Error creating folder",
       "created": "Folder created successfully",
       "errorDeleting": "Error deleting folder",

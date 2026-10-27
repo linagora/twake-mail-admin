@@ -289,6 +289,7 @@
       "createTooltip": "Ordner erstellen",
       "nameLabel": "Ordnername",
       "namePlaceholder": "Neuer Ordnername (. für Unterordner, z. B. INBOX.work)",
+      "invalidName": "Jeder Teil des Namens zwischen Punkten muss ausgefüllt sein (z. B. nicht \"a..b\", \".a\" oder \"a.\")",
       "errorCreating": "Fehler beim Erstellen des Ordners",
       "created": "Ordner erfolgreich erstellt",
       "errorDeleting": "Fehler beim Löschen des Ordners",

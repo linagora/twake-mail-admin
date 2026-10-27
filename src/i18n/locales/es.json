@@ -289,6 +289,7 @@
       "createTooltip": "Crear carpeta",
       "nameLabel": "Nombre de la carpeta",
       "namePlaceholder": "Nombre de la nueva carpeta (use . para anidar, p. ej. INBOX.work)",
+      "invalidName": "Cada parte del nombre entre puntos debe completarse (p. ej. no \"a..b\", \".a\" ni \"a.\")",
       "errorCreating": "Error al crear la carpeta",
       "created": "Carpeta creada correctamente",
       "errorDeleting": "Error al eliminar la carpeta",

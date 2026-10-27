@@ -286,6 +286,7 @@
       "createTooltip": "Tạo thư mục",
       "nameLabel": "Tên thư mục",
       "namePlaceholder": "Tên thư mục mới (dùng . để lồng cấp, vd INBOX.work)",
+      "invalidName": "Mỗi phần của tên giữa các dấu chấm phải được điền (ví dụ: không phải \"a..b\", \".a\" hoặc \"a.\")",
       "errorCreating": "Lỗi khi tạo thư mục",
       "created": "Đã tạo thư mục thành công",
       "errorDeleting": "Lỗi khi xóa thư mục",

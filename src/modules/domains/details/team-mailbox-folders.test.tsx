@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
+import { AxiosError, AxiosHeaders } from "axios";
 
 const api = vi.hoisted(() => ({
   getTeamMailboxFolders: vi.fn(),
@@ -57,5 +58,58 @@ describe("team mailbox folders", () => {
     expect(await screen.findByTestId("counts")).not.toBeNull();
     await waitFor(() => expect(api.createTeamMailboxFolder).toHaveBeenCalledWith("example.com", "sales", "INBOX.work"));
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+  });
+
+  it("refuses a folder name with an empty hierarchy part before sending it", async () => {
+    api.getTeamMailboxFolders.mockResolvedValue([]);
+    api.createTeamMailboxFolder.mockReset();
+    render(
+      <MemoryRouter>
+        <TeamMailboxFolders domain="example.com" mailbox="sales" />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByTitle("domains.folders.createTooltip"));
+    const dialog = screen.getByRole("dialog");
+    const field = within(dialog).getByLabelText("domains.folders.nameLabel");
+    fireEvent.change(field, { target: { value: "a..b" } });
+
+    expect(within(dialog).getByRole("alert").textContent).toBe("domains.folders.invalidName");
+    expect(field.getAttribute("aria-invalid")).toBe("true");
+    const create = within(dialog).getByRole("button", { name: "common.create" }) as HTMLButtonElement;
+    expect(create.disabled).toBe(true);
+    fireEvent.submit(create.closest("form")!);
+    expect(api.createTeamMailboxFolder).not.toHaveBeenCalled();
+  });
+
+  it("keeps the modal open with the typed name when WebAdmin answers 400", async () => {
+    api.getTeamMailboxFolders.mockResolvedValue([]);
+    api.createTeamMailboxFolder.mockRejectedValue(
+      new AxiosError("Request failed with status code 400", "ERR_BAD_REQUEST", undefined, undefined, {
+        status: 400,
+        statusText: "Bad Request",
+        headers: {},
+        config: { headers: new AxiosHeaders() },
+        data: { statusCode: 400, type: "InvalidArgument", message: "Invalid folder name", details: "Mailbox name exceeds maximum size" },
+      })
+    );
+    render(
+      <MemoryRouter>
+        <TeamMailboxFolders domain="example.com" mailbox="sales" />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByTitle("domains.folders.createTooltip"));
+    const dialog = screen.getByRole("dialog");
+    const field = within(dialog).getByLabelText("domains.folders.nameLabel") as HTMLInputElement;
+    fireEvent.change(field, { target: { value: "INBOX.work" } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "common.create" }));
+
+    const alert = await within(dialog).findByRole("alert");
+    expect(alert.textContent).toContain("Invalid folder name");
+    expect(alert.textContent).toContain("Mailbox name exceeds maximum size");
+    expect(api.createTeamMailboxFolder).toHaveBeenCalledWith("example.com", "sales", "INBOX.work");
+    expect(screen.getByRole("dialog")).not.toBeNull();
+    expect(field.value).toBe("INBOX.work");
   });
 });
