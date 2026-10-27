@@ -55,8 +55,9 @@ class UserDetailTest extends MailAdminE2ETest {
         // Local date and time of the browser (en-US, Europe/Paris), not a GMT string
         assertThat(inbox).containsText(Pattern.compile("Creation date: \\d{1,2}/\\d{1,2}/\\d{4} \\d{1,2}:\\d{2}:\\d{2} [AP]M"));
         assertThat(inbox).not().containsText("GMT");
-        assertThat(inbox.getByTitle("Total messages")).hasText("2");
-        assertThat(inbox.getByTitle("Unseen messages")).hasText("2");
+        // The counters are labelled in visible text: a touch screen never shows a hover tooltip
+        assertThat(inbox.getByText("Total: 2", new Locator.GetByTextOptions().setExact(true))).isVisible();
+        assertThat(inbox.getByText("Unseen: 2", new Locator.GetByTextOptions().setExact(true))).isVisible();
 
         // The "+" next to the title opens a modal
         detail.button(mailboxes, "Create mailbox").click();
@@ -104,7 +105,8 @@ class UserDetailTest extends MailAdminE2ETest {
 
         UserDetailPage detail = UserDetailPage.open(app, alice);
         Locator mailboxes = detail.expand("Mailboxes");
-        assertThat(detail.itemRow(mailboxes, "INBOX", "Clear content of mailbox \"INBOX\"").getByTitle("Total messages")).hasText("2");
+        assertThat(detail.itemRow(mailboxes, "INBOX", "Clear content of mailbox \"INBOX\"")
+            .getByText("Total: 2", new Locator.GetByTextOptions().setExact(true))).isVisible();
 
         detail.clickItemButton(mailboxes, "INBOX", "Clear content of mailbox \"INBOX\"");
         assertThat(app.dialog()).containsText("Are you sure you want to delete all messages in \"INBOX\"?");
@@ -122,7 +124,8 @@ class UserDetailTest extends MailAdminE2ETest {
         assertThat(fixtures.messageCount(alice, "INBOX")).isZero();
         detail = UserDetailPage.open(app, alice);
         mailboxes = detail.expand("Mailboxes");
-        assertThat(detail.itemRow(mailboxes, "INBOX", "Clear content of mailbox \"INBOX\"").getByTitle("Total messages")).hasText("0");
+        assertThat(detail.itemRow(mailboxes, "INBOX", "Clear content of mailbox \"INBOX\"")
+            .getByText("Total: 0", new Locator.GetByTextOptions().setExact(true))).isVisible();
     }
 
     @Test

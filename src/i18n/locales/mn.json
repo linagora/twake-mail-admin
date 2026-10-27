@@ -285,10 +285,6 @@
       "subaddressingDisabledToast": "Дэд хаяглалт идэвхгүй болсон",
       "errorUpdating": "Дэд хаяглалтыг шинэчлэхэд алдаа гарлаа"
     },
-    "folderCounts": {
-      "totalMessages": "Нийт захидал",
-      "unseenMessages": "Уншаагүй захидал"
-    },
     "extraAcl": {
       "title": "Нэмэлт ACL",
       "addEntry": "ACL бичлэг нэмэх",
@@ -1253,8 +1249,8 @@
     "countRange": "Хэрэглэгч {{from}}–{{to}}"
   },
   "mailboxCounts": {
-    "totalMessages": "Нийт захидал",
-    "unseenMessages": "Уншаагүй захидал"
+    "total": "Нийт: {{value}}",
+    "unseen": "Уншаагүй: {{value}}"
   },
   "renameUserForm": {
     "currentUsername": "Одоогийн хэрэглэгчийн нэр",
