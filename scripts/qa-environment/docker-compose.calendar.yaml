@@ -1,0 +1,22 @@
+# Overlay on top of the twake-calendar e2e compose file (start.sh --calendar): the admin app in
+# front of the WebAdmin of the twake-calendar side service, both published on 127.0.0.1 only.
+# The calendar SPAs and their proxy are not started.
+#
+# Paths are absolute (GENERATED_DIR): compose resolves the relative ones of an overlay against
+# the directory of the first file, in twake-calendar-frontend.
+services:
+  twake-calendar-side-service:
+    volumes:
+      # CORS: the admin app calls WebAdmin from the browser, on another origin
+      - ${GENERATED_DIR:?}/webadmin.properties:/root/conf/webadmin.properties:ro
+    ports:
+      - "127.0.0.1:${QA_WEBADMIN_PORT:?}:8000"
+
+  admin:
+    image: ${ADMIN_IMAGE:?}
+    volumes:
+      - ${GENERATED_DIR:?}/env.js:/usr/share/nginx/html/env.js:ro
+    ports:
+      - "127.0.0.1:${QA_ADMIN_PORT:?}:80"
+    networks:
+      - tcalendar-e2e
