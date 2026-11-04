@@ -22,48 +22,50 @@ interface MVP.
 
 ### Prerequisite
 
-- Install [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
-  for managing local node versions.
-- Install [bun](https://bun.sh/docs/installation) for compiling.
+- Node.js 24, the version of [`.nvmrc`](.nvmrc), with the npm it ships. With
+  [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating):
 
-### Environment Variables
+  ```sh
+  nvm install   # reads .nvmrc
+  nvm use
+  ```
 
-Before running the project, create a `.env` file based on `.env.example`:
+The project uses **npm only**: `package-lock.json` is the single lock file, used
+by the CI, the Docker image and Dependabot. Do not add another package manager's
+lock file.
+
+### Configuration
+
+The API endpoint and the admin mode are read at runtime from `window.__ENV__`,
+defined in `env.js`. In development, Vite serves [`public/env.js`](public/env.js);
+edit it to point at your environment (see [`env.js.example`](env.js.example) for
+every option: `VITE_API_BASE_URL`, `MODE`, `DOMAIN`, `APPLICATION`).
+
+Build-time defaults can also be set in a `.env` file, created from `.env.example`:
 
 ```sh
 cp .env.example .env
 ```
 
-Then, update the values as needed.
-
-| Variable          | Description                                      | Default Value               |
-|------------------|------------------------------------------------|-----------------------------|
-| `VITE_API_BASE_URL` | The base URL for the admin API.                     | `http://localhost:8000`     |
-| `VITE_PAGE_LIMIT`  | Defines the number of items per page in pagination. | `20`                         |
-
+| Variable            | Description                                                         | Default                 |
+|---------------------|---------------------------------------------------------------------|-------------------------|
+| `VITE_API_BASE_URL` | Base URL of the admin API, when `env.js` does not set one.          | `http://localhost:8000` |
+| `VITE_PAGE_LIMIT`   | Number of items per page in paginated lists.                        | `50` (`.env.example`: `20`) |
 
 ### Commands
 
-Then use node version 18:
+| Task | Command | Notes |
+|------|---------|-------|
+| Install the dependencies | `npm ci` | exactly `package-lock.json`; use `npm install <pkg>` to add or change one |
+| Run the dev server | `npm run dev` | <http://localhost:3000>, with hot reload |
+| Lint | `npm run lint` | 0 error expected |
+| Unit tests | `npm test` | `npm run test:watch` to re-run on change |
+| Production build | `npm run build` | type-checks (`tsc -b`), then writes `dist/` |
+| Serve the production build | `npm run preview` | <http://localhost:4173>, serves `dist/` (including the `env.js` copied from `public/`) |
+| Check the dependencies | `npm audit` | must report 0 vulnerabilities |
 
-```
-nvm install 18
-nvm use 18
-```
-
-Rename `.env.sample` into `.env` and edit the file accordingly to your Twake Mail environment.
-
-Install other project dependencies:
-
-```
-bun install
-```
-
-Then run the dev version of the project:
-
-```
-bun run dev
-```
+Former `bun` users: `bun install` → `npm ci` (or `npm install`), `bun run <script>`
+→ `npm run <script>`, `bunx <tool>` → `npx <tool>`.
 
 ### Run with Docker Compose
 
