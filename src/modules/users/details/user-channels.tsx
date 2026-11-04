@@ -64,6 +64,7 @@ export default function UserChannels({ username }: Props) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches when the section is opened: the loading flag is set as the request starts
     if (open) fetchChannels();
   }, [open, fetchChannels]);
 

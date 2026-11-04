@@ -14,22 +14,19 @@ export const isSubmittableUserStatus = (status: UserExistsStatus): boolean =>
 
 // checkSyntax false for an address field, e.g. a mapping source: the server's refusal says what is wrong
 export function useCheckUserExists(username: string, { checkSyntax = true }: { checkSyntax?: boolean } = {}): UserExistsStatus {
-  const [status, setStatus] = useState<UserExistsStatus>("idle");
+  // The status of the name it was checked for: another name, or another kind of check, is checked anew
+  const [checked, setChecked] = useState<{ trimmed: string; checkSyntax: boolean; status: UserExistsStatus } | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const trimmed = username.trim();
 
   useEffect(() => {
-    const trimmed = username.trim();
-
-    if (!trimmed) {
-      setStatus("idle");
-      return;
-    }
+    if (!trimmed) return;
 
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
 
-    setStatus("checking");
+    const setStatus = (status: UserExistsStatus) => setChecked({ trimmed, checkSyntax, status });
 
     timerRef.current = setTimeout(async () => {
       if (checkSyntax && !isWellFormedUsername(trimmed)) {
@@ -56,7 +53,8 @@ export function useCheckUserExists(username: string, { checkSyntax = true }: { c
         clearTimeout(timerRef.current);
       }
     };
-  }, [username, checkSyntax]);
+  }, [trimmed, checkSyntax]);
 
-  return status;
+  if (!trimmed) return "idle";
+  return checked?.trimmed === trimmed && checked.checkSyntax === checkSyntax ? checked.status : "checking";
 }

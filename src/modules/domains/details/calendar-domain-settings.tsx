@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { Save, Loader2, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -116,12 +116,15 @@ export default function CalendarDomainSettings({ domain, defaultOpen = false }: 
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
+  // The form shows the settings each time they are (re)loaded
+  const [shownSettings, setShownSettings] = useState(settings);
+  if (settings !== shownSettings) {
+    setShownSettings(settings);
     if (settings) {
       setValues(toValues(settings));
       setDirty(false);
     }
-  }, [settings]);
+  }
 
   if (!canView) return null;
 

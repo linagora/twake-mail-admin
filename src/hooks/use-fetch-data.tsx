@@ -50,6 +50,7 @@ export function useFetchData<T>(getter: (() => Promise<T>) | null, refreshKey?: 
 
   useEffect(() => {
     if (!getter) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the fetch sets its loading flag as the request starts
     fetchData();
   }, [getter, refreshKey]);
 

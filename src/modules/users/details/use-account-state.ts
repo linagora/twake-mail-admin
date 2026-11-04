@@ -12,24 +12,23 @@ import { isWellFormedUsername } from "@/hooks/use-check-user-exists";
 export type AccountState = "checking" | "exists" | "missing" | "invalid" | "unknown";
 
 export function useAccountState(username: string): AccountState {
-  const [state, setState] = useState<AccountState>("checking");
+  // The answer for the username it was asked for: another username is checked anew
+  const [answer, setAnswer] = useState<{ username: string; state: AccountState } | null>(null);
+  const wellFormed = isWellFormedUsername(username);
 
   useEffect(() => {
-    if (!isWellFormedUsername(username)) {
-      setState("invalid");
-      return;
-    }
+    if (!wellFormed) return;
     let cancelled = false;
-    setState("checking");
     apiClient.head(`/users/${encodeURIComponent(username)}`)
-      .then(() => { if (!cancelled) setState("exists"); })
+      .then(() => { if (!cancelled) setAnswer({ username, state: "exists" }); })
       .catch((err) => {
         if (cancelled) return;
         const status = err?.response?.status;
-        setState(status === 404 ? "missing" : status === 400 ? "invalid" : "unknown");
+        setAnswer({ username, state: status === 404 ? "missing" : status === 400 ? "invalid" : "unknown" });
       });
     return () => { cancelled = true; };
-  }, [username]);
+  }, [username, wellFormed]);
 
-  return state;
+  if (!wellFormed) return "invalid";
+  return answer?.username === username ? answer.state : "checking";
 }

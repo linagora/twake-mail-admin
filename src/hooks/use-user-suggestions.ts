@@ -29,11 +29,11 @@ export function useUserSuggestions(text: string, enabled = true): string[] {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const wanted = enabled && canList && query.length >= MIN_SUGGEST_LENGTH;
 
+  // Nothing is suggested any more: the last suggestions are dropped at once
+  if (!wanted && suggestions.length > 0) setSuggestions([]);
+
   useEffect(() => {
-    if (!wanted) {
-      setSuggestions([]);
-      return;
-    }
+    if (!wanted) return;
     let current = true;
     const show = (usernames: string[]) => { if (current) setSuggestions(usernames); };
     fetchSuggestions(query, domain).then(show, () => show([]));

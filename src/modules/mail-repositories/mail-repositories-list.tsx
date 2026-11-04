@@ -77,6 +77,7 @@ export default function MailRepositoriesList() {
   // Trigger the fetch when mailRepositoriesResult is available
   useEffect(() => {
     if (mailRepositoriesResult) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- the fetch sets its loading flag as the requests start
       fetchRepositoryInfo();
     }
   }, [mailRepositoriesResult, fetchRepositoryInfo]);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -110,10 +110,13 @@ export default function HealthCheck() {
     error,
     refresh,
   } = useFetchData<HealthCheckResponseType>(getHealthCheck);
+  // When the response shown was received
   const [checkedAt, setCheckedAt] = useState<Date | null>(null);
-  useEffect(() => {
+  const [checkedResponse, setCheckedResponse] = useState(healthCheckResponse);
+  if (healthCheckResponse !== checkedResponse) {
+    setCheckedResponse(healthCheckResponse);
     if (healthCheckResponse) setCheckedAt(new Date());
-  }, [healthCheckResponse]);
+  }
 
   const checks = healthCheckResponse?.checks || [];
   const sections = groupHealthChecks(checks, isCalendar);

@@ -58,14 +58,14 @@ interface Props {
 
 // The criteria builder of the restore dialog. Once a confirm is refused because of incomplete
 // criteria, the dialog shows the error in place of the builder's hint and their empty controls are flagged.
-function RestoreDeletedMessagesForm({ flagIncomplete, onChange }: {
-  flagIncomplete: { current: () => void };
+function RestoreDeletedMessagesForm({ flagIncompleteRef, onChange }: {
+  flagIncompleteRef: { current: () => void };
   onChange: ComponentProps<typeof RestoreCriteriaBuilder>["onChange"];
 }) {
   const [flagged, setFlagged] = useState(false);
   useEffect(() => {
-    flagIncomplete.current = () => setFlagged(true);
-  }, [flagIncomplete]);
+    flagIncompleteRef.current = () => setFlagged(true);
+  }, [flagIncompleteRef]);
   return <RestoreCriteriaBuilder onChange={onChange} flagIncomplete={flagged} showIncompleteMessage={!flagged} />;
 }
 
@@ -205,7 +205,7 @@ export default function UserTasks({ username }: Props) {
           initialValues={request}
           renderForm={(onChange) => (
             <RestoreDeletedMessagesForm
-              flagIncomplete={flagIncomplete}
+              flagIncompleteRef={flagIncomplete}
               onChange={(criteria, limit, isValid) => {
                 criteriaValid = isValid;
                 onChange(buildRestoreRequest(criteria, limit));

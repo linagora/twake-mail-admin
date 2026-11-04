@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Plus, Trash2, Save, Loader2, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -46,13 +46,16 @@ export default function UserJmapSettings({ username }: Props) {
   const [saving, setSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<number, string>>({});
 
-  useEffect(() => {
+  // The rows show the settings each time they are (re)loaded
+  const [shownSettings, setShownSettings] = useState(settings);
+  if (settings !== shownSettings) {
+    setShownSettings(settings);
     if (settings) {
       setRows(settingsToRows(settings));
       setDirty(false);
       setValidationErrors({});
     }
-  }, [settings]);
+  }
 
   if (!canView) return null;
 

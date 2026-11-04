@@ -62,6 +62,7 @@ export default function UserVacation({ username }: Props) {
   }, [username]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetches when the section is opened: the loading flag is set as the request starts
     if (open) fetchVacation();
   }, [open, fetchVacation]);
 

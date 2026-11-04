@@ -41,6 +41,7 @@ export function useUsersPages(source: UsernamesSource, filter: UsersFilter, page
 
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loading flag of the page request started here
     setIsLoading(true);
     setError(null);
     fetchUsersPage(source, { query, domain }, pageSize, anchor)

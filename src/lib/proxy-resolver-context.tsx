@@ -43,14 +43,12 @@ const ProxyResolverContext = createContext<ResolverState>({ status: "loading" })
 
 export function ProxyResolverProvider({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
-  const [state, setState] = useState<ResolverState>({ status: "loading" });
+  // No SSO configured → static token auth → no restrictions
+  const [state, setState] = useState<ResolverState>(() =>
+    appConfig.sso ? { status: "loading" } : { status: "ready", resolver: null });
 
   useEffect(() => {
-    // No SSO configured → static token auth → no restrictions
-    if (!appConfig.sso) {
-      setState({ status: "ready", resolver: null });
-      return;
-    }
+    if (!appConfig.sso) return;
 
     fetchRules()
       .then((rules) => {

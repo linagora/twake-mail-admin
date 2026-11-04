@@ -9,7 +9,7 @@ import {
   deleteRegexMapping,
 } from "./api-client";
 import { GetMappingsResponseType, FlatMapping } from "./types";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
@@ -206,9 +206,7 @@ export default function MappingsList() {
     ? filteredMappings.filter((m) => canDeleteMapping(m.type))
     : [];
 
-  useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
-  }, [page, totalPages]);
+  if (page > totalPages) setPage(totalPages);
 
   const goToPage = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages) return;

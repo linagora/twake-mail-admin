@@ -12,19 +12,21 @@ interface OIDCCallbackProps {
   config: SSOConfig;
 }
 
+// An SSO-level error returned in the callback URL, surfaced before attempting token exchange
+const ssoErrorOf = (search: string): string | null => {
+  const params = new URLSearchParams(search);
+  const errorParam = params.get('error');
+  if (!errorParam) return null;
+  const description = params.get('error_description') ?? '';
+  return `SSO error: ${errorParam}${description ? ` — ${description}` : ''}`;
+};
+
 export const OIDCCallback: React.FC<OIDCCallbackProps> = ({ config }) => {
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => ssoErrorOf(window.location.search));
 
   useEffect(() => {
-    // Surface SSO-level errors before attempting token exchange
-    const params = new URLSearchParams(window.location.search);
-    const errorParam = params.get('error');
-    if (errorParam) {
-      const description = params.get('error_description') ?? '';
-      setError(`SSO error: ${errorParam}${description ? ` — ${description}` : ''}`);
-      return;
-    }
+    if (ssoErrorOf(window.location.search)) return;
 
     exchangeCodeForTokens(config)
       .then((tokens) => {

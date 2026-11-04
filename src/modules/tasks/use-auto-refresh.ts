@@ -16,7 +16,9 @@ export function useAutoRefresh(active: boolean, refresh: () => unknown, interval
   const [visible, setVisible] = useState(isTabVisible);
   // The latest callback, so that a new render does not restart the timer
   const latestRefresh = useRef(refresh);
-  latestRefresh.current = refresh;
+  useEffect(() => {
+    latestRefresh.current = refresh;
+  });
 
   useEffect(() => {
     const onVisibilityChange = () => setVisible(isTabVisible());

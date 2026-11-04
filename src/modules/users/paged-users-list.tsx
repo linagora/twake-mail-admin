@@ -31,9 +31,11 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
   // The URL only mirrors the text, and is read back when it changes from outside (Back, a link)
   const [search, setSearchText] = useState(urlSearch);
   const navigationType = useNavigationType();
-  useEffect(() => {
+  const [readUrl, setReadUrl] = useState({ urlSearch, navigationType });
+  if (readUrl.urlSearch !== urlSearch || readUrl.navigationType !== navigationType) {
+    setReadUrl({ urlSearch, navigationType });
     if (navigationType !== NavigationType.Replace) setSearchText(urlSearch);
-  }, [urlSearch, navigationType]);
+  }
   const selectedDomain = searchParams.get("domain") ?? "";
   // Two changes before a render (clearing the search, then picking a domain) must not undo one
   // another: each starts from the parameters the previous one wrote, not from the last render,

@@ -59,9 +59,13 @@ export default function ChannelsMap() {
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
-  useEffect(() => {
+  const reload = () => {
     setStatusText(t("networkChannels.loadingChannels"));
     setError(null);
+    setReloadKey((k) => k + 1);
+  };
+
+  useEffect(() => {
     let cancelled = false;
     let mapInstance: any = null;
 
@@ -159,7 +163,7 @@ export default function ChannelsMap() {
         <Button variant="outline" size="sm" onClick={() => navigate("/network-channels")}>
           <ArrowLeft className="w-4 h-4 mr-1" /> {t("networkChannels.backButton")}
         </Button>
-        <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)} disabled={!!statusText && !error} aria-label={t("common.refresh")} title={t("common.refresh")}>
+        <Button variant="outline" size="sm" onClick={reload} disabled={!!statusText && !error} aria-label={t("common.refresh")} title={t("common.refresh")}>
           <RefreshCw className="w-4 h-4" />
         </Button>
         {error ? (

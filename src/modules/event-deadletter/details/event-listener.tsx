@@ -80,7 +80,6 @@ export default function EventListenersDetail() {
     if (!canViewJson || !id || !pageKey) return;
     let active = true;
     const keys = pageKey.split(",");
-    setEvents((current) => ({ ...current, ...Object.fromEntries(keys.filter((k) => !current[k]).map((k) => [k, { status: "loading" }])) }));
     keys.forEach((key) => {
       getEventDetails(id, key)
         .then((json) => { if (active) setEvents((current) => ({ ...current, [key]: { status: "loaded", json } })); })
@@ -188,7 +187,8 @@ export default function EventListenersDetail() {
         <div className="mt-4">
           <ul>
             {pageEventKeys.map((failedEventKey, index) => {
-              const loaded = events[failedEventKey];
+              // An event not answered yet is loading, once it can be read
+              const loaded: Loaded | undefined = events[failedEventKey] ?? (canViewJson ? { status: "loading" } : undefined);
               const described = loaded?.status === "loaded" ? describeEvent(loaded.json) : {};
               return (
                 <li

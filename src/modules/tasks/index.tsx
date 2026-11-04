@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { RefreshCcw, CircleStop, Filter, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -103,7 +103,9 @@ export default function Tasks() {
   // task page shows the same list (/tasks?status=failed&type=SubscribeAllTask&sort=type&asc=1&page=2)
   const [searchParams, setSearchParams] = useSearchParams();
   const latestParams = useRef(searchParams);
-  latestParams.current = searchParams;
+  useLayoutEffect(() => {
+    latestParams.current = searchParams;
+  }, [searchParams]);
   const updateParams = (changes: Record<string, string>, replace: boolean) => {
     const next = new URLSearchParams(latestParams.current);
     for (const [key, value] of Object.entries(changes)) {
@@ -128,7 +130,11 @@ export default function Tasks() {
   // The panel fields only build the request: it is sent when the filters are applied, not on every keystroke
   const [draft, setDraft] = useState<ServerFilters>(applied);
   // Back, a reload or Reset show the filters of the URL
-  useEffect(() => setDraft(applied), [applied]);
+  const [draftOf, setDraftOf] = useState(applied);
+  if (applied !== draftOf) {
+    setDraftOf(applied);
+    setDraft(applied);
+  }
   const [showFilters, setShowFilters] = useState(false);
 
   // Detail modal
@@ -148,15 +154,14 @@ export default function Tasks() {
   const hasRunningTask = !!tasks && tasks.some((task) => isRunning(task.status));
   const following = useAutoRefresh(hasRunningTask, refreshSilently, TASK_LIST_AUTO_REFRESH_MS);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
-  useEffect(() => {
-    if (tasks) setUpdatedAt(new Date());
-  }, [tasks]);
-
   // The type picker lists the types of the last list fetched without a type, and the known ones
   const [seenTypes, setSeenTypes] = useState<string[]>([]);
-  useEffect(() => {
+  const [readTasks, setReadTasks] = useState({ tasks, type: applied.type });
+  if (tasks !== readTasks.tasks || applied.type !== readTasks.type) {
+    setReadTasks({ tasks, type: applied.type });
+    if (tasks && tasks !== readTasks.tasks) setUpdatedAt(new Date());
     if (tasks && !applied.type) setSeenTypes(tasks.map((task) => task.type));
-  }, [tasks, applied.type]);
+  }
   const types = useMemo(
     () => typeOptions(t, [...seenTypes, ...KNOWN_TYPES, applied.type, draft.type]),
     [t, seenTypes, applied.type, draft.type]

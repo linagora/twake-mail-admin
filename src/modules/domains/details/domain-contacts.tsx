@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { Plus, Trash2, Pencil, AlertTriangle, Loader2, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -65,7 +65,11 @@ export default function DomainContacts({ domain }: Props) {
   const fetchContacts = useCallback(() => getDomainContacts(domain), [domain]);
   const { data: fetchedContacts, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchContacts : null);
   const [localChanges, setLocalChanges] = useState<LocalChanges>(NO_LOCAL_CHANGES);
-  useEffect(() => setLocalChanges(NO_LOCAL_CHANGES), [domain]);
+  const [changesDomain, setChangesDomain] = useState(domain);
+  if (domain !== changesDomain) {
+    setChangesDomain(domain);
+    setLocalChanges(NO_LOCAL_CHANGES);
+  }
   const contacts = useMemo(
     () => fetchedContacts && applyLocalChanges(fetchedContacts, localChanges),
     [fetchedContacts, localChanges]
