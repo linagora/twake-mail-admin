@@ -198,7 +198,9 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
   // dialog is cancelled rather than left open over another page
   const inRouter = useInRouterContext();
   const latestCancel = useRef(handleCancel);
-  latestCancel.current = handleCancel;
+  useLayoutEffect(() => {
+    latestCancel.current = handleCancel;
+  });
 
   // Any edit of the content may fix the reported problem: the error is re-checked on the next confirm.
   const [clearError] = useState(() => () =>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { RefreshCcw, CircleStop, Filter, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -103,7 +103,9 @@ export default function Tasks() {
   // task page shows the same list (/tasks?status=failed&type=SubscribeAllTask&sort=type&asc=1&page=2)
   const [searchParams, setSearchParams] = useSearchParams();
   const latestParams = useRef(searchParams);
-  latestParams.current = searchParams;
+  useLayoutEffect(() => {
+    latestParams.current = searchParams;
+  }, [searchParams]);
   const updateParams = (changes: Record<string, string>, replace: boolean) => {
     const next = new URLSearchParams(latestParams.current);
     for (const [key, value] of Object.entries(changes)) {
