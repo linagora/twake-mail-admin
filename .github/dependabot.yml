@@ -20,6 +20,8 @@ updates:
           - patch
 
   - package-ecosystem: docker
-    directory: /profile-editor
+    directories:
+      - /
+      - /profile-editor
     schedule:
       interval: weekly

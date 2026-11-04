@@ -1,13 +1,13 @@
-# Stage 1: Build
-FROM oven/bun:latest AS build
+# Stage 1: Build, with the same npm and package-lock.json as the CI
+FROM node:24-alpine AS build
 
 WORKDIR /app
 
-COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
 
 COPY . .
-RUN bun run build
+RUN npm run build
 
 # Stage 2: Serve
 FROM nginx:alpine
