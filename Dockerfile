@@ -1,5 +1,5 @@
 # Stage 1: Build, with the same npm and package-lock.json as the CI
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 
 WORKDIR /app
 
