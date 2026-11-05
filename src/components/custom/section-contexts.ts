@@ -15,4 +15,4 @@ export const contentIdOf = (id: string) => `section-${id}-content`;
 
 export const SectionsContext = createContext<SectionsContextValue | null>(null);
 
-export const SectionIdsContext = createContext<React.MutableRefObject<Map<string, number>> | null>(null);
+export const SectionIdsContext = createContext<React.RefObject<Map<string, number>> | null>(null);
