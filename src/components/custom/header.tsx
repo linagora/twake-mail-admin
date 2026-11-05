@@ -25,7 +25,7 @@ const DocLink = ({ url }: { url?: string }) =>
   url ? <> (<a href={url} target="_blank" rel="noreferrer" className="text-blue-500 underline">doc</a>)</> : null;
 
 // Whether the element has scrolled out of the viewport, above it
-function useScrolledPast(ref: RefObject<HTMLElement>, enabled: boolean): boolean {
+function useScrolledPast(ref: RefObject<HTMLElement | null>, enabled: boolean): boolean {
   const [past, setPast] = useState(false);
   useEffect(() => {
     const element = ref.current;
