@@ -58,14 +58,14 @@ interface Props {
 
 // The criteria builder of the restore dialog. Once a confirm is refused because of incomplete
 // criteria, the dialog shows the error in place of the builder's hint and their empty controls are flagged.
-function RestoreDeletedMessagesForm({ flagIncomplete, onChange }: {
-  flagIncomplete: { current: () => void };
+function RestoreDeletedMessagesForm({ registerFlagIncomplete, onChange }: {
+  registerFlagIncomplete: (flag: () => void) => void;
   onChange: ComponentProps<typeof RestoreCriteriaBuilder>["onChange"];
 }) {
   const [flagged, setFlagged] = useState(false);
   useEffect(() => {
-    flagIncomplete.current = () => setFlagged(true);
-  }, [flagIncomplete]);
+    registerFlagIncomplete(() => setFlagged(true));
+  }, [registerFlagIncomplete]);
   return <RestoreCriteriaBuilder onChange={onChange} flagIncomplete={flagged} showIncompleteMessage={!flagged} />;
 }
 
@@ -195,7 +195,8 @@ export default function UserTasks({ username }: Props) {
     let request = buildRestoreRequest([], undefined);
     let criteriaValid = true;
     // Set by the form once mounted: flags the incomplete criteria after a refused confirm
-    const flagIncomplete = { current: () => {} };
+    let flagIncomplete = () => {};
+    const registerFlagIncomplete = (flag: () => void) => { flagIncomplete = flag; };
 
     await confirm({
       header: t("users.deletedVault.restoreTitle"),
@@ -205,7 +206,7 @@ export default function UserTasks({ username }: Props) {
           initialValues={request}
           renderForm={(onChange) => (
             <RestoreDeletedMessagesForm
-              flagIncomplete={flagIncomplete}
+              registerFlagIncomplete={registerFlagIncomplete}
               onChange={(criteria, limit, isValid) => {
                 criteriaValid = isValid;
                 onChange(buildRestoreRequest(criteria, limit));
@@ -218,7 +219,7 @@ export default function UserTasks({ username }: Props) {
       ),
       validate: () => {
         if (criteriaValid) return null;
-        flagIncomplete.current();
+        flagIncomplete();
         return t("users.deletedVault.criteria.incomplete");
       },
       action: async () => {

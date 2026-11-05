@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 // A running task is read again this often on its page, until it is over
 export const TASK_AUTO_REFRESH_MS = 2000;
@@ -16,7 +16,9 @@ export function useAutoRefresh(active: boolean, refresh: () => unknown, interval
   const [visible, setVisible] = useState(isTabVisible);
   // The latest callback, so that a new render does not restart the timer
   const latestRefresh = useRef(refresh);
-  latestRefresh.current = refresh;
+  useLayoutEffect(() => {
+    latestRefresh.current = refresh;
+  });
 
   useEffect(() => {
     const onVisibilityChange = () => setVisible(isTabVisible());
