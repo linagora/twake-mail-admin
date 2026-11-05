@@ -96,7 +96,8 @@ describe("mail repository extended view: layout", () => {
     const row = await screen.findByTestId("mail-repository-extended-row");
 
     // The e2e suite reads the size as /^\d+ B$/: the label must not be part of its element
-    expect(within(row).getByText(/^\d+ /).textContent).toMatch(/^\d+ /);
+    // i18next is not initialized here: the unit may be rendered empty
+    expect(within(row).getByText(/^\d+( .*)?$/).textContent).toMatch(/^\d+ /);
     expect(within(row).getByText("bob@example.com").textContent).toBe("bob@example.com");
   });
 
