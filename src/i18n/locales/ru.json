@@ -1717,7 +1717,8 @@
     },
     "summary": {
       "healthy": "Все компоненты ({{count}}) исправны.",
-      "problems": "Неисправно: {{unhealthy}}, с деградацией: {{degraded}} из {{count}} компонентов."
+      "degraded": "с деградацией: {{count}}",
+      "problems": "Неисправно: {{unhealthy}}, {{degraded}} из {{count}} компонентов."
     },
     "checkedAt": "Проверено в {{time}}",
     "refresh": "Проверить снова",

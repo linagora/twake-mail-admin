@@ -1710,7 +1710,8 @@
     },
     "summary": {
       "healthy": "All {{count}} components are healthy.",
-      "problems": "{{unhealthy}} unhealthy, {{degraded}} degraded out of {{count}} components."
+      "degraded": "{{count}} degraded",
+      "problems": "{{unhealthy}} unhealthy, {{degraded}} out of {{count}} components."
     },
     "checkedAt": "Checked at {{time}}",
     "refresh": "Check again",

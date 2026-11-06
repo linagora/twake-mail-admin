@@ -1710,7 +1710,9 @@
     },
     "summary": {
       "healthy": "Les {{count}} composants sont sains.",
-      "problems": "{{unhealthy}} en échec, {{degraded}} dégradé(s) sur {{count}} composants."
+      "degraded_one": "{{count}} dégradé",
+      "degraded_other": "{{count}} dégradés",
+      "problems": "{{unhealthy}} en échec, {{degraded}} sur {{count}} composants."
     },
     "checkedAt": "Vérifié à {{time}}",
     "refresh": "Vérifier à nouveau",

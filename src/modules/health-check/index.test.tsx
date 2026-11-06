@@ -61,7 +61,11 @@ describe("health check: component status", () => {
     render(<MemoryRouter><HealthCheck /></MemoryRouter>);
 
     const summary = await banner();
-    expect(summary.textContent).toContain('healthCheck.summary.problems {"unhealthy":1,"degraded":1,"count":3}');
+    expect(summary.textContent).toContain(`healthCheck.summary.problems ${JSON.stringify({
+      unhealthy: 1,
+      degraded: 'healthCheck.summary.degraded {"count":1}',
+      count: 3,
+    })}`);
     const lines = within(summary).getAllByRole("listitem").map((li) => li.textContent);
     expect(lines).toEqual([
       "Redis — healthCheck.status.unhealthy",
