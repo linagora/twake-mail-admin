@@ -63,7 +63,7 @@ describe("task details", () => {
     expect(grid.textContent).toContain("tasks.info.indexedSpaces12");
   });
 
-  it.each(["PopulateEmailQueryViewTaskV2", "PopulateEmailQueryViewTask-v2"])("labels the mailbox counters of a populate email query view reporting %s", (type) => {
+  it.each(["PopulateEmailQueryViewTaskV2", "PopulateEmailQueryViewTask-v2", "PopulateEmailQueryViewTask"])("labels the mailbox counters of a populate email query view reporting %s", (type) => {
     const grid = renderDetails({
       type,
       timestamp: "2026-10-09T08:00:00Z",

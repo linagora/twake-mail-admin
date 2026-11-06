@@ -1657,7 +1657,7 @@
       "reindexFixOutdated": "Wenn die Suche neue Mails nicht findet. Indiziert nur veraltete Dokumente neu; mäßige Last.",
       "reindexRebuildAll": "Nach einem OpenSearch-Verlust oder einer Mapping-Änderung. Baut den ganzen Index neu; hohe Last, kann Stunden dauern.",
       "perUserReindex": "Dieselbe vollständige Neuindizierung, aufgeteilt in eine Aufgabe pro Benutzer: ein Fehler betrifft nur ein Konto.",
-      "populateEmailQueryView": "Nach dem Aktivieren der E-Mail-Abfrageansicht. Füllt sie aus den vorhandenen Nachrichten; mäßige Last.",
+      "populateEmailQueryView": "Nach dem Aktivieren der E-Mail-Abfrageansicht. Füllt sie aus den vorhandenen Nachrichten; mäßige Last. Bei Virtual Hosting werden nur Postfächer von Domains verarbeitet, die in der Domainliste eingetragen sind.",
       "reindexContacts": "Füllt die Empfänger-Autovervollständigung jedes Benutzers aus seinen gesendeten Mails.",
       "fixMailboxInconsistencies": "Wenn Postfächer fehlen, doppelt sind oder sich nicht öffnen lassen. Alle anderen Dienste müssen vorher gestoppt sein.",
       "fixMessageInconsistencies": "Wenn eine Nachricht aufgeführt, aber nicht lesbar ist, oder umgekehrt. Repariert die Nachrichtentabellen.",

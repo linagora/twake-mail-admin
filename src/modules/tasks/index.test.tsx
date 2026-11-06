@@ -308,6 +308,19 @@ describe("tasks: quick status chips", () => {
 });
 
 describe("tasks: type picker and dates", () => {
+  it("lists a versioned task type once, under the type of its task", async () => {
+    api.listTasks.mockResolvedValue([
+      { taskId: "t1", type: "PopulateEmailQueryViewTask-v2", status: "completed", submitDate: "2026-10-10T06:00:00Z" },
+    ]);
+    renderTasks();
+    await screen.findAllByTestId("task-row");
+    fireEvent.click(screen.getByText("tasks.filters"));
+
+    const options = Array.from((screen.getByLabelText("tasks.type") as HTMLSelectElement).options);
+    expect(options.filter((o) => o.value.startsWith("PopulateEmailQueryViewTask")).map((o) => [o.value, o.text]))
+      .toEqual([["PopulateEmailQueryViewTask", "commonTasks.populateEmailQueryView"]]);
+  });
+
   it("lists the task types by their name and sends the raw type", async () => {
     api.listTasks.mockResolvedValue([
       { taskId: "t1", type: "a-type-from-a-newer-server", status: "completed", submitDate: "2026-10-10T06:00:00Z" },

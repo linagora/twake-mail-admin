@@ -311,9 +311,12 @@ const DETAILS_VERSION_TASK_TYPES: Record<string, string> = {
   "PopulateEmailQueryViewTask-v2": "PopulateEmailQueryViewTask",
 };
 
+/** The task type behind a versioned one: both versions are the same task for the operator. */
+export const canonicalTaskType = (type: string): string => DETAILS_VERSION_TASK_TYPES[type] ?? type;
+
 /** The name of a task type in the UI language; an unknown type as WebAdmin names it. */
 export const taskTypeLabel = (t: TFunction, type: string): string => {
-  const labelKey = TASK_TYPE_LABEL_KEYS[DETAILS_VERSION_TASK_TYPES[type] ?? type];
+  const labelKey = TASK_TYPE_LABEL_KEYS[canonicalTaskType(type)];
   return labelKey ? t(labelKey) : type;
 };
 

@@ -156,7 +156,7 @@ class CommonTasksTest extends MailAdminE2ETest {
                 "DELETE", "/jmap/uploads?scope=expired", false),
             new CommonTask("Purge Deleted Messages", "Permanently deletes the messages of the Deleted Messages Vault whose retention period is over.", "curl -XDELETE /deletedMessages?scope=expired",
                 "DELETE", "/deletedMessages?scope=expired", false),
-            new CommonTask("Populate Email Query View", "Use after enabling the email query view. Fills it from the existing messages; moderate load.", "curl -XPOST /mailboxes?task=populateEmailQueryView&messagesPerSecond=10",
+            new CommonTask("Populate Email Query View", "Use after enabling the email query view. Fills it from the existing messages; moderate load. With virtual hosting, only mailboxes of domains registered in the domain list are processed.", "curl -XPOST /mailboxes?task=populateEmailQueryView&messagesPerSecond=10",
                 "POST", "/mailboxes?task=populateEmailQueryView&messagesPerSecond=10", true),
             new CommonTask("Reindex contacts from sent mailbox", "Fills the recipient autocompletion of every user from the mails they sent.", "curl -XPOST /mailboxes?task=ContactIndexing&usersPerSecond=1",
                 "POST", "/mailboxes?task=ContactIndexing&usersPerSecond=1", true),

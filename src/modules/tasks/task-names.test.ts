@@ -17,6 +17,18 @@ describe("task names", () => {
     expect(taskTypeLabel(t, "brand-new-task")).toBe("brand-new-task");
   });
 
+  it("gives both versions of populate email query view the same name", () => {
+    const names = ["PopulateEmailQueryViewTask", "PopulateEmailQueryViewTask-v2"].map((type) => ({
+      label: taskTypeLabel(t, type),
+      name: taskName(t, task(type)),
+      heading: taskHeading(t, task(type)),
+      cancel: cancelConfirmMessage(t, task(type)),
+    }));
+    expect(names[1]).toEqual(names[0]);
+    expect(names[1].label).toBe("commonTasks.populateEmailQueryView");
+    expect(JSON.stringify(names[1])).not.toContain("-v2");
+  });
+
   it("has an English name for every type it knows", () => {
     const lookup = (key: string) => key.split(".").reduce<unknown>((node, part) => (node as Record<string, unknown> | undefined)?.[part], en);
     const missing = Object.entries(TASK_TYPE_LABEL_KEYS).filter(([, key]) => typeof lookup(key) !== "string");

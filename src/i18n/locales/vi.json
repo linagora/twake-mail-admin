@@ -1646,7 +1646,7 @@
       "reindexFixOutdated": "Khi tìm kiếm bỏ sót thư gần đây. Chỉ lập chỉ mục lại tài liệu lỗi thời; tải vừa phải.",
       "reindexRebuildAll": "Sau khi mất OpenSearch hoặc thay đổi mapping. Dựng lại toàn bộ chỉ mục; tải nặng, có thể mất hàng giờ.",
       "perUserReindex": "Cùng việc lập chỉ mục lại toàn bộ, chia thành một tác vụ cho mỗi người dùng để lỗi chỉ ảnh hưởng một tài khoản.",
-      "populateEmailQueryView": "Sau khi bật chế độ xem truy vấn thư. Điền dữ liệu từ các thư hiện có; tải vừa phải.",
+      "populateEmailQueryView": "Sau khi bật chế độ xem truy vấn thư. Điền dữ liệu từ các thư hiện có; tải vừa phải. Với lưu trữ ảo, chỉ các hộp thư của tên miền đã đăng ký trong danh sách tên miền mới được xử lý.",
       "reindexContacts": "Điền gợi ý người nhận của mỗi người dùng từ các thư họ đã gửi.",
       "fixMailboxInconsistencies": "Khi hộp thư bị thiếu, trùng lặp hoặc không mở được. Phải dừng mọi dịch vụ khác trước.",
       "fixMessageInconsistencies": "Khi thư có trong danh sách nhưng không đọc được, hoặc ngược lại. Sửa các bảng thư.",
