@@ -74,7 +74,11 @@ function SummaryBanner({ checks, checkedAt, refreshButton }: { checks: HealthChe
           <Icon className="w-5 h-5 shrink-0" aria-hidden="true" />
           {level === "healthy"
             ? t("healthCheck.summary.healthy", { count: summary.count })
-            : t("healthCheck.summary.problems", { unhealthy: summary.unhealthy, degraded: summary.degraded, count: summary.count })}
+            : t("healthCheck.summary.problems", {
+                unhealthy: summary.unhealthy,
+                degraded: t("healthCheck.summary.degraded", { count: summary.degraded }),
+                count: summary.count,
+              })}
         </p>
         <div className="flex items-center gap-3 text-sm">
           {checkedAt && (

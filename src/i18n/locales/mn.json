@@ -1703,7 +1703,8 @@
     },
     "summary": {
       "healthy": "Бүх {{count}} бүрэлдэхүүн хэвийн.",
-      "problems": "{{count}} бүрэлдэхүүнээс {{unhealthy}} алдаатай, {{degraded}} доголдолтой."
+      "degraded": "{{count}} доголдолтой",
+      "problems": "{{count}} бүрэлдэхүүнээс {{unhealthy}} алдаатай, {{degraded}}."
     },
     "checkedAt": "{{time}}-д шалгасан",
     "refresh": "Дахин шалгах",

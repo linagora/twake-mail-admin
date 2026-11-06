@@ -1710,7 +1710,9 @@
     },
     "summary": {
       "healthy": "Tutti i {{count}} componenti sono integri.",
-      "problems": "{{unhealthy}} in errore, {{degraded}} degradato/i su {{count}} componenti."
+      "degraded_one": "{{count}} degradato",
+      "degraded_other": "{{count}} degradati",
+      "problems": "{{unhealthy}} in errore, {{degraded}} su {{count}} componenti."
     },
     "checkedAt": "Verificato alle {{time}}",
     "refresh": "Verifica di nuovo",

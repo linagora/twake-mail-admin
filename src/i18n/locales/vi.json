@@ -1699,7 +1699,8 @@
     },
     "summary": {
       "healthy": "Cả {{count}} thành phần đều ổn định.",
-      "problems": "{{unhealthy}} lỗi, {{degraded}} suy giảm trên {{count}} thành phần."
+      "degraded": "{{count}} suy giảm",
+      "problems": "{{unhealthy}} lỗi, {{degraded}} trên {{count}} thành phần."
     },
     "checkedAt": "Đã kiểm tra lúc {{time}}",
     "refresh": "Kiểm tra lại",

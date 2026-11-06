@@ -1710,7 +1710,8 @@
     },
     "summary": {
       "healthy": "Alle {{count}} Komponenten sind fehlerfrei.",
-      "problems": "{{unhealthy}} fehlerhaft, {{degraded}} beeinträchtigt von {{count}} Komponenten."
+      "degraded": "{{count}} beeinträchtigt",
+      "problems": "{{unhealthy}} fehlerhaft, {{degraded}} von {{count}} Komponenten."
     },
     "checkedAt": "Geprüft um {{time}}",
     "refresh": "Erneut prüfen",
