@@ -2020,9 +2020,16 @@
       "Regex": "Espressione regolare"
     },
     "destinationExternal": "Non è un account locale: la posta verrà inviata così com'è a questo indirizzo.",
+    "regexLimits": {
+      "refused": "Il server rifiuterà questa mappatura, a meno che non funzioni con james.rrt.regex.safe=false.",
+      "notApplied": "Supera i limiti delle espressioni regolari sicure: il server non applica questa mappatura, a meno che non funzioni con james.rrt.regex.safe=false.",
+      "braces": "Contiene { o }.",
+      "length": "La sua espressione regolare supera i {{max}} caratteri.",
+      "controlCharacters": "Contiene caratteri di controllo."
+    },
     "typeHint": {
       "address": "La posta inviata all'indirizzo di origine viene recapitata all'indirizzo di destinazione.",
-      "regex": "La posta il cui destinatario corrisponde all'espressione regolare viene riscritta verso la destinazione."
+      "regex": "La posta il cui destinatario corrisponde all'espressione regolare RE2 viene riscritta verso la destinazione. Limiti: niente { o } (quindi nessun parametro ${1} né ripetizione contata), al massimo {{max}} caratteri nell'espressione regolare, nessun carattere di controllo. RE2 non supporta lookaround né backreference."
     }
   },
   "mailingLists": {

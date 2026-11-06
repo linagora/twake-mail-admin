@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 
 const api = vi.hoisted(() => ({
@@ -105,6 +105,101 @@ describe("mappings list: an address mapping checks its addresses", () => {
     expect(screen.getByText("mappings.destinationExternal")).not.toBeNull();
     expect((screen.getByRole("button", { name: "common.create" }) as HTMLButtonElement).disabled).toBe(false);
     accounts.clear();
+  });
+});
+
+describe("mappings list: a new regex mapping and the limits of RE2", () => {
+  const BRACES_MAPPING = "(.*)@a.org:${1}@b.org";
+  const openRegexDialog = async () => {
+    render(<MemoryRouter><MappingsList /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole("button", { name: "mappings.addTitle" }));
+    fireEvent.change(screen.getByLabelText("mappings.type"), { target: { value: "regex" } });
+  };
+  const typeMapping = (mapping: string) => {
+    fireEvent.change(screen.getByLabelText("mappings.source"), { target: { value: "qa@a.org" } });
+    fireEvent.change(screen.getByLabelText("mappings.destination"), { target: { value: mapping } });
+  };
+  const submit = () => fireEvent.submit(screen.getByLabelText("mappings.source").closest("form")!);
+
+  afterEach(() => {
+    api.createRegexMapping.mockReset();
+  });
+
+  it("explains the limits under the type select", async () => {
+    await openRegexDialog();
+    expect(screen.getByText("mappings.typeHint.regex")).not.toBeNull();
+  });
+
+  it("warns about braces while typing, without blocking the submission", async () => {
+    await openRegexDialog();
+    typeMapping(BRACES_MAPPING);
+
+    expect(screen.getByRole("status").textContent).toBe("mappings.regexLimits.refused mappings.regexLimits.braces");
+    expect((screen.getByRole("button", { name: "common.create" }) as HTMLButtonElement).disabled).toBe(false);
+
+    submit();
+    await vi.waitFor(() => expect(api.createRegexMapping).toHaveBeenCalledWith("qa@a.org", BRACES_MAPPING));
+  });
+
+  it("does not warn about a mapping within the limits", async () => {
+    await openRegexDialog();
+    typeMapping("qa.*@a.org:bob@b.org");
+    expect(screen.getByRole("status").textContent).toBe("");
+  });
+
+  it("does not check the limits of another kind of mapping", async () => {
+    render(<MemoryRouter><MappingsList /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole("button", { name: "mappings.addTitle" }));
+    typeMapping(BRACES_MAPPING);
+    expect(screen.queryByText(/mappings\.regexLimits/)).toBeNull();
+  });
+
+  it("keeps the dialog open with the typed values and shows the message of a refusal", async () => {
+    api.createRegexMapping.mockRejectedValueOnce({
+      isAxiosError: true,
+      response: { status: 400, data: { statusCode: 400, type: "InvalidArgument", message: `Invalid regex: ${BRACES_MAPPING}` } },
+      message: "Request failed with status code 400",
+    });
+    await openRegexDialog();
+    typeMapping(BRACES_MAPPING);
+    submit();
+
+    expect((await screen.findByRole("alert")).textContent).toContain(`Invalid regex: ${BRACES_MAPPING}`);
+    expect((screen.getByLabelText("mappings.destination") as HTMLInputElement).value).toBe(BRACES_MAPPING);
+    expect((screen.getByLabelText("mappings.source") as HTMLInputElement).value).toBe("qa@a.org");
+  });
+});
+
+describe("mappings list: a stored regex mapping beyond the limits of RE2", () => {
+  const STORED_MAPPING = "(.*)@a.org:${1}@b.org";
+  const renderStored = async () => {
+    api.getMappings.mockResolvedValueOnce({
+      "stored@a.org": [{ type: "Regex", mapping: STORED_MAPPING }],
+      "safe@a.org": [{ type: "Regex", mapping: "qa.*@a.org:bob@b.org" }],
+      "forward@a.org": [{ type: "Forward", mapping: "{odd}@a.org" }],
+    } as never);
+    render(<MemoryRouter><MappingsList /></MemoryRouter>);
+    await screen.findByText("stored@a.org");
+  };
+
+  afterEach(() => {
+    api.deleteRegexMapping.mockReset();
+  });
+
+  it("flags it, and only it", async () => {
+    await renderStored();
+    const flagged = screen.getAllByText(/mappings\.regexLimits\.notApplied/);
+    expect(flagged).toHaveLength(1);
+    expect(flagged[0].textContent).toBe("mappings.regexLimits.notApplied mappings.regexLimits.braces");
+    expect(flagged[0].closest("tr")!.textContent).toContain("stored@a.org");
+  });
+
+  it("can still be deleted", async () => {
+    await renderStored();
+    confirmFn.mockResolvedValueOnce(true);
+    const flaggedRow = screen.getByText(/mappings\.regexLimits\.notApplied/).closest("tr")!;
+    fireEvent.click(within(flaggedRow).getByRole("button", { name: "mappings.removeNamed" }));
+    await vi.waitFor(() => expect(api.deleteRegexMapping).toHaveBeenCalledWith("stored@a.org", STORED_MAPPING));
   });
 });
 

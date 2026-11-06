@@ -2020,9 +2020,16 @@
       "Regex": "Regex"
     },
     "destinationExternal": "Not a local account: mail will be sent to this address as is.",
+    "regexLimits": {
+      "refused": "The server will refuse this mapping, unless it runs with james.rrt.regex.safe=false.",
+      "notApplied": "Exceeds the safe regex limits: the server does not apply this mapping, unless it runs with james.rrt.regex.safe=false.",
+      "braces": "It contains { or }.",
+      "length": "Its regex is longer than {{max}} characters.",
+      "controlCharacters": "It contains control characters."
+    },
     "typeHint": {
       "address": "Mail sent to the source address is delivered to the destination address.",
-      "regex": "Mail whose recipient matches the regular expression is rewritten to the destination."
+      "regex": "Mail whose recipient matches the RE2 regular expression is rewritten to the destination. Limits: no { or } (so no ${1} parameter and no counted repetition), at most {{max}} characters in the regex, no control characters. RE2 has no lookaround or backreferences."
     }
   },
   "mailingLists": {

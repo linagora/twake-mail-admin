@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import ListToolbar from "@/components/custom/list-toolbar";
 import CreateMappingDialog, { MappingKind } from "./create-mapping-dialog";
 import UserLink from "@/components/custom/user-link";
+import RegexLimitsWarning from "./regex-limits-warning";
 
 // Mappings between addresses, whose ends can be users; regex and domain mappings are not
 const ADDRESS_TYPES = ["Address", "Alias", "Forward", "Group"];
@@ -290,7 +291,10 @@ export default function MappingsList() {
                 </td>
                 <td className="px-4 py-2 text-sm">{ADDRESS_TYPES.includes(mapping.type) ? <UserLink address={mapping.source} /> : mapping.source}</td>
                 <td className="px-4 py-2 text-sm">{displayedType(mapping, t)}</td>
-                <td className="px-4 py-2 text-sm">{ADDRESS_TYPES.includes(mapping.type) ? <UserLink address={mapping.destination} /> : mapping.destination}</td>
+                <td className="px-4 py-2 text-sm">
+                  {ADDRESS_TYPES.includes(mapping.type) ? <UserLink address={mapping.destination} /> : mapping.destination}
+                  {mapping.type === "Regex" && <RegexLimitsWarning mapping={mapping.destination} consequence="notApplied" />}
+                </td>
                 <td className="px-4 py-2 text-sm">
                   {canDeleteMapping(mapping.type) && (
                     <button

@@ -2020,9 +2020,16 @@
       "Regex": "Regulärer Ausdruck"
     },
     "destinationExternal": "Kein lokales Konto: E-Mails werden unverändert an diese Adresse gesendet.",
+    "regexLimits": {
+      "refused": "Der Server wird diese Zuordnung ablehnen, sofern er nicht mit james.rrt.regex.safe=false läuft.",
+      "notApplied": "Überschreitet die Grenzen sicherer regulärer Ausdrücke: Der Server wendet diese Zuordnung nicht an, sofern er nicht mit james.rrt.regex.safe=false läuft.",
+      "braces": "Sie enthält { oder }.",
+      "length": "Ihr regulärer Ausdruck ist länger als {{max}} Zeichen.",
+      "controlCharacters": "Sie enthält Steuerzeichen."
+    },
     "typeHint": {
       "address": "E-Mails an die Quelladresse werden an die Zieladresse zugestellt.",
-      "regex": "E-Mails, deren Empfänger dem regulären Ausdruck entspricht, werden auf das Ziel umgeschrieben."
+      "regex": "E-Mails, deren Empfänger dem regulären RE2-Ausdruck entspricht, werden auf das Ziel umgeschrieben. Grenzen: kein { oder } (also kein Parameter ${1} und keine gezählte Wiederholung), höchstens {{max}} Zeichen im regulären Ausdruck, keine Steuerzeichen. RE2 unterstützt weder Lookaround noch Rückverweise."
     }
   },
   "mailingLists": {

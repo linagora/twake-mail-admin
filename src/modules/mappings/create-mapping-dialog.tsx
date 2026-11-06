@@ -4,6 +4,8 @@ import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { createAddressMapping, createDomainMapping, createRegexMapping } from "./api-client";
 import { DestinationLine, SourceLine, useSourceCheck } from "@/components/custom/address-checks";
+import { MAX_REGEX_LENGTH } from "./regex-limits";
+import RegexLimitsWarning from "./regex-limits-warning";
 
 export type MappingKind = "address" | "regex" | "domain";
 
@@ -16,6 +18,8 @@ const KINDS: Record<MappingKind, {
   hint: string;
   // Source and destination are addresses, checked against the accounts
   checksAccounts?: boolean;
+  // The destination is a regex mapping, checked against the limits of RE2
+  checksRegexLimits?: boolean;
 }> = {
   address: {
     sourcePlaceholder: "mappings.sourcePlaceholder",
@@ -31,6 +35,7 @@ const KINDS: Record<MappingKind, {
     created: "mappings.regexCreated",
     create: createRegexMapping,
     hint: "mappings.typeHint.regex",
+    checksRegexLimits: true,
   },
   domain: {
     sourcePlaceholder: "mappings.domainSourcePlaceholder",
@@ -92,7 +97,7 @@ export default function CreateMappingDialog({ open, kinds, onClose, onCreated }:
           </select>
         </div>
       )}
-      <p className="text-xs text-muted-foreground">{t(config.hint)}</p>
+      <p className="text-xs text-muted-foreground">{t(config.hint, { max: MAX_REGEX_LENGTH })}</p>
       <div>
         <label htmlFor={`${idPrefix}-source`} className="text-sm font-medium">{t("mappings.source")}</label>
         <input id={`${idPrefix}-source`} type="text" autoFocus value={source} onChange={(e) => setSource(e.target.value)}
@@ -104,6 +109,12 @@ export default function CreateMappingDialog({ open, kinds, onClose, onCreated }:
         <input id={`${idPrefix}-destination`} type="text" value={destination} onChange={(e) => setDestination(e.target.value)}
           placeholder={t(config.destinationPlaceholder)} className={FIELD_CLASS} />
         {config.checksAccounts && <DestinationLine destination={destination} />}
+        {config.checksRegexLimits && (
+          <div role="status">
+            {/* Trimmed as it will be sent */}
+            <RegexLimitsWarning mapping={destination.trim()} consequence="refused" />
+          </div>
+        )}
       </div>
     </FormDialog>
   );

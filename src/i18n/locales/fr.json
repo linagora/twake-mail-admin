@@ -2020,9 +2020,16 @@
       "Regex": "Expression régulière"
     },
     "destinationExternal": "Pas un compte local : le courrier sera envoyé tel quel à cette adresse.",
+    "regexLimits": {
+      "refused": "Le serveur refusera cette réécriture d'adresse, sauf s'il fonctionne avec james.rrt.regex.safe=false.",
+      "notApplied": "Dépasse les limites des regex sûres : le serveur n'applique pas cette réécriture d'adresse, sauf s'il fonctionne avec james.rrt.regex.safe=false.",
+      "braces": "Elle contient { ou }.",
+      "length": "Sa regex dépasse {{max}} caractères.",
+      "controlCharacters": "Elle contient des caractères de contrôle."
+    },
     "typeHint": {
       "address": "Le courrier envoyé à l'adresse source est remis à l'adresse de destination.",
-      "regex": "Le courrier dont le destinataire correspond à l'expression régulière est réécrit vers la destination."
+      "regex": "Le courrier dont le destinataire correspond à l'expression régulière RE2 est réécrit vers la destination. Limites : ni { ni } (donc pas de paramètre ${1} ni de répétition comptée), {{max}} caractères au plus dans la regex, pas de caractère de contrôle. RE2 ne prend en charge ni les lookarounds ni les références arrière."
     }
   },
   "mailingLists": {
