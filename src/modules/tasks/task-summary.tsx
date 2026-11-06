@@ -300,9 +300,22 @@ export const CALENDAR_TASK_TYPES: ReadonlySet<string> = new Set([
 /** The task types both WebAdmins run: deleting the data of a user or of a whole domain. */
 export const SHARED_TASK_TYPES: ReadonlySet<string> = new Set(["DeleteUserDataTask", "DeleteUsersDataOfDomainTask"]);
 
+/**
+ * The versions of a task's details (additionalInformation.type), named as the task they belong to.
+ * Kept apart from TASK_TYPE_LABEL_KEYS, which feeds the Tasks type picker: the `type` of the task
+ * does not change, and GET /tasks?type= would find nothing with these values.
+ * -v2 is what James reported before it settled on V2.
+ */
+const DETAILS_VERSION_TASK_TYPES: Record<string, string> = {
+  PopulateEmailQueryViewTaskV2: "PopulateEmailQueryViewTask",
+  "PopulateEmailQueryViewTask-v2": "PopulateEmailQueryViewTask",
+};
+
 /** The name of a task type in the UI language; an unknown type as WebAdmin names it. */
-export const taskTypeLabel = (t: TFunction, type: string): string =>
-  TASK_TYPE_LABEL_KEYS[type] ? t(TASK_TYPE_LABEL_KEYS[type]) : type;
+export const taskTypeLabel = (t: TFunction, type: string): string => {
+  const labelKey = TASK_TYPE_LABEL_KEYS[DETAILS_VERSION_TASK_TYPES[type] ?? type];
+  return labelKey ? t(labelKey) : type;
+};
 
 type CleanedFolder = "Trash" | "Spam";
 

@@ -63,9 +63,10 @@ describe("task details", () => {
     expect(grid.textContent).toContain("tasks.info.indexedSpaces12");
   });
 
-  it("labels the mailbox counters of a populate email query view", () => {
+  it.each(["PopulateEmailQueryViewTaskV2", "PopulateEmailQueryViewTask-v2"])("labels the mailbox counters of a populate email query view reporting %s", (type) => {
     const grid = renderDetails({
-      type: "PopulateEmailQueryViewTask",
+      type,
+      timestamp: "2026-10-09T08:00:00Z",
       processedMailboxCount: 12,
       failedMailboxCount: 1,
       processedMessageCount: 340,
@@ -77,6 +78,7 @@ describe("task details", () => {
     expect(grid.textContent).toContain("tasks.info.processedMessageCount340");
     expect(grid.textContent).toContain("tasks.info.failedMessageCount2");
     expect(grid.textContent).not.toContain("MailboxCount");
+    expect(grid.textContent).not.toContain(type);
   });
 
   it("labels the user counters of a populate email query view from an older backend", () => {

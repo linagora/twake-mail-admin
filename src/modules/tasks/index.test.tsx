@@ -336,6 +336,31 @@ describe("tasks: type picker and dates", () => {
     expect(screen.getByTestId("location").textContent).toBe("/tasks?type=SubscribeAllTask");
   });
 
+  it("offers the populate email query view under the type WebAdmin filters on, not its details versions", async () => {
+    api.listTasks.mockResolvedValue([
+      {
+        taskId: TASK_ID,
+        type: "PopulateEmailQueryViewTask",
+        status: "completed",
+        submitDate: "2026-10-10T06:00:00Z",
+        additionalInformation: { type: "PopulateEmailQueryViewTaskV2", processedMailboxCount: 3, failedMailboxCount: 0 },
+      },
+    ]);
+    renderTasks();
+    const row = await screen.findByTestId("task-row");
+    expect(within(row).getByRole("button", { name: /commonTasks\.populateEmailQueryView/ })).not.toBeNull();
+    fireEvent.click(screen.getByText("tasks.filters"));
+
+    const select = screen.getByLabelText("tasks.type") as HTMLSelectElement;
+    const offered = Array.from(select.options).filter((o) => o.value.startsWith("PopulateEmailQueryView"));
+    expect(offered.map((o) => [o.value, o.text])).toEqual([["PopulateEmailQueryViewTask", "commonTasks.populateEmailQueryView"]]);
+
+    fireEvent.change(select, { target: { value: "PopulateEmailQueryViewTask" } });
+    fireEvent.click(screen.getByText("tasks.apply"));
+
+    await waitFor(() => expect(api.listTasks).toHaveBeenLastCalledWith({ type: "PopulateEmailQueryViewTask" }));
+  });
+
   it("folds the date pickers in a closed block, and counts the applied filters on the toggle", async () => {
     api.listTasks.mockResolvedValue([]);
     renderTasks();
