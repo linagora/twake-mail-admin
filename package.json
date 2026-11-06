@@ -25,7 +25,7 @@
     "i18next": "^26.7.1",
     "i18next-browser-languagedetector": "^8.3.0",
     "lucide-react": "^1.66.0",
-    "openid-client": "^6.8.8",
+    "openid-client": "^6.8.9",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-i18next": "^17.1.11",
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.4",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
     "@types/node": "^26.6.6",
@@ -67,6 +67,6 @@
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.72.1",
     "vite": "^8.0.16",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   }
 }
