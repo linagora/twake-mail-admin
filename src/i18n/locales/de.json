@@ -2270,7 +2270,7 @@
       "clearMailbox": "Alle Nachrichten in „{{mailbox}}“ werden endgültig gelöscht; der Ordner bleibt.",
       "clearRepository": "Die {{count}} in {{path}} gespeicherten Mails werden endgültig gelöscht und können nicht mehr erneut verarbeitet werden.",
       "clearGroup": "Die Ereignisse werden gelöscht, ohne erneut zugestellt zu werden: Was sie aktualisieren sollten, bleibt veraltet.",
-      "deleteCalendarUserData": "Alle Kalender, Termine, Adressbücher, Kontakte und Buchungslinks dieses Benutzers werden gelöscht. Dies kann nicht rückgängig gemacht werden.",
+      "deleteCalendarUserData": "Alle Kalender, Termine, Adressbücher, Kontakte und Buchungslinks dieses Benutzers werden gelöscht. Die Kontaktkarten dieses Benutzers werden außerdem aus dem Adressbuch „Domänenmitglieder“ seiner Domäne entfernt. Dies kann nicht rückgängig gemacht werden.",
       "clearDomainMembersContacts": "Das Adressbuch „Domänenmitglieder“ jeder Domäne, außer den übersprungenen, wird geleert. Dies kann nicht rückgängig gemacht werden.",
       "fixMailboxInconsistencies": "Beenden Sie alle anderen Twake-Mail-Dienste, bevor Sie diese Aufgabe starten.",
       "blobGarbageCollection": "Gespeicherte Blobs, auf die keine Nachricht mehr verweist, werden endgültig aus dem Objektspeicher gelöscht. Dies kann nicht rückgängig gemacht werden.",

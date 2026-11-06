@@ -4,7 +4,9 @@ import { deleteUserData, archiveUserCalendarEvents, republishUserContacts } from
 import DeleteUserDataForm from "../components/delete-user-data-form";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
+import { deleteUserDataCommand } from "./user-task-commands";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
+import FormTaskContent from "@/modules/common-tasks/components/form-task-content";
 import ArchivalNotice from "@/modules/common-tasks/components/archival-notice";
 import { TaskParam } from "@/modules/common-tasks/types";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -62,9 +64,16 @@ export default function CalendarUserTasks({ username }: Props) {
       typeToConfirm: username,
       typeToConfirmIgnoreCase: true,
       message: (
-        <DeleteUserDataForm
+        <FormTaskContent
+          initialValues={currentFromStep}
+          renderForm={(onChange) => (
+            <DeleteUserDataForm
+              onChange={onChange}
+              fromStepPlaceholderKey="deleteUserDataForm.calendarFromStepPlaceholder"
+            />
+          )}
+          buildCommand={(fromStep) => deleteUserDataCommand(username, fromStep)}
           onChange={(value) => { currentFromStep = value; }}
-          fromStepPlaceholderKey="deleteUserDataForm.calendarFromStepPlaceholder"
         />
       ),
       action: async () => {

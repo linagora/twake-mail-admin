@@ -114,10 +114,17 @@ class UserTasksTest extends CalendarAdminE2ETest {
         // What is lost, counted by the page, then the user to type before the data can be wiped
         assertThat(dialog.root()).containsText("Calendars: 1");
         assertThat(dialog.root()).containsText("Every calendar, event, address book, contact and booking link of this user will be deleted.");
+        assertThat(dialog.root()).containsText("This user's cards are also removed from the \"Domain members\" address book of their domain.");
+        dialog.expectCommand("curl -XPOST /users/" + user + "?action=deleteData");
         dialog.root().getByText("Advanced: resume an interrupted deletion").click();
         Locator fromStep = dialog.root().getByLabel("Resume from step", new Locator.GetByLabelOptions().setExact(true));
         assertThat(fromStep).hasValue("");
         assertThat(fromStep).hasAttribute("placeholder", "e.g. DavCalendarDeletionTaskStep");
+        // The preview follows the typed step; it is cleared so that the whole deletion below runs
+        fromStep.fill("DavDomainMemberDeletionTaskStep");
+        dialog.expectCommand("curl -XPOST /users/" + user + "?action=deleteData&fromStep=DavDomainMemberDeletionTaskStep");
+        fromStep.fill("");
+        dialog.expectCommand("curl -XPOST /users/" + user + "?action=deleteData");
         Locator delete = dialog.confirmButton("Delete user data");
         assertThat(delete).isDisabled();
         dialog.root().getByLabel("Type " + user + " to confirm").fill(user.toUpperCase());

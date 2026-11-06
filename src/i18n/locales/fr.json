@@ -2271,7 +2271,7 @@
       "clearMailbox": "Tous les messages de « {{mailbox}} » sont définitivement supprimés ; le dossier est conservé.",
       "clearRepository": "Les {{count}} mails stockés dans {{path}} sont définitivement supprimés et ne pourront plus être retraités.",
       "clearGroup": "Les événements en échec sont supprimés sans être rejoués : ce qu'ils devaient mettre à jour reste obsolète.",
-      "deleteCalendarUserData": "Tous les calendriers, événements, carnets d'adresses, contacts et liens de réservation de cet utilisateur seront supprimés. Action irréversible.",
+      "deleteCalendarUserData": "Tous les calendriers, événements, carnets d'adresses, contacts et liens de réservation de cet utilisateur seront supprimés. Les fiches de cet utilisateur sont aussi retirées du carnet « Membres du domaine » de son domaine. Action irréversible.",
       "clearDomainMembersContacts": "Le carnet « Membres du domaine » de chaque domaine, hors domaines ignorés, est vidé. Action irréversible.",
       "fixMailboxInconsistencies": "Arrêtez tous les autres services Twake Mail avant de lancer cette tâche.",
       "blobGarbageCollection": "Les blobs stockés qu'aucun message ne référence plus sont définitivement supprimés du stockage objet. Cette action est irréversible.",

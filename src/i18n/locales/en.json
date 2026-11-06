@@ -2270,7 +2270,7 @@
       "clearMailbox": "All messages of \"{{mailbox}}\" are permanently deleted; the folder is kept.",
       "clearRepository": "The {{count}} mails stored in {{path}} are permanently deleted and can no longer be reprocessed.",
       "clearGroup": "The dead-lettered events are deleted without being redelivered: what they would have updated stays out of date.",
-      "deleteCalendarUserData": "Every calendar, event, address book, contact and booking link of this user will be deleted. This cannot be undone.",
+      "deleteCalendarUserData": "Every calendar, event, address book, contact and booking link of this user will be deleted. This user's cards are also removed from the \"Domain members\" address book of their domain. This cannot be undone.",
       "clearDomainMembersContacts": "The \"Domain members\" address book of every domain, except the skipped ones, is emptied. This cannot be undone.",
       "fixMailboxInconsistencies": "Stop every other Twake Mail service before running this task.",
       "blobGarbageCollection": "Stored blobs that no message references any more are permanently deleted from the object storage. This cannot be undone.",
