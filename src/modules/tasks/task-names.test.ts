@@ -41,6 +41,15 @@ describe("task names", () => {
     expect(taskTypeLabel(t, type)).not.toBe(type);
   });
 
+  it.each(["PopulateEmailQueryViewTask", "PopulateEmailQueryViewTaskV2", "PopulateEmailQueryViewTask-v2"])(
+    "names %s as the populate email query view",
+    (type) => {
+      expect(taskTypeLabel(t, type)).toBe("commonTasks.populateEmailQueryView");
+      expect(taskHeading(t, task(type))).toBe("commonTasks.populateEmailQueryView");
+      expect(cancelConfirmMessage(t, task(type))).toContain('"name":"commonTasks.populateEmailQueryView"');
+    }
+  );
+
   it("heads a task with its name and its target", () => {
     expect(taskHeading(t, task("SubscribeAllTask", { username: "bob@example.com" }))).toBe("users.tasks.subscribeAll — bob@example.com");
     expect(taskHeading(t, task("BlobGCTask"))).toBe("commonTasks.blobGarbageCollection");
