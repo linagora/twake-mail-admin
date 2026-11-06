@@ -101,6 +101,7 @@ export default function RegisteredUsersList() {
       header: t("registeredUsers.deleteTitle"),
       destructive: true,
       confirmLabel: t("common.delete"),
+      consequence: t("confirm.consequence.deleteRegisteredUser", { user: user.email }),
       message: t("registeredUsers.deleteConfirm", { email: user.email }),
     });
     if (!confirmed) return;

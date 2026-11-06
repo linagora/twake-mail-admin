@@ -96,6 +96,58 @@ describe("Edit registered user dialog", () => {
   });
 });
 
+describe("Delete registered user dialog", () => {
+  const openDeleteDialog = async () => {
+    render(
+      <MemoryRouter>
+        <ConfirmProvider>
+          <RegisteredUsersList />
+        </ConfirmProvider>
+      </MemoryRouter>
+    );
+    fireEvent.click(await screen.findByTitle("registeredUsers.deleteTooltip"));
+    return screen.findByRole("dialog");
+  };
+
+  const clickDelete = () => fireEvent.click(screen.getByRole("button", { name: "common.delete" }));
+
+  it("warns that the delegations are revoked before anything is sent", async () => {
+    const dialog = await openDeleteDialog();
+
+    expect(within(dialog).getByText("confirm.consequence.deleteRegisteredUser")).not.toBeNull();
+    expect(within(dialog).getByText("registeredUsers.deleteConfirm")).not.toBeNull();
+    expect(api.deleteRegisteredUser).not.toHaveBeenCalled();
+  });
+
+  it("sends nothing when cancelled", async () => {
+    await openDeleteDialog();
+    fireEvent.click(screen.getByRole("button", { name: "common.cancel" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(api.deleteRegisteredUser).not.toHaveBeenCalled();
+  });
+
+  it("deletes the user by e-mail and reloads the list once confirmed", async () => {
+    api.deleteRegisteredUser.mockResolvedValue(undefined);
+    await openDeleteDialog();
+    clickDelete();
+
+    await waitFor(() => expect(toast).toHaveBeenCalledWith({ title: "registeredUsers.deleted" }));
+    expect(api.deleteRegisteredUser).toHaveBeenCalledTimes(1);
+    expect(api.deleteRegisteredUser).toHaveBeenCalledWith(CHARLOTTE.email, undefined);
+    await waitFor(() => expect(api.getRegisteredUsers).toHaveBeenCalledTimes(2));
+  });
+
+  it("reports a refused deletion", async () => {
+    api.deleteRegisteredUser.mockRejectedValue(new Error("Invalid arguments supplied in the user request"));
+    await openDeleteDialog();
+    clickDelete();
+
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "registeredUsers.errorDeleting" })));
+    expect(api.getRegisteredUsers).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("Add registered user", () => {
   const EMMA = "emma@open-paas.org";
 

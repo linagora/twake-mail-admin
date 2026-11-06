@@ -2279,6 +2279,7 @@
       "clearRepository": "Los {{count}} correos de {{path}} se eliminan definitivamente y ya no podrán reprocesarse.",
       "clearGroup": "Los eventos se eliminan sin reenviarse: lo que debían actualizar queda desactualizado.",
       "deleteCalendarUserData": "Se eliminarán todos los calendarios, eventos, libretas de direcciones, contactos y enlaces de reserva de este usuario. Las fichas de este usuario también se quitan de la libreta «Miembros del dominio» de su dominio. No se puede deshacer.",
+      "deleteRegisteredUser": "{{user}} pierde el acceso a todos los calendarios de usuario, de equipo y de recurso que tiene delegados. Las delegaciones que {{user}} concedió sobre sus propios calendarios se revocan: sus delegados pierden esos calendarios.",
       "clearDomainMembersContacts": "Se vacía la libreta «Miembros del dominio» de cada dominio, salvo los omitidos. No se puede deshacer.",
       "fixMailboxInconsistencies": "Detenga todos los demás servicios de Twake Mail antes de ejecutar esta tarea.",
       "blobGarbageCollection": "Los blobs almacenados a los que ya no hace referencia ningún mensaje se eliminan definitivamente del almacenamiento de objetos. No se puede deshacer.",
