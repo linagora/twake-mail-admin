@@ -1657,7 +1657,7 @@
       "reindexFixOutdated": "Use when searches miss recent mails. Reindexes only outdated documents; moderate load.",
       "reindexRebuildAll": "Use after an OpenSearch loss or a mapping change. Rebuilds the whole index; heavy load, can take hours.",
       "perUserReindex": "The same full reindex, split into one task per user so that a failure stays limited to one account.",
-      "populateEmailQueryView": "Use after enabling the email query view. Fills it from the existing messages; moderate load.",
+      "populateEmailQueryView": "Use after enabling the email query view. Fills it from the existing messages; moderate load. With virtual hosting, only mailboxes of domains registered in the domain list are processed.",
       "reindexContacts": "Fills the recipient autocompletion of every user from the mails they sent.",
       "fixMailboxInconsistencies": "Use when mailboxes are missing, duplicated or cannot be opened. Every other service must be stopped first.",
       "fixMessageInconsistencies": "Use when a message is listed but cannot be read, or the reverse. Repairs the message tables.",

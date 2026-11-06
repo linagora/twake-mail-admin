@@ -100,6 +100,21 @@ describe("calendar user data deletion", () => {
   });
 });
 
+describe("populate email query view description", () => {
+  it.each([
+    ["en", "domain list"],
+    ["fr", "liste des domaines"],
+    ["de", "Domainliste"],
+    ["es", "lista de dominios"],
+    ["it", "elenco dei domini"],
+    ["ru", "списке доменов"],
+    ["vi", "danh sách tên miền"],
+    ["mn", "домэйны жагсаалтад"],
+  ])("%s states the domain list restriction", (code, domainList) => {
+    expect(flatten(locales[code])["commonTasks.desc.populateEmailQueryView"]).toContain(domainList);
+  });
+});
+
 describe("plural rendering", () => {
   const rulesCount = (lng: string, count: number) =>
     i18n.getFixedT(lng)("users.bookingLinks.rulesCount", { count });

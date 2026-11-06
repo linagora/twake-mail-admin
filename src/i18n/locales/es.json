@@ -1657,7 +1657,7 @@
       "reindexFixOutdated": "Cuando las búsquedas no encuentran correos recientes. Reindexa solo los documentos obsoletos; carga moderada.",
       "reindexRebuildAll": "Tras una pérdida de OpenSearch o un cambio de mapping. Reconstruye todo el índice; carga alta, puede durar horas.",
       "perUserReindex": "La misma reindexación completa, dividida en una tarea por usuario: un fallo queda limitado a una cuenta.",
-      "populateEmailQueryView": "Tras activar la vista de consulta de correo. La rellena con los mensajes existentes; carga moderada.",
+      "populateEmailQueryView": "Tras activar la vista de consulta de correo. La rellena con los mensajes existentes; carga moderada. Con alojamiento virtual, solo se procesan los buzones de los dominios registrados en la lista de dominios.",
       "reindexContacts": "Rellena el autocompletado de destinatarios de cada usuario a partir de los correos enviados.",
       "fixMailboxInconsistencies": "Cuando faltan buzones, están duplicados o no se abren. Todos los demás servicios deben detenerse antes.",
       "fixMessageInconsistencies": "Cuando un mensaje aparece en la lista pero no se puede leer, o al revés. Repara las tablas de mensajes.",

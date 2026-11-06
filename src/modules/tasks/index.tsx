@@ -17,7 +17,7 @@ import Header from "@/components/custom/header";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PaginationControls } from "@/components/custom/pagination-controls";
-import { cancelAndReport, cancelConfirmMessage, CALENDAR_TASK_TYPES, endDate, formatDate, isRunning, shortTaskId, statusLabel, SHARED_TASK_TYPES, STATUS_COLORS, TASK_TYPE_LABEL_KEYS, TaskDetails, taskTargetInfo, TaskTarget, TaskSummary, taskHeading, taskName, taskTypeLabel } from "./task-summary";
+import { cancelAndReport, cancelConfirmMessage, CALENDAR_TASK_TYPES, canonicalTaskType, endDate, formatDate, isRunning, shortTaskId, statusLabel, SHARED_TASK_TYPES, STATUS_COLORS, TASK_TYPE_LABEL_KEYS, TaskDetails, taskTargetInfo, TaskTarget, TaskSummary, taskHeading, taskName, taskTypeLabel } from "./task-summary";
 import { TASK_LIST_AUTO_REFRESH_MS, useAutoRefresh } from "./use-auto-refresh";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
@@ -77,7 +77,7 @@ const KNOWN_TYPES = Object.keys(TASK_TYPE_LABEL_KEYS).filter(
 
 /** The type picker options, by name; a name several types share tells them apart by their key. */
 function typeOptions(t: TFunction, types: Iterable<string>): { value: string; label: string }[] {
-  const options = [...new Set(types)].filter(Boolean).map((value) => ({ value, label: taskTypeLabel(t, value) }));
+  const options = [...new Set([...types].map(canonicalTaskType))].filter(Boolean).map((value) => ({ value, label: taskTypeLabel(t, value) }));
   const sharedNames = new Set(options.filter((o, i) => options.findIndex((other) => other.label === o.label) !== i).map((o) => o.label));
   return options
     .map((o) => (sharedNames.has(o.label) && o.label !== o.value ? { ...o, label: `${o.label} (${o.value})` } : o))
