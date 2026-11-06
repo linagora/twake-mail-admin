@@ -14,14 +14,16 @@ export default function HintTooltip({ hint, children, className }: {
 }) {
   const [open, setOpen] = useState(false);
   const hintId = useId();
-  const toggle = (event: MouseEvent) => {
+  // Not a toggle: the focus of a first tap has already opened the tooltip when its click arrives.
+  // preventDefault stops Radix from closing it on that click.
+  const openOnClick = (event: MouseEvent) => {
     event.preventDefault();
-    setOpen((wasOpen) => !wasOpen);
+    setOpen(true);
   };
   return (
     <TooltipProvider>
       <Tooltip delayDuration={0} open={open} onOpenChange={setOpen}>
-        <TooltipTrigger asChild onClick={toggle}>
+        <TooltipTrigger asChild onClick={openOnClick}>
           <span tabIndex={0} aria-describedby={hintId} className={className}>{children}</span>
         </TooltipTrigger>
         <TooltipContent className="max-w-xs">{hint}</TooltipContent>
