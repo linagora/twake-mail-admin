@@ -85,6 +85,21 @@ describe("locales", () => {
   });
 });
 
+describe("calendar user data deletion", () => {
+  it.each([
+    ["en", "Domain members"],
+    ["fr", "Membres du domaine"],
+    ["de", "Domänenmitglieder"],
+    ["es", "Miembros del dominio"],
+    ["it", "Membri del dominio"],
+    ["ru", "Участники домена"],
+    ["mn", "Домэйны гишүүд"],
+    ["vi", "Thành viên miền"],
+  ])("%s says the user leaves the \"%s\" address book", (lng, addressBook) => {
+    expect(i18n.getFixedT(lng)("confirm.consequence.deleteCalendarUserData")).toContain(addressBook);
+  });
+});
+
 describe("plural rendering", () => {
   const rulesCount = (lng: string, count: number) =>
     i18n.getFixedT(lng)("users.bookingLinks.rulesCount", { count });

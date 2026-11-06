@@ -97,6 +97,38 @@ describe("calendar user tasks: dialogs stay open until the request is accepted",
   });
 });
 
+describe("calendar user tasks: resuming a data deletion", () => {
+  const STEP = "DavDomainMemberDeletionTaskStep";
+  const fromStepField = () => screen.getByLabelText("deleteUserDataForm.fromStep");
+
+  const openDeleteDialog = async () => {
+    renderTasks();
+    runTask("users.tasks.deleteData");
+    await screen.findByLabelText("confirm.typeToConfirm");
+  };
+
+  it("previews the command without a step until one is typed", async () => {
+    await openDeleteDialog();
+
+    expect(screen.getByRole("dialog").textContent).toContain(`curl -XPOST /users/${USERNAME}?action=deleteData`);
+    expect(screen.getByRole("dialog").textContent).not.toContain("&fromStep=");
+  });
+
+  it("shows the domain member step in the preview and sends it unchanged", async () => {
+    api.deleteUserData.mockResolvedValueOnce({ taskId: "task-3" });
+    await openDeleteDialog();
+
+    fireEvent.change(fromStepField(), { target: { value: STEP } });
+
+    expect(await screen.findByText(new RegExp(`action=deleteData&fromStep=${STEP}`))).not.toBeNull();
+
+    fireEvent.change(screen.getByLabelText("confirm.typeToConfirm"), { target: { value: USERNAME } });
+    fireEvent.click(screen.getByRole("button", { name: "confirm.deleteUserData" }));
+
+    await waitFor(() => expect(api.deleteUserData).toHaveBeenCalledWith(USERNAME, STEP));
+  });
+});
+
 describe("calendar user tasks: archival without criteria", () => {
   const archiveButton = () => screen.getByRole("button", { name: /^(confirmTask.start|commonTasks.archiveAllEvents)$/ });
 

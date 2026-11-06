@@ -2269,7 +2269,7 @@
       "clearMailbox": "Tutti i messaggi di «{{mailbox}}» vengono eliminati definitivamente; la cartella resta.",
       "clearRepository": "Le {{count}} email di {{path}} vengono eliminate definitivamente e non potranno più essere rielaborate.",
       "clearGroup": "Gli eventi vengono eliminati senza essere riconsegnati: ciò che dovevano aggiornare resta obsoleto.",
-      "deleteCalendarUserData": "Tutti i calendari, eventi, rubriche, contatti e link di prenotazione di questo utente verranno eliminati. Operazione irreversibile.",
+      "deleteCalendarUserData": "Tutti i calendari, eventi, rubriche, contatti e link di prenotazione di questo utente verranno eliminati. Le schede di questo utente vengono anche rimosse dalla rubrica «Membri del dominio» del suo dominio. Operazione irreversibile.",
       "clearDomainMembersContacts": "La rubrica «Membri del dominio» di ogni dominio, tranne quelli esclusi, viene svuotata. Operazione irreversibile.",
       "fixMailboxInconsistencies": "Arresta tutti gli altri servizi Twake Mail prima di eseguire questa attività.",
       "blobGarbageCollection": "I blob memorizzati a cui nessun messaggio fa più riferimento vengono eliminati definitivamente dall'object storage. L'operazione è irreversibile.",

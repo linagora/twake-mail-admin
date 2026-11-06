@@ -2255,7 +2255,7 @@
       "clearMailbox": "Mọi thư trong \"{{mailbox}}\" sẽ bị xóa vĩnh viễn; thư mục được giữ.",
       "clearRepository": "{{count}} thư trong {{path}} sẽ bị xóa vĩnh viễn và không thể xử lý lại.",
       "clearGroup": "Các sự kiện bị xóa mà không được gửi lại: những gì chúng cần cập nhật sẽ vẫn lỗi thời.",
-      "deleteCalendarUserData": "Mọi lịch, sự kiện, sổ địa chỉ, liên hệ và liên kết đặt lịch của người dùng này sẽ bị xóa. Không thể hoàn tác.",
+      "deleteCalendarUserData": "Mọi lịch, sự kiện, sổ địa chỉ, liên hệ và liên kết đặt lịch của người dùng này sẽ bị xóa. Các thẻ của người dùng này cũng sẽ bị xóa khỏi sổ địa chỉ \"Thành viên miền\" của miền họ. Không thể hoàn tác.",
       "clearDomainMembersContacts": "Sổ địa chỉ \"Thành viên miền\" của mọi miền, trừ các miền bỏ qua, sẽ bị làm trống. Không thể hoàn tác.",
       "fixMailboxInconsistencies": "Hãy dừng mọi dịch vụ Twake Mail khác trước khi chạy tác vụ này.",
       "blobGarbageCollection": "Các blob đã lưu không còn được thư nào tham chiếu sẽ bị xóa vĩnh viễn khỏi kho lưu trữ đối tượng. Không thể hoàn tác.",
