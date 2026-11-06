@@ -2007,9 +2007,16 @@
       "Regex": "Biểu thức chính quy"
     },
     "destinationExternal": "Không phải tài khoản nội bộ: thư sẽ được gửi nguyên trạng tới địa chỉ này.",
+    "regexLimits": {
+      "refused": "Máy chủ sẽ từ chối ánh xạ này, trừ khi chạy với james.rrt.regex.safe=false.",
+      "notApplied": "Vượt quá giới hạn của biểu thức chính quy an toàn: máy chủ không áp dụng ánh xạ này, trừ khi chạy với james.rrt.regex.safe=false.",
+      "braces": "Ánh xạ chứa { hoặc }.",
+      "length": "Biểu thức chính quy dài hơn {{max}} ký tự.",
+      "controlCharacters": "Ánh xạ chứa ký tự điều khiển."
+    },
     "typeHint": {
       "address": "Thư gửi tới địa chỉ nguồn được chuyển tới địa chỉ đích.",
-      "regex": "Thư có người nhận khớp với biểu thức chính quy sẽ được ghi lại tới đích."
+      "regex": "Thư có người nhận khớp với biểu thức chính quy RE2 sẽ được ghi lại tới đích. Giới hạn: không có { hoặc } (nên không có tham số ${1} và không có lặp đếm số lần), tối đa {{max}} ký tự trong biểu thức chính quy, không có ký tự điều khiển. RE2 không hỗ trợ lookaround và tham chiếu ngược."
     }
   },
   "mailingLists": {

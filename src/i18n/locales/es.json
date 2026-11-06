@@ -2022,9 +2022,16 @@
       "Regex": "Expresión regular"
     },
     "destinationExternal": "No es una cuenta local: el correo se enviará tal cual a esta dirección.",
+    "regexLimits": {
+      "refused": "El servidor rechazará esta asignación, salvo que funcione con james.rrt.regex.safe=false.",
+      "notApplied": "Supera los límites de las expresiones regulares seguras: el servidor no aplica esta asignación, salvo que funcione con james.rrt.regex.safe=false.",
+      "braces": "Contiene { o }.",
+      "length": "Su expresión regular supera los {{max}} caracteres.",
+      "controlCharacters": "Contiene caracteres de control."
+    },
     "typeHint": {
       "address": "El correo enviado a la dirección de origen se entrega a la dirección de destino.",
-      "regex": "El correo cuyo destinatario coincide con la expresión regular se reescribe hacia el destino."
+      "regex": "El correo cuyo destinatario coincide con la expresión regular RE2 se reescribe hacia el destino. Límites: sin { ni } (por tanto, sin parámetro ${1} ni repetición contada), {{max}} caracteres como máximo en la expresión regular, sin caracteres de control. RE2 no admite lookaround ni referencias inversas."
     }
   },
   "mailingLists": {
