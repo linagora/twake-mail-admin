@@ -177,6 +177,8 @@ class RegisteredUsersTest extends CalendarAdminE2ETest {
         RegisteredUsersPage users = RegisteredUsersPage.open(app).searchFor(user);
         users.rowAction(user, "Delete user").click();
         assertThat(app.dialog()).containsText("Delete registered user \"" + user + "\"?");
+        assertThat(app.dialog()).containsText(user + " loses access to every user, team and resource calendar delegated to them.");
+        assertThat(app.dialog()).containsText("The delegations " + user + " granted on their own calendars are revoked, so their delegates lose those calendars.");
         app.dialog().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Delete").setExact(true)).click();
         assertThat(app.dialog()).isHidden();
 
