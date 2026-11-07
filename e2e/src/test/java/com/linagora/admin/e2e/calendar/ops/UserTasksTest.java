@@ -78,7 +78,7 @@ class UserTasksTest extends CalendarAdminE2ETest {
         assertThat(dialog.root()).isHidden();
 
         String taskId = runningTaskId(app);
-        app.toast("Task created").getByRole(AriaRole.LINK).click();
+        AdminApp.follow(app.toast("Task created").getByRole(AriaRole.LINK));
         assertThat(page).hasURL(Pattern.compile("/task/" + taskId + "$"));
         assertThat(webAdmin.awaitTask(taskId).path("status").asText()).isEqualTo("completed");
     }
