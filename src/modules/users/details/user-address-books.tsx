@@ -27,6 +27,7 @@ import SharedWithChip from "@/components/custom/shared-with-chip";
 import HintTooltip from "@/components/custom/hint-tooltip";
 import { StagedChangesNotice, blocksSave, useDiscardGuard } from "@/components/custom/staged-changes";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
+import { useRegisteredUsersPermissions } from "@/modules/registered-users/permissions";
 
 interface Props {
   username: string;
@@ -284,7 +285,7 @@ export default function UserAddressBooks({ username, defaultOpen = false }: Prop
   // Registered users tell the e-mail of the owners of shared/subscribed address books, and of
   // the sharees, listed by technical user id.
   const domain = useDomain() || undefined;
-  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const { read: canRegisteredUsers } = useRegisteredUsersPermissions();
   const fetchRegisteredUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
   const { data: registeredUsers } = useFetchData<RegisteredUser[]>(
     canView && canRegisteredUsers ? fetchRegisteredUsers : null

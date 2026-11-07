@@ -45,10 +45,27 @@ USER_QUERY_PARAMS = ("user",)
 #: Patterns whose domain scoping cannot be derived mechanically, mapped to the
 #: message explaining why. Emitting them unchanged is the safe default, but the
 #: operator has to be told.
+#:
+#: This is also the allow-list of DOMAIN-mode rules that may carry no ``{domain}``:
+#: any other such rule is a hard error (:class:`UnscopedDomainRule`), since the
+#: proxy cannot pin it to the caller's domain.
 DOMAIN_SCOPING_CAVEATS: Mapping[str, str] = {
     "/mailingLists/{address}": "warn.scoping.mailing-lists",
+    "/mailingLists/{address}/members/{member}": "warn.scoping.mailing-lists",
+    "/mailingLists/{address}/owners/{owner}": "warn.scoping.mailing-lists",
     "/users/{username}/rename/{newUsername}?action=rename": "warn.scoping.rename",
+    "/spaces?action=sync": "warn.scoping.spaces-sync",
 }
+
+
+class UnscopedDomainRule(ValueError):
+    """A DOMAIN-mode rule the proxy could not pin to the caller's domain.
+
+    ``url.patterns.restrictions`` only constrains captured variables: a rule with
+    no ``{domain}`` (nor ``%@{domain}``) is granted on every tenant. Global routes
+    such as ``/registeredUsers`` or ``/tasks`` must never reach a domain
+    administrator's profile; the inventory has to model a domain-scoped variant.
+    """
 
 
 @dataclass(frozen=True)
@@ -213,7 +230,23 @@ def _scoped_keys(
         message = Label(en=prefix + caveat.en, fr=prefix + caveat.fr)
         if message not in warnings:
             warnings.append(message)
-    return [(verb, domain_scope(pattern)) for verb, pattern in endpoint.keys]
+    keys = [(verb, domain_scope(pattern)) for verb, pattern in endpoint.keys]
+    if not caveat_key:
+        unscoped = [key for key in keys if not is_domain_scoped(key[1])]
+        if unscoped:
+            raise UnscopedDomainRule(
+                f"{scope.application.value} DOMAIN: "
+                + ", ".join(f"{verb} {pattern}" for verb, pattern in unscoped)
+                + " would be granted on every domain. Give the endpoint a "
+                "domain-scoped DOMAIN variant in the inventory, or, if it truly is "
+                "tenant-neutral, list it in DOMAIN_SCOPING_CAVEATS."
+            )
+    return keys
+
+
+def is_domain_scoped(pattern: str) -> bool:
+    """True when the proxy can pin the pattern to the caller's own domain."""
+    return "{domain}" in pattern
 
 
 def _label(key: str, **fmt: object) -> Label:

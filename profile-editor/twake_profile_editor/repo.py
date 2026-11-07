@@ -45,14 +45,22 @@ def is_available() -> bool:
     return VALIDATION_MD.is_file() and FRONTEND_SRC.is_dir()
 
 
-def frontend_permission_gates() -> set[tuple[str, str]]:
+#: Components mounted in DOMAIN mode only: the domain administrator's left bars
+#: and pages.
+DOMAIN_ADMIN_SRC = FRONTEND_SRC / "modules" / "domain-admin"
+
+
+def frontend_permission_gates(under: Path = FRONTEND_SRC) -> set[tuple[str, str]]:
     """Every ``(verb, pattern)`` the frontend statically asks the proxy about.
 
     Read from the sources rather than from a snapshot: a component that starts
-    gating on a new pattern shows up here on the next test run.
+    gating on a new pattern shows up here on the next test run. ``under`` narrows
+    the search to one directory of the sources.
     """
     gates: set[tuple[str, str]] = set()
     for path in _frontend_files():
+        if not path.is_relative_to(under) or ".test." in path.name:
+            continue
         text = path.read_text(encoding="utf-8")
         for pattern in (_GATE_CALL, _ALLOWANCE_TABLE):
             for match in pattern.finditer(text):

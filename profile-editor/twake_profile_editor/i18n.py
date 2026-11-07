@@ -148,6 +148,17 @@ STRINGS: dict[str, dict[str, str]] = {
             "Revoyez cette règle à la main."
         ),
     },
+    "warn.scoping.spaces-sync": {
+        "en": (
+            "the Twake spaces synchronisation is not domain-scoped: it is one task "
+            "over the spaces of every domain. Review this rule by hand."
+        ),
+        "fr": (
+            "la synchronisation des espaces Twake n'est pas restreinte au domaine : "
+            "c'est une seule tâche sur les espaces de tous les domaines. Revoyez "
+            "cette règle à la main."
+        ),
+    },
     "warn.scoping.rename": {
         "en": (
             "only the renamed user is domain-scoped; the target address stays free, so "

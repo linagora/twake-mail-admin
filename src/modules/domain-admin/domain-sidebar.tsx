@@ -68,8 +68,17 @@ export function DomainSidebar() {
   const canTeamMailboxes = useIsAllowed("GET", "/domains/{domain}/team-mailboxes");
   const canQuota = useIsAllowed("GET", "/quota/domains/{domain}");
   const canRateLimiting = useIsAllowed("GET", "/domains/{domain}/ratelimits");
-  const canMailingLists = useIsAllowed("GET", "/mailingLists");
-  const canTasks = useIsAllowed("GET", "/tasks");
+  // Gate on the routes a domain administrator calls: GET /mailingLists and GET /tasks span
+  // every tenant, a profile must not have to grant them for these entries to show.
+  const canMailingLists = useIsAllowed("GET", "/mailingLists?domain={domain}");
+  // The Tasks page never lists tasks: it starts the domain tasks of DomainTasks, and opens
+  // their details.
+  const canTasks = [
+    useIsAllowed("POST", "/domains/{domain}/signature-templates?action=apply"),
+    useIsAllowed("POST", "/domains/{domain}?action=deleteData"),
+    useIsAllowed("POST", "/domains/{domain}/templates"),
+    useIsAllowed("GET", "/domains/{domain}/tasks/{id}"),
+  ].some(Boolean);
 
   // Grouped like the global sidebar, by what the operator comes to do
   const GROUPS: NavGroup[] = [

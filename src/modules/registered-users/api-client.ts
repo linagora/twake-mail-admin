@@ -1,68 +1,24 @@
 import { apiClient } from "@/lib/apiClient";
-import { appConfig } from "@/lib/config";
 import { RegisteredUser } from "./types";
 
-// ---------------------------------------------------------------------------
-// Fallback probe — DOMAIN mode only, cached per session.
-// ---------------------------------------------------------------------------
-
-// null = not yet probed | 'domain' = domain-scoped route | 'global' = global route
-let registeredUsersRouting: 'domain' | 'global' | null = null;
-
-async function withRegisteredUsersApiFallback<T>(
-  domainScopedFn: () => Promise<T>,
-  globalFn: () => Promise<T>,
-): Promise<T> {
-  // GLOBAL mode always uses global routes.
-  if (appConfig.mode !== 'DOMAIN') return globalFn();
-
-  // Routing already determined for this session — call directly, no fallback.
-  if (registeredUsersRouting === 'domain') return domainScopedFn();
-  if (registeredUsersRouting === 'global') return globalFn();
-
-  // First call in DOMAIN mode: probe the domain-scoped route.
-  try {
-    const result = await domainScopedFn();
-    registeredUsersRouting = 'domain';
-    return result;
-  } catch (err: any) {
-    const status: number | undefined = err?.response?.status;
-    if (status !== undefined && status >= 400 && status < 500) {
-      registeredUsersRouting = 'global';
-      return globalFn();
-    }
-    throw err;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// API functions — domain param used in DOMAIN mode for scoped routes.
-// ---------------------------------------------------------------------------
+// A domain administrator (DOMAIN mode, `domain` set) only ever calls the domain-scoped
+// routes, whose errors are surfaced as they are. Never fall back to the global
+// /registeredUsers routes: they span every tenant, and a fallback would lead operators to
+// grant them to tenant-scoped administrators.
+const scopedPath = (domain: string) => `/domains/${encodeURIComponent(domain)}/registeredUsers`;
 
 export const getRegisteredUsers = async (domain?: string): Promise<RegisteredUser[]> =>
-  withRegisteredUsersApiFallback(
-    () => apiClient.get(`/domains/${encodeURIComponent(domain!)}/registeredUsers`),
-    () => apiClient.get('/registeredUsers'),
-  );
+  apiClient.get(domain ? scopedPath(domain) : '/registeredUsers');
 
 export const createRegisteredUser = async (user: RegisteredUser, domain?: string): Promise<void> =>
-  withRegisteredUsersApiFallback(
-    () => apiClient.post(`/domains/${encodeURIComponent(domain!)}/registeredUsers`, user),
-    () => apiClient.post('/registeredUsers', user),
-  );
+  apiClient.post(domain ? scopedPath(domain) : '/registeredUsers', user);
 
 export const updateRegisteredUser = async (
   id: string,
   data: { email?: string; firstname?: string; lastname?: string },
   domain?: string,
 ): Promise<void> =>
-  withRegisteredUsersApiFallback(
-    () => apiClient.patch(`/domains/${encodeURIComponent(domain!)}/registeredUsers?id=${encodeURIComponent(id)}`, data),
-    () => apiClient.patch(`/registeredUsers?id=${encodeURIComponent(id)}`, data),
-  );
+  apiClient.patch(`${domain ? scopedPath(domain) : '/registeredUsers'}?id=${encodeURIComponent(id)}`, data);
 
 export const deleteRegisteredUser = async (email: string, domain?: string): Promise<void> =>
-  withRegisteredUsersApiFallback(
-    () => apiClient.delete(`/domains/${encodeURIComponent(domain!)}/registeredUsers?email=${encodeURIComponent(email)}`),
-    () => apiClient.delete(`/registeredUsers?email=${encodeURIComponent(email)}`),
-  );
+  apiClient.delete(`${domain ? scopedPath(domain) : '/registeredUsers'}?email=${encodeURIComponent(email)}`);

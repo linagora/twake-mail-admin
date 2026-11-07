@@ -14,12 +14,13 @@ Deliberate departures from validation.md are listed in :data:`DISCREPANCIES`.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from .model import (
     Application,
     Inventory,
     Mode,
+    Node,
     action,
     may,
     must,
@@ -78,6 +79,132 @@ MISSING_FROM_VALIDATION: tuple[tuple[str, str], ...] = ()
 _TM = "/domains/{domain}/team-mailboxes/{mailbox}"
 _TM_FOLDER = f"{_TM}/mailboxes/{{folderName}}"
 
+
+def _domain_tasks(modes: frozenset[Mode] | None = None) -> list[Node]:
+    """The tasks a domain can be the target of.
+
+    Actions of the domain in GLOBAL mode, the Tasks page of the domain administrator
+    in DOMAIN mode -- built twice, since the ids of a node depend on where it hangs.
+    """
+    nodes = [
+        action(
+            "delete-data",
+            "Delete all data of a domain",
+            "Supprimer toutes les données d'un domaine",
+            endpoints=[may("POST", "/domains/{domain}?action=deleteData")],
+        ),
+        action(
+            "provision-templates",
+            "Provision mailbox templates for the domain",
+            "Provisionner les modèles de boîtes du domaine",
+            applications=MAIL,
+            endpoints=[
+                may(
+                    "POST",
+                    "/domains/{domain}/templates?action=provision&{params}",
+                    gates=("/domains/{domain}/templates",),
+                )
+            ],
+        ),
+        action(
+            "sync-members",
+            "Sync domain members",
+            "Synchroniser les membres du domaine",
+            applications=CALENDAR,
+            endpoints=[
+                may(
+                    "POST",
+                    "/addressbook/domain-members/{domain}?task=sync",
+                    gates=("/addressbook/domain-members/{domain}",),
+                )
+            ],
+        ),
+        section(
+            "contact-counts",
+            "Calendar: Domain contacts",
+            "Agenda : contacts du domaine",
+            applications=CALENDAR,
+            children=[
+                action(
+                    "dab",
+                    "Count the contacts of the domain address book",
+                    "Compter les contacts du carnet d'adresses du domaine",
+                    endpoints=[
+                        may("GET", "/domains/{domain}/addressbooks/dab/contactCount")
+                    ],
+                ),
+                action(
+                    "domain-members",
+                    "Count the contacts of the domain members",
+                    "Compter les contacts des membres du domaine",
+                    endpoints=[
+                        may(
+                            "GET",
+                            "/domains/{domain}/addressbooks/domain-members/contactCount",
+                        )
+                    ],
+                ),
+                action(
+                    "dab-export",
+                    "Export the domain address book",
+                    "Exporter le carnet d'adresses du domaine",
+                    endpoints=[
+                        may("POST", "/domains/{domain}/addressbooks/dab?action=export")
+                    ],
+                ),
+                action(
+                    "domain-members-export",
+                    "Export the contacts of the domain members",
+                    "Exporter les contacts des membres du domaine",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/addressbooks/domain-members"
+                            "?action=export",
+                        )
+                    ],
+                ),
+                action(
+                    "dab-import",
+                    "Import contacts into the domain address book",
+                    "Importer des contacts dans le carnet d'adresses du domaine",
+                    endpoints=[
+                        may("POST", "/domains/{domain}/addressbooks/dab?action=import")
+                    ],
+                ),
+                action(
+                    "dab-clear",
+                    "Clear the contacts of the domain address book",
+                    "Vider les contacts du carnet d'adresses du domaine",
+                    endpoints=[
+                        may("DELETE", "/domains/{domain}/addressbooks/dab/contacts")
+                    ],
+                ),
+                action(
+                    "dab-copy",
+                    "Copy the users of another domain into the domain address book",
+                    "Copier les utilisateurs d'un autre domaine dans le carnet d'adresses"
+                    " du domaine",
+                    endpoints=[
+                        may(
+                            "POST",
+                            "/domains/{domain}/addressbooks/dab?action=copyFrom",
+                        )
+                    ],
+                ),
+            ],
+        ),
+        action(
+            "republish-contacts",
+            "Calendar: republish the common contacts of the domain",
+            "Agenda : republier les contacts communs du domaine",
+            applications=CALENDAR,
+            endpoints=[may("POST", "/domains/{domain}/contacts?action=republish")],
+        ),
+    ]
+    return nodes if modes is None else [replace(node, modes=modes) for node in nodes]
+
+
 DOMAINS = page(
     "domains",
     "Domains",
@@ -100,12 +227,6 @@ DOMAINS = page(
                 may("GET", "/domains/{domain}/aliases"),
                 may("DELETE", "/domains/{domain}/aliases/{source}"),
             ],
-        ),
-        action(
-            "delete-data",
-            "Delete all data of a domain",
-            "Supprimer toutes les données d'un domaine",
-            endpoints=[may("POST", "/domains/{domain}?action=deleteData")],
         ),
         action(
             "user-count",
@@ -469,114 +590,7 @@ DOMAINS = page(
             applications=MAIL,
             endpoints=[must("GET", "/jmap/settings/reports")],
         ),
-        action(
-            "provision-templates",
-            "Provision mailbox templates for the domain",
-            "Provisionner les modèles de boîtes du domaine",
-            applications=MAIL,
-            endpoints=[
-                may(
-                    "POST",
-                    "/domains/{domain}/templates?action=provision&{params}",
-                    gates=("/domains/{domain}/templates",),
-                )
-            ],
-        ),
-        action(
-            "sync-members",
-            "Sync domain members",
-            "Synchroniser les membres du domaine",
-            applications=CALENDAR,
-            endpoints=[
-                may(
-                    "POST",
-                    "/addressbook/domain-members/{domain}?task=sync",
-                    gates=("/addressbook/domain-members/{domain}",),
-                )
-            ],
-        ),
-        section(
-            "contact-counts",
-            "Calendar: Domain contacts",
-            "Agenda : contacts du domaine",
-            applications=CALENDAR,
-            children=[
-                action(
-                    "dab",
-                    "Count the contacts of the domain address book",
-                    "Compter les contacts du carnet d'adresses du domaine",
-                    endpoints=[
-                        may("GET", "/domains/{domain}/addressbooks/dab/contactCount")
-                    ],
-                ),
-                action(
-                    "domain-members",
-                    "Count the contacts of the domain members",
-                    "Compter les contacts des membres du domaine",
-                    endpoints=[
-                        may(
-                            "GET",
-                            "/domains/{domain}/addressbooks/domain-members/contactCount",
-                        )
-                    ],
-                ),
-                action(
-                    "dab-export",
-                    "Export the domain address book",
-                    "Exporter le carnet d'adresses du domaine",
-                    endpoints=[
-                        may("POST", "/domains/{domain}/addressbooks/dab?action=export")
-                    ],
-                ),
-                action(
-                    "domain-members-export",
-                    "Export the contacts of the domain members",
-                    "Exporter les contacts des membres du domaine",
-                    endpoints=[
-                        may(
-                            "POST",
-                            "/domains/{domain}/addressbooks/domain-members"
-                            "?action=export",
-                        )
-                    ],
-                ),
-                action(
-                    "dab-import",
-                    "Import contacts into the domain address book",
-                    "Importer des contacts dans le carnet d'adresses du domaine",
-                    endpoints=[
-                        may("POST", "/domains/{domain}/addressbooks/dab?action=import")
-                    ],
-                ),
-                action(
-                    "dab-clear",
-                    "Clear the contacts of the domain address book",
-                    "Vider les contacts du carnet d'adresses du domaine",
-                    endpoints=[
-                        may("DELETE", "/domains/{domain}/addressbooks/dab/contacts")
-                    ],
-                ),
-                action(
-                    "dab-copy",
-                    "Copy the users of another domain into the domain address book",
-                    "Copier les utilisateurs d'un autre domaine dans le carnet d'adresses"
-                    " du domaine",
-                    endpoints=[
-                        may(
-                            "POST",
-                            "/domains/{domain}/addressbooks/dab?action=copyFrom",
-                        )
-                    ],
-                ),
-            ],
-        ),
-        action(
-            "republish-contacts",
-            "Calendar: republish the common contacts of the domain",
-            "Agenda : republier les contacts communs du domaine",
-            applications=CALENDAR,
-            endpoints=[may("POST", "/domains/{domain}/contacts?action=republish")],
-        ),
+        *_domain_tasks(),
         section(
             "admins",
             "Calendar: Admins tab",
@@ -1452,7 +1466,10 @@ USERS = page(
                     "owner-resolution",
                     "Resolve the owner of a delegated calendar",
                     "Résoudre le propriétaire d'un agenda délégué",
-                    endpoints=[may("GET", "/registeredUsers")],
+                    endpoints=[
+                        may("GET", "/registeredUsers", modes=GLOBAL),
+                        may("GET", "/domains/{domain}/registeredUsers", modes=DOMAIN),
+                    ],
                 ),
             ],
         ),
@@ -1461,13 +1478,19 @@ USERS = page(
             "Calendar: user registration",
             "Agenda : inscription de l'utilisateur",
             applications=CALENDAR,
-            endpoints=[must("GET", "/registeredUsers")],
+            endpoints=[
+                must("GET", "/registeredUsers", modes=GLOBAL),
+                must("GET", "/domains/{domain}/registeredUsers", modes=DOMAIN),
+            ],
             children=[
                 action(
                     "register",
                     "Register the user as a calendar user",
                     "Inscrire l'utilisateur comme utilisateur d'agenda",
-                    endpoints=[may("POST", "/registeredUsers")],
+                    endpoints=[
+                        may("POST", "/registeredUsers", modes=GLOBAL),
+                        may("POST", "/domains/{domain}/registeredUsers", modes=DOMAIN),
+                    ],
                 )
             ],
         ),
@@ -1544,7 +1567,10 @@ USERS = page(
                     "owner-resolution",
                     "Resolve the owner of a shared calendar",
                     "Résoudre le propriétaire d'un agenda partagé",
-                    endpoints=[may("GET", "/registeredUsers")],
+                    endpoints=[
+                        may("GET", "/registeredUsers", modes=GLOBAL),
+                        may("GET", "/domains/{domain}/registeredUsers", modes=DOMAIN),
+                    ],
                 ),
                 action(
                     "export",
@@ -1585,11 +1611,14 @@ MAILING_LISTS = page(
     "Mailing lists",
     "Listes de diffusion",
     applications=MAIL,
-    endpoints=[must("GET", "/mailingLists")],
     note=(
-        "In DOMAIN mode the frontend appends ?domain={domain}, which the resolver "
-        "treats as a distinct pattern. Confirm against what the proxy declares."
+        "GET /mailingLists lists the lists of every domain: a domain administrator "
+        "is only granted the listing of its own domain."
     ),
+    endpoints=[
+        must("GET", "/mailingLists", modes=GLOBAL),
+        must("GET", "/mailingLists?domain={domain}", modes=DOMAIN),
+    ],
     children=[
         action(
             "create",
@@ -1853,8 +1882,24 @@ TASKS = page(
     "tasks",
     "Tasks",
     "Tâches",
-    endpoints=[must("GET", "/tasks?{query_params}", gates=("/tasks",))],
+    note=(
+        "GET /tasks lists the tasks of every domain, with their details. In DOMAIN "
+        "mode the page never lists tasks: it starts the tasks of the domain, and "
+        "shows up as soon as one of them, or the task details, is allowed."
+    ),
+    endpoints=[must("GET", "/tasks?{query_params}", gates=("/tasks",), modes=GLOBAL)],
     children=[
+        *_domain_tasks(modes=DOMAIN),
+        action(
+            "apply-signatures",
+            "Apply the signature templates to every user",
+            "Appliquer les modèles de signature à tous les utilisateurs",
+            applications=MAIL,
+            modes=DOMAIN,
+            endpoints=[
+                may("POST", "/domains/{domain}/signature-templates?action=apply")
+            ],
+        ),
         section(
             "detail",
             "Task details",
@@ -2090,12 +2135,7 @@ REGISTERED_USERS = page(
     "Utilisateurs enregistrés",
     applications=CALENDAR,
     endpoints=[
-        must(
-            "GET",
-            "/domains/{domain}/registeredUsers",
-            modes=DOMAIN,
-            gates=("/registeredUsers",),
-        ),
+        must("GET", "/domains/{domain}/registeredUsers", modes=DOMAIN),
         must("GET", "/registeredUsers", modes=GLOBAL),
     ],
     children=[
@@ -2117,7 +2157,7 @@ REGISTERED_USERS = page(
                     "DELETE",
                     "/domains/{domain}/registeredUsers?email={email}",
                     modes=DOMAIN,
-                    gates=("/registeredUsers",),
+                    gates=("/domains/{domain}/registeredUsers",),
                 ),
                 may(
                     "DELETE",
@@ -2136,6 +2176,7 @@ REGISTERED_USERS = page(
                     "PATCH",
                     "/domains/{domain}/registeredUsers?id={id}",
                     modes=DOMAIN,
+                    gates=("/domains/{domain}/registeredUsers",),
                 ),
                 may(
                     "PATCH",

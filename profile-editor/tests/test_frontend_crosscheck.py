@@ -84,6 +84,14 @@ class FrontendCrossCheckTest(unittest.TestCase):
             for gate in endpoint.gates:
                 assert (endpoint.verb, gate) in gates(), f"{endpoint.verb} {gate}"
 
+    def test_every_domain_mode_frontend_gate_names_a_domain_scoped_path(self):
+        """A DOMAIN-only component asking about a global route forces the profile to
+        grant that route to a domain administrator, on every tenant."""
+        domain_gates = repo.frontend_permission_gates(repo.DOMAIN_ADMIN_SRC)
+        assert len(domain_gates) > 10
+        unscoped = {(v, p) for v, p in domain_gates if "{domain}" not in p}
+        assert not unscoped, sorted(unscoped)
+
     def test_gates_differ_from_the_endpoint_they_belong_to(self):
         for endpoint in INVENTORY.endpoints():
             assert endpoint.pattern not in endpoint.gates, endpoint.pattern

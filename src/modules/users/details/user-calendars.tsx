@@ -26,6 +26,7 @@ import SharedWithChip from "@/components/custom/shared-with-chip";
 import HintTooltip from "@/components/custom/hint-tooltip";
 import { StagedChangesNotice, blocksSave, useDiscardGuard } from "@/components/custom/staged-changes";
 import UserSuggestInput from "@/components/custom/user-suggest-input";
+import { useRegisteredUsersPermissions } from "@/modules/registered-users/permissions";
 
 interface Props {
   username: string;
@@ -358,7 +359,7 @@ export default function UserCalendars({ username, onCalendarsChanged, defaultOpe
 
   // Resolve owner emails of delegated/subscribed calendars via the registered users list.
   const domain = useDomain() || undefined;
-  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const { read: canRegisteredUsers } = useRegisteredUsersPermissions();
   const fetchRegisteredUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
   const { data: registeredUsers } = useFetchData<RegisteredUser[]>(
     canView && canRegisteredUsers ? fetchRegisteredUsers : null

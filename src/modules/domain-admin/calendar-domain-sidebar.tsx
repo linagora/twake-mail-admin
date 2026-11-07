@@ -19,6 +19,7 @@ import { appConfig } from "@/lib/config";
 import { useOIDC } from "@/components/custom/oidc-provider";
 import { supportedLanguages } from "@/i18n";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useRegisteredUsersPermissions } from "@/modules/registered-users/permissions";
 
 function LanguageSelector() {
   const { i18n, t } = useTranslation();
@@ -65,9 +66,23 @@ export function CalendarDomainSidebar() {
   const canDomainAdmins = useIsAllowed("GET", "/domains/{domain}/admins");
   const canResources = useIsAllowed("GET", "/domains/{domain}/resources");
   const canUsers = useIsAllowed("GET", "/domains/{domain}/users");
-  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const { read: canRegisteredUsers } = useRegisteredUsersPermissions();
   const canSettings = useIsAllowed("GET", "/domains/{domain}/settings");
-  const canTasks = useIsAllowed("GET", "/tasks");
+  // The Tasks page never lists tasks (GET /tasks spans every tenant): it starts the domain
+  // tasks of CalendarDomainTasks and DomainAddressBookCounts, and opens their details.
+  const canTasks = [
+    useIsAllowed("POST", "/domains/{domain}?action=deleteData"),
+    useIsAllowed("POST", "/addressbook/domain-members/{domain}"),
+    useIsAllowed("POST", "/domains/{domain}/contacts?action=republish"),
+    useIsAllowed("GET", "/domains/{domain}/addressbooks/dab/contactCount"),
+    useIsAllowed("POST", "/domains/{domain}/addressbooks/dab?action=export"),
+    useIsAllowed("POST", "/domains/{domain}/addressbooks/dab?action=import"),
+    useIsAllowed("DELETE", "/domains/{domain}/addressbooks/dab/contacts"),
+    useIsAllowed("POST", "/domains/{domain}/addressbooks/dab?action=copyFrom"),
+    useIsAllowed("GET", "/domains/{domain}/addressbooks/domain-members/contactCount"),
+    useIsAllowed("POST", "/domains/{domain}/addressbooks/domain-members?action=export"),
+    useIsAllowed("GET", "/domains/{domain}/tasks/{id}"),
+  ].some(Boolean);
 
   // Grouped like the global sidebar, by what the operator comes to do
   const GROUPS: NavGroup[] = [
