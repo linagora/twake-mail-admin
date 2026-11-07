@@ -122,7 +122,7 @@ class CommonTasksTest extends MailAdminE2ETest {
 
         Locator toastLink = app.toast("Task created").locator("a[href='/task/" + taskId + "']");
         assertThat(toastLink).hasText("Recompute mailbox counters — Task " + taskId.substring(0, 8));
-        toastLink.click();
+        AdminApp.follow(toastLink);
         assertThat(page).hasURL(Pattern.compile("/task/" + taskId + "$"));
         JsonNode task = webAdmin.awaitTask(taskId);
         assertThat(task.path("status").asText()).isEqualTo("completed");

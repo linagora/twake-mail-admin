@@ -122,6 +122,15 @@ public class AdminApp {
         return href.substring(href.lastIndexOf('/') + 1);
     }
 
+    /**
+     * Follows a toast link from the keyboard rather than with the mouse. A quick task ends right
+     * after its "Task created" toast shows up, and its outcome toast then slides in from below,
+     * over the earlier toast: a mouse click landing during that animation misses the link.
+     */
+    public static void follow(Locator toastLink) {
+        toastLink.press("Enter");
+    }
+
     public AdminApp expectToast(String text) {
         assertThat(toast(text)).isVisible();
         return this;
