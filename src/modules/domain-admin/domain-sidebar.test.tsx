@@ -58,6 +58,50 @@ describe("domain-admin sidebar groups", () => {
     expect(groups().map((g) => g.label)).toEqual(["Accounts and addresses", "Maintenance"]);
   });
 
+  it("never asks about the global routes, which span every tenant", () => {
+    ["/registeredUsers", "/tasks", "/mailingLists"].forEach((p) => allowed.deny.add(p));
+    renderSidebar(<CalendarDomainSidebar />);
+    expect(groups().flatMap((g) => g.entries)).toEqual(expect.arrayContaining(["Registered Users", "Tasks"]));
+    cleanup();
+    renderSidebar(<DomainSidebar />);
+    expect(groups().flatMap((g) => g.entries)).toEqual(expect.arrayContaining(["Mailing Lists", "Tasks"]));
+  });
+
+  it("gates the calendar entries on the domain-scoped routes", () => {
+    [
+      "/domains/{domain}/registeredUsers",
+      "/domains/{domain}?action=deleteData",
+      "/addressbook/domain-members/{domain}",
+      "/domains/{domain}/contacts?action=republish",
+      "/domains/{domain}/addressbooks/dab/contactCount",
+      "/domains/{domain}/addressbooks/dab?action=export",
+      "/domains/{domain}/addressbooks/dab?action=import",
+      "/domains/{domain}/addressbooks/dab/contacts",
+      "/domains/{domain}/addressbooks/dab?action=copyFrom",
+      "/domains/{domain}/addressbooks/domain-members/contactCount",
+      "/domains/{domain}/addressbooks/domain-members?action=export",
+      "/domains/{domain}/tasks/{id}",
+    ].forEach((p) => allowed.deny.add(p));
+    renderSidebar(<CalendarDomainSidebar />);
+    const entries = groups().flatMap((g) => g.entries);
+    expect(entries).not.toContain("Registered Users");
+    expect(entries).not.toContain("Tasks");
+  });
+
+  it("gates the mail entries on the domain-scoped routes", () => {
+    [
+      "/mailingLists?domain={domain}",
+      "/domains/{domain}/signature-templates?action=apply",
+      "/domains/{domain}?action=deleteData",
+      "/domains/{domain}/templates",
+      "/domains/{domain}/tasks/{id}",
+    ].forEach((p) => allowed.deny.add(p));
+    renderSidebar(<DomainSidebar />);
+    const entries = groups().flatMap((g) => g.entries);
+    expect(entries).not.toContain("Mailing Lists");
+    expect(entries).not.toContain("Tasks");
+  });
+
   it("marks only the current entry", () => {
     renderSidebar(<DomainSidebar />, "/users/user/alice@example.com");
     const current = Array.from(document.querySelectorAll('a[aria-current="page"]')).map((a) => a.textContent);

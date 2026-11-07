@@ -8,6 +8,7 @@
 - **Fallbacks ignored**: only the domain-scoped pattern is evaluated (e.g. `/domains/{domain}/resources`). Legacy fallback patterns are not declared as required.
 - **Query strings included**: the resolver compares verb + path + query string (e.g. `/users/{username}/mailboxes?task=reIndex` is distinct from `/users/{username}/mailboxes`).
 - **DOMAIN mode — tasks**: only `/domains/{domain}/tasks/{id}` is evaluated (the global `/tasks/{id}` pattern is ignored in DOMAIN mode).
+- **DOMAIN mode — never a global route**: a domain administrator is only ever asked about, and only ever calls, routes that the proxy pins to its own domain (`{domain}` or `%@{domain}`). The global `/registeredUsers`, `/tasks` and `/mailingLists` routes span every tenant: a DOMAIN profile must not grant them, and no DOMAIN-mode control depends on them.
 - **`.proxy/` calls**: never blocked, not subject to evaluation.
 - **`Accept` header**: ignored by the resolver (download and regular GET share the same pattern).
 - **Gate ≠ call**: a number of components ask the resolver about one pattern and then call another — almost always the bare path while the call carries a query string. A query-less rule on the path grants both (the proxy applies it to every query); a rule written against the call alone does not match the bare gate, and the control never renders. They are all listed under [Permission gates that differ from the call](#permission-gates-that-differ-from-the-call).
@@ -38,11 +39,13 @@ a task or action parameter.
 | `DELETE /messages?user={username}&mailbox=Spam` | `DELETE /messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` |
 | `DELETE /messages?user={username}&mailbox=Trash` | `DELETE /messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` |
 | `DELETE /registeredUsers` | `DELETE /registeredUsers?email={email}` |
+| `DELETE /domains/{domain}/registeredUsers` | `DELETE /domains/{domain}/registeredUsers?email={email}` |
 | `DELETE /tasks` | `DELETE /tasks?olderThan={days}day` |
 | `GET /tasks` | `GET /tasks?{query_params}` |
 | `GET /tasks/{id}/await` | `GET /tasks/{id}/await?timeout={timeout}` |
 | `GET /domains/{domain}/tasks/{id}/await` | `GET /domains/{domain}/tasks/{id}/await?timeout={timeout}` |
 | `PATCH /registeredUsers` | `PATCH /registeredUsers?id={id}` |
+| `PATCH /domains/{domain}/registeredUsers` | `PATCH /domains/{domain}/registeredUsers?id={id}` |
 | `POST /addressbook/domain-members/{domain}` | `POST /addressbook/domain-members/{domain}?task=sync` |
 | `POST /calendars/{username}` | `POST /calendars/{username}?task=archive` |
 | `POST /cassandra/mappings` | `POST /cassandra/mappings?action=SolveInconsistencies&{params}` |
@@ -88,8 +91,8 @@ top-level entries.
 | Team mailboxes | `GET /domains/{domain}/team-mailboxes` |
 | Quota | `GET /quota/domains/{domain}` |
 | Rate limiting | `GET /domains/{domain}/ratelimits` |
-| Mailing lists | `GET /mailingLists` |
-| Tasks | `GET /tasks` |
+| Mailing lists | `GET /mailingLists?domain={domain}` |
+| Tasks | any of `POST /domains/{domain}/signature-templates?action=apply`, `POST /domains/{domain}?action=deleteData`, `POST /domains/{domain}/templates`, `GET /domains/{domain}/tasks/{id}` |
 
 ### APPLICATION:"CALENDAR" — `domain-admin/calendar-domain-sidebar.tsx`
 
@@ -98,9 +101,9 @@ top-level entries.
 | Calendar admins | `GET /domains/{domain}/admins` |
 | Resources | `GET /domains/{domain}/resources` |
 | Users | `GET /domains/{domain}/users` |
-| Registered users | `GET /registeredUsers` |
+| Registered users | `GET /domains/{domain}/registeredUsers` |
 | Calendar settings | `GET /domains/{domain}/settings` |
-| Tasks | `GET /tasks` |
+| Tasks | any of the actions of the [domain Tasks page](#tasks-page-domain-mode), or `GET /domains/{domain}/tasks/{id}` |
 
 The user detail page is reachable from the Users entry in both applications
 (`user/:username`), so every *User detail* section below applies in DOMAIN mode
@@ -578,7 +581,7 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | "Import events" button (upload, owned calendars) | POST | `/users/{username}/calendars/{calendarId}?action=import` | MAY (do not show the upload icon if missing) |
 | Event counter refresh after an import | GET | `/tasks/{id}` (`/domains/{domain}/tasks/{id}` in DOMAIN mode) | MAY (the counter is then only re-read when the section is reopened) |
 | Invitee email existence check | HEAD | `/users/{username}` | MAY |
-| Owner email resolution (delegated/subscription) | GET | `/registeredUsers` | MAY (owner line hidden if missing) |
+| Owner email resolution (delegated/subscription) | GET | `/registeredUsers` (`/domains/{domain}/registeredUsers` in DOMAIN mode) | MAY (owner line hidden if missing) |
 | "Delete calendar" button (trash) | DELETE | `/users/{username}/calendars/{calendarId}` | MAY (do not show the trash icon if missing) |
 
 ### User detail — Calendar: Address books section *(APPLICATION:"CALENDAR" only)*
@@ -607,7 +610,7 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | "Delete booking link" button | DELETE | `/users/{username}/booking-links/{publicId}` | MAY (do not show the button if missing) |
 | "Regenerate link" button | POST | `/users/{username}/booking-links/{publicId}/reset` | MAY (do not show the button if missing) |
 | "Delete booked events" button | POST | `/users/{username}/booking-links/{publicId}?action=deleteEvents` | MAY (do not show the button if missing) |
-| Owner email of a delegated calendar, in the calendar names | GET | `/registeredUsers` | MAY (the calendar name is then shown alone) |
+| Owner email of a delegated calendar, in the calendar names | GET | `/registeredUsers` (`/domains/{domain}/registeredUsers` in DOMAIN mode) | MAY (the calendar name is then shown alone) |
 
 ### User detail — Calendar: registration *(APPLICATION:"CALENDAR" only)*
 
@@ -615,8 +618,8 @@ Shown when the user exists in Twake Mail but is not yet a registered calendar us
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
-| Registration status load | GET | `/registeredUsers` | MUST (hide the whole detail page if missing) |
-| "Register user" button | POST | `/registeredUsers` | MAY (do not show the button if missing) |
+| Registration status load | GET | `/registeredUsers` (`/domains/{domain}/registeredUsers` in DOMAIN mode) | MUST (hide the whole detail page if missing) |
+| "Register user" button | POST | `/registeredUsers` (`/domains/{domain}/registeredUsers` in DOMAIN mode) | MAY (do not show the button if missing) |
 
 ### User quota explorer (inline component) *(APPLICATION:"MAIL")*
 
@@ -633,7 +636,8 @@ Shown when the user exists in Twake Mail but is not yet a registered calendar us
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
-| Page load | GET | `/mailingLists` | MUST |
+| Page load (GLOBAL mode) | GET | `/mailingLists` | MUST |
+| Page load (DOMAIN mode) | GET | `/mailingLists?domain={domain}` | MUST |
 | "Create mailing list" form | PUT | `/mailingLists/{address}` | MAY (do not show the form if missing) |
 | "Delete mailing list" button | DELETE | `/mailingLists/{address}` | MAY (do not show the button if missing) |
 
@@ -647,10 +651,10 @@ Shown when the user exists in Twake Mail but is not yet a registered calendar us
 | "Add owner" button | PUT | `/mailingLists/{address}/owners/{owner}` | MAY (do not show the button if missing) |
 | "Remove owner" button | DELETE | `/mailingLists/{address}/owners/{owner}` | MAY (do not show the button if missing) |
 
-Note: the sidebar entry (both GLOBAL and DOMAIN mode) is gated on `GET /mailingLists`.
-In DOMAIN mode the actual call carries a `?domain={domain}` query string, which the
-"query strings included" resolver rule would make a distinct pattern — to be confirmed
-against what the proxy actually declares.
+Note: the sidebar entry is gated on `GET /mailingLists` in GLOBAL mode and on
+`GET /mailingLists?domain={domain}` in DOMAIN mode, the call the page then makes:
+`GET /mailingLists` lists the lists of every domain and must not be granted to a
+domain administrator.
 
 ---
 
@@ -736,6 +740,15 @@ A left bar entry in both modes; the detail pattern differs, see the two snackbar
 | "Cancel task" button | DELETE | `/tasks/{id}` | MAY (do not show the button if missing) | GLOBAL |
 | Task detail: name of the team calendar a calendar task worked on *(APPLICATION:"CALENDAR")* | GET | `/domains/{domain}/team-calendars` | MAY (the target is shown without its name) | GLOBAL |
 | Task detail: name of the resource a calendar task worked on *(APPLICATION:"CALENDAR")* | GET | `/domains/{domain}/resources/{resourceId}` | MAY (the target is shown without its name) | GLOBAL |
+
+### Tasks page *(DOMAIN mode)*
+
+The domain administrator's Tasks page never lists tasks — `GET /tasks` lists those of
+every domain, with their details. It starts the tasks of the domain, and is shown as
+soon as one of them, or the task detail (`GET /domains/{domain}/tasks/{id}`), is allowed:
+
+- APPLICATION:"MAIL": the actions of *Domain detail — Tasks section* (`domain-tasks.tsx`): apply the signature templates, delete all data of the domain, provision the mailbox templates.
+- APPLICATION:"CALENDAR": the actions of `calendar-domain-tasks.tsx` (delete all data, sync the domain members, republish the common contacts) and of `domain-address-book-counts.tsx` (count, export, import, clear and copy the contacts of the domain address books).
 
 ## Tasks snackbar *(GLOBAL mode)*
 
