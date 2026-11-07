@@ -117,7 +117,7 @@ class UserDetailTest extends MailAdminE2ETest {
         assertThat(taskLink).hasText(AdminApp.TASK_TOAST_LINK);
         String taskId = AdminApp.taskIdOf(taskLink);
         // Follow the link right away: the toast vanishes after a few seconds
-        taskLink.click();
+        AdminApp.follow(taskLink);
         assertThat(page).hasURL(Pattern.compile("/task/" + taskId + "$"));
 
         assertThat(webAdmin.awaitTask(taskId).path("status").asText()).isEqualTo("completed");
