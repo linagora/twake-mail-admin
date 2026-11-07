@@ -192,12 +192,12 @@ class GeneratorTest(unittest.TestCase):
     def test_a_refusal_the_baseline_would_grant_becomes_a_deny_rule(self):
         baseline = find_profile("classpath://functional-admin-mail-baseline.json")
         answers = grant_all(MAIL_DOMAIN)
-        answers["domains.aliases.delete"] = False
+        answers["users.aliases.remove"] = False
         generated = generate(INVENTORY, MAIL_DOMAIN, answers, baseline)
 
         denies = [rule for rule in generated.rules if isinstance(rule, Rule) and rule.denied]
         assert any(
-            rule.endpoint == "/domains/{domain}/aliases/{source}" and rule.verb == ("DELETE",)
+            rule.endpoint == "/address/aliases/%@{domain}/sources/{alias}" and rule.verb == ("DELETE",)
             for rule in denies
         ), denies
 
@@ -207,15 +207,33 @@ class GeneratorTest(unittest.TestCase):
         """The whole point: resolve the emitted list and the refusal must hold."""
         baseline = find_profile("classpath://functional-admin-mail-baseline.json")
         answers = grant_all(MAIL_DOMAIN)
-        answers["domains.aliases.delete"] = False
+        answers["users.aliases.remove"] = False
         generated = generate(INVENTORY, MAIL_DOMAIN, answers, baseline)
 
         expanded = []
         for rule in generated.rules:
             expanded.extend(baseline.rules if isinstance(rule, IncludeDirective) else [rule])
         resolver = Resolver(expanded)
+        assert resolver.is_allowed("DELETE", "/address/aliases/{username}/sources/{alias}") is False
+        assert resolver.is_allowed("PUT", "/address/aliases/{username}/sources/{alias}") is True
+
+
+
+    def test_a_domain_admin_profile_never_grants_domain_alias_writes(self):
+        """{domain} only binds the destination of a domain alias, whatever the answers."""
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        answers = grant_all(MAIL_DOMAIN)
+        answers["domains.aliases.add"] = True
+        answers["domains.aliases.delete"] = True
+        generated = generate(INVENTORY, MAIL_DOMAIN, answers, baseline)
+
+        expanded = []
+        for rule in generated.rules:
+            expanded.extend(baseline.rules if isinstance(rule, IncludeDirective) else [rule])
+        resolver = Resolver(expanded)
+        assert resolver.is_allowed("GET", "/domains/{domain}/aliases") is True
+        assert resolver.is_allowed("PUT", "/domains/{domain}/aliases/{source}") is False
         assert resolver.is_allowed("DELETE", "/domains/{domain}/aliases/{source}") is False
-        assert resolver.is_allowed("PUT", "/domains/{domain}/aliases/{source}") is True
 
 
 

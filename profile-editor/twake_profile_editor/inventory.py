@@ -124,12 +124,15 @@ DOMAINS = page(
                     "add",
                     "Add an alias",
                     "Ajouter un alias",
+                    # {domain} only binds the destination: a tenant admin would alias another tenant's domain
+                    modes=GLOBAL,
                     endpoints=[may("PUT", "/domains/{domain}/aliases/{source}")],
                 ),
                 action(
                     "delete",
                     "Delete an alias",
                     "Supprimer un alias",
+                    modes=GLOBAL,
                     endpoints=[may("DELETE", "/domains/{domain}/aliases/{source}")],
                 ),
             ],

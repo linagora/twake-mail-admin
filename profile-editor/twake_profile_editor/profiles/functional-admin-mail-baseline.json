@@ -1,4 +1,7 @@
 [
+  {"denied": true, "verb": ["PUT", "DELETE"], "endpoint": "/domains/{targetDomain}/aliases/{source}"},
+  {"verb": ["PUT", "DELETE"], "endpoint": "/address/aliases/%@{domain}/sources/%@{domain}"},
+  {"denied": true, "verb": ["PUT", "DELETE"], "endpoint": "/address/aliases/{address}/sources/{source}"},
   {"endpoint": "/domains/{domain}"},
   {"endpoint": "/domains/{domain}/*"},
   {"endpoint": "/users/%@{domain}"},
