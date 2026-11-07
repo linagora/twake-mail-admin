@@ -5,13 +5,15 @@ from __future__ import annotations
 import unittest
 
 from twake_profile_editor.generator import (
+    DOMAIN_SCOPING_CAVEATS,
     Generated,
     Scope,
+    UnscopedDomainRule,
     domain_scope,
     generate,
 )
 from twake_profile_editor.inventory import INVENTORY
-from twake_profile_editor.model import Application, Mode
+from twake_profile_editor.model import Application, Inventory, Mode, must, page
 from twake_profile_editor.profiles import IncludeDirective, find_profile
 from twake_profile_editor.resolver import Resolver, Rule
 
@@ -169,6 +171,58 @@ class GeneratorTest(unittest.TestCase):
         assert "rename" in warnings
 
 
+
+    def test_a_fully_granting_domain_profile_is_pinned_to_the_domain(self):
+        """Every DOMAIN rule names the caller's domain, so the proxy can pin it.
+
+        A rule without ``{domain}`` is granted on every tenant: the restriction
+        only constrains captured variables. The only exceptions are the patterns
+        the operator is explicitly warned about.
+        """
+        for application in Application:
+            scope = Scope(application, Mode.DOMAIN)
+            with self.subTest(application=application.value):
+                generated = generate(INVENTORY, scope, grant_all(scope))
+                unscoped = {
+                    (verb, pattern)
+                    for verb, pattern in endpoints_of(generated)
+                    if "{domain}" not in pattern and pattern not in DOMAIN_SCOPING_CAVEATS
+                }
+                assert not unscoped, sorted(unscoped)
+
+    def test_a_domain_profile_grants_no_cross_tenant_listing(self):
+        """Regression: global routes reached DOMAIN profiles through the frontend gates."""
+        for application in Application:
+            scope = Scope(application, Mode.DOMAIN)
+            with self.subTest(application=application.value):
+                granted = endpoints_of(generate(INVENTORY, scope, grant_all(scope)))
+                for key in [
+                    ("GET", "/registeredUsers"),
+                    ("POST", "/registeredUsers"),
+                    ("PATCH", "/registeredUsers"),
+                    ("DELETE", "/registeredUsers"),
+                    ("GET", "/tasks"),
+                    ("GET", "/tasks?{query_params}"),
+                    ("GET", "/mailingLists"),
+                ]:
+                    assert key not in granted, key
+
+    def test_a_domain_admin_still_gets_its_registered_users_and_tasks(self):
+        scope = Scope(Application.CALENDAR, Mode.DOMAIN)
+        granted = endpoints_of(generate(INVENTORY, scope, grant_all(scope)))
+        assert ("GET", "/domains/{domain}/registeredUsers") in granted
+        assert ("DELETE", "/domains/{domain}/registeredUsers") in granted
+        assert ("POST", "/domains/{domain}?action=deleteData") in granted
+        assert ("GET", "/domains/{domain}/tasks/{id}") in granted
+
+    def test_an_unscoped_domain_rule_is_refused(self):
+        inventory = Inventory(
+            pages=(page("p", "P", "P", endpoints=[must("GET", "/registeredUsers")]),)
+        )
+        scope = Scope(Application.CALENDAR, Mode.DOMAIN)
+        with self.assertRaises(UnscopedDomainRule) as raised:
+            generate(inventory, scope, {"p": False})
+        assert "GET /registeredUsers" in str(raised.exception)
 
     def test_reusing_a_baseline_emits_an_include_rather_than_a_copy(self):
         baseline = find_profile("classpath://functional-admin-mail-baseline.json")

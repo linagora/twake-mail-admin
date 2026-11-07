@@ -22,6 +22,7 @@ import { getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
 import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
+import { useRegisteredUsersPermissions } from "@/modules/registered-users/permissions";
 
 interface Props {
   username: string;
@@ -447,7 +448,7 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
   );
   const allCalendars = calendarsData?._embedded?.["dav:calendar"] ?? [];
   const domain = useDomain() || undefined;
-  const canRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const { read: canRegisteredUsers } = useRegisteredUsersPermissions();
   const fetchRegisteredUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
   const { data: registeredUsers } = useFetchData<RegisteredUser[]>(
     open && canView && canViewCalendars && canRegisteredUsers ? fetchRegisteredUsers : null

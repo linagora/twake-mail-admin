@@ -13,9 +13,9 @@ import RegisterUserButton from "./register-user-button";
 import ListToolbar from "@/components/custom/list-toolbar";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { useDomain } from "@/modules/domain-admin/domain-context";
-import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import { CompactList, CompactRow } from "@/components/custom/compact-list";
+import { useRegisteredUsersPermissions } from "./permissions";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -82,9 +82,7 @@ export default function RegisteredUsersList() {
   // In DOMAIN mode this returns the current domain; in GLOBAL mode returns "".
   const domain = useDomain() || undefined;
 
-  const canCreate = useIsAllowed("POST", "/registeredUsers");
-  const canEdit = useIsAllowed("PATCH", "/registeredUsers");
-  const canDelete = useIsAllowed("DELETE", "/registeredUsers");
+  const { create: canCreate, edit: canEdit, delete: canDelete } = useRegisteredUsersPermissions();
 
   const fetchUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
   const {

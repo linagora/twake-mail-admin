@@ -5,7 +5,6 @@ import { AlertTriangle, UserPlus } from "lucide-react";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
-import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { createRegisteredUser, getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
@@ -20,13 +19,14 @@ import UserAddressBooks from "./user-address-books";
 import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
 import { ExpandCollapseAll, SectionsProvider } from "@/components/custom/collapsible-section";
+import { useRegisteredUsersPermissions } from "@/modules/registered-users/permissions";
 
 function UnregisteredUser({ username, onRegistered }: { username: string; onRegistered: () => void }) {
   const { t } = useTranslation();
   const confirm = useConfirm();
   const { toast } = useToast();
   const domain = useDomain() || undefined;
-  const canRegister = useIsAllowed("POST", "/registeredUsers");
+  const { create: canRegister } = useRegisteredUsersPermissions();
 
   const handleRegister = async () => {
     const defaults = defaultRegisteredUserNames(username);
@@ -70,7 +70,7 @@ export default function CalendarUserDetail() {
   const { t } = useTranslation();
 
   const domain = useDomain() || undefined;
-  const canReadRegisteredUsers = useIsAllowed("GET", "/registeredUsers");
+  const { read: canReadRegisteredUsers } = useRegisteredUsersPermissions();
   const fetchRegisteredUsers = useCallback(() => getRegisteredUsers(domain), [domain]);
   const { data: registeredUsers, error, refresh } = useFetchData<RegisteredUser[]>(
     canReadRegisteredUsers ? fetchRegisteredUsers : null
