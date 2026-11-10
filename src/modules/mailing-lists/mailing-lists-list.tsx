@@ -522,12 +522,25 @@ export default function MailingListsList({ domain }: Props) {
     );
   }
 
+  const toolbar = (
+    <ListToolbar search={search} onSearch={(value) => { setSearch(value); setPage(1); }} placeholder={t("mailingLists.searchPlaceholder")}>
+      {canCreate && <CreateMailingListButton onCreated={refresh} />}
+    </ListToolbar>
+  );
+
+  // A failed load replaces the list: no table nor empty state claiming that no list exists
+  if (error) {
+    return (
+      <div>
+        {toolbar}
+        <p className="text-red-500 mt-4">{t("common.errorPrefix", { message: error })}</p>
+      </div>
+    );
+  }
+
   return (
     <div>
-
-      <ListToolbar search={search} onSearch={(value) => { setSearch(value); setPage(1); }} placeholder={t("mailingLists.searchPlaceholder")}>
-        {canCreate && <CreateMailingListButton onCreated={refresh} />}
-      </ListToolbar>
+      {toolbar}
       {isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
@@ -535,8 +548,6 @@ export default function MailingListsList({ domain }: Props) {
           <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
         </div>
       )}
-      {error && <p className="text-red-500 mt-4">{t("common.errorPrefix", { message: error })}</p>}
-
       {filtered.length > 0 && (
         <PaginationControls
           onFirst={() => goToPage(1)}
