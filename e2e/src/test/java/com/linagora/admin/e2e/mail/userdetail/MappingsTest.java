@@ -201,7 +201,7 @@ class MappingsTest extends MailAdminE2ETest {
         app.dialog().getByLabel("Type 3 to confirm", new Locator.GetByLabelOptions().setExact(true)).fill("3");
         confirm.click();
         assertThat(app.dialog()).isHidden();
-        app.expectToast("3 mapping(s) removed successfully");
+        app.expectToast("3 mappings removed successfully");
         // Nothing left to find: the search is cleared
         assertThat(mappings.search()).hasValue("");
 

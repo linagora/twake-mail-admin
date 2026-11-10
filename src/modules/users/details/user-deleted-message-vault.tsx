@@ -71,10 +71,11 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
   };
 
   const handleRestore = async () => {
-    const count = results?.length;
     const confirmed = await confirm({
       header: t("users.deletedVault.restoreTitle"),
-      message: t("users.deletedVault.restoreConfirm", { count: count ?? "all matching", label }),
+      message: results
+        ? t("users.deletedVault.restoreConfirm", { count: results.length, label })
+        : t("users.deletedVault.restoreAllConfirm", { label }),
     });
     if (!confirmed) return;
 
@@ -180,7 +181,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
                 {t("users.deletedVault.found", { count: results.length })}
-                {totalPages > 1 && ` — ${t("common.pageOf", { page, count: totalPages })}`}
+                {totalPages > 1 && ` — ${t("common.pageOf", { page, count: pageItems.length })}`}
               </p>
 
               <div className="overflow-x-auto rounded border">

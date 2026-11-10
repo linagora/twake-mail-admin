@@ -44,6 +44,45 @@ describe("plural forms", () => {
   });
 
   it.each([
+    ["en", "users.deletedVault.found", {}, 0, "0 messages found"],
+    ["en", "users.deletedVault.found", {}, 1, "1 message found"],
+    ["fr", "users.deletedVault.found", {}, 0, "0 message trouvé"],
+    ["fr", "users.deletedVault.found", {}, 2, "2 messages trouvés"],
+    ["en", "users.deletedVault.restoreConfirm", { label: "alice" }, 1, "Restore 1 message for alice? This will enqueue a background task."],
+    ["ru", "users.deletedVault.restoreConfirm", { label: "alice" }, 5, "Восстановить 5 сообщений для alice? Это поставит в очередь фоновую задачу."],
+    ["en", "common.pageOf", { page: 1 }, 1, "Page 1 — 1 result"],
+    ["en", "common.pageOf", { page: 2 }, 20, "Page 2 — 20 results"],
+    ["de", "exploreQuota.page", { page: 1 }, 3, "Seite 1 — 3 Ergebnisse"],
+    ["en", "commonTasks.cleanupOldTasksConfirm", {}, 1, "Delete all tasks older than 1 day?"],
+    ["en", "commonTasks.cleanupOldTasksConfirm", {}, 30, "Delete all tasks older than 30 days?"],
+    ["en", "mailRepositories.filtersActive", {}, 1, "1 filter active"],
+    ["it", "tasks.filtersActive", {}, 2, "Filtri (2 attivi)"],
+    ["en", "mappings.removedPage", {}, 1, "1 mapping removed successfully"],
+    ["en", "mappings.errorRemovingPage", { removed: 2 }, 3, "3 mappings could not be removed (2 removed)"],
+    ["en", "networkChannels.geolocatingIPs", {}, 1, "Geolocating 1 IP…"],
+    ["ru", "networkChannels.totalConnections", {}, 2, "Всего: 2 соединения"],
+  ])("%s pluralises %s with %o for %i", (lng, key, options, count, expected) => {
+    expect(i18n.getFixedT(lng)(key, { ...options, count })).toBe(expected);
+  });
+
+  it.each(["en", "fr", "de", "es", "it", "ru", "mn", "vi"])("%s words counts without the \"(s)\" placeholder plural", (lng) => {
+    const t = i18n.getFixedT(lng);
+    const rendered = [1, 2, 5].flatMap((count) => [
+      t("users.deletedVault.found", { count }),
+      t("users.deletedVault.restoreConfirm", { count, label: "alice" }),
+      t("common.pageOf", { page: 1, count }),
+      t("commonTasks.cleanupOldTasksConfirm", { count }),
+      t("mailRepositories.filtersActive", { count }),
+      t("tasks.filtersActive", { count }),
+      t("mappings.removedPage", { count }),
+      t("mappings.errorRemovingPage", { count, removed: 1 }),
+      t("networkChannels.geolocatingIPs", { count }),
+      t("networkChannels.totalConnections", { count }),
+    ]);
+    expect(rendered.filter((text) => /\(\S{1,3}\)|\/i\b|\/e\b/.test(text))).toEqual([]);
+  });
+
+  it.each([
     ["fr", 0, "1 en échec, 0 dégradé sur 4 composants."],
     ["fr", 1, "1 en échec, 1 dégradé sur 4 composants."],
     ["fr", 2, "1 en échec, 2 dégradés sur 4 composants."],

@@ -153,11 +153,11 @@ export default function MappingsList() {
       const removed = count - failures.length;
       if (failures.length > 0) {
         toast({
-          title: t("mappings.errorRemovingPage", { failed: failures.length, removed }),
+          title: t("mappings.errorRemovingPage", { count: failures.length, removed }),
           description: <ErrorDisplayer error={failures[0]} />,
         });
       } else {
-        toast({ title: t("mappings.removedPage", { total: removed }) });
+        toast({ title: t("mappings.removedPage", { count: removed }) });
         // Nothing left to find: back to the full list
         setSearch("");
         setPage(1);
