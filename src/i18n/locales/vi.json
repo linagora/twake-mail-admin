@@ -2079,7 +2079,7 @@
     "geolocationFailed": "Định vị địa lý thất bại.",
     "noPublicIPs": "Không có IP công khai để định vị.",
     "fetchError": "Không thể tải các kênh.",
-    "leafletError": "Không thể tải thư viện bản đồ.",
+    "geolocationNotConfigured": "Chưa cấu hình định vị địa lý IP của máy khách (GEOIP_URL).",
     "noActiveChannels": "Không có kênh hoạt động.",
     "totalConnections": "Tổng: {{count}} kết nối",
     "sortBy": "Sắp xếp theo:",

@@ -2103,7 +2103,7 @@
     "geolocationFailed": "Error de geolocalización.",
     "noPublicIPs": "No hay IP públicas que geolocalizar.",
     "fetchError": "No se pudieron obtener los canales.",
-    "leafletError": "No se pudo cargar la biblioteca de mapas.",
+    "geolocationNotConfigured": "La geolocalización de las IP de los clientes no está configurada (GEOIP_URL).",
     "noActiveChannels": "No hay canales activos.",
     "totalConnections_one": "Total: {{count}} conexión",
     "totalConnections_other": "Total: {{count}} conexiones",

@@ -2112,7 +2112,7 @@
     "geolocationFailed": "Сбой геолокации.",
     "noPublicIPs": "Нет публичных IP для геолокации.",
     "fetchError": "Не удалось получить каналы.",
-    "leafletError": "Не удалось загрузить библиотеку карты.",
+    "geolocationNotConfigured": "Геолокация IP-адресов клиентов не настроена (GEOIP_URL).",
     "noActiveChannels": "Нет активных каналов.",
     "totalConnections_one": "Всего: {{count}} соединение",
     "totalConnections_few": "Всего: {{count}} соединения",

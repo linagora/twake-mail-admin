@@ -2086,7 +2086,7 @@
     "geolocationFailed": "Байршил тогтоох амжилтгүй боллоо.",
     "noPublicIPs": "Байршил тогтоох нийтийн IP байхгүй.",
     "fetchError": "Сувгуудыг татаж чадсангүй.",
-    "leafletError": "Газрын зургийн санг ачаалж чадсангүй.",
+    "geolocationNotConfigured": "Үйлчлүүлэгчийн IP байршил тогтоох тохиргоо хийгдээгүй байна (GEOIP_URL).",
     "noActiveChannels": "Идэвхтэй суваг байхгүй.",
     "totalConnections": "Нийт: {{count}} холболт",
     "sortBy": "Эрэмбэлэх:",

@@ -2101,7 +2101,7 @@
     "geolocationFailed": "Geolokalisierung fehlgeschlagen.",
     "noPublicIPs": "Keine öffentlichen IP-Adressen zum Orten.",
     "fetchError": "Kanäle konnten nicht abgerufen werden.",
-    "leafletError": "Die Kartenbibliothek konnte nicht geladen werden.",
+    "geolocationNotConfigured": "Die Geolokalisierung der Client-IP-Adressen ist nicht konfiguriert (GEOIP_URL).",
     "noActiveChannels": "Keine aktiven Kanäle.",
     "totalConnections_one": "Gesamt: {{count}} Verbindung",
     "totalConnections_other": "Gesamt: {{count}} Verbindungen",
