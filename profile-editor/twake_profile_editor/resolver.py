@@ -91,7 +91,10 @@ class Resolver:
 
 def _rule_matches(rule: "_CompiledRule", verb: str, component: "_CompiledComponent") -> bool:
     if rule.verb is not None:
-        if verb.upper() not in [v.upper() for v in rule.verb]:
+        upper = [v.upper() for v in rule.verb]
+        asked = verb.upper()
+        # HEAD is GET without the body: a rule covering GET covers HEAD, a deny included
+        if asked not in upper and not (asked == "HEAD" and "GET" in upper):
             return False
     return _endpoint_matches(rule, component)
 

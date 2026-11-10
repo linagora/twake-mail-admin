@@ -203,6 +203,15 @@ class ResolverTest(unittest.TestCase):
     def test_verb_comparison_is_case_insensitive(self):
         assert resolve([Rule("/domains", verb=("get",))], "GET", "/domains") is True
 
+    def test_a_rule_covering_get_covers_head_a_deny_included(self):
+        assert resolve([Rule("/users/{u}", verb=("get",))], "HEAD", "/users/{username}") is True
+        assert resolve(
+            [Rule("/users/{u}", verb=("GET",), denied=True), Rule("/users/{u}")],
+            "HEAD",
+            "/users/{username}",
+        ) is False
+        assert resolve([Rule("/users/{u}", verb=("HEAD",))], "GET", "/users/{username}") is False
+
 
 
     def test_var_in_rule_matches_any_single_segment_in_component(self):
