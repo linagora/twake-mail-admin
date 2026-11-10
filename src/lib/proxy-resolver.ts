@@ -48,7 +48,7 @@ export interface ProxyRule {
   denied?: boolean;
 }
 
-export type HttpVerb = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+export type HttpVerb = "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 export class ProxyResolver {
   private readonly compiled: CompiledRule[];
