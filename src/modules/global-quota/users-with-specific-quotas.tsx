@@ -35,18 +35,18 @@ export default function UsersWithSpecificQuotas({ formatCount, formatSize }: Use
   };
 
   return (
-    <div className="p-4 bg-gray-50 rounded-2 space-y-3">
+    <div>
       <SectionToggle open={open} onToggle={() => setOpen(!open)} controls={openContentId}>
         {data ? t("globalQuota.usersSpecificTitle", { count: users.length }) : t("globalQuota.usersSpecific")}
       </SectionToggle>
-      {open && <div id={openContentId}>{isLoading ? (
+      {open && <div id={openContentId} className="mt-2">{isLoading ? (
         <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
       ) : error ? (
         <p className="text-sm text-red-500">{t("common.errorPrefix", { message: error })}</p>
       ) : !data ? null : users.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("globalQuota.noSpecificQuotas")}</p>
       ) : (
-        <>
+        <div className="p-4 bg-gray-50 rounded-2 space-y-3">
           <div className="space-y-1">
             {paginated.map((u, i) => (
               <div key={u.user} className="flex justify-between items-center py-1 text-sm">
@@ -73,7 +73,7 @@ export default function UsersWithSpecificQuotas({ formatCount, formatSize }: Use
               total={users.length}
             />
           )}
-        </>
+        </div>
       )}</div>}
     </div>
   );

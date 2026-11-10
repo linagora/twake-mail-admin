@@ -15,16 +15,16 @@ export default function AggregatedExtraQuotas({ formatCount, formatSize }: Aggre
   const { data, isLoading, error } = useFetchData(open ? getQuotaExtraSummary : null);
 
   return (
-    <div className="p-4 bg-gray-50 rounded-2 space-y-3">
+    <div>
       <SectionToggle open={open} onToggle={() => setOpen(!open)} controls={openContentId}>
         {t("globalQuota.aggregatedExtra")}
       </SectionToggle>
-      {open && <div id={openContentId}>{isLoading ? (
+      {open && <div id={openContentId} className="mt-2">{isLoading ? (
         <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
       ) : error ? (
         <p className="text-sm text-red-500">{t("common.errorPrefix", { message: error })}</p>
       ) : data ? (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+        <div className="p-4 bg-gray-50 rounded-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
           <span className="text-gray-600">{t("globalQuota.totalExtraStorage")}</span>
           <strong>{formatSize(data.totalExtraStorageLimit)}</strong>
           <span className="text-gray-600">{t("globalQuota.totalExtraCount")}</span>
