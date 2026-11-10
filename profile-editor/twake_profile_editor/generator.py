@@ -44,28 +44,14 @@ DOMAIN_PLACEHOLDER = "%@{domain}"
 #: a path segment.
 USER_QUERY_PARAMS = ("user",)
 
-#: Patterns whose domain scoping cannot be derived mechanically, mapped to the
-#: message explaining why. Emitting them unchanged is the safe default, but the
-#: operator has to be told.
-#:
-#: This is also the allow-list of DOMAIN-mode rules that may carry no ``{domain}``:
-#: any other such rule is a hard error (:class:`UnscopedDomainRule`), since the
-#: proxy cannot pin it to the caller's domain.
-DOMAIN_SCOPING_CAVEATS: Mapping[str, str] = {
-    "/mailingLists/{address}": "warn.scoping.mailing-lists",
-    "/mailingLists/{address}/members/{member}": "warn.scoping.mailing-lists",
-    "/mailingLists/{address}/owners/{owner}": "warn.scoping.mailing-lists",
-    "/spaces?action=sync": "warn.scoping.spaces-sync",
-}
-
-
 class UnscopedDomainRule(ValueError):
     """A DOMAIN-mode rule the proxy could not pin to the caller's domain.
 
     ``url.patterns.restrictions`` only constrains captured variables: a rule with
     no ``{domain}`` (nor ``%@{domain}``) is granted on every tenant. Global routes
-    such as ``/registeredUsers`` or ``/tasks`` must never reach a domain
-    administrator's profile; the inventory has to model a domain-scoped variant.
+    such as ``/registeredUsers``, ``/tasks`` or ``/mailingLists/{address}`` must
+    never reach a domain administrator's profile, and there is no exemption: the
+    inventory has to model a domain-scoped variant, or make the endpoint GLOBAL only.
     """
 
 
@@ -118,7 +104,7 @@ def generate(
 
     for node in scoped.nodes:
         for endpoint in node.endpoints:
-            for key in _scoped_keys(endpoint, scope, warnings):
+            for key in _scoped_keys(endpoint, scope):
                 _append_unique(all_keys, key)
                 if resolved.get(node.id, False):
                     _append_unique(granted_keys, key)
@@ -243,30 +229,19 @@ def _merge_rules(keys: Sequence[tuple[str, str]], *, denied: bool) -> list[Rule]
     ]
 
 
-def _scoped_keys(
-    endpoint: Endpoint, scope: Scope, warnings: list[Label]
-) -> list[tuple[str, str]]:
+def _scoped_keys(endpoint: Endpoint, scope: Scope) -> list[tuple[str, str]]:
     """The call itself plus every gate the frontend checks for it."""
     if not scope.is_domain:
         return list(endpoint.keys)
-    caveat_key = DOMAIN_SCOPING_CAVEATS.get(endpoint.pattern)
-    if caveat_key:
-        prefix = f"{endpoint.verb} {endpoint.pattern}: "
-        caveat = _label(caveat_key)
-        message = Label(en=prefix + caveat.en, fr=prefix + caveat.fr)
-        if message not in warnings:
-            warnings.append(message)
     keys = [(verb, domain_scope(pattern)) for verb, pattern in endpoint.keys]
-    if not caveat_key:
-        unscoped = [key for key in keys if not is_domain_scoped(key[1])]
-        if unscoped:
-            raise UnscopedDomainRule(
-                f"{scope.application.value} DOMAIN: "
-                + ", ".join(f"{verb} {pattern}" for verb, pattern in unscoped)
-                + " would be granted on every domain. Give the endpoint a "
-                "domain-scoped DOMAIN variant in the inventory, or, if it truly is "
-                "tenant-neutral, list it in DOMAIN_SCOPING_CAVEATS."
-            )
+    unscoped = [key for key in keys if not is_domain_scoped(key[1])]
+    if unscoped:
+        raise UnscopedDomainRule(
+            f"{scope.application.value} DOMAIN: "
+            + ", ".join(f"{verb} {pattern}" for verb, pattern in unscoped)
+            + " would be granted on every domain. Give the endpoint a "
+            "domain-scoped DOMAIN variant in the inventory, or make it GLOBAL only."
+        )
     return keys
 
 
