@@ -5,6 +5,47 @@ import { getAllChannels } from "./api-client";
 import { NetworkChannel } from "./types";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, RefreshCw } from "lucide-react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+// Leaflet is bundled (no third-party CDN): point its default marker at the bundled images
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
+L.Icon.Default.mergeOptions({ iconUrl: markerIcon, iconRetinaUrl: markerIcon2x, shadowUrl: markerShadow });
+
+export interface GeoLocation {
+  ip: string;
+  lat: number;
+  lon: number;
+  city: string;
+  country: string;
+}
+
+/**
+ * The ip-api compatible batch endpoint used to geolocate client IPs (window.__ENV__.GEOIP_URL).
+ * Geolocation sends client IPs to that service, so it is opt-in and only over https.
+ */
+export function geoipUrl(): string | null {
+  const url = window.__ENV__?.GEOIP_URL;
+  return url && url.startsWith("https://") ? url : null;
+}
+
+/** The popup of a marker, built as text nodes: the geolocation service is a third party. */
+export function buildPopup(geo: GeoLocation, count: number): HTMLElement {
+  const popup = document.createElement("div");
+  const ip = document.createElement("b");
+  ip.textContent = String(geo.ip);
+  popup.append(
+    ip,
+    document.createElement("br"),
+    `${geo.city}, ${geo.country}`,
+    document.createElement("br"),
+    `${count} connection${count > 1 ? "s" : ""}`,
+  );
+  return popup;
+}
 
 function parseIP(remoteAddress: string): string | null {
   if (!remoteAddress) return null;
@@ -34,23 +75,6 @@ function isPrivateIP(ip: string): boolean {
   );
 }
 
-function loadLeaflet(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if ((window as any).L) { resolve(); return; }
-
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-    document.head.appendChild(link);
-
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load Leaflet"));
-    document.head.appendChild(script);
-  });
-}
-
 export default function ChannelsMap() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -63,7 +87,7 @@ export default function ChannelsMap() {
     setStatusText(t("networkChannels.loadingChannels"));
     setError(null);
     let cancelled = false;
-    let mapInstance: any = null;
+    let mapInstance: L.Map | null = null;
 
     async function init() {
       // 1. Fetch channels
@@ -87,38 +111,36 @@ export default function ChannelsMap() {
       });
       const uniqueIPs = Object.keys(ipCount);
 
-      // 3. Load Leaflet from CDN
+      // 3. Init map
       setStatusText(t("networkChannels.loadingMap"));
-      try {
-        await loadLeaflet();
-      } catch {
-        if (!cancelled) setError(t("networkChannels.leafletError"));
-        return;
-      }
-
       if (cancelled || !mapRef.current) return;
-
-      // 4. Init map
-      const L = (window as any).L;
-      mapInstance = L.map(mapRef.current).setView([20, 0], 2);
+      const map = L.map(mapRef.current).setView([20, 0], 2);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '© <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-      }).addTo(mapInstance);
+      }).addTo(map);
+      mapInstance = map;
 
       if (uniqueIPs.length === 0) {
         setStatusText(t("networkChannels.noPublicIPs"));
         return;
       }
 
-      // 5. Geolocate IPs via ip-api.com batch (free, CORS supported)
+      // 4. Geolocate IPs via the configured ip-api compatible batch endpoint (opt-in, https only)
+      const url = geoipUrl();
+      if (!url) {
+        setStatusText("");
+        setError(t("networkChannels.geolocationNotConfigured"));
+        return;
+      }
       setStatusText(t("networkChannels.geolocatingIPs", { count: uniqueIPs.length }));
-      let geoResults: ({ ip: string; lat: number; lon: number; city: string; country: string } | null)[] = [];
+      let geoResults: (GeoLocation | null)[];
       try {
-        const res = await fetch("http://ip-api.com/batch?fields=status,lat,lon,city,country,query", {
+        const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(uniqueIPs.map((ip) => ({ query: ip }))),
         });
+        if (!res.ok) throw new Error(`Geolocation answered ${res.status}`);
         const data = await res.json();
         geoResults = (data as any[]).map((d) =>
           d.status === "success"
@@ -126,20 +148,21 @@ export default function ChannelsMap() {
             : null
         );
       } catch {
-        setStatusText(t("networkChannels.geolocationFailed"));
+        if (!cancelled) {
+          setStatusText("");
+          setError(t("networkChannels.geolocationFailed"));
+        }
+        return;
       }
 
       if (cancelled) return;
 
-      // 6. Add markers
+      // 5. Add markers
       geoResults.forEach((geo) => {
         if (!geo) return;
-        const count = ipCount[geo.ip];
         L.marker([geo.lat, geo.lon])
-          .addTo(mapInstance)
-          .bindPopup(
-            `<b>${geo.ip}</b><br>${geo.city}, ${geo.country}<br>${count} connection${count > 1 ? "s" : ""}`
-          );
+          .addTo(map)
+          .bindPopup(buildPopup(geo, ipCount[geo.ip]));
       });
 
       setStatusText("");

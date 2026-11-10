@@ -20,5 +20,6 @@ interface Window {
     SSO_RESPONSE_TYPE?: string;
     SSO_CODE_CHALLENGE_METHOD?: string;
     SSO_POST_LOGOUT_REDIRECT?: string;
+    GEOIP_URL?: string;
   };
 }

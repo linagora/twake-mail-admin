@@ -2102,7 +2102,7 @@
     "geolocationFailed": "Geolocation failed.",
     "noPublicIPs": "No public IPs to geolocate.",
     "fetchError": "Failed to fetch channels.",
-    "leafletError": "Failed to load the map library.",
+    "geolocationNotConfigured": "Client IP geolocation is not configured (GEOIP_URL).",
     "noActiveChannels": "No active channels.",
     "totalConnections_one": "Total: {{count}} connection",
     "totalConnections_other": "Total: {{count}} connections",
