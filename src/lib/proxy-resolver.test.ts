@@ -114,6 +114,15 @@ describe("verb matching", () => {
     const r: ProxyRule[] = [{ verb: ["get"], endpoint: "/domains" }];
     expect(resolve(r, "GET", "/domains")).toBe(true);
   });
+
+  it("a rule covering GET covers HEAD, a deny included", () => {
+    expect(resolve([{ verb: ["get"], endpoint: "/users/{u}" }], "HEAD", "/users/{username}")).toBe(true);
+    expect(resolve([
+      { denied: true, verb: ["GET"], endpoint: "/users/{u}" },
+      { endpoint: "/users/{u}" },
+    ], "HEAD", "/users/{username}")).toBe(false);
+    expect(resolve([{ verb: ["HEAD"], endpoint: "/users/{u}" }], "GET", "/users/{username}")).toBe(false);
+  });
 });
 
 // ---------------------------------------------------------------------------

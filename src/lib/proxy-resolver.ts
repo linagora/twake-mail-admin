@@ -90,7 +90,9 @@ function ruleMatches(
 ): boolean {
   if (rule.verb) {
     const upper = rule.verb.map((v) => v.toUpperCase());
-    if (!upper.includes(verb.toUpperCase())) return false;
+    const asked = verb.toUpperCase();
+    // HEAD is GET without the body: a rule covering GET covers HEAD, a deny included
+    if (!upper.includes(asked) && !(asked === "HEAD" && upper.includes("GET"))) return false;
   }
   return endpointMatches(rule, component);
 }
