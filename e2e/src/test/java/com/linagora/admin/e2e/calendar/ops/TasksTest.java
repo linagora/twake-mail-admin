@@ -104,7 +104,7 @@ class TasksTest extends CalendarAdminE2ETest {
         TasksPage.switchLanguage(app, "Français");
         assertThat(completedRow).containsText("Terminée");
         assertThat(failedRow).containsText("Échouée");
-        assertThat(app.main().getByText(Pattern.compile("^(Page \\d+ — \\d+ résultat\\(s\\)|Total : \\d+)$"))).isVisible();
+        assertThat(app.main().getByText(Pattern.compile("^(Page \\d+ — \\d+ résultats?|Total : \\d+)$"))).isVisible();
         dialog = list.openDetail(failed);
         assertThat(dialog.getByRole(AriaRole.HEADING, new Locator.GetByRoleOptions().setLevel(2)).first()).containsText("Importer des événements (ICS)");
         assertThat(dialog).containsText("Échouée");

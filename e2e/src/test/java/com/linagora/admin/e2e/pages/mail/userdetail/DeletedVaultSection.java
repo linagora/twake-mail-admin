@@ -41,7 +41,7 @@ public class DeletedVaultSection {
     }
 
     public Locator found() {
-        return detail.main().getByText(Pattern.compile("^\\d+ message\\(s\\) found"));
+        return detail.main().getByText(Pattern.compile("^\\d+ messages? found"));
     }
 
     public Locator table() {
