@@ -222,6 +222,13 @@ class GeneratorTest(unittest.TestCase):
             "POST", "/domains/a.org/addressbooks/dab?action=copyFrom&sourceDomain=b.org"
         )
 
+    def test_a_domain_admin_cannot_alias_an_address_of_another_domain(self):
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN))
+        resolver = Resolver(generated.rules)
+        for verb in ("PUT", "DELETE"):
+            assert resolver.is_allowed(verb, "/address/aliases/a@a.org/sources/sales@a.org")
+            assert not resolver.is_allowed(verb, "/address/aliases/a@a.org/sources/sales@b.org")
+
     def test_a_domain_admin_cannot_rename_a_user_into_another_domain(self):
         generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN))
         rules = [rule for rule in generated.rules if "/rename/" in rule.endpoint]
@@ -314,7 +321,8 @@ class GeneratorTest(unittest.TestCase):
 
         denies = [rule for rule in generated.rules if isinstance(rule, Rule) and rule.denied]
         assert any(
-            rule.endpoint == "/address/aliases/%@{domain}/sources/{alias}" and rule.verb == ("DELETE",)
+            rule.endpoint == "/address/aliases/%@{domain}/sources/%@{otherDomain}"
+            and rule.verb == ("DELETE",)
             for rule in denies
         ), denies
 

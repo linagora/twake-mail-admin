@@ -442,6 +442,10 @@ forwards are counted by their sections, whose own rows below apply; the strip it
 | "Add alias": the typed address checked against the accounts | HEAD | `/users/{username}` | MAY (not gated, like the delegation form: refused, the dialog shows no warning and an existing account is no longer stopped) |
 | "Remove alias" button | DELETE | `/address/aliases/{username}/sources/{alias}` | MAY (do not show the button if missing)|
 
+Note: in DOMAIN mode the alias is an address of the domain too
+(`/address/aliases/%@{domain}/sources/%@{domain}`): an alias in another domain would deliver
+that tenant's mail to a user of the domain.
+
 ### User detail — Forwards tab *(APPLICATION:"MAIL")*
 
 | Trigger | Verb | Pattern | MUST/MAY |

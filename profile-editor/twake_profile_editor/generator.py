@@ -35,8 +35,15 @@ from .resolver import Resolver, Rule
 #: In DOMAIN mode these become ``%@{domain}``, which the proxy pins to the caller's
 #: domain through ``url.patterns.restrictions``. The rename target is one of them:
 #: left free, a domain administrator would move a user's delegations and forwards
-#: onto an account of another tenant.
-USER_ADDRESS_VARS = ("{username}", "{mailbox@domain}", "{newUsername}", "{newUser}")
+#: onto an account of another tenant. So is an alias source: left free, the mail of
+#: another tenant's address would be delivered to a user of the domain.
+USER_ADDRESS_VARS = (
+    "{username}",
+    "{mailbox@domain}",
+    "{newUsername}",
+    "{newUser}",
+    "{alias}",
+)
 
 DOMAIN_PLACEHOLDER = "%@{domain}"
 
