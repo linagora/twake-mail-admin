@@ -41,6 +41,17 @@ describe("users with specific quotas", () => {
     expect(screen.queryByRole("button", { name: "globalQuota.usersSpecificTitle" })).not.toBeNull();
   });
 
+  // Same layout as the shared collapsible reports: the toggle sits outside the grey card (#613).
+  it("keeps the toggle outside the grey card wrapping the opened report", async () => {
+    api.getUsersWithSpecificQuotas.mockResolvedValue([{ user: "bob@domain.tld", storageLimit: 42, countLimit: 7 }]);
+    renderSection();
+
+    fireEvent.click(screen.getByRole("button", { name: "globalQuota.usersSpecific" }));
+
+    expect((await screen.findByText("bob@domain.tld")).closest(".bg-gray-50")).not.toBeNull();
+    expect(screen.getByRole("button", { expanded: true }).closest(".bg-gray-50")).toBeNull();
+  });
+
   it("shows the failure instead of the list", async () => {
     api.getUsersWithSpecificQuotas.mockRejectedValue(new Error("boom"));
     renderSection();
@@ -67,5 +78,21 @@ describe("aggregated extra quotas", () => {
     expect(await screen.findByText("1024")).not.toBeNull();
     expect(screen.queryByText("3")).not.toBeNull();
     expect(api.getQuotaExtraSummary).toHaveBeenCalledTimes(1);
+  });
+
+  // Same layout as the shared collapsible reports: the toggle sits outside the grey card (#613).
+  it("keeps the toggle outside the grey card wrapping the opened summary", async () => {
+    api.getQuotaExtraSummary.mockResolvedValue({
+      totalExtraStorageLimit: 1024,
+      totalExtraCountLimit: 10,
+      totalUnlimitedStorage: 3,
+      totalUnlimitedCount: 4,
+    });
+    render(<AggregatedExtraQuotas formatCount={format} formatSize={format} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "globalQuota.aggregatedExtra" }));
+
+    expect((await screen.findByText("1024")).closest(".bg-gray-50")).not.toBeNull();
+    expect(screen.getByRole("button", { expanded: true }).closest(".bg-gray-50")).toBeNull();
   });
 });
