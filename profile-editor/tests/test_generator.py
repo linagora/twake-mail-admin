@@ -170,6 +170,22 @@ class GeneratorTest(unittest.TestCase):
         assert "/mailingLists/{address}" in warnings
         assert "rename" not in warnings
 
+    def test_a_domain_admin_cannot_copy_the_directory_of_another_domain(self):
+        for application in Application:
+            scope = Scope(application, Mode.DOMAIN)
+            generated = generate(INVENTORY, scope, grant_all(scope))
+            resolver = Resolver([rule for rule in generated.rules if isinstance(rule, Rule)])
+            assert not resolver.is_allowed(
+                "POST", "/domains/a.org/addressbooks/dab?action=copyFrom&sourceDomain=b.org"
+            ), application
+
+    def test_a_platform_operator_may_copy_the_directory_of_another_domain(self):
+        scope = Scope(Application.CALENDAR, Mode.GLOBAL)
+        generated = generate(INVENTORY, scope, grant_all(scope))
+        assert Resolver(generated.rules).is_allowed(
+            "POST", "/domains/a.org/addressbooks/dab?action=copyFrom&sourceDomain=b.org"
+        )
+
     def test_a_domain_admin_cannot_rename_a_user_into_another_domain(self):
         generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN))
         rules = [rule for rule in generated.rules if "/rename/" in rule.endpoint]

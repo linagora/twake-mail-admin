@@ -185,10 +185,15 @@ def _domain_tasks(modes: frozenset[Mode] | None = None) -> list[Node]:
                     "Copy the users of another domain into the domain address book",
                     "Copier les utilisateurs d'un autre domaine dans le carnet d'adresses"
                     " du domaine",
+                    # The proxy ignores the parameters a rule does not list: granted
+                    # here, sourceDomain would name any tenant, whose directory gets
+                    # copied into the caller's address book. A copy from another
+                    # domain is a platform operator's action.
                     endpoints=[
                         may(
                             "POST",
                             "/domains/{domain}/addressbooks/dab?action=copyFrom",
+                            modes=GLOBAL,
                         )
                     ],
                 ),
