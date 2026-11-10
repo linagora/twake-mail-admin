@@ -184,7 +184,7 @@ class GlobalQuotaTest extends MailAdminE2ETest {
         assertThat(found.locator("xpath=..")).containsText("33.3%");
         explore(quota, "0", "100");
         // Paging controls only when the results do not fit on one page
-        assertThat(app.main().getByText(Pattern.compile("^(Page 1 — \\d+ result\\(s\\)|Total: \\d+)$"))).isVisible();
+        assertThat(app.main().getByText(Pattern.compile("^(Page 1 — \\d+ results?|Total: \\d+)$"))).isVisible();
         explore(quota, "61.37", "61.38");
         assertThat(app.main().getByText("No users found in this occupation range.")).isVisible();
     }

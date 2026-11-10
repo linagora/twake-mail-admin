@@ -51,17 +51,17 @@ class DeletedMessageVaultTest extends MailAdminE2ETest {
         criteria.addCriterion().field(0, "Subject").operator(0, "Contains");
         criteria.textValues().first().fill("Lunch");
         vault.searchButton().click();
-        assertThat(vault.found()).hasText("0 message(s) found");
+        assertThat(vault.found()).hasText("0 messages found");
         assertThat(app.main().getByText("No messages match the criteria.")).isVisible();
 
         criteria.textValues().first().fill("Quarterly");
         vault.searchButton().click();
-        assertThat(vault.found()).hasText(java.util.regex.Pattern.compile("^[01] message\\(s\\) found$"));
+        assertThat(vault.found()).hasText(java.util.regex.Pattern.compile("^(0 messages|1 message) found$"));
         String found = vault.found().textContent();
         String count = found.substring(0, found.indexOf(' '));
 
         vault.restoreButton().click();
-        assertThat(app.dialog()).containsText("Restore " + count + " message(s) for " + user
+        assertThat(app.dialog()).containsText("Restore " + count + ("1".equals(count) ? " message" : " messages") + " for " + user
             + "? This will enqueue a background task.");
         app.confirm();
         String taskId = detail.taskIdFromToast("Restore task started");

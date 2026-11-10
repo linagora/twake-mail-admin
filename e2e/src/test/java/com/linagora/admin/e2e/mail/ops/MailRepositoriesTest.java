@@ -302,7 +302,7 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         detail.filtersToggle().click();
         detail.senderFilter().fill(seeded.shortSender());
         detail.applyFilters().click();
-        assertThat(detail.filtersToggle()).containsText("1 filter(s) active");
+        assertThat(detail.filtersToggle()).containsText("1 filter active");
         assertThat(detail.mailKey(seeded.shortKey())).isVisible();
         assertThat(detail.mailKey(seeded.longKeys().get(0))).hasCount(0);
 
@@ -311,7 +311,7 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         detail.recipientFilter().fill(seeded.recipientA());
         detail.updatedAfterFilter().fill("1d");
         detail.applyFilters().click();
-        assertThat(detail.filtersToggle()).containsText("2 filter(s) active");
+        assertThat(detail.filtersToggle()).containsText("2 filters active");
         for (String key : seeded.longKeys()) {
             assertThat(detail.mailKey(key)).isVisible();
         }

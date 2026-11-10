@@ -262,7 +262,7 @@ class CommonTasksTest extends MailAdminE2ETest {
         assertThat(run).isEnabled();
         run.click();
         assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Cleanup Old Tasks");
-        assertThat(app.dialog()).containsText("Delete all tasks older than 1 day(s)?");
+        assertThat(app.dialog()).containsText("Delete all tasks older than 1 day?");
         Response response = app.page().waitForResponse(
             r -> r.request().method().equals("DELETE") && r.url().contains("/tasks?"), app::confirm);
         assertThat(pathOf(response)).isEqualTo("/tasks?olderThan=1day");

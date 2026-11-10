@@ -65,11 +65,11 @@ public class TasksPage {
     }
 
     /**
-     * The pagination line: "Page 2 — 50 result(s)" with its buttons, or only "Total: 12" when
+     * The pagination line: "Page 2 — 50 results" with its buttons, or only "Total: 12" when
      * the list fits on one page.
      */
     public Locator pagination() {
-        return app.main().getByText(Pattern.compile("^(Page \\d+ — \\d+ result\\(s\\)|Total: \\d+)$"));
+        return app.main().getByText(Pattern.compile("^(Page \\d+ — \\d+ results?|Total: \\d+)$"));
     }
 
     /** The raw JSON of a task, folded under "Raw JSON" in the detail dialog and on the task page. */

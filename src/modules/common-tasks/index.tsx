@@ -381,7 +381,7 @@ function MailCommonTasks() {
     if (days === null) return;
     const confirmed = await confirm({
       header: t("commonTasks.cleanupOldTasks"),
-      message: t("commonTasks.cleanupOldTasksConfirm", { days }),
+      message: t("commonTasks.cleanupOldTasksConfirm", { count: days }),
     });
     if (!confirmed) return;
 

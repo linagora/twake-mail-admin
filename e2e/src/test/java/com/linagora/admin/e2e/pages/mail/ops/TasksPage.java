@@ -118,9 +118,9 @@ public class TasksPage {
         return row(taskId).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Cancel task").setExact(true));
     }
 
-    /** "Page 2 — 20 result(s)", or "Total: 7" alone when every task fits on one page. */
+    /** "Page 2 — 20 results", or "Total: 7" alone when every task fits on one page. */
     public Locator pageLabel() {
-        return app.main().getByText(Pattern.compile("^(Page \\d+ — \\d+ result\\(s\\)|Total: \\d+)$"));
+        return app.main().getByText(Pattern.compile("^(Page \\d+ — \\d+ results?|Total: \\d+)$"));
     }
 
     public Locator emptyMessage() {
