@@ -1,5 +1,6 @@
 import { ReactNode, useId } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import DescribedTrigger from "./described-trigger";
 import { RiskBadge, RunTaskButton, TaskRisk } from "./run-task-button";
 
 interface TaskRowProps {
@@ -53,12 +54,15 @@ export default function TaskRow({ title, description, doc, risk = "safe", comman
         // On the side and not hoverable: above, the command would cover the Run button of the previous task
         <TooltipProvider>
           <Tooltip delayDuration={0} disableHoverableContent>
-            <TooltipTrigger asChild>{button}</TooltipTrigger>
+            <TooltipTrigger asChild>
+              <DescribedTrigger description={describedBy}>{button}</DescribedTrigger>
+            </TooltipTrigger>
             <TooltipContent side="left" className="max-w-md break-all">{command}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       ) : button}
-      {/* The tooltip only exists while shown: a hidden copy of the command describes Run */}
+      {/* The tooltip only exists while shown: a hidden copy of the command describes Run, and DescribedTrigger
+          keeps the shown tooltip out of its description */}
       {command && <span id={commandId} hidden>{command}</span>}
     </div>
   );
