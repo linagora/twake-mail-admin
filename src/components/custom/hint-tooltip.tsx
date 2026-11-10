@@ -24,11 +24,14 @@ export default function HintTooltip({ hint, children, className }: {
     <TooltipProvider>
       <Tooltip delayDuration={0} open={open} onOpenChange={setOpen}>
         <TooltipTrigger asChild onClick={openOnClick}>
-          <span tabIndex={0} aria-describedby={hintId} className={className}>{children}</span>
+          {/* While open, Radix describes the trigger by the tooltip: referencing the hidden copy
+              too would announce the hint twice */}
+          <span tabIndex={0} aria-describedby={open ? undefined : hintId} className={className}>{children}</span>
         </TooltipTrigger>
         <TooltipContent className="max-w-xs">{hint}</TooltipContent>
       </Tooltip>
-      {/* The tooltip only exists while shown: a hidden copy of the hint describes the trigger */}
+      {/* The tooltip only exists while shown: a hidden copy of the hint describes the trigger
+          while it is closed */}
       <span id={hintId} hidden>{hint}</span>
     </TooltipProvider>
   );
