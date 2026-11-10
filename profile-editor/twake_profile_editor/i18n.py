@@ -136,6 +136,16 @@ STRINGS: dict[str, dict[str, str]] = {
             "La règle de refus a été omise ; l'endpoint reste accessible."
         ),
     },
+    "warn.deny-all": {
+        "en": (
+            "nothing is granted: the profile is a single rule denying every call, as "
+            "webadmin-proxy reads an empty list as allowing every call."
+        ),
+        "fr": (
+            "rien n'est accordé : le profil est une seule règle qui refuse tout appel, "
+            "webadmin-proxy lisant une liste vide comme autorisant tout appel."
+        ),
+    },
     "warn.scoping.mailing-lists": {
         "en": (
             "mailing list addresses are not domain-scoped automatically: the calendar "

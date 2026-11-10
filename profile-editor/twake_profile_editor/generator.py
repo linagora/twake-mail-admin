@@ -131,7 +131,7 @@ def generate(
     )
 
     if baseline is None:
-        result.rules = _merge_rules(granted_keys, denied=False)
+        result.rules = _merge_rules(granted_keys, denied=False) or _deny_all(result)
         return result
 
     result.rules = _rules_against_baseline(granted_keys, all_keys, baseline, result)
@@ -219,6 +219,15 @@ def _granted_shadowed_by(
 # ---------------------------------------------------------------------------
 # Emission
 # ---------------------------------------------------------------------------
+
+#: webadmin-proxy reads an empty ``allowed.urls`` -- an include expanding to no
+#: rule included -- as "every call is allowed". Granting nothing has to say so.
+DENY_ALL = Rule(endpoint="/*", denied=True)
+
+
+def _deny_all(result: Generated) -> list[Rule]:
+    result.warnings.append(_label("warn.deny-all"))
+    return [DENY_ALL]
 
 
 def _merge_rules(keys: Sequence[tuple[str, str]], *, denied: bool) -> list[Rule]:

@@ -85,9 +85,16 @@ class GeneratorTest(unittest.TestCase):
 
 
 
-    def test_granting_nothing_produces_an_empty_profile(self):
-        generated = generate(INVENTORY, MAIL_GLOBAL, {})
-        assert generated.rules == []
+    def test_granting_nothing_produces_a_profile_denying_every_call(self):
+        """An empty list would allow every call: webadmin-proxy skips the check."""
+        for scope in (MAIL_GLOBAL, MAIL_DOMAIN):
+            generated = generate(INVENTORY, scope, {})
+            assert generated.to_json() == [{"denied": True, "endpoint": "/*"}]
+            assert generated.warnings
+            resolver = Resolver(generated.rules)
+            for verb in ("GET", "POST", "PUT", "DELETE", "PATCH"):
+                assert not resolver.is_allowed(verb, "/users/a@a.org")
+                assert not resolver.is_allowed(verb, "/")
 
 
 
