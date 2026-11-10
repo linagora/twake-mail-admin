@@ -53,6 +53,14 @@ describe("task row", () => {
     expect(screen.getByRole("button", { name: "common.run Delete user data", description: "tasks.risk.destructive DELETE /users/bob" })).not.toBeNull();
   });
 
+  it("describes the Run button once while its tooltip is shown", () => {
+    render(<TaskRow title="Delete user data" risk="destructive" command="DELETE /users/bob" onRun={() => {}} />);
+    const button = screen.getByRole("button", { name: "common.run Delete user data" });
+    fireEvent.focus(button);
+    expect(screen.getByRole("tooltip").textContent).toBe("DELETE /users/bob");
+    expect(screen.getByRole("button", { name: "common.run Delete user data", description: "tasks.risk.destructive DELETE /users/bob" })).not.toBeNull();
+  });
+
   it("gives a safe task without command no description", () => {
     render(<TaskRow title="Reindex" onRun={() => {}} />);
     expect(screen.getByRole("button").getAttribute("aria-describedby")).toBeNull();
