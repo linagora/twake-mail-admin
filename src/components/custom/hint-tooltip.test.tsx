@@ -42,6 +42,14 @@ describe("hint tooltip", () => {
     expect(document.getElementById(trigger().getAttribute("aria-describedby")!)!.textContent).toBe("Cannot be deleted");
   });
 
+  it("is described once by its hint while the tooltip is open", () => {
+    renderHint();
+    fireEvent.focus(trigger());
+    const description = trigger().getAttribute("aria-describedby")!.split(/\s+/)
+      .map(id => document.getElementById(id)!.textContent);
+    expect(description).toEqual(["Cannot be deleted"]);
+  });
+
   it("opens on a first tap", () => {
     renderHint();
     tap(trigger());
