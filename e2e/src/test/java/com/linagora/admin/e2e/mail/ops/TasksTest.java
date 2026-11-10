@@ -53,9 +53,18 @@ class TasksTest extends MailAdminE2ETest {
             "/users/" + WebAdmin.encode(user) + "/mailboxes?task=reIndex&messagesPerSecond=1");
     }
 
-    /** A "Submitted after" value a few seconds before now, in the time zone of the browser. */
+    /**
+     * A "Submitted after" value a few seconds before now, in the time zone of the browser.
+     * Never on a whole minute: a datetime-local field drops ":00" seconds, so the value it then
+     * holds would no longer be the one filled in ("Malformed value").
+     */
     private static String justBefore() {
-        return ZonedDateTime.now(ZoneId.of("Europe/Paris")).minusSeconds(5).format(DATETIME_LOCAL);
+        ZonedDateTime fewSecondsAgo = ZonedDateTime.now(ZoneId.of("Europe/Paris")).minusSeconds(5);
+        return withNonZeroSeconds(fewSecondsAgo).format(DATETIME_LOCAL);
+    }
+
+    private static ZonedDateTime withNonZeroSeconds(ZonedDateTime dateTime) {
+        return dateTime.getSecond() == 0 ? dateTime.minusSeconds(1) : dateTime;
     }
 
     /** The date format of the task list, computed by the browser. */
