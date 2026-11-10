@@ -171,10 +171,16 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   indexedSpaces: "tasks.info.indexedSpaces",
 };
 
+// A list of names or ids, e.g. the failed users. An empty list tells nothing of its items:
+// only a labelled key vouches it is a list of names, not of objects left to the raw JSON
+const isListOfNames = (key: string, value: unknown) =>
+  Array.isArray(value)
+  && (value.length > 0 ? value.every((item) => typeof item !== "object") : key in DETAIL_LABEL_KEYS);
+
 // Shown above the details already, or nested values left to the raw JSON
 const isDetailShown = (key: string, value: unknown) =>
   value !== null && value !== undefined && key !== "type"
-  && !(typeof value === "object" && !(Array.isArray(value) && value.every((item) => typeof item !== "object")));
+  && (typeof value !== "object" || isListOfNames(key, value));
 
 // A Trash or Spam cleanup (ExpireMailboxTask) nests its user, folder and age under runningOptions
 const EXPIRE_MAILBOX_TASK: string = "ExpireMailboxTask";

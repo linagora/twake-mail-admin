@@ -38,6 +38,24 @@ describe("task details", () => {
     expect(grid.textContent).not.toContain("recomputeSingleQuotaComponentResults");
   });
 
+  it("leaves an empty unlabelled list to the raw JSON while a quota recomputation runs", () => {
+    const grid = renderDetails({
+      type: "recompute-current-quotas",
+      processedQuotaRoots: 0,
+      failedQuotaRoots: [],
+      runningOptions: { usersPerSecond: 1, quotaComponents: [] },
+      recomputeSingleQuotaComponentResults: [],
+    });
+    expect(grid.textContent).toContain("tasks.info.processedUserCount0");
+    expect(grid.textContent).toContain("tasks.info.failedUsers—");
+    expect(grid.textContent).not.toContain("recomputeSingleQuotaComponentResults");
+  });
+
+  it("shows a non-empty unlabelled list of names", () => {
+    const grid = renderDetails({ type: "x", someNames: ["a", "b"] });
+    expect(grid.textContent).toContain("someNames");
+  });
+
   it("labels the counters of a Twake Space purge and links the team mailboxes it could not delete", () => {
     const grid = renderDetails({
       type: "twake-space-purge",
