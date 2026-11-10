@@ -1,6 +1,6 @@
 [
   {"verb": ["POST"], "endpoint": "/domains/{domain}/addressbooks/{addressBookId}?action=copyFrom&sourceDomain={domain}"},
-  {"denied": true, "endpoint": "/domains/{targetDomain}/addressbooks/{addressBookId}?action=copyFrom"},
+  {"denied": true, "endpoint": "/domains/{targetDomain}/addressbooks/{addressBookId}?sourceDomain"},
   {"endpoint": "/domains/{domain}"},
   {"endpoint": "/domains/{domain}/*"},
   {"endpoint": "/users/%@{domain}"},
