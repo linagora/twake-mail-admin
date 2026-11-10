@@ -59,6 +59,15 @@ describe("mailing lists: extension absent from the server", () => {
     expect(await screen.findByText("common.errorPrefix")).not.toBeNull();
     expect(screen.queryByText("mailingLists.unavailableTitle")).toBeNull();
   });
+
+  it("shows the error alone on a 500, without table nor empty state", async () => {
+    lists.get = () => Promise.reject(axiosError(500));
+    render(<MailingListsList />);
+
+    expect(await screen.findByText("common.errorPrefix")).not.toBeNull();
+    expect(screen.queryByRole("table")).toBeNull();
+    expect(screen.queryByText("mailingLists.empty")).toBeNull();
+  });
 });
 
 describe("mailing lists: one toolbar line", () => {
