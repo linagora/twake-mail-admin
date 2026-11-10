@@ -555,6 +555,12 @@ differs from the call it makes — see [Permission gates that differ from the ca
 | "Rename user" button | POST | `/users/{username}/rename/{newUsername}?action=rename` | MAY (do not show the button if missing) |
 | "Delete user data" button | POST | `/users/{username}?action=deleteData` | MAY (do not show the button if missing) |
 
+Note: in DOMAIN mode the rename target is a user of the domain too: the rename moves the
+delegations and forwards of the renamed user onto the target, so a target in another
+domain would hand that account over. The profile scopes both addresses
+(`/users/%@{domain}/rename/%@{domain}`), and the form refuses a new username outside the
+administered domain.
+
 ### User detail — Calendar: Archive events *(APPLICATION:"CALENDAR" only)*
 
 | Trigger | Verb | Pattern | MUST/MAY |

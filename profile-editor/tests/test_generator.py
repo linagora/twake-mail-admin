@@ -168,7 +168,18 @@ class GeneratorTest(unittest.TestCase):
         generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN))
         warnings = " ".join(warning.en for warning in generated.warnings)
         assert "/mailingLists/{address}" in warnings
-        assert "rename" in warnings
+        assert "rename" not in warnings
+
+    def test_a_domain_admin_cannot_rename_a_user_into_another_domain(self):
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN))
+        rules = [rule for rule in generated.rules if "/rename/" in rule.endpoint]
+        assert [rule.endpoint for rule in rules] == [
+            "/users/%@{domain}/rename/%@{domain}?action=rename",
+            "/users/%@{domain}/rename/%@{domain}",
+        ]
+        resolver = Resolver(rules)
+        assert resolver.is_allowed("POST", "/users/a@a.org/rename/b@a.org?action=rename")
+        assert not resolver.is_allowed("POST", "/users/a@a.org/rename/b@b.org?action=rename")
 
 
 
@@ -256,6 +267,22 @@ class GeneratorTest(unittest.TestCase):
         ), denies
 
 
+
+    def test_a_refused_rename_is_hidden_from_the_frontend_too(self):
+        """Both users are in {domain}: the deny must not need them to be equal."""
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        answers = grant_all(MAIL_DOMAIN)
+        answers["users.rename"] = False
+        generated = generate(INVENTORY, MAIL_DOMAIN, answers, baseline)
+
+        denies = [rule.endpoint for rule in generated.rules if isinstance(rule, Rule) and rule.denied]
+        assert "/users/%@{domain}/rename/%@{otherDomain}" in denies
+        expanded = []
+        for rule in generated.rules:
+            expanded.extend(baseline.rules if isinstance(rule, IncludeDirective) else [rule])
+        resolver = Resolver(expanded)
+        assert resolver.is_allowed("POST", "/users/{username}/rename/{newUser}") is False
+        assert resolver.is_allowed("POST", "/users/a@a.org/rename/b@a.org?action=rename") is False
 
     def test_the_deny_rules_actually_close_the_hole(self):
         """The whole point: resolve the emitted list and the refusal must hold."""
