@@ -18,6 +18,7 @@ from dataclasses import dataclass, replace
 
 from .model import (
     Application,
+    Endpoint,
     Inventory,
     Mode,
     Node,
@@ -374,7 +375,8 @@ DOMAINS = page(
                             "sync",
                             "Sync this space",
                             "Synchroniser cet espace",
-                            endpoints=[may("POST", "/spaces?action=sync")],
+                            # One task over the spaces of every domain.
+                            endpoints=[may("POST", "/spaces?action=sync", modes=GLOBAL)],
                         ),
                     ],
                 ),
@@ -1611,6 +1613,20 @@ USERS = page(
 
 _ML = "/mailingLists/{address}"
 
+#: In DOMAIN mode a list is reached only by an address of the domain, or of its
+#: lists sub-domain: ``{address}`` alone would name the lists of every tenant.
+_ML_DOMAIN = ("/mailingLists/%@{domain}", "/mailingLists/%@lists.{domain}")
+
+
+def _ml(verb: str, suffix: str = "", *, required: bool = False) -> list[Endpoint]:
+    """The GLOBAL call on ``{address}``, and its DOMAIN variants."""
+    make = must if required else may
+    return [
+        make(verb, f"{_ML}{suffix}", modes=GLOBAL),
+        *(make(verb, f"{base}{suffix}", modes=DOMAIN) for base in _ML_DOMAIN),
+    ]
+
+
 MAILING_LISTS = page(
     "mailing-lists",
     "Mailing lists",
@@ -1629,43 +1645,43 @@ MAILING_LISTS = page(
             "create",
             "Create a mailing list",
             "Créer une liste de diffusion",
-            endpoints=[may("PUT", _ML)],
+            endpoints=_ml("PUT"),
         ),
         action(
             "delete",
             "Delete a mailing list",
             "Supprimer une liste de diffusion",
-            endpoints=[may("DELETE", _ML)],
+            endpoints=_ml("DELETE"),
         ),
         section(
             "detail",
             "Mailing list details",
             "Détail d'une liste de diffusion",
-            endpoints=[must("GET", _ML)],
+            endpoints=_ml("GET", required=True),
             children=[
                 action(
                     "add-member",
                     "Add a member",
                     "Ajouter un membre",
-                    endpoints=[may("PUT", f"{_ML}/members/{{member}}")],
+                    endpoints=_ml("PUT", "/members/{member}"),
                 ),
                 action(
                     "remove-member",
                     "Remove a member",
                     "Retirer un membre",
-                    endpoints=[may("DELETE", f"{_ML}/members/{{member}}")],
+                    endpoints=_ml("DELETE", "/members/{member}"),
                 ),
                 action(
                     "add-owner",
                     "Add an owner",
                     "Ajouter un propriétaire",
-                    endpoints=[may("PUT", f"{_ML}/owners/{{owner}}")],
+                    endpoints=_ml("PUT", "/owners/{owner}"),
                 ),
                 action(
                     "remove-owner",
                     "Remove an owner",
                     "Retirer un propriétaire",
-                    endpoints=[may("DELETE", f"{_ML}/owners/{{owner}}")],
+                    endpoints=_ml("DELETE", "/owners/{owner}"),
                 ),
             ],
         ),
@@ -2426,7 +2442,7 @@ COMMON_TASKS = page(
             "Sync Twake spaces",
             "Synchroniser les espaces Twake",
             applications=MAIL,
-            endpoints=[may("POST", "/spaces?action=sync")],
+            endpoints=[may("POST", "/spaces?action=sync", modes=GLOBAL)],
         ),
         action(
             "import-ldap-users",

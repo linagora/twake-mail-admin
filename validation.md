@@ -206,7 +206,7 @@ The usage figures come from the same call as the tab load; there is no second en
 |---------|------|---------|----------|
 | Sub-tab load | GET | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MUST (do not show the sub-tab if missing, nor on a server without the Twake Space extension, whose WebAdmin answers "GET ... can not be found"; the 404 of a mailbox bound to no space reads "Not bound to any Twake space") |
 | "Bind to a space" / "Reopen space" dialog, optionally to a deleted space | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/space` | MAY (do not show the button if missing) |
-| "Sync this space" button | POST | `/spaces?action=sync` | MAY (do not show the button if missing) |
+| "Sync this space" button (GLOBAL mode only: one task over the spaces of every domain) | POST | `/spaces?action=sync` | MAY (do not show the button if missing) |
 
 #### Team mailbox detail — Members sub-tab
 
@@ -646,23 +646,40 @@ Shown when the user exists in Twake Mail but is not yet a registered calendar us
 |---------|------|---------|----------|
 | Page load (GLOBAL mode) | GET | `/mailingLists` | MUST |
 | Page load (DOMAIN mode) | GET | `/mailingLists?domain={domain}` | MUST |
-| "Create mailing list" form | PUT | `/mailingLists/{address}` | MAY (do not show the form if missing) |
-| "Delete mailing list" button | DELETE | `/mailingLists/{address}` | MAY (do not show the button if missing) |
+| "Create mailing list" form (GLOBAL mode) | PUT | `/mailingLists/{address}` | MAY (do not show the form if missing) |
+| "Create mailing list" form (DOMAIN mode) | PUT | `/mailingLists/%@{domain}` | MAY (do not show the form if missing) |
+| "Create mailing list" form (DOMAIN mode, lists sub-domain) | PUT | `/mailingLists/%@lists.{domain}` | MAY (do not show the form if missing) |
+| "Delete mailing list" button (GLOBAL mode) | DELETE | `/mailingLists/{address}` | MAY (do not show the button if missing) |
+| "Delete mailing list" button (DOMAIN mode) | DELETE | `/mailingLists/%@{domain}` | MAY (do not show the button if missing) |
+| "Delete mailing list" button (DOMAIN mode, lists sub-domain) | DELETE | `/mailingLists/%@lists.{domain}` | MAY (do not show the button if missing) |
 
 ### Mailing list detail *("Show details" row)*
 
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
-| Detail load | GET | `/mailingLists/{address}` | MUST |
-| "Add member" button | PUT | `/mailingLists/{address}/members/{member}` | MAY (do not show the button if missing) |
-| "Remove member" button | DELETE | `/mailingLists/{address}/members/{member}` | MAY (do not show the button if missing) |
-| "Add owner" button | PUT | `/mailingLists/{address}/owners/{owner}` | MAY (do not show the button if missing) |
-| "Remove owner" button | DELETE | `/mailingLists/{address}/owners/{owner}` | MAY (do not show the button if missing) |
+| Detail load (GLOBAL mode) | GET | `/mailingLists/{address}` | MUST |
+| Detail load (DOMAIN mode) | GET | `/mailingLists/%@{domain}` | MUST |
+| Detail load (DOMAIN mode, lists sub-domain) | GET | `/mailingLists/%@lists.{domain}` | MUST |
+| "Add member" button (GLOBAL mode) | PUT | `/mailingLists/{address}/members/{member}` | MAY (do not show the button if missing) |
+| "Add member" button (DOMAIN mode) | PUT | `/mailingLists/%@{domain}/members/{member}` | MAY (do not show the button if missing) |
+| "Add member" button (DOMAIN mode, lists sub-domain) | PUT | `/mailingLists/%@lists.{domain}/members/{member}` | MAY (do not show the button if missing) |
+| "Remove member" button (GLOBAL mode) | DELETE | `/mailingLists/{address}/members/{member}` | MAY (do not show the button if missing) |
+| "Remove member" button (DOMAIN mode) | DELETE | `/mailingLists/%@{domain}/members/{member}` | MAY (do not show the button if missing) |
+| "Remove member" button (DOMAIN mode, lists sub-domain) | DELETE | `/mailingLists/%@lists.{domain}/members/{member}` | MAY (do not show the button if missing) |
+| "Add owner" button (GLOBAL mode) | PUT | `/mailingLists/{address}/owners/{owner}` | MAY (do not show the button if missing) |
+| "Add owner" button (DOMAIN mode) | PUT | `/mailingLists/%@{domain}/owners/{owner}` | MAY (do not show the button if missing) |
+| "Add owner" button (DOMAIN mode, lists sub-domain) | PUT | `/mailingLists/%@lists.{domain}/owners/{owner}` | MAY (do not show the button if missing) |
+| "Remove owner" button (GLOBAL mode) | DELETE | `/mailingLists/{address}/owners/{owner}` | MAY (do not show the button if missing) |
+| "Remove owner" button (DOMAIN mode) | DELETE | `/mailingLists/%@{domain}/owners/{owner}` | MAY (do not show the button if missing) |
+| "Remove owner" button (DOMAIN mode, lists sub-domain) | DELETE | `/mailingLists/%@lists.{domain}/owners/{owner}` | MAY (do not show the button if missing) |
 
 Note: the sidebar entry is gated on `GET /mailingLists` in GLOBAL mode and on
 `GET /mailingLists?domain={domain}` in DOMAIN mode, the call the page then makes:
 `GET /mailingLists` lists the lists of every domain and must not be granted to a
-domain administrator.
+domain administrator. Likewise, in DOMAIN mode a list is only reached by an address of
+the domain or of its `lists.` sub-domain (`/mailingLists/%@{domain}`,
+`/mailingLists/%@lists.{domain}`): `/mailingLists/{address}` names the lists of every
+tenant.
 
 ---
 
@@ -899,7 +916,7 @@ the task never covers more than what is being looked at.
 | "Cleanup old messages" button | DELETE | `/messages?mailbox={mailbox}&olderThan={date}&useSavedDate` | MAY |
 | "Delete old tasks" button | DELETE | `/tasks?olderThan={days}day` | MAY |
 | "Reposition system rights" button | POST | `/team-mailboxes?action=repositionSystemRights` | MAY |
-| "Sync Twake spaces" button | POST | `/spaces?action=sync` | MAY |
+| "Sync Twake spaces" button (GLOBAL mode only) | POST | `/spaces?action=sync` | MAY |
 | "Reindex users" button | POST | `/users?{params}` | MAY |
 | "Rebuild the space index" button (Twake Space extension) | POST | `/spaces?action=reindex` | MAY |
 | "Purge team mailboxes of deleted spaces" button (Twake Space extension) | POST | `/spaces?action=purge` | MAY |

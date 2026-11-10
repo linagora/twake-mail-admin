@@ -146,29 +146,6 @@ STRINGS: dict[str, dict[str, str]] = {
             "webadmin-proxy lisant une liste vide comme autorisant tout appel."
         ),
     },
-    "warn.scoping.mailing-lists": {
-        "en": (
-            "mailing list addresses are not domain-scoped automatically: the calendar "
-            "baseline matches them as xxx@lists.{{domain}} or xxx@{{domain}}. Review "
-            "this rule by hand."
-        ),
-        "fr": (
-            "les adresses de liste ne sont pas restreintes au domaine automatiquement : "
-            "la base agenda les reconnaît comme xxx@lists.{{domain}} ou xxx@{{domain}}. "
-            "Revoyez cette règle à la main."
-        ),
-    },
-    "warn.scoping.spaces-sync": {
-        "en": (
-            "the Twake spaces synchronisation is not domain-scoped: it is one task "
-            "over the spaces of every domain. Review this rule by hand."
-        ),
-        "fr": (
-            "la synchronisation des espaces Twake n'est pas restreinte au domaine : "
-            "c'est une seule tâche sur les espaces de tous les domaines. Revoyez "
-            "cette règle à la main."
-        ),
-    },
     # -- check report ------------------------------------------------------
     "check.header": {
         "en": "What {path} makes visible — {application}, {mode} mode",

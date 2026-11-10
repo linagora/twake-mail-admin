@@ -160,9 +160,12 @@ else. It belongs in the client entry, next to the include, and the command print
 it at the end of a DOMAIN-mode run so it does not get forgotten. Without it the
 profile grants every domain.
 
-Two patterns cannot be scoped mechanically — mailing-list addresses (the calendar
-baseline matches them as `xxx@lists.{domain}`) and the target of a user rename.
-Both are emitted unchanged with a warning rather than guessed at.
+Every DOMAIN-mode rule carries `{domain}`, with no exemption: a rule without it
+is granted on every tenant, so generating one is an error. The rename target is
+scoped like the renamed user (`/users/%@{domain}/rename/%@{domain}`); mailing
+lists have DOMAIN variants on `%@{domain}` and `%@lists.{domain}`; routes that
+only exist platform-wide (`/spaces?action=sync`, the copy of another domain's
+directory) are GLOBAL only.
 
 ### Reusing a baseline
 

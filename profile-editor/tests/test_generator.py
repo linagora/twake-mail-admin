@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 
 from twake_profile_editor.generator import (
-    DOMAIN_SCOPING_CAVEATS,
     Generated,
     Scope,
     UnscopedDomainRule,
@@ -171,11 +171,40 @@ class GeneratorTest(unittest.TestCase):
 
 
 
-    def test_patterns_that_cannot_be_scoped_mechanically_are_flagged(self):
+    def test_every_domain_rule_is_pinned_to_the_domain_without_exemption(self):
+        for application in Application:
+            scope = Scope(application, Mode.DOMAIN)
+            generated = generate(INVENTORY, scope, grant_all(scope))
+            unscoped = [
+                rule.endpoint
+                for rule in generated.rules
+                if isinstance(rule, Rule) and "{domain}" not in rule.endpoint
+            ]
+            assert unscoped == [], application
+            assert generated.warnings == [], application
+
+    def test_a_domain_admin_only_reaches_the_mailing_lists_of_the_domain(self):
         generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN))
-        warnings = " ".join(warning.en for warning in generated.warnings)
-        assert "/mailingLists/{address}" in warnings
-        assert "rename" not in warnings
+        # What HAS_DOMAIN does for an administrator of a.org
+        resolver = Resolver(
+            [replace(rule, endpoint=rule.endpoint.replace("{domain}", "a.org")) for rule in generated.rules]
+        )
+        for verb in ("GET", "PUT", "DELETE"):
+            assert resolver.is_allowed(verb, "/mailingLists/all@a.org")
+            assert resolver.is_allowed(verb, "/mailingLists/all@lists.a.org")
+        assert resolver.is_allowed("PUT", "/mailingLists/all@a.org/members/x@else.org")
+        for path in (
+            "/mailingLists/all@b.org",
+            "/mailingLists/all@b.org/members/x@a.org",
+            "/mailingLists/all@b.org/owners/x@a.org",
+        ):
+            assert not resolver.is_allowed("GET", path), path
+            assert not resolver.is_allowed("PUT", path), path
+            assert not resolver.is_allowed("DELETE", path), path
+
+    def test_a_domain_admin_cannot_start_the_platform_wide_spaces_sync(self):
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN))
+        assert not Resolver(generated.rules).is_allowed("POST", "/spaces?action=sync")
 
     def test_a_domain_admin_cannot_copy_the_directory_of_another_domain(self):
         for application in Application:
@@ -220,7 +249,7 @@ class GeneratorTest(unittest.TestCase):
                 unscoped = {
                     (verb, pattern)
                     for verb, pattern in endpoints_of(generated)
-                    if "{domain}" not in pattern and pattern not in DOMAIN_SCOPING_CAVEATS
+                    if "{domain}" not in pattern
                 }
                 assert not unscoped, sorted(unscoped)
 
