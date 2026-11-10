@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NetworkChannel } from "../types";
-import ChannelGrid from "./channel-grid";
+import ChannelGrid, { compareValues } from "./channel-grid";
 
 afterEach(cleanup);
 
@@ -59,5 +59,22 @@ describe("channel grid: details", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     // Radix moves the focus on close from a timeout
     await waitFor(() => expect(document.activeElement).toBe(channelButton));
+  });
+});
+
+describe("channel grid: compareValues", () => {
+  it("sorts numbers numerically, then text, then empty values", () => {
+    expect(["1a", "", "10", "9", "b", " "].sort(compareValues)).toEqual(["9", "10", "1a", "b", "", " "]);
+  });
+
+  it("is transitive on mixed numeric and text values", () => {
+    expect(compareValues("9", "10")).toBeLessThan(0);
+    expect(compareValues("10", "1a")).toBeLessThan(0);
+    expect(compareValues("9", "1a")).toBeLessThan(0);
+  });
+
+  it("does not sort an empty value as zero", () => {
+    expect(compareValues("", "0")).toBeGreaterThan(0);
+    expect(compareValues("", "-5")).toBeGreaterThan(0);
   });
 });

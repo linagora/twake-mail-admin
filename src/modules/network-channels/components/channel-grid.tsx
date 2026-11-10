@@ -26,11 +26,20 @@ export function getFieldValue(channel: NetworkChannel, field: SortField): string
   return channel.protocolSpecificInformation?.[field] ?? "";
 }
 
+// Numbers first (numerically), then text (alphabetically), then empty values:
+// ranking the kinds first keeps the order total and transitive on mixed columns.
+function sortKey(value: string): { rank: number; num: number } {
+  if (value.trim() === "") return { rank: 2, num: 0 };
+  const num = Number(value);
+  return Number.isNaN(num) ? { rank: 1, num: 0 } : { rank: 0, num };
+}
+
 export function compareValues(a: string, b: string): number {
-  const numA = Number(a);
-  const numB = Number(b);
-  if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-  return a.localeCompare(b);
+  const keyA = sortKey(a);
+  const keyB = sortKey(b);
+  if (keyA.rank !== keyB.rank) return keyA.rank - keyB.rank;
+  if (keyA.rank === 0) return keyA.num === keyB.num ? 0 : keyA.num < keyB.num ? -1 : 1;
+  return keyA.rank === 1 ? a.localeCompare(b) : 0;
 }
 
 function formatBytes(value: string | undefined, perSecond = false): string {
