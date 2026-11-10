@@ -37,8 +37,10 @@ const PAGE_LIMIT = EXTENDED_PAGE_LIMIT;
 const MAIL_GRID_COLUMNS =
   "grid-cols-[2.5rem_minmax(0,1fr)] md:grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_4rem_9rem]";
 
-// Stacked phone cards have room to wrap; desktop columns keep a single truncated line
-const WRAP_BELOW_MD = "break-words md:truncate";
+// Stacked phone cards have room to wrap; desktop columns keep a single truncated line.
+// overflow-wrap: anywhere (unlike break-word) also lowers the min-content width, so a key or an address
+// without break points wraps instead of widening its card past the screen.
+const WRAP_BELOW_MD = "[overflow-wrap:anywhere] md:truncate";
 
 type SortField = "name" | "sender" | "recipients" | "size" | "lastUpdated";
 
@@ -400,14 +402,15 @@ export default function MailRepositoryExtended() {
                   <span className="text-muted-foreground">{globalIndex}.</span>
                   <div className={`min-w-0 ${WRAP_BELOW_MD}`}>
                     {/* A real button (the row itself holds the action buttons) so the detail opens from the keyboard */}
+                    {/* A block box: an inline-block button is sized by its content, so it would neither wrap
+                        within its card nor show the ellipsis of its cell, which only applies to inline text */}
                     <button
                       type="button"
-                      className="font-medium text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      className={`block max-w-full ${WRAP_BELOW_MD} font-medium text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
                       onClick={(e) => { e.stopPropagation(); openMail(mail); }}
                     >
                       {mail.name}
                     </button>
-                    <br />
                     <span className="text-xs text-gray-500">{mail.sender}</span>
                   </div>
                   {/* Below md the header is hidden: recipients, date and size stack, labelled, under the name.

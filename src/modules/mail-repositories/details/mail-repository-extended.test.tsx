@@ -113,4 +113,27 @@ describe("mail repository extended view: layout", () => {
       expect(cell.classList).toContain("md:truncate");
     });
   });
+
+  it("lets a name without break points wrap on a phone, and truncates it with an ellipsis from md", async () => {
+    renderExtended();
+
+    const row = await screen.findByTestId("mail-repository-extended-row");
+    const nameButton = within(row).getByRole("button", { name: "mail-001" });
+
+    // An inline-block button is sized by its content: it must be a block bounded by its cell
+    expect(nameButton.classList).toContain("block");
+    expect(nameButton.classList).toContain("max-w-full");
+    expect(nameButton.classList).toContain("[overflow-wrap:anywhere]");
+    expect(nameButton.classList).toContain("md:truncate");
+    expect(nameButton.classList).not.toContain("truncate");
+  });
+
+  it("lets recipients without break points wrap on a phone", async () => {
+    renderExtended();
+
+    const row = await screen.findByTestId("mail-repository-extended-row");
+    const recipientsCell = within(row).getByText("labelled(mailRepositories.colRecipients)").parentElement!;
+
+    expect(recipientsCell.classList).toContain("[overflow-wrap:anywhere]");
+  });
 });
