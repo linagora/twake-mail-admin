@@ -508,7 +508,7 @@ export function TaskSummary({ task }: { task: TaskDetailResponse }) {
     <div className="grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-4 gap-y-2 text-sm">
       <Row label={t("tasks.status")}><StatusPill status={task.status} /></Row>
       <Row label={t("tasks.type")}>
-        {taskTypeLabel(t, task.type)}
+        {taskName(t, task)}
         <span className="ml-2 font-mono text-xs text-gray-500">{task.type}</span>
       </Row>
       {/* The team calendar or resource a calendar task worked on, by its name; other targets are in the details */}

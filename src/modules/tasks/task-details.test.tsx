@@ -183,3 +183,23 @@ describe("task summary: what a calendar task worked on", () => {
     expect(screen.getByRole("link", { name: "alice@open-paas.org" }).getAttribute("href")).toBe("/users/user/alice%40open-paas.org");
   });
 });
+
+describe("task summary: the type of a Trash or Spam cleanup", () => {
+  const typeRow = (runningOptions: Record<string, unknown>) => {
+    const task = {
+      taskId: "t1", type: "ExpireMailboxTask", status: "completed",
+      additionalInformation: { type: "ExpireMailboxTask", runningOptions },
+    } as unknown as TaskDetailResponse;
+    render(<MemoryRouter><TaskSummary task={task} /></MemoryRouter>);
+    return screen.getByText("tasks.type").nextElementSibling!.textContent;
+  };
+
+  it.each([
+    [{ mailbox: "Trash", user: "bob@example.com", olderThan: "5d" }, "users.tasks.cleanupTrash"],
+    [{ mailbox: "Spam", user: "bob@example.com", olderThan: "5d" }, "users.tasks.cleanupSpam"],
+    [{ mailbox: "Trash", user: null, olderThan: "30d" }, "commonTasks.cleanupTrashAll"],
+    [{ mailbox: "Spam", user: null, olderThan: "30d" }, "commonTasks.cleanupSpamAll"],
+  ])("names the cleanup %j after its folder and scope, next to its WebAdmin type", (runningOptions, label) => {
+    expect(typeRow(runningOptions)).toBe(`${label}ExpireMailboxTask`);
+  });
+});
