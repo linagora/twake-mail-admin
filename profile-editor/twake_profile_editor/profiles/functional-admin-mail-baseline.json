@@ -4,6 +4,8 @@
   {"denied": true, "verb": ["PUT", "DELETE"], "endpoint": "/address/aliases/{address}/sources/{source}"},
   {"endpoint": "/domains/{domain}"},
   {"endpoint": "/domains/{domain}/*"},
+  {"verb": ["POST"], "endpoint": "/users/%@{domain}/rename/%@{domain}"},
+  {"denied": true, "verb": ["POST"], "endpoint": "/users/{user}/rename/{newUser}"},
   {"endpoint": "/users/%@{domain}"},
   {"endpoint": "/users/%@{domain}/*"},
   {"endpoint": "/quota/users/%@{domain}"},

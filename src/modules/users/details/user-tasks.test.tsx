@@ -90,6 +90,17 @@ describe("user tasks: confirmation dialogs preview their command", () => {
     expect(screen.getByText("curl -XPOST /users/bob@linagora.com/rename/alice@linagora.com?action=rename", { exact: false })).not.toBeNull();
   });
 
+  it("refuses, in DOMAIN mode, to rename into another domain", async () => {
+    await openDialog("users.tasks.renameUser");
+    expect(dialog.validate!()).toBe("renameUserForm.newUsernameRequired");
+
+    fireEvent.change(screen.getByLabelText("renameUserForm.newUsername"), { target: { value: "victim@other.com" } });
+    expect(dialog.validate!()).toBe("renameUserForm.newUsernameOtherDomain");
+
+    fireEvent.change(screen.getByLabelText("renameUserForm.newUsername"), { target: { value: "alice@LINAGORA.com" } });
+    expect(dialog.validate!()).toBeNull();
+  });
+
   it("refuses to restore deleted messages while a criterion is incomplete, and flags it", async () => {
     await openDialog("users.tasks.restoreDeleted");
     expect(dialog.validate!()).toBeNull();

@@ -1296,6 +1296,7 @@
     "currentUsername": "Nome utente attuale",
     "newUsername": "Nuovo nome utente",
     "newUsernameRequired": "Il nuovo nome utente è obbligatorio",
+    "newUsernameOtherDomain": "Il nuovo nome utente deve appartenere al dominio {{domain}}",
     "targetMustExist": "Il nuovo nome utente deve essere un account esistente: la ridenominazione migra solo i dati dell'utente attuale verso di esso.",
     "force": "Forza",
     "fromStep": "Riprendi dal passaggio",

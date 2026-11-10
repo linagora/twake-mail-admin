@@ -31,10 +31,12 @@ from .model import (
 from .profiles import IncludeDirective, Profile
 from .resolver import Resolver, Rule
 
-#: Path variables that denote the address of the administered user. In DOMAIN
-#: mode these become ``%@{domain}``, which the proxy pins to the caller's domain
-#: through ``url.patterns.restrictions``.
-USER_ADDRESS_VARS = ("{username}", "{mailbox@domain}")
+#: Path variables that denote the address of a user of the administered domain.
+#: In DOMAIN mode these become ``%@{domain}``, which the proxy pins to the caller's
+#: domain through ``url.patterns.restrictions``. The rename target is one of them:
+#: left free, a domain administrator would move a user's delegations and forwards
+#: onto an account of another tenant.
+USER_ADDRESS_VARS = ("{username}", "{mailbox@domain}", "{newUsername}", "{newUser}")
 
 DOMAIN_PLACEHOLDER = "%@{domain}"
 
@@ -53,7 +55,6 @@ DOMAIN_SCOPING_CAVEATS: Mapping[str, str] = {
     "/mailingLists/{address}": "warn.scoping.mailing-lists",
     "/mailingLists/{address}/members/{member}": "warn.scoping.mailing-lists",
     "/mailingLists/{address}/owners/{owner}": "warn.scoping.mailing-lists",
-    "/users/{username}/rename/{newUsername}?action=rename": "warn.scoping.rename",
     "/spaces?action=sync": "warn.scoping.spaces-sync",
 }
 
@@ -175,10 +176,26 @@ def _rules_against_baseline(
     # Denies first so they win the first-match race, then the endpoints the
     # baseline does not cover, then the baseline itself.
     return [
-        *_merge_rules(to_deny, denied=True),
+        *_merge_rules([(verb, _deny_pattern(pattern)) for verb, pattern in to_deny], denied=True),
         *_merge_rules(extra, denied=False),
         IncludeDirective(baseline.uri),
     ]
+
+
+def _deny_pattern(pattern: str) -> str:
+    """Free every ``{domain}`` but the first one of a deny rule.
+
+    A repeated variable must take a single value, and a deny is only known to apply
+    when that holds for every call: denying ``/users/%@{domain}/rename/%@{domain}``,
+    the frontend cannot tell that ``/users/{username}/rename/{newUser}`` is refused,
+    and keeps a button the proxy always answers 403. Freeing the second domain denies
+    a little more -- a call the baseline refuses anyway -- and is provable.
+    """
+    first = pattern.find("{domain}")
+    if first < 0:
+        return pattern
+    head, tail = pattern[: first + len("{domain}")], pattern[first + len("{domain}") :]
+    return head + tail.replace("{domain}", "{otherDomain}")
 
 
 def _granted_shadowed_by(

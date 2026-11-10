@@ -52,6 +52,18 @@ const INITIAL_PROVISION_VALUES: ProvisionTemplatesValues = { sourceUser: "", fol
 
 const INITIAL_RENAME_VALUES: RenameUserValues = { newUsername: "", force: false, fromStep: "" };
 
+const domainOf = (address: string) => address.slice(address.lastIndexOf("@") + 1).toLowerCase();
+
+/**
+ * The rename moves the delegations and forwards of the user onto the target: a domain administrator
+ * only renames into their own domain, which is the renamed user's one. The profile enforces it too.
+ */
+const renameTargetError = (username: string, newUsername: string): string | null => {
+  if (!newUsername) return "renameUserForm.newUsernameRequired";
+  if (appConfig.mode === "DOMAIN" && domainOf(newUsername) !== domainOf(username)) return "renameUserForm.newUsernameOtherDomain";
+  return null;
+};
+
 interface Props {
   username: string;
 }
@@ -291,7 +303,10 @@ export default function UserTasks({ username }: Props) {
           onChange={(values) => { currentValues = values; }}
         />
       ),
-      validate: () => (currentValues.newUsername.trim() ? null : t("renameUserForm.newUsernameRequired")),
+      validate: () => {
+        const error = renameTargetError(username, currentValues.newUsername.trim());
+        return error ? t(error, { domain: domainOf(username) }) : null;
+      },
       action: async () => {
         const data = await renameUser(username, currentValues.newUsername.trim(), {
           force: currentValues.force || undefined,

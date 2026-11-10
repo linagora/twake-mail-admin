@@ -159,16 +159,6 @@ STRINGS: dict[str, dict[str, str]] = {
             "cette règle à la main."
         ),
     },
-    "warn.scoping.rename": {
-        "en": (
-            "only the renamed user is domain-scoped; the target address stays free, so "
-            "a user may be renamed into another domain."
-        ),
-        "fr": (
-            "seul l'utilisateur renommé est restreint au domaine ; l'adresse cible "
-            "reste libre, un utilisateur peut donc être renommé vers un autre domaine."
-        ),
-    },
     # -- check report ------------------------------------------------------
     "check.header": {
         "en": "What {path} makes visible — {application}, {mode} mode",
