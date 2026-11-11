@@ -12,7 +12,7 @@
 #     docker run --rm -it -v "$PWD:/work" --user "$(id -u):$(id -g)" \
 #         linagora/twake-mail-admin-profile-editor:dev --name domain-support --fr
 
-FROM python:3.12-slim
+FROM python:3.15-slim
 
 ARG VERSION=dev
 ARG REVISION=unknown
