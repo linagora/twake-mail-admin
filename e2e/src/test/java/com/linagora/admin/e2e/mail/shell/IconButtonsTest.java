@@ -80,8 +80,6 @@ class IconButtonsTest extends MailAdminE2ETest {
     @DisplayName("NAV-05 Icon-only buttons have a name and a tooltip (network channels, metrics, user page, toast)")
     void pagesIconButtons(AdminApp app, MailFixtures fixtures, Page page) {
         String user = fixtures.newUser("icons");
-        // No Internet in the reference environment: the map library cannot load
-        page.route("https://unpkg.com/**", route -> route.abort());
 
         app.open("/network-channels");
         Shell.assertNamedWithTooltip(app.button("Refresh"), "Refresh");
