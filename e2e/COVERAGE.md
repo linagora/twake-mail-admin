@@ -44,7 +44,7 @@ origin app cannot read them
 | HC-01 | HealthCheckTest.healthCheckSections; known-bug healthCheckStatusIsNotColourOnly |
 | HC-02 | DegradedStateTest.unhealthyComponentTooltip (degraded answer stubbed in the test's browser: real dead letters land after 30 s to 5+ min) |
 | ML-01 | MailingListsTest.mailingListsWithoutLdap |
-| NC-01 | NetworkChannelsTest.networkChannelsPage (list stubbed empty, "Disconnect all" intercepted so it cannot cut other tests' sessions; geolocation: no Internet) |
+| NC-01 | NetworkChannelsTest.networkChannelsPage (list stubbed empty, "Disconnect all" intercepted so it cannot cut other tests' sessions; empty list: no public IPs, the map shows its empty state) |
 | CAS-01 | CassandraTest.schemaVersions |
 | RL-01 | ResourceLocatorTest.lookUpMailbox |
 | RL-02 | ResourceLocatorTest.locateMessage |

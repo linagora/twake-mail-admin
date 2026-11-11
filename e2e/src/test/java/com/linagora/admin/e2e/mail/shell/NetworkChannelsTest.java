@@ -50,8 +50,6 @@ class NetworkChannelsTest extends MailAdminE2ETest {
         });
         WebAdminStub.answer(page, path -> path.equals(CHANNELS), "[]");
         WebAdminStub.answer(page, "DELETE", path -> path.equals(CHANNELS), 204, "");
-        // No Internet in the reference environment: the map library cannot load
-        page.route("https://unpkg.com/**", route -> route.abort());
 
         app.open("/");
         app.navigate("Network Channels");
@@ -82,7 +80,8 @@ class NetworkChannelsTest extends MailAdminE2ETest {
 
         app.button("Map").click();
         assertThat(page).hasURL(Pattern.compile("/network-channels/map$"));
-        assertThat(app.main().getByText(Pattern.compile("^(No public IPs to geolocate\\.|Failed to load the map library\\.|Geolocation failed\\.)$")))
+        // Leaflet is bundled: with an empty channel list the map page shows its empty state
+        assertThat(app.main().getByText("No public IPs to geolocate.", new Locator.GetByTextOptions().setExact(true)))
             .isVisible();
         app.button("Back").click();
         assertThat(page).hasURL(Pattern.compile("/network-channels$"));
