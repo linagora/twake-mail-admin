@@ -3,8 +3,12 @@
 ## Build
 
 ```sh
-docker build -t linagora/twake-mail-admin .
+docker build --pull -t linagora/twake-mail-admin .
 ```
+
+`--pull` refreshes the `node:26-alpine` and `nginx:alpine` base images, and the serve
+stage runs `apk upgrade` so that Alpine security fixes are applied even when the
+upstream `nginx:alpine` tag lags behind them.
 
 ## Run
 
