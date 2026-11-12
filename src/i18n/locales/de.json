@@ -3,6 +3,7 @@
     "sourceUser": "Quellbenutzer",
     "sourceUserHint": "Das Konto, dessen Vorlagenordner als Referenz verwendet wird.",
     "sourceUserRequired": "Quellbenutzer ist erforderlich",
+    "sourceUserOtherDomain": "Der Quellbenutzer muss zur Domain {{domain}} gehören",
     "folderName": "Ordnername",
     "overwriteExisting": "Vorhandene Vorlagen überschreiben",
     "prune": "Vorlagen entfernen, die in der Quelle nicht mehr vorhanden sind",

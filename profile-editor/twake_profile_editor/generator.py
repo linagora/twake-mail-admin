@@ -43,13 +43,15 @@ USER_ADDRESS_VARS = (
     "{newUsername}",
     "{newUser}",
     "{alias}",
+    "{sourceUser}",
 )
 
 DOMAIN_PLACEHOLDER = "%@{domain}"
 
-#: Query parameters whose value is the administered user's address, scoped like
-#: a path segment.
-USER_QUERY_PARAMS = ("user",)
+#: Query parameters whose value is a user address, scoped like a path segment.
+#: ``from`` is the source of a template provisioning: unscoped, it names a user of
+#: any tenant, whose folder gets copied into the caller's domain.
+USER_QUERY_PARAMS = ("user", "from")
 
 class UnscopedDomainRule(ValueError):
     """A DOMAIN-mode rule the proxy could not pin to the caller's domain.

@@ -102,8 +102,7 @@ def _domain_tasks(modes: frozenset[Mode] | None = None) -> list[Node]:
             endpoints=[
                 may(
                     "POST",
-                    "/domains/{domain}/templates?action=provision&{params}",
-                    gates=("/domains/{domain}/templates",),
+                    "/domains/{domain}/templates?action=provision&from={sourceUser}&{params}",
                 )
             ],
         ),
@@ -1327,8 +1326,7 @@ USERS = page(
             endpoints=[
                 may(
                     "POST",
-                    "/users/{username}/templates?action=provision&{params}",
-                    gates=("/users/{username}/templates",),
+                    "/users/{username}/templates?action=provision&from={sourceUser}&{params}",
                 )
             ],
         ),

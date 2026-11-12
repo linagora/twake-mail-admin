@@ -76,7 +76,7 @@ export function DomainSidebar() {
   const canTasks = [
     useIsAllowed("POST", "/domains/{domain}/signature-templates?action=apply"),
     useIsAllowed("POST", "/domains/{domain}?action=deleteData"),
-    useIsAllowed("POST", "/domains/{domain}/templates"),
+    useIsAllowed("POST", "/domains/{domain}/templates?action=provision&from={sourceUser}"),
     useIsAllowed("GET", "/domains/{domain}/tasks/{id}"),
   ].some(Boolean);
 

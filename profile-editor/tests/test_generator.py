@@ -222,6 +222,52 @@ class GeneratorTest(unittest.TestCase):
             "POST", "/domains/a.org/addressbooks/dab?action=copyFrom&sourceDomain=b.org"
         )
 
+    PROVISION_FROM_OTHER_DOMAIN = (
+        "/users/a@a.org/templates?action=provision&from=b@b.org&folderName=INBOX",
+        "/domains/a.org/templates?action=provision&from=b@b.org&folderName=INBOX",
+    )
+    PROVISION_FROM_OWN_DOMAIN = (
+        "/users/a@a.org/templates?action=provision&from=c@a.org&folderName=Templates",
+        "/domains/a.org/templates?action=provision&from=c@a.org&folderName=Templates",
+    )
+
+    def test_a_domain_admin_cannot_provision_templates_from_another_domain(self):
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN))
+        resolver = Resolver(generated.rules)
+        for url in self.PROVISION_FROM_OTHER_DOMAIN:
+            assert not resolver.is_allowed("POST", url), url
+        for url in self.PROVISION_FROM_OWN_DOMAIN:
+            assert resolver.is_allowed("POST", url), url
+
+    def test_the_mail_baseline_cannot_provision_templates_from_another_domain(self):
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline)
+        expanded = [
+            expanded_rule
+            for rule in generated.rules
+            for expanded_rule in (baseline.rules if isinstance(rule, IncludeDirective) else [rule])
+        ]
+        for resolver in (Resolver(baseline.rules), Resolver(expanded)):
+            for url in self.PROVISION_FROM_OTHER_DOMAIN:
+                assert not resolver.is_allowed("POST", url), url
+            for url in self.PROVISION_FROM_OWN_DOMAIN:
+                assert resolver.is_allowed("POST", url), url
+
+    def test_a_domain_admin_still_sees_the_provision_templates_buttons(self):
+        resolver = Resolver(generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN)).rules)
+        assert resolver.is_allowed(
+            "POST", "/users/{username}/templates?action=provision&from={sourceUser}"
+        )
+        assert resolver.is_allowed(
+            "POST", "/domains/{domain}/templates?action=provision&from={sourceUser}"
+        )
+
+    def test_a_platform_operator_may_provision_templates_from_any_user(self):
+        scope = Scope(Application.MAIL, Mode.GLOBAL)
+        resolver = Resolver(generate(INVENTORY, scope, grant_all(scope)).rules)
+        for url in self.PROVISION_FROM_OTHER_DOMAIN:
+            assert resolver.is_allowed("POST", url), url
+
     def test_a_domain_admin_cannot_alias_an_address_of_another_domain(self):
         generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN))
         resolver = Resolver(generated.rules)

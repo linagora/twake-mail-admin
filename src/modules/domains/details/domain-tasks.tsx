@@ -7,6 +7,7 @@ import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import ProvisionTemplatesForm, { ProvisionTemplatesValues } from "@/components/custom/provision-templates-form";
+import { provisionSourceError } from "@/components/custom/provision-source";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { appConfig } from "@/lib/config";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
@@ -29,7 +30,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
   const confirm = useConfirm();
   const canApplySignatures = useIsAllowed("POST", "/domains/{domain}/signature-templates?action=apply");
   const canDeleteData = useIsAllowed("POST", "/domains/{domain}?action=deleteData");
-  const canProvisionTemplates = useIsAllowed("POST", "/domains/{domain}/templates");
+  const canProvisionTemplates = useIsAllowed("POST", "/domains/{domain}/templates?action=provision&from={sourceUser}");
 
   const [open, setOpen, openContentId] = useSectionOpen("tasks", defaultOpen ?? false);
   const [applyLoading, setApplyLoading] = useState(false);
@@ -76,7 +77,10 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
           onChange={(v) => { values = v; }}
         />
       ),
-      validate: () => (values.sourceUser.trim() ? null : t("provisionTemplates.sourceUserRequired")),
+      validate: () => {
+        const error = provisionSourceError(values.sourceUser.trim(), domain, appConfig.mode === "DOMAIN");
+        return error ? t(error, { domain }) : null;
+      },
       action: async () => {
         const { taskId } = await provisionDomainTemplates(domain, {
           from: values.sourceUser.trim(),

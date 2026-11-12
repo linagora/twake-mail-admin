@@ -61,6 +61,18 @@ describe("user tasks: cleanup mailbox gates", () => {
   });
 });
 
+describe("user tasks: provision templates gate", () => {
+  it("shows the button when the source user is scoped to the domain", () => {
+    renderWith([{ verb: ["POST"], endpoint: "/users/%@{domain}/templates?action=provision&from=%@{domain}" }]);
+    expect(screen.queryByText("users.tasks.provisionTemplates")).not.toBeNull();
+  });
+
+  it("hides it without a rule covering the provisioning call", () => {
+    renderWith([{ verb: ["POST"], endpoint: "/users/%@{domain}/templates?action=other" }]);
+    expect(screen.queryByText("users.tasks.provisionTemplates")).toBeNull();
+  });
+});
+
 describe("user tasks: confirmation dialogs preview their command", () => {
   const openDialog = async (label: string) => {
     renderWithResolver({ isAllowed: () => true });
@@ -98,6 +110,17 @@ describe("user tasks: confirmation dialogs preview their command", () => {
     expect(dialog.validate!()).toBe("renameUserForm.newUsernameOtherDomain");
 
     fireEvent.change(screen.getByLabelText("renameUserForm.newUsername"), { target: { value: "alice@LINAGORA.com" } });
+    expect(dialog.validate!()).toBeNull();
+  });
+
+  it("refuses, in DOMAIN mode, to provision templates from another domain", async () => {
+    await openDialog("users.tasks.provisionTemplates");
+    expect(dialog.validate!()).toBe("provisionTemplates.sourceUserRequired");
+
+    fireEvent.change(screen.getByLabelText("provisionTemplates.sourceUser"), { target: { value: "victim@other.com" } });
+    expect(dialog.validate!()).toBe("provisionTemplates.sourceUserOtherDomain");
+
+    fireEvent.change(screen.getByLabelText("provisionTemplates.sourceUser"), { target: { value: "ref@LINAGORA.com" } });
     expect(dialog.validate!()).toBeNull();
   });
 

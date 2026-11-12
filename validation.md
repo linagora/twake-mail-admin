@@ -50,7 +50,6 @@ a task or action parameter.
 | `POST /calendars/{username}` | `POST /calendars/{username}?task=archive` |
 | `POST /cassandra/mappings` | `POST /cassandra/mappings?action=SolveInconsistencies&{params}` |
 | `POST /deletedMessages/users/{username}` | `POST /deletedMessages/users/{username}?action=restore` |
-| `POST /domains/{domain}/templates` | `POST /domains/{domain}/templates?action=provision&{params}` |
 | `POST /events/deadLetter/groups/{group}` | `POST /events/deadLetter/groups/{group}?action=reDeliver` |
 | `POST /mailboxes` | `POST /mailboxes?{params}` |
 | `POST /messages` | `POST /messages?{params}` |
@@ -63,7 +62,6 @@ a task or action parameter.
 | `POST /users/{username}/mailboxes` | `POST /users/{username}/mailboxes?task=reIndex`<br>`POST /users/{username}/mailboxes?task=subscribeAll`<br>`POST /users/{username}/mailboxes?task=recomputeFastViewProjectionItems` |
 | `POST /users/{username}/mails` | `POST /users/{username}/mails?limit={limit}&offset={offset}` |
 | `POST /users/{username}/rename/{newUser}` | `POST /users/{username}/rename/{newUsername}?action=rename` |
-| `POST /users/{username}/templates` | `POST /users/{username}/templates?action=provision&{params}` |
 | `PUT /mailRepositories/{encodedPath}` | `PUT /mailRepositories/{encodedPath}?protocol={protocol}` |
 
 The gate patterns are also the reason a rule cannot simply be written against the
@@ -271,7 +269,7 @@ The usage figures come from the same call as the tab load; there is no second en
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | "Apply signature templates" button | POST | `/domains/{domain}/signature-templates?action=apply` | MAY (do not show the button if missing) |
-| "Provision templates" button | POST | `/domains/{domain}/templates?action=provision&{params}` | MAY (do not show the button if missing) |
+| "Provision templates" button | POST | `/domains/{domain}/templates?action=provision&from={sourceUser}&{params}` | MAY (do not show the button if missing) |
 
 ### Domain actions
 
@@ -545,7 +543,14 @@ differs from the call it makes — see [Permission gates that differ from the ca
 |---------|------|---------|----------|
 | "Cleanup mailbox" button | DELETE | `/messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` | MAY (do not show the button if missing) |
 | "Tier user data" button | POST | `/users/{username}/data?tiering={tiering}` | MAY (do not show the button if missing) |
-| "Provision templates" button | POST | `/users/{username}/templates?action=provision&{params}` | MAY (do not show the button if missing) |
+| "Provision templates" button | POST | `/users/{username}/templates?action=provision&from={sourceUser}&{params}` | MAY (do not show the button if missing) |
+
+Note: the provisioning copies every message of a folder of the `from` user, whoever
+they are: WebAdmin does not know the caller. In DOMAIN mode the profile scopes the source
+like the target (`/users/%@{domain}/templates?action=provision&from=%@{domain}`, and
+`/domains/{domain}/templates?action=provision&from=%@{domain}` for the domain task), and
+the form refuses a source user outside the administered domain. Unscoped, a domain
+administrator would copy the mailbox of a user of any other tenant into their own domain.
 
 ### User detail — JMAP settings section *(APPLICATION:"MAIL")*
 

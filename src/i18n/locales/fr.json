@@ -3,6 +3,7 @@
     "sourceUser": "Utilisateur source",
     "sourceUserHint": "Le compte dont le dossier de modèles servira de référence.",
     "sourceUserRequired": "L'utilisateur source est obligatoire",
+    "sourceUserOtherDomain": "L'utilisateur source doit appartenir au domaine {{domain}}",
     "folderName": "Nom du dossier",
     "overwriteExisting": "Écraser les modèles existants",
     "prune": "Supprimer les modèles absents de la source",

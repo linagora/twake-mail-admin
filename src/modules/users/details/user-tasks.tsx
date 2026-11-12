@@ -7,6 +7,7 @@ import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import RenameUserForm from "../components/rename-user-form";
 import DeleteUserDataForm from "../components/delete-user-data-form";
 import ProvisionTemplatesForm, { ProvisionTemplatesValues } from "@/components/custom/provision-templates-form";
+import { provisionSourceError } from "@/components/custom/provision-source";
 import { appConfig } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
@@ -97,7 +98,7 @@ export default function UserTasks({ username }: Props) {
   const canDeleteAllMailboxes = useIsAllowed("DELETE", "/users/{username}/mailboxes");
   const canDeleteData = useIsAllowed("POST", "/users/{username}?action=deleteData");
   const canTierData = useIsAllowed("POST", "/users/{username}/data?tiering={tiering}");
-  const canProvisionTemplates = useIsAllowed("POST", "/users/{username}/templates");
+  const canProvisionTemplates = useIsAllowed("POST", "/users/{username}/templates?action=provision&from={sourceUser}");
   const [open, setOpen, openContentId] = useSectionOpen("tasks");
   const [subscribeLoading, setSubscribeLoading] = useState(false);
 
@@ -122,7 +123,10 @@ export default function UserTasks({ username }: Props) {
           onChange={(v) => { values = v; }}
         />
       ),
-      validate: () => (values.sourceUser.trim() ? null : t("provisionTemplates.sourceUserRequired")),
+      validate: () => {
+        const error = provisionSourceError(values.sourceUser.trim(), domainOf(username), appConfig.mode === "DOMAIN");
+        return error ? t(error, { domain: domainOf(username) }) : null;
+      },
       action: async () => {
         const data = await provisionUserTemplates(username, {
           from: values.sourceUser.trim(),

@@ -3,6 +3,7 @@
     "sourceUser": "Source user",
     "sourceUserHint": "The account whose templates folder will be used as the reference.",
     "sourceUserRequired": "Source user is required",
+    "sourceUserOtherDomain": "The source user must belong to the domain {{domain}}",
     "folderName": "Folder name",
     "overwriteExisting": "Overwrite existing templates",
     "prune": "Prune templates no longer present in the source",
