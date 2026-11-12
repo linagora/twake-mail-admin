@@ -12,6 +12,11 @@ RUN npm run build
 # Stage 2: Serve
 FROM nginx:alpine
 
+# The nginx:alpine tag lags behind Alpine security fixes (e.g. libxslt,
+# CVE-2026-87636 / CVE-2026-9947): apply the pending OS updates at build time
+# so the published image does not inherit the vulnerabilities of a stale base.
+RUN apk upgrade --no-cache
+
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
