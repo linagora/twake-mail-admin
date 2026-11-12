@@ -3,6 +3,7 @@
     "sourceUser": "Usuario de origen",
     "sourceUserHint": "La cuenta cuya carpeta de plantillas se usará como referencia.",
     "sourceUserRequired": "El usuario de origen es obligatorio",
+    "sourceUserOtherDomain": "El usuario de origen debe pertenecer al dominio {{domain}}",
     "folderName": "Nombre de la carpeta",
     "overwriteExisting": "Sobrescribir las plantillas existentes",
     "prune": "Eliminar las plantillas que ya no existen en el origen",

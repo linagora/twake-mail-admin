@@ -93,7 +93,7 @@ describe("domain-admin sidebar groups", () => {
       "/mailingLists?domain={domain}",
       "/domains/{domain}/signature-templates?action=apply",
       "/domains/{domain}?action=deleteData",
-      "/domains/{domain}/templates",
+      "/domains/{domain}/templates?action=provision&from={sourceUser}",
       "/domains/{domain}/tasks/{id}",
     ].forEach((p) => allowed.deny.add(p));
     renderSidebar(<DomainSidebar />);

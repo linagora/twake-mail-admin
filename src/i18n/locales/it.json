@@ -3,6 +3,7 @@
     "sourceUser": "Utente di origine",
     "sourceUserHint": "L'account la cui cartella dei modelli verrà usata come riferimento.",
     "sourceUserRequired": "L'utente di origine è obbligatorio",
+    "sourceUserOtherDomain": "L'utente di origine deve appartenere al dominio {{domain}}",
     "folderName": "Nome della cartella",
     "overwriteExisting": "Sovrascrivi i modelli esistenti",
     "prune": "Rimuovi i modelli non più presenti nell'origine",

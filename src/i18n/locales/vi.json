@@ -3,6 +3,7 @@
     "sourceUser": "Người dùng nguồn",
     "sourceUserHint": "Tài khoản có thư mục mẫu sẽ được dùng làm tham chiếu.",
     "sourceUserRequired": "Bắt buộc nhập người dùng nguồn",
+    "sourceUserOtherDomain": "Người dùng nguồn phải thuộc miền {{domain}}",
     "folderName": "Tên thư mục",
     "overwriteExisting": "Ghi đè các mẫu hiện có",
     "prune": "Xóa các mẫu không còn trong nguồn",
