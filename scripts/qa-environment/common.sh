@@ -48,7 +48,7 @@ else
   export GENERATED_DIR="$SCRIPT_DIR/.generated"
   NETWORK="${QA_PROJECT}_default"
 
-  export TMAIL_BACKEND_IMAGE="${TMAIL_BACKEND_IMAGE:-linagora/tmail-backend:distributed-1.0.22}"
+  export TMAIL_BACKEND_IMAGE="${TMAIL_BACKEND_IMAGE:-linagora/tmail-backend:distributed-1.0.23}"
   TMAIL_BACKEND_DIR="${TMAIL_BACKEND_DIR:-$HOME/Documents/tmail-backend/tmail-backend/apps/distributed}"
   export TMAIL_BACKEND_DIR="${TMAIL_BACKEND_DIR/#\~/$HOME}"
 
