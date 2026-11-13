@@ -18,6 +18,8 @@ vi.mock("react-i18next", () => ({
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => mocks.confirm }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
+// Every route is allowed, so the created task would be followed through a real HTTP await call
+vi.mock("@/hooks/task-outcome", () => ({ followTask: vi.fn() }));
 vi.mock("@/hooks/use-run-task", () => ({ useRunTask: () => mocks.runTask }));
 
 import TaskContainer from "./task-container";
