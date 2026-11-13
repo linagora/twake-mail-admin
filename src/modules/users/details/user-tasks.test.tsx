@@ -46,6 +46,15 @@ describe("user tasks: cleanup mailbox gates", () => {
     expect(screen.queryByText("users.tasks.cleanupSpam")).not.toBeNull();
   });
 
+  it("shows both cleanup buttons with the baseline's DELETE-only rule behind its POST /messages deny", () => {
+    renderWith([
+      { denied: true, verb: ["POST"], endpoint: "/messages" },
+      { verb: ["DELETE"], endpoint: "/messages?user=%@{domain}" },
+    ]);
+    expect(screen.queryByText("users.tasks.cleanupTrash")).not.toBeNull();
+    expect(screen.queryByText("users.tasks.cleanupSpam")).not.toBeNull();
+  });
+
   it("hides them without a rule covering the user-scoped call", () => {
     renderWith([{ endpoint: "/users/%@{domain}" }, { endpoint: "/messages?user=%@{domain}&mailbox=Inbox" }]);
     expect(screen.queryByText("users.tasks.cleanupTrash")).toBeNull();

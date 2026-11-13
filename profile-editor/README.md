@@ -187,6 +187,16 @@ explicitly: variable names carry no meaning to the resolver, so
 would take the other down with it. When that happens the deny is skipped and the
 situation reported, rather than quietly revoking something the operator granted.
 
+The mail baseline binds its `/messages` and `/quota/users` rules to the one verb
+James scopes to the given `user` or `domain` (`DELETE /messages?user=%@{domain}`,
+`GET /quota/users?domain={domain}`): on every other verb James ignores that
+parameter and acts on the whole platform. It also opens with a deny of every
+`POST /messages`, so that no rule placed *after* the include reopens those
+platform-wide tasks. The platform-wide *Run a message task* and *Run a quota task*
+actions are GLOBAL only, so a DOMAIN profile is never offered them; in GLOBAL mode
+the generator emits them before the include, where they still win. A hand-written
+grant placed after the include is dead, and `--check` reports it forbidden.
+
 ### Checking an existing profile
 
 `--check` walks the same tree with the ported frontend resolver and reports what

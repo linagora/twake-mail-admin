@@ -44,3 +44,27 @@ the actual `POST /users/{user}/rename/{newUser}` call). They are the reusable ba
 `include` directive points at. Being in another repository, they are the only
 files here that can drift unnoticed; the checksums catch an accidental local
 edit, not an upstream change.
+
+### Known, deliberate difference
+
+`functional-admin-mail-baseline.json` is webadmin-proxy `master`'s copy (including
+the `/messages` and `/quota/users` verb binding of linagora/webadmin-proxy#53)
+plus the four template-provisioning rules of #634, placed right after the alias
+rules:
+
+```json
+{"verb": ["POST"], "endpoint": "/users/%@{domain}/templates?action=provision&from=%@{domain}"},
+{"denied": true, "verb": ["POST"], "endpoint": "/users/{user}/templates"},
+{"verb": ["POST"], "endpoint": "/domains/{domain}/templates?action=provision&from=%@{domain}"},
+{"denied": true, "verb": ["POST"], "endpoint": "/domains/{targetDomain}/templates"},
+```
+
+Without them `/users/%@{domain}/*` and `/domains/{domain}/*` let a tenant admin
+provision templates copied from a user of *another* tenant (`from=` is a free
+address). They are a security fix that belongs upstream; until webadmin-proxy
+ships them, this is the only accepted difference:
+
+```sh
+diff <(gh api 'repos/linagora/webadmin-proxy/contents/src/main/resources/functional-admin-mail-baseline.json?ref=master' --jq .content | base64 -d) \
+  profile-editor/twake_profile_editor/profiles/functional-admin-mail-baseline.json
+```

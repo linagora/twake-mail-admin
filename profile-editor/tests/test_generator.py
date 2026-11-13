@@ -35,6 +35,15 @@ def endpoints_of(generated: Generated) -> set[tuple[str, str]]:
     }
 
 
+def expand(rules, baseline) -> list[Rule]:
+    """Replace the include directive by the baseline's rules, as the proxy does."""
+    return [
+        expanded_rule
+        for rule in rules
+        for expanded_rule in (baseline.rules if isinstance(rule, IncludeDirective) else [rule])
+    ]
+
+
 # ---------------------------------------------------------------------------
 # Downward closure
 # ---------------------------------------------------------------------------
@@ -252,6 +261,40 @@ class GeneratorTest(unittest.TestCase):
                 assert not resolver.is_allowed("POST", url), url
             for url in self.PROVISION_FROM_OWN_DOMAIN:
                 assert resolver.is_allowed("POST", url), url
+
+    PLATFORM_WIDE_TASKS = (
+        "/messages?user=a@a.org&action=triage",
+        "/messages?task=SolveInconsistencies",
+        "/quota/users?domain=a.org&task=RecomputeCurrentQuotas",
+    )
+
+    def test_the_mail_baseline_refuses_the_platform_wide_message_and_quota_tasks(self):
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline)
+        for resolver in (Resolver(baseline.rules), Resolver(expand(generated.rules, baseline))):
+            for url in self.PLATFORM_WIDE_TASKS:
+                assert not resolver.is_allowed("POST", url), url
+
+    def test_the_mail_baseline_keeps_the_user_cleanup_and_the_domain_quota_listing(self):
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline)
+        for resolver in (Resolver(baseline.rules), Resolver(expand(generated.rules, baseline))):
+            assert resolver.is_allowed("DELETE", "/messages?user={username}&mailbox=Trash")
+            assert resolver.is_allowed("DELETE", "/messages?user=a@a.org&mailbox=Spam&olderThan=5d")
+            assert resolver.is_allowed("GET", "/quota/users?domain=a.org")
+
+    def test_a_domain_profile_is_never_offered_the_platform_wide_tasks(self):
+        """The baseline's leading POST /messages deny would make such a grant dead."""
+        offered = {node.id for node in INVENTORY.for_scope(Application.MAIL, Mode.DOMAIN).nodes}
+        assert not {"common-tasks.message-task", "common-tasks.quota-task"} & offered
+
+    def test_a_platform_task_granted_over_the_mail_baseline_comes_before_its_include(self):
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        answers = {"common-tasks": True, "common-tasks.message-task": True, "common-tasks.quota-task": True}
+        generated = generate(INVENTORY, MAIL_GLOBAL, answers, baseline)
+        resolver = Resolver(expand(generated.rules, baseline))
+        assert resolver.is_allowed("POST", "/messages?task=SolveInconsistencies")
+        assert resolver.is_allowed("POST", "/quota/users?task=RecomputeCurrentQuotas")
 
     def test_a_domain_admin_still_sees_the_provision_templates_buttons(self):
         resolver = Resolver(generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN)).rules)
