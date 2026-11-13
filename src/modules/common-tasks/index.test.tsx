@@ -52,6 +52,29 @@ describe("common tasks: platform-wide cleanup gates", () => {
   });
 });
 
+describe("common tasks: platform-wide tasks under the mail baseline", () => {
+  // The /messages and /quota/users rules of functional-admin-mail-baseline.json, behind its
+  // leading POST /messages deny: James ignores user/domain on POST and acts on every tenant.
+  const mailBaselineRules: ProxyRule[] = [
+    { denied: true, verb: ["POST"], endpoint: "/messages" },
+    { verb: ["DELETE"], endpoint: "/messages?user=%@{domain}" },
+    { verb: ["GET"], endpoint: "/quota/users?domain={domain}" },
+  ];
+
+  it.each(["commonTasks.fixMessageInconsistencies", "commonTasks.recomputeMailboxQuota"])(
+    "hides %s from a tenant admin holding the baseline",
+    (label) => {
+      renderWith(mailBaselineRules);
+      expect(screen.queryByText(label)).toBeNull();
+    }
+  );
+
+  it("keeps hiding message inconsistencies when a later rule grants POST /messages", () => {
+    renderWith([...mailBaselineRules, { verb: ["POST"], endpoint: "/messages" }]);
+    expect(screen.queryByText("commonTasks.fixMessageInconsistencies")).toBeNull();
+  });
+});
+
 describe("parseCleanupDays", () => {
   it.each([["1", 1], ["30", 30], [" 7 ", 7]])("accepts %j", (value, expected) => {
     expect(parseCleanupDays(value)).toBe(expected);
