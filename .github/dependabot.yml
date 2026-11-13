@@ -6,6 +6,13 @@ updates:
     schedule:
       interval: daily
     open-pull-requests-limit: 10
+    # wait before proposing a freshly published release, so that hijacked or
+    # broken versions get yanked first (security updates are not delayed)
+    cooldown:
+      default-days: 7
+      # our own packages (twake-ui, twake-libs): no need to wait
+      exclude:
+        - "@linagora/*"
     groups:
       # twake-ui and twake-libs packages (@linagora/twake-mui, -icons,
       # -oidc, ...): one pull request for all of them, majors included
@@ -25,3 +32,5 @@ updates:
       - /profile-editor
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
