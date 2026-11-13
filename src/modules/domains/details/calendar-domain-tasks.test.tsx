@@ -14,6 +14,8 @@ const toast = vi.hoisted(() => vi.fn());
 vi.mock("../api-client", () => api);
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
+// Every route is allowed, so the created task would be followed through a real HTTP await call
+vi.mock("@/hooks/task-outcome", () => ({ followTask: vi.fn() }));
 
 import CalendarDomainTasks from "./calendar-domain-tasks";
 
