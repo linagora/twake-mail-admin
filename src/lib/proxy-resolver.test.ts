@@ -842,10 +842,18 @@ describe("proxy conformance: flag-style parameters", () => {
 
 describe("proxy conformance: {params} placeholder", () => {
   it("otherParamsPlaceholderShouldImposeNoConstraint", () => {
-    const r: ProxyRule[] = [{ endpoint: "/users/%@{domain}/templates?action=provision&{params}" }];
-    expect(resolve(r, "POST", "/users/bob@example.com/templates?action=provision")).toBe(true);
-    expect(resolve(r, "POST", "/users/bob@example.com/templates?action=provision&from=a&to=b")).toBe(true);
-    expect(resolve(r, "POST", "/users/bob@example.com/templates?from=a")).toBe(false);
+    const r: ProxyRule[] = [{ endpoint: "/users/%@{domain}/templates?action=provision&from=%@{domain}&{params}" }];
+    expect(resolve(r, "POST", "/users/bob@example.com/templates?action=provision&from=carol@example.com")).toBe(true);
+    expect(resolve(r, "POST", "/users/bob@example.com/templates?action=provision&from=carol@example.com&folderName=a&prune")).toBe(true);
+    expect(resolve(r, "POST", "/users/bob@example.com/templates?from=carol@example.com")).toBe(false);
+  });
+
+  it("otherParamsPlaceholderShouldKeepListedParamsBound", () => {
+    const r: ProxyRule[] = [{ endpoint: "/users/%@{domain}/templates?action=provision&from=%@{domain}&{params}" }];
+    expect(resolve(r, "POST", "/users/bob@example.com/templates?action=provision")).toBe(false);
+    expect(resolve(r, "POST", "/users/bob@example.com/templates?action=provision&from=victim@other.com")).toBe(false);
+    expect(resolve(r, "POST", "/users/bob@example.com/templates?from=victim@other.com&action=provision&folderName=INBOX")).toBe(false);
+    expect(resolve(r, "POST", "/users/bob@example.com/templates?action=provision&from=carol@example.com&from=victim@other.com")).toBe(false);
   });
 
   it("otherParamsPlaceholderShouldBeTheWholeQuery", () => {

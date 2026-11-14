@@ -107,6 +107,9 @@ SPEC_EXAMPLE_CASES = [
 # 14. Proxy conformance: {params} placeholder (AllowedUrlTest.java)
 # ---------------------------------------------------------------------------
 
+PROVISION_RULE = "/users/%@{domain}/templates?action=provision&from=%@{domain}&{params}"
+PROVISION_TARGET = "/users/bob@example.com/templates"
+
 
 # ---------------------------------------------------------------------------
 # 15. Proxy conformance: wildcard * (AllowedUrlTest.java)
@@ -752,13 +755,27 @@ class ResolverTest(unittest.TestCase):
     # --- 14. Proxy conformance: {params} placeholder ---
 
     def test_other_params_placeholder_should_impose_no_constraint(self):
-        rules = [Rule("/users/%@{domain}/templates?action=provision&{params}")]
-        assert resolve(rules, "POST", "/users/bob@example.com/templates?action=provision") is True
+        rules = [Rule(PROVISION_RULE)]
+        bound = f"{PROVISION_TARGET}?action=provision&from=carol@example.com"
+        assert resolve(rules, "POST", bound) is True
+        assert resolve(rules, "POST", f"{bound}&folderName=a&prune") is True
+        assert resolve(rules, "POST", f"{PROVISION_TARGET}?from=carol@example.com") is False
+
+    def test_other_params_placeholder_should_keep_listed_params_bound(self):
+        rules = [Rule(PROVISION_RULE)]
+        foreign = "from=victim@other.com"
+        assert resolve(rules, "POST", f"{PROVISION_TARGET}?action=provision") is False
+        assert resolve(rules, "POST", f"{PROVISION_TARGET}?action=provision&{foreign}") is False
         assert (
-            resolve(rules, "POST", "/users/bob@example.com/templates?action=provision&from=a&to=b")
-            is True
+            resolve(rules, "POST", f"{PROVISION_TARGET}?{foreign}&action=provision&folderName=INBOX")
+            is False
         )
-        assert resolve(rules, "POST", "/users/bob@example.com/templates?from=a") is False
+        assert (
+            resolve(
+                rules, "POST", f"{PROVISION_TARGET}?action=provision&from=carol@example.com&{foreign}"
+            )
+            is False
+        )
 
     def test_other_params_placeholder_should_be_the_whole_query(self):
         rules = [Rule("/tasks?{query_params}")]
