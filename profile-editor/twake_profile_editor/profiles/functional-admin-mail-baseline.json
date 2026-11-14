@@ -1,4 +1,5 @@
 [
+  {"denied": true, "verb": ["POST"], "endpoint": "/messages"},
   {"denied": true, "verb": ["PUT", "DELETE"], "endpoint": "/domains/{targetDomain}/aliases/{source}"},
   {"verb": ["PUT", "DELETE"], "endpoint": "/address/aliases/%@{domain}/sources/%@{domain}"},
   {"denied": true, "verb": ["PUT", "DELETE"], "endpoint": "/address/aliases/{address}/sources/{source}"},
@@ -26,8 +27,8 @@
   {"endpoint": "/vacation/%@{domain}/*"},
   {"endpoint": "/deletedMessages/users/%@{domain}/*"},
   {"endpoint": "/deletedMessages/users/%@{domain}"},
-  {"endpoint": "/messages?user=%@{domain}"},
-  {"endpoint": "/quota/users?domain={domain}"},
+  {"verb": ["DELETE"], "endpoint": "/messages?user=%@{domain}"},
+  {"verb": ["GET"], "endpoint": "/quota/users?domain={domain}"},
   {"endpoint": "/servers/channels/user=%@{domain}"},
   {"endpoint": "/servers/channels/%@{domain}"},
   {"endpoint": "/tasks/{domain}"},

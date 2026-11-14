@@ -127,7 +127,10 @@ is what lets a request through:
    `/messages?user={username}&mailbox=Trash` and `…&mailbox=Spam`. `domain_scope` must rewrite a
    `user={username}` query value into `user=%@{domain}`, not only path segments. In DOMAIN mode never
    emit `/messages`, `/messages?mailbox=…` or any `/messages` rule without `user=%@{domain}`. The
-   shipped `functional-admin-mail-baseline.json` already grants `/messages?user=%@{domain}`. The
+   shipped `functional-admin-mail-baseline.json` already grants per-user message expiry
+   (`DELETE /messages?user=%@{domain}`) and per-domain quota listing
+   (`GET /quota/users?domain={domain}`), each bound to the one verb James scopes to that
+   parameter, behind a leading deny of every `POST /messages`. The
    frontend gates are being changed accordingly (see
    `~/Documents/webadmin-proxy/prompt-twake-mail-admin-messages-cleanup.md`).
  - **Unscoped endpoints in DOMAIN mode are cross-tenant.** A rule capturing no `{domain}` escapes

@@ -159,6 +159,19 @@ class CheckTest(unittest.TestCase):
                 report = statuses_by_id(check(scoped, expand(generated.rules)))
                 assert not any(status.available for status in report.values())
 
+    def test_a_platform_task_granted_after_the_mail_baseline_is_reported_forbidden(self):
+        """The baseline opens with a POST /messages deny: a later grant is dead."""
+        scoped = INVENTORY.for_scope(Application.MAIL, Mode.GLOBAL)
+        rules = expand(
+            [
+                IncludeDirective("classpath://functional-admin-mail-baseline.json"),
+                Rule(endpoint="/messages?{params}", verb=("POST",)),
+                Rule(endpoint="/messages", verb=("POST",)),
+            ]
+        )
+        report = statuses_by_id(check(scoped, rules))
+        assert report["common-tasks.message-task"].available is False
+
     def test_every_shipped_mail_profile_can_be_reported_on(self):
         scoped = INVENTORY.for_scope(Application.MAIL, Mode.DOMAIN)
         for uri in [
