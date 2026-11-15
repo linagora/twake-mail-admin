@@ -29,6 +29,9 @@ vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: mocks.userStatus }));
 vi.mock("../api-client", () => mocks.api);
+// Unmocked, the registered users are fetched over real HTTP on the jsdom origin: whatever
+// answers there (a non-array body on the CI agent) crashes the sharees of the next render
+vi.mock("@/modules/registered-users/api-client", () => ({ getRegisteredUsers: async () => [] }));
 
 import UserAddressBooks from "./user-address-books";
 
