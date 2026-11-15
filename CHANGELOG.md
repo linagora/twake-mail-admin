@@ -82,6 +82,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Security
 
 - Domain administrators can no longer rename users into another domain, add aliases of another domain, copy another tenant's address book, provision templates from another tenant, or read other tenants' mailing lists.
+- Domain administrators can no longer run platform-wide tasks through the mail baseline profile: `POST /messages` is denied, and only `DELETE /messages?user=…` and `GET /quota/users?domain=…` remain granted, so the triage, SolveInconsistencies and RecomputeCurrentQuotas tasks are out of their reach (#643).
 - A profile granting nothing now denies every call instead of allowing everything.
 - A GET rule now also covers HEAD in the proxy resolver.
 - Leaflet is bundled instead of loaded from unpkg. The CSP no longer allows unpkg, and geolocation answers are shown as text (GHSA-wgch-mmfq-r383).
