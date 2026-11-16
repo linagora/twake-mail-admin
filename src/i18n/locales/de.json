@@ -384,7 +384,9 @@
       "deleteAll": "Alle löschen",
       "empty": "Keine Signaturvorlagen konfiguriert.",
       "addTemplate": "Signaturvorlage hinzufügen",
-      "removeTemplate": "Vorlage „{{language}}“ entfernen"
+      "removeTemplate": "Vorlage „{{language}}“ entfernen",
+      "unavailableTitle": "Signaturvorlagen sind auf diesem Server nicht verfügbar",
+      "unavailableText": "Dieser Server stellt die Routen für Signaturvorlagen (/domains/{domain}/signature-templates) nicht bereit."
     },
     "calendarDetail": {},
     "domainSettings": {
@@ -974,7 +976,9 @@
         "subject": "Betreff"
       },
       "sortField": "Sortierfeld",
-      "sortDirection": "Sortierrichtung"
+      "sortDirection": "Sortierrichtung",
+      "unavailableTitle": "Die Nachrichtensuche ist auf diesem Server nicht verfügbar",
+      "unavailableText": "Dieser Server stellt die Route der Nachrichtensuche (POST /users/{user}/mails) nicht bereit."
     },
     "tasks": {
       "title": "Aufgaben",

@@ -389,7 +389,9 @@
       "deleteAll": "Удалить все",
       "empty": "Шаблоны подписей не настроены.",
       "addTemplate": "Добавить шаблон подписи",
-      "removeTemplate": "Удалить шаблон «{{language}}»"
+      "removeTemplate": "Удалить шаблон «{{language}}»",
+      "unavailableTitle": "Шаблоны подписей недоступны на этом сервере",
+      "unavailableText": "Этот сервер не предоставляет маршруты шаблонов подписей (/domains/{domain}/signature-templates)."
     },
     "calendarDetail": {},
     "domainSettings": {
@@ -980,7 +982,9 @@
         "subject": "Тема"
       },
       "sortField": "Поле сортировки",
-      "sortDirection": "Направление сортировки"
+      "sortDirection": "Направление сортировки",
+      "unavailableTitle": "Поиск сообщений недоступен на этом сервере",
+      "unavailableText": "Этот сервер не предоставляет маршрут поиска сообщений (POST /users/{user}/mails)."
     },
     "tasks": {
       "title": "Задачи",

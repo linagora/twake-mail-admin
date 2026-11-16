@@ -384,7 +384,9 @@
       "deleteAll": "Tout supprimer",
       "empty": "Aucun modèle de signature configuré.",
       "addTemplate": "Ajouter un modèle de signature",
-      "removeTemplate": "Supprimer le modèle « {{language}} »"
+      "removeTemplate": "Supprimer le modèle « {{language}} »",
+      "unavailableTitle": "Les modèles de signature ne sont pas disponibles sur ce serveur",
+      "unavailableText": "Ce serveur n'expose pas les routes des modèles de signature (/domains/{domain}/signature-templates)."
     },
     "calendarDetail": {},
     "domainSettings": {
@@ -974,7 +976,9 @@
         "subject": "Sujet"
       },
       "sortField": "Champ de tri",
-      "sortDirection": "Sens du tri"
+      "sortDirection": "Sens du tri",
+      "unavailableTitle": "La recherche de messages n'est pas disponible sur ce serveur",
+      "unavailableText": "Ce serveur n'expose pas la route de recherche de messages (POST /users/{user}/mails)."
     },
     "tasks": {
       "title": "Tâches",

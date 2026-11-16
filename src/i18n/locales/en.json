@@ -384,7 +384,9 @@
       "deleteAll": "Delete all",
       "empty": "No signature templates configured.",
       "addTemplate": "Add signature template",
-      "removeTemplate": "Remove template \"{{language}}\""
+      "removeTemplate": "Remove template \"{{language}}\"",
+      "unavailableTitle": "Signature templates are not available on this server",
+      "unavailableText": "This server does not expose the signature template routes (/domains/{domain}/signature-templates)."
     },
     "calendarDetail": {},
     "domainSettings": {
@@ -974,7 +976,9 @@
         "subject": "Subject"
       },
       "sortField": "Sort field",
-      "sortDirection": "Sort direction"
+      "sortDirection": "Sort direction",
+      "unavailableTitle": "Message search is not available on this server",
+      "unavailableText": "This server does not expose the message search route (POST /users/{user}/mails)."
     },
     "tasks": {
       "title": "Tasks",

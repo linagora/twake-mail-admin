@@ -5,6 +5,9 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import UnavailableFeature from "@/components/custom/unavailable-feature";
+import { isMissingRoute } from "@/lib/missing-route";
+import { markFeatureUnavailable, useFeatureUnavailable } from "@/lib/unavailable-features";
 import { Button } from "@/components/ui/button";
 import {
   SignatureTemplate,
@@ -17,6 +20,9 @@ import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-s
 interface Props {
   domain: string;
 }
+
+const SIGNATURE_TEMPLATES_DOC_URL =
+  "https://github.com/linagora/tmail-backend/blob/master/docs/modules/ROOT/pages/tmail-backend/webadmin.adoc#domain-signature-templates";
 
 const EMPTY_TEMPLATE: SignatureTemplate = { language: "", textSignature: "", htmlSignature: "" };
 
@@ -38,7 +44,8 @@ export default function DomainSignatureTemplates({ domain }: Props) {
   const [open, setOpen, openContentId] = useSectionOpen("signature-templates");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<unknown>(null);
+  const unavailable = useFeatureUnavailable("signatureTemplates");
   const [templates, setTemplates] = useState<SignatureTemplate[]>([]);
   // The list as last loaded or saved: there is something to save only when the edited one differs
   const [savedTemplates, setSavedTemplates] = useState<SignatureTemplate[]>([]);
@@ -51,16 +58,17 @@ export default function DomainSignatureTemplates({ domain }: Props) {
       const data = await getDomainSignatureTemplates(domain);
       setTemplates(data);
       setSavedTemplates(data);
-    } catch (err: any) {
-      setError(err?.message || t("domains.signatureTemplates.empty"));
+    } catch (err) {
+      if (isMissingRoute(err)) markFeatureUnavailable("signatureTemplates");
+      else setError(err);
     } finally {
       setLoading(false);
     }
   }, [domain]);
 
   useEffect(() => {
-    if (open) fetchTemplates();
-  }, [open, fetchTemplates]);
+    if (open && !unavailable) fetchTemplates();
+  }, [open, unavailable, fetchTemplates]);
 
   if (!canView) return null;
 
@@ -125,11 +133,11 @@ export default function DomainSignatureTemplates({ domain }: Props) {
       <div className="flex items-center gap-2">
         <SectionToggle open={open} onToggle={() => setOpen(!open)} controls={openContentId}>
           {t("domains.signatureTemplates.title")}
-          {!loading && (
+          {!loading && !unavailable && (
             <span className="text-sm font-normal text-gray-500">({templates.length})</span>
           )}
         </SectionToggle>
-        {open && canEdit && (
+        {open && canEdit && !unavailable && (
           <button
             onClick={handleAdd}
             className="p-1 rounded-md hover:bg-gray-200 transition"
@@ -141,14 +149,28 @@ export default function DomainSignatureTemplates({ domain }: Props) {
         )}
       </div>
 
-      {open && (
+      {open && unavailable && (
+        <div id={openContentId}>
+          <UnavailableFeature
+            title={t("domains.signatureTemplates.unavailableTitle")}
+            text={t("domains.signatureTemplates.unavailableText")}
+            docUrl={SIGNATURE_TEMPLATES_DOC_URL}
+          />
+        </div>
+      )}
+
+      {open && !unavailable && (
         <div id={openContentId} className="mt-2 space-y-2">
           {loading && (
             <div className="h-[58px] rounded-2 animate-pulse bg-gray-200" />
           )}
-          {error && <p className="text-red-500 text-sm">{t("common.errorPrefix", { message: error })}</p>}
+          {!!error && (
+            <div className="text-red-500 text-sm">
+              <ErrorDisplayer error={error} />
+            </div>
+          )}
 
-          {!loading && templates.length === 0 && (
+          {!loading && !error && templates.length === 0 && (
             <p className="text-sm text-gray-500">{t("domains.signatureTemplates.empty")}</p>
           )}
 

@@ -72,6 +72,12 @@ describe("domain signature templates", () => {
     http.get.mockRejectedValue(error);
     await expect(getDomainSignatureTemplates("linagora.com")).rejects.toBe(error);
   });
+
+  it("propagates the 404 of a server without the signature template routes", async () => {
+    const error = { response: { status: 404, data: { message: "GET /domains/linagora.com/signature-templates can not be found" } } };
+    http.get.mockRejectedValue(error);
+    await expect(getDomainSignatureTemplates("linagora.com")).rejects.toBe(error);
+  });
 });
 
 describe("domain address book contact count", () => {

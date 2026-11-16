@@ -65,4 +65,13 @@ describe("task row", () => {
     render(<TaskRow title="Reindex" onRun={() => {}} />);
     expect(screen.getByRole("button").getAttribute("aria-describedby")).toBeNull();
   });
+
+  it("disables Run and says why when the task is not available on this server", () => {
+    const onRun = vi.fn();
+    render(<TaskRow title="Apply" command="curl -XPOST /x" unavailable="Not available on this server" onRun={onRun} />);
+    const button = screen.getByRole("button", { name: "common.run Apply" }) as HTMLButtonElement;
+
+    expect(button.disabled).toBe(true);
+    expect(document.getElementById(button.getAttribute("aria-describedby")!)?.textContent).toBe("Not available on this server");
+  });
 });

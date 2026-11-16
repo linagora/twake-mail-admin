@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
+import { isMissingRoute } from "@/lib/missing-route";
 import { RunTaskResponse } from "@/modules/common-tasks/types";
 import { GetDomainsResponseType, GetDomainAliasesResponseType, GetTeamMailboxesResponseType, GetTeamMailboxMembersResponseType, GetTeamMailboxFoldersResponseType, TeamMailboxQuota, TeamMailboxSpace, TeamMailboxSpaceBinding, DomainQuota, DomainQuotaValues, GetDomainContactsResponseType, DomainContact, Resource, DomainSettings, DomainSettingsValues, TeamCalendar, TeamCalendarMember, TeamCalendarShareUpdate } from "./types";
 import { RateLimits } from "@/components/custom/rate-limits";
@@ -146,10 +147,6 @@ export const removeTeamMailboxExtraSender = async (domain: string, mailbox: stri
   await apiClient.delete(`/domains/${encodeURIComponent(domain)}/team-mailboxes/${encodeURIComponent(mailbox)}/extraSenders/${encodeURIComponent(username)}`);
 };
 
-// What WebAdmin answers for a route it does not have, e.g. "GET /domains/d/team-mailboxes/m/space can not be found"
-const isMissingRoute = (err: any): boolean =>
-  err?.response?.status === 404 && /^[A-Z]+ \S+ can not be found$/.test(err.response.data?.message ?? "");
-
 export const TWAKE_SPACE_UNAVAILABLE = "unavailable";
 
 // A team mailbox bound to no space answers 404 with its own message; a server without the Twake
@@ -272,7 +269,8 @@ export interface SignatureTemplate {
   htmlSignature: string;
 }
 
-// A domain without signature templates answers 404: read it as an empty list.
+// A domain without signature templates answers 404: read it as an empty list. A server without
+// the signature template routes answers a route-missing 404: thrown, for the caller to say so.
 export const getDomainSignatureTemplates = async (domain: string): Promise<SignatureTemplate[]> => {
   try {
     const response: { signatures: SignatureTemplate[] } = await apiClient.get(
@@ -280,7 +278,7 @@ export const getDomainSignatureTemplates = async (domain: string): Promise<Signa
     );
     return response.signatures ?? [];
   } catch (err: any) {
-    if (err?.response?.status === 404) return [];
+    if (err?.response?.status === 404 && !isMissingRoute(err)) return [];
     throw err;
   }
 };

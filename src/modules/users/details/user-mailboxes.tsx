@@ -17,6 +17,7 @@ import { formatMailboxCreationDate } from "./mailbox-creation-date";
 import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
+import { useFeatureUnavailable } from "@/lib/unavailable-features";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -55,6 +56,7 @@ export default function UserMailboxes({ username }: Props) {
   } = useFetchData<GetUserMailboxesResponseType>(canView ? fetchMailboxes : null);
 
   const [open, setOpen, openContentId] = useSectionOpen("mailboxes");
+  const messageSearchUnavailable = useFeatureUnavailable("messageSearch");
   useSectionFact("mailboxes", mailboxes?.length);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -153,13 +155,28 @@ export default function UserMailboxes({ username }: Props) {
             </span>
           )}
         </SectionToggle>
-        <Link
-          to={`/users/user/${encodeURIComponent(username)}/message-search`}
-          className="p-1 rounded-md hover:bg-gray-200 transition text-gray-500 hover:text-blue-600"
-          title={t("users.mailboxes.searchMessages")}
-        >
-          <Search className="w-4 h-4" />
-        </Link>
+        {messageSearchUnavailable ? (
+          // A disabled control receives no pointer events: its wrapper shows the reason
+          <span title={t("users.messageSearch.unavailableTitle")} className="inline-flex">
+            <button
+              type="button"
+              disabled
+              aria-label={t("users.mailboxes.searchMessages")}
+              aria-description={t("users.messageSearch.unavailableTitle")}
+              className="p-1 rounded-md text-gray-300 cursor-not-allowed"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+          </span>
+        ) : (
+          <Link
+            to={`/users/user/${encodeURIComponent(username)}/message-search`}
+            className="p-1 rounded-md hover:bg-gray-200 transition text-gray-500 hover:text-blue-600"
+            title={t("users.mailboxes.searchMessages")}
+          >
+            <Search className="w-4 h-4" />
+          </Link>
+        )}
         {canCreate && (
           <button
             type="button"

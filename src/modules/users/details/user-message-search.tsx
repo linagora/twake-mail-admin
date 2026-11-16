@@ -5,12 +5,18 @@ import { useTranslation } from "react-i18next";
 import { searchUserMails, getUserMailboxes } from "../api-client";
 import { MailSearchFilter, MailSearchResult } from "../types";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import UnavailableFeature from "@/components/custom/unavailable-feature";
+import { isMissingRoute } from "@/lib/missing-route";
+import { markFeatureUnavailable, useFeatureUnavailable } from "@/lib/unavailable-features";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
+
+const MESSAGE_SEARCH_DOC_URL =
+  "https://github.com/linagora/tmail-backend/blob/master/docs/modules/ROOT/pages/tmail-backend/webadmin.adoc#user-mails-search";
 
 const SORT_PROPERTIES = ["receivedAt", "from", "subject"] as const;
 
@@ -34,6 +40,7 @@ export default function UserMessageSearch() {
   const { t } = useTranslation();
   const idPrefix = useId();
   const canSearch = useIsAllowed("POST", "/users/{username}/mails");
+  const unavailable = useFeatureUnavailable("messageSearch");
 
   // Form state
   const [reason, setReason] = useState("");
@@ -107,7 +114,8 @@ export default function UserMessageSearch() {
       setOffset(newOffset);
       setHasMore(data.length === PAGE_LIMIT);
     } catch (err) {
-      setError(err);
+      if (isMissingRoute(err)) markFeatureUnavailable("messageSearch");
+      else setError(err);
       setResults(null);
     } finally {
       setIsLoading(false);
@@ -140,6 +148,13 @@ export default function UserMessageSearch() {
       documentTitle={`${t("users.messageSearch.title")} — ${username}`}
       breadcrumb={breadcrumbs.user(username!)}
     />
+    {unavailable ? (
+      <UnavailableFeature
+        title={t("users.messageSearch.unavailableTitle")}
+        text={t("users.messageSearch.unavailableText")}
+        docUrl={MESSAGE_SEARCH_DOC_URL}
+      />
+    ) : (
     <div className="mt-4 p-4 bg-white rounded-2">
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -461,6 +476,7 @@ export default function UserMessageSearch() {
         </div>
       )}
     </div>
+    )}
     </>
   );
 }

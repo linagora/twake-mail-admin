@@ -21,6 +21,7 @@ async function openSection() {
 }
 
 beforeEach(() => {
+  sessionStorage.clear();
   api.getDomainSignatureTemplates.mockReset();
   api.getDomainSignatureTemplates.mockResolvedValue([]);
 });
@@ -81,5 +82,33 @@ describe("domain signature templates: save changes", () => {
 
     fireEvent.change(text, { target: { value: "Bye" } });
     expect(saveButton()).toBeNull();
+  });
+});
+
+describe("domain signature templates: server without the routes", () => {
+  const toggle = () => screen.getByRole("button", { name: /domains.signatureTemplates.title/ });
+
+  it("says the feature is not available, without count, add, save nor delete", async () => {
+    api.getDomainSignatureTemplates.mockRejectedValue({
+      response: { status: 404, data: { message: "GET /domains/linagora.com/signature-templates can not be found" } },
+    });
+    render(<DomainSignatureTemplates domain="linagora.com" />);
+    fireEvent.click(toggle());
+
+    expect((await screen.findByRole("status")).textContent).toContain("domains.signatureTemplates.unavailableTitle");
+    expect(toggle().textContent).not.toContain("(0)");
+    expect(screen.queryByRole("button", { name: "domains.signatureTemplates.addTemplate" })).toBeNull();
+    expect(screen.queryByRole("button", { name: /domains.signatureTemplates.deleteAll/ })).toBeNull();
+    expect(screen.queryByText("domains.signatureTemplates.empty")).toBeNull();
+  });
+
+  it("shows any other load failure as an error, not as an empty list", async () => {
+    api.getDomainSignatureTemplates.mockRejectedValue({ message: "Request failed", response: { status: 500, data: { message: "Boom" } } });
+    render(<DomainSignatureTemplates domain="linagora.com" />);
+    fireEvent.click(toggle());
+
+    await screen.findByText(/Boom/);
+    expect(screen.queryByRole("status")).toBeNull();
+    expect(screen.queryByText("domains.signatureTemplates.empty")).toBeNull();
   });
 });
