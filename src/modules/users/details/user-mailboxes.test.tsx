@@ -26,10 +26,12 @@ vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }
 vi.mock("../api-client", () => mocks.api);
 
 import UserMailboxes from "./user-mailboxes";
+import { markFeatureUnavailable } from "@/lib/unavailable-features";
 
 const ALICE = "alice@example.com";
 
 beforeEach(() => {
+  sessionStorage.clear();
   vi.resetAllMocks();
   mocks.api.getUserMailboxes.mockResolvedValue([]);
   mocks.api.getMailboxMessageCount.mockResolvedValue(0);
@@ -78,5 +80,22 @@ describe("user mailboxes: create a mailbox", () => {
 
     expect((await screen.findByRole("alert")).textContent).toContain("users.mailboxes.alreadyExists");
     expect(mocks.api.createUserMailbox).not.toHaveBeenCalled();
+  });
+});
+
+describe("user mailboxes: message search link", () => {
+  it("links to the message search of the user", () => {
+    renderMailboxes();
+    expect(screen.getByTitle("users.mailboxes.searchMessages").getAttribute("href")).toBe(`/users/user/${encodeURIComponent(ALICE)}/message-search`);
+  });
+
+  it("is disabled, saying why, once message search was found missing on this server", () => {
+    markFeatureUnavailable("messageSearch");
+    renderMailboxes();
+
+    const button = screen.getByRole("button", { name: "users.mailboxes.searchMessages" }) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
+    expect(screen.getByTitle("users.messageSearch.unavailableTitle")).not.toBeNull();
+    expect(screen.queryByRole("link", { name: "users.mailboxes.searchMessages" })).toBeNull();
   });
 });

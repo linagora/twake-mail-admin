@@ -381,7 +381,9 @@
       "deleteAll": "Бүгдийг устгах",
       "empty": "Гарын үсгийн загвар тохируулаагүй байна.",
       "addTemplate": "Гарын үсгийн загвар нэмэх",
-      "removeTemplate": "\"{{language}}\" загварыг устгах"
+      "removeTemplate": "\"{{language}}\" загварыг устгах",
+      "unavailableTitle": "Энэ серверт гарын үсгийн загвар боломжгүй",
+      "unavailableText": "Энэ сервер гарын үсгийн загварын замыг (/domains/{domain}/signature-templates) нээгээгүй байна."
     },
     "calendarDetail": {},
     "domainSettings": {
@@ -965,7 +967,9 @@
         "subject": "Гарчиг"
       },
       "sortField": "Эрэмбэлэх талбар",
-      "sortDirection": "Эрэмбэлэх чиглэл"
+      "sortDirection": "Эрэмбэлэх чиглэл",
+      "unavailableTitle": "Энэ серверт мессеж хайлт боломжгүй",
+      "unavailableText": "Энэ сервер мессеж хайх замыг (POST /users/{user}/mails) нээгээгүй байна."
     },
     "tasks": {
       "title": "Даалгаврууд",

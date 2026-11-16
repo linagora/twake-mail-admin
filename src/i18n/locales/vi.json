@@ -380,7 +380,9 @@
       "deleteAll": "Xóa tất cả",
       "empty": "Chưa cấu hình mẫu chữ ký nào.",
       "addTemplate": "Thêm mẫu chữ ký",
-      "removeTemplate": "Xóa mẫu \"{{language}}\""
+      "removeTemplate": "Xóa mẫu \"{{language}}\"",
+      "unavailableTitle": "Mẫu chữ ký không khả dụng trên máy chủ này",
+      "unavailableText": "Máy chủ này không cung cấp các route mẫu chữ ký (/domains/{domain}/signature-templates)."
     },
     "calendarDetail": {},
     "domainSettings": {
@@ -962,7 +964,9 @@
         "subject": "Chủ đề"
       },
       "sortField": "Trường sắp xếp",
-      "sortDirection": "Chiều sắp xếp"
+      "sortDirection": "Chiều sắp xếp",
+      "unavailableTitle": "Tìm kiếm thư không khả dụng trên máy chủ này",
+      "unavailableText": "Máy chủ này không cung cấp route tìm kiếm thư (POST /users/{user}/mails)."
     },
     "tasks": {
       "title": "Tác vụ",

@@ -65,7 +65,7 @@ origin app cannot read them
 | DOM-08 | DomainQuotaTest.resourceUsageAndQuotaExplorer |
 | DOM-09 | DomainSectionsTest.addAndRemoveAlias |
 | DOM-10 | DomainSectionsTest.domainContacts |
-| DOM-11 | DomainSignatureTemplatesTest.signatureTemplates (editor + error toasts: no signature-templates routes on tmail-backend 1.0.22) |
+| DOM-11 | DomainSignatureTemplatesTest.signatureTemplates (no signature-templates routes on tmail-backend 1.0.22: "not available on this server" box, no editor, Apply task disabled) |
 | DOM-12 | DomainRateLimitsTest.domainRateLimits |
 | DOM-13 | DomainSectionsTest.jmapSettingsReport |
 | DOM-14 | DomainTasksTest.applySignaturesAndProvisionTemplates, DomainTasksTest.deleteAllUsersData |
@@ -106,7 +106,7 @@ origin app cannot read them
 | Case | Test |
 |---|---|
 | UDT-15 | DeletedMessageVaultTest.searchAndRestore (the vault is fed unreliably on this stack, DeletedMessageVaultListenerGroup dead letters: 0 or 1 match accepted, restore round trip checked against what is found) |
-| UDT-16 | MessageSearchTest.messageSearch (POST /users/{u}/mails is 404 on this backend: requests + readable error asserted, result rendering not) |
+| UDT-16 | MessageSearchTest.messageSearch (POST /users/{u}/mails is 404 on this backend: request asserted, then "not available on this server" box remembered for the session; filters, sort and result rendering not) |
 | UDT-17 | UserTasksTest.taskDialogsPreviewTheirCommand, reindexSubscribeAllRecomputeFastView |
 | UDT-18 | UserTasksTest.cleanupTrashSpamAndTierData |
 | UDT-19 | UserRenameAndDeleteTest.renameUser |

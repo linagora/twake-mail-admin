@@ -384,7 +384,9 @@
       "deleteAll": "Eliminar todas",
       "empty": "No hay plantillas de firma configuradas.",
       "addTemplate": "Añadir plantilla de firma",
-      "removeTemplate": "Eliminar la plantilla «{{language}}»"
+      "removeTemplate": "Eliminar la plantilla «{{language}}»",
+      "unavailableTitle": "Las plantillas de firma no están disponibles en este servidor",
+      "unavailableText": "Este servidor no expone las rutas de plantillas de firma (/domains/{domain}/signature-templates)."
     },
     "calendarDetail": {},
     "domainSettings": {
@@ -974,7 +976,9 @@
         "subject": "Asunto"
       },
       "sortField": "Campo de ordenación",
-      "sortDirection": "Dirección de ordenación"
+      "sortDirection": "Dirección de ordenación",
+      "unavailableTitle": "La búsqueda de mensajes no está disponible en este servidor",
+      "unavailableText": "Este servidor no expone la ruta de búsqueda de mensajes (POST /users/{user}/mails)."
     },
     "tasks": {
       "title": "Tareas",

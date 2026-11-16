@@ -384,7 +384,9 @@
       "deleteAll": "Elimina tutto",
       "empty": "Nessun modello di firma configurato.",
       "addTemplate": "Aggiungi modello di firma",
-      "removeTemplate": "Rimuovi il modello «{{language}}»"
+      "removeTemplate": "Rimuovi il modello «{{language}}»",
+      "unavailableTitle": "I modelli di firma non sono disponibili su questo server",
+      "unavailableText": "Questo server non espone le route dei modelli di firma (/domains/{domain}/signature-templates)."
     },
     "calendarDetail": {},
     "domainSettings": {
@@ -974,7 +976,9 @@
         "subject": "Oggetto"
       },
       "sortField": "Campo di ordinamento",
-      "sortDirection": "Direzione di ordinamento"
+      "sortDirection": "Direzione di ordinamento",
+      "unavailableTitle": "La ricerca dei messaggi non è disponibile su questo server",
+      "unavailableText": "Questo server non espone la route di ricerca dei messaggi (POST /users/{user}/mails)."
     },
     "tasks": {
       "title": "Attività",

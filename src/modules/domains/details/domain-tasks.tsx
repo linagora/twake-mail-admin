@@ -15,6 +15,8 @@ import FormTaskContent from "@/modules/common-tasks/components/form-task-content
 import { deleteAllUsersDataCommand, provisionDomainTemplatesCommand } from "./domain-task-commands";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
+import { isMissingRoute } from "@/lib/missing-route";
+import { markFeatureUnavailable, useFeatureUnavailable } from "@/lib/unavailable-features";
 
 const INITIAL_PROVISION_VALUES: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
 
@@ -35,6 +37,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
   const [open, setOpen, openContentId] = useSectionOpen("tasks", defaultOpen ?? false);
   const [applyLoading, setApplyLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const signatureTemplatesUnavailable = useFeatureUnavailable("signatureTemplates");
 
   const showApply = appConfig.application === 'MAIL' && canApplySignatures;
   const showProvision = appConfig.application === 'MAIL' && canProvisionTemplates;
@@ -55,6 +58,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
         description: t("domains.tasks.applySignaturesResult", { applied: result.applied, skipped: result.skipped, error: result.error }),
       });
     } catch (err) {
+      if (isMissingRoute(err)) markFeatureUnavailable("signatureTemplates");
       toast({
         title: t("domains.tasks.errorApplyingSignatures"),
         description: <ErrorDisplayer error={err} />,
@@ -153,6 +157,7 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
               onRun={handleApplySignatureTemplates}
               disabled={applyLoading}
               loading={applyLoading}
+              unavailable={signatureTemplatesUnavailable ? t("domains.signatureTemplates.unavailableTitle") : undefined}
             />
           )}
 

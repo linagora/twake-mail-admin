@@ -14,69 +14,48 @@ import com.microsoft.playwright.options.AriaRole;
 
 /**
  * DOM-11. The tmail-backend of the e2e stack has no signature templates routes (every
- * {@code /domains/{domain}/signature-templates} call answers 404, as noted in the test plan): the
- * editor is covered up to the request, and saving / deleting must show the WebAdmin refusal.
+ * {@code /domains/{domain}/signature-templates} call answers a route-missing 404, as noted in the test
+ * plan): the section says so up front, instead of an editor that cannot save.
  */
 class DomainSignatureTemplatesTest extends MailAdminE2ETest {
 
     @Test
-    @DisplayName("DOM-11 Signature templates: add, save, delete")
+    @DisplayName("DOM-11 Signature templates: not available on this server")
     void signatureTemplates(AdminApp app, MailFixtures fixtures) {
         String domain = fixtures.domain();
         DomainDetailPage detail = DomainDetailPage.open(app, domain).openSection("Signature Templates");
-        assertThat(detail.text("No signature templates configured.")).isVisible();
+
+        Locator unavailable = unavailable(detail);
+        assertThat(unavailable).isVisible();
+        assertThat(unavailable).containsText(
+            "This server does not expose the signature template routes (/domains/{domain}/signature-templates).");
+        assertThat(unavailable.getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("doc").setExact(true))).isVisible();
+        assertThat(detail.main()).not().containsText("can not be found");
+        assertThat(detail.text("No signature templates configured.")).hasCount(0);
+
+        // Nothing to edit: no counter, no add, no save, no delete
+        assertThat(detail.sectionButton("Signature Templates")).not().containsText("(");
+        assertThat(detail.button("Add signature template")).hasCount(0);
         assertThat(detail.button("Save changes")).hasCount(0);
+        assertThat(detail.button("Delete all")).hasCount(0);
 
-        detail.button("Add signature template").click();
-        assertThat(detail.sectionButton("Signature Templates", 1)).isVisible();
-        assertThat(detail.button("Save changes")).isVisible();
+        // The domain task applying the templates cannot run either
+        detail.openSection("Tasks");
+        assertThat(applySignatureTemplatesRunButton(detail)).isDisabled();
 
-        // Each label focuses its field
-        Locator language = detail.main().getByLabel("Language code", new Locator.GetByLabelOptions().setExact(true));
-        Locator text = detail.main().getByLabel("Text signature", new Locator.GetByLabelOptions().setExact(true));
-        Locator html = detail.main().getByLabel("HTML signature", new Locator.GetByLabelOptions().setExact(true));
-        detail.text("Language code").click();
-        assertThat(language).isFocused();
-        detail.text("Text signature").click();
-        assertThat(text).isFocused();
-        detail.text("HTML signature").click();
-        assertThat(html).isFocused();
-        language.fill("en");
-        text.fill("Regards");
-        html.fill("<p>Regards</p>");
-        assertThat(detail.button("Remove template \"en\"")).isVisible();
-
-        // A second template, removed by its own row button only
-        detail.button("Add signature template").click();
-        assertThat(detail.button("Remove template \"new template\"")).isVisible();
-        detail.main().getByLabel("Language code", new Locator.GetByLabelOptions().setExact(true)).fill("fr");
-        detail.button("Remove template \"fr\"").click();
-        assertThat(detail.button("Remove template \"fr\"")).hasCount(0);
-        assertThat(detail.button("Remove template \"en\"")).isVisible();
-        assertThat(detail.sectionButton("Signature Templates", 1)).isVisible();
-
-        // Saving: this backend has no such route, the refusal is displayed as text
-        detail.button("Save changes").click();
-        app.expectToast("Error saving signature templates");
-        assertThat(app.toast("Error saving signature templates"))
-            .containsText("PUT /domains/" + domain + "/signature-templates can not be found");
-        assertThat(app.toast("Error saving signature templates")).not().containsText("{");
-
-        // Delete all asks first
-        detail.button("Delete all").click();
-        assertThat(app.dialog()).containsText("Delete all signature templates for domain \"" + domain + "\"? This cannot be undone.");
-        app.cancel();
-        assertThat(detail.button("Remove template \"en\"")).isVisible();
-        detail.button("Delete all").click();
-        detail.confirmWith("Delete");
-        app.expectToast("Error deleting signature templates");
-        assertThat(app.toast("Error deleting signature templates"))
-            .containsText("DELETE /domains/" + domain + "/signature-templates can not be found");
-
-        // After a reload, nothing was stored
+        // Still said after a reload
         app.page().reload();
         detail = DomainDetailPage.open(app, domain).openSection("Signature Templates");
-        assertThat(detail.text("No signature templates configured.")).isVisible();
-        assertThat(detail.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Delete all"))).hasCount(0);
+        assertThat(unavailable(detail)).isVisible();
+    }
+
+    private static Locator unavailable(DomainDetailPage detail) {
+        return detail.main().getByRole(AriaRole.STATUS)
+            .filter(new Locator.FilterOptions().setHasText("Signature templates are not available on this server"));
+    }
+
+    private static Locator applySignatureTemplatesRunButton(DomainDetailPage detail) {
+        return detail.text("Apply signature templates").locator("xpath=ancestor::div[.//button][1]")
+            .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(AdminApp.RUN_TASK_BUTTON));
     }
 }
