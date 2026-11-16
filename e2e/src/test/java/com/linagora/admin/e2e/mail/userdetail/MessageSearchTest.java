@@ -11,11 +11,13 @@ import org.junit.jupiter.api.Test;
 import com.linagora.admin.e2e.MailAdminE2ETest;
 import com.linagora.admin.e2e.backend.MailFixtures;
 import com.linagora.admin.e2e.pages.AdminApp;
-import com.linagora.admin.e2e.pages.mail.userdetail.Regex;
 import com.linagora.admin.e2e.pages.mail.userdetail.MailUserDetailPage;
 import com.linagora.admin.e2e.pages.mail.userdetail.MessageSearchPage;
+import com.linagora.admin.e2e.pages.mail.userdetail.Regex;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
+import com.microsoft.playwright.options.AriaRole;
 
 class MessageSearchTest extends MailAdminE2ETest {
 
@@ -36,27 +38,31 @@ class MessageSearchTest extends MailAdminE2ETest {
         Request first = searchRequest(page, search);
         assertThat(first.postData()).contains("\"reason\":\"QA check\"")
             .contains("{\"property\":\"receivedAt\",\"isAscending\":false}");
-        // tmail-backend of this environment has no POST /users/{user}/mails: the page shows its message
-        assertThat(app.main().getByText(Pattern.compile("POST " + Regex.escape(MessageSearchPage.searchPath(user))
-            + " can not be found"))).isVisible();
 
-        search.filtersToggle().click();
-        search.filter("Subject").fill("Lunch");
-        assertThat(searchRequest(page, search).postData()).contains("\"subject\":\"Lunch\"");
-        search.filter("Subject").fill("");
-        search.filter("From").fill("alice@example.com");
-        String fromBody = searchRequest(page, search).postData();
-        assertThat(fromBody).contains("\"from\":\"alice@example.com\"").doesNotContain("\"subject\"");
+        // tmail-backend of this environment has no POST /users/{user}/mails: the page says so instead of the form
+        assertThat(unavailable(app)).isVisible();
+        assertThat(unavailable(app)).containsText("This server does not expose the message search route (POST /users/{user}/mails).");
+        assertThat(app.main()).not().containsText("can not be found");
+        assertThat(search.searchButton()).hasCount(0);
+        assertThat(search.reason()).hasCount(0);
 
-        search.addSort().click();
-        assertThat(search.sortFields()).hasCount(2);
-        search.sortFields().nth(1).selectOption("subject");
-        search.sortDirections().nth(1).selectOption("asc");
-        assertThat(searchRequest(page, search).postData())
-            .contains("{\"property\":\"subject\",\"isAscending\":true}");
+        // Remembered for the browser session: the page opens directly on the box
+        page.reload();
+        assertThat(search.title()).isVisible();
+        assertThat(unavailable(app)).isVisible();
+        assertThat(search.searchButton()).hasCount(0);
 
+        // ...and the magnifier next to "Mailboxes" is disabled
         search.backLink(user).click();
         assertThat(detail.title()).hasText(user);
+        assertThat(detail.searchMessagesLink()).hasCount(0);
+        assertThat(app.main().getByRole(AriaRole.BUTTON,
+            new Locator.GetByRoleOptions().setName("Search messages").setExact(true))).isDisabled();
+    }
+
+    private static Locator unavailable(AdminApp app) {
+        return app.main().getByRole(AriaRole.STATUS)
+            .filter(new Locator.FilterOptions().setHasText("Message search is not available on this server"));
     }
 
     private static Request searchRequest(Page page, MessageSearchPage search) {
