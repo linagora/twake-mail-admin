@@ -40,4 +40,12 @@ describe("DialogContent", () => {
 
     expect(screen.getByRole("button", { name: "common.close" })).not.toBeNull();
   });
+
+  // jsdom computes no layout: check the corner X is a 40 × 40 touch target, not its 16 px icon
+  it("gives the corner close button a large touch target", () => {
+    renderDialog();
+
+    const classes = screen.getByRole("button", { name: "common.close" }).classList;
+    expect(classes).toContain("size-10");
+  });
 });
