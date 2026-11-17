@@ -34,6 +34,9 @@ const EMPTY_CREATE: JmapIdentityCreatePayload = {
   sortOrder: 0,
 };
 
+/** The identity as its row shows it, to name the row buttons after it. */
+const identityLabel = (identity: JmapIdentity) => `${identity.name} <${identity.email}>`;
+
 export default function UserIdentities({ username }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -270,6 +273,7 @@ export default function UserIdentities({ username }: Props) {
                         onClick={(e) => { e.stopPropagation(); openEditFromList(identity); }}
                         className="p-2 rounded-md hover:bg-gray-200"
                         title={t("users.identities.editTooltip")}
+                        aria-label={t("users.identities.editNamed", { item: identityLabel(identity) })}
                       >
                         <Pencil className="w-4 h-4 text-blue-600" />
                       </button>
@@ -279,6 +283,7 @@ export default function UserIdentities({ username }: Props) {
                         onClick={(e) => { e.stopPropagation(); handleDelete(identity); }}
                         className="p-2 rounded-md hover:bg-gray-200"
                         title={t("users.identities.deleteTooltip")}
+                        aria-label={t("users.identities.deleteNamed", { item: identityLabel(identity) })}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>

@@ -131,7 +131,7 @@ class TeamMailboxesTest extends MailAdminE2ETest {
         assertThat(teamMailbox.rowHeading(ghost)).isVisible();
         assertThat(members(webAdmin, domain, SALES)).contains(ghost + ":member");
 
-        teamMailbox.rowButton(bob, "Remove member").click();
+        teamMailbox.rowButton(bob, "Remove member \"" + bob + "\"").click();
         assertThat(app.dialog()).containsText("Remove \"" + bob + "\" from " + SALES + "@" + domain + "?");
         teamMailbox.confirmWith("Remove");
         app.expectToast("Member removed");

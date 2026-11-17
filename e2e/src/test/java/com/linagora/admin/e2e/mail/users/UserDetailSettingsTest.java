@@ -192,14 +192,8 @@ class UserDetailSettingsTest extends MailAdminE2ETest {
             new Locator.GetByRoleOptions().setName("Bob QA edited <" + bob + ">").setExact(true))).isVisible();
         assertThat(identity(webAdmin, bob, "Bob QA edited").path("id").asText()).isEqualTo(id);
 
-        // The name of an identity is a button inside its heading: find the row by that button
-        Locator identityRow = identities.locator("div")
-            .filter(new Locator.FilterOptions().setHas(app.page().getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Bob QA edited <" + bob + ">").setExact(true))))
-            .filter(new Locator.FilterOptions().setHas(app.page().getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Delete identity").setExact(true))))
-            .last();
-        detail.button(identityRow, "Delete identity").click();
+        // The delete button of a row is named after its identity
+        detail.button(identities, "Delete identity \"Bob QA edited <" + bob + ">\"").click();
         assertThat(app.dialog()).containsText("Delete identity \"Bob QA edited <" + bob + ">\"?");
         detail.confirm("Delete");
         app.expectToast("Identity deleted");
@@ -251,7 +245,7 @@ class UserDetailSettingsTest extends MailAdminE2ETest {
         Locator row = labels.getByRole(AriaRole.ROW).filter(new Locator.FilterOptions().setHasText("Work emails"));
         assertThat(row).containsText(created.path("keyword").asText());
 
-        detail.button(row, "Edit label").click();
+        detail.button(row, "Edit label \"Work\"").click();
         Locator edit = app.dialog();
         assertThat(edit.getByRole(AriaRole.HEADING)).hasText("Edit Label — Work");
         label(edit, "Color").fill("#00ff00");
@@ -262,7 +256,7 @@ class UserDetailSettingsTest extends MailAdminE2ETest {
         assertThat(webAdmin.get("/users/" + bob + "/labels").expect(200).json().get(0).path("color").asText())
             .isEqualToIgnoringCase("#00ff00");
 
-        detail.button(row, "Edit label").click();
+        detail.button(row, "Edit label \"Work\"").click();
         edit = app.dialog();
         assertThat(label(edit, "Color")).hasAttribute("placeholder", "#ff0000");
         label(edit, "Color").fill("");
@@ -279,7 +273,7 @@ class UserDetailSettingsTest extends MailAdminE2ETest {
         assertThat(updated.path("description").asText()).isEqualTo("Work and projects");
         assertThat(updated.path("color").asText()).isEqualToIgnoringCase("#00ff00");
 
-        detail.button(row, "Delete label").click();
+        detail.button(row, "Delete label \"Work\"").click();
         assertThat(app.dialog()).containsText("Delete label \"Work\"?");
         detail.confirm("Delete");
         app.expectToast("Label deleted");

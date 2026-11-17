@@ -39,6 +39,8 @@ vi.mock("./team-mailbox-quota", () => ({ default: () => null }));
 vi.mock("./team-mailbox-extra-senders", () => ({ default: () => null }));
 vi.mock("./team-mailbox-space", () => ({ default: () => null }));
 vi.mock("@/modules/users/details/user-deleted-message-vault", () => ({ default: () => null }));
+// The member links need a router, out of the scope of these tests
+vi.mock("@/components/custom/user-link", () => ({ default: ({ address }: { address: string }) => address }));
 
 import TeamMailboxDetail from "./team-mailbox-detail";
 
@@ -185,5 +187,25 @@ describe("team mailbox members: member of another domain", () => {
 
     expect(hint()).toBeNull();
     expect(input().getAttribute("aria-describedby")).toBeNull();
+  });
+});
+
+describe("team mailbox members: row buttons", () => {
+  it("names each remove button after its member, the tooltip staying short", async () => {
+    mocks.api.getTeamMailboxMembers.mockResolvedValue([
+      { username: "charlotte@example.com", role: "manager" },
+      { username: "ghost@example.com", role: "member" },
+    ]);
+    render(<TeamMailboxDetail />);
+
+    const buttons = await screen.findAllByRole("button", { name: /^domains\.teamMailbox\.removeMemberNamed / });
+    expect(buttons.map((button) => button.getAttribute("aria-label"))).toEqual([
+      `domains.teamMailbox.removeMemberNamed ${JSON.stringify({ item: "charlotte@example.com" })}`,
+      `domains.teamMailbox.removeMemberNamed ${JSON.stringify({ item: "ghost@example.com" })}`,
+    ]);
+    expect(buttons.map((button) => button.getAttribute("title"))).toEqual([
+      "domains.teamMailbox.removeMemberTooltip",
+      "domains.teamMailbox.removeMemberTooltip",
+    ]);
   });
 });

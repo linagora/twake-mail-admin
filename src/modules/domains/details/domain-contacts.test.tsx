@@ -12,6 +12,11 @@ const api = vi.hoisted(() => ({
   deleteDomainContact: vi.fn(),
 }));
 
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => (options ? `${key} ${JSON.stringify(options)}` : key),
+  }),
+}));
 vi.mock("@/lib/proxy-resolver-context", () => ({
   useIsAllowed: (verb: never, pattern: string) => proxy.resolver!.isAllowed(verb, pattern),
 }));
@@ -109,5 +114,15 @@ describe("domain contacts", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     // Radix moves the focus on close from a timeout
     await waitFor(() => expect(document.activeElement).toBe(contactButton));
+  });
+
+  it("names the edit and remove buttons of each row after its contact, the tooltips staying short", () => {
+    const labels = (pattern: RegExp) => screen.getAllByRole("button", { name: pattern }).map((button) => button.getAttribute("aria-label"));
+    const named = (key: string) => STALE_LISTING.map((email) => `domains.contacts.${key} ${JSON.stringify({ item: email })}`);
+
+    expect(labels(/^domains\.contacts\.editNamed /)).toEqual(named("editNamed"));
+    expect(labels(/^domains\.contacts\.removeNamed /)).toEqual(named("removeNamed"));
+    expect(screen.getAllByTitle("domains.contacts.editTooltip")).toHaveLength(STALE_LISTING.length);
+    expect(screen.getAllByTitle("domains.contacts.removeTooltip")).toHaveLength(STALE_LISTING.length);
   });
 });

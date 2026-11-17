@@ -253,6 +253,7 @@ export default function UserLabels({ username }: Props) {
                                 onClick={() => openEdit(label)}
                                 className="p-1.5 rounded-md hover:bg-gray-200"
                                 title={t("users.labels.editTooltip")}
+                                aria-label={t("users.labels.editNamed", { item: label.displayName })}
                               >
                                 <Pencil className="w-3.5 h-3.5 text-blue-600" />
                               </button>
@@ -262,6 +263,7 @@ export default function UserLabels({ username }: Props) {
                                 onClick={() => handleDelete(label)}
                                 className="p-1.5 rounded-md hover:bg-gray-200"
                                 title={t("users.labels.deleteTooltip")}
+                                aria-label={t("users.labels.deleteNamed", { item: label.displayName })}
                               >
                                 <Trash2 className="w-3.5 h-3.5 text-red-600" />
                               </button>

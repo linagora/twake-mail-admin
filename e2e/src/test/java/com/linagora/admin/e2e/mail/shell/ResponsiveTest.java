@@ -160,7 +160,7 @@ class ResponsiveTest extends MailAdminE2ETest {
         for (int width : new int[] {1280, PHONE}) {
             page.setViewportSize(width, 800);
             assertThat(Shell.scrollWidth(page)).as("user page width at " + width).isLessThanOrEqualTo(width);
-            app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Delete identity").setExact(true)).click();
+            app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Delete identity \"" + longName + " <" + user + ">\"").setExact(true)).click();
             assertThat(app.dialog()).containsText("Delete identity \"" + longName + " <" + user + ">\"?");
             Shell.assertDialogFits(page, app.dialog(), "Cancel", "Delete");
             // Clickable with the mouse: a click on Cancel lands on it
