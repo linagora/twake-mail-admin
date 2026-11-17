@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import HintTooltip from "@/components/custom/hint-tooltip";
 import MailboxCounts from "./mailbox-counts";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import { currentLocale } from "@/i18n/locale";
@@ -156,18 +157,18 @@ export default function UserMailboxes({ username }: Props) {
           )}
         </SectionToggle>
         {messageSearchUnavailable ? (
-          // A disabled control receives no pointer events: its wrapper shows the reason
-          <span title={t("users.messageSearch.unavailableTitle")} className="inline-flex">
+          // A disabled control receives no pointer events: its wrapper shows the reason, also on a tap
+          <HintTooltip hint={t("users.messageSearch.unavailableTitle")} className="inline-flex rounded-md cursor-not-allowed">
             <button
               type="button"
               disabled
               aria-label={t("users.mailboxes.searchMessages")}
               aria-description={t("users.messageSearch.unavailableTitle")}
-              className="p-1 rounded-md text-gray-300 cursor-not-allowed"
+              className="p-1 rounded-md text-gray-300 pointer-events-none"
             >
               <Search className="w-4 h-4" />
             </button>
-          </span>
+          </HintTooltip>
         ) : (
           <Link
             to={`/users/user/${encodeURIComponent(username)}/message-search`}

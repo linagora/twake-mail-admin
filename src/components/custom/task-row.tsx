@@ -26,7 +26,8 @@ interface TaskRowProps {
   onRun: () => void;
   disabled?: boolean;
   loading?: boolean;
-  // Why the task cannot run on this server: Run is disabled, and its tooltip says why
+  // Why the task cannot run on this server: Run is disabled, and the row says why in words,
+  // readable on a touch screen where a tooltip of a disabled button never shows
   unavailable?: string;
   // Inline controls of the task, e.g. the port of a certificate reload
   children?: ReactNode;
@@ -41,9 +42,8 @@ export default function TaskRow({ title, description, doc, risk = "safe", comman
   const id = useId();
   const triggerRef = useRef<HTMLElement>(null);
   const [side, setSide] = useState<TooltipSide>("left");
-  const [buttonId, titleId, riskId, commandId] = ["run", "title", "risk", "command"].map((part) => `${id}-${part}`);
-  const tooltip = unavailable ?? command;
-  const describedBy = [risk !== "safe" && riskId, tooltip && commandId].filter(Boolean).join(" ") || undefined;
+  const [buttonId, titleId, riskId, unavailableId, commandId] = ["run", "title", "risk", "unavailable", "command"].map((part) => `${id}-${part}`);
+  const describedBy = [risk !== "safe" && riskId, unavailable && unavailableId, command && commandId].filter(Boolean).join(" ") || undefined;
   const runButton = (
     <RunTaskButton
       id={buttonId}
@@ -55,8 +55,8 @@ export default function TaskRow({ title, description, doc, risk = "safe", comman
       onClick={onRun}
     />
   );
-  // A disabled button receives no pointer events: its wrapper shows the tooltip
-  const button = unavailable ? <span tabIndex={0} className="inline-flex shrink-0">{runButton}</span> : runButton;
+  // A disabled button receives no pointer events: its wrapper shows the tooltip of the command
+  const button = unavailable && command ?<span tabIndex={0} className="inline-flex shrink-0">{runButton}</span> : runButton;
   return (
     <div data-task-row className="flex justify-between items-center gap-4 p-4 bg-gray-50 rounded-2 transition-colors hover:bg-gray-100">
       <div className="min-w-0">
@@ -68,22 +68,23 @@ export default function TaskRow({ title, description, doc, risk = "safe", comman
           <RiskBadge id={riskId} risk={risk} />
         </div>
         {description && <p className="text-sm text-muted-foreground mt-0.5">{description}</p>}
+        {unavailable && <p id={unavailableId} className="text-sm text-amber-800 mt-0.5">{unavailable}</p>}
         {children && <div className="flex flex-wrap items-center gap-2 mt-2">{children}</div>}
       </div>
-      {tooltip ? (
+      {command ? (
         // Not hoverable, and never above: there, the command would cover the Run button of the previous task
         <TooltipProvider>
           <Tooltip delayDuration={0} disableHoverableContent onOpenChange={(open) => open && setSide(tooltipSide(triggerRef.current))}>
             <TooltipTrigger asChild>
               <DescribedTrigger ref={triggerRef} description={describedBy}>{button}</DescribedTrigger>
             </TooltipTrigger>
-            <TooltipContent side={side} collisionPadding={8} className="max-w-[min(28rem,calc(100vw-1rem))] break-all">{tooltip}</TooltipContent>
+            <TooltipContent side={side} collisionPadding={8} className="max-w-[min(28rem,calc(100vw-1rem))] break-all">{command}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       ) : button}
       {/* The tooltip only exists while shown: a hidden copy of the command describes Run, and DescribedTrigger
           keeps the shown tooltip out of its description */}
-      {tooltip && <span id={commandId} hidden>{tooltip}</span>}
+      {command && <span id={commandId} hidden>{command}</span>}
     </div>
   );
 }
