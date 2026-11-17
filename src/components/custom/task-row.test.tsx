@@ -61,6 +61,26 @@ describe("task row", () => {
     expect(screen.getByRole("button", { name: "common.run Delete user data", description: "tasks.risk.destructive DELETE /users/bob" })).not.toBeNull();
   });
 
+  const showTooltipOfRunAt = (left: number) => {
+    render(<TaskRow title="Reindex" command="curl -XPOST /mailboxes?task=reIndex" onRun={() => {}} />);
+    const button = screen.getByRole("button", { name: "common.run Reindex" });
+    vi.spyOn(button, "getBoundingClientRect").mockReturnValue({ left } as DOMRect);
+    fireEvent.focus(button);
+    return document.querySelector("[data-side]")!;
+  };
+
+  it("opens the command beside Run when it fits on its left", () => {
+    expect(showTooltipOfRunAt(800).getAttribute("data-side")).toBe("left");
+  });
+
+  it("opens the command below Run when its left is too narrow, e.g. on a phone", () => {
+    expect(showTooltipOfRunAt(246).getAttribute("data-side")).toBe("bottom");
+  });
+
+  it("keeps the command within the width of the screen", () => {
+    expect(showTooltipOfRunAt(246).className).toContain("max-w-[min(28rem,calc(100vw-1rem))]");
+  });
+
   it("gives a safe task without command no description", () => {
     render(<TaskRow title="Reindex" onRun={() => {}} />);
     expect(screen.getByRole("button").getAttribute("aria-describedby")).toBeNull();
