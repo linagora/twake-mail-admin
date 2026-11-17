@@ -138,6 +138,7 @@
     "newDomainPlaceholder": "Шинэ домэйны нэр",
     "errorCreating": "Домэйн үүсгэхэд алдаа гарлаа",
     "created": "«{{name}}» домэйн үүслээ",
+    "alreadyExists": "{{name}} нэртэй домэйн аль хэдийн байна.",
     "createConfirmTitle": "Домэйн үүсгэх",
     "deleteDomain": "{{domain}} домэйныг устгах",
     "deleteConfirm": "«{{domain}}»-г устгах уу? Хэрэглэгч болон домэйн алиас агуулаагүй; дараа нь дахин үүсгэж болно.",

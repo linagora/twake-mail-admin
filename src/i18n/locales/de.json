@@ -141,6 +141,7 @@
     "newDomainPlaceholder": "Neuer Domainname",
     "errorCreating": "Fehler beim Erstellen der Domain",
     "created": "Domain „{{name}}“ erstellt",
+    "alreadyExists": "Eine Domain namens {{name}} existiert bereits.",
     "createConfirmTitle": "Domain erstellen",
     "deleteDomain": "Domain {{domain}} löschen",
     "deleteConfirm": "„{{domain}}“ löschen? Die Domain enthält keinen Benutzer und keinen Domain-Alias; sie kann danach neu angelegt werden.",

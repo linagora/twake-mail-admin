@@ -141,6 +141,7 @@
     "newDomainPlaceholder": "New domain name",
     "errorCreating": "Error creating domain",
     "created": "Domain \"{{name}}\" created",
+    "alreadyExists": "A domain named {{name}} already exists.",
     "createConfirmTitle": "Create Domain",
     "deleteDomain": "Delete domain {{domain}}",
     "deleteConfirm": "Delete \"{{domain}}\"? It holds no user and no domain alias; it can be re-created afterwards.",

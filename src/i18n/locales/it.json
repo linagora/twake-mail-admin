@@ -141,6 +141,7 @@
     "newDomainPlaceholder": "Nome del nuovo dominio",
     "errorCreating": "Errore durante la creazione del dominio",
     "created": "Dominio «{{name}}» creato",
+    "alreadyExists": "Esiste già un dominio chiamato {{name}}.",
     "createConfirmTitle": "Crea dominio",
     "deleteDomain": "Elimina il dominio {{domain}}",
     "deleteConfirm": "Eliminare «{{domain}}»? Non contiene alcun utente né alias di dominio; potrà essere ricreato in seguito.",

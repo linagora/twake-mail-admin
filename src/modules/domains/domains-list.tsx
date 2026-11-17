@@ -172,7 +172,7 @@ export default function DomainsList() {
     <div>
       {/* One line: the search, then what can be done to the list */}
       <ListToolbar search={search} onSearch={(value) => { setSearch(value); setPage(1); }} placeholder={t("domains.searchPlaceholder")}>
-        {canCreate && <CreateDomainButton onCreated={refresh} />}
+        {canCreate && <CreateDomainButton existingDomains={domainsResult ?? []} onCreated={refresh} />}
         {canCreate && <ImportDomainsButton onImported={refresh} />}
       </ListToolbar>
       {isLoading && (

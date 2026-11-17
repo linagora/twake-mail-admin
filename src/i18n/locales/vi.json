@@ -137,6 +137,7 @@
     "newDomainPlaceholder": "Tên miền mới",
     "errorCreating": "Lỗi khi tạo tên miền",
     "created": "Đã tạo tên miền \"{{name}}\"",
+    "alreadyExists": "Tên miền {{name}} đã tồn tại.",
     "createConfirmTitle": "Tạo tên miền",
     "deleteDomain": "Xóa miền {{domain}}",
     "deleteConfirm": "Xóa \"{{domain}}\"? Miền không chứa người dùng hay bí danh miền nào; có thể tạo lại sau.",
