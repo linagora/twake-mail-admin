@@ -2270,7 +2270,7 @@
     "invalidDesc": "Geben Sie eine positive ganze Zahl ein, -1 für unbegrenzt, oder lassen Sie das Feld für das Standardlimit leer."
   },
   "confirmTask": {
-    "command": "Befehl",
+    "commandLabel": "Befehl:",
     "start": "Aufgabe starten"
   },
   "auth": {

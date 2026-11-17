@@ -2247,7 +2247,7 @@
     "invalidDesc": "Nhập một số nguyên dương, -1 cho không giới hạn, hoặc để trống để dùng giới hạn mặc định."
   },
   "confirmTask": {
-    "command": "Lệnh",
+    "commandLabel": "Lệnh:",
     "start": "Bắt đầu tác vụ"
   },
   "auth": {

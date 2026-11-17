@@ -54,7 +54,7 @@ const ConfirmTaskContent = ({
       )}
       {notice?.(customParams)}
       <p className="break-words text-sm">
-        <span className="font-medium">{t("confirmTask.command")}:</span>{" "}
+        <span className="font-medium">{t("confirmTask.commandLabel")}</span>{" "}
         <code className="font-mono text-xs">{buildCommandPreview(command, previewValues(params, customParams))}</code>
       </p>
     </div>

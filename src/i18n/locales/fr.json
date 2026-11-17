@@ -2272,7 +2272,7 @@
     "invalidDesc": "Saisissez un entier positif, -1 pour illimité, ou laissez vide pour la limite par défaut."
   },
   "confirmTask": {
-    "command": "Commande",
+    "commandLabel": "Commande :",
     "start": "Lancer la tâche"
   },
   "auth": {
