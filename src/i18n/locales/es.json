@@ -813,7 +813,9 @@
       "title": "Canales de red",
       "disconnectAll": "Desconectar todos",
       "disconnected": "{{username}} desconectado",
-      "errorDisconnecting": "Error al desconectar a {{username}}"
+      "errorDisconnecting": "Error al desconectar a {{username}}",
+      "disconnectAllTitle": "Desconectar a {{username}}",
+      "disconnectAllConfirm": "¿Desconectar todos los canales de {{username}}? Se cerrarán sus conexiones activas."
     },
     "mappings": {
       "title": "Asignaciones",
@@ -2101,7 +2103,6 @@
   },
   "networkChannels": {
     "disconnectAll": "Desconectar todos",
-    "disconnectUser": "Desconectar los canales de {{username}}",
     "subtitle": "Canales de red activos actualmente en el servidor.",
     "disconnectAllTitle": "Desconectar a todos los usuarios",
     "disconnectAllConfirm": "¿Desconectar todos los canales de usuario del servidor? Se cerrarán todas las conexiones activas.",

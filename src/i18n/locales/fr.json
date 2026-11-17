@@ -813,7 +813,9 @@
       "title": "Canaux réseau",
       "disconnectAll": "Déconnecter tout",
       "disconnected": "{{username}} déconnecté",
-      "errorDisconnecting": "Erreur lors de la déconnexion de {{username}}"
+      "errorDisconnecting": "Erreur lors de la déconnexion de {{username}}",
+      "disconnectAllTitle": "Déconnecter {{username}}",
+      "disconnectAllConfirm": "Déconnecter tous les canaux de {{username}} ? Ses connexions actives seront fermées."
     },
     "mappings": {
       "title": "Réécritures d'adresses",
@@ -2101,7 +2103,6 @@
   },
   "networkChannels": {
     "disconnectAll": "Déconnecter tout",
-    "disconnectUser": "Déconnecter les canaux de {{username}}",
     "subtitle": "Canaux réseau actuellement actifs sur le serveur.",
     "disconnectAllTitle": "Déconnecter tous les utilisateurs",
     "disconnectAllConfirm": "Déconnecter tous les canaux utilisateurs du serveur ? Toutes les connexions actives seront fermées.",

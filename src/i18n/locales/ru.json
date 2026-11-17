@@ -818,7 +818,9 @@
       "title": "Сетевые каналы",
       "disconnectAll": "Отключить все",
       "disconnected": "{{username}} отключён",
-      "errorDisconnecting": "Ошибка при отключении {{username}}"
+      "errorDisconnecting": "Ошибка при отключении {{username}}",
+      "disconnectAllTitle": "Отключить {{username}}",
+      "disconnectAllConfirm": "Отключить все каналы {{username}}? Это закроет все активные подключения пользователя."
     },
     "mappings": {
       "title": "Сопоставления",
@@ -2107,7 +2109,6 @@
   },
   "networkChannels": {
     "disconnectAll": "Отключить все",
-    "disconnectUser": "Отключить каналы для {{username}}",
     "subtitle": "Сетевые каналы, активные на сервере в данный момент.",
     "disconnectAllTitle": "Отключить всех пользователей",
     "disconnectAllConfirm": "Отключить все пользовательские каналы на сервере? Это закроет каждое активное соединение.",

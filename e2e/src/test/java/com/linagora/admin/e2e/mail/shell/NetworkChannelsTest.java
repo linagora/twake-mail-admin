@@ -146,7 +146,7 @@ class NetworkChannelsTest extends MailAdminE2ETest {
             assertThat(usernameButtons).hasCount(1);
             assertThat(row).containsText("e2e-client");
             detail.button("Disconnect all").click();
-            assertThat(app.dialog()).containsText("Disconnect channels for " + user);
+            assertThat(app.dialog()).containsText("Disconnect all channels of " + user + "?");
             Dialogs.confirmWith(app, "Disconnect all");
             app.expectToast(user + " disconnected");
             assertThat(app.main().getByText("No active channels.", new Locator.GetByTextOptions().setExact(true))).isVisible();

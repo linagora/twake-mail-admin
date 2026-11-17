@@ -803,7 +803,9 @@
       "title": "Kênh mạng",
       "disconnectAll": "Ngắt kết nối tất cả",
       "disconnected": "Đã ngắt kết nối {{username}}",
-      "errorDisconnecting": "Lỗi khi ngắt kết nối {{username}}"
+      "errorDisconnecting": "Lỗi khi ngắt kết nối {{username}}",
+      "disconnectAllTitle": "Ngắt kết nối {{username}}",
+      "disconnectAllConfirm": "Ngắt kết nối tất cả kênh của {{username}}? Việc này sẽ đóng các kết nối đang hoạt động của người dùng."
     },
     "mappings": {
       "title": "Ánh xạ",
@@ -2077,7 +2079,6 @@
   },
   "networkChannels": {
     "disconnectAll": "Ngắt kết nối tất cả",
-    "disconnectUser": "Ngắt kết nối các kênh cho {{username}}",
     "subtitle": "Các kênh mạng hiện đang hoạt động trên máy chủ.",
     "disconnectAllTitle": "Ngắt kết nối tất cả người dùng",
     "disconnectAllConfirm": "Ngắt kết nối tất cả kênh người dùng trên máy chủ? Việc này sẽ đóng mọi kết nối đang hoạt động.",

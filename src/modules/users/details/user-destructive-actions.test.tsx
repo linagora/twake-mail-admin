@@ -86,6 +86,25 @@ describe("user channels: disconnect all", () => {
     await waitFor(() => expect(mocks.toast).toHaveBeenCalled());
   };
 
+  it("uses the caution style of the global Disconnect all button", () => {
+    render(<UserChannels username={BOB} />);
+    fireEvent.click(screen.getByText("users.channels.title"));
+    const button = screen.getByRole("button", { name: "users.channels.disconnectAll" });
+    expect(button.className).toContain("bg-orange-700");
+    expect(button.className).not.toContain("text-red-600");
+  });
+
+  it("names the user in a dedicated confirmation", async () => {
+    mocks.api.disconnectUserChannels.mockResolvedValue(undefined);
+    await disconnectAll();
+    expect(mocks.confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        header: `users.channels.disconnectAllTitle ${JSON.stringify({ username: BOB })}`,
+        message: `users.channels.disconnectAllConfirm ${JSON.stringify({ username: BOB })}`,
+      })
+    );
+  });
+
   it("reports the disconnected user on success", async () => {
     mocks.api.disconnectUserChannels.mockResolvedValue(undefined);
     await disconnectAll();

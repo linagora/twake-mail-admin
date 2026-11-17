@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
+import { RunTaskButton } from "@/components/custom/run-task-button";
 import ChannelGrid from "@/modules/network-channels/components/channel-grid";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
 
@@ -40,11 +41,11 @@ export default function UserChannels({ username }: Props) {
 
   const handleDisconnectAll = async () => {
     const confirmed = await confirm({
-      header: t("users.channels.title"),
+      header: t("users.channels.disconnectAllTitle", { username }),
       // Like Disconnect all: every open session of the user is closed
       destructive: true,
       confirmLabel: t("users.channels.disconnectAll"),
-      message: t("networkChannels.disconnectUser", { username }),
+      message: t("users.channels.disconnectAllConfirm", { username }),
     });
     if (!confirmed) return;
 
@@ -82,16 +83,14 @@ export default function UserChannels({ username }: Props) {
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
             </Button>
             {canDisconnect && (
-              <Button
-                variant="outline"
+              <RunTaskButton
+                risk="caution"
                 size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 onClick={handleDisconnectAll}
                 disabled={disconnecting}
-              >
-                {disconnecting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
-                {t("users.channels.disconnectAll")}
-              </Button>
+                loading={disconnecting}
+                label={t("users.channels.disconnectAll")}
+              />
             )}
           </div>
 

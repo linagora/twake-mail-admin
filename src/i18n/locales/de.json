@@ -813,7 +813,9 @@
       "title": "Netzwerkkanäle",
       "disconnectAll": "Alle trennen",
       "disconnected": "{{username}} getrennt",
-      "errorDisconnecting": "Fehler beim Trennen von {{username}}"
+      "errorDisconnecting": "Fehler beim Trennen von {{username}}",
+      "disconnectAllTitle": "{{username}} trennen",
+      "disconnectAllConfirm": "Alle Kanäle von {{username}} trennen? Dadurch werden alle aktiven Verbindungen geschlossen."
     },
     "mappings": {
       "title": "Zuordnungen",
@@ -2098,7 +2100,6 @@
   },
   "networkChannels": {
     "disconnectAll": "Alle trennen",
-    "disconnectUser": "Kanäle von {{username}} trennen",
     "subtitle": "Derzeit auf dem Server aktive Netzwerkkanäle.",
     "disconnectAllTitle": "Alle Benutzer trennen",
     "disconnectAllConfirm": "Alle Benutzerkanäle auf dem Server trennen? Dadurch werden alle aktiven Verbindungen geschlossen.",
