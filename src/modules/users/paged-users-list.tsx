@@ -8,6 +8,7 @@ import { UsernamesSource } from "./users-paging";
 import { useUsersPages } from "./use-users-pages";
 import ListToolbar from "@/components/custom/list-toolbar";
 import UserLink from "@/components/custom/user-link";
+import HintTooltip from "@/components/custom/hint-tooltip";
 import { CompactList, CompactRow } from "@/components/custom/compact-list";
 
 const SEARCH_DEBOUNCE_MS = 300;
@@ -112,12 +113,12 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
             <span className="min-w-0 break-all">
               <UserLink address={username} known />
               {isUnmanaged(username) && (
-                <span
+                <HintTooltip
+                  hint={t("users.unmanagedDomainHint")}
                   className="ml-2 inline-block text-xs font-normal rounded px-1.5 py-0.5 bg-gray-100 text-gray-600 whitespace-nowrap"
-                  title={t("users.unmanagedDomainHint")}
                 >
                   {t("users.unmanagedDomain")}
-                </span>
+                </HintTooltip>
               )}
             </span>
           </CompactRow>

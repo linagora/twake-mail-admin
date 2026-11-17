@@ -95,7 +95,17 @@ describe("user mailboxes: message search link", () => {
 
     const button = screen.getByRole("button", { name: "users.mailboxes.searchMessages" }) as HTMLButtonElement;
     expect(button.disabled).toBe(true);
-    expect(screen.getByTitle("users.messageSearch.unavailableTitle")).not.toBeNull();
+    expect(button.getAttribute("aria-description")).toBe("users.messageSearch.unavailableTitle");
     expect(screen.queryByRole("link", { name: "users.mailboxes.searchMessages" })).toBeNull();
+  });
+
+  it("says why message search is disabled on a tap, not in a native title", () => {
+    markFeatureUnavailable("messageSearch");
+    renderMailboxes();
+    const wrapper = screen.getByRole("button", { name: "users.mailboxes.searchMessages" }).parentElement!;
+
+    expect(wrapper.getAttribute("title")).toBeNull();
+    fireEvent.click(wrapper);
+    expect(screen.getByRole("tooltip").textContent).toBe("users.messageSearch.unavailableTitle");
   });
 });

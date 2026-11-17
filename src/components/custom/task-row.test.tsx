@@ -92,6 +92,21 @@ describe("task row", () => {
     const button = screen.getByRole("button", { name: "common.run Apply" }) as HTMLButtonElement;
 
     expect(button.disabled).toBe(true);
-    expect(document.getElementById(button.getAttribute("aria-describedby")!)?.textContent).toBe("Not available on this server");
+    expect(screen.getByRole("button", { name: "common.run Apply", description: "Not available on this server curl -XPOST /x" })).not.toBeNull();
+  });
+
+  it("says in the row, not only in a tooltip, why the task is not available", () => {
+    render(<TaskRow title="Apply" command="curl -XPOST /x" unavailable="Not available on this server" onRun={() => {}} />);
+    const reason = screen.getByText("Not available on this server");
+
+    expect(reason.closest("[hidden]")).toBeNull();
+    expect(reason.closest("[data-task-row]")).not.toBeNull();
+  });
+
+  it("keeps the command, not the reason, in the tooltip of an unavailable task", () => {
+    render(<TaskRow title="Apply" command="curl -XPOST /x" unavailable="Not available on this server" onRun={() => {}} />);
+    fireEvent.focus(screen.getByRole("button", { name: "common.run Apply" }).parentElement!);
+
+    expect(screen.getByRole("tooltip").textContent).toBe("curl -XPOST /x");
   });
 });

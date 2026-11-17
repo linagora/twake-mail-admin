@@ -158,6 +158,15 @@ describe("paged users list: users of a deleted domain", () => {
     expect(screen.getAllByText("users.unmanagedDomain")).toHaveLength(1);
     expect(screen.getByText("ghost@gone.test").parentElement?.textContent).toContain("users.unmanagedDomain");
   });
+
+  it("explains a not managed domain on a tap, not in a native title", async () => {
+    renderList(sourceOf(["bob@example.com", "ghost@gone.test"]), ["example.com"]);
+    const badge = await screen.findByText("users.unmanagedDomain");
+
+    expect(badge.getAttribute("title")).toBeNull();
+    fireEvent.click(badge);
+    expect(screen.getByRole("tooltip").textContent).toBe("users.unmanagedDomainHint");
+  });
 });
 
 describe("paged users list: count", () => {
