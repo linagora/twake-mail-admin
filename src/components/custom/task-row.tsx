@@ -1,7 +1,20 @@
-import { ReactNode, useId } from "react";
+import { ReactNode, useId, useRef, useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import DescribedTrigger from "./described-trigger";
 import { RiskBadge, RunTaskButton, TaskRisk } from "./run-task-button";
+
+type TooltipSide = "left" | "bottom";
+
+// Widest tooltip (max-w-md), its offset to Run and its collision padding
+const TOOLTIP_ROOM = 448 + 4 + 8;
+
+/**
+ * Beside Run when the command fits on its left, so that it does not cover the Run button of the
+ * previous task. Below otherwise, e.g. on a phone, where the left of Run is narrower than the command.
+ */
+function tooltipSide(trigger: Element | null): TooltipSide {
+  return trigger !== null && trigger.getBoundingClientRect().left >= TOOLTIP_ROOM ? "left" : "bottom";
+}
 
 interface TaskRowProps {
   title: ReactNode;
@@ -26,6 +39,8 @@ interface TaskRowProps {
  */
 export default function TaskRow({ title, description, doc, risk = "safe", command, onRun, disabled, loading, unavailable, children }: TaskRowProps) {
   const id = useId();
+  const triggerRef = useRef<HTMLElement>(null);
+  const [side, setSide] = useState<TooltipSide>("left");
   const [buttonId, titleId, riskId, commandId] = ["run", "title", "risk", "command"].map((part) => `${id}-${part}`);
   const tooltip = unavailable ?? command;
   const describedBy = [risk !== "safe" && riskId, tooltip && commandId].filter(Boolean).join(" ") || undefined;
@@ -56,13 +71,13 @@ export default function TaskRow({ title, description, doc, risk = "safe", comman
         {children && <div className="flex flex-wrap items-center gap-2 mt-2">{children}</div>}
       </div>
       {tooltip ? (
-        // On the side and not hoverable: above, the command would cover the Run button of the previous task
+        // Not hoverable, and never above: there, the command would cover the Run button of the previous task
         <TooltipProvider>
-          <Tooltip delayDuration={0} disableHoverableContent>
+          <Tooltip delayDuration={0} disableHoverableContent onOpenChange={(open) => open && setSide(tooltipSide(triggerRef.current))}>
             <TooltipTrigger asChild>
-              <DescribedTrigger description={describedBy}>{button}</DescribedTrigger>
+              <DescribedTrigger ref={triggerRef} description={describedBy}>{button}</DescribedTrigger>
             </TooltipTrigger>
-            <TooltipContent side="left" className="max-w-md break-all">{tooltip}</TooltipContent>
+            <TooltipContent side={side} collisionPadding={8} className="max-w-[min(28rem,calc(100vw-1rem))] break-all">{tooltip}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       ) : button}
