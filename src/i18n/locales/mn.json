@@ -801,7 +801,9 @@
       "title": "Сүлжээний сувгууд",
       "disconnectAll": "Бүгдийг салгах",
       "disconnected": "{{username}} салгагдлаа",
-      "errorDisconnecting": "{{username}}-г салгахад алдаа гарлаа"
+      "errorDisconnecting": "{{username}}-г салгахад алдаа гарлаа",
+      "disconnectAllTitle": "{{username}}-г салгах",
+      "disconnectAllConfirm": "{{username}}-ийн бүх сувгийг салгах уу? Энэ нь түүний идэвхтэй холболтуудыг хаана."
     },
     "mappings": {
       "title": "Зураглал",
@@ -2077,7 +2079,6 @@
   },
   "networkChannels": {
     "disconnectAll": "Бүгдийг салгах",
-    "disconnectUser": "{{username}}-ийн сувгуудыг салгах",
     "subtitle": "Сервер дээр одоо идэвхтэй байгаа сүлжээний сувгууд.",
     "disconnectAllTitle": "Бүх хэрэглэгчийг салгах",
     "disconnectAllConfirm": "Сервер дээрх бүх хэрэглэгчийн сувгуудыг салгах уу? Энэ нь идэвхтэй бүх холболтыг хаана.",

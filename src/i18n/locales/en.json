@@ -808,7 +808,9 @@
       "title": "Network Channels",
       "disconnectAll": "Disconnect all",
       "disconnected": "{{username}} disconnected",
-      "errorDisconnecting": "Error disconnecting {{username}}"
+      "errorDisconnecting": "Error disconnecting {{username}}",
+      "disconnectAllTitle": "Disconnect {{username}}",
+      "disconnectAllConfirm": "Disconnect all channels of {{username}}? This will close their active connections."
     },
     "mappings": {
       "title": "Mappings",
@@ -2092,7 +2094,6 @@
   },
   "networkChannels": {
     "disconnectAll": "Disconnect all",
-    "disconnectUser": "Disconnect channels for {{username}}",
     "subtitle": "Network channels currently active on the server.",
     "disconnectAllTitle": "Disconnect All Users",
     "disconnectAllConfirm": "Disconnect all user channels on the server? This will close every active connection.",

@@ -808,7 +808,9 @@
       "title": "Canali di rete",
       "disconnectAll": "Disconnetti tutti",
       "disconnected": "{{username}} disconnesso",
-      "errorDisconnecting": "Errore durante la disconnessione di {{username}}"
+      "errorDisconnecting": "Errore durante la disconnessione di {{username}}",
+      "disconnectAllTitle": "Disconnetti {{username}}",
+      "disconnectAllConfirm": "Disconnettere tutti i canali di {{username}}? Verranno chiuse le sue connessioni attive."
     },
     "mappings": {
       "title": "Mappature",
@@ -2094,7 +2096,6 @@
   },
   "networkChannels": {
     "disconnectAll": "Disconnetti tutti",
-    "disconnectUser": "Disconnetti i canali di {{username}}",
     "subtitle": "Canali di rete attualmente attivi sul server.",
     "disconnectAllTitle": "Disconnetti tutti gli utenti",
     "disconnectAllConfirm": "Disconnettere tutti i canali utente sul server? Verranno chiuse tutte le connessioni attive.",
