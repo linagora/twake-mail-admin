@@ -281,7 +281,7 @@ function BindSpaceDialog({ open, onClose, title, domain, mailbox, current, onBou
         </div>
       )}
       <p className="break-words text-sm">
-        <span className="font-medium">{t("confirmTask.command")}:</span>{" "}
+        <span className="font-medium">{t("confirmTask.commandLabel")}</span>{" "}
         <code className="font-mono text-xs">{bindSpaceCommand(domain, mailbox, binding)}</code>
       </p>
       {conflict && <p role="alert" className="text-sm text-red-600">{t("domains.teamMailboxSpace.conflict")}</p>}

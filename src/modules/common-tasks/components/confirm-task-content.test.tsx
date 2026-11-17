@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import ConfirmTaskContent from "./confirm-task-content";
 import { TaskParam } from "../types";
+import en from "@/i18n/locales/en.json";
+import fr from "@/i18n/locales/fr.json";
 
 const COMMAND = "curl -XPOST /users/bob@example.com/data";
 
@@ -121,8 +123,18 @@ describe("ConfirmTaskContent: no parameter", () => {
   it("shows the message directly followed by the command, without a stray 0", () => {
     const { container } = render(<ConfirmTaskContent message={<p>message</p>} command={COMMAND} params={[]} />);
 
-    // "Command:" is the untranslated fallback of confirmTask.command
-    expect(container.textContent).toBe(`messageconfirmTask.command: ${COMMAND}`);
+    // The label carries its own colon, so that the locale places it
+    expect(container.textContent).toBe(`messageconfirmTask.commandLabel ${COMMAND}`);
+  });
+});
+
+describe("ConfirmTaskContent: the command label colon", () => {
+  it("lets French put a space before the colon", () => {
+    expect(fr.confirmTask.commandLabel).toBe("Commande :");
+  });
+
+  it("keeps the colon right after the English label", () => {
+    expect(en.confirmTask.commandLabel).toBe("Command:");
   });
 });
 
