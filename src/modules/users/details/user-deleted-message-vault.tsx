@@ -45,21 +45,29 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
   const [loading, setLoading] = useState(false);
   const [restoreLoading, setRestoreLoading] = useState(false);
   const [results, setResults] = useState<DeletedMessage[] | null>(null);
+  const [searchedRequest, setSearchedRequest] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [restoringId, setRestoringId] = useState<string | null>(null);
+
+  const buildRequest = (): RestoreDeletedMessagesRequest => ({
+    combinator: "and",
+    criteria,
+    ...(limit !== undefined ? { limit } : {}),
+  });
+
+  // Search results only tell what Restore would act on while the criteria are still those of that search.
+  const currentResults = searchedRequest === JSON.stringify(buildRequest()) ? results : null;
+  const nothingToRestore = currentResults?.length === 0;
 
   const handleSearch = async () => {
     setLoading(true);
     setResults(null);
     setPage(1);
     try {
-      const body: RestoreDeletedMessagesRequest = {
-        combinator: "and",
-        criteria,
-        ...(limit !== undefined ? { limit } : {}),
-      };
+      const body = buildRequest();
       const data = await onSearch(body);
       setResults(data);
+      setSearchedRequest(JSON.stringify(body));
     } catch (err) {
       toast({
         title: t("users.deletedVault.errorSearch"),
@@ -73,20 +81,15 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
   const handleRestore = async () => {
     const confirmed = await confirm({
       header: t("users.deletedVault.restoreTitle"),
-      message: results
-        ? t("users.deletedVault.restoreConfirm", { count: results.length, label })
+      message: currentResults
+        ? t("users.deletedVault.restoreConfirm", { count: currentResults.length, label })
         : t("users.deletedVault.restoreAllConfirm", { label }),
     });
     if (!confirmed) return;
 
     setRestoreLoading(true);
     try {
-      const body: RestoreDeletedMessagesRequest = {
-        combinator: "and",
-        criteria,
-        ...(limit !== undefined ? { limit } : {}),
-      };
-      const data = await onRestore(body);
+      const data = await onRestore(buildRequest());
       toastTaskCreated(data.taskId, t("users.deletedVault.restoreStarted"), taskTypeLabel(t, "deleted-messages-restore"));
     } catch (err) {
       toast({
@@ -168,7 +171,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
                 size="sm"
                 variant="outline"
                 onClick={handleRestore}
-                disabled={loading || restoreLoading || !criteriaValid}
+                disabled={loading || restoreLoading || !criteriaValid || nothingToRestore}
                 className="flex items-center gap-2 text-green-700 border-green-600 hover:bg-green-50"
               >
                 {restoreLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
