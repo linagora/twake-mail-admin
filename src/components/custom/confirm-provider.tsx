@@ -136,6 +136,7 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const typeRef = useRef<HTMLInputElement>(null);
   const typeId = useId();
+  const consequenceId = useId();
   const focusCancel = useRef(false);
   const [requestFocusCancel] = useState(() => () => { focusCancel.current = true; });
 
@@ -222,15 +223,16 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
       {children}
       <Dialog open={confirmState.isOpen} onOpenChange={(open) => !open && handleCancel()}>
         <DialogContent className={cn("has-[[data-task-params]]:max-w-2xl", confirmState.className)} onOpenAutoFocus={handleOpenAutoFocus} onCloseAutoFocus={restoreFocus}
-          // A text message is the dialog's description; a content with fields, read as it is browsed
-          {...(typeof confirmState.message === 'string' ? {} : { "aria-describedby": undefined })}>
+          // Described by the consequence, then by a text message (Radix appends its Description id);
+          // a content with fields is read as it is browsed
+          aria-describedby={confirmState.consequence ? consequenceId : undefined}>
           <DialogHeader>
             <DialogTitle>{confirmState.header}</DialogTitle>
           </DialogHeader>
           {confirmState.consequence && (
             <div className="flex gap-2 items-start border-l-4 border-red-600 bg-red-50 text-red-900 p-3 text-sm">
               <TriangleAlert className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
-              <div>{confirmState.consequence}</div>
+              <div id={consequenceId}>{confirmState.consequence}</div>
             </div>
           )}
           <ConfirmAppearanceContext.Provider value={setAppearance}>

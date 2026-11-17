@@ -320,6 +320,20 @@ describe("destructive confirm dialog", () => {
     expect(screen.getByRole("dialog", { description: "Delete all signature templates for domain \"example.com\"?" })).not.toBeNull();
   });
 
+  it("is described by its consequence, then by its text message", async () => {
+    await openDestructive({ message: "Delete registered user \"alice\"?", consequence: "alice loses her delegated calendars." });
+
+    expect(screen.getByRole("dialog", {
+      description: "alice loses her delegated calendars. Delete registered user \"alice\"?",
+    })).not.toBeNull();
+  });
+
+  it("is described by its consequence when its message is a content", async () => {
+    await openDestructive({ message: <a href="/users">See the users</a>, consequence: "The domain still has 6 users." });
+
+    expect(screen.getByRole("dialog", { description: "The domain still has 6 users." })).not.toBeNull();
+  });
+
   it("names the action on a red button and shows the consequence", async () => {
     await openDestructive({ confirmLabel: "Delete user data", consequence: "Everything is lost" });
 
