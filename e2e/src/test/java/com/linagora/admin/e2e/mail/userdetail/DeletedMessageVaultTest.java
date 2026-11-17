@@ -53,26 +53,28 @@ class DeletedMessageVaultTest extends MailAdminE2ETest {
         vault.searchButton().click();
         assertThat(vault.found()).hasText("0 messages found");
         assertThat(app.main().getByText("No messages match the criteria.")).isVisible();
+        // Nothing to restore for the criteria of a search that found nothing
+        assertThat(vault.restoreButton()).isDisabled();
 
         criteria.textValues().first().fill("Quarterly");
+        assertThat(vault.restoreButton()).isEnabled();
         vault.searchButton().click();
-        assertThat(vault.found()).hasText(java.util.regex.Pattern.compile("^(0 messages|1 message) found$"));
-        String found = vault.found().textContent();
-        String count = found.substring(0, found.indexOf(' '));
+        assertThat(vault.found()).hasText(Pattern.compile("^(0 messages|1 message) found$"));
+        if (vault.found().textContent().startsWith("0 ")) {
+            // The vault did not get the message: there is nothing to restore
+            assertThat(vault.restoreButton()).isDisabled();
+            return;
+        }
 
         vault.restoreButton().click();
-        assertThat(app.dialog()).containsText("Restore " + count + ("1".equals(count) ? " message" : " messages") + " for " + user
-            + "? This will enqueue a background task.");
+        assertThat(app.dialog()).containsText("Restore 1 message for " + user + "? This will enqueue a background task.");
         app.confirm();
         String taskId = detail.taskIdFromToast("Restore task started");
         JsonNode task = webAdmin.awaitTask(taskId);
         assertThat(task.path("status").asText()).as(task.toString()).isEqualTo("completed");
-        // Whatever the vault held is back in the user's mailboxes
-        int restored = task.path("additionalInformation").path("successfulRestoreCount").asInt();
-        assertThat(restored).as(task.toString()).isEqualTo(Integer.parseInt(count));
-        if (restored > 0) {
-            fixtures.awaitMessageCount(user, "Restored-Messages", restored);
-        }
+        // The message held by the vault is back in the user's mailboxes
+        assertThat(task.path("additionalInformation").path("successfulRestoreCount").asInt()).as(task.toString()).isEqualTo(1);
+        fixtures.awaitMessageCount(user, "Restored-Messages", 1);
     }
 
     @Test
