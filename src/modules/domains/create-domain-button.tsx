@@ -7,13 +7,26 @@ import { useToast } from "@/hooks/use-toast";
 import { appConfig } from "@/lib/config";
 import { createDomain } from "./api-client";
 
+interface Props {
+  // The domains the list already shows: WebAdmin answers 204 to an existing domain too
+  existingDomains: readonly string[];
+  onCreated: () => void;
+}
+
 /** "Create a domain", next to the search of the domain list: the name is typed in a modal. */
-export default function CreateDomainButton({ onCreated }: { onCreated: () => void }) {
+export default function CreateDomainButton({ existingDomains, onCreated }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const fieldId = useId();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+
+  // Domain names are case insensitive
+  const validateCreate = () => {
+    const domain = name.trim();
+    const lower = domain.toLowerCase();
+    return existingDomains.some((existing) => existing.toLowerCase() === lower) ? t("domains.alreadyExists", { name: domain }) : null;
+  };
 
   const handleCreate = async () => {
     const domain = name.trim();
@@ -35,6 +48,7 @@ export default function CreateDomainButton({ onCreated }: { onCreated: () => voi
         title={t("domains.createConfirmTitle")}
         submitLabel={t("common.create")}
         submitDisabled={!name.trim()}
+        validate={validateCreate}
         onSubmit={handleCreate}
       >
         <div>

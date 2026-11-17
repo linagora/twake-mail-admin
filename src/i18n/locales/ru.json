@@ -146,6 +146,7 @@
     "newDomainPlaceholder": "Имя нового домена",
     "errorCreating": "Ошибка при создании домена",
     "created": "Домен «{{name}}» создан",
+    "alreadyExists": "Домен {{name}} уже существует.",
     "createConfirmTitle": "Создать домен",
     "deleteDomain": "Удалить домен {{domain}}",
     "deleteConfirm": "Удалить «{{domain}}»? В нём нет ни пользователей, ни псевдонимов домена; его можно будет создать снова.",

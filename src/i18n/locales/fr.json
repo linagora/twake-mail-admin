@@ -141,6 +141,7 @@
     "newDomainPlaceholder": "Nouveau nom de domaine",
     "errorCreating": "Erreur lors de la création du domaine",
     "created": "Domaine « {{name}} » créé",
+    "alreadyExists": "Un domaine nommé {{name}} existe déjà.",
     "createConfirmTitle": "Créer un domaine",
     "deleteDomain": "Supprimer le domaine {{domain}}",
     "deleteConfirm": "Supprimer « {{domain}} » ? Il ne contient aucun utilisateur ni alias de domaine ; il pourra être recréé ensuite.",
