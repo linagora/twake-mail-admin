@@ -2272,7 +2272,7 @@
     "invalidDesc": "Enter a positive integer, -1 for unlimited, or leave empty for the default limit."
   },
   "confirmTask": {
-    "command": "Command",
+    "commandLabel": "Command:",
     "start": "Start task"
   },
   "auth": {

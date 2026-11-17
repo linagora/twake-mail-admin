@@ -2273,7 +2273,7 @@
     "invalidDesc": "Introduzca un número entero positivo, -1 para ilimitado, o déjelo vacío para el límite predeterminado."
   },
   "confirmTask": {
-    "command": "Comando",
+    "commandLabel": "Comando:",
     "start": "Iniciar tarea"
   },
   "auth": {

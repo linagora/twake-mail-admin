@@ -157,8 +157,11 @@ describe("task container: doc link", () => {
 describe("task container: command tooltip", () => {
   it("opens the command on the side of the Run button, where it covers no other task", async () => {
     renderTaskWithDoc("");
+    const run = screen.getByRole("button", { name: /^common\.run / });
+    // A desktop layout: the command fits on the left of Run
+    vi.spyOn(run, "getBoundingClientRect").mockReturnValue({ left: 800 } as DOMRect);
 
-    fireEvent.focus(screen.getByRole("button", { name: /^common\.run / }));
+    fireEvent.focus(run);
 
     const tooltip = await screen.findByRole("tooltip");
     expect(tooltip.textContent).toBe("POST /calendars?task=scheduleAlarms");
