@@ -34,7 +34,7 @@ class UserDetailMiscTest extends MailAdminE2ETest {
         assertThat(app.main().getByText("No active channels.")).isVisible();
         assertThat(detail.button("Refresh")).hasAttribute("title", "Refresh");
         detail.button("Disconnect all").click();
-        assertThat(app.dialog()).containsText("Disconnect channels for " + user);
+        assertThat(app.dialog()).containsText("Disconnect all channels of " + user + "?");
         detail.confirm("Disconnect all");
         app.expectToast(user + " disconnected");
         assertThat(app.main().getByText("No active channels.")).isVisible();
