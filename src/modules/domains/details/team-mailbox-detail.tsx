@@ -188,6 +188,7 @@ function TeamMailboxDetailContent() {
                   onClick={() => handleRemove(member.username)}
                   className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                   title={t("domains.teamMailbox.removeMemberTooltip")}
+                  aria-label={t("domains.teamMailbox.removeMemberNamed", { item: member.username })}
                 >
                   <Trash2 className="w-4 h-4 text-red-600" />
                 </button>

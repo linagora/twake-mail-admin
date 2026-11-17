@@ -2,6 +2,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => (options ? `${key} ${JSON.stringify(options)}` : key),
+  }),
+}));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => false }));
@@ -46,6 +51,19 @@ describe("user labels: phone layout", () => {
   });
 });
 
+describe("user labels: row buttons", () => {
+  it("names the edit and delete buttons after the label, the tooltips staying short", async () => {
+    render(<UserLabels username="bob@example.com" />);
+    fireEvent.click(screen.getByText("users.labels.title"));
+
+    const item = JSON.stringify({ item: "Important" });
+    const edit = await screen.findByRole("button", { name: `users.labels.editNamed ${item}` });
+    const remove = screen.getByRole("button", { name: `users.labels.deleteNamed ${item}` });
+    expect(edit.getAttribute("title")).toBe("users.labels.editTooltip");
+    expect(remove.getAttribute("title")).toBe("users.labels.deleteTooltip");
+  });
+});
+
 describe("user labels: edit dialog color", () => {
   it("keeps the current color in the picker when the Color field is emptied, as the warning says", async () => {
     render(<UserLabels username="bob@example.com" />);
@@ -55,7 +73,7 @@ describe("user labels: edit dialog color", () => {
     fireEvent.change(await screen.findByLabelText("users.labels.colorLabel"), { target: { value: "" } });
 
     expect((screen.getByLabelText("users.labels.colorPicker") as HTMLInputElement).value).toBe("#ff0000");
-    expect(screen.getByText("users.labels.colorCannotBeCleared")).not.toBeNull();
+    expect(screen.getByText(`users.labels.colorCannotBeCleared ${JSON.stringify({ color: "#ff0000" })}`)).not.toBeNull();
   });
 });
 

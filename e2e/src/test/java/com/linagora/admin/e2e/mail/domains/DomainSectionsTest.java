@@ -125,7 +125,7 @@ class DomainSectionsTest extends MailAdminE2ETest {
         assertThat(webAdmin.get(contactPath).expect(200).json().path("surname").asText()).isEqualTo("Corrected");
 
         // "Edit contact" from the row opens the same form
-        detail.rowButton(email, "Edit contact").click();
+        detail.rowButton(email, "Edit contact \"" + email + "\"").click();
         assertThat(app.dialog().getByLabel("Surname", new Locator.GetByLabelOptions().setExact(true))).hasValue("Corrected");
         app.dialog().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Cancel").setExact(true)).click();
         assertThat(app.dialog()).isHidden();
@@ -138,7 +138,7 @@ class DomainSectionsTest extends MailAdminE2ETest {
         detail.placeholder("Search contacts...").fill(localPart);
         assertThat(detail.rowHeading(email)).isVisible();
 
-        detail.rowButton(email, "Remove contact").click();
+        detail.rowButton(email, "Remove contact \"" + email + "\"").click();
         assertThat(app.dialog()).containsText("Delete contact \"" + email + "\" from " + domain + "?");
         detail.confirmWith("Delete");
         app.expectToast("Contact deleted");

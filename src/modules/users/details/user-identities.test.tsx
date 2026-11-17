@@ -142,3 +142,15 @@ describe("user identities: Enter in a field", () => {
     await waitFor(() => expect(createUserIdentity).toHaveBeenCalledWith("bob@example.com", expect.objectContaining({ name: "Bob QA", email: "bob@example.com" })));
   });
 });
+
+describe("user identities: row buttons", () => {
+  it("names the edit and delete buttons after the identity as its row shows it, the tooltips staying short", async () => {
+    openSection();
+
+    const item = JSON.stringify({ item: "Bob <bob@example.com>" });
+    const edit = await screen.findByRole("button", { name: `users.identities.editNamed ${item}` });
+    const remove = screen.getByRole("button", { name: `users.identities.deleteNamed ${item}` });
+    expect(edit.getAttribute("title")).toBe("users.identities.editTooltip");
+    expect(remove.getAttribute("title")).toBe("users.identities.deleteTooltip");
+  });
+});

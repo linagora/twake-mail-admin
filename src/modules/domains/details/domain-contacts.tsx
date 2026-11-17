@@ -289,6 +289,7 @@ export default function DomainContacts({ domain }: Props) {
                         onClick={(e) => { e.stopPropagation(); openEditFromList(email); }}
                         className="p-2 rounded-md hover:bg-gray-200"
                         title={t("domains.contacts.editTooltip")}
+                        aria-label={t("domains.contacts.editNamed", { item: email })}
                       >
                         <Pencil className="w-4 h-4 text-blue-600" />
                       </button>
@@ -298,6 +299,7 @@ export default function DomainContacts({ domain }: Props) {
                         onClick={(e) => { e.stopPropagation(); handleDelete(email); }}
                         className="p-2 rounded-md hover:bg-gray-200"
                         title={t("domains.contacts.removeTooltip")}
+                        aria-label={t("domains.contacts.removeNamed", { item: email })}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>
