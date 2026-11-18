@@ -104,6 +104,7 @@
     "viewJson": "Показать JSON",
     "sourceIsAccount": "{{source}} — существующая учётная запись: псевдоним перенаправит её почту на {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} — существующая учётная запись: псевдоним перенаправит её почту.",
+    "sourceIsAccountRegex": "{{source}} — существующая учётная запись: сопоставление по регулярному выражению перепишет её почту.",
     "taskCreatedNamed": "{{name}} — Задача {{taskId}}",
     "pendingChanges_one": "{{count}} изменение ожидает сохранения: нажмите «Применить».",
     "pendingChanges_few": "{{count}} изменения ожидают сохранения: нажмите «Применить».",

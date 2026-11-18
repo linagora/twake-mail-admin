@@ -101,6 +101,7 @@
     "viewJson": "Xem JSON",
     "sourceIsAccount": "{{source}} là một tài khoản hiện có: bí danh sẽ chuyển hướng thư của tài khoản này tới {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} là một tài khoản hiện có: bí danh sẽ chuyển hướng thư của tài khoản này.",
+    "sourceIsAccountRegex": "{{source}} là một tài khoản hiện có: ánh xạ biểu thức chính quy sẽ viết lại thư của tài khoản này.",
     "taskCreatedNamed": "{{name}} — Tác vụ {{taskId}}"
   },
   "sidebar": {

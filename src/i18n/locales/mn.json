@@ -102,6 +102,7 @@
     "viewJson": "JSON харах",
     "sourceIsAccount": "{{source}} нь одоо байгаа бүртгэл: хоч нэр түүний шууданг {{destination}} руу шилжүүлнэ.",
     "sourceIsAccountNoDestination": "{{source}} нь одоо байгаа бүртгэл: хоч нэр түүний шууданг шилжүүлнэ.",
+    "sourceIsAccountRegex": "{{source}} нь одоо байгаа бүртгэл: тогтмол илэрхийллийн зураглал түүний шууданг дахин бичнэ.",
     "taskCreatedNamed": "{{name}} — Даалгавар {{taskId}}"
   },
   "sidebar": {

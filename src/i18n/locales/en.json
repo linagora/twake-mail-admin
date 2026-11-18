@@ -103,6 +103,7 @@
     "viewJson": "View JSON",
     "sourceIsAccount": "{{source}} is an existing account: an alias would divert its mail to {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} is an existing account: an alias would divert its mail.",
+    "sourceIsAccountRegex": "{{source}} is an existing account: a regular expression mapping would rewrite its mail.",
     "taskCreatedNamed": "{{name}} — Task {{taskId}}",
     "pendingChanges_one": "{{count}} pending change: click Apply to save.",
     "discardMessage_one": "{{count}} change will not be saved."

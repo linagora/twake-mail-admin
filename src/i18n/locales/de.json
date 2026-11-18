@@ -103,6 +103,7 @@
     "viewJson": "JSON anzeigen",
     "sourceIsAccount": "{{source}} ist ein bestehendes Konto: Ein Alias würde seine E-Mails an {{destination}} umleiten.",
     "sourceIsAccountNoDestination": "{{source}} ist ein bestehendes Konto: Ein Alias würde seine E-Mails umleiten.",
+    "sourceIsAccountRegex": "{{source}} ist ein bestehendes Konto: Ein Mapping mit regulärem Ausdruck würde seine E-Mails umschreiben.",
     "taskCreatedNamed": "{{name}} — Aufgabe {{taskId}}",
     "pendingChanges_one": "{{count}} ausstehende Änderung: Klicken Sie auf Übernehmen, um zu speichern.",
     "discardMessage_one": "{{count}} Änderung wird nicht gespeichert."

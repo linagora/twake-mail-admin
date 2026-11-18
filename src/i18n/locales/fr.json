@@ -103,6 +103,7 @@
     "viewJson": "Voir le JSON",
     "sourceIsAccount": "{{source}} est un compte existant : un alias détournerait son courrier vers {{destination}}.",
     "sourceIsAccountNoDestination": "{{source}} est un compte existant : un alias détournerait son courrier.",
+    "sourceIsAccountRegex": "{{source}} est un compte existant : un mapping par expression régulière réécrirait son courrier.",
     "taskCreatedNamed": "{{name}} — Tâche {{taskId}}",
     "pendingChanges_one": "{{count}} modification en attente : cliquez sur Appliquer pour enregistrer.",
     "discardMessage_one": "{{count}} modification ne sera pas enregistrée."
