@@ -435,6 +435,7 @@ export default function MailRepositoryExtended() {
                         onClick={() => handleDownload(mail.name)}
                         className="p-1.5 rounded-md hover:bg-gray-200"
                         title={t("mailRepositories.downloadTooltip")}
+                        aria-label={t("mailRepositories.downloadMailNamed", { item: mail.name })}
                       >
                         <Download className="w-4 h-4 text-blue-600" />
                       </button>
@@ -444,6 +445,7 @@ export default function MailRepositoryExtended() {
                         onClick={() => handleReprocess(mail.name)}
                         className="p-1.5 rounded-md hover:bg-gray-200"
                         title={t("mailRepositories.reprocessMailTooltip")}
+                        aria-label={t("mailRepositories.reprocessMailNamed", { item: mail.name })}
                       >
                         <RefreshCw className="w-4 h-4 text-green-600" />
                       </button>
@@ -453,6 +455,7 @@ export default function MailRepositoryExtended() {
                         onClick={() => handleMove(mail.name)}
                         className="p-1.5 rounded-md hover:bg-gray-200"
                         title={t("mailRepositories.moveMailTooltip")}
+                        aria-label={t("mailRepositories.moveMailNamed", { item: mail.name })}
                       >
                         <MoveHorizontal className="w-4 h-4 text-orange-500" />
                       </button>
@@ -462,6 +465,7 @@ export default function MailRepositoryExtended() {
                         onClick={() => handleDelete(mail.name)}
                         className="p-1.5 rounded-md hover:bg-gray-200"
                         title={t("mailRepositories.deleteMailTooltip")}
+                        aria-label={t("mailRepositories.deleteMailNamed", { item: mail.name })}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>

@@ -9,10 +9,13 @@ import com.microsoft.playwright.options.AriaRole;
 
 /** The detail (headed by the repository path) and extended views of a mail repository. */
 public class MailRepositoryDetailPage {
-    public static final String DOWNLOAD = "Download email";
-    public static final String REPROCESS = "Reprocess email";
-    public static final String MOVE = "Move email to another repository";
-    public static final String DELETE = "Delete email";
+    /** The per mail actions, their accessible names carrying the mail key: {@code Delete email "<key>"}. */
+    public static final String DOWNLOAD = "Download email \"%s\"";
+    public static final String REPROCESS = "Reprocess email \"%s\"";
+    public static final String MOVE = "Move email \"%s\" to another repository";
+    public static final String DELETE = "Delete email \"%s\"";
+    /** The hover tooltip of the per mail Delete buttons, the same on every row. */
+    private static final String DELETE_TOOLTIP = "Delete email";
 
     private final AdminApp app;
 
@@ -111,13 +114,14 @@ public class MailRepositoryDetailPage {
         return row(key).getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("(MIME)").setExact(true));
     }
 
+    /** A mail action of a row of the simple view, {@code action} being one of the named action formats. */
     public Locator simpleRowAction(String key, String action) {
-        return row(key).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(action).setExact(true));
+        return row(key).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(action.formatted(key)).setExact(true));
     }
 
     /** The per mail Delete buttons of the extended view: one per displayed mail. */
     public Locator extendedDeleteButtons() {
-        return app.main().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(DELETE).setExact(true));
+        return app.main().locator("button[title='" + DELETE_TOOLTIP + "']");
     }
 
     /** A mail key of the simple view. */
@@ -136,11 +140,12 @@ public class MailRepositoryDetailPage {
 
     /** A row of the extended view: the mail button, sender, recipients, date, size and actions. */
     public Locator extendedRow(String key) {
-        return mailButton(key).locator("xpath=ancestor::div[.//button[@title='" + DELETE + "']][1]");
+        return mailButton(key).locator("xpath=ancestor::div[.//button[@title='" + DELETE_TOOLTIP + "']][1]");
     }
 
+    /** A mail action of a row of the extended view, {@code action} being one of the named action formats. */
     public Locator rowAction(String key, String action) {
-        return extendedRow(key).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(action).setExact(true));
+        return extendedRow(key).getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName(action.formatted(key)).setExact(true));
     }
 
     public Locator sortField() {
