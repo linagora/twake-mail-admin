@@ -19,7 +19,7 @@ export default function ExpandCollapseAll() {
   return (
     <div className="flex gap-3 text-sm">
       {ALL_ACTIONS.map(({ open, labelKey, Icon }) => (
-        <button key={labelKey} type="button" className="inline-flex items-center text-blue-600 hover:underline" title={t(labelKey)}
+        <button key={labelKey} type="button" data-compact-action className="inline-flex items-center text-blue-600 hover:underline" title={t(labelKey)}
           onClick={() => sections.current.forEach((_, id) => writeSection(id, open))}>
           {/* Only where the room is short, e.g. the sticky bar on a phone: see Header */}
           <Icon data-compact-icon className="hidden w-5 h-5" aria-hidden="true" />
