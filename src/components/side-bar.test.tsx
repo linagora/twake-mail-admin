@@ -7,6 +7,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 const allowed = vi.hoisted(() => ({ deny: new Set<string>() }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: (_verb: string, pattern: string) => !allowed.deny.has(pattern) }));
 vi.mock("@/components/custom/oidc-provider", () => ({ useOIDC: () => ({ logout: vi.fn() }) }));
+vi.mock("@/components/custom/auth-provider", () => ({ useAuth: () => ({ isAuthenticated: false, clearToken: vi.fn() }) }));
 vi.mock("@/lib/config", () => ({ appConfig: { application: "MAIL", sso: false } }));
 
 import { AppSidebar } from "./side-bar";

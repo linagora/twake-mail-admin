@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
 import { AuthModal } from "./auth-modal";
-import { setBearerToken, getBearerToken, removeBearerToken } from "@/lib/auth";
+import { setBearerToken, getBearerToken, removeBearerToken, dropLegacyBearerCookie } from "@/lib/auth";
 import { setGlobalAuthHandler } from "@/lib/apiClient";
 
 interface AuthContextType {
@@ -59,6 +59,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAuthPromiseResolve(null);
     setAuthPromiseReject(null);
   }, [authPromiseReject]);
+
+  // A token an earlier version left in a 7-day cookie is no longer read: forget it
+  useEffect(() => {
+    dropLegacyBearerCookie();
+  }, []);
 
   // Register the auth handler with the API client
   useEffect(() => {

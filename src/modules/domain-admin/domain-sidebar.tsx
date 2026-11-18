@@ -1,4 +1,4 @@
-import { Users, BookMarked, Mailbox, Gauge, Zap, ListChecks, Globe, LogOut, Languages, Mails } from "lucide-react";
+import { Users, BookMarked, Mailbox, Gauge, Zap, ListChecks, Globe, Languages, Mails } from "lucide-react";
 import Logo from "@/assets/images/logo.svg";
 import {
   Sidebar,
@@ -6,7 +6,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
@@ -16,8 +15,7 @@ import { type NavGroup, visibleNavGroups } from "@/components/nav-groups";
 import { useTranslation } from "react-i18next";
 import { useDomain } from "./domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
-import { appConfig } from "@/lib/config";
-import { useOIDC } from "@/components/custom/oidc-provider";
+import { SidebarLogoutButton } from "@/components/sidebar-logout-button";
 import { supportedLanguages } from "@/i18n";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -42,19 +40,6 @@ function LanguageSelector() {
           </SelectContent>
         </Select>
       </div>
-    </SidebarMenuItem>
-  );
-}
-
-function SidebarLogoutButton() {
-  const { logout } = useOIDC();
-  const { t } = useTranslation();
-  return (
-    <SidebarMenuItem>
-      <SidebarMenuButton onClick={logout}>
-        <LogOut />
-        <span>{t("sidebar.logout")}</span>
-      </SidebarMenuButton>
     </SidebarMenuItem>
   );
 }
@@ -128,7 +113,7 @@ export function DomainSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <LanguageSelector />
-          {appConfig.sso && <SidebarLogoutButton />}
+          <SidebarLogoutButton />
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

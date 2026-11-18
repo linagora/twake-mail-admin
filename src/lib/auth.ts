@@ -1,25 +1,24 @@
-export const BEARER_TOKEN_COOKIE = 'bearer_token';
+// The static WebAdmin token lives in sessionStorage, as the OIDC tokens do (see oidc.ts):
+// it is dropped when the tab closes, is never sent to the server serving the app, and is not
+// shared with the applications served on other ports of the same host name, as a cookie would be.
+// (It stays readable from JS, hence the CSP defence-in-depth in nginx.conf.)
+export const BEARER_TOKEN_KEY = 'bearer_token';
+
+// Earlier versions kept the token 7 days in a cookie of that name
+const LEGACY_BEARER_TOKEN_COOKIE = 'bearer_token';
+
+export const dropLegacyBearerCookie = (): void => {
+  document.cookie = `${LEGACY_BEARER_TOKEN_COOKIE}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+};
 
 export const setBearerToken = (token: string): void => {
-  // Set cookie to expire in 7 days (after that if request failed with 401 again, it will show auth modal)
-  // SameSite=Strict limits CSRF; Secure keeps the token off plaintext HTTP.
-  // (HttpOnly cannot be set from JS — the token still lives in JS-readable
-  // storage, hence the CSP defence-in-depth in nginx.conf.)
-  const secure = window.location.protocol === "https:" ? "; Secure" : "";
-  document.cookie = `${BEARER_TOKEN_COOKIE}=${encodeURIComponent(token)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict${secure}`;
+  dropLegacyBearerCookie();
+  sessionStorage.setItem(BEARER_TOKEN_KEY, token);
 };
 
-export const getBearerToken = (): string | null => {
-  const cookies = document.cookie.split(';');
-  for (const cookie of cookies) {
-    const [name, value] = cookie.trim().split('=');
-    if (name === BEARER_TOKEN_COOKIE) {
-      return decodeURIComponent(value);
-    }
-  }
-  return null;
-};
+export const getBearerToken = (): string | null => sessionStorage.getItem(BEARER_TOKEN_KEY);
 
 export const removeBearerToken = (): void => {
-  document.cookie = `${BEARER_TOKEN_COOKIE}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  dropLegacyBearerCookie();
+  sessionStorage.removeItem(BEARER_TOKEN_KEY);
 };
