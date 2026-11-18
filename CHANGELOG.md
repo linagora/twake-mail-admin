@@ -90,6 +90,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - nginx sends `X-Content-Type-Options: nosniff` on every response.
 - npm audit fixes: minimatch (GHSA-g3hv-75wg-m249) and follow-redirects (GHSA-mrwp-f3q8-3g9p).
 - The Docker image applies Alpine security updates (#632).
+- Without SSO, the WebAdmin token is kept in sessionStorage for the tab only, no longer 7 days in a cookie, and the sidebar offers Logout to forget it (#684). Operators sign in again in each new tab.
 
 ## [1.0.12] - 2026-10-22
 

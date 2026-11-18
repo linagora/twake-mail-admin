@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import com.linagora.admin.e2e.MailAdminE2ETest;
 import com.linagora.admin.e2e.backend.Ids;
 import com.linagora.admin.e2e.backend.MailFixtures;
-import com.linagora.admin.e2e.docker.MailStack;
 import com.linagora.admin.e2e.pages.AdminApp;
 import com.linagora.admin.e2e.pages.mail.domains.DomainsPage;
 import com.linagora.admin.e2e.pages.mail.shell.Shell;
@@ -21,7 +20,7 @@ import com.linagora.admin.e2e.pages.mail.users.UsersListPage;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.Cookie;
+import com.microsoft.playwright.options.AriaRole;
 
 /**
  * Sign in without SSO: the app reaches WebAdmin with a static JWT, prompted for on the first 401.
@@ -51,7 +50,7 @@ class SignInTest extends MailAdminE2ETest {
         // The call answered 401 is replayed with the token: the list fills in without a reload
         domains.search(domain);
         assertThat(domains.domainLink(domain)).isVisible();
-        assertThat(WebAdminAuth.storedToken(context)).isEqualTo(token);
+        assertThat(WebAdminAuth.storedToken(page)).isEqualTo(token);
 
         // Kept across a reload, sent on every call, never prompted for again
         authorizations.clear();
@@ -68,20 +67,37 @@ class SignInTest extends MailAdminE2ETest {
 
     @Test
     @DisplayName("NAV-11 A rejected token prompts again and is forgotten")
-    void rejectedTokenPromptsAgain(AdminApp app, Page page, BrowserContext context, MailStack stack) {
+    void rejectedTokenPromptsAgain(AdminApp app, Page page, BrowserContext context) {
         WebAdminAuth.requireToken(context, Ids.unique("token"));
-        context.addCookies(List.of(new Cookie(WebAdminAuth.COOKIE, "revoked").setUrl(stack.adminUrl())));
+        WebAdminAuth.holdToken(page, "revoked");
 
         app.open("/domains");
         Locator dialog = WebAdminAuth.dialog(page);
         assertThat(dialog).isVisible();
         // The rejected token is dropped as soon as WebAdmin refuses it
-        assertThat(WebAdminAuth.storedToken(context)).isNull();
+        assertThat(WebAdminAuth.storedToken(page)).isNull();
 
         WebAdminAuth.button(page, "Cancel").click();
         assertThat(dialog).isHidden();
-        assertThat(WebAdminAuth.storedToken(context)).isNull();
+        assertThat(WebAdminAuth.storedToken(page)).isNull();
         // The refusal of WebAdmin shows up, not a blank page
         assertThat(app.main().getByText(Pattern.compile("^Error: "))).isVisible();
+    }
+
+    @Test
+    @DisplayName("NAV-11 Logout forgets the Bearer token and prompts for a new one")
+    void logoutForgetsBearerToken(AdminApp app, Page page, BrowserContext context) {
+        String token = Ids.unique("token");
+        WebAdminAuth.requireToken(context, token);
+        app.open("/domains");
+        WebAdminAuth.authenticate(page, token);
+        Locator dialog = WebAdminAuth.dialog(page);
+        assertThat(dialog).isHidden();
+        assertThat(context.cookies()).noneMatch(cookie -> cookie.name.equals(WebAdminAuth.STORAGE_KEY));
+
+        app.sidebar().getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Logout")).click();
+
+        assertThat(dialog).isVisible();
+        assertThat(WebAdminAuth.storedToken(page)).isNull();
     }
 }

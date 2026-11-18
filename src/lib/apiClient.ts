@@ -49,8 +49,8 @@ export function configureApiClient(baseURL: string): void {
 
 /**
  * Installs interceptors for static bearer-token auth (current behaviour):
- * - Reads token from cookie on every request.
- * - On 401, clears the cookie and prompts the user for a new token via modal.
+ * - Reads token from sessionStorage on every request.
+ * - On 401, forgets the token and prompts the user for a new token via modal.
  * Called once at startup when no SSO config is present.
  */
 export function installStaticTokenAuth(): void {

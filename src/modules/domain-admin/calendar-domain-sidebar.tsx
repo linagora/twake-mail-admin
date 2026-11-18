@@ -1,11 +1,10 @@
-import { ShieldCheck, Box, Users, UserCheck, ListChecks, Settings, Globe, LogOut, Languages } from "lucide-react";
+import { ShieldCheck, Box, Users, UserCheck, ListChecks, Settings, Globe, Languages } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
@@ -15,8 +14,7 @@ import { type NavGroup, visibleNavGroups } from "@/components/nav-groups";
 import { useTranslation } from "react-i18next";
 import { useDomain } from "./domain-context";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
-import { appConfig } from "@/lib/config";
-import { useOIDC } from "@/components/custom/oidc-provider";
+import { SidebarLogoutButton } from "@/components/sidebar-logout-button";
 import { supportedLanguages } from "@/i18n";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRegisteredUsersPermissions } from "@/modules/registered-users/permissions";
@@ -42,19 +40,6 @@ function LanguageSelector() {
           </SelectContent>
         </Select>
       </div>
-    </SidebarMenuItem>
-  );
-}
-
-function SidebarLogoutButton() {
-  const { logout } = useOIDC();
-  const { t } = useTranslation();
-  return (
-    <SidebarMenuItem>
-      <SidebarMenuButton onClick={logout}>
-        <LogOut />
-        <span>{t("sidebar.logout")}</span>
-      </SidebarMenuButton>
     </SidebarMenuItem>
   );
 }
@@ -135,7 +120,7 @@ export function CalendarDomainSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <LanguageSelector />
-          {appConfig.sso && <SidebarLogoutButton />}
+          <SidebarLogoutButton />
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

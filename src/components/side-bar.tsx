@@ -1,4 +1,4 @@
-import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, LogOut, Languages, BarChart2, Mails, Send } from "lucide-react";
+import { Heart, Mail, AlertCircle, ClipboardList, ListChecks, Users, Network, Globe, Gauge, Activity, Database, ArrowRightLeft, MapPin, UserCheck, Languages, BarChart2, Mails, Send } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -7,7 +7,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
@@ -17,7 +16,7 @@ import { SidebarNavGroups } from "@/components/sidebar-nav-item";
 import { type NavGroup, visibleNavGroups } from "@/components/nav-groups";
 import { appConfig } from "@/lib/config";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
-import { useOIDC } from "@/components/custom/oidc-provider";
+import { SidebarLogoutButton } from "@/components/sidebar-logout-button";
 import { supportedLanguages } from "@/i18n";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -42,19 +41,6 @@ function LanguageSelector() {
           </SelectContent>
         </Select>
       </div>
-    </SidebarMenuItem>
-  );
-}
-
-function SidebarLogoutButton() {
-  const { logout } = useOIDC();
-  const { t } = useTranslation();
-  return (
-    <SidebarMenuItem>
-      <SidebarMenuButton onClick={logout}>
-        <LogOut />
-        <span>{t("sidebar.logout")}</span>
-      </SidebarMenuButton>
     </SidebarMenuItem>
   );
 }
@@ -166,7 +152,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <LanguageSelector />
-          {appConfig.sso && <SidebarLogoutButton />}
+          <SidebarLogoutButton />
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
