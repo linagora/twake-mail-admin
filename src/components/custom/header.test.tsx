@@ -90,6 +90,23 @@ describe("header: sticky bar of a detail page", () => {
     vi.unstubAllGlobals();
   });
 
+  it("gives the back link and the icon-only actions a 44 px touch target on a phone", async () => {
+    vi.stubGlobal("IntersectionObserver", FakeIntersectionObserver);
+    const { container } = render(
+      <MemoryRouter>
+        <Header headerTitle="bob@example.com" breadcrumb={[{ label: "Users", to: "/users" }]}
+          actions={<button data-compact-action><span data-action-label>Expand all</span></button>} />
+      </MemoryRouter>
+    );
+    await act(async () => report(true));
+    const bar = container.querySelector("[data-sticky-header]")!;
+    expect(bar.querySelector("a")!.className).toContain("min-h-11");
+    const actions = bar.querySelector("button")!.parentElement!;
+    expect(actions.className).toContain("max-md:[&_[data-compact-action]]:min-w-11");
+    expect(actions.className).toContain("max-md:[&_[data-compact-action]]:min-h-11");
+    vi.unstubAllGlobals();
+  });
+
   it("has no sticky bar on a list page", async () => {
     vi.stubGlobal("IntersectionObserver", FakeIntersectionObserver);
     report = () => {};

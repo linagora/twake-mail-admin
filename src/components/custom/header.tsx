@@ -37,6 +37,15 @@ function useScrolledPast(ref: RefObject<HTMLElement | null>, enabled: boolean): 
   return past;
 }
 
+/** Below md, the actions of the sticky bar show their icon only, centred in a 44×44 px target. */
+const COMPACT_ACTIONS = [
+  "max-md:[&_[data-action-label]]:sr-only",
+  "max-md:[&_[data-compact-icon]]:inline",
+  "max-md:[&_[data-compact-action]]:justify-center",
+  "max-md:[&_[data-compact-action]]:min-w-11",
+  "max-md:[&_[data-compact-action]]:min-h-11",
+].join(" ");
+
 /**
  * The single h1 of a page. A list page shows its name, subtitle and doc; a detail page shows
  * the object it is about, under a breadcrumb leading back to its list.
@@ -64,13 +73,15 @@ const Header: React.FC<HeaderProps> = ({
       <div className="sticky top-12 md:top-0 z-20 h-0" aria-hidden={!scrolledPast}>
         {scrolledPast && (
           <div data-sticky-header className="-mx-4 px-4 h-12 flex items-center gap-3 bg-background/95 backdrop-blur border-b">
-            <Link to={back.to} className="inline-flex items-center gap-1 shrink-0 text-sm text-blue-600 hover:underline">
+            {/* Touch targets of a phone: 44 px high, fitting the 48 px bar */}
+            <Link to={back.to} className="inline-flex items-center gap-1 shrink-0 min-h-11 text-sm text-blue-600 hover:underline">
               <ChevronLeft className="w-4 h-4" aria-hidden="true" />
               {back.label}
             </Link>
             <span className="min-w-0 truncate text-lg font-semibold" title={typeof headerTitle === "string" ? headerTitle : undefined}>{headerTitle}</span>
-            {/* On a phone the actions shrink to their icons, leaving the room to the object */}
-            {actions && <div className="ml-auto shrink-0 max-md:[&_[data-action-label]]:sr-only max-md:[&_[data-compact-icon]]:inline">{actions}</div>}
+            {/* On a phone the actions shrink to their icons, leaving the room to the object, each
+                icon keeping a 44×44 px touch target */}
+            {actions && <div className={`ml-auto shrink-0 ${COMPACT_ACTIONS}`}>{actions}</div>}
           </div>
         )}
       </div>
