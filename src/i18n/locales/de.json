@@ -490,6 +490,7 @@
       "addAdminTooltip": "Administrator hinzufügen",
       "searchPlaceholder": "Ressourcen suchen...",
       "detailKind": "Ressourcenkalender",
+      "deletedNotice": "Diese Kalenderressource wurde gelöscht.",
       "noAdmins": "Keine Administratoren.",
       "administeredBy_one": "{{count}} Administrator",
       "administeredBy_other": "{{count}} Administratoren"

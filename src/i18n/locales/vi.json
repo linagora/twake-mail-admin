@@ -486,6 +486,7 @@
       "addAdminTooltip": "Thêm quản trị viên",
       "searchPlaceholder": "Tìm tài nguyên...",
       "detailKind": "Lịch tài nguyên",
+      "deletedNotice": "Tài nguyên lịch này đã bị xóa.",
       "noAdmins": "Không có quản trị viên.",
       "administeredBy": "{{count}} quản trị viên"
     },

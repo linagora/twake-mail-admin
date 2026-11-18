@@ -138,6 +138,24 @@ describe("CalendarResourceDetail", () => {
     expect(api.updateResource).not.toHaveBeenCalled();
   });
 
+  it("says a deleted resource was deleted and offers no Edit, Add or Remove administrator", async () => {
+    api.getResource.mockResolvedValue({ ...resource, deleted: true, administrators: [{ email: "bob@open-paas.org" }] });
+    render(<CalendarResourceDetail />);
+
+    expect((await screen.findByRole("status")).textContent).toBe("domains.calendarResources.deletedNotice");
+    expect(screen.getByText("bob@open-paas.org")).toBeTruthy();
+    expect(screen.queryByText("common.edit")).toBeNull();
+    expect(screen.queryByTitle("domains.calendarResources.addAdminTooltip")).toBeNull();
+    expect(screen.queryByTitle("domains.calendarResources.removeAdminTooltip")).toBeNull();
+  });
+
+  it("shows no deleted notice for an active resource", async () => {
+    render(<CalendarResourceDetail />);
+
+    await screen.findByText("common.edit");
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
   it("keeps the edit form with the typed values when the update is refused", async () => {
     api.updateResource.mockRejectedValue(new Error("Unsupported icon"));
     render(<CalendarResourceDetail />);
