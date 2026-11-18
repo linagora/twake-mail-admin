@@ -305,6 +305,8 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         assertThat(detail.filtersToggle()).containsText("1 filter active");
         assertThat(detail.mailKey(seeded.shortKey())).isVisible();
         assertThat(detail.mailKey(seeded.longKeys().get(0))).hasCount(0);
+        // The total counts the matching mails, not the whole repository
+        assertThat(detail.pageLabel("Total: 1")).isVisible();
 
         detail.resetFilters().click();
         assertThat(detail.mailKey(seeded.longKeys().get(0))).isVisible();
@@ -322,6 +324,7 @@ class MailRepositoriesTest extends MailAdminE2ETest {
         detail.applyFilters().click();
         assertThat(app.main().getByRole(AriaRole.STATUS).filter(new Locator.FilterOptions().setHasText("No emails found."))).isVisible();
         assertThat(detail.mailKey(seeded.shortKey())).hasCount(0);
+        assertThat(detail.pageLabel("Total: 0")).isVisible();
     }
 
     @Test

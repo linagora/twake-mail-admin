@@ -25,6 +25,7 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 import { currentLocale } from "@/i18n/locale";
 import { formatByteSize } from "@/i18n/format-size";
 import { EXTENDED_PAGE_LIMIT } from "./page-limits";
+import { hasActiveFilter, lastPageAction, pagingLabel, repositoryPaging } from "./repository-paging";
 import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
 import EmptyState from "@/components/custom/empty-state";
@@ -94,8 +95,6 @@ export default function MailRepositoryExtended() {
   const repoSize = Number(searchParams.get("size")) || 0;
   const page = Number(searchParams.get("page")) || 1;
   const offset = (page - 1) * PAGE_LIMIT;
-  const totalPages = Math.max(1, Math.ceil(repoSize / PAGE_LIMIT));
-  const hasMore = offset + PAGE_LIMIT < repoSize;
 
   const activeFilters: MailFilters = {
     sender: searchParams.get("sender") || "",
@@ -206,6 +205,11 @@ export default function MailRepositoryExtended() {
     return copy;
   }, [mails, sortField, sortAsc]);
 
+  const filtered = hasActiveFilter(activeFilters);
+  const paging = repositoryPaging({
+    page, limit: PAGE_LIMIT, repositorySize: repoSize, listed: mailKeys.length, filtered,
+  });
+
   const buildParams = (overrides: Record<string, string> = {}): Record<string, string> => {
     const params: Record<string, string> = { page: page.toString(), size: repoSize.toString(), ...overrides };
     if (activeFilters.sender) params.sender = activeFilters.sender;
@@ -218,7 +222,7 @@ export default function MailRepositoryExtended() {
   };
 
   const goToPage = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return;
+    if (newPage < 1 || newPage > (paging.totalPages ?? Infinity)) return;
     setSearchParams(buildParams({ page: newPage.toString() }));
   };
 
@@ -479,16 +483,16 @@ export default function MailRepositoryExtended() {
       )}
 
       {/* Pagination */}
-      {repoSize > 0 && (
+      {(filtered || repoSize > 0) && (
         <PaginationControls
           onFirst={() => goToPage(1)}
           onPrev={() => goToPage(page - 1)}
           onNext={() => goToPage(page + 1)}
-          onLast={() => goToPage(totalPages)}
+          onLast={lastPageAction(paging, goToPage)}
           disabledPrev={page <= 1}
-          disabledNext={!hasMore}
-          label={t("common.page", { page, totalPages, total: repoSize })}
-          total={repoSize}
+          disabledNext={!paging.hasMore}
+          label={pagingLabel(t, page, paging)}
+          total={paging.total}
         />
       )}
 
