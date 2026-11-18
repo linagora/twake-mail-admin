@@ -23,6 +23,7 @@ import {
   renameUserCommand,
   RenameUserValues,
   restoreDeletedMessagesCommand,
+  resumeStep,
   subscribeAllCommand,
 } from "./user-task-commands";
 import { TaskParam } from "@/modules/common-tasks/types";
@@ -314,7 +315,7 @@ export default function UserTasks({ username }: Props) {
       action: async () => {
         const data = await renameUser(username, currentValues.newUsername.trim(), {
           force: currentValues.force || undefined,
-          fromStep: currentValues.fromStep || undefined,
+          fromStep: resumeStep(currentValues.fromStep),
         });
         toastTaskCreated(data.taskId, undefined, taskTypeLabel(t, "UsernameChangeTask"));
       },
@@ -340,7 +341,7 @@ export default function UserTasks({ username }: Props) {
         />
       ),
       action: async () => {
-        const data = await deleteUserData(username, currentFromStep || undefined);
+        const data = await deleteUserData(username, resumeStep(currentFromStep));
         toastTaskCreated(data.taskId, undefined, taskTypeLabel(t, "DeleteUserDataTask"));
       },
     });

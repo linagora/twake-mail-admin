@@ -129,6 +129,29 @@ describe("calendar user tasks: resuming a data deletion", () => {
 
     await waitFor(() => expect(api.deleteUserData).toHaveBeenCalledWith(USERNAME, STEP));
   });
+
+  it("trims the typed step before sending it", async () => {
+    api.deleteUserData.mockResolvedValueOnce({ taskId: "task-4" });
+    await openDeleteDialog();
+
+    fireEvent.change(fromStepField(), { target: { value: `  ${STEP} ` } });
+    fireEvent.change(screen.getByLabelText("confirm.typeToConfirm"), { target: { value: USERNAME } });
+    fireEvent.click(screen.getByRole("button", { name: "confirm.deleteUserData" }));
+
+    await waitFor(() => expect(api.deleteUserData).toHaveBeenCalledWith(USERNAME, STEP));
+  });
+
+  it("starts from the beginning when only spaces are typed", async () => {
+    api.deleteUserData.mockResolvedValueOnce({ taskId: "task-5" });
+    await openDeleteDialog();
+
+    fireEvent.change(fromStepField(), { target: { value: "  " } });
+    expect(screen.getByRole("dialog").textContent).not.toContain("&fromStep=");
+    fireEvent.change(screen.getByLabelText("confirm.typeToConfirm"), { target: { value: USERNAME } });
+    fireEvent.click(screen.getByRole("button", { name: "confirm.deleteUserData" }));
+
+    await waitFor(() => expect(api.deleteUserData).toHaveBeenCalledWith(USERNAME, undefined));
+  });
 });
 
 describe("calendar user tasks: archival without criteria", () => {

@@ -3,18 +3,33 @@ import { RestoreCriterion, RestoreDeletedMessagesRequest } from "../types";
 
 // Previews of the WebAdmin calls run by the user tasks, shown in their confirmation dialogs.
 // They mirror the query parameters actually sent by the api-client: empty values are dropped,
-// and a `true` flag is rendered as a bare parameter (e.g. `&force`).
+// a `true` flag is rendered as a bare parameter (e.g. `&force`), and the characters that would
+// change the meaning of the query (`&`, `=`, `+`, `#`, `%`, spaces...) are percent-encoded.
 type QueryValue = string | boolean | undefined;
 
-const isSent = ([, value]: [string, QueryValue]) => value !== undefined && value !== false && value !== "";
+type SentParam = [string, string | true];
+
+const isSent = (param: [string, QueryValue]): param is SentParam => {
+  const [, value] = param;
+  return value !== undefined && value !== false && value !== "";
+};
+
+// Keeps readable what is valid as is in a query value (e.g. an email, a `{placeholder}`).
+const UNSAFE_QUERY_CHARACTER = /[^A-Za-z0-9\-._~!$'()*,;:@/?{}]/gu;
+
+export const encodeQueryValue = (value: string): string =>
+  value.replace(UNSAFE_QUERY_CHARACTER, encodeURIComponent);
 
 export const withQuery = (path: string, params: [string, QueryValue][]): string => {
   const query = params
     .filter(isSent)
-    .map(([key, value]) => (value === true ? key : `${key}=${value}`))
+    .map(([key, value]) => (value === true ? key : `${key}=${encodeQueryValue(value)}`))
     .join("&");
   return query ? `${path}?${query}` : path;
 };
+
+// The step a rename or a deletion resumes from: a blank value means "from the start".
+export const resumeStep = (fromStep: string): string | undefined => fromStep.trim() || undefined;
 
 export const orPlaceholder = (value: string, placeholder: string) => value.trim() || `{${placeholder}}`;
 
@@ -43,13 +58,13 @@ export const renameUserCommand = (username: string, values: RenameUserValues) =>
   `curl -XPOST ${withQuery(`/users/${username}/rename/${orPlaceholder(values.newUsername, "newUser")}`, [
     ["action", "rename"],
     ["force", values.force],
-    ["fromStep", values.fromStep],
+    ["fromStep", resumeStep(values.fromStep)],
   ])}`;
 
 export const deleteUserDataCommand = (username: string, fromStep: string) =>
   `curl -XPOST ${withQuery(`/users/${username}`, [
     ["action", "deleteData"],
-    ["fromStep", fromStep],
+    ["fromStep", resumeStep(fromStep)],
   ])}`;
 
 export const buildRestoreRequest = (criteria: RestoreCriterion[], limit: number | undefined): RestoreDeletedMessagesRequest => ({
