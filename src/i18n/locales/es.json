@@ -493,6 +493,7 @@
       "addAdminTooltip": "Añadir administrador",
       "searchPlaceholder": "Buscar recursos...",
       "detailKind": "Calendario de recurso",
+      "deletedNotice": "Este recurso de calendario fue eliminado.",
       "noAdmins": "Ningún administrador.",
       "administeredBy_one": "{{count}} administrador",
       "administeredBy_other": "{{count}} administradores"

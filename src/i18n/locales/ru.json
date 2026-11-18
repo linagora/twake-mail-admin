@@ -498,6 +498,7 @@
       "addAdminTooltip": "Добавить администратора",
       "searchPlaceholder": "Поиск ресурсов...",
       "detailKind": "Календарь ресурса",
+      "deletedNotice": "Этот ресурс календаря был удалён.",
       "noAdmins": "Нет администраторов.",
       "administeredBy_one": "{{count}} администратор",
       "administeredBy_few": "{{count}} администратора",

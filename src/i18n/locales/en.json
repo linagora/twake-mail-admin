@@ -493,6 +493,7 @@
       "addAdminTooltip": "Add administrator",
       "searchPlaceholder": "Search resources...",
       "detailKind": "Resource calendar",
+      "deletedNotice": "This calendar resource was deleted.",
       "noAdmins": "No administrators.",
       "administeredBy_one": "{{count}} administrator",
       "administeredBy_other": "{{count}} administrators"

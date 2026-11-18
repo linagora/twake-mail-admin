@@ -490,6 +490,7 @@
       "addAdminTooltip": "Администратор нэмэх",
       "searchPlaceholder": "Нөөц хайх...",
       "detailKind": "Нөөцийн хуанли",
+      "deletedNotice": "Энэ хуанлийн нөөц устгагдсан.",
       "noAdmins": "Администратор алга.",
       "administeredBy_one": "{{count}} админ",
       "administeredBy_other": "{{count}} админ"

@@ -40,7 +40,9 @@ export default function CalendarResourceDetail() {
   const fetchResource = useCallback(() => getResource(domain, resourceId!), [domain, resourceId]);
   const { data: resource, isLoading, error, refresh } = useFetchData<Resource>(fetchResource);
 
-  const canEdit = useIsAllowed("PATCH", "/domains/{domain}/resources/{resourceId}");
+  const canPatch = useIsAllowed("PATCH", "/domains/{domain}/resources/{resourceId}");
+  // A deleted resource is still returned, flagged, but the side service refuses any update of it (404)
+  const canEdit = canPatch && !resource?.deleted;
 
   const [page, setPage] = useState(1);
   const [showAddAdmin, setShowAddAdmin] = useState(false);
@@ -162,6 +164,11 @@ export default function CalendarResourceDetail() {
 
       {resource && (
         <>
+          {resource.deleted && (
+            <p role="status" className="inline-block px-2 py-1 rounded-md bg-red-100 text-red-800 text-sm font-medium">
+              {t("domains.calendarResources.deletedNotice")}
+            </p>
+          )}
           {editing ? (
             <div className="mt-2 space-y-2">
               <div>
