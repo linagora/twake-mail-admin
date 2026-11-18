@@ -136,7 +136,7 @@ export default function UserMappings({ username }: Props) {
                     <tr key={`${m.type}-${m.mapping}-${index}`} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-2 text-sm text-gray-500">{index + 1}</td>
                       <td className="px-4 py-2 text-sm">{m.type}</td>
-                      <td className="px-4 py-2 text-sm">{m.mapping}</td>
+                      <td className="px-4 py-2 text-sm [overflow-wrap:anywhere]">{m.mapping}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -169,7 +169,7 @@ export default function UserMappings({ username }: Props) {
                       className="space-y-1 p-3 bg-gray-50 rounded-2 my-1 flex items-center"
                     >
                       <span className="text-gray-500 mr-2 text-sm">{index + 1}/</span>
-                      <span className="text-sm">{source}</span>
+                      <span className="text-sm min-w-0 [overflow-wrap:anywhere]">{source}</span>
                     </div>
                   ))}
                 </div>
