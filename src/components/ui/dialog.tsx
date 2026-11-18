@@ -4,6 +4,7 @@ import { X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { cn } from "@/lib/utils"
+import { useEscapeHandoff, useMergedRefs } from "./escape-handoff"
 
 // The name of the corner X button, in the current language
 function CloseLabel() {
@@ -40,35 +41,43 @@ export const OWNS_ESCAPE = "data-owns-escape"
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, onEscapeKeyDown, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      onEscapeKeyDown={(event) => {
-        // A list open inside the dialog (suggestions, a picker) closes first: Radix listens to
-        // Escape on the document, before any handler of the field could stop it
-        if (event.target instanceof Element && event.target.closest(`[${OWNS_ESCAPE}="true"]`)) event.preventDefault()
-        onEscapeKeyDown?.(event)
-      }}
-      className={cn(
-        // Never moves nor resizes on its own: anchored at a fixed top (a message appearing in it
-        // grows it downwards instead of shifting it), a fixed width, a stable scrollbar gutter,
-        // and a plain fade instead of the zoom and slide animations
-        "fixed left-[50%] top-[8vh] z-50 grid w-[calc(100%-2rem)] max-w-lg max-h-[84vh] overflow-y-auto [scrollbar-gutter:stable] grid-cols-[minmax(0,1fr)] [overflow-wrap:anywhere] translate-x-[-50%] gap-4 border bg-background p-6 shadow-lg duration-150 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 rounded-lg",
-        className
-      )}
-      {...props}
-    >
-      {children}
-      {/* A 40 × 40 touch target (WCAG 2.5.8) whose 16 px icon stays 16 px from the corner */}
-      <DialogPrimitive.Close className="absolute right-1 top-1 inline-flex size-10 items-center justify-center rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-        <X className="h-4 w-4" />
-        <CloseLabel />
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
-  </DialogPortal>
-))
+>(({ className, children, onEscapeKeyDown, ...props }, ref) => {
+  const closeButton = React.useRef<HTMLButtonElement>(null)
+  const handleEscapeKeyDown = (event: KeyboardEvent) => {
+    // A list open inside the dialog (suggestions, a picker) closes first: Radix listens to
+    // Escape on the document, before any handler of the field could stop it
+    if (event.target instanceof Element && event.target.closest(`[${OWNS_ESCAPE}="true"]`)) event.preventDefault()
+    onEscapeKeyDown?.(event)
+  }
+  // Escape still closes the dialog while a toast it raised is shown
+  const escapeHandoff = useEscapeHandoff<HTMLDivElement>(handleEscapeKeyDown, () => closeButton.current?.click())
+  const contentRef = useMergedRefs(ref, escapeHandoff)
+
+  return (
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogPrimitive.Content
+        ref={contentRef}
+        onEscapeKeyDown={handleEscapeKeyDown}
+        className={cn(
+          // Never moves nor resizes on its own: anchored at a fixed top (a message appearing in it
+          // grows it downwards instead of shifting it), a fixed width, a stable scrollbar gutter,
+          // and a plain fade instead of the zoom and slide animations
+          "fixed left-[50%] top-[8vh] z-50 grid w-[calc(100%-2rem)] max-w-lg max-h-[84vh] overflow-y-auto [scrollbar-gutter:stable] grid-cols-[minmax(0,1fr)] [overflow-wrap:anywhere] translate-x-[-50%] gap-4 border bg-background p-6 shadow-lg duration-150 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 rounded-lg",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        {/* A 40 × 40 touch target (WCAG 2.5.8) whose 16 px icon stays 16 px from the corner */}
+        <DialogPrimitive.Close ref={closeButton} className="absolute right-1 top-1 inline-flex size-10 items-center justify-center rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+          <X className="h-4 w-4" />
+          <CloseLabel />
+        </DialogPrimitive.Close>
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  )
+})
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
 const DialogHeader = ({

@@ -1,7 +1,9 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { useState } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./dialog";
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from "./sheet";
 import { Toast, ToastClose, ToastProvider, ToastTitle, ToastViewport } from "./toast";
 
 afterEach(cleanup);
@@ -66,5 +68,93 @@ describe("toast", () => {
 
     const toastTitle = screen.getByText("Failed to create the mail repository");
     expect(toastTitle.closest("[aria-hidden='true']")).toBeNull();
+  });
+
+  function DialogRaisingToasts({ toasts, keepOpen = false }: { toasts: number; keepOpen?: boolean }) {
+    const [open, setOpen] = useState(true);
+    return (
+      <ToastProvider>
+        {Array.from({ length: toasts }, (_, index) => (
+          <Toast key={index} open>
+            <ToastTitle>{`Copied to clipboard ${index}`}</ToastTitle>
+          </Toast>
+        ))}
+        <ToastViewport />
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent onEscapeKeyDown={(event) => keepOpen && event.preventDefault()}>
+            <DialogTitle>mail-001</DialogTitle>
+            <DialogDescription>Mail as JSON</DialogDescription>
+            <button>Copy</button>
+          </DialogContent>
+        </Dialog>
+      </ToastProvider>
+    );
+  }
+
+  const pressEscapeOn = (element: HTMLElement) => {
+    element.focus();
+    fireEvent.keyDown(element, { key: "Escape" });
+  };
+
+  it("closes the dialog holding the focus on Escape, not the toast it raised", () => {
+    render(<DialogRaisingToasts toasts={3} />);
+
+    pressEscapeOn(screen.getByRole("button", { name: "Copy" }));
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByText("Copied to clipboard 2")).toBeTruthy();
+  });
+
+  it("lets the dialog keep Escape from closing it while a toast is shown", () => {
+    render(<DialogRaisingToasts toasts={1} keepOpen />);
+
+    pressEscapeOn(screen.getByRole("button", { name: "Copy" }));
+
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.getByText("Copied to clipboard 0")).toBeTruthy();
+  });
+
+  it("closes the sheet holding the focus on Escape, not the toast it raised", () => {
+    function SheetRaisingToast() {
+      const [open, setOpen] = useState(true);
+      return (
+        <ToastProvider>
+          <Toast open>
+            <ToastTitle>Saved</ToastTitle>
+          </Toast>
+          <ToastViewport />
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetContent>
+              <SheetTitle>Menu</SheetTitle>
+              <SheetDescription>Navigation</SheetDescription>
+              <button>Domains</button>
+            </SheetContent>
+          </Sheet>
+        </ToastProvider>
+      );
+    }
+    render(<SheetRaisingToast />);
+
+    pressEscapeOn(screen.getByRole("button", { name: "Domains" }));
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByText("Saved")).toBeTruthy();
+  });
+
+  it("still closes a toast on Escape when no dialog holds the focus", () => {
+    const onOpenChange = vi.fn();
+    render(
+      <ToastProvider>
+        <Toast open onOpenChange={onOpenChange}>
+          <ToastTitle>Rate limits updated</ToastTitle>
+        </Toast>
+        <ToastViewport />
+        <button>Elsewhere</button>
+      </ToastProvider>
+    );
+
+    pressEscapeOn(screen.getByRole("button", { name: "Elsewhere" }));
+
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });
