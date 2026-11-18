@@ -108,6 +108,46 @@ describe("mappings list: an address mapping checks its addresses", () => {
   });
 });
 
+describe("mappings list: a regex mapping checks its source against the accounts", () => {
+  const openRegexDialog = async () => {
+    render(<MemoryRouter><MappingsList /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole("button", { name: "mappings.addTitle" }));
+    fireEvent.change(screen.getByLabelText("mappings.type"), { target: { value: "regex" } });
+  };
+  const typeMapping = (source: string, mapping: string) => {
+    fireEvent.change(screen.getByLabelText("mappings.source"), { target: { value: source } });
+    fireEvent.change(screen.getByLabelText("mappings.destination"), { target: { value: mapping } });
+  };
+  const createButton = () => screen.getByRole("button", { name: "common.create" }) as HTMLButtonElement;
+
+  afterEach(() => accounts.clear());
+
+  it("refuses a source that is an existing account, its mail would be rewritten", async () => {
+    accounts.add("bob@example.com");
+    await openRegexDialog();
+    typeMapping("bob@example.com", ".*@example.com:alice@example.com");
+
+    expect(screen.getByRole("alert").textContent).toBe("common.sourceIsAccountRegex");
+    expect(createButton().disabled).toBe(true);
+  });
+
+  it("accepts a source that is not an account", async () => {
+    await openRegexDialog();
+    typeMapping("qa@example.com", ".*@example.com:alice@example.com");
+
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(createButton().disabled).toBe(false);
+  });
+
+  it("does not check the destination, a pattern rather than an address", async () => {
+    accounts.add("alice@example.com");
+    await openRegexDialog();
+    typeMapping("qa@example.com", "alice@example.com");
+
+    expect(screen.queryByText("common.userExists")).toBeNull();
+  });
+});
+
 describe("mappings list: a new regex mapping and the limits of RE2", () => {
   const BRACES_MAPPING = "(.*)@a.org:${1}@b.org";
   const openRegexDialog = async () => {

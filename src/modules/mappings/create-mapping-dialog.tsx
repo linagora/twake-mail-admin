@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { createAddressMapping, createDomainMapping, createRegexMapping } from "./api-client";
-import { DestinationLine, SourceLine, useSourceCheck } from "@/components/custom/address-checks";
+import { DestinationLine, type SourceEffect, SourceLine, useSourceCheck } from "@/components/custom/address-checks";
 import { MAX_REGEX_LENGTH } from "./regex-limits";
 import RegexLimitsWarning from "./regex-limits-warning";
 
@@ -16,8 +16,10 @@ const KINDS: Record<MappingKind, {
   create: (source: string, destination: string) => Promise<unknown>;
   // What the type does, under the type select
   hint: string;
-  // Source and destination are addresses, checked against the accounts
-  checksAccounts?: boolean;
+  // The source is an address checked against the accounts: what would happen to the mail of an existing one
+  sourceEffect?: SourceEffect;
+  // The destination is an address, checked against the accounts
+  checksDestination?: boolean;
   // The destination is a regex mapping, checked against the limits of RE2
   checksRegexLimits?: boolean;
 }> = {
@@ -27,7 +29,8 @@ const KINDS: Record<MappingKind, {
     created: "mappings.addressCreated",
     create: createAddressMapping,
     hint: "mappings.typeHint.address",
-    checksAccounts: true,
+    sourceEffect: "diverted",
+    checksDestination: true,
   },
   regex: {
     sourcePlaceholder: "mappings.mappingSourcePlaceholder",
@@ -35,6 +38,8 @@ const KINDS: Record<MappingKind, {
     created: "mappings.regexCreated",
     create: createRegexMapping,
     hint: "mappings.typeHint.regex",
+    // The source of a regex mapping is an address too (linagora/twake-mail-admin#674)
+    sourceEffect: "rewritten",
     checksRegexLimits: true,
   },
   domain: {
@@ -63,8 +68,8 @@ export default function CreateMappingDialog({ open, kinds, onClose, onCreated }:
   const [destination, setDestination] = useState("");
   const [kind, setKind] = useState<MappingKind>(kinds[0] ?? "address");
   const config = KINDS[kinds.includes(kind) ? kind : kinds[0] ?? "address"];
-  // Only an address source can be an account whose mail would be diverted
-  const sourceCheck = useSourceCheck(config.checksAccounts ? source : "");
+  // A domain source is not an account: only address and regex sources are checked
+  const sourceCheck = useSourceCheck(config.sourceEffect ? source : "");
 
   const close = () => {
     setSource("");
@@ -102,13 +107,15 @@ export default function CreateMappingDialog({ open, kinds, onClose, onCreated }:
         <label htmlFor={`${idPrefix}-source`} className="text-sm font-medium">{t("mappings.source")}</label>
         <input id={`${idPrefix}-source`} type="text" autoFocus value={source} onChange={(e) => setSource(e.target.value)}
           placeholder={t(config.sourcePlaceholder)} className={FIELD_CLASS} />
-        {config.checksAccounts && <SourceLine source={source} destination={destination} status={sourceCheck.status} />}
+        {config.sourceEffect && (
+          <SourceLine source={source} destination={destination} status={sourceCheck.status} effect={config.sourceEffect} />
+        )}
       </div>
       <div>
         <label htmlFor={`${idPrefix}-destination`} className="text-sm font-medium">{t("mappings.destination")}</label>
         <input id={`${idPrefix}-destination`} type="text" value={destination} onChange={(e) => setDestination(e.target.value)}
           placeholder={t(config.destinationPlaceholder)} className={FIELD_CLASS} />
-        {config.checksAccounts && <DestinationLine destination={destination} />}
+        {config.checksDestination && <DestinationLine destination={destination} />}
         {config.checksRegexLimits && (
           <div role="status">
             {/* Trimmed as it will be sent */}
