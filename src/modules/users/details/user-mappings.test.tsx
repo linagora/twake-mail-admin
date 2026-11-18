@@ -81,3 +81,32 @@ describe("user mappings: sources pointing to the user", () => {
     );
   });
 });
+
+describe("user mappings: a long address fits a phone screen", () => {
+  const LONG_SOURCE = "another.very.long.qa.alias.without.any.break@example.com";
+  const LONG_DESTINATION = "a.very.long.qa.destination.without.any.break@example.com";
+
+  const openMappings = async () => {
+    render(<UserMappings username={EMMA} />);
+    fireEvent.click(await screen.findByRole("button", { name: /Mappings/ }));
+  };
+
+  it("lets a source row break inside the address", async () => {
+    mocks.api.getUserMappingSources.mockImplementation(async (_user: string, type: string) =>
+      type === "alias" ? [LONG_SOURCE] : []
+    );
+    await openMappings();
+
+    const source = await screen.findByText(LONG_SOURCE);
+    expect(source.className).toContain("min-w-0");
+    expect(source.className).toContain("[overflow-wrap:anywhere]");
+  });
+
+  it("lets a destination cell break inside the address", async () => {
+    mocks.api.getUserMappings.mockResolvedValue([{ type: "Forward", mapping: LONG_DESTINATION }]);
+    await openMappings();
+
+    const destination = await screen.findByText(LONG_DESTINATION);
+    expect(destination.className).toContain("[overflow-wrap:anywhere]");
+  });
+});
