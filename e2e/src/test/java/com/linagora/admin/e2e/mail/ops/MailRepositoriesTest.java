@@ -409,6 +409,7 @@ class MailRepositoriesTest extends MailAdminE2ETest {
 
         detail.rowAction(deleted, MailRepositoryDetailPage.DELETE).click();
         assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Delete Email");
+        assertThat(app.dialog()).containsText("Delete the email \"" + deleted + "\" from the repository " + seeded.repository() + "?");
         Dialogs.confirmWith(app, "Delete");
         app.expectToast("Email removed successfully");
         assertThat(detail.mailButton(deleted)).hasCount(0);

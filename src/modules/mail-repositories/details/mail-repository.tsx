@@ -352,6 +352,7 @@ export default function MailRepositoryDetail() {
                       className="p-2 rounded-md hover:bg-gray-200"
                       onClick={() => handleReprocessMail(mailKey)}
                       title={t("mailRepositories.reprocessMailTooltip")}
+                      aria-label={t("mailRepositories.reprocessMailNamed", { item: mailKey })}
                     >
                       <RefreshCw className="w-5 h-5 text-green-600" />
                     </button>
@@ -361,6 +362,7 @@ export default function MailRepositoryDetail() {
                       className="p-2 rounded-md hover:bg-gray-200"
                       onClick={() => handleMoveMail(mailKey)}
                       title={t("mailRepositories.moveMailTooltip")}
+                      aria-label={t("mailRepositories.moveMailNamed", { item: mailKey })}
                     >
                       <MoveHorizontal className="w-5 h-5 text-orange-500" />
                     </button>
@@ -370,6 +372,7 @@ export default function MailRepositoryDetail() {
                       className="p-2 rounded-md hover:bg-gray-200"
                       onClick={() => handleRemoveMail(mailKey)}
                       title={t("mailRepositories.deleteMailTooltip")}
+                      aria-label={t("mailRepositories.deleteMailNamed", { item: mailKey })}
                     >
                       <Trash2 className="w-5 h-5 text-red-600" />
                     </button>
