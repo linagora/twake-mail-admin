@@ -46,6 +46,13 @@ export default function UserAliases({ username }: Props) {
 
   if (!canView) return null;
 
+  // WebAdmin answers 204 to an existing alias too; addresses are case insensitive
+  const validateAdd = () => {
+    const alias = newAlias.trim();
+    const lower = alias.toLowerCase();
+    return aliases?.some((existing) => existing.source.toLowerCase() === lower) ? t("users.aliases.alreadyExists", { alias }) : null;
+  };
+
   // A refusal throws: the modal shows it and keeps the typed alias
   const handleAdd = async () => {
     await addUserAlias(username, newAlias.trim());
@@ -103,6 +110,7 @@ export default function UserAliases({ username }: Props) {
         title={t("users.aliases.addTooltip")}
         submitLabel={t("common.add")}
         submitDisabled={!newAlias.trim() || aliasCheck.blocking}
+        validate={validateAdd}
         onSubmit={handleAdd}
       >
         <div>

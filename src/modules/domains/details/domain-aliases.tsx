@@ -44,6 +44,13 @@ export default function DomainAliases({ domain, defaultOpen }: Props) {
 
   if (!canView) return null;
 
+  // WebAdmin answers 204 to an existing alias too; domain names are case insensitive
+  const validateAdd = () => {
+    const source = newAlias.trim();
+    const lower = source.toLowerCase();
+    return aliases?.some((alias) => alias.source.toLowerCase() === lower) ? t("domains.aliases.alreadyExists", { source }) : null;
+  };
+
   // A refusal is shown in the modal, which then stays open with the typed alias
   const handleAdd = async () => {
     const source = newAlias.trim();
@@ -141,6 +148,7 @@ export default function DomainAliases({ domain, defaultOpen }: Props) {
         title={t("domains.aliases.addTooltip")}
         submitLabel={t("common.add")}
         submitDisabled={!newAlias.trim()}
+        validate={validateAdd}
         onSubmit={handleAdd}
       >
         <div>

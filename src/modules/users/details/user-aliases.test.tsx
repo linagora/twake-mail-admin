@@ -75,3 +75,19 @@ describe("user aliases: the alias address is checked against the accounts", () =
     await vi.waitFor(() => expect(mocks.api.addUserAlias).toHaveBeenCalledWith(ALICE, "bob.alias@example.com"));
   });
 });
+
+describe("user aliases: an alias already listed", () => {
+  it("says it already exists, whatever its case, instead of announcing its addition", async () => {
+    mocks.api.getUserAliases.mockResolvedValue([{ source: "alice.alias@example.com" }]);
+    await openAddDialog(" Alice.Alias@Example.com ");
+    await vi.waitFor(() => expect(mocks.api.getUserAliases).toHaveBeenCalled());
+    await screen.findByText("(1)");
+
+    fireEvent.click(addButton());
+
+    expect((await screen.findByRole("alert")).textContent).toBe(
+      `users.aliases.alreadyExists ${JSON.stringify({ alias: "Alice.Alias@Example.com" })}`
+    );
+    expect(mocks.api.addUserAlias).not.toHaveBeenCalled();
+  });
+});
