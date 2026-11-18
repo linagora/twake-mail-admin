@@ -7,6 +7,7 @@ import { X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { cn } from "@/lib/utils"
+import { useEscapeHandoff, useMergedRefs } from "./escape-handoff"
 
 // The name of the corner X button, in the current language
 function CloseLabel() {
@@ -63,23 +64,34 @@ interface SheetContentProps
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
-    <SheetPrimitive.Content
-      ref={ref}
-      className={cn(sheetVariants({ side }), className)}
-      {...props}
-    >
-      {children}
-      {/* A 40 × 40 touch target (WCAG 2.5.8) whose 16 px icon stays 16 px from the corner */}
-      <SheetPrimitive.Close className="absolute right-1 top-1 inline-flex size-10 items-center justify-center rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-        <X className="h-4 w-4" />
-        <CloseLabel />
-      </SheetPrimitive.Close>
-    </SheetPrimitive.Content>
-  </SheetPortal>
-))
+>(({ side = "right", className, children, onEscapeKeyDown, ...props }, ref) => {
+  const closeButton = React.useRef<HTMLButtonElement>(null)
+  // Escape still closes the sheet while a toast it raised is shown
+  const escapeHandoff = useEscapeHandoff<HTMLDivElement>(
+    (event) => onEscapeKeyDown?.(event),
+    () => closeButton.current?.click()
+  )
+  const contentRef = useMergedRefs(ref, escapeHandoff)
+
+  return (
+    <SheetPortal>
+      <SheetOverlay />
+      <SheetPrimitive.Content
+        ref={contentRef}
+        onEscapeKeyDown={onEscapeKeyDown}
+        className={cn(sheetVariants({ side }), className)}
+        {...props}
+      >
+        {children}
+        {/* A 40 × 40 touch target (WCAG 2.5.8) whose 16 px icon stays 16 px from the corner */}
+        <SheetPrimitive.Close ref={closeButton} className="absolute right-1 top-1 inline-flex size-10 items-center justify-center rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+          <X className="h-4 w-4" />
+          <CloseLabel />
+        </SheetPrimitive.Close>
+      </SheetPrimitive.Content>
+    </SheetPortal>
+  )
+})
 SheetContent.displayName = SheetPrimitive.Content.displayName
 
 const SheetHeader = ({

@@ -5,6 +5,7 @@ import { X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { cn } from "@/lib/utils"
+import { handOffEscapeToFocusedDialog } from "./escape-handoff"
 
 const ToastProvider = ToastPrimitives.Provider
 
@@ -49,10 +50,15 @@ const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
+>(({ className, variant, onEscapeKeyDown, ...props }, ref) => {
   return (
     <ToastPrimitives.Root
       ref={ref}
+      onEscapeKeyDown={(event) => {
+        onEscapeKeyDown?.(event)
+        // Escape closes the dialog holding the focus: the toast stays, reachable with F8
+        if (!event.defaultPrevented && handOffEscapeToFocusedDialog(event)) event.preventDefault()
+      }}
       className={cn(toastVariants({ variant }), className)}
       {...props}
     />
