@@ -3,9 +3,11 @@ import {
   buildRestoreRequest,
   deleteAllMailboxesCommand,
   deleteUserDataCommand,
+  encodeQueryValue,
   provisionTemplatesCommand,
   renameUserCommand,
   restoreDeletedMessagesCommand,
+  resumeStep,
   subscribeAllCommand,
 } from "./user-task-commands";
 
@@ -43,6 +45,26 @@ describe("user task commands", () => {
   it("previews the delete user data call, with its step when given", () => {
     expect(deleteUserDataCommand(USER, "")).toBe("curl -XPOST /users/bob@example.com?action=deleteData");
     expect(deleteUserDataCommand(USER, "VacationStep")).toBe("curl -XPOST /users/bob@example.com?action=deleteData&fromStep=VacationStep");
+  });
+
+  it("trims the resume step and drops a blank one", () => {
+    expect(deleteUserDataCommand(USER, "  ")).toBe("curl -XPOST /users/bob@example.com?action=deleteData");
+    expect(deleteUserDataCommand(USER, "  DavCalendarDeletionTaskStep "))
+      .toBe("curl -XPOST /users/bob@example.com?action=deleteData&fromStep=DavCalendarDeletionTaskStep");
+    expect(renameUserCommand(USER, { newUsername: "alice@example.com", force: false, fromStep: " " }))
+      .toBe("curl -XPOST /users/bob@example.com/rename/alice@example.com?action=rename");
+  });
+
+  it("encodes the query values like the request does", () => {
+    expect(deleteUserDataCommand(USER, "a&b=c")).toBe("curl -XPOST /users/bob@example.com?action=deleteData&fromStep=a%26b%3Dc");
+    expect(encodeQueryValue("a b+c#d%é")).toBe("a%20b%2Bc%23d%25%C3%A9");
+    expect(new URLSearchParams(`x=${encodeQueryValue("a b+c#d%é&=")}`).get("x")).toBe("a b+c#d%é&=");
+  });
+
+  it("keeps a blank resume step from the start", () => {
+    expect(resumeStep("")).toBeUndefined();
+    expect(resumeStep("   ")).toBeUndefined();
+    expect(resumeStep(" Step ")).toBe("Step");
   });
 
   it("previews the restore call with its body", () => {
