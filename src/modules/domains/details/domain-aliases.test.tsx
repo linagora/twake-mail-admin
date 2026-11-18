@@ -58,4 +58,19 @@ describe("domain aliases: add", () => {
     expect((within(dialog).getByLabelText("domains.domainName") as HTMLInputElement).value).toBe(" new.example.com ");
     expect(mocks.toast).not.toHaveBeenCalled();
   });
+
+  it("says an alias already listed exists, whatever its case, instead of announcing its addition", async () => {
+    render(<DomainAliases domain="example.com" />);
+    fireEvent.click(screen.getByTitle("domains.aliases.addTooltip"));
+    const dialog = screen.getByRole("dialog");
+    await screen.findByText("old.example.com");
+    fireEvent.change(within(dialog).getByLabelText("domains.domainName"), { target: { value: " Old.Example.COM " } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "common.add" }));
+
+    expect((await within(dialog).findByRole("alert")).textContent).toBe(
+      `domains.aliases.alreadyExists ${JSON.stringify({ source: "Old.Example.COM" })}`
+    );
+    expect(mocks.api.addDomainAlias).not.toHaveBeenCalled();
+    expect(mocks.toast).not.toHaveBeenCalled();
+  });
 });

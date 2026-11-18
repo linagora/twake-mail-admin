@@ -50,6 +50,12 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
 
   if (!canView) return null;
 
+  // WebAdmin answers 204 to an existing team mailbox too: the listed ones are told apart here
+  const validateAdd = () => {
+    const name = newName.trim();
+    return mailboxes?.some((mb) => mb.name === name) ? t("domains.teamMailboxes.alreadyExists", { name }) : null;
+  };
+
   // A refusal is shown in the modal, which then stays open with the typed name
   const handleAdd = async () => {
     const name = newName.trim();
@@ -167,6 +173,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
         title={t("domains.teamMailboxes.addTooltip")}
         submitLabel={t("common.add")}
         submitDisabled={!newName.trim()}
+        validate={validateAdd}
         onSubmit={handleAdd}
       >
         <div>

@@ -63,4 +63,24 @@ describe("domain team mailboxes: add", () => {
     await waitFor(() => expect(mocks.api.createTeamMailbox).toHaveBeenCalledWith("example.com", "support"));
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
   });
+
+  it("says a team mailbox already listed exists instead of announcing its creation", async () => {
+    render(
+      <MemoryRouter>
+        <DomainTeamMailboxes domain="example.com" />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByTitle("domains.teamMailboxes.addTooltip"));
+    const dialog = screen.getByRole("dialog");
+    await screen.findByText("sales@example.com");
+    fireEvent.change(within(dialog).getByLabelText("domains.teamMailboxes.nameLabel"), { target: { value: " sales " } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "common.add" }));
+
+    expect((await within(dialog).findByRole("alert")).textContent).toBe(
+      `domains.teamMailboxes.alreadyExists ${JSON.stringify({ name: "sales" })}`
+    );
+    expect(mocks.api.createTeamMailbox).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).not.toBeNull();
+  });
 });
