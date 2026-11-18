@@ -22,6 +22,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
 import { BASIC_PAGE_LIMIT, extendedPageOf } from "./page-limits";
+import { hasActiveFilter, lastPageAction, pagingLabel, repositoryPaging } from "./repository-paging";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useTranslation } from "react-i18next";
 import Header from "@/components/custom/header";
@@ -90,9 +91,6 @@ export default function MailRepositoryDetail() {
   const size = Number(searchParams.get("size")) || 0;
   const limit = BASIC_PAGE_LIMIT;
   const offset = (page - 1) * limit;
-  const totalPages = Math.max(1, Math.ceil(size / limit));
-  // check if we reached the end of the list
-  const hasMore = offset + limit < size;
 
   const activeFilters: MailFilters = {
     sender: searchParams.get("sender") || "",
@@ -134,6 +132,9 @@ export default function MailRepositoryDetail() {
     error,
     refresh,
   } = useFetchData<MailKeysResponseType>(fetchMails);
+
+  const filtered = hasActiveFilter(activeFilters);
+  const paging = repositoryPaging({ page, limit, repositorySize: size, listed: mailKeys?.length ?? 0, filtered });
 
   const buildParams = (overrides: Record<string, string> = {}): Record<string, string> => {
     const params: Record<string, string> = { page: page.toString(), size: size.toString(), ...overrides };
@@ -286,11 +287,11 @@ export default function MailRepositoryDetail() {
         onFirst={() => goToPage(1)}
         onPrev={() => goToPage(page - 1)}
         onNext={() => goToPage(page + 1)}
-        onLast={() => goToPage(Math.ceil(size / limit))}
+        onLast={lastPageAction(paging, goToPage)}
         disabledPrev={page <= 1}
-        disabledNext={!hasMore}
-        label={t("common.page", { page, totalPages, total: size })}
-        total={size}
+        disabledNext={!paging.hasMore}
+        label={pagingLabel(t, page, paging)}
+        total={paging.total}
       />
       {!isLoading && mailKeys?.length === 0 && <EmptyState title={t("mailRepositories.noMails")} />}
       {mailKeys && mailKeys.length > 0 && (
