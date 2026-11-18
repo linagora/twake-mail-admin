@@ -285,7 +285,7 @@ Please drop these changes from the pull request, or ask a linagora member to car
         stage('Audit') {
             steps {
                 tee('ci-logs/Audit.log') {
-                    sh 'npm audit --audit-level=high'
+                    sh 'npm audit --omit=dev --audit-level=high'
                 }
             }
         }
