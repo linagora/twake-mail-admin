@@ -60,9 +60,45 @@ def isTrustedContributor() {
     error("GitHub API error ${status} while checking membership for '${forkOwner}'")
 }
 
+// The commit of the change request this build runs, as GitHub records it -
+// asked before anything from the change request has run. Null when it cannot be
+// established: the checked out HEAD must be that commit, or a merge of it.
+def changeHeadSha() {
+    def pullJson = null
+    withCredentials([usernamePassword(credentialsId: 'github',
+            usernameVariable: 'GITHUB_CREDENTIAL_USR', passwordVariable: 'GITHUB_CREDENTIAL_PSW')]) {
+        pullJson = sh(
+            script: """curl -s \
+              -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
+              "https://api.github.com/repos/linagora/twake-mail-admin/pulls/\${CHANGE_ID}" """,
+            returnStdout: true
+        ).trim()
+    }
+    def pull = readJSON text: pullJson
+    String head = pull?.head?.sha
+    if (head == null || !head.matches('[0-9a-f]{40}')) {
+        error("Unexpected GitHub API answer while reading the head of #${env.CHANGE_ID}")
+    }
+    // HEAD itself with the head strategy, one of its parents when Jenkins
+    // builds the merge with the target branch.
+    def built = sh(script: 'git rev-list --parents -n 1 HEAD', returnStdout: true).trim().split(' ') as List
+    if (!built.contains(head)) {
+        echo "The pull request head ${head} is not the commit being built (${built[0]}): it moved meanwhile."
+        return null
+    }
+    return head
+}
+
 // A change request from outside the organisation is vouched for once a linagora
-// member comments "Build this please" on it.
+// member comments "Build this please <sha>" on it, <sha> being (a prefix of at
+// least 7 characters of) the commit they reviewed. The approval covers that
+// commit only: a later push by the contributor needs a new one. A bare "Build
+// this please" approves nothing, as it would carry over to unreviewed pushes.
 def approvedByMember() {
+    String head = changeHeadSha()
+    if (head == null) {
+        return false
+    }
     def approved = false
     withCredentials([usernamePassword(credentialsId: 'github',
             usernameVariable: 'GITHUB_CREDENTIAL_USR', passwordVariable: 'GITHUB_CREDENTIAL_PSW')]) {
@@ -77,28 +113,38 @@ def approvedByMember() {
             error("Unexpected GitHub API answer while listing the comments of #${env.CHANGE_ID}")
         }
         for (comment in comments) {
-            if (comment.body?.trim()?.toLowerCase() == 'build this please') {
-                def commenter = comment.user.login
-                def commenterStatus = sh(
-                    script: """curl -s -o /dev/null -w "%{http_code}" \
-                      -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
-                      "https://api.github.com/orgs/linagora/members/${commenter}" """,
-                    returnStdout: true
-                ).trim()
-                if (commenterStatus == '204') {
-                    echo "Build approved by linagora member '${commenter}'."
-                    approved = true
-                    break
-                }
+            String body = comment.body?.trim()?.toLowerCase()?.replaceAll('\\s+', ' ')
+            if (body == null || !body.matches('build this please [0-9a-f]{7,40}')) {
+                continue
+            }
+            String approvedSha = body.substring('build this please '.length())
+            if (!head.startsWith(approvedSha)) {
+                continue
+            }
+            def commenter = comment.user.login
+            def commenterStatus = sh(
+                script: """curl -s -o /dev/null -w "%{http_code}" \
+                  -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
+                  "https://api.github.com/orgs/linagora/members/${commenter}" """,
+                returnStdout: true
+            ).trim()
+            if (commenterStatus == '204') {
+                echo "Build of ${head} approved by linagora member '${commenter}'."
+                approved = true
+                break
             }
         }
+    }
+    if (!approved) {
+        echo "Not approved: a linagora member can approve this commit by commenting \"Build this please ${head.substring(0, 12)}\"."
     }
     return approved
 }
 
 // 'member'    - a branch or tag build, or a change request someone with push
 //               access could have pushed anyway;
-// 'approved'  - a fork from outside the organisation a member vouched for;
+// 'approved'  - a fork from outside the organisation whose built commit a
+//               member vouched for;
 // 'untrusted' - anything else.
 // Null until the first stage decided it: an unknown trust is no trust.
 @Field String changeTrust = null
@@ -221,7 +267,7 @@ def reportBuildFailure() {
         } else {
             // The change request's code has run on this agent: the curl, awk,
             // find... the script starts could be its own. The report is only
-            // written to the console; a member can rerun with "Build this please".
+            // written to the console; a member can rerun with "Build this please <sha>".
             echo 'Untrusted change request: the failure report is not posted to GitHub.'
             sh "bash '${reportScript}' || true"
         }
@@ -358,7 +404,7 @@ Please drop these changes from the pull request, or ask a linagora member to car
                         changeRequest()
                         // A fork owned by someone outside the linagora
                         // organization only gets an image once a linagora
-                        // member commented "Build this please" on it - checked
+                        // member commented "Build this please <sha>" on it - checked
                         // by the first stage, before the fork's code ran.
                         expression { credentialsAllowed() }
                     }
