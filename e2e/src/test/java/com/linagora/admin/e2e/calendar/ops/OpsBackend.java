@@ -7,6 +7,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -27,6 +31,7 @@ import com.linagora.admin.e2e.docker.CalendarStack;
  */
 final class OpsBackend {
     private static final HttpClient HTTP = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+    private static final DateTimeFormatter ICS_UTC = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneOffset.UTC);
 
     private final WebAdmin webAdmin;
     private final CalendarStack stack;
@@ -222,13 +227,16 @@ final class OpsBackend {
 
     /**
      * Puts, through Sabre, an event organized by {@code organizer} that invites {@code attendees}:
-     * the side service sends them an invitation by mail (iMIP).
+     * the side service sends them an invitation by mail (iMIP). The event starts tomorrow: the side
+     * service sends no invitation for an event that already started.
      */
     void invite(String organizer, String... attendees) {
         String calendarUrl = defaultCalendarUrl(organizer);
         String uid = Ids.unique("invite");
+        Instant start = Instant.now().plus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.HOURS);
         StringBuilder ics = new StringBuilder("BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//QA//EN\r\nBEGIN:VEVENT\r\nUID:" + uid
-            + "\r\nDTSTAMP:20261016T080000Z\r\nDTSTART:20261120T090000Z\r\nDTEND:20261120T100000Z\r\nSUMMARY:Unsent " + uid
+            + "\r\nDTSTAMP:20261016T080000Z\r\nDTSTART:" + icsUtc(start) + "\r\nDTEND:" + icsUtc(start.plus(1, ChronoUnit.HOURS))
+            + "\r\nSUMMARY:Unsent " + uid
             + "\r\nORGANIZER:mailto:" + organizer + "\r\nATTENDEE;PARTSTAT=ACCEPTED:mailto:" + organizer + "\r\n");
         for (String attendee : attendees) {
             ics.append("ATTENDEE;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:mailto:").append(attendee).append("\r\n");
@@ -244,6 +252,11 @@ final class OpsBackend {
         if (response.statusCode() != 201 && response.statusCode() != 204) {
             throw new IllegalStateException("Sabre answered " + response.statusCode() + ": " + response.body());
         }
+    }
+
+    /** {@code instant} as an iCalendar UTC date-time, e.g. 20261121T090000Z. */
+    private static String icsUtc(Instant instant) {
+        return ICS_UTC.format(instant);
     }
 
     /** Ids of the unsent mails sent by {@code sender}. */
