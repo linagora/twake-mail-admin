@@ -90,10 +90,12 @@ def changeHeadSha() {
 }
 
 // A change request from outside the organisation is vouched for once a linagora
-// member comments "Build this please <sha>" on it, <sha> being (a prefix of at
-// least 7 characters of) the commit they reviewed. The approval covers that
-// commit only: a later push by the contributor needs a new one. A bare "Build
-// this please" approves nothing, as it would carry over to unreviewed pushes.
+// member comments "Build this please <sha>" on it, <sha> being the full 40
+// character id of the commit they reviewed. A prefix is not accepted: the
+// contributor writes the commits, and can craft a second one sharing a short
+// prefix with the reviewed one. The approval covers that commit only: a later
+// push by the contributor needs a new one. A bare "Build this please"
+// approves nothing, as it would carry over to unreviewed pushes.
 def approvedByMember() {
     String head = changeHeadSha()
     if (head == null) {
@@ -114,11 +116,11 @@ def approvedByMember() {
         }
         for (comment in comments) {
             String body = comment.body?.trim()?.toLowerCase()?.replaceAll('\\s+', ' ')
-            if (body == null || !body.matches('build this please [0-9a-f]{7,40}')) {
+            if (body == null || !body.matches('build this please [0-9a-f]{40}')) {
                 continue
             }
             String approvedSha = body.substring('build this please '.length())
-            if (!head.startsWith(approvedSha)) {
+            if (head != approvedSha) {
                 continue
             }
             def commenter = comment.user.login
@@ -136,7 +138,7 @@ def approvedByMember() {
         }
     }
     if (!approved) {
-        echo "Not approved: a linagora member can approve this commit by commenting \"Build this please ${head.substring(0, 12)}\"."
+        echo "Not approved: a linagora member can approve this commit by commenting \"Build this please ${head}\"."
     }
     return approved
 }
