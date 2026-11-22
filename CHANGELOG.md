@@ -45,6 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Calendar resources: all 40 icons of the side service are available (#409).
 - Domain contacts explain the two address books (#452).
 - Domain settings name the system default and explain each setting (#448).
+- Message Search and Signature Templates say up front when the server does not provide them, instead of showing a raw error or an empty list; the "Apply signature templates" domain task is then disabled with the reason (#651).
 
 ### Changed
 
@@ -58,6 +59,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - Tier user data marks its retention period as required.
 - Blob garbage collection and Purge Deleted Messages are marked "Modifies data" and ask for a confirmation instead of a typed word.
 - The cancel-task confirmation reads "Keep running" / "Cancel task".
+- User page: Disconnect all looks and reads like the global one, with a confirmation naming the user (#667).
 
 ### Fixed
 
@@ -79,6 +81,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 - A load error on Mailing Lists replaces the list (#610).
 - The channel grid sort is consistent (#625).
 - Task page Details drop empty unlabelled lists (#612).
+- Creating a domain that already exists says so instead of announcing its creation (#655).
+- Adding a team mailbox, a domain alias or a user alias that already exists says so instead of announcing its addition (#680).
+- Mail repositories: with a filter active, the total and the pagination count the matching mails instead of the whole repository (#679).
+- Mail repositories: each per-mail button and confirmation names its mail (#678).
+- Row buttons of team mailbox members, labels, JMAP identities and domain contacts are named after their item (#658).
+- Deleted Message Vault: Restore is disabled when the last search found no message (#665).
+- Delete user data and Rename user: a blank "Resume from step" is ignored, a padded one is trimmed, and the Command preview encodes special characters like the request sent (#676).
+- A deleted calendar resource says so and no longer offers Edit or administrator changes (#677).
+- Task Run tooltips open below the button when there is no room on the left, e.g. on a phone (#661).
+- Long addresses under Mappings on the user page wrap instead of overflowing a phone screen (#681).
+- Touch targets: the Close button of dialogs and sheets and the sticky bar actions on a phone are bigger (#657, #682).
+- Screen readers announce the consequence of a confirmation along with its question (#653).
+- Escape closes the open dialog instead of the toast it raised (#673).
+- Explanations for disabled Search messages, unavailable tasks and the "domain not managed" badge also show on touch screens (#654).
+- French: the command label of task dialogs reads "Commande :" (#663).
 
 ### Security
 
