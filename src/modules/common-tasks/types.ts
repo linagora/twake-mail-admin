@@ -129,6 +129,8 @@ export interface TaskParam {
   optional?: boolean;
   // Rarely needed: shown in a closed "Advanced options" section.
   advanced?: boolean;
+  // A checkbox WebAdmin reads by presence: sent and previewed bare (`&force`), not `force=true`.
+  flag?: boolean;
 }
 
 export interface CommonTask {

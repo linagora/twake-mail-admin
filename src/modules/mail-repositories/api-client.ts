@@ -119,6 +119,17 @@ export const clearMailRepository = async (
   return response;
 };
 
+// Values are trimmed and blank ones left out: WebAdmin then applies its default, e.g. the stored state of each mail
+// for `processor`. An unknown processor or queue is refused with a 400 by recent backends, before any mail is moved.
+const reprocessQuery = (options: Record<string, string | number | boolean | undefined> = {}): string => {
+  const params = new URLSearchParams({ action: "reprocess" });
+  Object.entries(options)
+    .map(([key, value]) => [key, typeof value === "string" ? value.trim() : value] as const)
+    .filter(([, value]) => value !== undefined && value !== "")
+    .forEach(([key, value]) => params.set(key, String(value)));
+  return params.toString();
+};
+
 /**
  * Reprocesses mails from a specified mail repository.
  *
@@ -127,6 +138,7 @@ export const clearMailRepository = async (
  * - Reprocesses mails, optionally targeting a specific queue, processor, and other parameters.
  * - HTTP 201: Task generation succeeded, returns corresponding task ID.
  * - HTTP 404: Repository not found.
+ * - HTTP 400: The target queue does not exist, or the target processor is not configured.
  *
  * @param encodedPathOfTheRepository - The URL-encoded path of the mail repository.
  * @param options - Optional parameters for reprocessing.
@@ -137,28 +149,15 @@ export const reprocessMailRepository = async (
   options?: {
     queue?: string;
     processor?: string;
-    consume?: boolean;
-    limit?: number;
-    maxRetries?: number;
+    consume?: boolean | string;
+    limit?: number | string;
+    maxRetries?: number | string;
     redeliver_group_events?: boolean;
   }
-): Promise<{ taskId: string }> => {
-  const queryParams = new URLSearchParams({
-    action: "reprocess",
-    processor: "root",
-  });
-
-  // `set` lets a custom processor override the default one; blank values are dropped.
-  Object.entries(options ?? {})
-    .filter(([, value]) => value !== undefined && value !== "")
-    .forEach(([key, value]) => queryParams.set(key, String(value)));
-
-  const response = await apiClient.patch<any, { taskId: string }>(
-    `/mailRepositories/${encodedPathOfTheRepository}/mails?${queryParams.toString()}`
+): Promise<{ taskId: string }> =>
+  apiClient.patch<any, { taskId: string }>(
+    `/mailRepositories/${encodedPathOfTheRepository}/mails?${reprocessQuery(options)}`
   );
-
-  return response;
-};
 
 /**
  * Removes a mail from a specified mail repository.
@@ -187,11 +186,8 @@ export const reprocessSingleMail = async (
   mailKey: string,
   options?: { queue?: string; processor?: string }
 ): Promise<{ taskId: string }> => {
-  const params = new URLSearchParams({ action: "reprocess" });
-  if (options?.queue) params.set("queue", options.queue);
-  if (options?.processor) params.set("processor", options.processor);
   return apiClient.patch(
-    `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}?${params.toString()}`
+    `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}?${reprocessQuery(options)}`
   );
 };
 

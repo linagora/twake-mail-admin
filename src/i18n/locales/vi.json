@@ -988,6 +988,7 @@
       "reindexAll": "Lập chỉ mục lại tất cả hộp thư",
       "reindexTitle": "Lập chỉ mục lại tất cả hộp thư",
       "reindexDesc": "Lập chỉ mục lại tất cả hộp thư cho {{username}}.",
+      "reindexUnknownUser": "Người dùng {{username}} không tồn tại: không có tác vụ lập chỉ mục lại nào được tạo.",
       "errorReindex": "Lỗi khi chạy tác vụ lập chỉ mục lại",
       "subscribeAll": "Đăng ký tất cả hộp thư",
       "subscribeTitle": "Đăng ký tất cả hộp thư",
@@ -1551,7 +1552,7 @@
       },
       "processor": {
         "label": "Bộ xử lý đích",
-        "help": "Bộ xử lý mailet xử lý lại thư. root nghĩa là xử lý đầy đủ."
+        "help": "Tên một bộ xử lý được cấu hình trong mailet container của máy chủ (mailetcontainer.xml), ví dụ root, transport, error, local-delivery hoặc relay. Để trống, mỗi thư trở về trạng thái đã lưu của chính nó."
       },
       "consume": {
         "label": "Xóa khỏi kho sau khi xử lý lại",
@@ -1589,6 +1590,10 @@
       "autoMerge": {
         "label": "Gộp các hộp thư trùng lặp",
         "help": "Đã chọn: các hộp thư cùng tên được gộp thay vì chỉ được báo cáo."
+      },
+      "force": {
+        "label": "Chạy ngay cả khi người dùng không tồn tại (force)",
+        "help": "Chỉ hữu ích để dọn các mục chỉ mục của người dùng đã bị xóa. Nếu không có tùy chọn này, WebAdmin từ chối người dùng không xác định, giúp tránh lỗi gõ nhầm."
       },
       "trustMessageProjection": {
         "label": "Tin cậy bản chiếu thư",
@@ -1693,14 +1698,16 @@
       "clearDomainMembersContacts": "Làm trống sổ địa chỉ \"Thành viên miền\" của mọi miền. Chạy đồng bộ để điền lại.",
       "twakeSpacePurge": "Xóa hộp thư nhóm của các không gian đã bị xóa lâu hơn thời gian lưu giữ trong space.properties, giải phóng địa chỉ của chúng. TMail không còn tự chạy tác vụ này: hãy lên lịch bằng cron bên ngoài hoặc chạy tại đây.",
       "twakeSpaceReindex": "Dùng sau khi liên kết hộp thư nhóm bên ngoài tiện ích mở rộng (ví dụ: di chuyển từ dịch vụ phụ của Twake Mail) hoặc khi hộp thư chỉ mục bị mất. Quét mọi hộp thư nhóm.",
-      "syncTwakeSpaces": "Hỏi ldap-rest trạng thái hiện tại của các không gian Twake và áp dụng cho các hộp thư nhóm của chúng: tất cả, của một tổ chức, hoặc một không gian."
+      "syncTwakeSpaces": "Hỏi ldap-rest trạng thái hiện tại của các không gian Twake và áp dụng cho các hộp thư nhóm của chúng: tất cả, của một tổ chức, hoặc một không gian.",
+      "sendEmail": "Gửi email qua quy trình xử lý thư của máy chủ, đến những người nhận có trong tiêu đề: soạn tại đây, dán hoặc tải từ tệp .eml."
     },
     "archiveAllEvents": "Lưu trữ mọi sự kiện",
     "archiveAllWarning": "Chưa đặt tiêu chí: mọi sự kiện của mọi người dùng đã đăng ký sẽ được chuyển sang lịch \"Archival\".",
     "twakeSpacePurge": "Xóa hộp thư nhóm của các không gian đã xóa",
     "twakeSpaceReindex": "Xây dựng lại chỉ mục không gian",
     "twakeSpaceUnavailable": "Twake Space không khả dụng trên máy chủ này: máy chủ không cung cấp các route /spaces, vốn cần tiện ích mở rộng Twake Space của tmail-backend.",
-    "syncTwakeSpaces": "Đồng bộ các không gian Twake"
+    "syncTwakeSpaces": "Đồng bộ các không gian Twake",
+    "sendEmail": "Gửi email"
   },
   "healthCheck": {
     "checking": "Đang kiểm tra các thành phần, việc này có thể mất một lúc…",
@@ -1948,6 +1955,10 @@
     "reprocessMailConfirm": "Xử lý lại email \"{{mailKey}}\"?",
     "reprocessRepoConfirm": "Xử lý lại tất cả email trong kho {{path}}?",
     "reprocessScheduled": "Đã lên lịch xử lý lại",
+    "reprocessRefused": {
+      "processor": "Bộ xử lý đích chưa được cấu hình trong mailet container của máy chủ: không có thư nào bị di chuyển. Hãy sửa lại, hoặc để trống để mỗi thư trở về trạng thái của chính nó.",
+      "queue": "Hàng đợi đích không tồn tại trên máy chủ: không có thư nào bị di chuyển. Hãy sửa lại, hoặc để trống để dùng spool."
+    },
     "errorReprocessing": "Lỗi khi xử lý lại",
     "moveMailHeader": "Chuyển email",
     "moveMailConfirm": "Chuyển email \"{{mailKey}}\" đến:",
@@ -2283,7 +2294,7 @@
     "clear": "Làm trống",
     "typeToConfirm": "Nhập {{value}} để xác nhận",
     "consequence": {
-      "deleteUserData": "Mọi hộp thư, thư, danh tính, nhãn, trả lời vắng mặt và cài đặt của {{user}} sẽ bị xóa vĩnh viễn. Tài khoản vẫn được giữ. Không thể hoàn tác.",
+      "deleteUserData": "Mọi hộp thư, thư, danh tính, nhãn, trả lời vắng mặt và cài đặt của {{user}} sẽ bị xóa vĩnh viễn. Tài khoản vẫn được giữ. Các ủy quyền của tài khoản bị xóa: {{user}} mất quyền truy cập vào các tài khoản được ủy quyền cho mình, và những người dùng được người này ủy quyền tài khoản sẽ mất quyền truy cập vào đó. Không thể hoàn tác.",
       "deleteMailboxes": "Mọi hộp thư của {{user}} và toàn bộ thư bên trong sẽ bị xóa vĩnh viễn. Không thể hoàn tác.",
       "deleteMailbox": "\"{{mailbox}}\", các thư mục con và toàn bộ thư sẽ bị xóa vĩnh viễn.",
       "clearMailbox": "Mọi thư trong \"{{mailbox}}\" sẽ bị xóa vĩnh viễn; thư mục được giữ.",
@@ -2326,7 +2337,8 @@
     "fromGlobal": "(toàn cục)",
     "noLimitSet": "Không giới hạn (chưa đặt giới hạn)",
     "noLimit": "Không giới hạn",
-    "domainLevel": "Miền {{domain}}"
+    "domainLevel": "Miền {{domain}}",
+    "zeroLimit": "Giới hạn là 0: không thể lưu trữ gì."
   },
   "taskTypes": {
     "fullReindexing": "Lập chỉ mục lại toàn bộ dữ liệu trong OpenSearch",
@@ -2352,5 +2364,41 @@
       "requested": "Đã yêu cầu đồng bộ",
       "thisSpace": "Đồng bộ không gian này"
     }
+  },
+  "sendEmail": {
+    "title": "Gửi email",
+    "intro": "Thư được đưa vào hàng đợi xử lý, như một thư máy chủ nhận được: người nhận là các địa chỉ To, Cc và Bcc trong tiêu đề của thư.",
+    "modeLabel": "Nguồn thư",
+    "mode": {
+      "compose": "Soạn thư",
+      "raw": "Thư thô (.eml)"
+    },
+    "field": {
+      "from": "Từ",
+      "to": "Đến",
+      "cc": "Cc",
+      "subject": "Chủ đề",
+      "body": "Nội dung",
+      "eml": "Tải tệp .eml",
+      "raw": "Thư RFC 822"
+    },
+    "placeholder": {
+      "from": "admin@domain.tld",
+      "to": "user@domain.tld, other@domain.tld",
+      "cc": "user@domain.tld",
+      "subject": "Chủ đề"
+    },
+    "cannotSend": "Nút Gửi bị tắt cho đến khi:",
+    "problem": {
+      "empty": "thư được soạn hoặc tải lên",
+      "noFrom": "thư có một địa chỉ From",
+      "severalFrom": "thư chỉ có một địa chỉ From",
+      "invalidFrom": "địa chỉ From \"{{address}}\" hợp lệ",
+      "noRecipient": "thư có ít nhất một người nhận (To, Cc hoặc Bcc)",
+      "invalidRecipient": "địa chỉ {{header}} \"{{address}}\" hợp lệ"
+    },
+    "send": "Gửi",
+    "enqueued": "Email đã được đưa vào hàng đợi xử lý",
+    "refused": "Máy chủ đã từ chối email"
   }
 }
