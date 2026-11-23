@@ -1497,7 +1497,9 @@
       "deletedTeamMailboxes": "Удалено командных ящиков",
       "failedTeamMailboxes": "Командные ящики с ошибкой",
       "failedTeamMailboxesRetried": "Следующий запуск попробует их снова.",
-      "indexedSpaces": "Проиндексировано пространств"
+      "indexedSpaces": "Проиндексировано пространств",
+      "teamMailbox": "Командный почтовый ящик",
+      "processedTeamMailboxes": "Обработано командных ящиков"
     },
     "cancelTarget": " для {{target}}",
     "targetCalendar": {
@@ -1510,7 +1512,8 @@
       "ended": "Задача завершена",
       "took": "за {{duration}}",
       "details": "Подробности"
-    }
+    },
+    "domainListTitle": "Задачи домена"
   },
   "commonTasks": {
     "title": "Общие задачи",
@@ -2408,7 +2411,8 @@
     "domainAddressBookClear": "Очистить контакты",
     "bookingLinkEventDeletion": "Удалить события ссылки бронирования",
     "twakeSpacePurge": "Очистка Twake Space",
-    "twakeSpaceReindex": "Переиндексация Twake Space"
+    "twakeSpaceReindex": "Переиндексация Twake Space",
+    "recomputeTeamMailboxQuotas": "Пересчитать квоты командных почтовых ящиков"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID организации (необязательно)",

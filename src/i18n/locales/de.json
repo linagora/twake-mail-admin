@@ -1484,7 +1484,9 @@
       "deletedTeamMailboxes": "Gelöschte Team-Postfächer",
       "failedTeamMailboxes": "Fehlgeschlagene Team-Postfächer",
       "failedTeamMailboxesRetried": "Der nächste Lauf versucht sie erneut.",
-      "indexedSpaces": "Indizierte Spaces"
+      "indexedSpaces": "Indizierte Spaces",
+      "teamMailbox": "Team-Postfach",
+      "processedTeamMailboxes": "Verarbeitete Team-Postfächer"
     },
     "cancelTarget": " für {{target}}",
     "targetCalendar": {
@@ -1497,7 +1499,8 @@
       "ended": "Aufgabe beendet",
       "took": "Dauer {{duration}}",
       "details": "Details"
-    }
+    },
+    "domainListTitle": "Aufgaben der Domain"
   },
   "commonTasks": {
     "title": "Allgemeine Aufgaben",
@@ -2389,7 +2392,8 @@
     "domainAddressBookClear": "Kontakte leeren",
     "bookingLinkEventDeletion": "Die Termine eines Buchungslinks löschen",
     "twakeSpacePurge": "Twake-Space-Bereinigung",
-    "twakeSpaceReindex": "Twake-Space-Neuindizierung"
+    "twakeSpaceReindex": "Twake-Space-Neuindizierung",
+    "recomputeTeamMailboxQuotas": "Kontingente der Team-Postfächer neu berechnen"
   },
   "twakeSpace": {
     "organizationIdOptional": "Organisations-ID (optional)",

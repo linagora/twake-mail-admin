@@ -1471,7 +1471,9 @@
       "deletedTeamMailboxes": "Устгасан багийн шуудангийн хайрцаг",
       "failedTeamMailboxes": "Амжилтгүй багийн шуудангийн хайрцаг",
       "failedTeamMailboxesRetried": "Дараагийн ажиллагаа тэдгээрийг дахин оролдоно.",
-      "indexedSpaces": "Индексжүүлсэн орон зай"
+      "indexedSpaces": "Индексжүүлсэн орон зай",
+      "teamMailbox": "Багийн шуудангийн хайрцаг",
+      "processedTeamMailboxes": "Боловсруулсан багийн хайрцгууд"
     },
     "cancelTarget": " ({{target}})",
     "targetCalendar": {
@@ -1484,7 +1486,8 @@
       "ended": "Даалгавар дууссан",
       "took": "{{duration}} үргэлжилсэн",
       "details": "Дэлгэрэнгүй"
-    }
+    },
+    "domainListTitle": "Домэйны даалгаврууд"
   },
   "commonTasks": {
     "title": "Нийтлэг даалгаврууд",
@@ -2370,7 +2373,8 @@
     "domainAddressBookClear": "Харилцагчдыг цэвэрлэх",
     "bookingLinkEventDeletion": "Захиалгын холбоосын үйл явдлуудыг устгах",
     "twakeSpacePurge": "Twake Space цэвэрлэгээ",
-    "twakeSpaceReindex": "Twake Space дахин индексжүүлэлт"
+    "twakeSpaceReindex": "Twake Space дахин индексжүүлэлт",
+    "recomputeTeamMailboxQuotas": "Багийн шуудангийн хайрцгийн квотыг дахин тооцоолох"
   },
   "twakeSpace": {
     "organizationIdOptional": "Байгууллагын ID (заавал биш)",

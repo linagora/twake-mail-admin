@@ -7,7 +7,7 @@ import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { appConfig } from "@/lib/config";
 import { currentLocale } from "@/i18n/locale";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { listTasks, ListTasksParams } from "./api-client";
+import { listDomainTasks, listTasks, ListTasksParams } from "./api-client";
 import { TaskDetailResponse, TaskStatus } from "@/modules/common-tasks/types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -84,6 +84,15 @@ function typeOptions(t: TFunction, types: Iterable<string>): { value: string; la
     .sort((a, b) => a.label.localeCompare(b.label, currentLocale()));
 }
 
+/**
+ * The tasks of a domain, for its administrator. WebAdmin filters them by status only: their type
+ * is filtered here, and the date filters are not offered.
+ */
+async function listTasksOfDomain(domain: string, type: string): Promise<TaskDetailResponse[]> {
+  const tasks = await listDomainTasks(domain);
+  return type ? tasks.filter((task) => canonicalTaskType(task.type) === type) : tasks;
+}
+
 function startedCompletedText(task: TaskDetailResponse): string {
   const started = formatDate(task.startedDate);
   const ended = endDate(task);
@@ -92,12 +101,19 @@ function startedCompletedText(task: TaskDetailResponse): string {
 
 const docuUrl = "https://james.staged.apache.org/james-project/3.10.0/servers/distributed/operate/webadmin.html#_task_management";
 
-export default function Tasks() {
+interface Props {
+  // The domain of a domain administrator: lists its tasks only, through the domain-scoped routes
+  domain?: string;
+}
+
+export default function Tasks({ domain }: Props = {}) {
   const { t } = useTranslation();
   const idPrefix = useId();
   const { toast } = useToast();
   const confirm = useConfirm();
-  const canCancel = useIsAllowed("DELETE", "/tasks/{id}");
+  const canCancelGlobal = useIsAllowed("DELETE", "/tasks/{id}");
+  const canCancelInDomain = useIsAllowed("DELETE", "/domains/{domain}/tasks/{id}");
+  const canCancel = domain ? canCancelInDomain : canCancelGlobal;
 
   // Status, type, dates, sort and page live in the URL: a reload, a bookmark or Back from a
   // task page shows the same list (/tasks?status=failed&type=SubscribeAllTask&sort=type&asc=1&page=2)
@@ -125,7 +141,8 @@ export default function Tasks() {
   // The applied type and dates, as a stable key: the list is fetched again only when they change
   const appliedKey = JSON.stringify(serverFiltersOf(searchParams));
   const applied = useMemo(() => JSON.parse(appliedKey) as ServerFilters, [appliedKey]);
-  const activeFilterCount = SERVER_FILTERS.filter((key) => applied[key]).length;
+  // A domain is filtered by type only
+  const activeFilterCount = SERVER_FILTERS.filter((key) => applied[key] && (!domain || key === "type")).length;
 
   // The panel fields only build the request: it is sent when the filters are applied, not on every keystroke
   const [draft, setDraft] = useState<ServerFilters>(applied);
@@ -143,7 +160,10 @@ export default function Tasks() {
   };
 
   // WebAdmin cannot sort: fetch every matching task, then filter by status, sort and paginate locally
-  const fetchTasks = useCallback(() => listTasks(toListParams(applied)), [applied]);
+  const fetchTasks = useCallback(
+    () => (domain ? listTasksOfDomain(domain, applied.type) : listTasks(toListParams(applied))),
+    [applied, domain]
+  );
   const { data: tasks, isLoading, error, refresh, refreshSilently } = useFetchData<TaskDetailResponse[]>(fetchTasks);
 
   // Follows the list while one of its tasks runs, without the loading placeholder
@@ -154,14 +174,15 @@ export default function Tasks() {
     if (tasks) setUpdatedAt(new Date());
   }, [tasks]);
 
-  // The type picker lists the types of the last list fetched without a type, and the known ones
+  // The type picker lists the types of the last list fetched without a type, and the known ones.
+  // A domain lists all its tasks at once: the types it has are the ones it can pick
   const [seenTypes, setSeenTypes] = useState<string[]>([]);
   useEffect(() => {
     if (tasks && !applied.type) setSeenTypes(tasks.map((task) => task.type));
   }, [tasks, applied.type]);
   const types = useMemo(
-    () => typeOptions(t, [...seenTypes, ...KNOWN_TYPES, applied.type, draft.type]),
-    [t, seenTypes, applied.type, draft.type]
+    () => typeOptions(t, [...seenTypes, ...(domain ? [] : KNOWN_TYPES), applied.type, draft.type]),
+    [t, seenTypes, applied.type, draft.type, domain]
   );
 
   const chipCounts = useMemo(
@@ -207,7 +228,7 @@ export default function Tasks() {
     });
     if (!confirmed) return;
     try {
-      toast({ title: await cancelAndReport(t, task.taskId) });
+      toast({ title: await cancelAndReport(t, task.taskId, domain) });
       await refresh();
     } catch (err) {
       toast({ title: t("tasks.errorCancelling"), description: <ErrorDisplayer error={err} /> });
@@ -253,8 +274,10 @@ export default function Tasks() {
   };
 
   return (
-    <div className="p-4 w-fit max-w-full">
-      <Header headerTitle={t("tasks.title")} headerSubTitle={t("tasks.subtitle")} docuUrl={docuUrl} />
+    <div className={domain ? "mt-6 w-fit max-w-full" : "p-4 w-fit max-w-full"}>
+      {domain
+        ? <h2 className="text-lg font-semibold">{t("tasks.domainListTitle")}</h2>
+        : <Header headerTitle={t("tasks.title")} headerSubTitle={t("tasks.subtitle")} docuUrl={docuUrl} />}
 
       <div className="mt-4">
         {/* Toolbar: refresh and when the list was read, filter toggle, sort */}
@@ -330,11 +353,13 @@ export default function Tasks() {
               </div>
             </div>
 
-            <DateFilters
-              initiallyOpen={DATE_FILTERS.some((key) => applied[key])}
-              activeCount={activeDateCount}
-              fields={DATE_FILTERS.map((key) => ({ key, label: DATE_FILTER_LABELS[key], value: draft[key], onChange: setDraftField(key) }))}
-            />
+            {!domain && (
+              <DateFilters
+                initiallyOpen={DATE_FILTERS.some((key) => applied[key])}
+                activeCount={activeDateCount}
+                fields={DATE_FILTERS.map((key) => ({ key, label: DATE_FILTER_LABELS[key], value: draft[key], onChange: setDraftField(key) }))}
+              />
+            )}
 
             <div className="flex gap-2 pt-1">
               <Button size="sm" onClick={handleApplyFilters}>{t("tasks.apply")}</Button>

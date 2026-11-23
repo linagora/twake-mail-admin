@@ -1467,7 +1467,9 @@
       "deletedTeamMailboxes": "Hộp thư nhóm đã xóa",
       "failedTeamMailboxes": "Hộp thư nhóm thất bại",
       "failedTeamMailboxesRetried": "Lần chạy tiếp theo sẽ thử lại.",
-      "indexedSpaces": "Không gian đã lập chỉ mục"
+      "indexedSpaces": "Không gian đã lập chỉ mục",
+      "teamMailbox": "Hộp thư nhóm",
+      "processedTeamMailboxes": "Hộp thư nhóm đã xử lý"
     },
     "cancelTarget": " cho {{target}}",
     "targetCalendar": {
@@ -1480,7 +1482,8 @@
       "ended": "Tác vụ đã kết thúc",
       "took": "mất {{duration}}",
       "details": "Chi tiết"
-    }
+    },
+    "domainListTitle": "Tác vụ của tên miền"
   },
   "commonTasks": {
     "title": "Tác vụ chung",
@@ -2363,7 +2366,8 @@
     "domainAddressBookClear": "Xóa danh bạ",
     "bookingLinkEventDeletion": "Xóa các sự kiện của một liên kết đặt lịch",
     "twakeSpacePurge": "Dọn dẹp Twake Space",
-    "twakeSpaceReindex": "Lập chỉ mục lại Twake Space"
+    "twakeSpaceReindex": "Lập chỉ mục lại Twake Space",
+    "recomputeTeamMailboxQuotas": "Tính lại hạn mức hộp thư nhóm"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID tổ chức (tùy chọn)",

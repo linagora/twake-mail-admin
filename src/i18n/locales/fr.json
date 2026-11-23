@@ -1485,7 +1485,9 @@
       "deletedTeamMailboxes": "Boîtes partagées supprimées",
       "failedTeamMailboxes": "Boîtes partagées en échec",
       "failedTeamMailboxesRetried": "Le prochain lancement les retente.",
-      "indexedSpaces": "Espaces indexés"
+      "indexedSpaces": "Espaces indexés",
+      "teamMailbox": "Boîte partagée",
+      "processedTeamMailboxes": "Boîtes partagées traitées"
     },
     "cancelTarget": " pour {{target}}",
     "targetCalendar": {
@@ -1498,7 +1500,8 @@
       "ended": "Tâche terminée",
       "took": "en {{duration}}",
       "details": "Détails"
-    }
+    },
+    "domainListTitle": "Tâches du domaine"
   },
   "commonTasks": {
     "title": "Tâches communes",
@@ -2391,7 +2394,8 @@
     "domainAddressBookClear": "Effacer les contacts",
     "bookingLinkEventDeletion": "Supprimer les événements d'un lien de réservation",
     "twakeSpacePurge": "Purge Twake Space",
-    "twakeSpaceReindex": "Réindexation Twake Space"
+    "twakeSpaceReindex": "Réindexation Twake Space",
+    "recomputeTeamMailboxQuotas": "Recalculer les quotas des boîtes partagées"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID d'organisation (facultatif)",
