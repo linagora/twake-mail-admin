@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { TaskParam } from "../types";
 import TaskParamsModifier from "./task-prams-modifier";
-import { buildCommandPreview } from "./command-preview";
+import { buildCommandPreview, flagKeys } from "./command-preview";
 import { useTranslation } from "react-i18next";
 import { useConfirmAppearance, useFocusCancelOnOpen } from "@/components/custom/confirm-provider";
 
@@ -55,7 +55,7 @@ const ConfirmTaskContent = ({
       {notice?.(customParams)}
       <p className="break-words text-sm">
         <span className="font-medium">{t("confirmTask.commandLabel")}</span>{" "}
-        <code className="font-mono text-xs">{buildCommandPreview(command, previewValues(params, customParams))}</code>
+        <code className="font-mono text-xs">{buildCommandPreview(command, previewValues(params, customParams), flagKeys(params))}</code>
       </p>
     </div>
   );

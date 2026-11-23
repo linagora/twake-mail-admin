@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { type ReactNode } from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
+import { AxiosError } from "axios";
 import { ProxyResolver, type HttpVerb, type ProxyRule } from "@/lib/proxy-resolver";
 
 const proxy = vi.hoisted(() => ({ resolver: null as { isAllowed: (verb: never, pattern: string) => boolean } | null }));
@@ -11,15 +12,22 @@ vi.mock("@/lib/proxy-resolver-context", () => ({
   useIsAllowed: (verb: HttpVerb, pattern: string) => proxy.resolver!.isAllowed(verb as never, pattern),
 }));
 vi.mock("@/lib/config", () => ({ appConfig: { application: "MAIL", mode: "DOMAIN", sso: null } }));
-const dialog = vi.hoisted(() => ({ message: null as unknown, validate: undefined as (() => string | null) | undefined }));
+interface DialogOptions {
+  message: unknown;
+  validate?: () => string | null;
+  action?: () => Promise<void>;
+  describeError?: (error: unknown) => ReactNode | null;
+}
+const dialog = vi.hoisted(() => ({ message: null as unknown, options: undefined as DialogOptions | undefined }));
 vi.mock("@/hooks/use-confirm", () => ({
-  useConfirm: () => async (options: { message: unknown; validate?: () => string | null }) => {
+  useConfirm: () => async (options: DialogOptions) => {
     dialog.message = options.message;
-    dialog.validate = options.validate;
+    dialog.options = options;
     return false;
   },
 }));
-vi.mock("../api-client", () => ({}));
+const api = vi.hoisted(() => ({ reindexUserMailboxes: vi.fn() }));
+vi.mock("../api-client", () => api);
 
 import UserTasks from "./user-tasks";
 
@@ -113,29 +121,29 @@ describe("user tasks: confirmation dialogs preview their command", () => {
 
   it("refuses, in DOMAIN mode, to rename into another domain", async () => {
     await openDialog("users.tasks.renameUser");
-    expect(dialog.validate!()).toBe("renameUserForm.newUsernameRequired");
+    expect(dialog.options!.validate!()).toBe("renameUserForm.newUsernameRequired");
 
     fireEvent.change(screen.getByLabelText("renameUserForm.newUsername"), { target: { value: "victim@other.com" } });
-    expect(dialog.validate!()).toBe("renameUserForm.newUsernameOtherDomain");
+    expect(dialog.options!.validate!()).toBe("renameUserForm.newUsernameOtherDomain");
 
     fireEvent.change(screen.getByLabelText("renameUserForm.newUsername"), { target: { value: "alice@LINAGORA.com" } });
-    expect(dialog.validate!()).toBeNull();
+    expect(dialog.options!.validate!()).toBeNull();
   });
 
   it("refuses, in DOMAIN mode, to provision templates from another domain", async () => {
     await openDialog("users.tasks.provisionTemplates");
-    expect(dialog.validate!()).toBe("provisionTemplates.sourceUserRequired");
+    expect(dialog.options!.validate!()).toBe("provisionTemplates.sourceUserRequired");
 
     fireEvent.change(screen.getByLabelText("provisionTemplates.sourceUser"), { target: { value: "victim@other.com" } });
-    expect(dialog.validate!()).toBe("provisionTemplates.sourceUserOtherDomain");
+    expect(dialog.options!.validate!()).toBe("provisionTemplates.sourceUserOtherDomain");
 
     fireEvent.change(screen.getByLabelText("provisionTemplates.sourceUser"), { target: { value: "ref@LINAGORA.com" } });
-    expect(dialog.validate!()).toBeNull();
+    expect(dialog.options!.validate!()).toBeNull();
   });
 
   it("refuses to restore deleted messages while a criterion is incomplete, and flags it", async () => {
     await openDialog("users.tasks.restoreDeleted");
-    expect(dialog.validate!()).toBeNull();
+    expect(dialog.options!.validate!()).toBeNull();
 
     fireEvent.click(screen.getByText("users.deletedVault.criteria.addCriterion"));
     const field = screen.getByRole("combobox", { name: "users.deletedVault.criteria.fieldPlaceholder" });
@@ -146,7 +154,7 @@ describe("user tasks: confirmation dialogs preview their command", () => {
     expect(field.getAttribute("aria-invalid")).toBe("false");
 
     let error: string | null = null;
-    act(() => { error = dialog.validate!(); });
+    act(() => { error = dialog.options!.validate!(); });
     expect(error).toBe("users.deletedVault.criteria.incomplete");
     // The dialog shows the returned error as an alert: the hint gives way to it
     expect(screen.queryByText("users.deletedVault.criteria.incomplete")).toBeNull();
@@ -155,7 +163,7 @@ describe("user tasks: confirmation dialogs preview their command", () => {
     expect(screen.getByPlaceholderText("users.deletedVault.criteria.valuePlaceholder").getAttribute("aria-invalid")).toBe("true");
 
     fireEvent.click(screen.getByRole("button", { name: "users.deletedVault.criteria.removeCriterion" }));
-    expect(dialog.validate!()).toBeNull();
+    expect(dialog.options!.validate!()).toBeNull();
   });
 
   it("marks the tier retention period required, not optional, and refuses it empty", async () => {
@@ -166,10 +174,63 @@ describe("user tasks: confirmation dialogs preview their command", () => {
     // Only messagesPerSecond keeps a clear button and an "(optional)" mark
     expect(screen.getByLabelText("messagesPerSecond (common.optional)")).not.toBeNull();
     expect(screen.queryAllByRole("button", { name: "commonTasks.clearParam" })).toEqual([]);
-    expect(dialog.validate!()).toBeNull();
+    expect(dialog.options!.validate!()).toBeNull();
 
     fireEvent.change(field, { target: { value: "" } });
-    expect(dialog.validate!()).toBe("users.tasks.tieringRequired");
+    expect(dialog.options!.validate!()).toBe("users.tasks.tieringRequired");
+  });
+});
+
+describe("user tasks: reindexing an unknown user", () => {
+  const openReindexDialog = async () => {
+    renderWithResolver({ isAllowed: () => true });
+    const row = screen.getByText("users.tasks.reindexAll").closest("[data-task-row]") as HTMLElement;
+    fireEvent.click(within(row).getByRole("button"));
+    await waitFor(() => expect(dialog.message).not.toBeNull());
+    cleanup();
+    render(<>{dialog.message as ReactNode}</>);
+  };
+  const notFound = Object.assign(new AxiosError("Request failed with status code 404"), {
+    response: { status: 404, data: { message: "User 'bob@linagora.com' does not exist" } },
+  });
+
+  afterEach(() => {
+    dialog.message = null;
+    api.reindexUserMailboxes.mockReset();
+  });
+
+  it("does not force by default, neither in the request nor in the preview", async () => {
+    await openReindexDialog();
+    api.reindexUserMailboxes.mockRejectedValue(notFound);
+
+    await expect(dialog.options!.action!()).rejects.toBe(notFound);
+    expect(api.reindexUserMailboxes.mock.calls[0][1].force).toBeFalsy();
+    expect(screen.getByText(/curl -XPOST/).textContent).toBe("curl -XPOST /users/bob@linagora.com/mailboxes?task=reIndex&messagesPerSecond=50");
+  });
+
+  it("sends and previews a bare force once ticked", async () => {
+    await openReindexDialog();
+    api.reindexUserMailboxes.mockRejectedValue(notFound);
+    fireEvent.click(screen.getByLabelText("force (common.optional)"));
+
+    expect(screen.getByText(/curl -XPOST/).textContent).toBe("curl -XPOST /users/bob@linagora.com/mailboxes?task=reIndex&messagesPerSecond=50&force");
+    await expect(dialog.options!.action!()).rejects.toBe(notFound);
+    expect(api.reindexUserMailboxes).toHaveBeenCalledWith("bob@linagora.com", expect.objectContaining({ force: true }));
+  });
+
+  it("says that the user does not exist on a 404, above the server message", async () => {
+    await openReindexDialog();
+    cleanup();
+    render(<>{dialog.options!.describeError!(notFound)}</>);
+
+    expect(screen.getByText("users.tasks.reindexUnknownUser")).not.toBeNull();
+    expect(screen.getByText("common.serverMessage")).not.toBeNull();
+    expect(screen.getByText("User 'bob@linagora.com' does not exist")).not.toBeNull();
+  });
+
+  it("shows any other error as the server returned it", async () => {
+    await openReindexDialog();
+    expect(dialog.options!.describeError!({ response: { status: 500 } })).toBeNull();
   });
 });
 

@@ -1000,6 +1000,7 @@
       "reindexAll": "Reindexar todos los buzones",
       "reindexTitle": "Reindexar todos los buzones",
       "reindexDesc": "Reindexar todos los buzones de {{username}}.",
+      "reindexUnknownUser": "El usuario {{username}} no existe: no se ha creado ninguna tarea de reindexación.",
       "errorReindex": "Error al ejecutar la tarea de reindexación",
       "subscribeAll": "Suscribirse a todos los buzones",
       "subscribeTitle": "Suscribirse a todos los buzones",
@@ -1605,6 +1606,10 @@
       "autoMerge": {
         "label": "Fusionar buzones duplicados",
         "help": "Marcado: los buzones con el mismo nombre se fusionan en lugar de solo notificarse."
+      },
+      "force": {
+        "label": "Ejecutar aunque el usuario no exista (force)",
+        "help": "Solo sirve para limpiar las entradas de índice de un usuario ya eliminado. Sin esta opción, WebAdmin rechaza un usuario desconocido, lo que evita errores tipográficos."
       },
       "trustMessageProjection": {
         "label": "Confiar en la proyección de mensajes",

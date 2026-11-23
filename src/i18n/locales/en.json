@@ -1000,6 +1000,7 @@
       "reindexAll": "Reindex all mailboxes",
       "reindexTitle": "Reindex all mailboxes",
       "reindexDesc": "Reindex all mailboxes for {{username}}.",
+      "reindexUnknownUser": "User {{username}} does not exist: no reindexing task was created.",
       "errorReindex": "Error running reindex task",
       "subscribeAll": "Subscribe to all mailboxes",
       "subscribeTitle": "Subscribe to all mailboxes",
@@ -1604,6 +1605,10 @@
       "autoMerge": {
         "label": "Merge duplicate mailboxes",
         "help": "Ticked: mailboxes sharing a name are merged instead of only being reported."
+      },
+      "force": {
+        "label": "Run even if the user does not exist (force)",
+        "help": "Only useful to clean up the index entries of a user who was already deleted. Without it, WebAdmin refuses an unknown user, which stops typos."
       },
       "trustMessageProjection": {
         "label": "Trust the message projection",

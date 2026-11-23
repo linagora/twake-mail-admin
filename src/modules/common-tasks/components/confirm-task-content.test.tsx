@@ -148,3 +148,17 @@ describe("ConfirmTaskContent: boxes ticked by default", () => {
     expect(preview()).toContain(`${COMMAND}?consume=false`);
   });
 });
+
+describe("ConfirmTaskContent: flags", () => {
+  it("previews a ticked flag bare, as WebAdmin reads it by presence", () => {
+    renderWith([{ key: "force", defaultValue: false, type: "checkbox", flag: true }]);
+    expect(preview()).not.toContain("force");
+
+    fireEvent.click(screen.getByRole("checkbox"));
+    expect(preview()).toContain(`${COMMAND}?force`);
+    expect(preview()).not.toContain("force=");
+
+    fireEvent.click(screen.getByRole("checkbox"));
+    expect(preview()).not.toContain("force");
+  });
+});
