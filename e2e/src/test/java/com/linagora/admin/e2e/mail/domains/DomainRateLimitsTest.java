@@ -24,6 +24,8 @@ class DomainRateLimitsTest extends MailAdminE2ETest {
         "Mails sent / minute", "Mails sent / hour", "Mails sent / day",
         "Recipients sent / minute", "Recipients sent / hour", "Recipients sent / day",
         "Mails received / minute", "Mails received / hour", "Mails received / day");
+    private static final String INVALID_HINT =
+        "Enter a whole number, 0 or more, -1 for unlimited, or leave empty for the default limit.";
 
     @Test
     @DisplayName("DOM-12 Domain rate limits")
@@ -98,10 +100,8 @@ class DomainRateLimitsTest extends MailAdminE2ETest {
         for (String invalid : List.of("-5", "1.5", "1e2")) {
             field.fill(invalid);
             assertThat(field).hasAttribute("aria-invalid", "true");
-            detail.button("Save").click();
-            app.expectToast("Invalid rate limit");
-            assertThat(app.toast("Invalid rate limit"))
-                .containsText("Enter a positive integer, -1 for unlimited, or leave empty for the default limit.");
+            assertThat(field).hasAccessibleDescription(INVALID_HINT);
+            assertThat(detail.button("Save")).isDisabled();
         }
         assertThat(writes).isEmpty();
         assertThat(webAdmin.get(path).body()).isEqualTo(before);
