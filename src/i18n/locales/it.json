@@ -1000,6 +1000,7 @@
       "reindexAll": "Reindicizza tutte le caselle di posta",
       "reindexTitle": "Reindicizza tutte le caselle di posta",
       "reindexDesc": "Reindicizza tutte le caselle di posta di {{username}}.",
+      "reindexUnknownUser": "L'utente {{username}} non esiste: nessuna attività di reindicizzazione è stata creata.",
       "errorReindex": "Errore durante l'esecuzione della reindicizzazione",
       "subscribeAll": "Iscriviti a tutte le caselle di posta",
       "subscribeTitle": "Iscriviti a tutte le caselle di posta",
@@ -1605,6 +1606,10 @@
       "autoMerge": {
         "label": "Unisci le caselle duplicate",
         "help": "Selezionato: le caselle con lo stesso nome vengono unite invece di essere solo segnalate."
+      },
+      "force": {
+        "label": "Esegui anche se l'utente non esiste (force)",
+        "help": "Utile solo per ripulire le voci di indice di un utente già eliminato. Senza questa opzione, WebAdmin rifiuta un utente sconosciuto, evitando gli errori di battitura."
       },
       "trustMessageProjection": {
         "label": "Fidati della proiezione dei messaggi",
@@ -2311,7 +2316,7 @@
     "clear": "Svuota",
     "typeToConfirm": "Digita {{value}} per confermare",
     "consequence": {
-      "deleteUserData": "Tutte le caselle, i messaggi, le identità, le etichette, la risposta automatica e le impostazioni di {{user}} vengono eliminati definitivamente. L'account resta. Operazione irreversibile.",
+      "deleteUserData": "Tutte le caselle, i messaggi, le identità, le etichette, la risposta automatica e le impostazioni di {{user}} vengono eliminati definitivamente. L'account resta. Le sue deleghe vengono rimosse: {{user}} perde l'accesso agli account a lui delegati, e gli utenti a cui aveva delegato il proprio account ne perdono l'accesso. Operazione irreversibile.",
       "deleteMailboxes": "Tutte le caselle di {{user}} e i relativi messaggi vengono eliminati definitivamente. Operazione irreversibile.",
       "deleteMailbox": "«{{mailbox}}», le sottocartelle e tutti i messaggi vengono eliminati definitivamente.",
       "clearMailbox": "Tutti i messaggi di «{{mailbox}}» vengono eliminati definitivamente; la cartella resta.",
@@ -2354,7 +2359,8 @@
     "fromGlobal": "(globale)",
     "noLimitSet": "Illimitato (nessun limite impostato)",
     "noLimit": "Nessun limite",
-    "domainLevel": "Dominio {{domain}}"
+    "domainLevel": "Dominio {{domain}}",
+    "zeroLimit": "Il limite è 0: non è possibile archiviare nulla."
   },
   "taskTypes": {
     "fullReindexing": "Reindicizza tutti i dati in OpenSearch",

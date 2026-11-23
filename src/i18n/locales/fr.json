@@ -1000,6 +1000,7 @@
       "reindexAll": "Réindexer toutes les boîtes",
       "reindexTitle": "Réindexer toutes les boîtes",
       "reindexDesc": "Réindexer toutes les boîtes de {{username}}.",
+      "reindexUnknownUser": "L'utilisateur {{username}} n'existe pas : aucune tâche de réindexation n'a été créée.",
       "errorReindex": "Erreur lors du lancement de la tâche de réindexation",
       "subscribeAll": "S'abonner à toutes les boîtes",
       "subscribeTitle": "S'abonner à toutes les boîtes",
@@ -1605,6 +1606,10 @@
       "autoMerge": {
         "label": "Fusionner les boîtes en double",
         "help": "Coché : les boîtes de même nom sont fusionnées au lieu d'être seulement signalées."
+      },
+      "force": {
+        "label": "Lancer même si l'utilisateur n'existe pas (force)",
+        "help": "Utile seulement pour nettoyer les entrées d'index d'un utilisateur déjà supprimé. Sans cela, WebAdmin refuse un utilisateur inconnu, ce qui évite les fautes de frappe."
       },
       "trustMessageProjection": {
         "label": "Se fier à la projection des messages",
@@ -2311,7 +2316,7 @@
     "clear": "Vider",
     "typeToConfirm": "Saisissez {{value}} pour confirmer",
     "consequence": {
-      "deleteUserData": "Toutes les boîtes, messages, identités, étiquettes, réponse d'absence et paramètres de {{user}} sont définitivement supprimés. Le compte lui-même est conservé. Cette action est irréversible.",
+      "deleteUserData": "Toutes les boîtes, messages, identités, étiquettes, réponse d'absence et paramètres de {{user}} sont définitivement supprimés. Le compte lui-même est conservé. Ses délégations sont supprimées : {{user}} perd l'accès aux comptes qui lui étaient délégués, et les utilisateurs à qui il avait délégué son compte en perdent l'accès. Cette action est irréversible.",
       "deleteMailboxes": "Toutes les boîtes de {{user}} et tous leurs messages sont définitivement supprimés. Cette action est irréversible.",
       "deleteMailbox": "« {{mailbox}} », ses sous-dossiers et tous leurs messages sont définitivement supprimés.",
       "clearMailbox": "Tous les messages de « {{mailbox}} » sont définitivement supprimés ; le dossier est conservé.",
@@ -2354,7 +2359,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Illimité (aucune limite définie)",
     "noLimit": "Aucune limite",
-    "domainLevel": "Domaine {{domain}}"
+    "domainLevel": "Domaine {{domain}}",
+    "zeroLimit": "La limite est 0 : rien ne peut être stocké."
   },
   "taskTypes": {
     "fullReindexing": "Réindexer toutes les données dans OpenSearch",

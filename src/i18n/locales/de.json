@@ -1000,6 +1000,7 @@
       "reindexAll": "Alle Postfächer neu indizieren",
       "reindexTitle": "Alle Postfächer neu indizieren",
       "reindexDesc": "Alle Postfächer von {{username}} neu indizieren.",
+      "reindexUnknownUser": "Der Benutzer {{username}} existiert nicht: Es wurde keine Neuindizierungsaufgabe erstellt.",
       "errorReindex": "Fehler beim Ausführen der Neuindizierung",
       "subscribeAll": "Alle Postfächer abonnieren",
       "subscribeTitle": "Alle Postfächer abonnieren",
@@ -1604,6 +1605,10 @@
       "autoMerge": {
         "label": "Doppelte Postfächer zusammenführen",
         "help": "Angehakt: Gleichnamige Postfächer werden zusammengeführt statt nur gemeldet."
+      },
+      "force": {
+        "label": "Auch ausführen, wenn der Benutzer nicht existiert (force)",
+        "help": "Nur nützlich, um die Indexeinträge eines bereits gelöschten Benutzers zu bereinigen. Ohne diese Option lehnt WebAdmin einen unbekannten Benutzer ab, was Tippfehler verhindert."
       },
       "trustMessageProjection": {
         "label": "Der Nachrichtenprojektion vertrauen",
@@ -2309,7 +2314,7 @@
     "clear": "Leeren",
     "typeToConfirm": "Geben Sie {{value}} zur Bestätigung ein",
     "consequence": {
-      "deleteUserData": "Alle Postfächer, Nachrichten, Identitäten, Labels, Abwesenheitsnotiz und Einstellungen von {{user}} werden endgültig gelöscht. Das Konto selbst bleibt bestehen. Dies kann nicht rückgängig gemacht werden.",
+      "deleteUserData": "Alle Postfächer, Nachrichten, Identitäten, Labels, Abwesenheitsnotiz und Einstellungen von {{user}} werden endgültig gelöscht. Das Konto selbst bleibt bestehen. Seine Delegierungen werden entfernt: {{user}} verliert den Zugriff auf die an ihn delegierten Konten, und die Benutzer, an die er sein Konto delegiert hat, verlieren den Zugriff darauf. Dies kann nicht rückgängig gemacht werden.",
       "deleteMailboxes": "Alle Postfächer von {{user}} und alle enthaltenen Nachrichten werden endgültig gelöscht. Dies kann nicht rückgängig gemacht werden.",
       "deleteMailbox": "„{{mailbox}}“, seine Unterordner und alle Nachrichten werden endgültig gelöscht.",
       "clearMailbox": "Alle Nachrichten in „{{mailbox}}“ werden endgültig gelöscht; der Ordner bleibt.",
@@ -2352,7 +2357,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Unbegrenzt (kein Limit gesetzt)",
     "noLimit": "Kein Limit",
-    "domainLevel": "Domain {{domain}}"
+    "domainLevel": "Domain {{domain}}",
+    "zeroLimit": "Das Limit ist 0: Es kann nichts gespeichert werden."
   },
   "taskTypes": {
     "fullReindexing": "Alle Daten in OpenSearch neu indizieren",

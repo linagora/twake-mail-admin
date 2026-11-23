@@ -1000,6 +1000,7 @@
       "reindexAll": "Reindex all mailboxes",
       "reindexTitle": "Reindex all mailboxes",
       "reindexDesc": "Reindex all mailboxes for {{username}}.",
+      "reindexUnknownUser": "User {{username}} does not exist: no reindexing task was created.",
       "errorReindex": "Error running reindex task",
       "subscribeAll": "Subscribe to all mailboxes",
       "subscribeTitle": "Subscribe to all mailboxes",
@@ -1604,6 +1605,10 @@
       "autoMerge": {
         "label": "Merge duplicate mailboxes",
         "help": "Ticked: mailboxes sharing a name are merged instead of only being reported."
+      },
+      "force": {
+        "label": "Run even if the user does not exist (force)",
+        "help": "Only useful to clean up the index entries of a user who was already deleted. Without it, WebAdmin refuses an unknown user, which stops typos."
       },
       "trustMessageProjection": {
         "label": "Trust the message projection",
@@ -2310,7 +2315,7 @@
     "clear": "Clear",
     "typeToConfirm": "Type {{value}} to confirm",
     "consequence": {
-      "deleteUserData": "All mailboxes, messages, identities, labels, vacation and settings of {{user}} are permanently deleted. The account itself is kept. This cannot be undone.",
+      "deleteUserData": "All mailboxes, messages, identities, labels, vacation and settings of {{user}} are permanently deleted. The account itself is kept. Its delegations are removed: {{user}} loses access to the accounts delegated to it, and the users it delegated its account to lose access to it. This cannot be undone.",
       "deleteMailboxes": "Every mailbox of {{user}} and all the messages they contain are permanently deleted. This cannot be undone.",
       "deleteMailbox": "\"{{mailbox}}\", its sub-folders and all their messages are permanently deleted.",
       "clearMailbox": "All messages of \"{{mailbox}}\" are permanently deleted; the folder is kept.",
@@ -2353,7 +2358,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Unlimited (no limit set)",
     "noLimit": "No limit",
-    "domainLevel": "Domain {{domain}}"
+    "domainLevel": "Domain {{domain}}",
+    "zeroLimit": "Limit is 0: nothing can be stored."
   },
   "taskTypes": {
     "fullReindexing": "Reindex all data in OpenSearch",

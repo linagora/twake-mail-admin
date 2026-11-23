@@ -40,6 +40,8 @@ export const PARAM_DESCRIPTIONS: Record<string, ParamDescription> = {
   associatedProbability: { help: true },
   expectedBlobCount: { help: true },
   dryRun: { help: true },
+  // User mailboxes reindexing: skips the check that the user exists
+  force: { help: true },
   // Calendar and contacts
   createdBefore: { help: true },
   lastModifiedBefore: { help: true },

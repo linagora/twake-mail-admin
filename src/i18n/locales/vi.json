@@ -988,6 +988,7 @@
       "reindexAll": "Lập chỉ mục lại tất cả hộp thư",
       "reindexTitle": "Lập chỉ mục lại tất cả hộp thư",
       "reindexDesc": "Lập chỉ mục lại tất cả hộp thư cho {{username}}.",
+      "reindexUnknownUser": "Người dùng {{username}} không tồn tại: không có tác vụ lập chỉ mục lại nào được tạo.",
       "errorReindex": "Lỗi khi chạy tác vụ lập chỉ mục lại",
       "subscribeAll": "Đăng ký tất cả hộp thư",
       "subscribeTitle": "Đăng ký tất cả hộp thư",
@@ -1589,6 +1590,10 @@
       "autoMerge": {
         "label": "Gộp các hộp thư trùng lặp",
         "help": "Đã chọn: các hộp thư cùng tên được gộp thay vì chỉ được báo cáo."
+      },
+      "force": {
+        "label": "Chạy ngay cả khi người dùng không tồn tại (force)",
+        "help": "Chỉ hữu ích để dọn các mục chỉ mục của người dùng đã bị xóa. Nếu không có tùy chọn này, WebAdmin từ chối người dùng không xác định, giúp tránh lỗi gõ nhầm."
       },
       "trustMessageProjection": {
         "label": "Tin cậy bản chiếu thư",
@@ -2286,7 +2291,7 @@
     "clear": "Làm trống",
     "typeToConfirm": "Nhập {{value}} để xác nhận",
     "consequence": {
-      "deleteUserData": "Mọi hộp thư, thư, danh tính, nhãn, trả lời vắng mặt và cài đặt của {{user}} sẽ bị xóa vĩnh viễn. Tài khoản vẫn được giữ. Không thể hoàn tác.",
+      "deleteUserData": "Mọi hộp thư, thư, danh tính, nhãn, trả lời vắng mặt và cài đặt của {{user}} sẽ bị xóa vĩnh viễn. Tài khoản vẫn được giữ. Các ủy quyền của tài khoản bị xóa: {{user}} mất quyền truy cập vào các tài khoản được ủy quyền cho mình, và những người dùng được người này ủy quyền tài khoản sẽ mất quyền truy cập vào đó. Không thể hoàn tác.",
       "deleteMailboxes": "Mọi hộp thư của {{user}} và toàn bộ thư bên trong sẽ bị xóa vĩnh viễn. Không thể hoàn tác.",
       "deleteMailbox": "\"{{mailbox}}\", các thư mục con và toàn bộ thư sẽ bị xóa vĩnh viễn.",
       "clearMailbox": "Mọi thư trong \"{{mailbox}}\" sẽ bị xóa vĩnh viễn; thư mục được giữ.",
@@ -2329,7 +2334,8 @@
     "fromGlobal": "(toàn cục)",
     "noLimitSet": "Không giới hạn (chưa đặt giới hạn)",
     "noLimit": "Không giới hạn",
-    "domainLevel": "Miền {{domain}}"
+    "domainLevel": "Miền {{domain}}",
+    "zeroLimit": "Giới hạn là 0: không thể lưu trữ gì."
   },
   "taskTypes": {
     "fullReindexing": "Lập chỉ mục lại toàn bộ dữ liệu trong OpenSearch",
