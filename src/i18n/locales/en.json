@@ -1708,14 +1708,16 @@
       "clearDomainMembersContacts": "Empties the \"Domain members\" address book of every domain. Run a synchronization to fill it again.",
       "twakeSpacePurge": "Deletes the team mailboxes of the spaces deleted for longer than the retention set in space.properties, freeing their addresses. TMail no longer runs it on its own: schedule it with an external cron, or run it here.",
       "twakeSpaceReindex": "Use after binding team mailboxes outside of the extension (e.g. a migration from the Twake Mail side service), or if the index mailbox was lost. Scans every team mailbox.",
-      "syncTwakeSpaces": "Asks ldap-rest for the current state of the Twake spaces, applied to their team mailboxes: all of them, one organization's, or a single space."
+      "syncTwakeSpaces": "Asks ldap-rest for the current state of the Twake spaces, applied to their team mailboxes: all of them, one organization's, or a single space.",
+      "sendEmail": "Sends an email through the mail processing of the server, to the recipients its headers name: composed here, pasted or loaded from an .eml file."
     },
     "archiveAllEvents": "Archive all events",
     "archiveAllWarning": "No criterion set: every event of every registered user will be moved to an \"Archival\" calendar.",
     "twakeSpacePurge": "Purge team mailboxes of deleted spaces",
     "twakeSpaceReindex": "Rebuild the space index",
     "twakeSpaceUnavailable": "Twake Space is not available on this server: it does not expose the /spaces routes, which require the Twake Space extension of tmail-backend.",
-    "syncTwakeSpaces": "Sync Twake spaces"
+    "syncTwakeSpaces": "Sync Twake spaces",
+    "sendEmail": "Send an email"
   },
   "healthCheck": {
     "checking": "Checking the components, this can take a while…",
@@ -2375,5 +2377,41 @@
       "requested": "Sync requested",
       "thisSpace": "Sync this space"
     }
+  },
+  "sendEmail": {
+    "title": "Send an email",
+    "intro": "The message is enqueued for processing, like a message received by the server: its recipients are the To, Cc and Bcc addresses of its headers.",
+    "modeLabel": "Message source",
+    "mode": {
+      "compose": "Compose",
+      "raw": "Raw message (.eml)"
+    },
+    "field": {
+      "from": "From",
+      "to": "To",
+      "cc": "Cc",
+      "subject": "Subject",
+      "body": "Body",
+      "eml": "Load an .eml file",
+      "raw": "RFC 822 message"
+    },
+    "placeholder": {
+      "from": "admin@domain.tld",
+      "to": "user@domain.tld, other@domain.tld",
+      "cc": "user@domain.tld",
+      "subject": "Subject"
+    },
+    "cannotSend": "Send is disabled until:",
+    "problem": {
+      "empty": "the message is written or loaded",
+      "noFrom": "the message has a From address",
+      "severalFrom": "the message has a single From address",
+      "invalidFrom": "the From address \"{{address}}\" is valid",
+      "noRecipient": "the message has at least one recipient (To, Cc or Bcc)",
+      "invalidRecipient": "the {{header}} address \"{{address}}\" is valid"
+    },
+    "send": "Send",
+    "enqueued": "Email enqueued for processing",
+    "refused": "The server refused the email"
   }
 }

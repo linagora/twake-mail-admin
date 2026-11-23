@@ -107,6 +107,22 @@ describe("common tasks: cleaning up old tasks validation", () => {
   });
 });
 
+describe("common tasks: send an email", () => {
+  it("lists it under the server group with POST /mail-transfer-service, and opens its dialog", () => {
+    renderWith([{ verb: ["POST"], endpoint: "/mail-transfer-service" }]);
+    const serverGroup = screen.getByRole("region", { name: "commonTasks.group.server" });
+    const row = within(serverGroup).getByText("commonTasks.sendEmail").closest("[data-task-row]") as HTMLElement;
+    fireEvent.click(within(row).getByRole("button", { name: /^common\.run / }));
+
+    expect(screen.getByRole("dialog", { name: "sendEmail.title" })).not.toBeNull();
+  });
+
+  it("hides it without POST /mail-transfer-service", () => {
+    renderWith([{ verb: ["GET"], endpoint: "/mail-transfer-service" }, { verb: ["POST"], endpoint: "/servers" }]);
+    expect(screen.queryByText("commonTasks.sendEmail")).toBeNull();
+  });
+});
+
 describe("common tasks: groups and filter", () => {
   const groupHeadings = () => screen.queryAllByRole("heading", { level: 2 }).map((h) => h.textContent).filter((text) => text?.startsWith("commonTasks.group."));
   const ALL: ProxyRule[] = [{ verb: ["GET", "POST", "PUT", "PATCH", "DELETE"], endpoint: "/**" }];
