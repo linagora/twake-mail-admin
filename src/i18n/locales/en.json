@@ -1984,6 +1984,7 @@
       "processor": "The target processor is not configured in the server's mailet container: no mail was moved. Correct it, or leave it empty so that each mail goes back to its own state.",
       "queue": "The target queue does not exist on the server: no mail was moved. Correct it, or leave it empty to use spool."
     },
+    "unknownQueue": "No mail queue named \"{{queue}}\" exists on this server: WebAdmin will refuse the reprocessing.",
     "errorReprocessing": "Error reprocessing",
     "moveMailHeader": "Move Email",
     "moveMailConfirm": "Move the email \"{{mailKey}}\" to:",

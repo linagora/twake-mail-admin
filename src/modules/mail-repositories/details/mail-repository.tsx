@@ -19,7 +19,7 @@ import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { MoveHorizontal, Trash2, RefreshCw } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
-import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
+import ReprocessTaskContent from "../reprocess-task-content";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
 import { BASIC_PAGE_LIMIT, extendedPageOf } from "./page-limits";
 import { hasActiveFilter, lastPageAction, pagingLabel, repositoryPaging } from "./repository-paging";
@@ -175,7 +175,7 @@ export default function MailRepositoryDetail() {
     await confirm({
       header: t("mailRepositories.reprocessMailHeader"),
       message: (
-        <ConfirmTaskContent
+        <ReprocessTaskContent
           message={<p>{t("mailRepositories.reprocessMailConfirm", { mailKey })}</p>}
           command={`curl -XPATCH '/mailRepositories/${encodeURIComponent(id)}/mails/${mailKey}?action=reprocess'`}
           params={params}

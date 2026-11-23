@@ -14,7 +14,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
-import ConfirmTaskContent from "../common-tasks/components/confirm-task-content";
+import ReprocessTaskContent from "./reprocess-task-content";
 import { useTranslation } from "react-i18next";
 import CreateMailRepositoryButton from "./create-mail-repository-button";
 import ErrorDisplayer from "@/components/custom/error-displayer";
@@ -115,7 +115,7 @@ export default function MailRepositoriesList() {
     await confirm({
       header: t("mailRepositories.reprocessAll"),
       message: (
-        <ConfirmTaskContent
+        <ReprocessTaskContent
           message={<p>{t("mailRepositories.reprocessRepoConfirm", { path: repository })}</p>}
           command={command}
           params={params}

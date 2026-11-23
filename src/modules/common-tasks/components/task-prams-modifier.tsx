@@ -107,11 +107,14 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
       ? t("commonTasks.params.defaultPlaceholder", { value: param.defaultValue })
       : undefined;
 
+  const suggestionsId = (key: string) => `${idPrefix}-${key}-suggestions`;
+
   const renderField = (param: TaskParam) => {
     const required = param.optional === false;
     const helpText = help(param);
     const describedBy = helpText ? helpId(param.key) : undefined;
     const unitText = unit(param);
+    const hasSuggestions = (param.suggestions?.length ?? 0) > 0;
     return (
       <div className="min-w-0">
         {param.type === "input" && (
@@ -120,10 +123,17 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
               id={fieldId(param.key)}
               aria-describedby={describedBy}
               aria-required={required || undefined}
+              list={hasSuggestions ? suggestionsId(param.key) : undefined}
+              autoComplete={hasSuggestions ? "off" : undefined}
               value={formData[param.key] as string}
               placeholder={defaultPlaceholder(param)}
               onChange={e => handleChange(param.key, e.target.value)}
             />
+            {hasSuggestions && (
+              <datalist id={suggestionsId(param.key)}>
+                {param.suggestions?.map(suggestion => <option key={suggestion} value={suggestion} />)}
+              </datalist>
+            )}
             {unitText && <span className="text-sm text-muted-foreground whitespace-nowrap">{unitText}</span>}
           </div>
         )}

@@ -137,6 +137,7 @@ const reprocessQuery = (options: Record<string, string | number | boolean | unde
  *
  * - Reprocesses mails, optionally targeting a specific queue, processor, and other parameters.
  * - HTTP 201: Task generation succeeded, returns corresponding task ID.
+ * - HTTP 400: The target `queue` does not exist; no task is created.
  * - HTTP 404: Repository not found.
  * - HTTP 400: The target queue does not exist, or the target processor is not configured.
  *
@@ -181,6 +182,15 @@ export const getMailDetail = async (
   );
 };
 
+/**
+ * Reprocesses one mail of a repository.
+ *
+ * API: `PATCH http://ip:port/mailRepositories/{encodedPathOfTheRepository}/mails/{mailKey}?action=reprocess`
+ *
+ * - HTTP 201: Task generation succeeded, returns corresponding task ID.
+ * - HTTP 400: The target `queue` does not exist; no task is created.
+ * - HTTP 404: Repository not found.
+ */
 export const reprocessSingleMail = async (
   encodedPathOfTheRepository: string,
   mailKey: string,
@@ -190,6 +200,14 @@ export const reprocessSingleMail = async (
     `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}?${reprocessQuery(options)}`
   );
 };
+
+/**
+ * Lists the names of the mail queues, the targets a reprocessing can send mails to.
+ *
+ * API: `GET http://ip:port/mailQueues`, e.g. `["spool", "outgoing"]`.
+ */
+export const getMailQueueNames = async (): Promise<string[]> =>
+  apiClient.get<any, string[]>("/mailQueues");
 
 /**
  * Moves all mails from a repository to another.

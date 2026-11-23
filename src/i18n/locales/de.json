@@ -1983,6 +1983,7 @@
       "processor": "Der Zielprozessor ist im Mailet-Container des Servers nicht konfiguriert: Es wurde keine Mail verschoben. Korrigieren Sie ihn oder lassen Sie ihn leer, damit jede Mail in ihren eigenen Zustand zurückkehrt.",
       "queue": "Die Ziel-Warteschlange existiert auf dem Server nicht: Es wurde keine Mail verschoben. Korrigieren Sie sie oder lassen Sie sie leer, um spool zu verwenden."
     },
+    "unknownQueue": "Auf diesem Server gibt es keine Mail-Warteschlange namens \"{{queue}}\": WebAdmin wird die erneute Verarbeitung ablehnen.",
     "errorReprocessing": "Fehler bei der erneuten Verarbeitung",
     "moveMailHeader": "E-Mail verschieben",
     "moveMailConfirm": "Die E-Mail \"{{mailKey}}\" verschieben nach:",

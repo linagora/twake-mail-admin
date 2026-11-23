@@ -1967,6 +1967,7 @@
       "processor": "Bộ xử lý đích chưa được cấu hình trong mailet container của máy chủ: không có thư nào bị di chuyển. Hãy sửa lại, hoặc để trống để mỗi thư trở về trạng thái của chính nó.",
       "queue": "Hàng đợi đích không tồn tại trên máy chủ: không có thư nào bị di chuyển. Hãy sửa lại, hoặc để trống để dùng spool."
     },
+    "unknownQueue": "Không có hàng đợi thư nào tên \"{{queue}}\" trên máy chủ này: WebAdmin sẽ từ chối xử lý lại.",
     "errorReprocessing": "Lỗi khi xử lý lại",
     "moveMailHeader": "Chuyển email",
     "moveMailConfirm": "Chuyển email \"{{mailKey}}\" đến:",
