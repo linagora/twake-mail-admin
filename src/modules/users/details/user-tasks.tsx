@@ -54,6 +54,15 @@ const TIER_PARAMS: TaskParam[] = [
   { key: "messagesPerSecond", defaultValue: "50", type: "input" },
 ];
 
+// The duration field sends "<amount><unit>": WebAdmin refuses 0, which used to evict the whole account
+const TIERING_PATTERN = /^(\d+)[hdwmy]$/;
+
+const tieringErrorKey = (tiering: string | undefined): string | null => {
+  if (!tiering) return "users.tasks.tieringRequired";
+  const match = TIERING_PATTERN.exec(tiering);
+  return match && Number(match[1]) > 0 ? null : "users.tasks.tieringPositive";
+};
+
 const INITIAL_PROVISION_VALUES: ProvisionTemplatesValues = { sourceUser: "", folderName: "", overwriteExisting: false, prune: false, usersPerSecond: "1" };
 
 const INITIAL_RENAME_VALUES: RenameUserValues = { newUsername: "", force: false, fromStep: "" };
@@ -373,7 +382,19 @@ export default function UserTasks({ username }: Props) {
           }}
         />
       ),
-      validate: () => (additionalParams.tiering ? null : t("users.tasks.tieringRequired")),
+      validate: () => {
+        const error = tieringErrorKey(additionalParams.tiering);
+        return error ? t(error) : null;
+      },
+      // WebAdmin answers 404 for an unknown user: say so, along with the server message
+      describeError: (error) => (isNotFound(error)
+        ? (
+          <>
+            <p>{t("users.tasks.tierDataUnknownUser", { username })}</p>
+            <ErrorDisplayer error={error} />
+          </>
+        )
+        : null),
       action: async () => {
         const data = await tierUserData(username, {
           tiering: additionalParams.tiering,

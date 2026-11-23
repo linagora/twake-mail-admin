@@ -179,6 +179,31 @@ describe("user tasks: confirmation dialogs preview their command", () => {
     fireEvent.change(field, { target: { value: "" } });
     expect(dialog.options!.validate!()).toBe("users.tasks.tieringRequired");
   });
+
+  it.each(["0", "00", "-1"])("refuses a tier retention period of %s: 0 would evict the whole account", async (amount) => {
+    await openDialog("users.tasks.tierData");
+    fireEvent.change(screen.getByLabelText("tiering *"), { target: { value: amount } });
+    expect(dialog.options!.validate!()).toBe("users.tasks.tieringPositive");
+  });
+
+  it("accepts a strictly positive tier retention period", async () => {
+    await openDialog("users.tasks.tierData");
+    fireEvent.change(screen.getByLabelText("tiering *"), { target: { value: "1" } });
+    expect(dialog.options!.validate!()).toBeNull();
+  });
+
+  it("tells a 404 of the tiering apart: the user does not exist, with the server message", async () => {
+    await openDialog("users.tasks.tierData");
+    const notFound = { response: { status: 404, data: { message: "User 'bob@linagora.com' does not exist" } } };
+    render(<>{dialog.options!.describeError!(notFound) as ReactNode}</>);
+    expect(screen.getByText("users.tasks.tierDataUnknownUser")).not.toBeNull();
+    expect(screen.getByText("common.serverMessage")).not.toBeNull();
+  });
+
+  it("shows other tiering errors, such as a 400, as the server returned them", async () => {
+    await openDialog("users.tasks.tierData");
+    expect(dialog.options!.describeError!({ response: { status: 400, data: { message: "Invalid tiering" } } })).toBeNull();
+  });
 });
 
 describe("user tasks: reindexing an unknown user", () => {
@@ -232,6 +257,7 @@ describe("user tasks: reindexing an unknown user", () => {
     await openReindexDialog();
     expect(dialog.options!.describeError!({ response: { status: 500 } })).toBeNull();
   });
+
 });
 
 describe("user tasks: Run tooltips show the command run with the default parameters", () => {
