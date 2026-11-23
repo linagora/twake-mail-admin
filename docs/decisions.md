@@ -11,6 +11,13 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Why: WebAdmin now refuses an unknown queue with a 400, while a suggestion list still lets a queue missing from the list (e.g. listing not allowed for the profile) be typed.
 - Scope: desktop and mobile, mail repository list and mail repository pages (default and Extended).
 
+## 2026-11-23, [UX] Rate limits: invalid values are refused on the field
+
+- Decision: on the user and domain Rate Limiting editors, a limit is empty (no limit set, sent as `null`), `-1` (unlimited) or a whole number ≥ 0 (sent as a JSON integer); any other value, including text the number input cannot parse, is flagged on the field and disables Save, and is never rounded or sent.
+- Decided by: chibenwa, [issue #711](https://github.com/linagora/twake-mail-admin/issues/711), following tmail-backend [c89f212](https://github.com/linagora/tmail-backend/commit/c89f212ce9c3b083248bad4b93e1a3aa002fb4be) which answers 400 to such values.
+- Why: what is saved must be exactly what the operator typed, and the backend now rejects other values.
+- Scope: desktop and mobile, user detail, domain detail and domain admin Rate Limiting page.
+
 ## 2026-11-23, [UX] A team mailbox vault restore brings back all its messages, with no criteria
 
 - Decision: on a team mailbox page, "Restore all deleted messages" opens its own confirmation, which names the team mailbox, says every deleted message goes back into its restore folder and that they cannot be picked, and previews a curl command with no body. The request has no body. The criteria of the Deleted Message Vault section only search the vault: they offer no Restore of the criteria nor of a single message.

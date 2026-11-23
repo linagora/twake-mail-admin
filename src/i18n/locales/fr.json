@@ -2336,7 +2336,7 @@
     "noLimitHint": "Laisser vide pour appliquer la limite par défaut, -1 signifie illimité. Les limites de destinataires comptent chaque destinataire d'un mail envoyé, les limites de mails comptent le mail une seule fois.",
     "sectionTitle": "Limitation de débit",
     "invalid": "Limite invalide",
-    "invalidDesc": "Saisissez un entier positif, -1 pour illimité, ou laissez vide pour la limite par défaut."
+    "invalidDesc": "Saisissez un entier positif ou nul, -1 pour illimité, ou laissez vide pour la limite par défaut."
   },
   "confirmTask": {
     "commandLabel": "Commande :",
