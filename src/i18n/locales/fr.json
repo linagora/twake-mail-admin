@@ -1568,7 +1568,7 @@
       },
       "processor": {
         "label": "Processeur cible",
-        "help": "Processeur de mailets qui retraite les mails. root : traitement complet."
+        "help": "Nom d'un processeur configuré dans le conteneur de mailets du serveur (mailetcontainer.xml), par exemple root, transport, error, local-delivery ou relay. Laissé vide, chaque mail retourne dans son propre état enregistré."
       },
       "consume": {
         "label": "Retirer du dépôt une fois retraités",
@@ -1972,6 +1972,10 @@
     "reprocessMailConfirm": "Retraiter l'email \"{{mailKey}}\" ?",
     "reprocessRepoConfirm": "Retraiter tous les emails du dépôt {{path}} ?",
     "reprocessScheduled": "Retraitement planifié",
+    "reprocessRefused": {
+      "processor": "Le processeur cible n'est pas configuré dans le conteneur de mailets du serveur : aucun mail n'a été déplacé. Corrigez-le, ou laissez-le vide pour que chaque mail retourne dans son propre état.",
+      "queue": "La file cible n'existe pas sur le serveur : aucun mail n'a été déplacé. Corrigez-la, ou laissez-la vide pour utiliser spool."
+    },
     "errorReprocessing": "Erreur lors du retraitement",
     "moveMailHeader": "Déplacer l'email",
     "moveMailConfirm": "Déplacer l'email \"{{mailKey}}\" vers :",

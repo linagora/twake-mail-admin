@@ -1568,7 +1568,7 @@
       },
       "processor": {
         "label": "Processore di destinazione",
-        "help": "Processore di mailet che rielabora i messaggi. root: elaborazione completa."
+        "help": "Nome di un processore configurato nel contenitore di mailet del server (mailetcontainer.xml), ad es. root, transport, error, local-delivery o relay. Se vuoto, ogni messaggio torna al proprio stato salvato."
       },
       "consume": {
         "label": "Rimuovi dal repository dopo la rielaborazione",
@@ -1972,6 +1972,10 @@
     "reprocessMailConfirm": "Rielaborare l'email \"{{mailKey}}\"?",
     "reprocessRepoConfirm": "Rielaborare tutte le email del repository {{path}}?",
     "reprocessScheduled": "Rielaborazione pianificata",
+    "reprocessRefused": {
+      "processor": "Il processore di destinazione non è configurato nel contenitore di mailet del server: nessun messaggio è stato spostato. Correggilo o lascialo vuoto perché ogni messaggio torni al proprio stato.",
+      "queue": "La coda di destinazione non esiste sul server: nessun messaggio è stato spostato. Correggila o lasciala vuota per usare spool."
+    },
     "errorReprocessing": "Errore durante la rielaborazione",
     "moveMailHeader": "Sposta l'email",
     "moveMailConfirm": "Sposta l'email \"{{mailKey}}\" in:",

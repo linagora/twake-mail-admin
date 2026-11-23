@@ -1552,7 +1552,7 @@
       },
       "processor": {
         "label": "Bộ xử lý đích",
-        "help": "Bộ xử lý mailet xử lý lại thư. root nghĩa là xử lý đầy đủ."
+        "help": "Tên một bộ xử lý được cấu hình trong mailet container của máy chủ (mailetcontainer.xml), ví dụ root, transport, error, local-delivery hoặc relay. Để trống, mỗi thư trở về trạng thái đã lưu của chính nó."
       },
       "consume": {
         "label": "Xóa khỏi kho sau khi xử lý lại",
@@ -1953,6 +1953,10 @@
     "reprocessMailConfirm": "Xử lý lại email \"{{mailKey}}\"?",
     "reprocessRepoConfirm": "Xử lý lại tất cả email trong kho {{path}}?",
     "reprocessScheduled": "Đã lên lịch xử lý lại",
+    "reprocessRefused": {
+      "processor": "Bộ xử lý đích chưa được cấu hình trong mailet container của máy chủ: không có thư nào bị di chuyển. Hãy sửa lại, hoặc để trống để mỗi thư trở về trạng thái của chính nó.",
+      "queue": "Hàng đợi đích không tồn tại trên máy chủ: không có thư nào bị di chuyển. Hãy sửa lại, hoặc để trống để dùng spool."
+    },
     "errorReprocessing": "Lỗi khi xử lý lại",
     "moveMailHeader": "Chuyển email",
     "moveMailConfirm": "Chuyển email \"{{mailKey}}\" đến:",

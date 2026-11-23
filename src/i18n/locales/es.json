@@ -1568,7 +1568,7 @@
       },
       "processor": {
         "label": "Procesador de destino",
-        "help": "Procesador de mailets que vuelve a tratar los correos. root: procesamiento completo."
+        "help": "Nombre de un procesador configurado en el contenedor de mailets del servidor (mailetcontainer.xml), p. ej. root, transport, error, local-delivery o relay. Si se deja vacío, cada correo vuelve a su propio estado guardado."
       },
       "consume": {
         "label": "Quitar del repositorio una vez reprocesados",
@@ -1972,6 +1972,10 @@
     "reprocessMailConfirm": "¿Volver a procesar el correo \"{{mailKey}}\"?",
     "reprocessRepoConfirm": "¿Volver a procesar todos los correos del repositorio {{path}}?",
     "reprocessScheduled": "Reprocesamiento programado",
+    "reprocessRefused": {
+      "processor": "El procesador de destino no está configurado en el contenedor de mailets del servidor: no se ha movido ningún correo. Corríjalo o déjelo vacío para que cada correo vuelva a su propio estado.",
+      "queue": "La cola de destino no existe en el servidor: no se ha movido ningún correo. Corríjala o déjela vacía para usar spool."
+    },
     "errorReprocessing": "Error al volver a procesar",
     "moveMailHeader": "Mover el correo",
     "moveMailConfirm": "Mover el correo \"{{mailKey}}\" a:",
