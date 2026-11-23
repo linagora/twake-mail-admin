@@ -2029,6 +2029,7 @@
     "domainSourcePlaceholder": "Dominio di origine (ad es. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Dominio di destinazione (ad es. destination.tld)",
     "domainHint": "Le email indirizzate al dominio di origine verranno riscritte verso il dominio di destinazione. Non viene effettuato alcun controllo dei cicli.",
+    "domainSelfMapping": "Un dominio non può essere mappato su se stesso.",
     "domainCreated": "Mappatura di dominio creata correttamente",
     "errorCreatingDomain": "Errore durante la creazione della mappatura di dominio",
     "removeTitle": "Rimuovi mappatura di tipo {{type}}",

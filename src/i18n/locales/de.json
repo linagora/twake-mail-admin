@@ -2026,6 +2026,7 @@
     "domainSourcePlaceholder": "Quell-Domain (z. B. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Ziel-Domain (z. B. destination.tld)",
     "domainHint": "An die Quell-Domain adressierte E-Mails werden auf die Ziel-Domain umgeschrieben. Es erfolgt keine Schleifenprüfung.",
+    "domainSelfMapping": "Eine Domain kann nicht auf sich selbst abgebildet werden.",
     "domainCreated": "Domain-Zuordnung erfolgreich erstellt",
     "errorCreatingDomain": "Fehler beim Erstellen der Domain-Zuordnung",
     "removeTitle": "Zuordnung vom Typ {{type}} entfernen",

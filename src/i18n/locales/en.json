@@ -2027,6 +2027,7 @@
     "domainSourcePlaceholder": "Source domain (e.g. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Destination domain (e.g. destination.tld)",
     "domainHint": "Mail addressed to the source domain will be rewritten to the destination domain. No loop check is performed.",
+    "domainSelfMapping": "A domain cannot be mapped to itself.",
     "domainCreated": "Domain mapping created successfully",
     "errorCreatingDomain": "Error creating domain mapping",
     "removeTitle": "Remove {{type}} Mapping",

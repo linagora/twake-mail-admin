@@ -2010,6 +2010,7 @@
     "domainSourcePlaceholder": "Tên miền nguồn (vd. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Tên miền đích (vd. destination.tld)",
     "domainHint": "Thư gửi đến tên miền nguồn sẽ được viết lại thành tên miền đích. Không kiểm tra vòng lặp.",
+    "domainSelfMapping": "Không thể ánh xạ một tên miền tới chính nó.",
     "domainCreated": "Đã tạo ánh xạ tên miền thành công",
     "errorCreatingDomain": "Lỗi khi tạo ánh xạ tên miền",
     "removeTitle": "Xóa ánh xạ {{type}}",

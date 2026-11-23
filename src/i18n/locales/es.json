@@ -2029,6 +2029,7 @@
     "domainSourcePlaceholder": "Dominio de origen (p. ej. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Dominio de destino (p. ej. destination.tld)",
     "domainHint": "Los correos dirigidos al dominio de origen se reescribirán al dominio de destino. No se realiza ninguna comprobación de bucles.",
+    "domainSelfMapping": "Un dominio no se puede asignar a sí mismo.",
     "domainCreated": "Asignación de dominio creada correctamente",
     "errorCreatingDomain": "Error al crear la asignación de dominio",
     "removeTitle": "Quitar asignación de tipo {{type}}",
