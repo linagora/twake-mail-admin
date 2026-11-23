@@ -1319,6 +1319,7 @@
     "newUsernameRequired": "Le nouveau nom d'utilisateur est obligatoire",
     "newUsernameOtherDomain": "Le nouveau nom d'utilisateur doit appartenir au domaine {{domain}}",
     "targetMustExist": "Le nouveau nom d'utilisateur doit être un compte existant : le renommage ne fait que migrer les données de l'utilisateur actuel vers ce compte.",
+    "mergeIntoExisting": "Les données sont fusionnées dans le compte existant. Si les deux comptes ont une étiquette avec le même mot-clé, le compte existant conserve sa propre étiquette et celle de l'ancien utilisateur est supprimée. Si le compte existant a déjà des limites de débit, elles sont conservées et celles de l'ancien utilisateur ne sont pas copiées.",
     "force": "Forcer",
     "fromStep": "Reprendre depuis l'étape",
     "fromStepPlaceholder": "ex. MailboxUsernameChangeTaskStep",
