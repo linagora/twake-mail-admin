@@ -21,6 +21,8 @@ import { CALENDAR_WEBADMIN_DOC_URL, calendarWebadminDoc } from "@/lib/calendar-d
 import { cleanupTaskLabel } from "@/modules/tasks/task-summary";
 import { useSyncSpaces } from "@/modules/twake-space/use-sync-spaces";
 import { EVERY_SPACE, syncSpacesCommand } from "@/modules/twake-space/space";
+import SendEmailDialog from "./send-email/send-email-dialog";
+import { SEND_EMAIL_COMMAND } from "./send-email/api-client";
 
 // How a task's risk is set: safe = reads or rebuilds derived data; caution = changes stored
 // data, needs a maintenance window or deletes only unreferenced or expired data; destructive =
@@ -325,6 +327,8 @@ function MailCommonTasks() {
   const canCleanupOldTasks = useIsAllowed("DELETE", "/tasks");
   const canReindexUsers = useIsAllowed("POST", "/users");
   const canSyncSpaces = useIsAllowed("POST", "/spaces?action=sync");
+  const canSendEmail = useIsAllowed("POST", "/mail-transfer-service");
+  const [sendEmailOpen, setSendEmailOpen] = useState(false);
   const syncSpaces = useSyncSpaces();
   const [reloadLoading, setReloadLoading] = useState(false);
   const [reloadPort, setReloadPort] = useState("");
@@ -550,6 +554,20 @@ function MailCommonTasks() {
         </TaskRow>
       ),
     }] : []),
+    ...(canSendEmail ? [{
+      nameKey: "commonTasks.sendEmail",
+      group: "server" as const,
+      risk: "caution" as const,
+      node: (
+        <TaskRow
+          title={t("commonTasks.sendEmail")}
+          description={t(taskDescriptionKey("commonTasks.sendEmail"))}
+          risk="caution"
+          command={SEND_EMAIL_COMMAND}
+          onRun={() => setSendEmailOpen(true)}
+        />
+      ),
+    }] : []),
   ];
 
   return (
@@ -561,6 +579,7 @@ function MailCommonTasks() {
       />
 
       <TaskGroups order={MAIL_GROUPS} entries={entries} />
+      <SendEmailDialog open={sendEmailOpen} onClose={() => setSendEmailOpen(false)} />
     </div>
   );
 }

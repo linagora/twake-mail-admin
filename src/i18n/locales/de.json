@@ -211,7 +211,14 @@
       "errorUpdating": "Fehler beim Aktualisieren des Kontakts",
       "updated": "Kontakt aktualisiert",
       "searchPlaceholder": "Kontakte suchen...",
-      "noResults": "Keine Kontakte entsprechen Ihrer Suche."
+      "noResults": "Keine Kontakte entsprechen Ihrer Suche.",
+      "teamMailbox": {
+        "badge": "Team-Postfach",
+        "badgeNamed": "Team-Postfach {{name}}",
+        "label": "Team-Postfach",
+        "undeletable": "Dieser Kontakt gehört zum Team-Postfach {{name}}. Er wird mit dem Team-Postfach erstellt und entfernt: Löschen Sie das Team-Postfach, um ihn zu entfernen.",
+        "deleteRefused": "Dieser Kontakt gehört zu einem bestehenden Team-Postfach und kann nicht gelöscht werden"
+      }
     },
     "teamMailboxes": {
       "title": "Team-Postfächer",
@@ -875,7 +882,8 @@
       "errorUpdating": "Fehler beim Aktualisieren des Labels",
       "deleted": "Label gelöscht",
       "errorDeleting": "Fehler beim Löschen des Labels",
-      "colorPicker": "Farbauswahl"
+      "colorPicker": "Farbauswahl",
+      "storedOverLimit": "Dieses Label überschreitet die Größenlimits des Servers: kürzen Sie es vor dem Speichern."
     },
     "jmapSettings": {
       "title": "JMAP-Einstellungen",
@@ -890,7 +898,11 @@
       "addRow": "Einstellung hinzufügen",
       "removeRow": "Diesen Eintrag entfernen",
       "saved": "JMAP-Einstellungen gespeichert",
-      "errorSaving": "Fehler beim Speichern der JMAP-Einstellungen"
+      "errorSaving": "Fehler beim Speichern der JMAP-Einstellungen",
+      "tooMany_one": "Ein Benutzer hat höchstens {{count}} Einstellung: entfernen Sie {{excess}} vor dem Speichern.",
+      "tooMany_other": "Ein Benutzer hat höchstens {{count}} Einstellungen: entfernen Sie {{excess}} vor dem Speichern.",
+      "limitReached_one": "Das Limit von {{count}} Einstellung ist erreicht.",
+      "limitReached_other": "Das Limit von {{count}} Einstellungen ist erreicht."
     },
     "deletedVault": {
       "title": "Tresor gelöschter Nachrichten",
@@ -1000,6 +1012,7 @@
       "reindexAll": "Alle Postfächer neu indizieren",
       "reindexTitle": "Alle Postfächer neu indizieren",
       "reindexDesc": "Alle Postfächer von {{username}} neu indizieren.",
+      "reindexUnknownUser": "Der Benutzer {{username}} existiert nicht: Es wurde keine Neuindizierungsaufgabe erstellt.",
       "errorReindex": "Fehler beim Ausführen der Neuindizierung",
       "subscribeAll": "Alle Postfächer abonnieren",
       "subscribeTitle": "Alle Postfächer abonnieren",
@@ -1306,7 +1319,12 @@
     "unmanagedDomainHint": "Die Domain dieses Benutzers existiert auf dem Server nicht mehr: E-Mails an diese Adresse werden nicht lokal zugestellt.",
     "countSingle_other": "{{count}} Benutzer",
     "countSingle_one": "{{count}} Benutzer",
-    "countRange": "Benutzer {{from}}–{{to}}"
+    "countRange": "Benutzer {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Pflichtfeld: darf nicht leer sein.",
+      "tooLong_one": "Höchstens {{count}} Zeichen (derzeit {{length}}): bitte kürzen.",
+      "tooLong_other": "Höchstens {{count}} Zeichen (derzeit {{length}}): bitte kürzen."
+    }
   },
   "mailboxCounts": {
     "total": "Gesamt: {{value}}",
@@ -1318,6 +1336,7 @@
     "newUsernameRequired": "Der neue Benutzername ist erforderlich",
     "newUsernameOtherDomain": "Der neue Benutzername muss zur Domain {{domain}} gehören",
     "targetMustExist": "Der neue Benutzername muss ein bestehendes Konto sein: Das Umbenennen migriert nur die Daten des aktuellen Benutzers dorthin.",
+    "mergeIntoExisting": "Die Daten werden in das bestehende Konto übernommen. Haben beide Konten ein Label mit demselben Schlüsselwort, behält das bestehende Konto sein eigenes Label und das Label des alten Benutzers wird verworfen. Hat das bestehende Konto bereits Ratenbegrenzungen, bleiben diese erhalten und die Begrenzungen des alten Benutzers werden nicht kopiert.",
     "force": "Erzwingen",
     "fromStep": "Ab Schritt fortsetzen",
     "fromStepPlaceholder": "z. B. MailboxUsernameChangeTaskStep",
@@ -1569,7 +1588,7 @@
       },
       "processor": {
         "label": "Ziel-Prozessor",
-        "help": "Mailet-Prozessor, der die Mails erneut verarbeitet. root bedeutet vollständige Verarbeitung."
+        "help": "Name eines im Mailet-Container des Servers konfigurierten Prozessors (mailetcontainer.xml), z. B. root, transport, error, local-delivery oder relay. Leer gelassen, kehrt jede Mail in ihren eigenen gespeicherten Zustand zurück."
       },
       "consume": {
         "label": "Nach der Verarbeitung aus dem Repository entfernen",
@@ -1607,6 +1626,10 @@
       "autoMerge": {
         "label": "Doppelte Postfächer zusammenführen",
         "help": "Angehakt: Gleichnamige Postfächer werden zusammengeführt statt nur gemeldet."
+      },
+      "force": {
+        "label": "Auch ausführen, wenn der Benutzer nicht existiert (force)",
+        "help": "Nur nützlich, um die Indexeinträge eines bereits gelöschten Benutzers zu bereinigen. Ohne diese Option lehnt WebAdmin einen unbekannten Benutzer ab, was Tippfehler verhindert."
       },
       "trustMessageProjection": {
         "label": "Der Nachrichtenprojektion vertrauen",
@@ -1711,14 +1734,16 @@
       "clearDomainMembersContacts": "Leert das Adressbuch „Domänenmitglieder“ jeder Domäne. Eine Synchronisierung füllt es wieder.",
       "twakeSpacePurge": "Löscht die Team-Postfächer der Spaces, die länger als die in space.properties festgelegte Aufbewahrungsdauer gelöscht sind, und gibt ihre Adressen frei. TMail führt dies nicht mehr selbst aus: per externem Cron planen oder hier starten.",
       "twakeSpaceReindex": "Nach dem Verknüpfen von Team-Postfächern außerhalb der Erweiterung (z. B. Migration vom Twake-Mail-Nebendienst) oder bei Verlust des Index-Postfachs ausführen. Durchsucht alle Team-Postfächer.",
-      "syncTwakeSpaces": "Fragt ldap-rest nach dem aktuellen Stand der Twake-Bereiche und wendet ihn auf ihre Team-Postfächer an: alle, die einer Organisation oder einen einzelnen Bereich."
+      "syncTwakeSpaces": "Fragt ldap-rest nach dem aktuellen Stand der Twake-Bereiche und wendet ihn auf ihre Team-Postfächer an: alle, die einer Organisation oder einen einzelnen Bereich.",
+      "sendEmail": "Sendet eine E-Mail über die Mailverarbeitung des Servers an die in ihren Kopfzeilen genannten Empfänger: hier verfasst, eingefügt oder aus einer .eml-Datei geladen."
     },
     "archiveAllEvents": "Alle Termine archivieren",
     "archiveAllWarning": "Kein Kriterium gesetzt: Alle Termine aller registrierten Benutzer werden in einen Kalender „Archival“ verschoben.",
     "twakeSpacePurge": "Team-Postfächer gelöschter Spaces bereinigen",
     "twakeSpaceReindex": "Space-Index neu aufbauen",
     "twakeSpaceUnavailable": "Twake Space ist auf diesem Server nicht verfügbar: Er stellt die /spaces-Routen nicht bereit, die die Twake-Space-Erweiterung von tmail-backend erfordern.",
-    "syncTwakeSpaces": "Twake-Bereiche synchronisieren"
+    "syncTwakeSpaces": "Twake-Bereiche synchronisieren",
+    "sendEmail": "E-Mail senden"
   },
   "healthCheck": {
     "checking": "Komponenten werden geprüft, dies kann eine Weile dauern…",
@@ -1967,6 +1992,10 @@
     "reprocessMailConfirm": "Die E-Mail \"{{mailKey}}\" erneut verarbeiten?",
     "reprocessRepoConfirm": "Alle E-Mails im Repository {{path}} erneut verarbeiten?",
     "reprocessScheduled": "Erneute Verarbeitung eingeplant",
+    "reprocessRefused": {
+      "processor": "Der Zielprozessor ist im Mailet-Container des Servers nicht konfiguriert: Es wurde keine Mail verschoben. Korrigieren Sie ihn oder lassen Sie ihn leer, damit jede Mail in ihren eigenen Zustand zurückkehrt.",
+      "queue": "Die Ziel-Warteschlange existiert auf dem Server nicht: Es wurde keine Mail verschoben. Korrigieren Sie sie oder lassen Sie sie leer, um spool zu verwenden."
+    },
     "errorReprocessing": "Fehler bei der erneuten Verarbeitung",
     "moveMailHeader": "E-Mail verschieben",
     "moveMailConfirm": "Die E-Mail \"{{mailKey}}\" verschieben nach:",
@@ -2018,6 +2047,7 @@
     "domainSourcePlaceholder": "Quell-Domain (z. B. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Ziel-Domain (z. B. destination.tld)",
     "domainHint": "An die Quell-Domain adressierte E-Mails werden auf die Ziel-Domain umgeschrieben. Es erfolgt keine Schleifenprüfung.",
+    "domainSelfMapping": "Eine Domain kann nicht auf sich selbst abgebildet werden.",
     "domainCreated": "Domain-Zuordnung erfolgreich erstellt",
     "errorCreatingDomain": "Fehler beim Erstellen der Domain-Zuordnung",
     "removeTitle": "Zuordnung vom Typ {{type}} entfernen",
@@ -2308,7 +2338,7 @@
     "clear": "Leeren",
     "typeToConfirm": "Geben Sie {{value}} zur Bestätigung ein",
     "consequence": {
-      "deleteUserData": "Alle Postfächer, Nachrichten, Identitäten, Labels, Abwesenheitsnotiz und Einstellungen von {{user}} werden endgültig gelöscht. Das Konto selbst bleibt bestehen. Dies kann nicht rückgängig gemacht werden.",
+      "deleteUserData": "Alle Postfächer, Nachrichten, Identitäten, Labels, Abwesenheitsnotiz und Einstellungen von {{user}} werden endgültig gelöscht. Das Konto selbst bleibt bestehen. Seine Delegierungen werden entfernt: {{user}} verliert den Zugriff auf die an ihn delegierten Konten, und die Benutzer, an die er sein Konto delegiert hat, verlieren den Zugriff darauf. Dies kann nicht rückgängig gemacht werden.",
       "deleteMailboxes": "Alle Postfächer von {{user}} und alle enthaltenen Nachrichten werden endgültig gelöscht. Dies kann nicht rückgängig gemacht werden.",
       "deleteMailbox": "„{{mailbox}}“, seine Unterordner und alle Nachrichten werden endgültig gelöscht.",
       "clearMailbox": "Alle Nachrichten in „{{mailbox}}“ werden endgültig gelöscht; der Ordner bleibt.",
@@ -2351,7 +2381,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Unbegrenzt (kein Limit gesetzt)",
     "noLimit": "Kein Limit",
-    "domainLevel": "Domain {{domain}}"
+    "domainLevel": "Domain {{domain}}",
+    "zeroLimit": "Das Limit ist 0: Es kann nichts gespeichert werden."
   },
   "taskTypes": {
     "fullReindexing": "Alle Daten in OpenSearch neu indizieren",
@@ -2378,5 +2409,41 @@
       "requested": "Synchronisierung angefordert",
       "thisSpace": "Diesen Bereich synchronisieren"
     }
+  },
+  "sendEmail": {
+    "title": "E-Mail senden",
+    "intro": "Die Nachricht wird zur Verarbeitung eingereiht, wie eine vom Server empfangene Nachricht: Ihre Empfänger sind die To-, Cc- und Bcc-Adressen ihrer Kopfzeilen.",
+    "modeLabel": "Quelle der Nachricht",
+    "mode": {
+      "compose": "Verfassen",
+      "raw": "Rohe Nachricht (.eml)"
+    },
+    "field": {
+      "from": "Von",
+      "to": "An",
+      "cc": "Cc",
+      "subject": "Betreff",
+      "body": "Text",
+      "eml": "Eine .eml-Datei laden",
+      "raw": "RFC-822-Nachricht"
+    },
+    "placeholder": {
+      "from": "admin@domain.tld",
+      "to": "benutzer@domain.tld, andere@domain.tld",
+      "cc": "benutzer@domain.tld",
+      "subject": "Betreff"
+    },
+    "cannotSend": "Senden bleibt deaktiviert, solange:",
+    "problem": {
+      "empty": "die Nachricht nicht verfasst oder geladen ist",
+      "noFrom": "die Nachricht keine From-Adresse hat",
+      "severalFrom": "die Nachricht mehr als eine From-Adresse hat",
+      "invalidFrom": "die From-Adresse „{{address}}“ ungültig ist",
+      "noRecipient": "die Nachricht keinen Empfänger hat (To, Cc oder Bcc)",
+      "invalidRecipient": "die {{header}}-Adresse „{{address}}“ ungültig ist"
+    },
+    "send": "Senden",
+    "enqueued": "E-Mail zur Verarbeitung eingereiht",
+    "refused": "Der Server hat die E-Mail abgelehnt"
   }
 }

@@ -27,6 +27,8 @@ export default function RenameUserForm({ username, onChange }: Props) {
     <div className="space-y-4">
       <p>{t("renameUserForm.currentUsername")}: <strong>{username}</strong></p>
       <p className="text-sm text-muted-foreground">{t("renameUserForm.targetMustExist")}</p>
+      {/* The target always exists, so every rename merges: say which side wins on a collision */}
+      <p className="text-sm text-muted-foreground">{t("renameUserForm.mergeIntoExisting")}</p>
       <div>
         <label htmlFor={newUsernameId} className="text-sm font-medium">{t("renameUserForm.newUsername")}</label>
         <UserSuggestInput

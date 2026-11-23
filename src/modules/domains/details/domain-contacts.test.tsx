@@ -10,7 +10,9 @@ const api = vi.hoisted(() => ({
   createDomainContact: vi.fn(),
   updateDomainContact: vi.fn(),
   deleteDomainContact: vi.fn(),
+  getTeamMailboxes: vi.fn(),
 }));
+const toast = vi.hoisted(() => vi.fn());
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -22,22 +24,40 @@ vi.mock("@/lib/proxy-resolver-context", () => ({
 }));
 vi.mock("../api-client", () => api);
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => true }));
-vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }));
+vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
 
+import { AxiosError, AxiosHeaders } from "axios";
+import { MemoryRouter } from "react-router";
 import DomainContacts from "./domain-contacts";
 
 // The listing is eventually consistent: it keeps answering the state prior to any write.
 const STALE_LISTING = ["alice@example.com", "bob@example.com"];
+const CONTACT_ENDPOINTS = [{ endpoint: "/domains/{domain}/contacts" }, { endpoint: "/domains/{domain}/contacts/*" }];
+const TEAM_MAILBOX_ENDPOINTS = [{ endpoint: "/domains/{domain}/team-mailboxes" }];
+
+const renderContacts = async (endpoints: { endpoint: string }[]) => {
+  cleanup();
+  proxy.resolver = new ProxyResolver(endpoints);
+  render(<MemoryRouter><DomainContacts domain="example.com" /></MemoryRouter>);
+  fireEvent.click(screen.getByText("domains.contacts.title"));
+  await screen.findByText("alice@example.com");
+};
+
+const conflict = (message: string) => {
+  const config = { headers: new AxiosHeaders() };
+  return new AxiosError("Request failed with status code 409", "ERR_BAD_REQUEST", config, null, {
+    status: 409, statusText: "Conflict", headers: {}, config, data: { statusCode: 409, message },
+  });
+};
 
 beforeEach(async () => {
   Object.values(api).forEach((fn) => fn.mockReset());
+  toast.mockReset();
   api.getDomainContacts.mockResolvedValue(STALE_LISTING);
   api.createDomainContact.mockResolvedValue(undefined);
   api.deleteDomainContact.mockResolvedValue(undefined);
-  proxy.resolver = new ProxyResolver([{ endpoint: "/domains/{domain}/contacts" }, { endpoint: "/domains/{domain}/contacts/*" }]);
-  render(<DomainContacts domain="example.com" />);
-  fireEvent.click(screen.getByText("domains.contacts.title"));
-  await screen.findByText("alice@example.com");
+  api.getTeamMailboxes.mockResolvedValue([]);
+  await renderContacts(CONTACT_ENDPOINTS);
 });
 
 afterEach(cleanup);
@@ -124,5 +144,42 @@ describe("domain contacts", () => {
     expect(labels(/^domains\.contacts\.removeNamed /)).toEqual(named("removeNamed"));
     expect(screen.getAllByTitle("domains.contacts.editTooltip")).toHaveLength(STALE_LISTING.length);
     expect(screen.getAllByTitle("domains.contacts.removeTooltip")).toHaveLength(STALE_LISTING.length);
+  });
+});
+
+describe("domain contacts of the team mailboxes", () => {
+  const removeButtonOf = (email: string) =>
+    screen.getByRole("button", { name: `domains.contacts.removeNamed ${JSON.stringify({ item: email })}` }) as HTMLButtonElement;
+
+  it("marks the contact of a team mailbox and does not offer its deletion, saying why", async () => {
+    api.getTeamMailboxes.mockResolvedValue([{ name: "sales", emailAddress: "Alice@example.com" }]);
+    await renderContacts([...CONTACT_ENDPOINTS, ...TEAM_MAILBOX_ENDPOINTS]);
+
+    const badge = await screen.findByRole("link", { name: `domains.contacts.teamMailbox.badgeNamed ${JSON.stringify({ name: "sales" })}` });
+    expect(badge.getAttribute("href")).toBe("/domains/domain/example.com/team-mailbox/sales");
+    const aliceRemove = removeButtonOf("alice@example.com");
+    expect(aliceRemove.disabled).toBe(true);
+    const hint = `domains.contacts.teamMailbox.undeletable ${JSON.stringify({ name: "Alice@example.com" })}`;
+    expect(document.getElementById(aliceRemove.getAttribute("aria-describedby")!)?.textContent).toBe(hint);
+    expect(removeButtonOf("bob@example.com").disabled).toBe(false);
+
+    fireEvent.click(aliceRemove.parentElement!);
+    expect(api.deleteDomainContact).not.toHaveBeenCalled();
+  });
+
+  it("does not look the team mailboxes up without the permission to list them", () => {
+    expect(api.getTeamMailboxes).not.toHaveBeenCalled();
+    expect(screen.queryByRole("link")).toBeNull();
+  });
+
+  it("reports the refusal to delete the contact of a team mailbox, and keeps it listed", async () => {
+    api.deleteDomainContact.mockRejectedValue(conflict("Contact alice@example.com belongs to a team mailbox"));
+    fireEvent.click(removeButtonOf("alice@example.com"));
+
+    await waitFor(() => expect(toast).toHaveBeenCalledTimes(1));
+    expect(toast.mock.calls[0][0].title).toBe("domains.contacts.teamMailbox.deleteRefused");
+    expect(toast).not.toHaveBeenCalledWith(expect.objectContaining({ title: "domains.contacts.deleted" }));
+    expect(screen.queryByText("alice@example.com")).not.toBeNull();
+    expect(counter()).toBe("(2)");
   });
 });

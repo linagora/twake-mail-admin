@@ -45,6 +45,23 @@ describe("mail user summary", () => {
     expect(await screen.findByText("users.summary.vacationOn")).not.toBeNull();
   });
 
+  it("shows a used zero size limit as full, not the NaN of older backends", async () => {
+    api.getUserQuota.mockResolvedValue({
+      global: null, domain: null, user: { size: 0, count: null },
+      computed: { size: 0, count: null },
+      occupation: { size: 1126, count: 2, ratio: { size: "NaN", count: 0, max: "NaN" } },
+    });
+    render(
+      <SectionsProvider page="user">
+        <MailUserSummary username="bob@example.com" />
+      </SectionsProvider>
+    );
+
+    expect(await screen.findByText("users.summary.quota")).not.toBeNull();
+    const bar = document.querySelector<HTMLElement>(".bg-red-500");
+    expect(bar?.style.width).toBe("100%");
+  });
+
   it("opens the section of a fact when clicked", async () => {
     render(
       <SectionsProvider page="user">

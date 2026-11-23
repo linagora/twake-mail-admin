@@ -5,7 +5,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getTeamMailboxQuota, updateTeamMailboxQuotaSize, deleteTeamMailboxQuotaSize, updateTeamMailboxQuotaCount, deleteTeamMailboxQuotaCount } from "../api-client";
 import { TeamMailboxQuota as TeamMailboxQuotaType } from "../types";
 import QuotaLimits, { NO_LIMITS, QuotaLimitsApi } from "@/components/custom/quota-limits";
-import { isLimited, QuotaLevel, QuotaLevelRows, QuotaOccupation } from "@/components/custom/quota-levels";
+import { QuotaLevel, QuotaLevelRows, QuotaOccupation } from "@/components/custom/quota-levels";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
 
 interface Props {
@@ -55,7 +55,7 @@ export default function TeamMailboxQuota({ domain, mailbox }: Props) {
 
           {quota && (
             <div className="p-4 bg-gray-50 rounded-2 space-y-3">
-              <QuotaOccupation occupation={quota.occupation} limited={isLimited(levels)} />
+              <QuotaOccupation occupation={quota.occupation} levels={levels} />
 
               <hr className="border-gray-200" />
 
