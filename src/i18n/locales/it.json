@@ -2307,7 +2307,7 @@
     "clear": "Svuota",
     "typeToConfirm": "Digita {{value}} per confermare",
     "consequence": {
-      "deleteUserData": "Tutte le caselle, i messaggi, le identità, le etichette, la risposta automatica e le impostazioni di {{user}} vengono eliminati definitivamente. L'account resta. Operazione irreversibile.",
+      "deleteUserData": "Tutte le caselle, i messaggi, le identità, le etichette, la risposta automatica e le impostazioni di {{user}} vengono eliminati definitivamente. L'account resta. Le sue deleghe vengono rimosse: {{user}} perde l'accesso agli account a lui delegati, e gli utenti a cui aveva delegato il proprio account ne perdono l'accesso. Operazione irreversibile.",
       "deleteMailboxes": "Tutte le caselle di {{user}} e i relativi messaggi vengono eliminati definitivamente. Operazione irreversibile.",
       "deleteMailbox": "«{{mailbox}}», le sottocartelle e tutti i messaggi vengono eliminati definitivamente.",
       "clearMailbox": "Tutti i messaggi di «{{mailbox}}» vengono eliminati definitivamente; la cartella resta.",

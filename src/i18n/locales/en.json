@@ -2306,7 +2306,7 @@
     "clear": "Clear",
     "typeToConfirm": "Type {{value}} to confirm",
     "consequence": {
-      "deleteUserData": "All mailboxes, messages, identities, labels, vacation and settings of {{user}} are permanently deleted. The account itself is kept. This cannot be undone.",
+      "deleteUserData": "All mailboxes, messages, identities, labels, vacation and settings of {{user}} are permanently deleted. The account itself is kept. Its delegations are removed: {{user}} loses access to the accounts delegated to it, and the users it delegated its account to lose access to it. This cannot be undone.",
       "deleteMailboxes": "Every mailbox of {{user}} and all the messages they contain are permanently deleted. This cannot be undone.",
       "deleteMailbox": "\"{{mailbox}}\", its sub-folders and all their messages are permanently deleted.",
       "clearMailbox": "All messages of \"{{mailbox}}\" are permanently deleted; the folder is kept.",

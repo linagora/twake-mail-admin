@@ -2307,7 +2307,7 @@
     "clear": "Vider",
     "typeToConfirm": "Saisissez {{value}} pour confirmer",
     "consequence": {
-      "deleteUserData": "Toutes les boîtes, messages, identités, étiquettes, réponse d'absence et paramètres de {{user}} sont définitivement supprimés. Le compte lui-même est conservé. Cette action est irréversible.",
+      "deleteUserData": "Toutes les boîtes, messages, identités, étiquettes, réponse d'absence et paramètres de {{user}} sont définitivement supprimés. Le compte lui-même est conservé. Ses délégations sont supprimées : {{user}} perd l'accès aux comptes qui lui étaient délégués, et les utilisateurs à qui il avait délégué son compte en perdent l'accès. Cette action est irréversible.",
       "deleteMailboxes": "Toutes les boîtes de {{user}} et tous leurs messages sont définitivement supprimés. Cette action est irréversible.",
       "deleteMailbox": "« {{mailbox}} », ses sous-dossiers et tous leurs messages sont définitivement supprimés.",
       "clearMailbox": "Tous les messages de « {{mailbox}} » sont définitivement supprimés ; le dossier est conservé.",
