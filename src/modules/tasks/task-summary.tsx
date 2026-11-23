@@ -116,6 +116,8 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   failedMailboxes: "tasks.info.failedMailboxes",
   processedMessageCount: "tasks.info.processedMessageCount",
   failedMessageCount: "tasks.info.failedMessageCount",
+  // Data tiering (UserDataTieringTask)
+  tieredMessageCount: "tasks.info.tieredMessageCount",
   timestamp: "tasks.info.timestamp",
   // Calendar tasks: archival, imports
   targetUser: "tasks.info.username",
