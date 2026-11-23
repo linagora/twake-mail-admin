@@ -1698,14 +1698,16 @@
       "clearDomainMembersContacts": "Làm trống sổ địa chỉ \"Thành viên miền\" của mọi miền. Chạy đồng bộ để điền lại.",
       "twakeSpacePurge": "Xóa hộp thư nhóm của các không gian đã bị xóa lâu hơn thời gian lưu giữ trong space.properties, giải phóng địa chỉ của chúng. TMail không còn tự chạy tác vụ này: hãy lên lịch bằng cron bên ngoài hoặc chạy tại đây.",
       "twakeSpaceReindex": "Dùng sau khi liên kết hộp thư nhóm bên ngoài tiện ích mở rộng (ví dụ: di chuyển từ dịch vụ phụ của Twake Mail) hoặc khi hộp thư chỉ mục bị mất. Quét mọi hộp thư nhóm.",
-      "syncTwakeSpaces": "Hỏi ldap-rest trạng thái hiện tại của các không gian Twake và áp dụng cho các hộp thư nhóm của chúng: tất cả, của một tổ chức, hoặc một không gian."
+      "syncTwakeSpaces": "Hỏi ldap-rest trạng thái hiện tại của các không gian Twake và áp dụng cho các hộp thư nhóm của chúng: tất cả, của một tổ chức, hoặc một không gian.",
+      "sendEmail": "Gửi email qua quy trình xử lý thư của máy chủ, đến những người nhận có trong tiêu đề: soạn tại đây, dán hoặc tải từ tệp .eml."
     },
     "archiveAllEvents": "Lưu trữ mọi sự kiện",
     "archiveAllWarning": "Chưa đặt tiêu chí: mọi sự kiện của mọi người dùng đã đăng ký sẽ được chuyển sang lịch \"Archival\".",
     "twakeSpacePurge": "Xóa hộp thư nhóm của các không gian đã xóa",
     "twakeSpaceReindex": "Xây dựng lại chỉ mục không gian",
     "twakeSpaceUnavailable": "Twake Space không khả dụng trên máy chủ này: máy chủ không cung cấp các route /spaces, vốn cần tiện ích mở rộng Twake Space của tmail-backend.",
-    "syncTwakeSpaces": "Đồng bộ các không gian Twake"
+    "syncTwakeSpaces": "Đồng bộ các không gian Twake",
+    "sendEmail": "Gửi email"
   },
   "healthCheck": {
     "checking": "Đang kiểm tra các thành phần, việc này có thể mất một lúc…",
@@ -2361,5 +2363,41 @@
       "requested": "Đã yêu cầu đồng bộ",
       "thisSpace": "Đồng bộ không gian này"
     }
+  },
+  "sendEmail": {
+    "title": "Gửi email",
+    "intro": "Thư được đưa vào hàng đợi xử lý, như một thư máy chủ nhận được: người nhận là các địa chỉ To, Cc và Bcc trong tiêu đề của thư.",
+    "modeLabel": "Nguồn thư",
+    "mode": {
+      "compose": "Soạn thư",
+      "raw": "Thư thô (.eml)"
+    },
+    "field": {
+      "from": "Từ",
+      "to": "Đến",
+      "cc": "Cc",
+      "subject": "Chủ đề",
+      "body": "Nội dung",
+      "eml": "Tải tệp .eml",
+      "raw": "Thư RFC 822"
+    },
+    "placeholder": {
+      "from": "admin@domain.tld",
+      "to": "user@domain.tld, other@domain.tld",
+      "cc": "user@domain.tld",
+      "subject": "Chủ đề"
+    },
+    "cannotSend": "Nút Gửi bị tắt cho đến khi:",
+    "problem": {
+      "empty": "thư được soạn hoặc tải lên",
+      "noFrom": "thư có một địa chỉ From",
+      "severalFrom": "thư chỉ có một địa chỉ From",
+      "invalidFrom": "địa chỉ From \"{{address}}\" hợp lệ",
+      "noRecipient": "thư có ít nhất một người nhận (To, Cc hoặc Bcc)",
+      "invalidRecipient": "địa chỉ {{header}} \"{{address}}\" hợp lệ"
+    },
+    "send": "Gửi",
+    "enqueued": "Email đã được đưa vào hàng đợi xử lý",
+    "refused": "Máy chủ đã từ chối email"
   }
 }

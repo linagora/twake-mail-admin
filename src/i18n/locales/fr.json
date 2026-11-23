@@ -1714,14 +1714,16 @@
       "clearDomainMembersContacts": "Vide le carnet « Membres du domaine » de chaque domaine. Lancez une synchronisation pour le remplir à nouveau.",
       "twakeSpacePurge": "Supprime les boîtes partagées des espaces supprimés depuis plus longtemps que la rétention définie dans space.properties, ce qui libère leurs adresses. TMail ne la lance plus de lui-même : planifiez-la avec un cron externe, ou lancez-la ici.",
       "twakeSpaceReindex": "À lancer après avoir lié des boîtes partagées en dehors de l'extension (p. ex. migration depuis le service annexe Twake Mail), ou si la boîte d'index a été perdue. Parcourt toutes les boîtes partagées.",
-      "syncTwakeSpaces": "Demande à ldap-rest l'état actuel des espaces Twake, appliqué à leurs boîtes partagées : tous, ceux d'une organisation, ou un seul espace."
+      "syncTwakeSpaces": "Demande à ldap-rest l'état actuel des espaces Twake, appliqué à leurs boîtes partagées : tous, ceux d'une organisation, ou un seul espace.",
+      "sendEmail": "Envoie un e-mail via le traitement du courrier du serveur, aux destinataires nommés par ses en-têtes : rédigé ici, collé ou chargé depuis un fichier .eml."
     },
     "archiveAllEvents": "Archiver tous les événements",
     "archiveAllWarning": "Aucun critère : tous les événements de tous les utilisateurs enregistrés seront déplacés dans un calendrier « Archival ».",
     "twakeSpacePurge": "Purger les boîtes partagées des espaces supprimés",
     "twakeSpaceReindex": "Reconstruire l'index des espaces",
     "twakeSpaceUnavailable": "Twake Space n'est pas disponible sur ce serveur : il n'expose pas les routes /spaces, qui nécessitent l'extension Twake Space de tmail-backend.",
-    "syncTwakeSpaces": "Synchroniser les espaces Twake"
+    "syncTwakeSpaces": "Synchroniser les espaces Twake",
+    "sendEmail": "Envoyer un e-mail"
   },
   "healthCheck": {
     "checking": "Vérification des composants, cela peut prendre un moment…",
@@ -2386,5 +2388,41 @@
       "requested": "Synchronisation demandée",
       "thisSpace": "Synchroniser cet espace"
     }
+  },
+  "sendEmail": {
+    "title": "Envoyer un e-mail",
+    "intro": "Le message est mis en file d'attente de traitement, comme un message reçu par le serveur : ses destinataires sont les adresses To, Cc et Bcc de ses en-têtes.",
+    "modeLabel": "Source du message",
+    "mode": {
+      "compose": "Rédiger",
+      "raw": "Message brut (.eml)"
+    },
+    "field": {
+      "from": "De",
+      "to": "À",
+      "cc": "Cc",
+      "subject": "Objet",
+      "body": "Corps",
+      "eml": "Charger un fichier .eml",
+      "raw": "Message RFC 822"
+    },
+    "placeholder": {
+      "from": "admin@domaine.tld",
+      "to": "utilisateur@domaine.tld, autre@domaine.tld",
+      "cc": "utilisateur@domaine.tld",
+      "subject": "Objet"
+    },
+    "cannotSend": "Envoyer reste désactivé tant que :",
+    "problem": {
+      "empty": "le message n'est pas rédigé ou chargé",
+      "noFrom": "le message n'a pas d'adresse From",
+      "severalFrom": "le message a plus d'une adresse From",
+      "invalidFrom": "l'adresse From « {{address}} » est invalide",
+      "noRecipient": "le message n'a aucun destinataire (To, Cc ou Bcc)",
+      "invalidRecipient": "l'adresse {{header}} « {{address}} » est invalide"
+    },
+    "send": "Envoyer",
+    "enqueued": "E-mail mis en file d'attente de traitement",
+    "refused": "Le serveur a refusé l'e-mail"
   }
 }

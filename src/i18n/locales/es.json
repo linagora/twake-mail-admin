@@ -1714,14 +1714,16 @@
       "clearDomainMembersContacts": "Vacía la libreta «Miembros del dominio» de cada dominio. Ejecute una sincronización para volver a llenarla.",
       "twakeSpacePurge": "Elimina los buzones de equipo de los espacios eliminados hace más tiempo que la retención definida en space.properties, liberando sus direcciones. TMail ya no la ejecuta por sí mismo: prográmela con un cron externo o ejecútela aquí.",
       "twakeSpaceReindex": "Úselo tras vincular buzones de equipo fuera de la extensión (p. ej. migración desde el servicio auxiliar de Twake Mail) o si se perdió el buzón de índice. Recorre todos los buzones de equipo.",
-      "syncTwakeSpaces": "Pide a ldap-rest el estado actual de los espacios Twake, aplicado a sus buzones de equipo: todos, los de una organización o un solo espacio."
+      "syncTwakeSpaces": "Pide a ldap-rest el estado actual de los espacios Twake, aplicado a sus buzones de equipo: todos, los de una organización o un solo espacio.",
+      "sendEmail": "Envía un correo a través del procesamiento de correo del servidor, a los destinatarios que nombran sus cabeceras: redactado aquí, pegado o cargado desde un archivo .eml."
     },
     "archiveAllEvents": "Archivar todos los eventos",
     "archiveAllWarning": "Sin criterios: todos los eventos de todos los usuarios registrados se moverán a un calendario «Archival».",
     "twakeSpacePurge": "Purgar los buzones de equipo de los espacios eliminados",
     "twakeSpaceReindex": "Reconstruir el índice de espacios",
     "twakeSpaceUnavailable": "Twake Space no está disponible en este servidor: no expone las rutas /spaces, que requieren la extensión Twake Space de tmail-backend.",
-    "syncTwakeSpaces": "Sincronizar los espacios Twake"
+    "syncTwakeSpaces": "Sincronizar los espacios Twake",
+    "sendEmail": "Enviar un correo"
   },
   "healthCheck": {
     "checking": "Comprobando los componentes, esto puede tardar un poco…",
@@ -2386,5 +2388,41 @@
       "requested": "Sincronización solicitada",
       "thisSpace": "Sincronizar este espacio"
     }
+  },
+  "sendEmail": {
+    "title": "Enviar un correo",
+    "intro": "El mensaje se pone en cola para su procesamiento, como un mensaje recibido por el servidor: sus destinatarios son las direcciones To, Cc y Bcc de sus cabeceras.",
+    "modeLabel": "Origen del mensaje",
+    "mode": {
+      "compose": "Redactar",
+      "raw": "Mensaje sin procesar (.eml)"
+    },
+    "field": {
+      "from": "De",
+      "to": "Para",
+      "cc": "Cc",
+      "subject": "Asunto",
+      "body": "Cuerpo",
+      "eml": "Cargar un archivo .eml",
+      "raw": "Mensaje RFC 822"
+    },
+    "placeholder": {
+      "from": "admin@dominio.tld",
+      "to": "usuario@dominio.tld, otro@dominio.tld",
+      "cc": "usuario@dominio.tld",
+      "subject": "Asunto"
+    },
+    "cannotSend": "Enviar sigue desactivado mientras:",
+    "problem": {
+      "empty": "el mensaje no esté redactado o cargado",
+      "noFrom": "el mensaje no tenga dirección From",
+      "severalFrom": "el mensaje tenga más de una dirección From",
+      "invalidFrom": "la dirección From «{{address}}» no sea válida",
+      "noRecipient": "el mensaje no tenga destinatario (To, Cc o Bcc)",
+      "invalidRecipient": "la dirección {{header}} «{{address}}» no sea válida"
+    },
+    "send": "Enviar",
+    "enqueued": "Correo puesto en cola para su procesamiento",
+    "refused": "El servidor rechazó el correo"
   }
 }
