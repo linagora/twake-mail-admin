@@ -4,12 +4,13 @@ import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { isValidFolderName } from "@/lib/mailbox-path";
+import { folderNameProblem, isTeamMailboxSystemFolder } from "@/lib/mailbox-path";
 import { getTeamMailboxFolders, createTeamMailboxFolder, deleteTeamMailboxFolder } from "../api-client";
 import { GetTeamMailboxFoldersResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import HintTooltip from "@/components/custom/hint-tooltip";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import TeamMailboxFolderCounts from "./team-mailbox-folder-counts";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
@@ -43,9 +44,9 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
   const [showCreate, setShowCreate] = useState(false);
   const fieldId = useId();
   const nameErrorId = useId();
-  const newFolderValid = isValidFolderName(newFolder.trim());
+  const nameProblem = folderNameProblem(newFolder.trim());
   // An empty field is not yet an error: the disabled Create button says enough
-  const showNameError = newFolder.trim() !== "" && !newFolderValid;
+  const showNameError = newFolder.trim() !== "" && nameProblem !== null;
 
   // WebAdmin lists the team mailbox root under its bare name, but folder routes are relative to that root
   const sorted = useMemo(() => {
@@ -80,7 +81,6 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
       destructive: true,
       confirmLabel: t("common.delete"),
       consequence: t("confirm.consequence.deleteMailbox", { mailbox: folderName }),
-      typeToConfirm: folderName.toUpperCase() === "INBOX" ? folderName : undefined,
       message: t("domains.folders.deleteConfirm", { folderName }),
     });
     if (!confirmed) return;
@@ -91,6 +91,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
     } catch (err) {
       toast({
         title: t("domains.folders.errorDeleting"),
+        variant: "destructive",
         description: <ErrorDisplayer error={err} />,
       });
     }
@@ -161,7 +162,9 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                     </div>
                     <span className="flex shrink-0 items-center gap-2">
                       <TeamMailboxFolderCounts domain={domain} mailbox={mailbox} folderName={folder.mailboxName} />
-                      {canDelete && (
+                      {canDelete && (isTeamMailboxSystemFolder(folder.mailboxName) ? (
+                        <SystemFolderDeleteHint folderName={folder.mailboxName} />
+                      ) : (
                         <button
                           onClick={() => handleDelete(folder.mailboxName)}
                           className="p-2 rounded-md hover:bg-gray-200"
@@ -170,7 +173,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </button>
-                      )}
+                      ))}
                     </span>
                   </div>
                 ))}
@@ -189,7 +192,7 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
         onClose={() => setShowCreate(false)}
         title={t("domains.folders.createTooltip")}
         submitLabel={t("common.create")}
-        submitDisabled={!newFolderValid}
+        submitDisabled={nameProblem !== null}
         onSubmit={handleCreate}
       >
         <div>
@@ -207,11 +210,33 @@ export default function TeamMailboxFolders({ domain, mailbox }: Props) {
           />
           {showNameError && (
             <p id={nameErrorId} role="alert" className="mt-1 text-xs text-red-600">
-              {t("domains.folders.invalidName")}
+              {t(nameProblem === "namespacePrefix" ? "domains.folders.namespacePrefixName" : "domains.folders.invalidName")}
             </p>
           )}
         </div>
       </FormDialog>
     </div>
+  );
+}
+
+/**
+ * In place of the Delete action of a system folder, which WebAdmin refuses to delete: a "System
+ * folder" badge and a disabled action, both explained by a hint that a tap also shows.
+ */
+function SystemFolderDeleteHint({ folderName }: { folderName: string }) {
+  const { t } = useTranslation();
+  return (
+    <HintTooltip hint={t("domains.folders.systemFolderHint")} className="inline-flex items-center gap-2 rounded-md cursor-not-allowed">
+      <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600">{t("domains.folders.systemFolder")}</span>
+      <button
+        type="button"
+        disabled
+        aria-label={t("domains.folders.deleteNamed", { item: folderName })}
+        aria-description={t("domains.folders.systemFolderHint")}
+        className="p-2 rounded-md pointer-events-none"
+      >
+        <Trash2 className="w-4 h-4 text-gray-300" />
+      </button>
+    </HintTooltip>
   );
 }

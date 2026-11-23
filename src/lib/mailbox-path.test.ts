@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isValidFolderName, parseMailboxPath } from "./mailbox-path";
+import { folderNameProblem, isTeamMailboxSystemFolder, parseMailboxPath } from "./mailbox-path";
 
 describe("mailbox path", () => {
   it("tells the owner and the mailbox of a private path", () => {
@@ -15,14 +15,32 @@ describe("mailbox path", () => {
 
 describe("folder name", () => {
   it("accepts a name and a nested name", () => {
-    expect(isValidFolderName("INBOX")).toBe(true);
-    expect(isValidFolderName("INBOX.work")).toBe(true);
+    expect(folderNameProblem("INBOX")).toBeNull();
+    expect(folderNameProblem("INBOX.work")).toBeNull();
+    expect(folderNameProblem("a#b")).toBeNull();
   });
 
   it("refuses a name with an empty hierarchy part", () => {
-    expect(isValidFolderName("")).toBe(false);
-    expect(isValidFolderName(".work")).toBe(false);
-    expect(isValidFolderName("INBOX.")).toBe(false);
-    expect(isValidFolderName("a..b")).toBe(false);
+    expect(folderNameProblem("")).toBe("emptyPart");
+    expect(folderNameProblem(".work")).toBe("emptyPart");
+    expect(folderNameProblem("INBOX.")).toBe("emptyPart");
+    expect(folderNameProblem("a..b")).toBe("emptyPart");
+  });
+
+  it("refuses a name with a hierarchy part starting with the namespace prefix", () => {
+    expect(folderNameProblem("#user")).toBe("namespacePrefix");
+    expect(folderNameProblem("INBOX.#work")).toBe("namespacePrefix");
+  });
+});
+
+describe("team mailbox system folder", () => {
+  it("tells the top-level folders provisioned with the team mailbox", () => {
+    ["INBOX", "Sent", "Trash", "Outbox", "Drafts", "Templates"]
+      .forEach((folder) => expect(isTeamMailboxSystemFolder(folder)).toBe(true));
+  });
+
+  it("does not protect their sub-folders nor other folders", () => {
+    expect(isTeamMailboxSystemFolder("INBOX.work")).toBe(false);
+    expect(isTeamMailboxSystemFolder("Archive")).toBe(false);
   });
 });
