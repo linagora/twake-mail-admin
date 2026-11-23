@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Loader2, Search, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -20,9 +20,14 @@ const PAGE_SIZE = 10;
 interface Props {
   label: string;
   onSearch: (body: RestoreDeletedMessagesRequest) => Promise<DeletedMessage[]>;
-  onRestore: (body: RestoreDeletedMessagesRequest) => Promise<RunTaskResponse>;
+  // Without it the vault is browsed only: no restore of the criteria, nor of a single message
+  onRestore?: (body: RestoreDeletedMessagesRequest) => Promise<RunTaskResponse>;
   canSearch?: boolean;
   canRestore?: boolean;
+  // Shown first in the open section, e.g. an action of its own
+  intro?: ReactNode;
+  // Replaces the description of the criteria, when they do not drive a restore
+  criteriaDescription?: string;
 }
 
 function formatDate(iso: string): string {
@@ -33,7 +38,15 @@ function formatDate(iso: string): string {
   }
 }
 
-export default function UserDeletedMessageVault({ label, onSearch, onRestore, canSearch = true, canRestore = true }: Props) {
+export default function UserDeletedMessageVault({
+  label,
+  onSearch,
+  onRestore,
+  canSearch = true,
+  canRestore: restoreAllowed = true,
+  intro,
+  criteriaDescription,
+}: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const toastTaskCreated = useTaskCreatedToast();
@@ -48,6 +61,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
   const [searchedRequest, setSearchedRequest] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [restoringId, setRestoringId] = useState<string | null>(null);
+  const canRestore = restoreAllowed && !!onRestore;
 
   const buildRequest = (): RestoreDeletedMessagesRequest => ({
     combinator: "and",
@@ -89,7 +103,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
 
     setRestoreLoading(true);
     try {
-      const data = await onRestore(buildRequest());
+      const data = await onRestore!(buildRequest());
       toastTaskCreated(data.taskId, t("users.deletedVault.restoreStarted"), taskTypeLabel(t, "deleted-messages-restore"));
     } catch (err) {
       toast({
@@ -120,7 +134,7 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
           },
         ],
       };
-      const data = await onRestore(body);
+      const data = await onRestore!(body);
       toastTaskCreated(data.taskId, t("users.deletedVault.restoreStarted"), taskTypeLabel(t, "deleted-messages-restore"));
     } catch (err) {
       toast({
@@ -145,40 +159,46 @@ export default function UserDeletedMessageVault({ label, onSearch, onRestore, ca
 
       {open && (
         <div id={openContentId} className="mt-3 space-y-4">
-          <RestoreCriteriaBuilder
-            flagIncomplete
-            onChange={(c, l, valid) => {
-              setCriteria(c);
-              setLimit(l);
-              setCriteriaValid(valid);
-            }}
-          />
+          {intro}
+          {(canSearch || canRestore) && (
+            <>
+              <RestoreCriteriaBuilder
+                flagIncomplete
+                description={criteriaDescription}
+                onChange={(c, l, valid) => {
+                  setCriteria(c);
+                  setLimit(l);
+                  setCriteriaValid(valid);
+                }}
+              />
 
-          <div className="flex items-center gap-2">
-            {canSearch && (
-              <Button
-                size="sm"
-                onClick={handleSearch}
-                disabled={loading || restoreLoading || !criteriaValid}
-                className="flex items-center gap-2"
-              >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                {t("users.deletedVault.search")}
-              </Button>
-            )}
-            {canRestore && (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleRestore}
-                disabled={loading || restoreLoading || !criteriaValid || nothingToRestore}
-                className="flex items-center gap-2 text-green-700 border-green-600 hover:bg-green-50"
-              >
-                {restoreLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
-                {t("users.deletedVault.restore")}
-              </Button>
-            )}
-          </div>
+              <div className="flex items-center gap-2">
+                {canSearch && (
+                  <Button
+                    size="sm"
+                    onClick={handleSearch}
+                    disabled={loading || restoreLoading || !criteriaValid}
+                    className="flex items-center gap-2"
+                  >
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                    {t("users.deletedVault.search")}
+                  </Button>
+                )}
+                {canRestore && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleRestore}
+                    disabled={loading || restoreLoading || !criteriaValid || nothingToRestore}
+                    className="flex items-center gap-2 text-green-700 border-green-600 hover:bg-green-50"
+                  >
+                    {restoreLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                    {t("users.deletedVault.restore")}
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
 
           {results !== null && (
             <div className="space-y-2">

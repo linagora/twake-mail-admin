@@ -254,7 +254,15 @@
       "removeMemberNamed": "Mitglied „{{item}}“ entfernen",
       "role": "Rolle",
       "otherDomainHint": "Dieser Benutzer gehört zu einer anderen Domain als das Team-Postfach ({{domain}}). Der Server lehnt ihn ab, sofern die domänenübergreifende Freigabe nicht aktiviert ist.",
-      "detailKind": "Team-Postfach"
+      "detailKind": "Team-Postfach",
+      "vaultRestore": {
+        "title": "Alle gelöschten Nachrichten wiederherstellen",
+        "confirm": "Alle wiederherstellen",
+        "description": "Alle gelöschten Nachrichten von {{address}} aus dem Tresor gelöschter Nachrichten in seinen Wiederherstellungsordner zurückholen? Die Nachrichten lassen sich nicht auswählen: der ganze Tresor des Team-Postfachs wird wiederhergestellt.",
+        "hint": "Ein Team-Postfach wird als Ganzes wiederhergestellt: alle gelöschten Nachrichten kommen in seinen Wiederherstellungsordner zurück. Die Kriterien unten dienen nur der Suche im Tresor.",
+        "button": "Alle gelöschten Nachrichten wiederherstellen",
+        "searchDescription": "Legen Sie Kriterien fest, um gelöschte Nachrichten zu suchen. Sie filtern die Wiederherstellung nicht, die alle Nachrichten zurückholt."
+      }
     },
     "teamMailboxSpace": {
       "title": "Twake Space",
@@ -1480,6 +1488,7 @@
       "failedReprocessedMailCount": "Nicht neu indizierte Nachrichten",
       "restoredCount": "Wiederhergestellte Nachrichten",
       "failedRestoreCount": "Nicht wiederhergestellte Nachrichten",
+      "teamMailbox": "Team-Postfach",
       "appliedTemplates": "Angewendete Vorlagen",
       "skippedTemplates": "Übersprungene Vorlagen",
       "removedTemplates": "Entfernte Vorlagen",
@@ -2401,7 +2410,8 @@
     "bookingLinkEventDeletion": "Die Termine eines Buchungslinks löschen",
     "twakeSpacePurge": "Twake-Space-Bereinigung",
     "twakeSpaceReindex": "Twake-Space-Neuindizierung",
-    "recomputeTeamMailboxQuotas": "Kontingente der Team-Postfächer neu berechnen"
+    "recomputeTeamMailboxQuotas": "Kontingente der Team-Postfächer neu berechnen",
+    "teamMailboxRestoreDeleted": "Gelöschte Nachrichten eines Team-Postfachs wiederherstellen"
   },
   "twakeSpace": {
     "organizationIdOptional": "Organisations-ID (optional)",

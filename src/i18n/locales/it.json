@@ -254,7 +254,15 @@
       "removeMemberNamed": "Rimuovi il membro «{{item}}»",
       "role": "Ruolo",
       "otherDomainHint": "Questo utente appartiene a un dominio diverso da quello della casella di team ({{domain}}). Il server lo rifiuterà a meno che la condivisione tra domini non sia abilitata.",
-      "detailKind": "Casella di team"
+      "detailKind": "Casella di team",
+      "vaultRestore": {
+        "title": "Ripristina tutti i messaggi eliminati",
+        "confirm": "Ripristina tutto",
+        "description": "Ripristinare tutti i messaggi eliminati di {{address}} dall'archivio dei messaggi eliminati nella sua cartella di ripristino? Non puoi scegliere i messaggi: viene ripristinato tutto l'archivio della casella di team.",
+        "hint": "Una casella di team si ripristina per intero: tutti i suoi messaggi eliminati tornano nella sua cartella di ripristino. I criteri qui sotto servono solo a cercare nell'archivio.",
+        "button": "Ripristina tutti i messaggi eliminati",
+        "searchDescription": "Definisci i criteri per cercare i messaggi eliminati. Non filtrano il ripristino, che riporta tutti i messaggi."
+      }
     },
     "teamMailboxSpace": {
       "title": "Spazio Twake",
@@ -1481,6 +1489,7 @@
       "failedReprocessedMailCount": "Messaggi non reindicizzati",
       "restoredCount": "Messaggi ripristinati",
       "failedRestoreCount": "Messaggi non ripristinati",
+      "teamMailbox": "Casella di team",
       "appliedTemplates": "Modelli applicati",
       "skippedTemplates": "Modelli saltati",
       "removedTemplates": "Modelli rimossi",
@@ -2403,7 +2412,8 @@
     "bookingLinkEventDeletion": "Elimina gli eventi di un link di prenotazione",
     "twakeSpacePurge": "Pulizia Twake Space",
     "twakeSpaceReindex": "Reindicizzazione Twake Space",
-    "recomputeTeamMailboxQuotas": "Ricalcola le quote delle caselle di team"
+    "recomputeTeamMailboxQuotas": "Ricalcola le quote delle caselle di team",
+    "teamMailboxRestoreDeleted": "Ripristina i messaggi eliminati di una casella di team"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID organizzazione (facoltativo)",

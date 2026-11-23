@@ -5,7 +5,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useFetchData } from "@/hooks/use-fetch-data";
-import { getTeamMailboxMembers, addTeamMailboxMember, removeTeamMailboxMember, searchTeamMailboxDeletedMessages, restoreTeamMailboxDeletedMessages } from "../api-client";
+import { getTeamMailboxMembers, addTeamMailboxMember, removeTeamMailboxMember, searchTeamMailboxDeletedMessages } from "../api-client";
 import { GetTeamMailboxMembersResponseType } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -16,6 +16,7 @@ import TeamMailboxFolders from "./team-mailbox-folders";
 import TeamMailboxQuota from "./team-mailbox-quota";
 import TeamMailboxExtraSenders from "./team-mailbox-extra-senders";
 import TeamMailboxSpace from "./team-mailbox-space";
+import TeamMailboxVaultRestore from "./team-mailbox-vault-restore";
 import UserDeletedMessageVault from "@/modules/users/details/user-deleted-message-vault";
 import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
@@ -250,13 +251,14 @@ function TeamMailboxDetailContent() {
       <TeamMailboxFolders domain={domain!} mailbox={mailbox!} />
       <TeamMailboxQuota domain={domain!} mailbox={mailbox!} />
       <TeamMailboxExtraSenders domain={domain!} mailbox={mailbox!} />
+      {/* The criteria only browse the vault: a team mailbox restore brings back all its messages */}
       {(canSearch || canRestore) && (
         <UserDeletedMessageVault
           label={`${mailbox}@${domain}`}
           onSearch={(body) => searchTeamMailboxDeletedMessages(domain!, mailbox!, body)}
-          onRestore={() => restoreTeamMailboxDeletedMessages(domain!, mailbox!)}
           canSearch={canSearch}
-          canRestore={canRestore}
+          criteriaDescription={t("domains.teamMailbox.vaultRestore.searchDescription")}
+          intro={canRestore && <TeamMailboxVaultRestore domain={domain!} mailbox={mailbox!} />}
         />
       )}
     </div>

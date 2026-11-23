@@ -10,3 +10,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #717](https://github.com/linagora/twake-mail-admin/issues/717); free text with suggestions rather than a strict select chosen by agent (PR for #717), to be confirmed by chibenwa.
 - Why: WebAdmin now refuses an unknown queue with a 400, while a suggestion list still lets a queue missing from the list (e.g. listing not allowed for the profile) be typed.
 - Scope: desktop and mobile, mail repository list and mail repository pages (default and Extended).
+
+## 2026-11-23, [UX] A team mailbox vault restore brings back all its messages, with no criteria
+
+- Decision: on a team mailbox page, "Restore all deleted messages" opens its own confirmation, which names the team mailbox, says every deleted message goes back into its restore folder and that they cannot be picked, and previews a curl command with no body. The request has no body. The criteria of the Deleted Message Vault section only search the vault: they offer no Restore of the criteria nor of a single message.
+- Decided by: Benoit Tellier, [issue #706](https://github.com/linagora/twake-mail-admin/issues/706)
+- Why: tmail-backend restores the whole vault of a team mailbox and answers 400 to any body, so a restore by criteria would either fail or restore more than asked.
+- Scope: desktop and mobile, team mailbox detail page, Tasks list and task page (task type `team-mailbox-deleted-messages-restore`).

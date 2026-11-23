@@ -250,7 +250,15 @@
       "removeMemberNamed": "Xóa thành viên \"{{item}}\"",
       "role": "Vai trò",
       "otherDomainHint": "Người dùng này thuộc một miền khác với hộp thư nhóm ({{domain}}). Máy chủ sẽ từ chối trừ khi bật chia sẻ giữa các miền.",
-      "detailKind": "Hộp thư nhóm"
+      "detailKind": "Hộp thư nhóm",
+      "vaultRestore": {
+        "title": "Khôi phục tất cả thư đã xóa",
+        "confirm": "Khôi phục tất cả",
+        "description": "Khôi phục tất cả thư đã xóa của {{address}} từ kho thư đã xóa vào thư mục khôi phục của nó? Bạn không thể chọn thư: toàn bộ kho của hộp thư nhóm sẽ được khôi phục.",
+        "hint": "Hộp thư nhóm được khôi phục toàn bộ: mọi thư đã xóa trở về thư mục khôi phục. Các tiêu chí bên dưới chỉ dùng để tìm kiếm trong kho.",
+        "button": "Khôi phục tất cả thư đã xóa",
+        "searchDescription": "Xác định tiêu chí để tìm thư đã xóa. Chúng không lọc việc khôi phục, vốn đưa về tất cả thư."
+      }
     },
     "teamMailboxSpace": {
       "title": "Không gian Twake",
@@ -1463,6 +1471,7 @@
       "failedReprocessedMailCount": "Thư lập chỉ mục lại thất bại",
       "restoredCount": "Thư đã khôi phục",
       "failedRestoreCount": "Thư khôi phục thất bại",
+      "teamMailbox": "Hộp thư nhóm",
       "appliedTemplates": "Mẫu đã áp dụng",
       "skippedTemplates": "Mẫu đã bỏ qua",
       "removedTemplates": "Mẫu đã xóa",
@@ -2375,7 +2384,8 @@
     "bookingLinkEventDeletion": "Xóa các sự kiện của một liên kết đặt lịch",
     "twakeSpacePurge": "Dọn dẹp Twake Space",
     "twakeSpaceReindex": "Lập chỉ mục lại Twake Space",
-    "recomputeTeamMailboxQuotas": "Tính lại hạn mức hộp thư nhóm"
+    "recomputeTeamMailboxQuotas": "Tính lại hạn mức hộp thư nhóm",
+    "teamMailboxRestoreDeleted": "Khôi phục thư đã xóa của hộp thư nhóm"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID tổ chức (tùy chọn)",

@@ -94,11 +94,16 @@ describe("task targets", () => {
     expect(taskTargetInfo(task("x", { mailboxId: "42" }))).toEqual({ kind: "mailbox", value: "42" });
   });
 
-  it("reads the team mailbox of a vault restore and the domain of a team mailbox quota recomputation", () => {
-    expect(taskHeading(t, task("team-mailbox-deleted-messages-restore", { teamMailboxAddress: "sales@acme.com" })))
-      .toBe("users.tasks.restoreDeleted — sales@acme.com");
+  it("reads the domain of a team mailbox quota recomputation", () => {
     expect(taskHeading(t, task("recompute-quota-team-mailboxes", { domain: "acme.com" })))
       .toBe("taskTypes.recomputeTeamMailboxQuotas — acme.com");
+  });
+
+  it("names a team mailbox vault restore apart from a user one, after its team mailbox", () => {
+    const restore = task("team-mailbox-deleted-messages-restore", { teamMailboxAddress: "sales@example.com", successfulRestoreCount: 3 });
+    expect(taskTargetInfo(restore)).toEqual({ kind: "teamMailbox", value: "sales@example.com" });
+    expect(taskHeading(t, restore)).toBe("taskTypes.teamMailboxRestoreDeleted — sales@example.com");
+    expect(taskTypeLabel(t, "deleted-messages-restore")).toBe("users.tasks.restoreDeleted");
   });
 
   it("names a Trash or Spam cleanup after its folder, and its user from its options", () => {

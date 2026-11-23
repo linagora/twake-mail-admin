@@ -254,7 +254,15 @@
       "removeMemberNamed": "Quitar al miembro «{{item}}»",
       "role": "Rol",
       "otherDomainHint": "Este usuario pertenece a un dominio distinto del buzón de equipo ({{domain}}). El servidor lo rechazará salvo que el uso compartido entre dominios esté habilitado.",
-      "detailKind": "Buzón de equipo"
+      "detailKind": "Buzón de equipo",
+      "vaultRestore": {
+        "title": "Restaurar todos los mensajes eliminados",
+        "confirm": "Restaurar todo",
+        "description": "¿Restaurar todos los mensajes eliminados de {{address}} desde el almacén de mensajes eliminados a su carpeta de restauración? No puede elegir los mensajes: se restaura todo el almacén del buzón de equipo.",
+        "hint": "Un buzón de equipo se restaura entero: todos sus mensajes eliminados vuelven a su carpeta de restauración. Los criterios de abajo solo sirven para buscar en el almacén.",
+        "button": "Restaurar todos los mensajes eliminados",
+        "searchDescription": "Defina criterios para buscar los mensajes eliminados. No filtran la restauración, que recupera todos los mensajes."
+      }
     },
     "teamMailboxSpace": {
       "title": "Espacio Twake",
@@ -1481,6 +1489,7 @@
       "failedReprocessedMailCount": "Mensajes no reindexados",
       "restoredCount": "Mensajes restaurados",
       "failedRestoreCount": "Mensajes no restaurados",
+      "teamMailbox": "Buzón de equipo",
       "appliedTemplates": "Plantillas aplicadas",
       "skippedTemplates": "Plantillas omitidas",
       "removedTemplates": "Plantillas eliminadas",
@@ -2403,7 +2412,8 @@
     "bookingLinkEventDeletion": "Eliminar los eventos de un enlace de reserva",
     "twakeSpacePurge": "Purga de Twake Space",
     "twakeSpaceReindex": "Reindexación de Twake Space",
-    "recomputeTeamMailboxQuotas": "Recalcular las cuotas de los buzones de equipo"
+    "recomputeTeamMailboxQuotas": "Recalcular las cuotas de los buzones de equipo",
+    "teamMailboxRestoreDeleted": "Restaurar los mensajes eliminados de un buzón de equipo"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID de organización (opcional)",
