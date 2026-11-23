@@ -26,6 +26,7 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Tracing;
+import com.microsoft.playwright.options.UnrouteBehavior;
 
 /**
  * Wires a Playwright {@link Page} onto the stack of the test class ({@link UsesStack}), one fresh
@@ -188,10 +189,29 @@ public class AdminE2EExtension implements BeforeEachCallback, AfterTestExecution
         TestState state = STATE.get();
         if (state != null) {
             try {
-                state.context.close();
+                dropRoutes(state);
             } finally {
-                STATE.remove();
+                closeContext(state);
             }
+        }
+    }
+
+    /**
+     * The app keeps calling the backend once the test is over: a route handler (a stub, a token
+     * check) still answering one of these calls while the context closes fails with
+     * TargetClosedError, and fails a test that passed. Routes are dropped first, without waiting
+     * for the handlers in flight, whose errors are ignored.
+     */
+    private static void dropRoutes(TestState state) {
+        state.page.unrouteAll(new Page.UnrouteAllOptions().setBehavior(UnrouteBehavior.IGNOREERRORS));
+        state.context.unrouteAll(new BrowserContext.UnrouteAllOptions().setBehavior(UnrouteBehavior.IGNOREERRORS));
+    }
+
+    private static void closeContext(TestState state) {
+        try {
+            state.context.close();
+        } finally {
+            STATE.remove();
         }
     }
 
