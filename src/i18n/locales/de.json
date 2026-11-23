@@ -1566,7 +1566,7 @@
       },
       "processor": {
         "label": "Ziel-Prozessor",
-        "help": "Mailet-Prozessor, der die Mails erneut verarbeitet. root bedeutet vollständige Verarbeitung."
+        "help": "Name eines im Mailet-Container des Servers konfigurierten Prozessors (mailetcontainer.xml), z. B. root, transport, error, local-delivery oder relay. Leer gelassen, kehrt jede Mail in ihren eigenen gespeicherten Zustand zurück."
       },
       "consume": {
         "label": "Nach der Verarbeitung aus dem Repository entfernen",
@@ -1964,6 +1964,10 @@
     "reprocessMailConfirm": "Die E-Mail \"{{mailKey}}\" erneut verarbeiten?",
     "reprocessRepoConfirm": "Alle E-Mails im Repository {{path}} erneut verarbeiten?",
     "reprocessScheduled": "Erneute Verarbeitung eingeplant",
+    "reprocessRefused": {
+      "processor": "Der Zielprozessor ist im Mailet-Container des Servers nicht konfiguriert: Es wurde keine Mail verschoben. Korrigieren Sie ihn oder lassen Sie ihn leer, damit jede Mail in ihren eigenen Zustand zurückkehrt.",
+      "queue": "Die Ziel-Warteschlange existiert auf dem Server nicht: Es wurde keine Mail verschoben. Korrigieren Sie sie oder lassen Sie sie leer, um spool zu verwenden."
+    },
     "errorReprocessing": "Fehler bei der erneuten Verarbeitung",
     "moveMailHeader": "E-Mail verschieben",
     "moveMailConfirm": "Die E-Mail \"{{mailKey}}\" verschieben nach:",

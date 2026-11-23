@@ -1566,7 +1566,7 @@
       },
       "processor": {
         "label": "Target processor",
-        "help": "Mailet processor that handles the mails again. root means full processing."
+        "help": "Name of a processor configured in the server's mailet container (mailetcontainer.xml), e.g. root, transport, error, local-delivery or relay. Left empty, each mail goes back to its own stored state."
       },
       "consume": {
         "label": "Remove from the repository once reprocessed",
@@ -1965,6 +1965,10 @@
     "reprocessMailConfirm": "Reprocess the email \"{{mailKey}}\"?",
     "reprocessRepoConfirm": "Reprocess all emails in repository {{path}}?",
     "reprocessScheduled": "Reprocessing scheduled",
+    "reprocessRefused": {
+      "processor": "The target processor is not configured in the server's mailet container: no mail was moved. Correct it, or leave it empty so that each mail goes back to its own state.",
+      "queue": "The target queue does not exist on the server: no mail was moved. Correct it, or leave it empty to use spool."
+    },
     "errorReprocessing": "Error reprocessing",
     "moveMailHeader": "Move Email",
     "moveMailConfirm": "Move the email \"{{mailKey}}\" to:",

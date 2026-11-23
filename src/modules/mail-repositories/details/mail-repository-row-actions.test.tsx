@@ -3,11 +3,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import type { ReactNode } from "react";
+import { AxiosError, AxiosHeaders } from "axios";
 
 const REPOSITORY = "var/mail/error";
 const MAIL_KEYS = ["mail-001", "mail-002"];
 
-const http = vi.hoisted(() => ({ get: vi.fn() }));
+const http = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn() }));
 const confirm = vi.hoisted(() => vi.fn());
 
 vi.mock("react-i18next", () => ({
@@ -17,7 +18,7 @@ vi.mock("react-i18next", () => ({
 }));
 vi.mock(import("@/lib/apiClient"), async (importOriginal) => ({
   ...(await importOriginal()),
-  apiClient: { get: http.get } as never,
+  apiClient: { get: http.get, patch: http.patch } as never,
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => confirm }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
@@ -68,6 +69,7 @@ function lastConfirmMessage(): string {
 
 beforeEach(() => {
   http.get.mockReset().mockImplementation(answer);
+  http.patch.mockReset();
   confirm.mockReset().mockResolvedValue(false);
 });
 
@@ -125,5 +127,35 @@ describe("mail repository extended view: row buttons and their confirmations", (
     fireEvent.click(await screen.findByRole("button", { name: named("deleteMailNamed") }));
     await waitFor(() => expect(confirm).toHaveBeenCalledTimes(1));
     expect(lastConfirmMessage()).toBe(`mailRepositories.deleteMailConfirm ${JSON.stringify({ mailKey: "mail-002", id: REPOSITORY })}`);
+  });
+});
+
+const unknownProcessor = () =>
+  new AxiosError("Request failed with status code 400", "ERR_BAD_REQUEST", undefined, undefined, {
+    status: 400,
+    statusText: "Bad Request",
+    headers: {},
+    config: { headers: new AxiosHeaders() },
+    data: { statusCode: 400, type: "InvalidArgument", message: "'unknown' processor is not configured" },
+  });
+
+describe.each([
+  ["default", `/mail-repositories/repository/${encodeURIComponent(REPOSITORY)}`],
+  ["extended", `/mail-repositories/repository/${encodeURIComponent(REPOSITORY)}/extended`],
+])("mail repository %s view: reprocessing one mail into an unknown processor", (_view, path) => {
+  it("keeps the dialog open on the 400, naming the processor and saying that no mail was moved", async () => {
+    const refusal = unknownProcessor();
+    http.patch.mockRejectedValue(refusal);
+    renderAt(path);
+
+    fireEvent.click(await screen.findByRole("button", { name: named("reprocessMailNamed") }));
+    await waitFor(() => expect(confirm).toHaveBeenCalledTimes(1));
+    const options = confirm.mock.lastCall?.[0];
+
+    // The dialog runs the action and reports its failure in place, with the typed values
+    await expect(options.action()).rejects.toBe(refusal);
+    const { container } = render(<>{options.describeError(refusal)}</>);
+    expect(container.textContent).toContain("mailRepositories.reprocessRefused.processor");
+    expect(container.textContent).toContain("'unknown' processor is not configured");
   });
 });
