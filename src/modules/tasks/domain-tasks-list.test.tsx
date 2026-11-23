@@ -76,7 +76,7 @@ describe("tasks of a domain", () => {
     expect(webAdmin.get).toHaveBeenCalledWith(`/domains/${DOMAIN}/tasks`);
     expect(webAdmin.get).not.toHaveBeenCalledWith(expect.stringMatching(/^\/tasks/));
     expect(rows.map((row) => within(row).getAllByRole("button")[0].textContent))
-      .toEqual(["users.tasks.restoreDeleted", "taskTypes.recomputeTeamMailboxQuotas"]);
+      .toEqual(["taskTypes.teamMailboxRestoreDeleted", "taskTypes.recomputeTeamMailboxQuotas"]);
     expect(within(rows[0]).getByRole("link", { name: "sales@acme.com" }).getAttribute("href"))
       .toBe("/domains/domain/acme.com/team-mailbox/sales");
     // A domain administrator has no domain page
@@ -90,7 +90,7 @@ describe("tasks of a domain", () => {
     fireEvent.click(screen.getByRole("button", { name: "tasks.filters" }));
 
     const options = within(screen.getByLabelText("tasks.type")).getAllByRole("option").map((option) => option.textContent);
-    expect(options).toEqual(["tasks.allTypes", "taskTypes.recomputeTeamMailboxQuotas", "users.tasks.restoreDeleted"]);
+    expect(options).toEqual(["tasks.allTypes", "taskTypes.recomputeTeamMailboxQuotas", "taskTypes.teamMailboxRestoreDeleted"]);
     expect(screen.queryByTestId("tasks-date-filters")).toBeNull();
   });
 

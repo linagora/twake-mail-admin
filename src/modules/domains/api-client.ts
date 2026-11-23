@@ -256,6 +256,7 @@ export const restoreTeamMailboxDeletedMessages = async (
   mailbox: string
 ): Promise<RunTaskResponse> => {
   const address = encodeURIComponent(`${mailbox}@${domain}`);
+  // Restores every deleted message: WebAdmin takes no criteria and answers 400 to any body, even {} or null
   return apiClient.post(`/deletedMessages/teamMailbox/${address}?action=restore`);
 };
 

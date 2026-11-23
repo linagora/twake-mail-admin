@@ -70,11 +70,13 @@ interface Props {
    * it itself, such as a confirmation dialog showing the error returned by its validator.
    */
   showIncompleteMessage?: boolean;
+  /** Replaces the default description, which tells the criteria pick the messages to restore. */
+  description?: string;
 }
 
 const isComplete = (c: CriterionRow) => Boolean(c.fieldName && c.operator && c.value);
 
-export default function RestoreCriteriaBuilder({ onChange, flagIncomplete = false, showIncompleteMessage = true }: Props) {
+export default function RestoreCriteriaBuilder({ onChange, flagIncomplete = false, showIncompleteMessage = true, description }: Props) {
   const { t } = useTranslation();
   const limitId = useId();
   const [criteria, setCriteria] = useState<CriterionRow[]>([]);
@@ -123,7 +125,7 @@ export default function RestoreCriteriaBuilder({ onChange, flagIncomplete = fals
   return (
     <div className="space-y-4 w-full">
       <p className="text-sm text-muted-foreground">
-        {t("users.deletedVault.criteria.description")}
+        {description ?? t("users.deletedVault.criteria.description")}
       </p>
 
       {criteria.map((criterion, index) => {

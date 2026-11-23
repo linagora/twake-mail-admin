@@ -254,7 +254,15 @@
       "removeMemberNamed": "Retirer le membre « {{item}} »",
       "role": "Rôle",
       "otherDomainHint": "Cet utilisateur appartient à un autre domaine que la boîte partagée ({{domain}}). Le serveur le refusera, sauf si le partage entre domaines est activé.",
-      "detailKind": "Boîte partagée"
+      "detailKind": "Boîte partagée",
+      "vaultRestore": {
+        "title": "Restaurer tous les messages supprimés",
+        "confirm": "Tout restaurer",
+        "description": "Restaurer tous les messages supprimés de {{address}} depuis le coffre des messages supprimés dans son dossier de restauration ? Vous ne pouvez pas choisir les messages : tout le coffre de la boîte partagée est restauré.",
+        "hint": "Une boîte partagée se restaure en entier : tous ses messages supprimés reviennent dans son dossier de restauration. Les critères ci-dessous servent seulement à chercher dans le coffre.",
+        "button": "Restaurer tous les messages supprimés",
+        "searchDescription": "Définissez des critères pour chercher les messages supprimés. Ils ne filtrent pas la restauration, qui ramène tous les messages."
+      }
     },
     "teamMailboxSpace": {
       "title": "Espace Twake",
@@ -1481,6 +1489,7 @@
       "failedReprocessedMailCount": "Messages non réindexés",
       "restoredCount": "Messages restaurés",
       "failedRestoreCount": "Messages non restaurés",
+      "teamMailbox": "Boîte partagée",
       "appliedTemplates": "Modèles appliqués",
       "skippedTemplates": "Modèles ignorés",
       "removedTemplates": "Modèles supprimés",
@@ -2403,7 +2412,8 @@
     "bookingLinkEventDeletion": "Supprimer les événements d'un lien de réservation",
     "twakeSpacePurge": "Purge Twake Space",
     "twakeSpaceReindex": "Réindexation Twake Space",
-    "recomputeTeamMailboxQuotas": "Recalculer les quotas des boîtes partagées"
+    "recomputeTeamMailboxQuotas": "Recalculer les quotas des boîtes partagées",
+    "teamMailboxRestoreDeleted": "Restaurer les messages supprimés d'une boîte partagée"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID d'organisation (facultatif)",

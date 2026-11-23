@@ -254,7 +254,15 @@
       "removeMemberNamed": "Remove member \"{{item}}\"",
       "role": "Role",
       "otherDomainHint": "This user belongs to another domain than the team mailbox ({{domain}}). The server will refuse it unless cross-domain sharing is enabled.",
-      "detailKind": "Team mailbox"
+      "detailKind": "Team mailbox",
+      "vaultRestore": {
+        "title": "Restore all deleted messages",
+        "confirm": "Restore all",
+        "description": "Restore all the deleted messages of {{address}} from the Deleted Message Vault into its restore folder? You cannot pick the messages: the whole vault of the team mailbox is restored.",
+        "hint": "A team mailbox is restored as a whole: all its deleted messages go back into its restore folder. The criteria below only search the vault.",
+        "button": "Restore all deleted messages",
+        "searchDescription": "Define criteria to search the deleted messages. They do not filter the restore, which brings back all messages."
+      }
     },
     "teamMailboxSpace": {
       "title": "Twake Space",
@@ -1480,6 +1488,7 @@
       "failedReprocessedMailCount": "Messages failed to reindex",
       "restoredCount": "Restored messages",
       "failedRestoreCount": "Messages failed to restore",
+      "teamMailbox": "Team mailbox",
       "appliedTemplates": "Templates applied",
       "skippedTemplates": "Templates skipped",
       "removedTemplates": "Templates removed",
@@ -2402,7 +2411,8 @@
     "bookingLinkEventDeletion": "Delete the events of a booking link",
     "twakeSpacePurge": "Twake Space purge",
     "twakeSpaceReindex": "Twake Space reindex",
-    "recomputeTeamMailboxQuotas": "Recompute team mailbox quotas"
+    "recomputeTeamMailboxQuotas": "Recompute team mailbox quotas",
+    "teamMailboxRestoreDeleted": "Restore team mailbox deleted messages"
   },
   "twakeSpace": {
     "organizationIdOptional": "Organization ID (optional)",

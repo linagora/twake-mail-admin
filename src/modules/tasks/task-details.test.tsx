@@ -105,6 +105,20 @@ describe("task details", () => {
     expect(screen.getByRole("link", { name: "ops@acme.com" }).getAttribute("href")).toBe("/domains/domain/acme.com/team-mailbox/ops");
   });
 
+  it("labels the counters of a team mailbox vault restore and links its team mailbox", () => {
+    const grid = renderDetails({
+      type: "team-mailbox-deleted-messages-restore",
+      teamMailboxAddress: "sales@acme.com",
+      successfulRestoreCount: 12,
+      errorRestoreCount: 0,
+    });
+    expect(grid.textContent).toContain("tasks.info.teamMailbox");
+    expect(grid.textContent).toContain("tasks.info.restoredCount12");
+    expect(grid.textContent).toContain("tasks.info.failedRestoreCount0");
+    expect(grid.textContent).not.toContain("teamMailboxAddress");
+    expect(screen.getByRole("link", { name: "sales@acme.com" }).getAttribute("href")).toBe("/domains/domain/acme.com/team-mailbox/sales");
+  });
+
   it("shows a dash, without the retry hint, when the purge deleted every team mailbox", () => {
     const grid = renderDetails({ type: "twake-space-purge", deletedTeamMailboxes: 2, failedTeamMailboxes: [] });
     expect(grid.textContent).toContain("tasks.info.failedTeamMailboxes—");

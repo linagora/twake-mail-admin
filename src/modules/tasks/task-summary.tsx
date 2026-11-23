@@ -270,7 +270,7 @@ export const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
   SubscribeAllTask: "users.tasks.subscribeAll",
   RecomputeUserFastViewProjectionItemsTask: "users.tasks.fastView",
   "deleted-messages-restore": "users.tasks.restoreDeleted",
-  "team-mailbox-deleted-messages-restore": "users.tasks.restoreDeleted",
+  "team-mailbox-deleted-messages-restore": "taskTypes.teamMailboxRestoreDeleted",
   [RECOMPUTE_TEAM_MAILBOX_QUOTAS]: "taskTypes.recomputeTeamMailboxQuotas",
   UsernameChangeTask: "users.tasks.renameUser",
   DeleteUserDataTask: "users.tasks.deleteData",

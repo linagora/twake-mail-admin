@@ -86,4 +86,22 @@ describe("user deleted message vault", () => {
 
     expect(restoreButton().disabled).toBe(false);
   });
+
+  it("only browses the vault without onRestore: no Restore of the criteria nor of a message", async () => {
+    render(
+      <UserDeletedMessageVault
+        label="sales@example.com"
+        onSearch={vi.fn().mockResolvedValue([deletedMessage])}
+        criteriaDescription="search only"
+        intro={<button type="button">restore all</button>}
+      />
+    );
+    fireEvent.click(screen.getByText("users.deletedVault.title"));
+
+    expect(screen.getByRole("button", { name: "restore all" })).toBeTruthy();
+    expect(screen.getByText("search only")).toBeTruthy();
+    fireEvent.click(searchButton());
+    await waitFor(() => expect(screen.getByText(deletedMessage.messageId)).toBeTruthy());
+    expect(screen.queryByRole("button", { name: "users.deletedVault.restore" })).toBeNull();
+  });
 });

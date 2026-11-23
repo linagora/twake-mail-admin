@@ -15,6 +15,7 @@ import {
   getDomainSignatureTemplates,
   getTeamMailboxSpace,
   importDomainAddressBook,
+  restoreTeamMailboxDeletedMessages,
   TWAKE_SPACE_UNAVAILABLE,
 } from "./api-client";
 
@@ -167,5 +168,20 @@ describe("domain address book copy", () => {
     expect(http.post).toHaveBeenCalledWith(
       "/domains/teachers.school.org/addressbooks/dab?action=copyFrom&sourceDomain=students.school.org&ldapFilter=%28employeeType%3Dstudent%29"
     );
+  });
+});
+
+describe("team mailbox vault restore", () => {
+  beforeEach(() => {
+    http.post.mockReset();
+    http.post.mockResolvedValue({ taskId: "6d3bb34e" });
+  });
+
+  // WebAdmin restores everything and refuses any body with a 400, even {} or null
+  it("schedules the restore of all deleted messages without any body", async () => {
+    await expect(restoreTeamMailboxDeletedMessages("example.com", "sales")).resolves.toEqual({ taskId: "6d3bb34e" });
+
+    expect(http.post).toHaveBeenCalledTimes(1);
+    expect(http.post.mock.calls[0]).toEqual(["/deletedMessages/teamMailbox/sales%40example.com?action=restore"]);
   });
 });
