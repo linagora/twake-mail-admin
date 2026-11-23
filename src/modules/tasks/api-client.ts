@@ -35,3 +35,10 @@ export const listTasks = async (params?: ListTasksParams): Promise<TaskDetailRes
   const qs = query.toString();
   return apiClient.get(`/tasks${qs ? `?${qs}` : ""}`);
 };
+
+/**
+ * The tasks of a domain, for its administrator: GET /tasks spans every domain. WebAdmin filters
+ * them by status only, recent first.
+ */
+export const listDomainTasks = async (domain: string): Promise<TaskDetailResponse[]> =>
+  apiClient.get(`/domains/${encodeURIComponent(domain)}/tasks`);

@@ -46,6 +46,7 @@ describe("task names", () => {
     "DomainTemplatesProvisionTask", "DeleteUsersDataOfDomainTask",
     "reprocessing-all", "clear-mail-repository", "event-dead-letters-redeliver-group",
     "twake-space-purge", "twake-space-reindex",
+    "team-mailbox-deleted-messages-restore", "recompute-quota-team-mailboxes",
     // Calendar
     "reindex-calendar-events", "schedule-alarms", "add-missing-fields", "calendar-archival", "calendar-import",
     "addressbook-import", "domain-calendar-import", "resend-unsent-mails", "delete-unsent-mails",
@@ -91,6 +92,13 @@ describe("task targets", () => {
   it("keeps the mail targets", () => {
     expect(taskTargetInfo(task("x", { repositoryPath: "var/mail/error", username: "bob@example.com" }))).toEqual({ kind: "repository", value: "var/mail/error" });
     expect(taskTargetInfo(task("x", { mailboxId: "42" }))).toEqual({ kind: "mailbox", value: "42" });
+  });
+
+  it("reads the team mailbox of a vault restore and the domain of a team mailbox quota recomputation", () => {
+    expect(taskHeading(t, task("team-mailbox-deleted-messages-restore", { teamMailboxAddress: "sales@acme.com" })))
+      .toBe("users.tasks.restoreDeleted — sales@acme.com");
+    expect(taskHeading(t, task("recompute-quota-team-mailboxes", { domain: "acme.com" })))
+      .toBe("taskTypes.recomputeTeamMailboxQuotas — acme.com");
   });
 
   it("names a Trash or Spam cleanup after its folder, and its user from its options", () => {

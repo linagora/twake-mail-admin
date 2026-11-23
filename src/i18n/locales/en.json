@@ -1465,7 +1465,9 @@
       "deletedTeamMailboxes": "Team mailboxes deleted",
       "failedTeamMailboxes": "Team mailboxes that failed",
       "failedTeamMailboxesRetried": "The next run tries them again.",
-      "indexedSpaces": "Spaces indexed"
+      "indexedSpaces": "Spaces indexed",
+      "teamMailbox": "Team mailbox",
+      "processedTeamMailboxes": "Team mailboxes processed"
     },
     "cancelTarget": " for {{target}}",
     "targetCalendar": {
@@ -1478,7 +1480,8 @@
       "ended": "Task ended",
       "took": "took {{duration}}",
       "details": "Details"
-    }
+    },
+    "domainListTitle": "Tasks of the domain"
   },
   "commonTasks": {
     "title": "Common Tasks",
@@ -2359,7 +2362,8 @@
     "domainAddressBookClear": "Clear contacts",
     "bookingLinkEventDeletion": "Delete the events of a booking link",
     "twakeSpacePurge": "Twake Space purge",
-    "twakeSpaceReindex": "Twake Space reindex"
+    "twakeSpaceReindex": "Twake Space reindex",
+    "recomputeTeamMailboxQuotas": "Recompute team mailbox quotas"
   },
   "twakeSpace": {
     "organizationIdOptional": "Organization ID (optional)",

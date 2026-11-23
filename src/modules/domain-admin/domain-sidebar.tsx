@@ -56,9 +56,10 @@ export function DomainSidebar() {
   // Gate on the routes a domain administrator calls: GET /mailingLists and GET /tasks span
   // every tenant, a profile must not have to grant them for these entries to show.
   const canMailingLists = useIsAllowed("GET", "/mailingLists?domain={domain}");
-  // The Tasks page never lists tasks: it starts the domain tasks of DomainTasks, and opens
-  // their details.
+  // The Tasks page starts the domain tasks of DomainTasks, lists the tasks of the domain
+  // (GET /domains/{domain}/tasks, never GET /tasks) and opens their details.
   const canTasks = [
+    useIsAllowed("GET", "/domains/{domain}/tasks"),
     useIsAllowed("POST", "/domains/{domain}/signature-templates?action=apply"),
     useIsAllowed("POST", "/domains/{domain}?action=deleteData"),
     useIsAllowed("POST", "/domains/{domain}/templates?action=provision&from={sourceUser}"),

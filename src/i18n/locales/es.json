@@ -1466,7 +1466,9 @@
       "deletedTeamMailboxes": "Buzones de equipo eliminados",
       "failedTeamMailboxes": "Buzones de equipo con error",
       "failedTeamMailboxesRetried": "La próxima ejecución los vuelve a intentar.",
-      "indexedSpaces": "Espacios indexados"
+      "indexedSpaces": "Espacios indexados",
+      "teamMailbox": "Buzón de equipo",
+      "processedTeamMailboxes": "Buzones de equipo procesados"
     },
     "cancelTarget": " para {{target}}",
     "targetCalendar": {
@@ -1479,7 +1481,8 @@
       "ended": "Tarea finalizada",
       "took": "en {{duration}}",
       "details": "Detalles"
-    }
+    },
+    "domainListTitle": "Tareas del dominio"
   },
   "commonTasks": {
     "title": "Tareas comunes",
@@ -2360,7 +2363,8 @@
     "domainAddressBookClear": "Borrar los contactos",
     "bookingLinkEventDeletion": "Eliminar los eventos de un enlace de reserva",
     "twakeSpacePurge": "Purga de Twake Space",
-    "twakeSpaceReindex": "Reindexación de Twake Space"
+    "twakeSpaceReindex": "Reindexación de Twake Space",
+    "recomputeTeamMailboxQuotas": "Recalcular las cuotas de los buzones de equipo"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID de organización (opcional)",

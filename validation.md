@@ -777,9 +777,21 @@ A left bar entry in both modes; the detail pattern differs, see the two snackbar
 
 ### Tasks page *(DOMAIN mode)*
 
-The domain administrator's Tasks page never lists tasks — `GET /tasks` lists those of
-every domain, with their details. It starts the tasks of the domain, and is shown as
-soon as one of them, or the task detail (`GET /domains/{domain}/tasks/{id}`), is allowed:
+The domain administrator's Tasks page never calls `GET /tasks`, which lists the tasks of
+every domain, with their details. It lists the tasks of the domain through
+`GET /domains/{domain}/tasks`: a task belongs to a domain when it worked on a user, a team
+mailbox (team mailbox vault restore, team mailbox quota recomputation) or the domain
+itself. WebAdmin filters that list by status only: the list filters it by type, and offers
+no date filter. It starts the tasks of the domain, and is shown as soon as one of them, the
+list, or the task detail (`GET /domains/{domain}/tasks/{id}`), is allowed:
+
+| Trigger | Verb | Pattern | MUST/MAY | Mode |
+|---------|------|---------|----------|------|
+| Tasks of the domain *(APPLICATION:"MAIL")* | GET | `/domains/{domain}/tasks` | MAY (the list is not shown if missing) | DOMAIN |
+
+Its "Cancel task" button is the one of the task details: `DELETE /domains/{domain}/tasks/{id}`.
+
+The actions it starts:
 
 - APPLICATION:"MAIL": the actions of *Domain detail — Tasks section* (`domain-tasks.tsx`): apply the signature templates, delete all data of the domain, provision the mailbox templates.
 - APPLICATION:"CALENDAR": the actions of `calendar-domain-tasks.tsx` (delete all data, sync the domain members, republish the common contacts) and of `domain-address-book-counts.tsx` (count, export, import, clear and copy the contacts of the domain address books).
