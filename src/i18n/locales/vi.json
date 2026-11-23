@@ -207,7 +207,14 @@
       "errorUpdating": "Lỗi khi cập nhật liên hệ",
       "updated": "Đã cập nhật liên hệ",
       "searchPlaceholder": "Tìm liên hệ...",
-      "noResults": "Không có liên hệ phù hợp với tìm kiếm."
+      "noResults": "Không có liên hệ phù hợp với tìm kiếm.",
+      "teamMailbox": {
+        "badge": "Hộp thư nhóm",
+        "badgeNamed": "Hộp thư nhóm {{name}}",
+        "label": "Hộp thư nhóm",
+        "undeletable": "Liên hệ này thuộc hộp thư nhóm {{name}}. Nó được tạo và xóa cùng với hộp thư nhóm: hãy xóa hộp thư nhóm để xóa nó.",
+        "deleteRefused": "Liên hệ này thuộc một hộp thư nhóm hiện có và không thể xóa"
+      }
     },
     "teamMailboxes": {
       "title": "Hộp thư nhóm",

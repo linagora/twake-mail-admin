@@ -333,6 +333,12 @@ DOMAINS = page(
                     "Supprimer un contact",
                     endpoints=[may("DELETE", "/domains/{domain}/contacts/{username}")],
                 ),
+                action(
+                    "team-mailbox-badge",
+                    "Mark the contacts of the team mailboxes",
+                    "Signaler les contacts des boîtes partagées",
+                    endpoints=[may("GET", "/domains/{domain}/team-mailboxes")],
+                ),
             ],
         ),
         section(

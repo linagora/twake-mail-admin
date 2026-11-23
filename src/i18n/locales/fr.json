@@ -211,7 +211,14 @@
       "errorUpdating": "Erreur lors de la mise à jour du contact",
       "updated": "Contact mis à jour",
       "searchPlaceholder": "Rechercher des contacts…",
-      "noResults": "Aucun contact ne correspond à votre recherche."
+      "noResults": "Aucun contact ne correspond à votre recherche.",
+      "teamMailbox": {
+        "badge": "Boîte partagée",
+        "badgeNamed": "Boîte partagée {{name}}",
+        "label": "Boîte partagée",
+        "undeletable": "Ce contact appartient à la boîte partagée {{name}}. Il est créé et supprimé avec la boîte partagée : supprimez la boîte partagée pour le supprimer.",
+        "deleteRefused": "Ce contact appartient à une boîte partagée existante et ne peut pas être supprimé"
+      }
     },
     "teamMailboxes": {
       "title": "Boîtes partagées",

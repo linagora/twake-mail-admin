@@ -211,7 +211,14 @@
       "errorUpdating": "Error updating contact",
       "updated": "Contact updated",
       "searchPlaceholder": "Search contacts...",
-      "noResults": "No contacts match your search."
+      "noResults": "No contacts match your search.",
+      "teamMailbox": {
+        "badge": "Team mailbox",
+        "badgeNamed": "Team mailbox {{name}}",
+        "label": "Team mailbox",
+        "undeletable": "This contact belongs to the team mailbox {{name}}. It is created and removed with the team mailbox: delete the team mailbox to remove it.",
+        "deleteRefused": "This contact belongs to an existing team mailbox and cannot be deleted"
+      }
     },
     "teamMailboxes": {
       "title": "Team Mailboxes",
