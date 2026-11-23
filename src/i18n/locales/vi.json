@@ -988,6 +988,7 @@
       "reindexAll": "Lập chỉ mục lại tất cả hộp thư",
       "reindexTitle": "Lập chỉ mục lại tất cả hộp thư",
       "reindexDesc": "Lập chỉ mục lại tất cả hộp thư cho {{username}}.",
+      "reindexUnknownUser": "Người dùng {{username}} không tồn tại: không có tác vụ lập chỉ mục lại nào được tạo.",
       "errorReindex": "Lỗi khi chạy tác vụ lập chỉ mục lại",
       "subscribeAll": "Đăng ký tất cả hộp thư",
       "subscribeTitle": "Đăng ký tất cả hộp thư",
@@ -1589,6 +1590,10 @@
       "autoMerge": {
         "label": "Gộp các hộp thư trùng lặp",
         "help": "Đã chọn: các hộp thư cùng tên được gộp thay vì chỉ được báo cáo."
+      },
+      "force": {
+        "label": "Chạy ngay cả khi người dùng không tồn tại (force)",
+        "help": "Chỉ hữu ích để dọn các mục chỉ mục của người dùng đã bị xóa. Nếu không có tùy chọn này, WebAdmin từ chối người dùng không xác định, giúp tránh lỗi gõ nhầm."
       },
       "trustMessageProjection": {
         "label": "Tin cậy bản chiếu thư",
