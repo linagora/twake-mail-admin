@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { AxiosError, AxiosHeaders } from "axios";
 import { MemoryRouter } from "react-router";
 
 const api = vi.hoisted(() => ({
@@ -313,5 +314,68 @@ describe("mappings list: deleting the mappings a search found", () => {
     fireEvent.click(bulkButton()!);
     await vi.waitFor(() => expect(confirmFn).toHaveBeenCalled());
     expect(api.deleteAddressMapping).not.toHaveBeenCalled();
+  });
+});
+
+describe("mappings list: a domain mapping to itself", () => {
+  const openDomainDialog = async () => {
+    render(<MemoryRouter><MappingsList /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole("button", { name: "mappings.addTitle" }));
+    fireEvent.change(screen.getByLabelText("mappings.type"), { target: { value: "domain" } });
+  };
+  const typeDomains = (source: string, destination: string) => {
+    fireEvent.change(screen.getByLabelText("mappings.source"), { target: { value: source } });
+    fireEvent.change(screen.getByLabelText("mappings.destination"), { target: { value: destination } });
+  };
+  const submit = () => fireEvent.submit(screen.getByLabelText("mappings.source").closest("form")!);
+  const createButton = () => screen.getByRole("button", { name: "common.create" }) as HTMLButtonElement;
+  const fieldValue = (label: string) => (screen.getByLabelText(label) as HTMLInputElement).value;
+  const webAdminError = (message: string) =>
+    new AxiosError("Request failed with status code 400", "ERR_BAD_REQUEST", undefined, undefined, {
+      status: 400,
+      statusText: "Bad Request",
+      headers: {},
+      config: { headers: new AxiosHeaders() },
+      data: { statusCode: 400, type: "InvalidArgument", message },
+    });
+
+  afterEach(() => api.createDomainMapping.mockReset());
+
+  it("refuses it before sending, case and spaces ignored, the typed values kept", async () => {
+    await openDomainDialog();
+    typeDomains(" Example.com ", "example.COM");
+
+    expect(screen.getByRole("alert").textContent).toBe("mappings.domainSelfMapping");
+    expect(createButton().disabled).toBe(true);
+    submit();
+
+    expect(api.createDomainMapping).not.toHaveBeenCalled();
+    expect(fieldValue("mappings.source")).toBe(" Example.com ");
+    expect(fieldValue("mappings.destination")).toBe("example.COM");
+  });
+
+  it("accepts two different domains", async () => {
+    api.createDomainMapping.mockResolvedValueOnce(undefined);
+    await openDomainDialog();
+    typeDomains("example.com", "other.com");
+
+    expect(screen.queryByText("mappings.domainSelfMapping")).toBeNull();
+    expect(createButton().disabled).toBe(false);
+    submit();
+
+    await vi.waitFor(() => expect(api.createDomainMapping).toHaveBeenCalledWith("example.com", "other.com"));
+  });
+
+  it("keeps the dialog open with the server message when WebAdmin answers 400", async () => {
+    api.createDomainMapping.mockRejectedValueOnce(webAdminError("Source and destination domain can't be the same!"));
+    await openDomainDialog();
+    typeDomains("example.com", "other.com");
+    submit();
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain("common.serverMessage");
+    expect(alert.textContent).toContain("Source and destination domain can't be the same!");
+    expect(fieldValue("mappings.source")).toBe("example.com");
+    expect(fieldValue("mappings.destination")).toBe("other.com");
   });
 });

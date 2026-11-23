@@ -21,10 +21,15 @@ vi.mock("./create-mail-repository-button", () => ({ default: () => null }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
 // Every route is allowed, so the created task would be followed through a real HTTP await call
 vi.mock("@/hooks/task-outcome", () => ({ followTask: vi.fn() }));
-const confirmed = vi.hoisted(() => ({ message: undefined as ReactNode, actionError: undefined as unknown }));
+const confirmed = vi.hoisted(() => ({
+  message: undefined as ReactNode,
+  actionError: undefined as unknown,
+  describeError: undefined as ((error: unknown) => ReactNode | null) | undefined,
+}));
 vi.mock("@/hooks/use-confirm", () => ({
-  useConfirm: () => async (options: { message: ReactNode; action?: () => Promise<unknown> }) => {
+  useConfirm: () => async (options: { message: ReactNode; action?: () => Promise<unknown>; describeError?: (error: unknown) => ReactNode | null }) => {
     confirmed.message = options.message;
+    confirmed.describeError = options.describeError;
     // Like the confirm dialog: a failed action is reported in the dialog, which stays open
     try {
       await options.action?.();
@@ -76,6 +81,20 @@ describe("mail repositories list tasks", () => {
     await clickAction("mailRepositories.reprocessAll");
 
     await waitFor(() => expect(confirmed.actionError).toBe(refusal));
+    expect(toast).not.toHaveBeenCalled();
+  });
+
+  it("reports an unknown processor in the dialog, saying that no mail was moved", async () => {
+    const refusal = webAdminRefusal("'unknown' processor is not configured");
+    api.reprocessMailRepository.mockRejectedValue(refusal);
+    await clickAction("mailRepositories.reprocessAll");
+    await waitFor(() => expect(confirmed.actionError).toBe(refusal));
+    cleanup();
+
+    render(<>{confirmed.describeError?.(refusal)}</>);
+
+    expect(screen.getByText("mailRepositories.reprocessRefused.processor")).toBeTruthy();
+    expect(screen.getByText("'unknown' processor is not configured")).toBeTruthy();
     expect(toast).not.toHaveBeenCalled();
   });
 

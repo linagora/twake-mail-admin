@@ -929,6 +929,7 @@ the task never covers more than what is being looked at.
 | "Reindex users" button | POST | `/users?{params}` | MAY |
 | "Rebuild the space index" button (Twake Space extension) | POST | `/spaces?action=reindex` | MAY |
 | "Purge team mailboxes of deleted spaces" button (Twake Space extension) | POST | `/spaces?action=purge` | MAY |
+| "Send an email" button (dialog: compose, paste or load an `.eml`, sent as `message/rfc822`) | POST | `/mail-transfer-service` | MAY |
 
 Note: Hide tasks button that are not allowed
 

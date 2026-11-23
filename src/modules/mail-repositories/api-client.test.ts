@@ -6,7 +6,7 @@ vi.mock("@/lib/apiClient", () => ({
   apiClient: { get: http.get, patch: http.patch },
 }));
 
-import { getMailRepositories, moveAllMails, moveSingleMail, reprocessMailRepository } from "./api-client";
+import { getMailRepositories, moveAllMails, moveSingleMail, reprocessMailRepository, reprocessSingleMail } from "./api-client";
 
 const error = { repository: "var/mail/error", path: "var%2Fmail%2Ferror" };
 const qaRepo = { repository: "var/mail/qa-repo", path: "var%2Fmail%2Fqa-repo" };
@@ -63,10 +63,10 @@ describe("reprocess mail repository", () => {
     http.patch.mockReset().mockResolvedValue({ taskId: "task-1" });
   });
 
-  it("defaults to the root processor", async () => {
+  it("leaves the processor out by default, each mail going back to its stored state", async () => {
     await reprocessMailRepository("var%2Fmail%2Ferror");
     expect(http.patch).toHaveBeenCalledWith(
-      "/mailRepositories/var%2Fmail%2Ferror/mails?action=reprocess&processor=root"
+      "/mailRepositories/var%2Fmail%2Ferror/mails?action=reprocess"
     );
   });
 
@@ -75,18 +75,42 @@ describe("reprocess mail repository", () => {
       queue: "spool",
       processor: "transport",
       consume: true,
-      limit: "" as unknown as number,
-      maxRetries: "" as unknown as number,
+      limit: "",
+      maxRetries: "",
     });
     expect(http.patch).toHaveBeenCalledWith(
-      "/mailRepositories/var%2Fmail%2Ferror/mails?action=reprocess&processor=transport&queue=spool&consume=true"
+      "/mailRepositories/var%2Fmail%2Ferror/mails?action=reprocess&queue=spool&processor=transport&consume=true"
     );
+  });
+
+  it("trims the processor and leaves a blank one out", async () => {
+    await reprocessMailRepository("var%2Fmail%2Ferror", { queue: " spool ", processor: " transport " });
+    await reprocessMailRepository("var%2Fmail%2Ferror", { processor: "   " });
+    expect(http.patch.mock.calls.map(([url]) => url)).toEqual([
+      "/mailRepositories/var%2Fmail%2Ferror/mails?action=reprocess&queue=spool&processor=transport",
+      "/mailRepositories/var%2Fmail%2Ferror/mails?action=reprocess",
+    ]);
   });
 
   it("keeps numeric limits", async () => {
     await reprocessMailRepository("var%2Fmail%2Ferror", { limit: 10, maxRetries: 3 });
     expect(http.patch).toHaveBeenCalledWith(
-      "/mailRepositories/var%2Fmail%2Ferror/mails?action=reprocess&processor=root&limit=10&maxRetries=3"
+      "/mailRepositories/var%2Fmail%2Ferror/mails?action=reprocess&limit=10&maxRetries=3"
     );
+  });
+});
+
+describe("reprocess a single mail", () => {
+  beforeEach(() => {
+    http.patch.mockReset().mockResolvedValue({ taskId: "task-1" });
+  });
+
+  it("trims the queue and processor and leaves blank ones out", async () => {
+    await reprocessSingleMail("var%2Fmail%2Ferror", "mail-1", { queue: " spool ", processor: " transport " });
+    await reprocessSingleMail("var%2Fmail%2Ferror", "mail-1", { queue: "", processor: "  " });
+    expect(http.patch.mock.calls.map(([url]) => url)).toEqual([
+      "/mailRepositories/var%2Fmail%2Ferror/mails/mail-1?action=reprocess&queue=spool&processor=transport",
+      "/mailRepositories/var%2Fmail%2Ferror/mails/mail-1?action=reprocess",
+    ]);
   });
 });

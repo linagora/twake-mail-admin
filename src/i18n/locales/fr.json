@@ -1000,6 +1000,7 @@
       "reindexAll": "Réindexer toutes les boîtes",
       "reindexTitle": "Réindexer toutes les boîtes",
       "reindexDesc": "Réindexer toutes les boîtes de {{username}}.",
+      "reindexUnknownUser": "L'utilisateur {{username}} n'existe pas : aucune tâche de réindexation n'a été créée.",
       "errorReindex": "Erreur lors du lancement de la tâche de réindexation",
       "subscribeAll": "S'abonner à toutes les boîtes",
       "subscribeTitle": "S'abonner à toutes les boîtes",
@@ -1567,7 +1568,7 @@
       },
       "processor": {
         "label": "Processeur cible",
-        "help": "Processeur de mailets qui retraite les mails. root : traitement complet."
+        "help": "Nom d'un processeur configuré dans le conteneur de mailets du serveur (mailetcontainer.xml), par exemple root, transport, error, local-delivery ou relay. Laissé vide, chaque mail retourne dans son propre état enregistré."
       },
       "consume": {
         "label": "Retirer du dépôt une fois retraités",
@@ -1605,6 +1606,10 @@
       "autoMerge": {
         "label": "Fusionner les boîtes en double",
         "help": "Coché : les boîtes de même nom sont fusionnées au lieu d'être seulement signalées."
+      },
+      "force": {
+        "label": "Lancer même si l'utilisateur n'existe pas (force)",
+        "help": "Utile seulement pour nettoyer les entrées d'index d'un utilisateur déjà supprimé. Sans cela, WebAdmin refuse un utilisateur inconnu, ce qui évite les fautes de frappe."
       },
       "trustMessageProjection": {
         "label": "Se fier à la projection des messages",
@@ -1709,14 +1714,16 @@
       "clearDomainMembersContacts": "Vide le carnet « Membres du domaine » de chaque domaine. Lancez une synchronisation pour le remplir à nouveau.",
       "twakeSpacePurge": "Supprime les boîtes partagées des espaces supprimés depuis plus longtemps que la rétention définie dans space.properties, ce qui libère leurs adresses. TMail ne la lance plus de lui-même : planifiez-la avec un cron externe, ou lancez-la ici.",
       "twakeSpaceReindex": "À lancer après avoir lié des boîtes partagées en dehors de l'extension (p. ex. migration depuis le service annexe Twake Mail), ou si la boîte d'index a été perdue. Parcourt toutes les boîtes partagées.",
-      "syncTwakeSpaces": "Demande à ldap-rest l'état actuel des espaces Twake, appliqué à leurs boîtes partagées : tous, ceux d'une organisation, ou un seul espace."
+      "syncTwakeSpaces": "Demande à ldap-rest l'état actuel des espaces Twake, appliqué à leurs boîtes partagées : tous, ceux d'une organisation, ou un seul espace.",
+      "sendEmail": "Envoie un e-mail via le traitement du courrier du serveur, aux destinataires nommés par ses en-têtes : rédigé ici, collé ou chargé depuis un fichier .eml."
     },
     "archiveAllEvents": "Archiver tous les événements",
     "archiveAllWarning": "Aucun critère : tous les événements de tous les utilisateurs enregistrés seront déplacés dans un calendrier « Archival ».",
     "twakeSpacePurge": "Purger les boîtes partagées des espaces supprimés",
     "twakeSpaceReindex": "Reconstruire l'index des espaces",
     "twakeSpaceUnavailable": "Twake Space n'est pas disponible sur ce serveur : il n'expose pas les routes /spaces, qui nécessitent l'extension Twake Space de tmail-backend.",
-    "syncTwakeSpaces": "Synchroniser les espaces Twake"
+    "syncTwakeSpaces": "Synchroniser les espaces Twake",
+    "sendEmail": "Envoyer un e-mail"
   },
   "healthCheck": {
     "checking": "Vérification des composants, cela peut prendre un moment…",
@@ -1967,6 +1974,10 @@
     "reprocessMailConfirm": "Retraiter l'email \"{{mailKey}}\" ?",
     "reprocessRepoConfirm": "Retraiter tous les emails du dépôt {{path}} ?",
     "reprocessScheduled": "Retraitement planifié",
+    "reprocessRefused": {
+      "processor": "Le processeur cible n'est pas configuré dans le conteneur de mailets du serveur : aucun mail n'a été déplacé. Corrigez-le, ou laissez-le vide pour que chaque mail retourne dans son propre état.",
+      "queue": "La file cible n'existe pas sur le serveur : aucun mail n'a été déplacé. Corrigez-la, ou laissez-la vide pour utiliser spool."
+    },
     "errorReprocessing": "Erreur lors du retraitement",
     "moveMailHeader": "Déplacer l'email",
     "moveMailConfirm": "Déplacer l'email \"{{mailKey}}\" vers :",
@@ -2018,6 +2029,7 @@
     "domainSourcePlaceholder": "Domaine source (ex. domaineSource.tld)",
     "domainDestinationPlaceholder": "Domaine de destination (ex. destination.tld)",
     "domainHint": "Le courrier adressé au domaine source sera réécrit vers le domaine de destination. Aucune vérification de boucle n'est effectuée.",
+    "domainSelfMapping": "Un domaine ne peut pas être associé à lui-même.",
     "domainCreated": "Réécriture de domaine créée",
     "errorCreatingDomain": "Erreur lors de la création de la réécriture de domaine",
     "removeTitle": "Supprimer la réécriture d'adresse {{type}}",
@@ -2307,7 +2319,7 @@
     "clear": "Vider",
     "typeToConfirm": "Saisissez {{value}} pour confirmer",
     "consequence": {
-      "deleteUserData": "Toutes les boîtes, messages, identités, étiquettes, réponse d'absence et paramètres de {{user}} sont définitivement supprimés. Le compte lui-même est conservé. Cette action est irréversible.",
+      "deleteUserData": "Toutes les boîtes, messages, identités, étiquettes, réponse d'absence et paramètres de {{user}} sont définitivement supprimés. Le compte lui-même est conservé. Ses délégations sont supprimées : {{user}} perd l'accès aux comptes qui lui étaient délégués, et les utilisateurs à qui il avait délégué son compte en perdent l'accès. Cette action est irréversible.",
       "deleteMailboxes": "Toutes les boîtes de {{user}} et tous leurs messages sont définitivement supprimés. Cette action est irréversible.",
       "deleteMailbox": "« {{mailbox}} », ses sous-dossiers et tous leurs messages sont définitivement supprimés.",
       "clearMailbox": "Tous les messages de « {{mailbox}} » sont définitivement supprimés ; le dossier est conservé.",
@@ -2350,7 +2362,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Illimité (aucune limite définie)",
     "noLimit": "Aucune limite",
-    "domainLevel": "Domaine {{domain}}"
+    "domainLevel": "Domaine {{domain}}",
+    "zeroLimit": "La limite est 0 : rien ne peut être stocké."
   },
   "taskTypes": {
     "fullReindexing": "Réindexer toutes les données dans OpenSearch",
@@ -2376,5 +2389,41 @@
       "requested": "Synchronisation demandée",
       "thisSpace": "Synchroniser cet espace"
     }
+  },
+  "sendEmail": {
+    "title": "Envoyer un e-mail",
+    "intro": "Le message est mis en file d'attente de traitement, comme un message reçu par le serveur : ses destinataires sont les adresses To, Cc et Bcc de ses en-têtes.",
+    "modeLabel": "Source du message",
+    "mode": {
+      "compose": "Rédiger",
+      "raw": "Message brut (.eml)"
+    },
+    "field": {
+      "from": "De",
+      "to": "À",
+      "cc": "Cc",
+      "subject": "Objet",
+      "body": "Corps",
+      "eml": "Charger un fichier .eml",
+      "raw": "Message RFC 822"
+    },
+    "placeholder": {
+      "from": "admin@domaine.tld",
+      "to": "utilisateur@domaine.tld, autre@domaine.tld",
+      "cc": "utilisateur@domaine.tld",
+      "subject": "Objet"
+    },
+    "cannotSend": "Envoyer reste désactivé tant que :",
+    "problem": {
+      "empty": "le message n'est pas rédigé ou chargé",
+      "noFrom": "le message n'a pas d'adresse From",
+      "severalFrom": "le message a plus d'une adresse From",
+      "invalidFrom": "l'adresse From « {{address}} » est invalide",
+      "noRecipient": "le message n'a aucun destinataire (To, Cc ou Bcc)",
+      "invalidRecipient": "l'adresse {{header}} « {{address}} » est invalide"
+    },
+    "send": "Envoyer",
+    "enqueued": "E-mail mis en file d'attente de traitement",
+    "refused": "Le serveur a refusé l'e-mail"
   }
 }

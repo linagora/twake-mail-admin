@@ -2382,6 +2382,13 @@ COMMON_TASKS = page(
             ],
         ),
         action(
+            "send-email",
+            "Send an email",
+            "Envoyer un e-mail",
+            applications=MAIL,
+            endpoints=[may("POST", "/mail-transfer-service")],
+        ),
+        action(
             "reload-certificates",
             "Reload TLS certificates",
             "Recharger les certificats TLS",

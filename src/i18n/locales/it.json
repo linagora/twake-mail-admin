@@ -1000,6 +1000,7 @@
       "reindexAll": "Reindicizza tutte le caselle di posta",
       "reindexTitle": "Reindicizza tutte le caselle di posta",
       "reindexDesc": "Reindicizza tutte le caselle di posta di {{username}}.",
+      "reindexUnknownUser": "L'utente {{username}} non esiste: nessuna attività di reindicizzazione è stata creata.",
       "errorReindex": "Errore durante l'esecuzione della reindicizzazione",
       "subscribeAll": "Iscriviti a tutte le caselle di posta",
       "subscribeTitle": "Iscriviti a tutte le caselle di posta",
@@ -1567,7 +1568,7 @@
       },
       "processor": {
         "label": "Processore di destinazione",
-        "help": "Processore di mailet che rielabora i messaggi. root: elaborazione completa."
+        "help": "Nome di un processore configurato nel contenitore di mailet del server (mailetcontainer.xml), ad es. root, transport, error, local-delivery o relay. Se vuoto, ogni messaggio torna al proprio stato salvato."
       },
       "consume": {
         "label": "Rimuovi dal repository dopo la rielaborazione",
@@ -1605,6 +1606,10 @@
       "autoMerge": {
         "label": "Unisci le caselle duplicate",
         "help": "Selezionato: le caselle con lo stesso nome vengono unite invece di essere solo segnalate."
+      },
+      "force": {
+        "label": "Esegui anche se l'utente non esiste (force)",
+        "help": "Utile solo per ripulire le voci di indice di un utente già eliminato. Senza questa opzione, WebAdmin rifiuta un utente sconosciuto, evitando gli errori di battitura."
       },
       "trustMessageProjection": {
         "label": "Fidati della proiezione dei messaggi",
@@ -1709,14 +1714,16 @@
       "clearDomainMembersContacts": "Svuota la rubrica «Membri del dominio» di ogni dominio. Esegui una sincronizzazione per riempirla di nuovo.",
       "twakeSpacePurge": "Elimina le caselle di team degli spazi eliminati da più tempo della conservazione impostata in space.properties, liberandone gli indirizzi. TMail non la esegue più da solo: pianificala con un cron esterno o eseguila qui.",
       "twakeSpaceReindex": "Da eseguire dopo aver collegato caselle di team al di fuori dell'estensione (ad es. migrazione dal servizio ausiliario di Twake Mail) o se la casella dell'indice è andata persa. Analizza tutte le caselle di team.",
-      "syncTwakeSpaces": "Chiede a ldap-rest lo stato attuale degli spazi Twake, applicato alle loro caselle condivise: tutti, quelli di un'organizzazione o un singolo spazio."
+      "syncTwakeSpaces": "Chiede a ldap-rest lo stato attuale degli spazi Twake, applicato alle loro caselle condivise: tutti, quelli di un'organizzazione o un singolo spazio.",
+      "sendEmail": "Invia un'email tramite l'elaborazione della posta del server, ai destinatari indicati nelle sue intestazioni: composta qui, incollata o caricata da un file .eml."
     },
     "archiveAllEvents": "Archivia tutti gli eventi",
     "archiveAllWarning": "Nessun criterio: tutti gli eventi di tutti gli utenti registrati verranno spostati in un calendario «Archival».",
     "twakeSpacePurge": "Elimina le caselle di team degli spazi eliminati",
     "twakeSpaceReindex": "Ricostruisci l'indice degli spazi",
     "twakeSpaceUnavailable": "Twake Space non è disponibile su questo server: non espone le rotte /spaces, che richiedono l'estensione Twake Space di tmail-backend.",
-    "syncTwakeSpaces": "Sincronizza gli spazi Twake"
+    "syncTwakeSpaces": "Sincronizza gli spazi Twake",
+    "sendEmail": "Invia un'email"
   },
   "healthCheck": {
     "checking": "Verifica dei componenti in corso, potrebbe richiedere un po' di tempo…",
@@ -1967,6 +1974,10 @@
     "reprocessMailConfirm": "Rielaborare l'email \"{{mailKey}}\"?",
     "reprocessRepoConfirm": "Rielaborare tutte le email del repository {{path}}?",
     "reprocessScheduled": "Rielaborazione pianificata",
+    "reprocessRefused": {
+      "processor": "Il processore di destinazione non è configurato nel contenitore di mailet del server: nessun messaggio è stato spostato. Correggilo o lascialo vuoto perché ogni messaggio torni al proprio stato.",
+      "queue": "La coda di destinazione non esiste sul server: nessun messaggio è stato spostato. Correggila o lasciala vuota per usare spool."
+    },
     "errorReprocessing": "Errore durante la rielaborazione",
     "moveMailHeader": "Sposta l'email",
     "moveMailConfirm": "Sposta l'email \"{{mailKey}}\" in:",
@@ -2018,6 +2029,7 @@
     "domainSourcePlaceholder": "Dominio di origine (ad es. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Dominio di destinazione (ad es. destination.tld)",
     "domainHint": "Le email indirizzate al dominio di origine verranno riscritte verso il dominio di destinazione. Non viene effettuato alcun controllo dei cicli.",
+    "domainSelfMapping": "Un dominio non può essere mappato su se stesso.",
     "domainCreated": "Mappatura di dominio creata correttamente",
     "errorCreatingDomain": "Errore durante la creazione della mappatura di dominio",
     "removeTitle": "Rimuovi mappatura di tipo {{type}}",
@@ -2307,7 +2319,7 @@
     "clear": "Svuota",
     "typeToConfirm": "Digita {{value}} per confermare",
     "consequence": {
-      "deleteUserData": "Tutte le caselle, i messaggi, le identità, le etichette, la risposta automatica e le impostazioni di {{user}} vengono eliminati definitivamente. L'account resta. Operazione irreversibile.",
+      "deleteUserData": "Tutte le caselle, i messaggi, le identità, le etichette, la risposta automatica e le impostazioni di {{user}} vengono eliminati definitivamente. L'account resta. Le sue deleghe vengono rimosse: {{user}} perde l'accesso agli account a lui delegati, e gli utenti a cui aveva delegato il proprio account ne perdono l'accesso. Operazione irreversibile.",
       "deleteMailboxes": "Tutte le caselle di {{user}} e i relativi messaggi vengono eliminati definitivamente. Operazione irreversibile.",
       "deleteMailbox": "«{{mailbox}}», le sottocartelle e tutti i messaggi vengono eliminati definitivamente.",
       "clearMailbox": "Tutti i messaggi di «{{mailbox}}» vengono eliminati definitivamente; la cartella resta.",
@@ -2350,7 +2362,8 @@
     "fromGlobal": "(globale)",
     "noLimitSet": "Illimitato (nessun limite impostato)",
     "noLimit": "Nessun limite",
-    "domainLevel": "Dominio {{domain}}"
+    "domainLevel": "Dominio {{domain}}",
+    "zeroLimit": "Il limite è 0: non è possibile archiviare nulla."
   },
   "taskTypes": {
     "fullReindexing": "Reindicizza tutti i dati in OpenSearch",
@@ -2376,5 +2389,41 @@
       "requested": "Sincronizzazione richiesta",
       "thisSpace": "Sincronizza questo spazio"
     }
+  },
+  "sendEmail": {
+    "title": "Invia un'email",
+    "intro": "Il messaggio viene messo in coda per l'elaborazione, come un messaggio ricevuto dal server: i suoi destinatari sono gli indirizzi To, Cc e Bcc delle sue intestazioni.",
+    "modeLabel": "Origine del messaggio",
+    "mode": {
+      "compose": "Componi",
+      "raw": "Messaggio grezzo (.eml)"
+    },
+    "field": {
+      "from": "Da",
+      "to": "A",
+      "cc": "Cc",
+      "subject": "Oggetto",
+      "body": "Corpo",
+      "eml": "Carica un file .eml",
+      "raw": "Messaggio RFC 822"
+    },
+    "placeholder": {
+      "from": "admin@dominio.tld",
+      "to": "utente@dominio.tld, altro@dominio.tld",
+      "cc": "utente@dominio.tld",
+      "subject": "Oggetto"
+    },
+    "cannotSend": "Invia resta disattivato finché:",
+    "problem": {
+      "empty": "il messaggio non è scritto o caricato",
+      "noFrom": "il messaggio non ha un indirizzo From",
+      "severalFrom": "il messaggio ha più di un indirizzo From",
+      "invalidFrom": "l'indirizzo From «{{address}}» non è valido",
+      "noRecipient": "il messaggio non ha destinatari (To, Cc o Bcc)",
+      "invalidRecipient": "l'indirizzo {{header}} «{{address}}» non è valido"
+    },
+    "send": "Invia",
+    "enqueued": "Email messa in coda per l'elaborazione",
+    "refused": "Il server ha rifiutato l'email"
   }
 }
