@@ -34,7 +34,11 @@ import { cleanupTaskLabel, taskTypeLabel } from "@/modules/tasks/task-summary";
 const REINDEX_PARAMS: TaskParam[] = [
   { key: "messagesPerSecond", defaultValue: "50", type: "input" },
   { key: "mode", values: ["", "fixOutdated", "rebuildAll"], type: "select" },
+  // Same bare `&force` as the rename: skips the check that the user exists
+  { key: "force", defaultValue: false, type: "checkbox", flag: true },
 ];
+
+const isNotFound = (error: unknown) => (error as { response?: { status?: number } })?.response?.status === 404;
 
 const FAST_VIEW_PARAMS: TaskParam[] = [
   { key: "messagesPerSecond", defaultValue: "10", type: "input" },
@@ -158,6 +162,13 @@ export default function UserTasks({ username }: Props) {
         const data = await reindexUserMailboxes(username, additionalParams);
         toastTaskCreated(data.taskId, undefined, taskTypeLabel(t, "user-reindexing"));
       },
+      // The dialog stays open with its values: the operator can tick "force" and run it again
+      describeError: (error) => (isNotFound(error) ? (
+        <>
+          <p>{t("users.tasks.reindexUnknownUser", { username })}</p>
+          <ErrorDisplayer error={error} />
+        </>
+      ) : null),
     });
   };
 

@@ -1000,6 +1000,7 @@
       "reindexAll": "Reindicizza tutte le caselle di posta",
       "reindexTitle": "Reindicizza tutte le caselle di posta",
       "reindexDesc": "Reindicizza tutte le caselle di posta di {{username}}.",
+      "reindexUnknownUser": "L'utente {{username}} non esiste: nessuna attività di reindicizzazione è stata creata.",
       "errorReindex": "Errore durante l'esecuzione della reindicizzazione",
       "subscribeAll": "Iscriviti a tutte le caselle di posta",
       "subscribeTitle": "Iscriviti a tutte le caselle di posta",
@@ -1605,6 +1606,10 @@
       "autoMerge": {
         "label": "Unisci le caselle duplicate",
         "help": "Selezionato: le caselle con lo stesso nome vengono unite invece di essere solo segnalate."
+      },
+      "force": {
+        "label": "Esegui anche se l'utente non esiste (force)",
+        "help": "Utile solo per ripulire le voci di indice di un utente già eliminato. Senza questa opzione, WebAdmin rifiuta un utente sconosciuto, evitando gli errori di battitura."
       },
       "trustMessageProjection": {
         "label": "Fidati della proiezione dei messaggi",

@@ -16,26 +16,34 @@ const removeQueryParam = (command: string, key: string): string =>
     (_match, separator, nextSeparator) => (nextSeparator ? separator : "")
   );
 
-const appendQueryParam = (command: string, key: string, value: string | boolean): string => {
+const appendQueryParam = (command: string, parameter: string): string => {
   const closingQuote = TRAILING_QUOTE.exec(command)?.[0] ?? "";
   const url = command.slice(0, command.length - closingQuote.length);
   const separator = url.includes("?") ? "&" : "?";
-  return `${url}${separator}${key}=${value}${closingQuote}`;
+  return `${url}${separator}${parameter}${closingQuote}`;
 };
+
+// The keys of the parameters sent bare when ticked (`&force`), see TaskParam.flag
+export const flagKeys = (params?: TaskParam[]): ReadonlySet<string> =>
+  new Set((params ?? []).filter((param) => param.flag).map((param) => param.key));
 
 export const buildCommandPreview = (
   command: string,
-  customParams: Record<string, string | boolean>
+  customParams: Record<string, string | boolean>,
+  flags: ReadonlySet<string> = new Set()
 ): string => {
   return Object.entries(customParams).reduce((result, [key, value]) => {
     if (!value) {
       return removeQueryParam(result, key);
     }
+    if (flags.has(key)) {
+      return appendQueryParam(result, key);
+    }
     const existing = new RegExp(`([?&]${key}=)[^&"']*`);
     if (existing.test(result)) {
       return result.replace(existing, (_match, prefix) => `${prefix}${value}`);
     }
-    return appendQueryParam(result, key, value);
+    return appendQueryParam(result, `${key}=${value}`);
   }, command);
 };
 
@@ -44,5 +52,6 @@ export const buildCommandPreview = (
 export const defaultCommand = (command: string, params?: TaskParam[]): string =>
   buildCommandPreview(
     command,
-    Object.fromEntries((params ?? []).map((param) => [param.key, param.defaultValue ?? ""]))
+    Object.fromEntries((params ?? []).map((param) => [param.key, param.defaultValue ?? ""])),
+    flagKeys(params)
   );

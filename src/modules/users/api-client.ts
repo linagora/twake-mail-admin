@@ -102,11 +102,13 @@ export const deleteAllUserMailboxes = async (username: string): Promise<void> =>
 
 export const reindexUserMailboxes = async (
   username: string,
-  params: { messagesPerSecond?: string; mode?: string }
+  params: { messagesPerSecond?: string; mode?: string; force?: boolean }
 ): Promise<RunTaskResponse> => {
   const query = new URLSearchParams({ task: "reIndex" });
   if (params.messagesPerSecond) query.set("messagesPerSecond", params.messagesPerSecond);
   if (params.mode) query.set("mode", params.mode);
+  // WebAdmin answers 404 for an unknown user, unless forced
+  if (params.force) query.set("force", "");
   const response = await apiClient.post<any, RunTaskResponse>(
     `/users/${encodeURIComponent(username)}/mailboxes?${query.toString()}`
   );

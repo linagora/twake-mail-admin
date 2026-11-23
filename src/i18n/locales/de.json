@@ -1000,6 +1000,7 @@
       "reindexAll": "Alle Postfächer neu indizieren",
       "reindexTitle": "Alle Postfächer neu indizieren",
       "reindexDesc": "Alle Postfächer von {{username}} neu indizieren.",
+      "reindexUnknownUser": "Der Benutzer {{username}} existiert nicht: Es wurde keine Neuindizierungsaufgabe erstellt.",
       "errorReindex": "Fehler beim Ausführen der Neuindizierung",
       "subscribeAll": "Alle Postfächer abonnieren",
       "subscribeTitle": "Alle Postfächer abonnieren",
@@ -1604,6 +1605,10 @@
       "autoMerge": {
         "label": "Doppelte Postfächer zusammenführen",
         "help": "Angehakt: Gleichnamige Postfächer werden zusammengeführt statt nur gemeldet."
+      },
+      "force": {
+        "label": "Auch ausführen, wenn der Benutzer nicht existiert (force)",
+        "help": "Nur nützlich, um die Indexeinträge eines bereits gelöschten Benutzers zu bereinigen. Ohne diese Option lehnt WebAdmin einen unbekannten Benutzer ab, was Tippfehler verhindert."
       },
       "trustMessageProjection": {
         "label": "Der Nachrichtenprojektion vertrauen",
