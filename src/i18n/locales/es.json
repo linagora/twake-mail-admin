@@ -1318,6 +1318,7 @@
     "newUsernameRequired": "El nuevo nombre de usuario es obligatorio",
     "newUsernameOtherDomain": "El nuevo nombre de usuario debe pertenecer al dominio {{domain}}",
     "targetMustExist": "El nuevo nombre de usuario debe ser una cuenta existente: el cambio de nombre solo migra los datos del usuario actual a ella.",
+    "mergeIntoExisting": "Los datos se fusionan en la cuenta existente. Si ambas cuentas tienen una etiqueta con la misma palabra clave, la cuenta existente conserva su propia etiqueta y se descarta la del usuario anterior. Si la cuenta existente ya tiene límites de tasa, se conservan y no se copian los del usuario anterior.",
     "force": "Forzar",
     "fromStep": "Reanudar desde el paso",
     "fromStepPlaceholder": "p. ej. MailboxUsernameChangeTaskStep",

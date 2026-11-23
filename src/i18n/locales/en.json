@@ -1318,6 +1318,7 @@
     "newUsernameRequired": "New username is required",
     "newUsernameOtherDomain": "The new username must be in the domain {{domain}}",
     "targetMustExist": "The new username must be an existing account: renaming only migrates the data of the current user to it.",
+    "mergeIntoExisting": "The data is merged into the existing account. If both accounts have a label with the same keyword, the existing account keeps its own label and the old user's label is dropped. If the existing account already has rate limits, they are kept and the old user's limits are not copied.",
     "force": "Force",
     "fromStep": "Resume from step",
     "fromStepPlaceholder": "e.g. MailboxUsernameChangeTaskStep",

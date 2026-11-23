@@ -1318,6 +1318,7 @@
     "newUsernameRequired": "Der neue Benutzername ist erforderlich",
     "newUsernameOtherDomain": "Der neue Benutzername muss zur Domain {{domain}} gehören",
     "targetMustExist": "Der neue Benutzername muss ein bestehendes Konto sein: Das Umbenennen migriert nur die Daten des aktuellen Benutzers dorthin.",
+    "mergeIntoExisting": "Die Daten werden in das bestehende Konto übernommen. Haben beide Konten ein Label mit demselben Schlüsselwort, behält das bestehende Konto sein eigenes Label und das Label des alten Benutzers wird verworfen. Hat das bestehende Konto bereits Ratenbegrenzungen, bleiben diese erhalten und die Begrenzungen des alten Benutzers werden nicht kopiert.",
     "force": "Erzwingen",
     "fromStep": "Ab Schritt fortsetzen",
     "fromStepPlaceholder": "z. B. MailboxUsernameChangeTaskStep",
