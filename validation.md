@@ -189,6 +189,7 @@ The usage figures come from the same call as the tab load; there is no second en
 | "Create contact" button | POST | `/domains/{domain}/contacts` | MAY (do not show the button if missing) |
 | "Edit contact" form | PUT | `/domains/{domain}/contacts/{username}` | MAY (do not show the button if missing)|
 | "Delete contact" button | DELETE | `/domains/{domain}/contacts/{username}` | MAY (do not show the button if missing) |
+| "Team mailbox" badge, disabled "Delete contact" of a team mailbox's contact | GET | `/domains/{domain}/team-mailboxes` | MAY (no badge if missing: the delete of such a contact is then refused by the server with a 409, reported in a toast) |
 
 ### Domain detail — Team mailboxes tab *(APPLICATION:"MAIL")*
 

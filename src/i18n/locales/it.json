@@ -211,7 +211,14 @@
       "errorUpdating": "Errore durante l'aggiornamento del contatto",
       "updated": "Contatto aggiornato",
       "searchPlaceholder": "Cerca contatti...",
-      "noResults": "Nessun contatto corrisponde alla tua ricerca."
+      "noResults": "Nessun contatto corrisponde alla tua ricerca.",
+      "teamMailbox": {
+        "badge": "Casella condivisa",
+        "badgeNamed": "Casella condivisa {{name}}",
+        "label": "Casella condivisa",
+        "undeletable": "Questo contatto appartiene alla casella condivisa {{name}}. Viene creato e rimosso con la casella condivisa: elimina la casella condivisa per rimuoverlo.",
+        "deleteRefused": "Questo contatto appartiene a una casella condivisa esistente e non può essere eliminato"
+      }
     },
     "teamMailboxes": {
       "title": "Caselle condivise",

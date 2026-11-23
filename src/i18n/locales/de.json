@@ -211,7 +211,14 @@
       "errorUpdating": "Fehler beim Aktualisieren des Kontakts",
       "updated": "Kontakt aktualisiert",
       "searchPlaceholder": "Kontakte suchen...",
-      "noResults": "Keine Kontakte entsprechen Ihrer Suche."
+      "noResults": "Keine Kontakte entsprechen Ihrer Suche.",
+      "teamMailbox": {
+        "badge": "Team-Postfach",
+        "badgeNamed": "Team-Postfach {{name}}",
+        "label": "Team-Postfach",
+        "undeletable": "Dieser Kontakt gehört zum Team-Postfach {{name}}. Er wird mit dem Team-Postfach erstellt und entfernt: Löschen Sie das Team-Postfach, um ihn zu entfernen.",
+        "deleteRefused": "Dieser Kontakt gehört zu einem bestehenden Team-Postfach und kann nicht gelöscht werden"
+      }
     },
     "teamMailboxes": {
       "title": "Team-Postfächer",

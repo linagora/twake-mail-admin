@@ -211,7 +211,14 @@
       "errorUpdating": "Error al actualizar el contacto",
       "updated": "Contacto actualizado",
       "searchPlaceholder": "Buscar contactos...",
-      "noResults": "Ningún contacto coincide con su búsqueda."
+      "noResults": "Ningún contacto coincide con su búsqueda.",
+      "teamMailbox": {
+        "badge": "Buzón compartido",
+        "badgeNamed": "Buzón compartido {{name}}",
+        "label": "Buzón compartido",
+        "undeletable": "Este contacto pertenece al buzón compartido {{name}}. Se crea y se elimina con el buzón compartido: elimine el buzón compartido para eliminarlo.",
+        "deleteRefused": "Este contacto pertenece a un buzón compartido existente y no se puede eliminar"
+      }
     },
     "teamMailboxes": {
       "title": "Buzones compartidos",
