@@ -2354,7 +2354,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Unlimited (no limit set)",
     "noLimit": "No limit",
-    "domainLevel": "Domain {{domain}}"
+    "domainLevel": "Domain {{domain}}",
+    "zeroLimit": "Limit is 0: nothing can be stored."
   },
   "taskTypes": {
     "fullReindexing": "Reindex all data in OpenSearch",

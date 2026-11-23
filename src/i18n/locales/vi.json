@@ -2330,7 +2330,8 @@
     "fromGlobal": "(toàn cục)",
     "noLimitSet": "Không giới hạn (chưa đặt giới hạn)",
     "noLimit": "Không giới hạn",
-    "domainLevel": "Miền {{domain}}"
+    "domainLevel": "Miền {{domain}}",
+    "zeroLimit": "Giới hạn là 0: không thể lưu trữ gì."
   },
   "taskTypes": {
     "fullReindexing": "Lập chỉ mục lại toàn bộ dữ liệu trong OpenSearch",

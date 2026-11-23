@@ -2337,7 +2337,8 @@
     "fromGlobal": "(глобал)",
     "noLimitSet": "Хязгааргүй (хязгаар тогтоогоогүй)",
     "noLimit": "Хязгааргүй",
-    "domainLevel": "Домэйн {{domain}}"
+    "domainLevel": "Домэйн {{domain}}",
+    "zeroLimit": "Хязгаар 0 байна: юу ч хадгалах боломжгүй."
   },
   "taskTypes": {
     "fullReindexing": "OpenSearch дахь бүх өгөгдлийг дахин индексжүүлэх",

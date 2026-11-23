@@ -2366,7 +2366,8 @@
     "fromGlobal": "(глобально)",
     "noLimitSet": "Без ограничений (лимит не задан)",
     "noLimit": "Без лимита",
-    "domainLevel": "Домен {{domain}}"
+    "domainLevel": "Домен {{domain}}",
+    "zeroLimit": "Лимит равен 0: ничего нельзя сохранить."
   },
   "taskTypes": {
     "fullReindexing": "Переиндексировать все данные в OpenSearch",
