@@ -1949,6 +1949,7 @@
     "pathLabel": "Путь хранилища",
     "pathPlaceholder": "напр. mailRepo",
     "protocolLabel": "Протокол",
+    "protocolHint": "Должен быть протоколом, поддерживаемым сервером, например cassandra, postgres, file или memory.",
     "newRepository": "Новое хранилище",
     "reprocessAll": "Повторно обработать все письма",
     "reprocessAllOf": "Повторно обработать все письма хранилища «{{repository}}»",

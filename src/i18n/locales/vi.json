@@ -1919,6 +1919,7 @@
     "pathLabel": "Đường dẫn kho",
     "pathPlaceholder": "vd. mailRepo",
     "protocolLabel": "Giao thức",
+    "protocolHint": "Phải là giao thức mà máy chủ hỗ trợ, ví dụ cassandra, postgres, file hoặc memory.",
     "newRepository": "Kho mới",
     "reprocessAll": "Xử lý lại tất cả thư",
     "reprocessAllOf": "Xử lý lại tất cả thư của \"{{repository}}\"",

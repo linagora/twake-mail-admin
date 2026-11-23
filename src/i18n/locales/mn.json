@@ -1923,6 +1923,7 @@
     "pathLabel": "Агуулахын зам",
     "pathPlaceholder": "жнь mailRepo",
     "protocolLabel": "Протокол",
+    "protocolHint": "Серверийн дэмждэг протокол байх ёстой, жишээ нь cassandra, postgres, file эсвэл memory.",
     "newRepository": "Шинэ агуулах",
     "reprocessAll": "Бүх захидлуудыг дахин боловсруулах",
     "reprocessAllOf": "\"{{repository}}\"-ийн бүх захидлуудыг дахин боловсруулах",

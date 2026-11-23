@@ -1940,6 +1940,7 @@
     "pathLabel": "Ruta del repositorio",
     "pathPlaceholder": "p. ej. mailRepo",
     "protocolLabel": "Protocolo",
+    "protocolHint": "Debe ser un protocolo admitido por el servidor, por ejemplo cassandra, postgres, file o memory.",
     "newRepository": "Nuevo repositorio",
     "reprocessAll": "Volver a procesar todos los correos",
     "reprocessAllOf": "Volver a procesar todos los correos de «{{repository}}»",

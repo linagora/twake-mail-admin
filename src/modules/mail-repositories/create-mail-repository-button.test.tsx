@@ -50,6 +50,38 @@ describe("create mail repository dialog", () => {
     expect(api.createMailRepository).not.toHaveBeenCalled();
   });
 
+  it("flags a protocol made only of spaces, without calling WebAdmin", () => {
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/qa-blank" } });
+    fireEvent.change(protocolInput(), { target: { value: "   " } });
+    confirm();
+
+    expect(screen.getByText("mailRepositories.protocolRequired")).not.toBeNull();
+    expect(api.createMailRepository).not.toHaveBeenCalled();
+  });
+
+  it("suggests the usual protocols and tells they must be supported by the server", () => {
+    openDialog();
+
+    const suggestions = document.getElementById(protocolInput().getAttribute("list")!)!;
+    expect(Array.from(suggestions.querySelectorAll("option"), (o) => o.value))
+      .toEqual(["cassandra", "postgres", "file", "memory"]);
+    const hint = document.getElementById(protocolInput().getAttribute("aria-describedby")!)!;
+    expect(hint.textContent).toBe("mailRepositories.protocolHint");
+    expect(protocolInput().getAttribute("aria-required")).toBe("true");
+  });
+
+  it("sends the trimmed protocol", async () => {
+    api.createMailRepository.mockResolvedValue(undefined);
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/qa-trim" } });
+    fireEvent.change(protocolInput(), { target: { value: "  memory " } });
+    confirm();
+
+    await waitFor(() => expect(onCreated).toHaveBeenCalled());
+    expect(api.createMailRepository).toHaveBeenCalledWith(encodeURIComponent("var/mail/qa-trim"), "memory");
+  });
+
   it("flags a blank path", () => {
     openDialog();
     fireEvent.change(pathInput(), { target: { value: "   " } });
@@ -110,6 +142,9 @@ describe("create mail repository dialog", () => {
     expect(alert.textContent).toContain("common.serverMessage");
     expect(screen.getByText("'nosuchproto' is an unsupported protocol")).not.toBeNull();
     expect(protocolInput().value).toBe("nosuchproto");
+    expect(pathInput().value).toBe("var/mail/qa-bad");
+    expect(toast).not.toHaveBeenCalled();
+    expect(onCreated).not.toHaveBeenCalled();
   });
 
   it("clears the refusal once a field is edited", async () => {

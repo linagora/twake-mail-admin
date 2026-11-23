@@ -1,12 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const http = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn() }));
+const http = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn(), put: vi.fn() }));
 
 vi.mock("@/lib/apiClient", () => ({
-  apiClient: { get: http.get, patch: http.patch },
+  apiClient: { get: http.get, patch: http.patch, put: http.put },
 }));
 
-import { getMailRepositories, moveAllMails, moveSingleMail, reprocessMailRepository, reprocessSingleMail } from "./api-client";
+import {
+  createMailRepository,
+  getMailRepositories,
+  moveAllMails,
+  moveSingleMail,
+  reprocessMailRepository,
+  reprocessSingleMail,
+} from "./api-client";
 
 const error = { repository: "var/mail/error", path: "var%2Fmail%2Ferror" };
 const qaRepo = { repository: "var/mail/qa-repo", path: "var%2Fmail%2Fqa-repo" };
@@ -26,6 +33,18 @@ describe("mail repositories listing", () => {
     expect(await getMailRepositories()).toEqual([
       { repository: "var/mail/a+b", path: "var%2Fmail%2Fa%2Bb" },
     ]);
+  });
+});
+
+describe("mail repository creation", () => {
+  beforeEach(() => {
+    http.put.mockReset().mockResolvedValue(undefined);
+  });
+
+  it("always sends the protocol, encoded, as WebAdmin requires it", async () => {
+    await createMailRepository("var%2Fmail%2Fnew", "my proto");
+
+    expect(http.put).toHaveBeenCalledWith("/mailRepositories/var%2Fmail%2Fnew?protocol=my%20proto");
   });
 });
 

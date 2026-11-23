@@ -1940,6 +1940,7 @@
     "pathLabel": "Chemin du dépôt",
     "pathPlaceholder": "ex. mailRepo",
     "protocolLabel": "Protocole",
+    "protocolHint": "Doit être un protocole pris en charge par le serveur, par exemple cassandra, postgres, file ou memory.",
     "newRepository": "Nouveau dépôt",
     "reprocessAll": "Retraiter tous les emails",
     "reprocessAllOf": "Retraiter tous les emails de « {{repository}} »",
