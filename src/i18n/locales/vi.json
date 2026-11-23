@@ -2287,7 +2287,7 @@
     "clear": "Làm trống",
     "typeToConfirm": "Nhập {{value}} để xác nhận",
     "consequence": {
-      "deleteUserData": "Mọi hộp thư, thư, danh tính, nhãn, trả lời vắng mặt và cài đặt của {{user}} sẽ bị xóa vĩnh viễn. Tài khoản vẫn được giữ. Không thể hoàn tác.",
+      "deleteUserData": "Mọi hộp thư, thư, danh tính, nhãn, trả lời vắng mặt và cài đặt của {{user}} sẽ bị xóa vĩnh viễn. Tài khoản vẫn được giữ. Các ủy quyền của tài khoản bị xóa: {{user}} mất quyền truy cập vào các tài khoản được ủy quyền cho mình, và những người dùng được người này ủy quyền tài khoản sẽ mất quyền truy cập vào đó. Không thể hoàn tác.",
       "deleteMailboxes": "Mọi hộp thư của {{user}} và toàn bộ thư bên trong sẽ bị xóa vĩnh viễn. Không thể hoàn tác.",
       "deleteMailbox": "\"{{mailbox}}\", các thư mục con và toàn bộ thư sẽ bị xóa vĩnh viễn.",
       "clearMailbox": "Mọi thư trong \"{{mailbox}}\" sẽ bị xóa vĩnh viễn; thư mục được giữ.",

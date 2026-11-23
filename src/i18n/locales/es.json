@@ -2312,7 +2312,7 @@
     "clear": "Vaciar",
     "typeToConfirm": "Escriba {{value}} para confirmar",
     "consequence": {
-      "deleteUserData": "Todos los buzones, mensajes, identidades, etiquetas, respuesta de ausencia y ajustes de {{user}} se eliminan definitivamente. La cuenta se conserva. No se puede deshacer.",
+      "deleteUserData": "Todos los buzones, mensajes, identidades, etiquetas, respuesta de ausencia y ajustes de {{user}} se eliminan definitivamente. La cuenta se conserva. Sus delegaciones se eliminan: {{user}} pierde el acceso a las cuentas que le estaban delegadas, y los usuarios a los que había delegado su cuenta pierden el acceso a ella. No se puede deshacer.",
       "deleteMailboxes": "Todos los buzones de {{user}} y sus mensajes se eliminan definitivamente. No se puede deshacer.",
       "deleteMailbox": "«{{mailbox}}», sus subcarpetas y todos sus mensajes se eliminan definitivamente.",
       "clearMailbox": "Todos los mensajes de «{{mailbox}}» se eliminan definitivamente; la carpeta se conserva.",
