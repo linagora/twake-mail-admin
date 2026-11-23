@@ -7,6 +7,10 @@ import { DestinationLine, type SourceEffect, SourceLine, useSourceCheck } from "
 import { MAX_REGEX_LENGTH } from "./regex-limits";
 import RegexLimitsWarning from "./regex-limits-warning";
 
+/** Domain names are case insensitive: compared as WebAdmin will store them. */
+const isSelfMapping = (source: string, destination: string): boolean =>
+  source.trim() !== "" && source.trim().toLowerCase() === destination.trim().toLowerCase();
+
 export type MappingKind = "address" | "regex" | "domain";
 
 const KINDS: Record<MappingKind, {
@@ -22,6 +26,8 @@ const KINDS: Record<MappingKind, {
   checksDestination?: boolean;
   // The destination is a regex mapping, checked against the limits of RE2
   checksRegexLimits?: boolean;
+  // WebAdmin refuses a mapping whose destination is its own source (apache/james-project 6f21126)
+  refusesSelfMapping?: boolean;
 }> = {
   address: {
     sourcePlaceholder: "mappings.sourcePlaceholder",
@@ -48,6 +54,7 @@ const KINDS: Record<MappingKind, {
     created: "mappings.domainCreated",
     create: createDomainMapping,
     hint: "mappings.domainHint",
+    refusesSelfMapping: true,
   },
 };
 
@@ -70,6 +77,7 @@ export default function CreateMappingDialog({ open, kinds, onClose, onCreated }:
   const config = KINDS[kinds.includes(kind) ? kind : kinds[0] ?? "address"];
   // A domain source is not an account: only address and regex sources are checked
   const sourceCheck = useSourceCheck(config.sourceEffect ? source : "");
+  const selfMapping = !!config.refusesSelfMapping && isSelfMapping(source, destination);
 
   const close = () => {
     setSource("");
@@ -91,7 +99,7 @@ export default function CreateMappingDialog({ open, kinds, onClose, onCreated }:
       onClose={close}
       title={t("mappings.addTitle")}
       submitLabel={t("common.create")}
-      submitDisabled={!source.trim() || !destination.trim() || sourceCheck.blocking}
+      submitDisabled={!source.trim() || !destination.trim() || sourceCheck.blocking || selfMapping}
       onSubmit={handleCreate}
     >
       {kinds.length > 1 && (
@@ -115,6 +123,7 @@ export default function CreateMappingDialog({ open, kinds, onClose, onCreated }:
         <label htmlFor={`${idPrefix}-destination`} className="text-sm font-medium">{t("mappings.destination")}</label>
         <input id={`${idPrefix}-destination`} type="text" value={destination} onChange={(e) => setDestination(e.target.value)}
           placeholder={t(config.destinationPlaceholder)} className={FIELD_CLASS} />
+        {selfMapping && <p role="alert" className="mt-1 text-xs text-red-600">{t("mappings.domainSelfMapping")}</p>}
         {config.checksDestination && <DestinationLine destination={destination} />}
         {config.checksRegexLimits && (
           <div role="status">

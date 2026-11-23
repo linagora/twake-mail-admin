@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import i18n from "i18next";
 import { currentLocale } from "@/i18n/locale";
 import { formatByteSize } from "@/i18n/format-size";
-import { formatPercent } from "@/i18n/format-percent";
+import { formatRatio, occupationRatios } from "./quota-ratio";
 import { toErrorMessage } from "./error-message";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
 import { PaginationControls } from "@/components/custom/pagination-controls";
@@ -250,6 +250,7 @@ export default function ExploreUserQuota({ domain }: Props) {
                         const globalIndex = (page - 1) * PAGE_LIMIT + index + 1;
                         const occ = entry.detail.occupation;
                         const comp = entry.detail.computed;
+                        const ratio = occupationRatios(occ, comp);
                         return (
                           <div
                             key={entry.username}
@@ -263,16 +264,16 @@ export default function ExploreUserQuota({ domain }: Props) {
                               <span className="font-mono sm:text-right">
                                 <FigureLabel label={t("exploreQuota.occupationSize")} />
                                 {formatSize(occ.size)}
-                                <span className="text-gray-400 ml-1">({formatPercent(occ.ratio.size)})</span>
+                                <span className="text-gray-400 ml-1">({formatRatio(ratio.size)})</span>
                               </span>
                               <span className="font-mono sm:text-right">
                                 <FigureLabel label={t("exploreQuota.occupationCount")} />
                                 {formatCount(occ.count)}
-                                <span className="text-gray-400 ml-1">({formatPercent(occ.ratio.count)})</span>
+                                <span className="text-gray-400 ml-1">({formatRatio(ratio.count)})</span>
                               </span>
                               <span className="font-semibold sm:text-right">
                                 <FigureLabel label={t("exploreQuota.ratioMax")} />
-                                {formatPercent(occ.ratio.max)}
+                                {formatRatio(ratio.max)}
                               </span>
                               <span className="text-gray-500 sm:text-right">
                                 <FigureLabel label={t("exploreQuota.computedLimit")} />

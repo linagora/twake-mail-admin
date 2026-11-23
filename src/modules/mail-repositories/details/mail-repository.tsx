@@ -30,6 +30,7 @@ import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
 import EmptyState from "@/components/custom/empty-state";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
+import { describeReprocessRefusal } from "../reprocess-refusal";
 
 // Define the types for the expected responses
 interface JsonMailResponse {
@@ -185,11 +186,12 @@ export default function MailRepositoryDetail() {
       ),
       action: async () => {
         const { taskId } = await reprocessSingleMail(encodeURIComponent(id), mailKey, {
-          queue: paramValues["queue"] || undefined,
-          processor: paramValues["processor"] || undefined,
+          queue: paramValues["queue"],
+          processor: paramValues["processor"],
         });
         toastTaskCreated(taskId, t("mailRepositories.reprocessScheduled"), taskTypeLabel(t, "reprocessing-one"));
       },
+      describeError: describeReprocessRefusal,
     });
   };
 

@@ -1007,6 +1007,7 @@
       "reindexAll": "Reindexar todos los buzones",
       "reindexTitle": "Reindexar todos los buzones",
       "reindexDesc": "Reindexar todos los buzones de {{username}}.",
+      "reindexUnknownUser": "El usuario {{username}} no existe: no se ha creado ninguna tarea de reindexación.",
       "errorReindex": "Error al ejecutar la tarea de reindexación",
       "subscribeAll": "Suscribirse a todos los buzones",
       "subscribeTitle": "Suscribirse a todos los buzones",
@@ -1325,6 +1326,7 @@
     "newUsernameRequired": "El nuevo nombre de usuario es obligatorio",
     "newUsernameOtherDomain": "El nuevo nombre de usuario debe pertenecer al dominio {{domain}}",
     "targetMustExist": "El nuevo nombre de usuario debe ser una cuenta existente: el cambio de nombre solo migra los datos del usuario actual a ella.",
+    "mergeIntoExisting": "Los datos se fusionan en la cuenta existente. Si ambas cuentas tienen una etiqueta con la misma palabra clave, la cuenta existente conserva su propia etiqueta y se descarta la del usuario anterior. Si la cuenta existente ya tiene límites de tasa, se conservan y no se copian los del usuario anterior.",
     "force": "Forzar",
     "fromStep": "Reanudar desde el paso",
     "fromStepPlaceholder": "p. ej. MailboxUsernameChangeTaskStep",
@@ -1574,7 +1576,7 @@
       },
       "processor": {
         "label": "Procesador de destino",
-        "help": "Procesador de mailets que vuelve a tratar los correos. root: procesamiento completo."
+        "help": "Nombre de un procesador configurado en el contenedor de mailets del servidor (mailetcontainer.xml), p. ej. root, transport, error, local-delivery o relay. Si se deja vacío, cada correo vuelve a su propio estado guardado."
       },
       "consume": {
         "label": "Quitar del repositorio una vez reprocesados",
@@ -1612,6 +1614,10 @@
       "autoMerge": {
         "label": "Fusionar buzones duplicados",
         "help": "Marcado: los buzones con el mismo nombre se fusionan en lugar de solo notificarse."
+      },
+      "force": {
+        "label": "Ejecutar aunque el usuario no exista (force)",
+        "help": "Solo sirve para limpiar las entradas de índice de un usuario ya eliminado. Sin esta opción, WebAdmin rechaza un usuario desconocido, lo que evita errores tipográficos."
       },
       "trustMessageProjection": {
         "label": "Confiar en la proyección de mensajes",
@@ -1716,14 +1722,16 @@
       "clearDomainMembersContacts": "Vacía la libreta «Miembros del dominio» de cada dominio. Ejecute una sincronización para volver a llenarla.",
       "twakeSpacePurge": "Elimina los buzones de equipo de los espacios eliminados hace más tiempo que la retención definida en space.properties, liberando sus direcciones. TMail ya no la ejecuta por sí mismo: prográmela con un cron externo o ejecútela aquí.",
       "twakeSpaceReindex": "Úselo tras vincular buzones de equipo fuera de la extensión (p. ej. migración desde el servicio auxiliar de Twake Mail) o si se perdió el buzón de índice. Recorre todos los buzones de equipo.",
-      "syncTwakeSpaces": "Pide a ldap-rest el estado actual de los espacios Twake, aplicado a sus buzones de equipo: todos, los de una organización o un solo espacio."
+      "syncTwakeSpaces": "Pide a ldap-rest el estado actual de los espacios Twake, aplicado a sus buzones de equipo: todos, los de una organización o un solo espacio.",
+      "sendEmail": "Envía un correo a través del procesamiento de correo del servidor, a los destinatarios que nombran sus cabeceras: redactado aquí, pegado o cargado desde un archivo .eml."
     },
     "archiveAllEvents": "Archivar todos los eventos",
     "archiveAllWarning": "Sin criterios: todos los eventos de todos los usuarios registrados se moverán a un calendario «Archival».",
     "twakeSpacePurge": "Purgar los buzones de equipo de los espacios eliminados",
     "twakeSpaceReindex": "Reconstruir el índice de espacios",
     "twakeSpaceUnavailable": "Twake Space no está disponible en este servidor: no expone las rutas /spaces, que requieren la extensión Twake Space de tmail-backend.",
-    "syncTwakeSpaces": "Sincronizar los espacios Twake"
+    "syncTwakeSpaces": "Sincronizar los espacios Twake",
+    "sendEmail": "Enviar un correo"
   },
   "healthCheck": {
     "checking": "Comprobando los componentes, esto puede tardar un poco…",
@@ -1974,6 +1982,10 @@
     "reprocessMailConfirm": "¿Volver a procesar el correo \"{{mailKey}}\"?",
     "reprocessRepoConfirm": "¿Volver a procesar todos los correos del repositorio {{path}}?",
     "reprocessScheduled": "Reprocesamiento programado",
+    "reprocessRefused": {
+      "processor": "El procesador de destino no está configurado en el contenedor de mailets del servidor: no se ha movido ningún correo. Corríjalo o déjelo vacío para que cada correo vuelva a su propio estado.",
+      "queue": "La cola de destino no existe en el servidor: no se ha movido ningún correo. Corríjala o déjela vacía para usar spool."
+    },
     "errorReprocessing": "Error al volver a procesar",
     "moveMailHeader": "Mover el correo",
     "moveMailConfirm": "Mover el correo \"{{mailKey}}\" a:",
@@ -2025,6 +2037,7 @@
     "domainSourcePlaceholder": "Dominio de origen (p. ej. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Dominio de destino (p. ej. destination.tld)",
     "domainHint": "Los correos dirigidos al dominio de origen se reescribirán al dominio de destino. No se realiza ninguna comprobación de bucles.",
+    "domainSelfMapping": "Un dominio no se puede asignar a sí mismo.",
     "domainCreated": "Asignación de dominio creada correctamente",
     "errorCreatingDomain": "Error al crear la asignación de dominio",
     "removeTitle": "Quitar asignación de tipo {{type}}",
@@ -2314,7 +2327,7 @@
     "clear": "Vaciar",
     "typeToConfirm": "Escriba {{value}} para confirmar",
     "consequence": {
-      "deleteUserData": "Todos los buzones, mensajes, identidades, etiquetas, respuesta de ausencia y ajustes de {{user}} se eliminan definitivamente. La cuenta se conserva. No se puede deshacer.",
+      "deleteUserData": "Todos los buzones, mensajes, identidades, etiquetas, respuesta de ausencia y ajustes de {{user}} se eliminan definitivamente. La cuenta se conserva. Sus delegaciones se eliminan: {{user}} pierde el acceso a las cuentas que le estaban delegadas, y los usuarios a los que había delegado su cuenta pierden el acceso a ella. No se puede deshacer.",
       "deleteMailboxes": "Todos los buzones de {{user}} y sus mensajes se eliminan definitivamente. No se puede deshacer.",
       "deleteMailbox": "«{{mailbox}}», sus subcarpetas y todos sus mensajes se eliminan definitivamente.",
       "clearMailbox": "Todos los mensajes de «{{mailbox}}» se eliminan definitivamente; la carpeta se conserva.",
@@ -2357,7 +2370,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Ilimitado (sin límite definido)",
     "noLimit": "Sin límite",
-    "domainLevel": "Dominio {{domain}}"
+    "domainLevel": "Dominio {{domain}}",
+    "zeroLimit": "El límite es 0: no se puede almacenar nada."
   },
   "taskTypes": {
     "fullReindexing": "Reindexar todos los datos en OpenSearch",
@@ -2383,5 +2397,41 @@
       "requested": "Sincronización solicitada",
       "thisSpace": "Sincronizar este espacio"
     }
+  },
+  "sendEmail": {
+    "title": "Enviar un correo",
+    "intro": "El mensaje se pone en cola para su procesamiento, como un mensaje recibido por el servidor: sus destinatarios son las direcciones To, Cc y Bcc de sus cabeceras.",
+    "modeLabel": "Origen del mensaje",
+    "mode": {
+      "compose": "Redactar",
+      "raw": "Mensaje sin procesar (.eml)"
+    },
+    "field": {
+      "from": "De",
+      "to": "Para",
+      "cc": "Cc",
+      "subject": "Asunto",
+      "body": "Cuerpo",
+      "eml": "Cargar un archivo .eml",
+      "raw": "Mensaje RFC 822"
+    },
+    "placeholder": {
+      "from": "admin@dominio.tld",
+      "to": "usuario@dominio.tld, otro@dominio.tld",
+      "cc": "usuario@dominio.tld",
+      "subject": "Asunto"
+    },
+    "cannotSend": "Enviar sigue desactivado mientras:",
+    "problem": {
+      "empty": "el mensaje no esté redactado o cargado",
+      "noFrom": "el mensaje no tenga dirección From",
+      "severalFrom": "el mensaje tenga más de una dirección From",
+      "invalidFrom": "la dirección From «{{address}}» no sea válida",
+      "noRecipient": "el mensaje no tenga destinatario (To, Cc o Bcc)",
+      "invalidRecipient": "la dirección {{header}} «{{address}}» no sea válida"
+    },
+    "send": "Enviar",
+    "enqueued": "Correo puesto en cola para su procesamiento",
+    "refused": "El servidor rechazó el correo"
   }
 }

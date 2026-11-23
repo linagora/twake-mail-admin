@@ -21,6 +21,7 @@ import ErrorDisplayer from "@/components/custom/error-displayer";
 import ListToolbar from "@/components/custom/list-toolbar";
 import { cn } from "@/lib/utils";
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
+import { describeReprocessRefusal } from "./reprocess-refusal";
 
 /**
  * What a standard repository holds, keyed by the last segment of its path (address-error,
@@ -125,6 +126,7 @@ export default function MailRepositoriesList() {
         />
       ),
       action: async () => { toastTaskCreated((await reprocessMailRepository(path, paramValues)).taskId, undefined, taskTypeLabel(t, "reprocessing-all")); },
+      describeError: describeReprocessRefusal,
     });
   };
   const handleMoveAll = async (source: MailRepository) => {

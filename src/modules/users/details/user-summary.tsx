@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { formatByteSize } from "@/i18n/format-size";
-import { formatPercent } from "@/i18n/format-percent";
+import { barWidth, formatRatio, occupationRatio } from "@/components/custom/quota-ratio";
 import { useSectionFacts } from "@/components/custom/collapsible-section";
 import { CountFact, Fact, Strip } from "@/components/custom/summary-facts";
 import { getUserQuota, getUserVacation } from "../api-client";
@@ -11,20 +11,20 @@ import { UserQuota } from "../types";
 import type { ForwardsFact } from "./user-forwards";
 
 // Same thresholds as the quota bars of the sections
-const quotaBarClass = (ratio: number) => (ratio > 0.9 ? "bg-red-500" : ratio >= 0.7 ? "bg-amber-500" : "bg-green-500");
+const quotaBarClass = (ratio: number | null) => (ratio === null ? "bg-gray-400" : ratio > 0.9 ? "bg-red-500" : ratio >= 0.7 ? "bg-amber-500" : "bg-green-500");
 
 function QuotaFact({ quota }: { quota: UserQuota }) {
   const { t } = useTranslation();
   const limit = quota.computed?.size;
   const used = formatByteSize(quota.occupation.size);
   if (limit == null || limit < 0) return <Fact section="quota">{t("users.summary.quotaUnlimited", { used })}</Fact>;
-  const ratio = quota.occupation.ratio.size;
+  const ratio = occupationRatio(quota.occupation.ratio?.size, quota.occupation.size, limit);
   return (
     <Fact section="quota">
       <span className="flex flex-col gap-1">
-        <span>{t("users.summary.quota", { used, limit: formatByteSize(limit), percent: formatPercent(ratio) })}</span>
+        <span>{t("users.summary.quota", { used, limit: formatByteSize(limit), percent: formatRatio(ratio) })}</span>
         <span className="block h-1 w-full rounded-full bg-gray-200" aria-hidden="true">
-          <span className={`block h-1 rounded-full ${quotaBarClass(ratio)}`} style={{ width: `${Math.min(ratio * 100, 100)}%` }} />
+          <span className={`block h-1 rounded-full ${quotaBarClass(ratio)}`} style={{ width: barWidth(ratio) }} />
         </span>
       </span>
     </Fact>
