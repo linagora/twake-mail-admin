@@ -2020,6 +2020,7 @@
     "domainSourcePlaceholder": "Исходный домен (напр. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Домен назначения (напр. destination.tld)",
     "domainHint": "Почта, адресованная исходному домену, будет перенаправлена на домен назначения. Проверка на циклы не выполняется.",
+    "domainSelfMapping": "Домен не может быть сопоставлен сам с собой.",
     "domainCreated": "Сопоставление домена успешно создано",
     "errorCreatingDomain": "Ошибка при создании сопоставления домена",
     "removeTitle": "Удалить сопоставление {{type}}",

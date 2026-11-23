@@ -2003,6 +2003,7 @@
     "domainSourcePlaceholder": "Эх домэйн (жнь sourceDomain.tld)",
     "domainDestinationPlaceholder": "Зорилтот домэйн (жнь destination.tld)",
     "domainHint": "Эх домэйн руу илгээсэн шуудан зорилтот домэйн руу дахин бичигдэнэ. Давталтын шалгалт хийгдэхгүй.",
+    "domainSelfMapping": "Домэйныг өөртөө холбох боломжгүй.",
     "domainCreated": "Домэйн зураглал амжилттай үүслээ",
     "errorCreatingDomain": "Домэйн зураглал үүсгэхэд алдаа гарлаа",
     "removeTitle": "{{type}} зураглал устгах",

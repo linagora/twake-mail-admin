@@ -2018,6 +2018,7 @@
     "domainSourcePlaceholder": "Domaine source (ex. domaineSource.tld)",
     "domainDestinationPlaceholder": "Domaine de destination (ex. destination.tld)",
     "domainHint": "Le courrier adressé au domaine source sera réécrit vers le domaine de destination. Aucune vérification de boucle n'est effectuée.",
+    "domainSelfMapping": "Un domaine ne peut pas être associé à lui-même.",
     "domainCreated": "Réécriture de domaine créée",
     "errorCreatingDomain": "Erreur lors de la création de la réécriture de domaine",
     "removeTitle": "Supprimer la réécriture d'adresse {{type}}",
