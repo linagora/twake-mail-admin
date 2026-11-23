@@ -9,6 +9,9 @@ import { createMailRepository } from "./api-client";
 
 const INPUT_CLASS = "w-full border rounded px-3 py-1.5 text-sm focus:outline-hidden focus:ring-2";
 const DEFAULT_PROTOCOL = "cassandra";
+// Usual protocols, offered as suggestions: the field still accepts any protocol the server supports
+const SUGGESTED_PROTOCOLS = ["cassandra", "postgres", "file", "memory"];
+const PROTOCOL_SUGGESTIONS_ID = "mail-repository-protocol-suggestions";
 
 type Field = "path" | "protocol";
 
@@ -71,9 +74,11 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
     }
   };
 
-  const renderField = (field: Field, label: string, placeholder?: string) => {
+  const renderField = (field: Field, label: string, options: { placeholder?: string; hint?: string; list?: string } = {}) => {
+    const { placeholder, hint, list } = options;
     const isMissing = missing.includes(field);
     const id = `mail-repository-${field}`;
+    const hintId = `${id}-hint`;
     return (
       <div className="space-y-1">
         <label className="text-sm font-medium" htmlFor={id}>
@@ -84,9 +89,13 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
           className={`${INPUT_CLASS} ${isMissing ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
           placeholder={placeholder}
           value={values[field]}
+          list={list}
+          aria-required
           aria-invalid={isMissing}
+          aria-describedby={hint ? hintId : undefined}
           onChange={(e) => update(field, e.target.value)}
         />
+        {hint && <p id={hintId} className="text-xs text-muted-foreground">{hint}</p>}
         {isMissing && <p className="text-xs text-red-600">{t(REQUIRED_KEYS[field])}</p>}
       </div>
     );
@@ -110,8 +119,14 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
           {/* A form, so that Enter in a field submits like Confirm */}
           <form onSubmit={(e) => { e.preventDefault(); if (!creating) handleCreate(); }}>
             <div className="space-y-3 py-2">
-              {renderField("path", t("mailRepositories.pathLabel"), t("mailRepositories.pathPlaceholder"))}
-              {renderField("protocol", t("mailRepositories.protocolLabel"))}
+              {renderField("path", t("mailRepositories.pathLabel"), { placeholder: t("mailRepositories.pathPlaceholder") })}
+              {renderField("protocol", t("mailRepositories.protocolLabel"), {
+                hint: t("mailRepositories.protocolHint"),
+                list: PROTOCOL_SUGGESTIONS_ID,
+              })}
+              <datalist id={PROTOCOL_SUGGESTIONS_ID}>
+                {SUGGESTED_PROTOCOLS.map((protocol) => <option key={protocol} value={protocol} />)}
+              </datalist>
               {error !== null && (
                 <div role="alert" className="text-sm text-red-600">
                   <p className="font-medium">{t("mailRepositories.createError")}</p>

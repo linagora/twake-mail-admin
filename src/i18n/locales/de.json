@@ -1919,6 +1919,7 @@
     "pathLabel": "Repository-Pfad",
     "pathPlaceholder": "z. B. mailRepo",
     "protocolLabel": "Protokoll",
+    "protocolHint": "Muss ein vom Server unterstütztes Protokoll sein, zum Beispiel cassandra, postgres, file oder memory.",
     "newRepository": "Neues Repository",
     "reprocessAll": "Alle E-Mails erneut verarbeiten",
     "reprocessAllOf": "Alle E-Mails von „{{repository}}“ erneut verarbeiten",

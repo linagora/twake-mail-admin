@@ -241,17 +241,17 @@ export const moveSingleMail = async (
  * API: `PUT http://ip:port/mailRepositories/{encodedPathOfTheRepository}?protocol={someProtocol}`
  *
  * - HTTP 204: The repository is created.
+ * - HTTP 400: The protocol is missing, blank or unsupported by the server.
  *
  * @param encodedPathOfTheRepository - The URL-encoded path of the mail repository.
- * @param protocol - Optional protocol for the repository.
+ * @param protocol - The protocol of the repository, required by WebAdmin.
  */
 export const createMailRepository = async (
   encodedPathOfTheRepository: string,
-  protocol?: string
+  protocol: string
 ): Promise<void> => {
-  const params = protocol ? `?protocol=${encodeURIComponent(protocol)}` : "";
   await apiClient.put(
-    `/mailRepositories/${encodedPathOfTheRepository}${params}`
+    `/mailRepositories/${encodedPathOfTheRepository}?protocol=${encodeURIComponent(protocol)}`
   );
 };
 
