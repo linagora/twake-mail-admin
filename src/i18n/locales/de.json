@@ -875,7 +875,8 @@
       "errorUpdating": "Fehler beim Aktualisieren des Labels",
       "deleted": "Label gelöscht",
       "errorDeleting": "Fehler beim Löschen des Labels",
-      "colorPicker": "Farbauswahl"
+      "colorPicker": "Farbauswahl",
+      "storedOverLimit": "Dieses Label überschreitet die Größenlimits des Servers: kürzen Sie es vor dem Speichern."
     },
     "jmapSettings": {
       "title": "JMAP-Einstellungen",
@@ -890,7 +891,11 @@
       "addRow": "Einstellung hinzufügen",
       "removeRow": "Diesen Eintrag entfernen",
       "saved": "JMAP-Einstellungen gespeichert",
-      "errorSaving": "Fehler beim Speichern der JMAP-Einstellungen"
+      "errorSaving": "Fehler beim Speichern der JMAP-Einstellungen",
+      "tooMany_one": "Ein Benutzer hat höchstens {{count}} Einstellung: entfernen Sie {{excess}} vor dem Speichern.",
+      "tooMany_other": "Ein Benutzer hat höchstens {{count}} Einstellungen: entfernen Sie {{excess}} vor dem Speichern.",
+      "limitReached_one": "Das Limit von {{count}} Einstellung ist erreicht.",
+      "limitReached_other": "Das Limit von {{count}} Einstellungen ist erreicht."
     },
     "deletedVault": {
       "title": "Tresor gelöschter Nachrichten",
@@ -1306,7 +1311,12 @@
     "unmanagedDomainHint": "Die Domain dieses Benutzers existiert auf dem Server nicht mehr: E-Mails an diese Adresse werden nicht lokal zugestellt.",
     "countSingle_other": "{{count}} Benutzer",
     "countSingle_one": "{{count}} Benutzer",
-    "countRange": "Benutzer {{from}}–{{to}}"
+    "countRange": "Benutzer {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Pflichtfeld: darf nicht leer sein.",
+      "tooLong_one": "Höchstens {{count}} Zeichen (derzeit {{length}}): bitte kürzen.",
+      "tooLong_other": "Höchstens {{count}} Zeichen (derzeit {{length}}): bitte kürzen."
+    }
   },
   "mailboxCounts": {
     "total": "Gesamt: {{value}}",

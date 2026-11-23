@@ -875,7 +875,8 @@
       "errorUpdating": "Errore durante l'aggiornamento dell'etichetta",
       "deleted": "Etichetta eliminata",
       "errorDeleting": "Errore durante l'eliminazione dell'etichetta",
-      "colorPicker": "Selettore di colore"
+      "colorPicker": "Selettore di colore",
+      "storedOverLimit": "Questa etichetta supera i limiti di dimensione del server: accorciala prima di salvare."
     },
     "jmapSettings": {
       "title": "Impostazioni JMAP",
@@ -890,7 +891,11 @@
       "addRow": "Aggiungi impostazione",
       "removeRow": "Rimuovi questa voce",
       "saved": "Impostazioni JMAP salvate",
-      "errorSaving": "Errore durante il salvataggio delle impostazioni JMAP"
+      "errorSaving": "Errore durante il salvataggio delle impostazioni JMAP",
+      "tooMany_one": "Un utente ha al massimo {{count}} impostazione: rimuovine {{excess}} prima di salvare.",
+      "tooMany_other": "Un utente ha al massimo {{count}} impostazioni: rimuovine {{excess}} prima di salvare.",
+      "limitReached_one": "Il limite di {{count}} impostazione è raggiunto.",
+      "limitReached_other": "Il limite di {{count}} impostazioni è raggiunto."
     },
     "deletedVault": {
       "title": "Archivio dei messaggi eliminati",
@@ -1306,7 +1311,12 @@
     "unmanagedDomainHint": "Il dominio di questo utente non esiste più sul server: la posta per questo indirizzo non viene recapitata localmente.",
     "countSingle_other": "{{count}} utenti",
     "countSingle_one": "{{count}} utente",
-    "countRange": "Utenti {{from}}–{{to}}"
+    "countRange": "Utenti {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Obbligatorio: non può essere vuoto.",
+      "tooLong_one": "Al massimo {{count}} carattere ({{length}} ora): accorcialo.",
+      "tooLong_other": "Al massimo {{count}} caratteri ({{length}} ora): accorcialo."
+    }
   },
   "mailboxCounts": {
     "total": "Totale: {{value}}",

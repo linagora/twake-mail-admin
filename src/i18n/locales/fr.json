@@ -875,7 +875,8 @@
       "errorUpdating": "Erreur lors de la mise à jour de l'étiquette",
       "deleted": "Étiquette supprimée",
       "errorDeleting": "Erreur lors de la suppression de l'étiquette",
-      "colorPicker": "Sélecteur de couleur"
+      "colorPicker": "Sélecteur de couleur",
+      "storedOverLimit": "Ce libellé dépasse les limites de taille du serveur : raccourcissez-le avant d'enregistrer."
     },
     "jmapSettings": {
       "title": "Paramètres JMAP",
@@ -890,7 +891,11 @@
       "addRow": "Ajouter un paramètre",
       "removeRow": "Supprimer cette ligne",
       "saved": "Paramètres JMAP enregistrés",
-      "errorSaving": "Erreur lors de l'enregistrement des paramètres JMAP"
+      "errorSaving": "Erreur lors de l'enregistrement des paramètres JMAP",
+      "tooMany_one": "Un utilisateur a au plus {{count}} paramètre : supprimez-en {{excess}} avant d'enregistrer.",
+      "tooMany_other": "Un utilisateur a au plus {{count}} paramètres : supprimez-en {{excess}} avant d'enregistrer.",
+      "limitReached_one": "La limite de {{count}} paramètre est atteinte.",
+      "limitReached_other": "La limite de {{count}} paramètres est atteinte."
     },
     "deletedVault": {
       "title": "Coffre des messages supprimés",
@@ -1306,7 +1311,12 @@
     "unmanagedDomainHint": "Le domaine de cet utilisateur n'existe plus sur le serveur : le courrier adressé à cette adresse n'est pas distribué localement.",
     "countSingle_other": "{{count}} utilisateurs",
     "countSingle_one": "{{count}} utilisateur",
-    "countRange": "Utilisateurs {{from}}–{{to}}"
+    "countRange": "Utilisateurs {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Obligatoire : ne peut pas être vide.",
+      "tooLong_one": "{{count}} caractère au plus ({{length}} actuellement) : raccourcissez-le.",
+      "tooLong_other": "{{count}} caractères au plus ({{length}} actuellement) : raccourcissez-le."
+    }
   },
   "mailboxCounts": {
     "total": "Total : {{value}}",

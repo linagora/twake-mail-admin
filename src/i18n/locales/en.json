@@ -875,7 +875,8 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Color picker"
+      "colorPicker": "Color picker",
+      "storedOverLimit": "This label exceeds the size limits of the server: shorten it before saving."
     },
     "jmapSettings": {
       "title": "JMAP Settings",
@@ -890,7 +891,11 @@
       "addRow": "Add setting",
       "removeRow": "Remove this entry",
       "saved": "JMAP settings saved",
-      "errorSaving": "Error saving JMAP settings"
+      "errorSaving": "Error saving JMAP settings",
+      "tooMany_one": "A user has at most {{count}} setting: remove {{excess}} before saving.",
+      "tooMany_other": "A user has at most {{count}} settings: remove {{excess}} before saving.",
+      "limitReached_one": "The limit of {{count}} setting is reached.",
+      "limitReached_other": "The limit of {{count}} settings is reached."
     },
     "deletedVault": {
       "title": "Deleted Message Vault",
@@ -1306,7 +1311,12 @@
     "unmanagedDomainHint": "This user's domain no longer exists on the server: mail to this address is not delivered locally.",
     "countSingle_other": "{{count}} users",
     "countSingle_one": "{{count}} user",
-    "countRange": "Users {{from}}–{{to}}"
+    "countRange": "Users {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Required: it cannot be blank.",
+      "tooLong_one": "At most {{count}} character ({{length}} now): shorten it.",
+      "tooLong_other": "At most {{count}} characters ({{length}} now): shorten it."
+    }
   },
   "mailboxCounts": {
     "total": "Total: {{value}}",

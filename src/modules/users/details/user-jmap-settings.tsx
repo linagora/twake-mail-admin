@@ -8,6 +8,14 @@ import { useToast } from "@/hooks/use-toast";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Button } from "@/components/ui/button";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
+import FieldLimitHint from "./field-limit-hint";
+import {
+  canAddJmapSetting,
+  checkJmapSettingValue,
+  JMAP_SETTING_VALUE_MAX_LENGTH,
+  JMAP_SETTINGS_MAX_COUNT,
+  jmapSettingsExcess,
+} from "./size-limits";
 
 const KEY_REGEX = /^[a-zA-Z0-9.\-_#]{1,255}$/;
 
@@ -77,6 +85,7 @@ export default function UserJmapSettings({ username }: Props) {
   };
 
   const addRow = () => {
+    if (!canAddJmapSetting(rows.length)) return;
     setRows((prev) => [...prev, { id: nextId++, key: "", value: "" }]);
     setDirty(true);
   };
@@ -111,7 +120,10 @@ export default function UserJmapSettings({ username }: Props) {
       seenKeys.add(row.key);
     }
 
-    if (Object.keys(errors).length > 0) {
+    // Too many settings or a too long value: both are already shown, live
+    const overLimits = jmapSettingsExcess(rows.length) > 0 || rows.some((row) => checkJmapSettingValue(row.value));
+
+    if (Object.keys(errors).length > 0 || overLimits) {
       setValidationErrors(errors);
       return;
     }
@@ -185,9 +197,19 @@ export default function UserJmapSettings({ username }: Props) {
                       value={row.value}
                       onChange={(e) => updateRow(row.id, "value", e.target.value)}
                       aria-label={t("users.jmapSettings.value")}
+                      aria-invalid={!!checkJmapSettingValue(row.value)}
+                      aria-describedby={`jmap-setting-${row.id}-value-hint`}
                       placeholder={t("users.jmapSettings.valuePlaceholder")}
                       disabled={!canUpdate}
-                      className="w-full px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-600"
+                      className={`w-full px-3 py-1.5 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-600 ${
+                        checkJmapSettingValue(row.value) ? "border-red-400" : ""
+                      }`}
+                    />
+                    <FieldLimitHint
+                      id={`jmap-setting-${row.id}-value-hint`}
+                      value={row.value}
+                      max={JMAP_SETTING_VALUE_MAX_LENGTH}
+                      problem={checkJmapSettingValue(row.value)}
                     />
                   </div>
                   {canUpdate && (
@@ -202,15 +224,36 @@ export default function UserJmapSettings({ username }: Props) {
                 </div>
               ))}
 
+              {jmapSettingsExcess(rows.length) > 0 && (
+                <p role="alert" className="text-sm text-red-600 pt-2">
+                  {t("users.jmapSettings.tooMany", {
+                    count: JMAP_SETTINGS_MAX_COUNT,
+                    excess: jmapSettingsExcess(rows.length),
+                  })}
+                </p>
+              )}
+
               {canUpdate && (
                 <div className="flex items-center justify-between pt-2">
-                  <button
-                    onClick={addRow}
-                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    {t("users.jmapSettings.addRow")}
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={addRow}
+                      disabled={!canAddJmapSetting(rows.length)}
+                      title={canAddJmapSetting(rows.length)
+                        ? undefined
+                        : t("users.jmapSettings.limitReached", { count: JMAP_SETTINGS_MAX_COUNT })}
+                      className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition disabled:text-gray-400 disabled:cursor-not-allowed"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      {t("users.jmapSettings.addRow")}
+                    </button>
+                    <span
+                      data-testid="jmap-settings-count"
+                      className={`text-xs ${jmapSettingsExcess(rows.length) > 0 ? "text-red-600" : "text-gray-500"}`}
+                    >
+                      {`${rows.length} / ${JMAP_SETTINGS_MAX_COUNT}`}
+                    </span>
+                  </div>
                   {dirty && (
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" onClick={handleReset} disabled={saving}>

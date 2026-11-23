@@ -13,10 +13,25 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
+import FieldLimitHint from "./field-limit-hint";
+import {
+  checkLabelDescription,
+  checkLabelDisplayName,
+  exceedsLabelLimits,
+  isLabelFormValid,
+  LABEL_DESCRIPTION_MAX_LENGTH,
+  LABEL_DISPLAY_NAME_MAX_LENGTH,
+} from "./size-limits";
 
 interface Props {
   username: string;
 }
+
+// An empty display name only disables the submit button: "required" shows for a spaces-only one
+const displayNameProblem = (displayName: string) => (displayName ? checkLabelDisplayName(displayName) : null);
+
+// A stored label may exceed the limits: its text stays whole, clamped, and readable in the tooltip
+const CLAMPED_TEXT_CLASS = "line-clamp-3";
 
 const EMPTY_CREATE: UserLabelCreatePayload = {
   displayName: "",
@@ -130,7 +145,7 @@ export default function UserLabels({ username }: Props) {
         onClose={() => setShowCreate(false)}
         title={t("users.labels.newTitle")}
         submitLabel={t("common.create")}
-        submitDisabled={!createForm.displayName.trim()}
+        submitDisabled={!isLabelFormValid(createForm)}
         onSubmit={handleCreate}
       >
         <div>
@@ -142,7 +157,15 @@ export default function UserLabels({ username }: Props) {
             value={createForm.displayName}
             onChange={(e) => setCreateForm((f) => ({ ...f, displayName: e.target.value }))}
             placeholder={t("users.labels.displayNamePlaceholder")}
+            aria-invalid={!!displayNameProblem(createForm.displayName)}
+            aria-describedby={`${idPrefix}-create-displayName-hint`}
             className={FIELD_CLASS}
+          />
+          <FieldLimitHint
+            id={`${idPrefix}-create-displayName-hint`}
+            value={createForm.displayName.trim()}
+            max={LABEL_DISPLAY_NAME_MAX_LENGTH}
+            problem={displayNameProblem(createForm.displayName)}
           />
         </div>
         <div>
@@ -184,7 +207,15 @@ export default function UserLabels({ username }: Props) {
             value={createForm.description ?? ""}
             onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
             placeholder={t("users.labels.descriptionPlaceholder")}
+            aria-invalid={!!checkLabelDescription(createForm.description)}
+            aria-describedby={`${idPrefix}-create-description-hint`}
             className={FIELD_CLASS}
+          />
+          <FieldLimitHint
+            id={`${idPrefix}-create-description-hint`}
+            value={(createForm.description ?? "").trim()}
+            max={LABEL_DESCRIPTION_MAX_LENGTH}
+            problem={checkLabelDescription(createForm.description)}
           />
         </div>
       </FormDialog>
@@ -219,11 +250,11 @@ export default function UserLabels({ username }: Props) {
                     {labels.map((label) => (
                       <tr key={label.id} className="border-t border-gray-100 hover:bg-gray-50">
                         <td className="px-3 py-2">
-                          <div className="font-medium break-all">{label.displayName}</div>
+                          <div className={`font-medium break-all ${CLAMPED_TEXT_CLASS}`} title={label.displayName}>{label.displayName}</div>
                           <div className="md:hidden mt-1 space-y-1 text-xs text-gray-600" data-testid="label-phone-details">
                             <div className="font-mono break-all">{label.keyword}</div>
                             {label.readOnly && <div className="text-orange-600 font-medium">{t("users.labels.readOnly")}</div>}
-                            {label.description && <div className="break-words">{label.description}</div>}
+                            {label.description && <div className={`break-words ${CLAMPED_TEXT_CLASS}`} title={label.description}>{label.description}</div>}
                           </div>
                         </td>
                         <td className="hidden md:table-cell px-3 py-2 font-mono text-xs text-gray-600">{label.keyword}</td>
@@ -245,7 +276,11 @@ export default function UserLabels({ username }: Props) {
                             {label.readOnly ? t("common.yes") : t("common.no")}
                           </span>
                         </td>
-                        <td className="hidden md:table-cell px-3 py-2 text-gray-600">{label.description ?? <span className="text-gray-400">—</span>}</td>
+                        <td className="hidden md:table-cell px-3 py-2 text-gray-600">
+                          {label.description
+                            ? <div className={`break-words ${CLAMPED_TEXT_CLASS}`} title={label.description}>{label.description}</div>
+                            : <span className="text-gray-400">—</span>}
+                        </td>
                         <td className="px-3 py-2 w-px">
                           <div className="flex gap-1 justify-end">
                             {canEdit && (
@@ -289,8 +324,11 @@ export default function UserLabels({ username }: Props) {
           {editLabel && (
             <form
               className="space-y-3"
-              onSubmit={(e) => { e.preventDefault(); if (!saving && editForm.displayName.trim()) handleUpdate(); }}
+              onSubmit={(e) => { e.preventDefault(); if (!saving && isLabelFormValid(editForm)) handleUpdate(); }}
             >
+              {exceedsLabelLimits(editLabel) && (
+                <p role="note" className="text-xs text-orange-600">{t("users.labels.storedOverLimit")}</p>
+              )}
               <div>
                 <label htmlFor={`${idPrefix}-edit-displayName`} className="text-sm font-medium">{t("users.labels.displayNameLabel")}</label>
                 <input
@@ -298,7 +336,15 @@ export default function UserLabels({ username }: Props) {
                   type="text"
                   value={editForm.displayName}
                   onChange={(e) => setEditForm((f) => ({ ...f, displayName: e.target.value }))}
+                  aria-invalid={!!checkLabelDisplayName(editForm.displayName)}
+                  aria-describedby={`${idPrefix}-edit-displayName-hint`}
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                />
+                <FieldLimitHint
+                  id={`${idPrefix}-edit-displayName-hint`}
+                  value={editForm.displayName.trim()}
+                  max={LABEL_DISPLAY_NAME_MAX_LENGTH}
+                  problem={checkLabelDisplayName(editForm.displayName)}
                 />
               </div>
               <div>
@@ -334,7 +380,15 @@ export default function UserLabels({ username }: Props) {
                   value={editForm.description ?? ""}
                   onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
                   placeholder={t("users.labels.descriptionEdit")}
+                  aria-invalid={!!checkLabelDescription(editForm.description)}
+                  aria-describedby={`${idPrefix}-edit-description-hint`}
                   className="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                />
+                <FieldLimitHint
+                  id={`${idPrefix}-edit-description-hint`}
+                  value={(editForm.description ?? "").trim()}
+                  max={LABEL_DESCRIPTION_MAX_LENGTH}
+                  problem={checkLabelDescription(editForm.description)}
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -354,7 +408,7 @@ export default function UserLabels({ username }: Props) {
                 <Button
                   type="submit"
                   size="sm"
-                  disabled={saving || !editForm.displayName.trim()}
+                  disabled={saving || !isLabelFormValid(editForm)}
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
                   {t("common.save")}

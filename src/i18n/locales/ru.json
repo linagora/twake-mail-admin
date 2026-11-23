@@ -880,7 +880,8 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Выбор цвета"
+      "colorPicker": "Выбор цвета",
+      "storedOverLimit": "Эта метка превышает ограничения размера сервера: сократите её перед сохранением."
     },
     "jmapSettings": {
       "title": "Настройки JMAP",
@@ -895,7 +896,15 @@
       "addRow": "Добавить настройку",
       "removeRow": "Удалить эту запись",
       "saved": "Настройки JMAP сохранены",
-      "errorSaving": "Ошибка при сохранении настроек JMAP"
+      "errorSaving": "Ошибка при сохранении настроек JMAP",
+      "tooMany_one": "У пользователя не более {{count}} настройки: удалите {{excess}} перед сохранением.",
+      "tooMany_few": "У пользователя не более {{count}} настроек: удалите {{excess}} перед сохранением.",
+      "tooMany_many": "У пользователя не более {{count}} настроек: удалите {{excess}} перед сохранением.",
+      "tooMany_other": "У пользователя не более {{count}} настройки: удалите {{excess}} перед сохранением.",
+      "limitReached_one": "Достигнут предел в {{count}} настройку.",
+      "limitReached_few": "Достигнут предел в {{count}} настройки.",
+      "limitReached_many": "Достигнут предел в {{count}} настроек.",
+      "limitReached_other": "Достигнут предел в {{count}} настройки."
     },
     "deletedVault": {
       "title": "Хранилище удалённых сообщений",
@@ -1313,7 +1322,14 @@
     "unmanagedDomain": "домен не обслуживается",
     "unmanagedDomainHint": "Домена этого пользователя больше нет на сервере: почта на этот адрес не доставляется локально.",
     "countSingle": "Пользователей: {{count}}",
-    "countRange": "Пользователи {{from}}–{{to}}"
+    "countRange": "Пользователи {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Обязательное поле: не может быть пустым.",
+      "tooLong_one": "Не более {{count}} символа (сейчас {{length}}): сократите.",
+      "tooLong_few": "Не более {{count}} символов (сейчас {{length}}): сократите.",
+      "tooLong_many": "Не более {{count}} символов (сейчас {{length}}): сократите.",
+      "tooLong_other": "Не более {{count}} символа (сейчас {{length}}): сократите."
+    }
   },
   "mailboxCounts": {
     "total": "Всего: {{value}}",
