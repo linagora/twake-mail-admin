@@ -2006,6 +2006,7 @@
       "processor": "El procesador de destino no está configurado en el contenedor de mailets del servidor: no se ha movido ningún correo. Corríjalo o déjelo vacío para que cada correo vuelva a su propio estado.",
       "queue": "La cola de destino no existe en el servidor: no se ha movido ningún correo. Corríjala o déjela vacía para usar spool."
     },
+    "unknownQueue": "No existe ninguna cola de correo llamada \"{{queue}}\" en este servidor: WebAdmin rechazará el reprocesamiento.",
     "errorReprocessing": "Error al volver a procesar",
     "moveMailHeader": "Mover el correo",
     "moveMailConfirm": "Mover el correo \"{{mailKey}}\" a:",

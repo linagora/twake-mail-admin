@@ -2006,6 +2006,7 @@
       "processor": "Le processeur cible n'est pas configuré dans le conteneur de mailets du serveur : aucun mail n'a été déplacé. Corrigez-le, ou laissez-le vide pour que chaque mail retourne dans son propre état.",
       "queue": "La file cible n'existe pas sur le serveur : aucun mail n'a été déplacé. Corrigez-la, ou laissez-la vide pour utiliser spool."
     },
+    "unknownQueue": "Aucune file de mails nommée \"{{queue}}\" n'existe sur ce serveur : WebAdmin refusera le retraitement.",
     "errorReprocessing": "Erreur lors du retraitement",
     "moveMailHeader": "Déplacer l'email",
     "moveMailConfirm": "Déplacer l'email \"{{mailKey}}\" vers :",

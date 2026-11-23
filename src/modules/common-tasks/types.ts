@@ -120,6 +120,8 @@ export interface TaskParam {
   defaultValue?: string | boolean;
   type: "input" | "checkbox" | "select" | "duration";
   values?: string[];
+  // Values offered while typing in an "input" field, which still accepts any other value.
+  suggestions?: string[];
   // Label and help are looked up by key in PARAM_DESCRIPTIONS (param-descriptions.ts);
   // these override them for a dialog where the parameter means something else.
   labelKey?: string;

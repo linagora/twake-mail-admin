@@ -13,6 +13,7 @@ const api = vi.hoisted(() => ({
   reprocessMailRepository: vi.fn(),
   clearMailRepository: vi.fn(),
   moveAllMails: vi.fn(),
+  getMailQueueNames: vi.fn(async () => ["spool"]),
 }));
 const toast = vi.hoisted(() => vi.fn());
 

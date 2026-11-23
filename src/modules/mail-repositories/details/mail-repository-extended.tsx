@@ -19,7 +19,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useReturnFocus } from "@/hooks/use-return-focus";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
+import ReprocessTaskContent from "../reprocess-task-content";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { PaginationControls } from "@/components/custom/pagination-controls";
 import { currentLocale } from "@/i18n/locale";
@@ -272,7 +272,7 @@ export default function MailRepositoryExtended() {
     await confirm({
       header: t("mailRepositories.reprocessMailHeader"),
       message: (
-        <ConfirmTaskContent
+        <ReprocessTaskContent
           message={<p>{t("mailRepositories.reprocessMailConfirm", { mailKey })}</p>}
           command={`curl -XPATCH '/mailRepositories/${encodedRepo}/mails/${mailKey}?action=reprocess'`}
           params={params}

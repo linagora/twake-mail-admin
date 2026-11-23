@@ -2006,6 +2006,7 @@
       "processor": "Il processore di destinazione non è configurato nel contenitore di mailet del server: nessun messaggio è stato spostato. Correggilo o lascialo vuoto perché ogni messaggio torni al proprio stato.",
       "queue": "La coda di destinazione non esiste sul server: nessun messaggio è stato spostato. Correggila o lasciala vuota per usare spool."
     },
+    "unknownQueue": "Su questo server non esiste nessuna coda di posta chiamata \"{{queue}}\": WebAdmin rifiuterà la rielaborazione.",
     "errorReprocessing": "Errore durante la rielaborazione",
     "moveMailHeader": "Sposta l'email",
     "moveMailConfirm": "Sposta l'email \"{{mailKey}}\" in:",
