@@ -306,6 +306,9 @@
       "nameLabel": "Nombre de la carpeta",
       "namePlaceholder": "Nombre de la nueva carpeta (use . para anidar, p. ej. INBOX.work)",
       "invalidName": "Cada parte del nombre entre puntos debe completarse (p. ej. no \"a..b\", \".a\" ni \"a.\")",
+      "namespacePrefixName": "Un nombre de carpeta no puede empezar por «#», ni ninguna parte entre puntos (reservado a los espacios de nombres)",
+      "systemFolder": "Carpeta del sistema",
+      "systemFolderHint": "Creada con el buzón compartido: no se puede eliminar",
       "errorCreating": "Error al crear la carpeta",
       "created": "Carpeta creada correctamente",
       "errorDeleting": "Error al eliminar la carpeta",
@@ -882,7 +885,8 @@
       "errorUpdating": "Error al actualizar la etiqueta",
       "deleted": "Etiqueta eliminada",
       "errorDeleting": "Error al eliminar la etiqueta",
-      "colorPicker": "Selector de color"
+      "colorPicker": "Selector de color",
+      "storedOverLimit": "Esta etiqueta supera los límites de tamaño del servidor: acórtela antes de guardar."
     },
     "jmapSettings": {
       "title": "Ajustes JMAP",
@@ -897,7 +901,11 @@
       "addRow": "Añadir ajuste",
       "removeRow": "Quitar esta entrada",
       "saved": "Ajustes JMAP guardados",
-      "errorSaving": "Error al guardar los ajustes JMAP"
+      "errorSaving": "Error al guardar los ajustes JMAP",
+      "tooMany_one": "Un usuario tiene como máximo {{count}} ajuste: elimine {{excess}} antes de guardar.",
+      "tooMany_other": "Un usuario tiene como máximo {{count}} ajustes: elimine {{excess}} antes de guardar.",
+      "limitReached_one": "Se ha alcanzado el límite de {{count}} ajuste.",
+      "limitReached_other": "Se ha alcanzado el límite de {{count}} ajustes."
     },
     "deletedVault": {
       "title": "Almacén de mensajes eliminados",
@@ -1039,6 +1047,8 @@
       "tierDataTitle": "Jerarquizar los datos del usuario",
       "tierDataDesc": "Descartar los datos en caché (fast view, encabezados, proyección de archivos adjuntos) de los mensajes de {{username}} con una antigüedad superior al periodo de retención.",
       "tieringRequired": "El periodo de retención es obligatorio",
+      "tieringPositive": "El periodo de retención debe ser estrictamente positivo: 0 eliminaría los datos en caché de toda la cuenta.",
+      "tierDataUnknownUser": "El usuario {{username}} no existe.",
       "errorTierData": "Error al ejecutar la tarea de jerarquización",
       "provisionTemplates": "Distribuir plantillas",
       "provisionTemplatesTitle": "Distribuir plantillas",
@@ -1314,7 +1324,12 @@
     "unmanagedDomainHint": "El dominio de este usuario ya no existe en el servidor: el correo dirigido a esta dirección no se entrega localmente.",
     "countSingle_other": "{{count}} usuarios",
     "countSingle_one": "{{count}} usuario",
-    "countRange": "Usuarios {{from}}–{{to}}"
+    "countRange": "Usuarios {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Obligatorio: no puede estar vacío.",
+      "tooLong_one": "Como máximo {{count}} carácter ({{length}} ahora): acórtelo.",
+      "tooLong_other": "Como máximo {{count}} caracteres ({{length}} ahora): acórtelo."
+    }
   },
   "mailboxCounts": {
     "total": "Total: {{value}}",
@@ -1441,6 +1456,7 @@
       "failedMailboxes": "Buzones fallidos",
       "processedMessageCount": "Mensajes procesados",
       "failedMessageCount": "Mensajes fallidos",
+      "tieredMessageCount": "Mensajes movidos de nivel",
       "timestamp": "Registrado el",
       "mailboxesExpired": "Buzones con mensajes caducados",
       "messagesDeleted": "Mensajes eliminados",
@@ -1475,7 +1491,9 @@
       "deletedTeamMailboxes": "Buzones de equipo eliminados",
       "failedTeamMailboxes": "Buzones de equipo con error",
       "failedTeamMailboxesRetried": "La próxima ejecución los vuelve a intentar.",
-      "indexedSpaces": "Espacios indexados"
+      "indexedSpaces": "Espacios indexados",
+      "teamMailbox": "Buzón de equipo",
+      "processedTeamMailboxes": "Buzones de equipo procesados"
     },
     "cancelTarget": " para {{target}}",
     "targetCalendar": {
@@ -1488,7 +1506,8 @@
       "ended": "Tarea finalizada",
       "took": "en {{duration}}",
       "details": "Detalles"
-    }
+    },
+    "domainListTitle": "Tareas del dominio"
   },
   "commonTasks": {
     "title": "Tareas comunes",
@@ -2382,7 +2401,8 @@
     "domainAddressBookClear": "Borrar los contactos",
     "bookingLinkEventDeletion": "Eliminar los eventos de un enlace de reserva",
     "twakeSpacePurge": "Purga de Twake Space",
-    "twakeSpaceReindex": "Reindexación de Twake Space"
+    "twakeSpaceReindex": "Reindexación de Twake Space",
+    "recomputeTeamMailboxQuotas": "Recalcular las cuotas de los buzones de equipo"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID de organización (opcional)",

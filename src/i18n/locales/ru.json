@@ -311,6 +311,9 @@
       "nameLabel": "Имя папки",
       "namePlaceholder": "Имя новой папки (используйте . для вложенности, напр. INBOX.work)",
       "invalidName": "Каждая часть имени между точками должна быть заполнена (например, не \"a..b\", \".a\" или \"a.\")",
+      "namespacePrefixName": "Имя папки не может начинаться с «#», как и любая его часть между точками (зарезервировано для пространств имён)",
+      "systemFolder": "Системная папка",
+      "systemFolderHint": "Создана вместе с командным ящиком: её нельзя удалить",
       "errorCreating": "Ошибка при создании папки",
       "created": "Папка успешно создана",
       "errorDeleting": "Ошибка при удалении папки",
@@ -887,7 +890,8 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Выбор цвета"
+      "colorPicker": "Выбор цвета",
+      "storedOverLimit": "Эта метка превышает ограничения размера сервера: сократите её перед сохранением."
     },
     "jmapSettings": {
       "title": "Настройки JMAP",
@@ -902,7 +906,15 @@
       "addRow": "Добавить настройку",
       "removeRow": "Удалить эту запись",
       "saved": "Настройки JMAP сохранены",
-      "errorSaving": "Ошибка при сохранении настроек JMAP"
+      "errorSaving": "Ошибка при сохранении настроек JMAP",
+      "tooMany_one": "У пользователя не более {{count}} настройки: удалите {{excess}} перед сохранением.",
+      "tooMany_few": "У пользователя не более {{count}} настроек: удалите {{excess}} перед сохранением.",
+      "tooMany_many": "У пользователя не более {{count}} настроек: удалите {{excess}} перед сохранением.",
+      "tooMany_other": "У пользователя не более {{count}} настройки: удалите {{excess}} перед сохранением.",
+      "limitReached_one": "Достигнут предел в {{count}} настройку.",
+      "limitReached_few": "Достигнут предел в {{count}} настройки.",
+      "limitReached_many": "Достигнут предел в {{count}} настроек.",
+      "limitReached_other": "Достигнут предел в {{count}} настройки."
     },
     "deletedVault": {
       "title": "Хранилище удалённых сообщений",
@@ -1045,6 +1057,8 @@
       "tierDataTitle": "Распределить данные пользователя по уровням",
       "tierDataDesc": "Вытеснить кэшированные данные (быстрый просмотр, заголовки, проекция вложений) для сообщений старше срока хранения для {{username}}.",
       "tieringRequired": "Требуется срок хранения",
+      "tieringPositive": "Срок хранения должен быть строго положительным: 0 удалит кэшированные данные всей учётной записи.",
+      "tierDataUnknownUser": "Пользователь {{username}} не существует.",
       "errorTierData": "Ошибка при выполнении задачи распределения по уровням",
       "provisionTemplates": "Подготовить шаблоны",
       "provisionTemplatesTitle": "Подготовить шаблоны",
@@ -1321,7 +1335,14 @@
     "unmanagedDomain": "домен не обслуживается",
     "unmanagedDomainHint": "Домена этого пользователя больше нет на сервере: почта на этот адрес не доставляется локально.",
     "countSingle": "Пользователей: {{count}}",
-    "countRange": "Пользователи {{from}}–{{to}}"
+    "countRange": "Пользователи {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Обязательное поле: не может быть пустым.",
+      "tooLong_one": "Не более {{count}} символа (сейчас {{length}}): сократите.",
+      "tooLong_few": "Не более {{count}} символов (сейчас {{length}}): сократите.",
+      "tooLong_many": "Не более {{count}} символов (сейчас {{length}}): сократите.",
+      "tooLong_other": "Не более {{count}} символа (сейчас {{length}}): сократите."
+    }
   },
   "mailboxCounts": {
     "total": "Всего: {{value}}",
@@ -1447,6 +1468,7 @@
       "failedMailboxes": "Ящики с ошибкой",
       "processedMessageCount": "Обработано сообщений",
       "failedMessageCount": "Сообщения с ошибкой",
+      "tieredMessageCount": "Перемещённые сообщения",
       "timestamp": "Записано",
       "mailboxesExpired": "Ящики с устаревшими сообщениями",
       "messagesDeleted": "Удалено сообщений",
@@ -1481,7 +1503,9 @@
       "deletedTeamMailboxes": "Удалено командных ящиков",
       "failedTeamMailboxes": "Командные ящики с ошибкой",
       "failedTeamMailboxesRetried": "Следующий запуск попробует их снова.",
-      "indexedSpaces": "Проиндексировано пространств"
+      "indexedSpaces": "Проиндексировано пространств",
+      "teamMailbox": "Командный почтовый ящик",
+      "processedTeamMailboxes": "Обработано командных ящиков"
     },
     "cancelTarget": " для {{target}}",
     "targetCalendar": {
@@ -1494,7 +1518,8 @@
       "ended": "Задача завершена",
       "took": "за {{duration}}",
       "details": "Подробности"
-    }
+    },
+    "domainListTitle": "Задачи домена"
   },
   "commonTasks": {
     "title": "Общие задачи",
@@ -2393,7 +2418,8 @@
     "domainAddressBookClear": "Очистить контакты",
     "bookingLinkEventDeletion": "Удалить события ссылки бронирования",
     "twakeSpacePurge": "Очистка Twake Space",
-    "twakeSpaceReindex": "Переиндексация Twake Space"
+    "twakeSpaceReindex": "Переиндексация Twake Space",
+    "recomputeTeamMailboxQuotas": "Пересчитать квоты командных почтовых ящиков"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID организации (необязательно)",

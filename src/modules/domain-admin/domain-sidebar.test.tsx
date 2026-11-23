@@ -95,12 +95,24 @@ describe("domain-admin sidebar groups", () => {
       "/domains/{domain}/signature-templates?action=apply",
       "/domains/{domain}?action=deleteData",
       "/domains/{domain}/templates?action=provision&from={sourceUser}",
+      "/domains/{domain}/tasks",
       "/domains/{domain}/tasks/{id}",
     ].forEach((p) => allowed.deny.add(p));
     renderSidebar(<DomainSidebar />);
     const entries = groups().flatMap((g) => g.entries);
     expect(entries).not.toContain("Mailing Lists");
     expect(entries).not.toContain("Tasks");
+  });
+
+  it("shows the mail Tasks entry when only the tasks of the domain can be listed", () => {
+    [
+      "/domains/{domain}/signature-templates?action=apply",
+      "/domains/{domain}?action=deleteData",
+      "/domains/{domain}/templates?action=provision&from={sourceUser}",
+      "/domains/{domain}/tasks/{id}",
+    ].forEach((p) => allowed.deny.add(p));
+    renderSidebar(<DomainSidebar />);
+    expect(groups().flatMap((g) => g.entries)).toContain("Tasks");
   });
 
   it("marks only the current entry", () => {

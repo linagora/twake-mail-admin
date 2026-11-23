@@ -306,6 +306,9 @@
       "nameLabel": "Ordnername",
       "namePlaceholder": "Neuer Ordnername (. für Unterordner, z. B. INBOX.work)",
       "invalidName": "Jeder Teil des Namens zwischen Punkten muss ausgefüllt sein (z. B. nicht \"a..b\", \".a\" oder \"a.\")",
+      "namespacePrefixName": "Ein Ordnername darf nicht mit „#“ beginnen, auch kein Teil zwischen Punkten (für Namespaces reserviert)",
+      "systemFolder": "Systemordner",
+      "systemFolderHint": "Mit dem Team-Postfach angelegt: er kann nicht gelöscht werden",
       "errorCreating": "Fehler beim Erstellen des Ordners",
       "created": "Ordner erfolgreich erstellt",
       "errorDeleting": "Fehler beim Löschen des Ordners",
@@ -882,7 +885,8 @@
       "errorUpdating": "Fehler beim Aktualisieren des Labels",
       "deleted": "Label gelöscht",
       "errorDeleting": "Fehler beim Löschen des Labels",
-      "colorPicker": "Farbauswahl"
+      "colorPicker": "Farbauswahl",
+      "storedOverLimit": "Dieses Label überschreitet die Größenlimits des Servers: kürzen Sie es vor dem Speichern."
     },
     "jmapSettings": {
       "title": "JMAP-Einstellungen",
@@ -897,7 +901,11 @@
       "addRow": "Einstellung hinzufügen",
       "removeRow": "Diesen Eintrag entfernen",
       "saved": "JMAP-Einstellungen gespeichert",
-      "errorSaving": "Fehler beim Speichern der JMAP-Einstellungen"
+      "errorSaving": "Fehler beim Speichern der JMAP-Einstellungen",
+      "tooMany_one": "Ein Benutzer hat höchstens {{count}} Einstellung: entfernen Sie {{excess}} vor dem Speichern.",
+      "tooMany_other": "Ein Benutzer hat höchstens {{count}} Einstellungen: entfernen Sie {{excess}} vor dem Speichern.",
+      "limitReached_one": "Das Limit von {{count}} Einstellung ist erreicht.",
+      "limitReached_other": "Das Limit von {{count}} Einstellungen ist erreicht."
     },
     "deletedVault": {
       "title": "Tresor gelöschter Nachrichten",
@@ -1039,6 +1047,8 @@
       "tierDataTitle": "Benutzerdaten auslagern",
       "tierDataDesc": "Zwischengespeicherte Daten (Fast View, Header, Anhangsprojektion) von Nachrichten, die älter als die Aufbewahrungsdauer sind, für {{username}} verwerfen.",
       "tieringRequired": "Aufbewahrungsdauer ist erforderlich",
+      "tieringPositive": "Die Aufbewahrungsdauer muss strikt positiv sein: 0 würde die zwischengespeicherten Daten des gesamten Kontos entfernen.",
+      "tierDataUnknownUser": "Der Benutzer {{username}} existiert nicht.",
       "errorTierData": "Fehler beim Ausführen der Auslagerung",
       "provisionTemplates": "Vorlagen bereitstellen",
       "provisionTemplatesTitle": "Vorlagen bereitstellen",
@@ -1314,7 +1324,12 @@
     "unmanagedDomainHint": "Die Domain dieses Benutzers existiert auf dem Server nicht mehr: E-Mails an diese Adresse werden nicht lokal zugestellt.",
     "countSingle_other": "{{count}} Benutzer",
     "countSingle_one": "{{count}} Benutzer",
-    "countRange": "Benutzer {{from}}–{{to}}"
+    "countRange": "Benutzer {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Pflichtfeld: darf nicht leer sein.",
+      "tooLong_one": "Höchstens {{count}} Zeichen (derzeit {{length}}): bitte kürzen.",
+      "tooLong_other": "Höchstens {{count}} Zeichen (derzeit {{length}}): bitte kürzen."
+    }
   },
   "mailboxCounts": {
     "total": "Gesamt: {{value}}",
@@ -1440,6 +1455,7 @@
       "failedMailboxes": "Fehlgeschlagene Postfächer",
       "processedMessageCount": "Verarbeitete Nachrichten",
       "failedMessageCount": "Fehlgeschlagene Nachrichten",
+      "tieredMessageCount": "Ausgelagerte Nachrichten",
       "timestamp": "Erfasst am",
       "mailboxesExpired": "Postfächer mit abgelaufenen Nachrichten",
       "messagesDeleted": "Gelöschte Nachrichten",
@@ -1474,7 +1490,9 @@
       "deletedTeamMailboxes": "Gelöschte Team-Postfächer",
       "failedTeamMailboxes": "Fehlgeschlagene Team-Postfächer",
       "failedTeamMailboxesRetried": "Der nächste Lauf versucht sie erneut.",
-      "indexedSpaces": "Indizierte Spaces"
+      "indexedSpaces": "Indizierte Spaces",
+      "teamMailbox": "Team-Postfach",
+      "processedTeamMailboxes": "Verarbeitete Team-Postfächer"
     },
     "cancelTarget": " für {{target}}",
     "targetCalendar": {
@@ -1487,7 +1505,8 @@
       "ended": "Aufgabe beendet",
       "took": "Dauer {{duration}}",
       "details": "Details"
-    }
+    },
+    "domainListTitle": "Aufgaben der Domain"
   },
   "commonTasks": {
     "title": "Allgemeine Aufgaben",
@@ -2380,7 +2399,8 @@
     "domainAddressBookClear": "Kontakte leeren",
     "bookingLinkEventDeletion": "Die Termine eines Buchungslinks löschen",
     "twakeSpacePurge": "Twake-Space-Bereinigung",
-    "twakeSpaceReindex": "Twake-Space-Neuindizierung"
+    "twakeSpaceReindex": "Twake-Space-Neuindizierung",
+    "recomputeTeamMailboxQuotas": "Kontingente der Team-Postfächer neu berechnen"
   },
   "twakeSpace": {
     "organizationIdOptional": "Organisations-ID (optional)",

@@ -9,6 +9,7 @@ import UserLink from "@/components/custom/user-link";
 import { useFetchData } from "@/hooks/use-fetch-data";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getResource, getTeamCalendars } from "@/modules/domains/api-client";
+import { useDomain } from "@/modules/domain-admin/domain-context";
 
 // The additionalInformation keys holding a user, shown as a link to their page
 const USER_KEYS = new Set(["username", "user", "oldUser", "newUser", "targetUser", "sourceUser"]);
@@ -115,6 +116,8 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   failedMailboxes: "tasks.info.failedMailboxes",
   processedMessageCount: "tasks.info.processedMessageCount",
   failedMessageCount: "tasks.info.failedMessageCount",
+  // Data tiering (UserDataTieringTask)
+  tieredMessageCount: "tasks.info.tieredMessageCount",
   timestamp: "tasks.info.timestamp",
   // Calendar tasks: archival, imports
   targetUser: "tasks.info.username",
@@ -139,6 +142,8 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
   mailboxFailures: "tasks.info.failedMailboxes",
   successfulRestoreCount: "tasks.info.restoredCount",
   errorRestoreCount: "tasks.info.failedRestoreCount",
+  // Team mailbox vault restore
+  teamMailboxAddress: "tasks.info.teamMailbox",
   // Templates provisioning of a user or a domain: its options as the dialog names them
   sourceUser: "provisionTemplates.sourceUser",
   folderName: "provisionTemplates.folderName",
@@ -173,6 +178,25 @@ const DETAIL_LABEL_KEYS: Record<string, string> = {
 
 // A list of names or ids, e.g. the failed users. An empty list tells nothing of its items:
 // only a labelled key vouches it is a list of names, not of objects left to the raw JSON
+// The team mailbox quota recomputation counts team mailboxes, not users
+const RECOMPUTE_TEAM_MAILBOX_QUOTAS: string = "recompute-quota-team-mailboxes";
+const TEAM_MAILBOX_QUOTA_LABEL_KEYS: Record<string, string> = {
+  processedQuotaRoots: "tasks.info.processedTeamMailboxes",
+  failedQuotaRoots: "tasks.info.failedTeamMailboxes",
+};
+
+const detailLabelKey = (task: TaskDetailResponse, key: string): string | undefined =>
+  (task.type === RECOMPUTE_TEAM_MAILBOX_QUOTAS ? TEAM_MAILBOX_QUOTA_LABEL_KEYS[key] : undefined) ?? DETAIL_LABEL_KEYS[key];
+
+// The address of a team mailbox from its quota root: #TeamMailbox&sales@acme.com@acme.com is sales@acme.com
+const TEAM_MAILBOX_QUOTA_ROOT_PREFIX = "#TeamMailbox&";
+const teamMailboxOfQuotaRoot = (quotaRoot: string): string => {
+  if (!quotaRoot.startsWith(TEAM_MAILBOX_QUOTA_ROOT_PREFIX)) return quotaRoot;
+  const qualified = quotaRoot.slice(TEAM_MAILBOX_QUOTA_ROOT_PREFIX.length);
+  const at = qualified.lastIndexOf("@");
+  return at > 0 ? qualified.slice(0, at) : qualified;
+};
+
 const isListOfNames = (key: string, value: unknown) =>
   Array.isArray(value)
   && (value.length > 0 ? value.every((item) => typeof item !== "object") : key in DETAIL_LABEL_KEYS);
@@ -247,6 +271,7 @@ export const TASK_TYPE_LABEL_KEYS: Record<string, string> = {
   RecomputeUserFastViewProjectionItemsTask: "users.tasks.fastView",
   "deleted-messages-restore": "users.tasks.restoreDeleted",
   "team-mailbox-deleted-messages-restore": "users.tasks.restoreDeleted",
+  [RECOMPUTE_TEAM_MAILBOX_QUOTAS]: "taskTypes.recomputeTeamMailboxQuotas",
   UsernameChangeTask: "users.tasks.renameUser",
   DeleteUserDataTask: "users.tasks.deleteData",
   UserDataTieringTask: "users.tasks.tierData",
@@ -349,9 +374,9 @@ export function taskName(t: TFunction, task: TaskDetailResponse): string {
 /** The first characters of a task ID, enough to tell tasks apart on screen. */
 export const shortTaskId = (taskId: string) => taskId.slice(0, 8);
 
-/** What a task worked on: a repository, a user, a domain (or one of its calendars), a mailbox. */
+/** What a task worked on: a repository, a user, a team mailbox, a domain (or one of its calendars), a mailbox. */
 export type TaskTargetInfo =
-  | { kind: "repository" | "user" | "mailbox"; value: string }
+  | { kind: "repository" | "user" | "teamMailbox" | "mailbox"; value: string }
   | { kind: "domain"; value: string; calendar?: { type: "team-calendar" | "resource"; id: string } };
 
 const stringOf = (value: unknown) => (typeof value === "string" && value ? value : undefined);
@@ -364,6 +389,8 @@ export function taskTargetInfo(task: TaskDetailResponse): TaskTargetInfo | null 
   const user = stringOf(info.targetUser) ?? stringOf(info.username) ?? stringOf(info.user) ?? stringOf(info.oldUser)
     ?? stringOf(expireOptions(task).user);
   if (user) return { kind: "user", value: user };
+  const teamMailbox = stringOf(info.teamMailboxAddress);
+  if (teamMailbox) return { kind: "teamMailbox", value: teamMailbox };
   const domain = stringOf(info.domain);
   if (domain) {
     const calendarId = stringOf(info.calendarId);
@@ -436,13 +463,16 @@ export function TaskTarget({ task, withName = false }: { task: TaskDetailRespons
   const target = taskTargetInfo(task);
   const calendar = target?.kind === "domain" ? target.calendar : undefined;
   const name = useCalendarName(target?.value ?? "", calendar?.type, calendar?.id, withName);
+  // A domain administrator has no domain page: their own domain reads as text
+  const isDomainAdmin = !!useDomain();
   if (!target) return null;
   if (target.kind === "user") return <UserLink address={target.value} />;
+  if (target.kind === "teamMailbox") return <TeamMailboxLinks addresses={[target.value]} />;
   if (target.kind !== "domain") return <>{target.value}</>;
   const domainPage = `/domains/domain/${encodeURIComponent(target.value)}`;
   return (
     <>
-      <Link to={domainPage} className="text-blue-600 hover:underline">{target.value}</Link>
+      {isDomainAdmin ? target.value : <Link to={domainPage} className="text-blue-600 hover:underline">{target.value}</Link>}
       {calendar && (
         <>
           {" · "}
@@ -473,13 +503,12 @@ const teamMailboxPage = (address: string): string | null => {
     : null;
 };
 
-/** The team mailboxes a purge could not delete, each linked to its page; the next run retries them. */
-function FailedTeamMailboxes({ addresses }: { addresses: unknown[] }) {
-  const { t } = useTranslation();
+/** Team mailboxes, each linked to its page; a dash when there is none. */
+function TeamMailboxLinks({ addresses, children }: { addresses: string[]; children?: React.ReactNode }) {
   if (addresses.length === 0) return <span>—</span>;
   return (
     <span className="min-w-0 break-words">
-      {addresses.map(String).map((address, index) => {
+      {addresses.map((address, index) => {
         const page = teamMailboxPage(address);
         return (
           <Fragment key={address}>
@@ -488,9 +517,42 @@ function FailedTeamMailboxes({ addresses }: { addresses: unknown[] }) {
           </Fragment>
         );
       })}
-      <span className="block text-xs text-muted-foreground">{t("tasks.info.failedTeamMailboxesRetried")}</span>
+      {children}
     </span>
   );
+}
+
+/** The team mailboxes a purge could not delete; the next run retries them. */
+function FailedTeamMailboxes({ addresses }: { addresses: unknown[] }) {
+  const { t } = useTranslation();
+  return (
+    <TeamMailboxLinks addresses={addresses.map(String)}>
+      <span className="block text-xs text-muted-foreground">{t("tasks.info.failedTeamMailboxesRetried")}</span>
+    </TeamMailboxLinks>
+  );
+}
+
+// A value naming team mailboxes, linked to their pages: the address of a vault restore, the
+// quota roots a team mailbox quota recomputation could not recompute
+function teamMailboxesOf(task: TaskDetailResponse, key: string, value: unknown): string[] | null {
+  if (key === "teamMailboxAddress" && typeof value === "string") return [value];
+  if (task.type === RECOMPUTE_TEAM_MAILBOX_QUOTAS && key === "failedQuotaRoots" && Array.isArray(value)) {
+    return value.map(String).map(teamMailboxOfQuotaRoot);
+  }
+  return null;
+}
+
+function DetailValue({ task, name, value }: { task: TaskDetailResponse; name: string; value: unknown }) {
+  const { t } = useTranslation();
+  const teamMailboxes = teamMailboxesOf(task, name, value);
+  if (teamMailboxes) return <TeamMailboxLinks addresses={teamMailboxes} />;
+  if (name === "timestamp" && typeof value === "string") return <span className="min-w-0 break-words">{formatDate(value)}</span>;
+  if (name === "calendarType" && typeof value === "string" && CALENDAR_TYPE_KEYS[value]) {
+    return <span className="min-w-0 break-words">{t(CALENDAR_TYPE_KEYS[value])}</span>;
+  }
+  if (USER_KEYS.has(name) && typeof value === "string") return <span className="min-w-0"><UserLink address={value} /></span>;
+  if (name === "failedTeamMailboxes" && Array.isArray(value)) return <FailedTeamMailboxes addresses={value} />;
+  return <span className="min-w-0 break-words">{detailText(t, value)}</span>;
 }
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
@@ -535,20 +597,15 @@ export function TaskDetails({ task, raw }: { task: TaskDetailResponse; raw: unkn
         <div>
           <h2 className="text-sm font-semibold mb-2">{t("tasks.details")}</h2>
           <div className="grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-4 gap-y-2 text-sm">
-            {entries.map(([key, value]) => (
-              <Fragment key={key}>
-                <span className="text-gray-500 font-medium">{DETAIL_LABEL_KEYS[key] ? t(DETAIL_LABEL_KEYS[key]) : key}</span>
-                {key === "timestamp" && typeof value === "string"
-                  ? <span className="min-w-0 break-words">{formatDate(value)}</span>
-                  : key === "calendarType" && typeof value === "string" && CALENDAR_TYPE_KEYS[value]
-                  ? <span className="min-w-0 break-words">{t(CALENDAR_TYPE_KEYS[value])}</span>
-                  : USER_KEYS.has(key) && typeof value === "string"
-                  ? <span className="min-w-0"><UserLink address={value} /></span>
-                  : key === "failedTeamMailboxes" && Array.isArray(value)
-                  ? <FailedTeamMailboxes addresses={value} />
-                  : <span className="min-w-0 break-words">{detailText(t, value)}</span>}
-              </Fragment>
-            ))}
+            {entries.map(([key, value]) => {
+              const labelKey = detailLabelKey(task, key);
+              return (
+                <Fragment key={key}>
+                  <span className="text-gray-500 font-medium">{labelKey ? t(labelKey) : key}</span>
+                  <DetailValue task={task} name={key} value={value} />
+                </Fragment>
+              );
+            })}
           </div>
         </div>
       )}

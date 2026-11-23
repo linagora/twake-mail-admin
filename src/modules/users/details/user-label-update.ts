@@ -7,7 +7,7 @@ import { UserLabel, UserLabelUpdatePayload } from "../types";
 export const buildLabelUpdatePayload = (form: UserLabelUpdatePayload): UserLabelUpdatePayload => {
   const color = form.color?.trim();
   return {
-    displayName: form.displayName,
+    displayName: form.displayName.trim(),
     ...(color ? { color } : {}),
     description: form.description?.trim() || null,
     readOnly: form.readOnly,

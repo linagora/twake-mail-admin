@@ -119,3 +119,66 @@ describe("user labels: Enter in a field", () => {
     await waitFor(() => expect(updateUserLabel).toHaveBeenCalledWith("bob@example.com", "1", expect.anything()));
   });
 });
+
+describe("user labels: size limits", () => {
+  it("refuses a 256-character display name in the create modal, saying why", async () => {
+    render(<UserLabels username="bob@example.com" />);
+    fireEvent.click(screen.getByTitle("users.labels.createButton"));
+
+    fireEvent.change(await screen.findByLabelText("users.labels.displayNameLabel"), { target: { value: "a".repeat(256) } });
+
+    expect(screen.getByText(`users.sizeLimits.tooLong ${JSON.stringify({ count: 255, length: 256 })}`)).not.toBeNull();
+    expect((screen.getByRole("button", { name: "common.create" }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it("refuses a spaces-only display name", async () => {
+    render(<UserLabels username="bob@example.com" />);
+    fireEvent.click(screen.getByTitle("users.labels.createButton"));
+
+    fireEvent.change(await screen.findByLabelText("users.labels.displayNameLabel"), { target: { value: "   " } });
+
+    expect(screen.getByText("users.sizeLimits.required")).not.toBeNull();
+    expect((screen.getByRole("button", { name: "common.create" }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it("refuses a 4097-character description in the edit dialog", async () => {
+    render(<UserLabels username="bob@example.com" />);
+    fireEvent.click(screen.getByText("users.labels.title"));
+    fireEvent.click(await screen.findByTitle("users.labels.editTooltip"));
+
+    fireEvent.change(await screen.findByLabelText("users.labels.descriptionLabel"), { target: { value: "a".repeat(4097) } });
+
+    expect(screen.getByText(`users.sizeLimits.tooLong ${JSON.stringify({ count: 4096, length: 4097 })}`)).not.toBeNull();
+    expect((screen.getByRole("button", { name: "common.save" }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it("keeps the create modal and the typed values when the server answers 400, showing its message", async () => {
+    vi.mocked(createUserLabel).mockRejectedValueOnce(new Error("displayName is too long"));
+    render(<UserLabels username="bob@example.com" />);
+    fireEvent.click(screen.getByTitle("users.labels.createButton"));
+
+    const displayName = (await screen.findByLabelText("users.labels.displayNameLabel")) as HTMLInputElement;
+    fireEvent.change(displayName, { target: { value: "Work" } });
+    fireEvent.click(screen.getByRole("button", { name: "common.create" }));
+
+    expect(await screen.findByText("displayName is too long")).not.toBeNull();
+    expect(screen.getByRole("dialog")).not.toBeNull();
+    expect(displayName.value).toBe("Work");
+  });
+
+  it("keeps the edit dialog and the typed values when the server answers 400", async () => {
+    vi.mocked(updateUserLabel).mockClear().mockRejectedValueOnce(new Error("description is too long"));
+    render(<UserLabels username="bob@example.com" />);
+    fireEvent.click(screen.getByText("users.labels.title"));
+    fireEvent.click(await screen.findByTitle("users.labels.editTooltip"));
+
+    const displayName = (await screen.findByLabelText("users.labels.displayNameLabel")) as HTMLInputElement;
+    fireEvent.change(displayName, { target: { value: "Urgent" } });
+    fireEvent.click(screen.getByRole("button", { name: "common.save" }));
+
+    await waitFor(() => expect(updateUserLabel).toHaveBeenCalled());
+    await waitFor(() => expect((screen.getByRole("button", { name: "common.save" }) as HTMLButtonElement).disabled).toBe(false));
+    expect(screen.getByRole("dialog")).not.toBeNull();
+    expect(displayName.value).toBe("Urgent");
+  });
+});

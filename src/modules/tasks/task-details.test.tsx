@@ -20,9 +20,44 @@ const renderDetails = (additionalInformation: Record<string, unknown>) => {
   return container.querySelector(".grid")!;
 };
 
+const renderTaskOfType = (type: string, additionalInformation: Record<string, unknown>) => {
+  const task = { taskId: "t1", type, status: "completed", additionalInformation } as unknown as TaskDetailResponse;
+  const { container } = render(<MemoryRouter><TaskDetails task={task} raw={task} /></MemoryRouter>);
+  return container.querySelector(".grid")!;
+};
+
 afterEach(cleanup);
 
 describe("task details", () => {
+  it("names the team mailbox a vault restore worked on, linked to its page, with its counters", () => {
+    const grid = renderTaskOfType("team-mailbox-deleted-messages-restore", {
+      type: "team-mailbox-deleted-messages-restore",
+      teamMailboxAddress: "sales@acme.com",
+      successfulRestoreCount: 12,
+      errorRestoreCount: 1,
+    });
+    expect(grid.textContent).toContain("tasks.info.teamMailbox");
+    expect(grid.textContent).toContain("tasks.info.restoredCount12");
+    expect(grid.textContent).toContain("tasks.info.failedRestoreCount1");
+    expect(grid.textContent).not.toContain("teamMailboxAddress");
+    expect(screen.getByRole("link", { name: "sales@acme.com" }).getAttribute("href")).toBe("/domains/domain/acme.com/team-mailbox/sales");
+  });
+
+  it("counts team mailboxes, not users, in a team mailbox quota recomputation", () => {
+    const grid = renderTaskOfType("recompute-quota-team-mailboxes", {
+      type: "recompute-quota-team-mailboxes",
+      domain: "acme.com",
+      processedQuotaRoots: 3,
+      failedQuotaRoots: ["#TeamMailbox&sales@acme.com@acme.com"],
+    });
+    expect(grid.textContent).toContain("tasks.info.domainacme.com");
+    expect(grid.textContent).toContain("tasks.info.processedTeamMailboxes3");
+    expect(grid.textContent).toContain("tasks.info.failedTeamMailboxes");
+    expect(grid.textContent).not.toContain("tasks.info.failedUsers");
+    expect(grid.textContent).not.toContain("#TeamMailbox");
+    expect(screen.getByRole("link", { name: "sales@acme.com" }).getAttribute("href")).toBe("/domains/domain/acme.com/team-mailbox/sales");
+  });
+
   it("labels the counters of the tasks the console starts, without repeating the type", () => {
     const grid = renderDetails({
       type: "recompute-current-quotas",

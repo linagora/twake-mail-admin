@@ -306,6 +306,9 @@
       "nameLabel": "Nome della cartella",
       "namePlaceholder": "Nome della nuova cartella (usa . per annidare, ad es. INBOX.work)",
       "invalidName": "Ogni parte del nome tra i punti deve essere compilata (ad es. non \"a..b\", \".a\" o \"a.\")",
+      "namespacePrefixName": "Il nome di una cartella non può iniziare con «#», né alcuna parte tra i punti (riservato agli spazi dei nomi)",
+      "systemFolder": "Cartella di sistema",
+      "systemFolderHint": "Creata con la casella condivisa: non può essere eliminata",
       "errorCreating": "Errore durante la creazione della cartella",
       "created": "Cartella creata correttamente",
       "errorDeleting": "Errore durante l'eliminazione della cartella",
@@ -882,7 +885,8 @@
       "errorUpdating": "Errore durante l'aggiornamento dell'etichetta",
       "deleted": "Etichetta eliminata",
       "errorDeleting": "Errore durante l'eliminazione dell'etichetta",
-      "colorPicker": "Selettore di colore"
+      "colorPicker": "Selettore di colore",
+      "storedOverLimit": "Questa etichetta supera i limiti di dimensione del server: accorciala prima di salvare."
     },
     "jmapSettings": {
       "title": "Impostazioni JMAP",
@@ -897,7 +901,11 @@
       "addRow": "Aggiungi impostazione",
       "removeRow": "Rimuovi questa voce",
       "saved": "Impostazioni JMAP salvate",
-      "errorSaving": "Errore durante il salvataggio delle impostazioni JMAP"
+      "errorSaving": "Errore durante il salvataggio delle impostazioni JMAP",
+      "tooMany_one": "Un utente ha al massimo {{count}} impostazione: rimuovine {{excess}} prima di salvare.",
+      "tooMany_other": "Un utente ha al massimo {{count}} impostazioni: rimuovine {{excess}} prima di salvare.",
+      "limitReached_one": "Il limite di {{count}} impostazione è raggiunto.",
+      "limitReached_other": "Il limite di {{count}} impostazioni è raggiunto."
     },
     "deletedVault": {
       "title": "Archivio dei messaggi eliminati",
@@ -1039,6 +1047,8 @@
       "tierDataTitle": "Archivia i dati dell'utente su più livelli",
       "tierDataDesc": "Elimina i dati in cache (fast view, intestazioni, proiezione degli allegati) dei messaggi di {{username}} più vecchi del periodo di conservazione.",
       "tieringRequired": "Il periodo di conservazione è obbligatorio",
+      "tieringPositive": "Il periodo di conservazione deve essere strettamente positivo: 0 eliminerebbe i dati in cache dell'intero account.",
+      "tierDataUnknownUser": "L'utente {{username}} non esiste.",
       "errorTierData": "Errore durante l'esecuzione dell'archiviazione su più livelli",
       "provisionTemplates": "Distribuisci i modelli",
       "provisionTemplatesTitle": "Distribuisci i modelli",
@@ -1314,7 +1324,12 @@
     "unmanagedDomainHint": "Il dominio di questo utente non esiste più sul server: la posta per questo indirizzo non viene recapitata localmente.",
     "countSingle_other": "{{count}} utenti",
     "countSingle_one": "{{count}} utente",
-    "countRange": "Utenti {{from}}–{{to}}"
+    "countRange": "Utenti {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Obbligatorio: non può essere vuoto.",
+      "tooLong_one": "Al massimo {{count}} carattere ({{length}} ora): accorcialo.",
+      "tooLong_other": "Al massimo {{count}} caratteri ({{length}} ora): accorcialo."
+    }
   },
   "mailboxCounts": {
     "total": "Totale: {{value}}",
@@ -1441,6 +1456,7 @@
       "failedMailboxes": "Caselle non riuscite",
       "processedMessageCount": "Messaggi elaborati",
       "failedMessageCount": "Messaggi non riusciti",
+      "tieredMessageCount": "Messaggi spostati di livello",
       "timestamp": "Registrato il",
       "mailboxesExpired": "Caselle con messaggi scaduti",
       "messagesDeleted": "Messaggi eliminati",
@@ -1475,7 +1491,9 @@
       "deletedTeamMailboxes": "Caselle di team eliminate",
       "failedTeamMailboxes": "Caselle di team non riuscite",
       "failedTeamMailboxesRetried": "La prossima esecuzione le riprova.",
-      "indexedSpaces": "Spazi indicizzati"
+      "indexedSpaces": "Spazi indicizzati",
+      "teamMailbox": "Casella di team",
+      "processedTeamMailboxes": "Caselle di team elaborate"
     },
     "cancelTarget": " per {{target}}",
     "targetCalendar": {
@@ -1488,7 +1506,8 @@
       "ended": "Attività terminata",
       "took": "in {{duration}}",
       "details": "Dettagli"
-    }
+    },
+    "domainListTitle": "Attività del dominio"
   },
   "commonTasks": {
     "title": "Attività comuni",
@@ -2382,7 +2401,8 @@
     "domainAddressBookClear": "Cancella i contatti",
     "bookingLinkEventDeletion": "Elimina gli eventi di un link di prenotazione",
     "twakeSpacePurge": "Pulizia Twake Space",
-    "twakeSpaceReindex": "Reindicizzazione Twake Space"
+    "twakeSpaceReindex": "Reindicizzazione Twake Space",
+    "recomputeTeamMailboxQuotas": "Ricalcola le quote delle caselle di team"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID organizzazione (facoltativo)",

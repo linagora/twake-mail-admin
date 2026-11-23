@@ -306,6 +306,9 @@
       "nameLabel": "Folder name",
       "namePlaceholder": "New folder name (use . for nesting, e.g. INBOX.work)",
       "invalidName": "Each part of the name between dots must be filled in (e.g. not \"a..b\", \".a\" or \"a.\")",
+      "namespacePrefixName": "A folder name cannot start with \"#\", nor any part between dots (reserved for namespaces)",
+      "systemFolder": "System folder",
+      "systemFolderHint": "Provisioned with the team mailbox: it cannot be deleted",
       "errorCreating": "Error creating folder",
       "created": "Folder created successfully",
       "errorDeleting": "Error deleting folder",
@@ -882,7 +885,8 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Color picker"
+      "colorPicker": "Color picker",
+      "storedOverLimit": "This label exceeds the size limits of the server: shorten it before saving."
     },
     "jmapSettings": {
       "title": "JMAP Settings",
@@ -897,7 +901,11 @@
       "addRow": "Add setting",
       "removeRow": "Remove this entry",
       "saved": "JMAP settings saved",
-      "errorSaving": "Error saving JMAP settings"
+      "errorSaving": "Error saving JMAP settings",
+      "tooMany_one": "A user has at most {{count}} setting: remove {{excess}} before saving.",
+      "tooMany_other": "A user has at most {{count}} settings: remove {{excess}} before saving.",
+      "limitReached_one": "The limit of {{count}} setting is reached.",
+      "limitReached_other": "The limit of {{count}} settings is reached."
     },
     "deletedVault": {
       "title": "Deleted Message Vault",
@@ -1039,6 +1047,8 @@
       "tierDataTitle": "Tier user data",
       "tierDataDesc": "Evict cached data (fast view, headers, attachments projection) for messages older than the retention period for {{username}}.",
       "tieringRequired": "Retention period is required",
+      "tieringPositive": "The retention period must be strictly positive: 0 would evict the cached data of the whole account.",
+      "tierDataUnknownUser": "The user {{username}} does not exist.",
       "errorTierData": "Error running tiering task",
       "provisionTemplates": "Provision templates",
       "provisionTemplatesTitle": "Provision templates",
@@ -1314,7 +1324,12 @@
     "unmanagedDomainHint": "This user's domain no longer exists on the server: mail to this address is not delivered locally.",
     "countSingle_other": "{{count}} users",
     "countSingle_one": "{{count}} user",
-    "countRange": "Users {{from}}–{{to}}"
+    "countRange": "Users {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Required: it cannot be blank.",
+      "tooLong_one": "At most {{count}} character ({{length}} now): shorten it.",
+      "tooLong_other": "At most {{count}} characters ({{length}} now): shorten it."
+    }
   },
   "mailboxCounts": {
     "total": "Total: {{value}}",
@@ -1440,6 +1455,7 @@
       "failedMailboxes": "Failed mailboxes",
       "processedMessageCount": "Processed messages",
       "failedMessageCount": "Failed messages",
+      "tieredMessageCount": "Tiered messages",
       "timestamp": "Recorded at",
       "mailboxesExpired": "Mailboxes with expired messages",
       "messagesDeleted": "Messages deleted",
@@ -1474,7 +1490,9 @@
       "deletedTeamMailboxes": "Team mailboxes deleted",
       "failedTeamMailboxes": "Team mailboxes that failed",
       "failedTeamMailboxesRetried": "The next run tries them again.",
-      "indexedSpaces": "Spaces indexed"
+      "indexedSpaces": "Spaces indexed",
+      "teamMailbox": "Team mailbox",
+      "processedTeamMailboxes": "Team mailboxes processed"
     },
     "cancelTarget": " for {{target}}",
     "targetCalendar": {
@@ -1487,7 +1505,8 @@
       "ended": "Task ended",
       "took": "took {{duration}}",
       "details": "Details"
-    }
+    },
+    "domainListTitle": "Tasks of the domain"
   },
   "commonTasks": {
     "title": "Common Tasks",
@@ -2381,7 +2400,8 @@
     "domainAddressBookClear": "Clear contacts",
     "bookingLinkEventDeletion": "Delete the events of a booking link",
     "twakeSpacePurge": "Twake Space purge",
-    "twakeSpaceReindex": "Twake Space reindex"
+    "twakeSpaceReindex": "Twake Space reindex",
+    "recomputeTeamMailboxQuotas": "Recompute team mailbox quotas"
   },
   "twakeSpace": {
     "organizationIdOptional": "Organization ID (optional)",

@@ -1909,11 +1909,20 @@ TASKS = page(
     "Tâches",
     note=(
         "GET /tasks lists the tasks of every domain, with their details. In DOMAIN "
-        "mode the page never lists tasks: it starts the tasks of the domain, and "
-        "shows up as soon as one of them, or the task details, is allowed."
+        "mode the page never calls it: it lists the tasks of the domain through "
+        "GET /domains/{domain}/tasks, starts the tasks of the domain, and shows up "
+        "as soon as one of them, the list, or the task details, is allowed."
     ),
     endpoints=[must("GET", "/tasks?{query_params}", gates=("/tasks",), modes=GLOBAL)],
     children=[
+        action(
+            "domain-list",
+            "List the tasks of the domain",
+            "Lister les tâches du domaine",
+            applications=MAIL,
+            modes=DOMAIN,
+            endpoints=[may("GET", "/domains/{domain}/tasks")],
+        ),
         *_domain_tasks(modes=DOMAIN),
         action(
             "apply-signatures",

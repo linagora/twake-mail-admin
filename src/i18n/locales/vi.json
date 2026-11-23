@@ -302,6 +302,9 @@
       "nameLabel": "Tên thư mục",
       "namePlaceholder": "Tên thư mục mới (dùng . để lồng cấp, vd INBOX.work)",
       "invalidName": "Mỗi phần của tên giữa các dấu chấm phải được điền (ví dụ: không phải \"a..b\", \".a\" hoặc \"a.\")",
+      "namespacePrefixName": "Tên thư mục không được bắt đầu bằng \"#\", kể cả từng phần giữa các dấu chấm (dành cho không gian tên)",
+      "systemFolder": "Thư mục hệ thống",
+      "systemFolderHint": "Được tạo cùng hộp thư nhóm: không thể xóa",
       "errorCreating": "Lỗi khi tạo thư mục",
       "created": "Đã tạo thư mục thành công",
       "errorDeleting": "Lỗi khi xóa thư mục",
@@ -872,7 +875,8 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Bộ chọn màu"
+      "colorPicker": "Bộ chọn màu",
+      "storedOverLimit": "Nhãn này vượt quá giới hạn kích thước của máy chủ: hãy rút ngắn trước khi lưu."
     },
     "jmapSettings": {
       "title": "Cài đặt JMAP",
@@ -887,7 +891,9 @@
       "addRow": "Thêm cài đặt",
       "removeRow": "Xóa mục này",
       "saved": "Đã lưu cài đặt JMAP",
-      "errorSaving": "Lỗi khi lưu cài đặt JMAP"
+      "errorSaving": "Lỗi khi lưu cài đặt JMAP",
+      "tooMany": "Mỗi người dùng có tối đa {{count}} cài đặt: hãy xóa {{excess}} trước khi lưu.",
+      "limitReached": "Đã đạt giới hạn {{count}} cài đặt."
     },
     "deletedVault": {
       "title": "Kho thư đã xóa",
@@ -1027,6 +1033,8 @@
       "tierDataTitle": "Phân tầng dữ liệu người dùng",
       "tierDataDesc": "Xóa dữ liệu đã lưu đệm (xem nhanh, tiêu đề, phép chiếu tệp đính kèm) cho các thư cũ hơn thời gian lưu giữ của {{username}}.",
       "tieringRequired": "Cần có thời gian lưu giữ",
+      "tieringPositive": "Thời gian lưu giữ phải lớn hơn 0: giá trị 0 sẽ xóa dữ liệu đệm của toàn bộ tài khoản.",
+      "tierDataUnknownUser": "Người dùng {{username}} không tồn tại.",
       "errorTierData": "Lỗi khi chạy tác vụ phân tầng",
       "provisionTemplates": "Cung cấp mẫu",
       "provisionTemplatesTitle": "Cung cấp mẫu",
@@ -1300,7 +1308,11 @@
     "unmanagedDomain": "miền không được quản lý",
     "unmanagedDomainHint": "Miền của người dùng này không còn tồn tại trên máy chủ: thư gửi tới địa chỉ này không được gửi nội bộ.",
     "countSingle": "{{count}} người dùng",
-    "countRange": "Người dùng {{from}}–{{to}}"
+    "countRange": "Người dùng {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Bắt buộc: không được để trống.",
+      "tooLong": "Tối đa {{count}} ký tự (hiện tại {{length}}): hãy rút ngắn."
+    }
   },
   "mailboxCounts": {
     "total": "Tổng: {{value}}",
@@ -1426,6 +1438,7 @@
       "failedMailboxes": "Hộp thư lỗi",
       "processedMessageCount": "Thư đã xử lý",
       "failedMessageCount": "Thư lỗi",
+      "tieredMessageCount": "Thư đã chuyển tầng",
       "timestamp": "Ghi nhận lúc",
       "mailboxesExpired": "Hộp thư có thư hết hạn",
       "messagesDeleted": "Thư đã xóa",
@@ -1460,7 +1473,9 @@
       "deletedTeamMailboxes": "Hộp thư nhóm đã xóa",
       "failedTeamMailboxes": "Hộp thư nhóm thất bại",
       "failedTeamMailboxesRetried": "Lần chạy tiếp theo sẽ thử lại.",
-      "indexedSpaces": "Không gian đã lập chỉ mục"
+      "indexedSpaces": "Không gian đã lập chỉ mục",
+      "teamMailbox": "Hộp thư nhóm",
+      "processedTeamMailboxes": "Hộp thư nhóm đã xử lý"
     },
     "cancelTarget": " cho {{target}}",
     "targetCalendar": {
@@ -1473,7 +1488,8 @@
       "ended": "Tác vụ đã kết thúc",
       "took": "mất {{duration}}",
       "details": "Chi tiết"
-    }
+    },
+    "domainListTitle": "Tác vụ của tên miền"
   },
   "commonTasks": {
     "title": "Tác vụ chung",
@@ -2357,7 +2373,8 @@
     "domainAddressBookClear": "Xóa danh bạ",
     "bookingLinkEventDeletion": "Xóa các sự kiện của một liên kết đặt lịch",
     "twakeSpacePurge": "Dọn dẹp Twake Space",
-    "twakeSpaceReindex": "Lập chỉ mục lại Twake Space"
+    "twakeSpaceReindex": "Lập chỉ mục lại Twake Space",
+    "recomputeTeamMailboxQuotas": "Tính lại hạn mức hộp thư nhóm"
   },
   "twakeSpace": {
     "organizationIdOptional": "ID tổ chức (tùy chọn)",

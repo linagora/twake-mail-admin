@@ -303,6 +303,9 @@
       "nameLabel": "Хавтасны нэр",
       "namePlaceholder": "Шинэ хавтасны нэр (үүрлэхдээ . ашиглана, жнь INBOX.work)",
       "invalidName": "Цэгүүдийн хоорондох нэрийн хэсэг бүрийг бөглөх ёстой (жишээ нь \"a..b\", \".a\" эсвэл \"a.\" биш)",
+      "namespacePrefixName": "Хавтасны нэр, мөн цэгүүдийн хоорондох аль ч хэсэг нь \"#\"-ээр эхэлж болохгүй (нэрийн орон зайд зориулагдсан)",
+      "systemFolder": "Системийн хавтас",
+      "systemFolderHint": "Багийн шуудангийн хайрцагтай хамт үүссэн: устгах боломжгүй",
       "errorCreating": "Хавтас үүсгэхэд алдаа гарлаа",
       "created": "Хавтас амжилттай үүслээ",
       "errorDeleting": "Хавтас устгахад алдаа гарлаа",
@@ -875,7 +878,8 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Өнгө сонгогч"
+      "colorPicker": "Өнгө сонгогч",
+      "storedOverLimit": "Энэ шошго серверийн хэмжээний хязгаараас хэтэрсэн: хадгалахаас өмнө богиносгоно уу."
     },
     "jmapSettings": {
       "title": "JMAP тохиргоо",
@@ -890,7 +894,9 @@
       "addRow": "Тохиргоо нэмэх",
       "removeRow": "Энэ бичлэгийг устгах",
       "saved": "JMAP тохиргоо хадгалагдлаа",
-      "errorSaving": "JMAP тохиргоо хадгалахад алдаа гарлаа"
+      "errorSaving": "JMAP тохиргоо хадгалахад алдаа гарлаа",
+      "tooMany": "Хэрэглэгч хамгийн ихдээ {{count}} тохиргоотой байна: хадгалахаас өмнө {{excess}}-ыг устгана уу.",
+      "limitReached": "{{count}} тохиргооны хязгаарт хүрсэн."
     },
     "deletedVault": {
       "title": "Устгасан захидлын сан",
@@ -1030,6 +1036,8 @@
       "tierDataTitle": "Хэрэглэгчийн өгөгдлийг түвшинд хуваах",
       "tierDataDesc": "{{username}}-ийн хадгалах хугацаанаас хуучин захидлуудын кэшлэгдсэн өгөгдлийг (хурдан харах, толгой, хавсралтын проекц) зайлуулах.",
       "tieringRequired": "Хадгалах хугацаа шаардлагатай",
+      "tieringPositive": "Хадгалах хугацаа заавал эерэг байх ёстой: 0 нь бүх бүртгэлийн кэшлэгдсэн өгөгдлийг устгана.",
+      "tierDataUnknownUser": "{{username}} хэрэглэгч байхгүй байна.",
       "errorTierData": "Түвшинд хуваах даалгавар ажиллуулахад алдаа гарлаа",
       "provisionTemplates": "Загвар нийлүүлэх",
       "provisionTemplatesTitle": "Загвар нийлүүлэх",
@@ -1304,7 +1312,11 @@
     "unmanagedDomain": "удирдагдаагүй домэйн",
     "unmanagedDomainHint": "Энэ хэрэглэгчийн домэйн серверт байхгүй болсон: энэ хаяг руу ирэх захидал дотооддоо хүргэгдэхгүй.",
     "countSingle": "{{count}} хэрэглэгч",
-    "countRange": "Хэрэглэгч {{from}}–{{to}}"
+    "countRange": "Хэрэглэгч {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Заавал бөглөнө: хоосон байж болохгүй.",
+      "tooLong": "Хамгийн ихдээ {{count}} тэмдэгт (одоо {{length}}): богиносгоно уу."
+    }
   },
   "mailboxCounts": {
     "total": "Нийт: {{value}}",
@@ -1430,6 +1442,7 @@
       "failedMailboxes": "Амжилтгүй хайрцаг",
       "processedMessageCount": "Боловсруулсан мессеж",
       "failedMessageCount": "Амжилтгүй мессеж",
+      "tieredMessageCount": "Шилжүүлсэн мессеж",
       "timestamp": "Бүртгэсэн",
       "mailboxesExpired": "Хугацаа нь дууссан захидалтай хайрцаг",
       "messagesDeleted": "Устгасан захидал",
@@ -1464,7 +1477,9 @@
       "deletedTeamMailboxes": "Устгасан багийн шуудангийн хайрцаг",
       "failedTeamMailboxes": "Амжилтгүй багийн шуудангийн хайрцаг",
       "failedTeamMailboxesRetried": "Дараагийн ажиллагаа тэдгээрийг дахин оролдоно.",
-      "indexedSpaces": "Индексжүүлсэн орон зай"
+      "indexedSpaces": "Индексжүүлсэн орон зай",
+      "teamMailbox": "Багийн шуудангийн хайрцаг",
+      "processedTeamMailboxes": "Боловсруулсан багийн хайрцгууд"
     },
     "cancelTarget": " ({{target}})",
     "targetCalendar": {
@@ -1477,7 +1492,8 @@
       "ended": "Даалгавар дууссан",
       "took": "{{duration}} үргэлжилсэн",
       "details": "Дэлгэрэнгүй"
-    }
+    },
+    "domainListTitle": "Домэйны даалгаврууд"
   },
   "commonTasks": {
     "title": "Нийтлэг даалгаврууд",
@@ -2364,7 +2380,8 @@
     "domainAddressBookClear": "Харилцагчдыг цэвэрлэх",
     "bookingLinkEventDeletion": "Захиалгын холбоосын үйл явдлуудыг устгах",
     "twakeSpacePurge": "Twake Space цэвэрлэгээ",
-    "twakeSpaceReindex": "Twake Space дахин индексжүүлэлт"
+    "twakeSpaceReindex": "Twake Space дахин индексжүүлэлт",
+    "recomputeTeamMailboxQuotas": "Багийн шуудангийн хайрцгийн квотыг дахин тооцоолох"
   },
   "twakeSpace": {
     "organizationIdOptional": "Байгууллагын ID (заавал биш)",
