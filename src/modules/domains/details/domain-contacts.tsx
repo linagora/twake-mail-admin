@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
+import { Link } from "react-router";
+import axios from "axios";
 import { Plus, Trash2, Pencil, AlertTriangle, Loader2, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
@@ -9,12 +11,14 @@ import {
   createDomainContact,
   updateDomainContact,
   deleteDomainContact,
+  getTeamMailboxes,
 } from "../api-client";
-import { DomainContact } from "../types";
+import { DomainContact, GetTeamMailboxesResponseType, TeamMailbox } from "../types";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useReturnFocus } from "@/hooks/use-return-focus";
 import ErrorDisplayer from "@/components/custom/error-displayer";
+import HintTooltip from "@/components/custom/hint-tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { PaginationControls } from "@/components/custom/pagination-controls";
@@ -51,6 +55,17 @@ const applyLocalChanges = (fetched: string[], changes: LocalChanges): string[] =
   return [...new Set([...fetched, ...changes.added])].filter((email) => !removed.has(email));
 };
 
+// The contact of a team mailbox is created and removed together with it: the server refuses its deletion
+const isTeamMailboxConflict = (err: unknown) => axios.isAxiosError(err) && err.response?.status === 409;
+
+const NO_TEAM_MAILBOXES: GetTeamMailboxesResponseType = [];
+
+const byEmailAddress = (teamMailboxes: GetTeamMailboxesResponseType): Map<string, TeamMailbox> =>
+  new Map(teamMailboxes.map((mailbox) => [mailbox.emailAddress.toLowerCase(), mailbox]));
+
+const teamMailboxPath = (domain: string, mailbox: TeamMailbox) =>
+  `/domains/domain/${encodeURIComponent(domain)}/team-mailbox/${encodeURIComponent(mailbox.name)}`;
+
 export default function DomainContacts({ domain }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -61,11 +76,20 @@ export default function DomainContacts({ domain }: Props) {
   const canCreate = useIsAllowed("POST", "/domains/{domain}/contacts");
   const canEdit = useIsAllowed("PUT", "/domains/{domain}/contacts/{username}");
   const canDelete = useIsAllowed("DELETE", "/domains/{domain}/contacts/{username}");
+  const canListTeamMailboxes = useIsAllowed("GET", "/domains/{domain}/team-mailboxes");
 
   const fetchContacts = useCallback(() => getDomainContacts(domain), [domain]);
   const { data: fetchedContacts, isLoading, error, refresh } = useFetchData<string[]>(canView ? fetchContacts : null);
   const [localChanges, setLocalChanges] = useState<LocalChanges>(NO_LOCAL_CHANGES);
   useEffect(() => setLocalChanges(NO_LOCAL_CHANGES), [domain]);
+  const fetchTeamMailboxes = useCallback(() => getTeamMailboxes(domain), [domain]);
+  const { data: teamMailboxes, refresh: refreshTeamMailboxes } = useFetchData<GetTeamMailboxesResponseType>(
+    canView && canListTeamMailboxes ? fetchTeamMailboxes : null
+  );
+  const teamMailboxOf = useMemo(() => {
+    const index = byEmailAddress(teamMailboxes ?? NO_TEAM_MAILBOXES);
+    return (email: string) => index.get(email.toLowerCase());
+  }, [teamMailboxes]);
   const contacts = useMemo(
     () => fetchedContacts && applyLocalChanges(fetchedContacts, localChanges),
     [fetchedContacts, localChanges]
@@ -140,10 +164,13 @@ export default function DomainContacts({ domain }: Props) {
       toast({ title: t("domains.contacts.deleted") });
       setLocalChanges((changes) => withRemoved(changes, email));
     } catch (err) {
+      const conflict = isTeamMailboxConflict(err);
       toast({
-        title: t("domains.contacts.errorDeleting"),
+        title: t(conflict ? "domains.contacts.teamMailbox.deleteRefused" : "domains.contacts.errorDeleting"),
         description: <ErrorDisplayer error={err} />,
       });
+      // The team mailbox list was stale: mark the contact now
+      if (conflict && canListTeamMailboxes) refreshTeamMailboxes();
     }
   };
 
@@ -266,7 +293,9 @@ export default function DomainContacts({ domain }: Props) {
                 />
               )}
 
-              {paginated.map((email, index) => (
+              {paginated.map((email, index) => {
+                const teamMailbox = teamMailboxOf(email);
+                return (
                 <div
                   key={email}
                   className="p-4 bg-gray-50 rounded-2 my-2 flex justify-between items-center gap-2 cursor-pointer hover:bg-gray-100 transition"
@@ -282,6 +311,7 @@ export default function DomainContacts({ domain }: Props) {
                     >
                       {email}
                     </button>
+                    {teamMailbox && <TeamMailboxBadge domain={domain} mailbox={teamMailbox} />}
                   </h4>
                   <div className="flex shrink-0 gap-1">
                     {canEdit && (
@@ -294,7 +324,8 @@ export default function DomainContacts({ domain }: Props) {
                         <Pencil className="w-4 h-4 text-blue-600" />
                       </button>
                     )}
-                    {canDelete && (
+                    {canDelete && teamMailbox && <UndeletableContactButton email={email} mailbox={teamMailbox} />}
+                    {canDelete && !teamMailbox && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(email); }}
                         className="p-2 rounded-md hover:bg-gray-200"
@@ -306,7 +337,8 @@ export default function DomainContacts({ domain }: Props) {
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
               {contacts.length === 0 && (
                 <p className="mt-2 text-sm text-gray-500">{t("domains.contacts.empty")}</p>
               )}
@@ -383,6 +415,7 @@ export default function DomainContacts({ domain }: Props) {
               <Row label={t("domains.contacts.email")} value={viewContact.emailAddress} />
               <Row label={t("domains.contacts.firstname")} value={viewContact.firstname || "—"} />
               <Row label={t("domains.contacts.surname")} value={viewContact.surname || "—"} />
+              <TeamMailboxRow domain={domain} mailbox={teamMailboxOf(viewContact.emailAddress)} />
               {canEdit && (
                 <div className="flex justify-end pt-2">
                   <Button size="sm" onClick={() => openEdit(viewContact)}>
@@ -448,5 +481,54 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="text-gray-500 font-medium min-w-[80px]">{label}:</span>
       <span className="break-all">{value}</span>
     </div>
+  );
+}
+
+function TeamMailboxRow({ domain, mailbox }: { domain: string; mailbox?: TeamMailbox }) {
+  const { t } = useTranslation();
+  if (!mailbox) return null;
+  return (
+    <div className="flex gap-2">
+      <span className="text-gray-500 font-medium min-w-[80px]">{t("domains.contacts.teamMailbox.label")}:</span>
+      <TeamMailboxBadge domain={domain} mailbox={mailbox} />
+    </div>
+  );
+}
+
+function TeamMailboxBadge({ domain, mailbox }: { domain: string; mailbox: TeamMailbox }) {
+  const { t } = useTranslation();
+  return (
+    <Link
+      to={teamMailboxPath(domain, mailbox)}
+      onClick={(e) => e.stopPropagation()}
+      className="ml-2 inline-block text-xs font-normal rounded px-1.5 py-0.5 bg-blue-50 text-blue-700 hover:underline whitespace-nowrap"
+      aria-label={t("domains.contacts.teamMailbox.badgeNamed", { name: mailbox.name })}
+    >
+      {t("domains.contacts.teamMailbox.badge")}
+    </Link>
+  );
+}
+
+// Disabled, the reason being shown on hover, focus and tap, and given as the button's accessible description
+function UndeletableContactButton({ email, mailbox }: { email: string; mailbox: TeamMailbox }) {
+  const { t } = useTranslation();
+  const hintId = useId();
+  const hint = t("domains.contacts.teamMailbox.undeletable", { name: mailbox.emailAddress });
+  return (
+    // The tap showing the hint must not open the contact details of the row
+    <span onClick={(e) => e.stopPropagation()}>
+      <HintTooltip hint={hint} className="inline-flex rounded-md cursor-not-allowed">
+        <button
+          type="button"
+          disabled
+          aria-label={t("domains.contacts.removeNamed", { item: email })}
+          aria-describedby={hintId}
+          className="p-2 rounded-md opacity-40 pointer-events-none"
+        >
+          <Trash2 className="w-4 h-4 text-gray-400" />
+        </button>
+      </HintTooltip>
+      <span id={hintId} hidden>{hint}</span>
+    </span>
   );
 }

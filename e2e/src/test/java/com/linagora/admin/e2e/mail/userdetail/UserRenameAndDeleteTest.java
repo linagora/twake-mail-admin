@@ -120,7 +120,9 @@ class UserRenameAndDeleteTest extends MailAdminE2ETest {
         Locator dialog = detail.tasks().open().run("Delete user data");
         assertThat(dialog.getByRole(com.microsoft.playwright.options.AriaRole.HEADING)).hasText("Delete all data of " + user);
         assertThat(dialog).containsText("All mailboxes, messages, identities, labels, vacation and settings of " + user
-            + " are permanently deleted. The account itself is kept. This cannot be undone.");
+            + " are permanently deleted. The account itself is kept. Its delegations are removed: " + user
+            + " loses access to the accounts delegated to it, and the users it delegated its account to lose access to it."
+            + " This cannot be undone.");
         detail.openAdvanced("Advanced: resume an interrupted deletion");
         assertThat(dialog.getByLabel("Resume from step", new Locator.GetByLabelOptions().setExact(true))).hasValue("");
         assertThat(detail.commandPreview()).hasText(Pattern.compile("action=deleteData$"));

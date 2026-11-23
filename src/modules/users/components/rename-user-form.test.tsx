@@ -26,4 +26,9 @@ describe("rename user form", () => {
     render(<RenameUserForm username="ren1@example.com" onChange={() => {}} />);
     expect(screen.queryByText("renameUserForm.targetMustExist")).not.toBeNull();
   });
+
+  it("explains that the existing account keeps its own labels and rate limits", () => {
+    render(<RenameUserForm username="ren1@example.com" onChange={() => {}} />);
+    expect(screen.queryByText("renameUserForm.mergeIntoExisting")).not.toBeNull();
+  });
 });

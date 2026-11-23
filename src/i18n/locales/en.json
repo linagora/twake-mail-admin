@@ -211,7 +211,14 @@
       "errorUpdating": "Error updating contact",
       "updated": "Contact updated",
       "searchPlaceholder": "Search contacts...",
-      "noResults": "No contacts match your search."
+      "noResults": "No contacts match your search.",
+      "teamMailbox": {
+        "badge": "Team mailbox",
+        "badgeNamed": "Team mailbox {{name}}",
+        "label": "Team mailbox",
+        "undeletable": "This contact belongs to the team mailbox {{name}}. It is created and removed with the team mailbox: delete the team mailbox to remove it.",
+        "deleteRefused": "This contact belongs to an existing team mailbox and cannot be deleted"
+      }
     },
     "teamMailboxes": {
       "title": "Team Mailboxes",
@@ -878,7 +885,8 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Color picker"
+      "colorPicker": "Color picker",
+      "storedOverLimit": "This label exceeds the size limits of the server: shorten it before saving."
     },
     "jmapSettings": {
       "title": "JMAP Settings",
@@ -893,7 +901,11 @@
       "addRow": "Add setting",
       "removeRow": "Remove this entry",
       "saved": "JMAP settings saved",
-      "errorSaving": "Error saving JMAP settings"
+      "errorSaving": "Error saving JMAP settings",
+      "tooMany_one": "A user has at most {{count}} setting: remove {{excess}} before saving.",
+      "tooMany_other": "A user has at most {{count}} settings: remove {{excess}} before saving.",
+      "limitReached_one": "The limit of {{count}} setting is reached.",
+      "limitReached_other": "The limit of {{count}} settings is reached."
     },
     "deletedVault": {
       "title": "Deleted Message Vault",
@@ -1003,6 +1015,7 @@
       "reindexAll": "Reindex all mailboxes",
       "reindexTitle": "Reindex all mailboxes",
       "reindexDesc": "Reindex all mailboxes for {{username}}.",
+      "reindexUnknownUser": "User {{username}} does not exist: no reindexing task was created.",
       "errorReindex": "Error running reindex task",
       "subscribeAll": "Subscribe to all mailboxes",
       "subscribeTitle": "Subscribe to all mailboxes",
@@ -1309,7 +1322,12 @@
     "unmanagedDomainHint": "This user's domain no longer exists on the server: mail to this address is not delivered locally.",
     "countSingle_other": "{{count}} users",
     "countSingle_one": "{{count}} user",
-    "countRange": "Users {{from}}–{{to}}"
+    "countRange": "Users {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Required: it cannot be blank.",
+      "tooLong_one": "At most {{count}} character ({{length}} now): shorten it.",
+      "tooLong_other": "At most {{count}} characters ({{length}} now): shorten it."
+    }
   },
   "mailboxCounts": {
     "total": "Total: {{value}}",
@@ -1321,6 +1339,7 @@
     "newUsernameRequired": "New username is required",
     "newUsernameOtherDomain": "The new username must be in the domain {{domain}}",
     "targetMustExist": "The new username must be an existing account: renaming only migrates the data of the current user to it.",
+    "mergeIntoExisting": "The data is merged into the existing account. If both accounts have a label with the same keyword, the existing account keeps its own label and the old user's label is dropped. If the existing account already has rate limits, they are kept and the old user's limits are not copied.",
     "force": "Force",
     "fromStep": "Resume from step",
     "fromStepPlaceholder": "e.g. MailboxUsernameChangeTaskStep",
@@ -1569,7 +1588,7 @@
       },
       "processor": {
         "label": "Target processor",
-        "help": "Mailet processor that handles the mails again. root means full processing."
+        "help": "Name of a processor configured in the server's mailet container (mailetcontainer.xml), e.g. root, transport, error, local-delivery or relay. Left empty, each mail goes back to its own stored state."
       },
       "consume": {
         "label": "Remove from the repository once reprocessed",
@@ -1607,6 +1626,10 @@
       "autoMerge": {
         "label": "Merge duplicate mailboxes",
         "help": "Ticked: mailboxes sharing a name are merged instead of only being reported."
+      },
+      "force": {
+        "label": "Run even if the user does not exist (force)",
+        "help": "Only useful to clean up the index entries of a user who was already deleted. Without it, WebAdmin refuses an unknown user, which stops typos."
       },
       "trustMessageProjection": {
         "label": "Trust the message projection",
@@ -1711,14 +1734,16 @@
       "clearDomainMembersContacts": "Empties the \"Domain members\" address book of every domain. Run a synchronization to fill it again.",
       "twakeSpacePurge": "Deletes the team mailboxes of the spaces deleted for longer than the retention set in space.properties, freeing their addresses. TMail no longer runs it on its own: schedule it with an external cron, or run it here.",
       "twakeSpaceReindex": "Use after binding team mailboxes outside of the extension (e.g. a migration from the Twake Mail side service), or if the index mailbox was lost. Scans every team mailbox.",
-      "syncTwakeSpaces": "Asks ldap-rest for the current state of the Twake spaces, applied to their team mailboxes: all of them, one organization's, or a single space."
+      "syncTwakeSpaces": "Asks ldap-rest for the current state of the Twake spaces, applied to their team mailboxes: all of them, one organization's, or a single space.",
+      "sendEmail": "Sends an email through the mail processing of the server, to the recipients its headers name: composed here, pasted or loaded from an .eml file."
     },
     "archiveAllEvents": "Archive all events",
     "archiveAllWarning": "No criterion set: every event of every registered user will be moved to an \"Archival\" calendar.",
     "twakeSpacePurge": "Purge team mailboxes of deleted spaces",
     "twakeSpaceReindex": "Rebuild the space index",
     "twakeSpaceUnavailable": "Twake Space is not available on this server: it does not expose the /spaces routes, which require the Twake Space extension of tmail-backend.",
-    "syncTwakeSpaces": "Sync Twake spaces"
+    "syncTwakeSpaces": "Sync Twake spaces",
+    "sendEmail": "Send an email"
   },
   "healthCheck": {
     "checking": "Checking the components, this can take a while…",
@@ -1968,6 +1993,10 @@
     "reprocessMailConfirm": "Reprocess the email \"{{mailKey}}\"?",
     "reprocessRepoConfirm": "Reprocess all emails in repository {{path}}?",
     "reprocessScheduled": "Reprocessing scheduled",
+    "reprocessRefused": {
+      "processor": "The target processor is not configured in the server's mailet container: no mail was moved. Correct it, or leave it empty so that each mail goes back to its own state.",
+      "queue": "The target queue does not exist on the server: no mail was moved. Correct it, or leave it empty to use spool."
+    },
     "errorReprocessing": "Error reprocessing",
     "moveMailHeader": "Move Email",
     "moveMailConfirm": "Move the email \"{{mailKey}}\" to:",
@@ -2019,6 +2048,7 @@
     "domainSourcePlaceholder": "Source domain (e.g. sourceDomain.tld)",
     "domainDestinationPlaceholder": "Destination domain (e.g. destination.tld)",
     "domainHint": "Mail addressed to the source domain will be rewritten to the destination domain. No loop check is performed.",
+    "domainSelfMapping": "A domain cannot be mapped to itself.",
     "domainCreated": "Domain mapping created successfully",
     "errorCreatingDomain": "Error creating domain mapping",
     "removeTitle": "Remove {{type}} Mapping",
@@ -2309,7 +2339,7 @@
     "clear": "Clear",
     "typeToConfirm": "Type {{value}} to confirm",
     "consequence": {
-      "deleteUserData": "All mailboxes, messages, identities, labels, vacation and settings of {{user}} are permanently deleted. The account itself is kept. This cannot be undone.",
+      "deleteUserData": "All mailboxes, messages, identities, labels, vacation and settings of {{user}} are permanently deleted. The account itself is kept. Its delegations are removed: {{user}} loses access to the accounts delegated to it, and the users it delegated its account to lose access to it. This cannot be undone.",
       "deleteMailboxes": "Every mailbox of {{user}} and all the messages they contain are permanently deleted. This cannot be undone.",
       "deleteMailbox": "\"{{mailbox}}\", its sub-folders and all their messages are permanently deleted.",
       "clearMailbox": "All messages of \"{{mailbox}}\" are permanently deleted; the folder is kept.",
@@ -2352,7 +2382,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Unlimited (no limit set)",
     "noLimit": "No limit",
-    "domainLevel": "Domain {{domain}}"
+    "domainLevel": "Domain {{domain}}",
+    "zeroLimit": "Limit is 0: nothing can be stored."
   },
   "taskTypes": {
     "fullReindexing": "Reindex all data in OpenSearch",
@@ -2378,5 +2409,41 @@
       "requested": "Sync requested",
       "thisSpace": "Sync this space"
     }
+  },
+  "sendEmail": {
+    "title": "Send an email",
+    "intro": "The message is enqueued for processing, like a message received by the server: its recipients are the To, Cc and Bcc addresses of its headers.",
+    "modeLabel": "Message source",
+    "mode": {
+      "compose": "Compose",
+      "raw": "Raw message (.eml)"
+    },
+    "field": {
+      "from": "From",
+      "to": "To",
+      "cc": "Cc",
+      "subject": "Subject",
+      "body": "Body",
+      "eml": "Load an .eml file",
+      "raw": "RFC 822 message"
+    },
+    "placeholder": {
+      "from": "admin@domain.tld",
+      "to": "user@domain.tld, other@domain.tld",
+      "cc": "user@domain.tld",
+      "subject": "Subject"
+    },
+    "cannotSend": "Send is disabled until:",
+    "problem": {
+      "empty": "the message is written or loaded",
+      "noFrom": "the message has a From address",
+      "severalFrom": "the message has a single From address",
+      "invalidFrom": "the From address \"{{address}}\" is valid",
+      "noRecipient": "the message has at least one recipient (To, Cc or Bcc)",
+      "invalidRecipient": "the {{header}} address \"{{address}}\" is valid"
+    },
+    "send": "Send",
+    "enqueued": "Email enqueued for processing",
+    "refused": "The server refused the email"
   }
 }
