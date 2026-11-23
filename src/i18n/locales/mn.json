@@ -875,7 +875,8 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Өнгө сонгогч"
+      "colorPicker": "Өнгө сонгогч",
+      "storedOverLimit": "Энэ шошго серверийн хэмжээний хязгаараас хэтэрсэн: хадгалахаас өмнө богиносгоно уу."
     },
     "jmapSettings": {
       "title": "JMAP тохиргоо",
@@ -890,7 +891,9 @@
       "addRow": "Тохиргоо нэмэх",
       "removeRow": "Энэ бичлэгийг устгах",
       "saved": "JMAP тохиргоо хадгалагдлаа",
-      "errorSaving": "JMAP тохиргоо хадгалахад алдаа гарлаа"
+      "errorSaving": "JMAP тохиргоо хадгалахад алдаа гарлаа",
+      "tooMany": "Хэрэглэгч хамгийн ихдээ {{count}} тохиргоотой байна: хадгалахаас өмнө {{excess}}-ыг устгана уу.",
+      "limitReached": "{{count}} тохиргооны хязгаарт хүрсэн."
     },
     "deletedVault": {
       "title": "Устгасан захидлын сан",
@@ -1304,7 +1307,11 @@
     "unmanagedDomain": "удирдагдаагүй домэйн",
     "unmanagedDomainHint": "Энэ хэрэглэгчийн домэйн серверт байхгүй болсон: энэ хаяг руу ирэх захидал дотооддоо хүргэгдэхгүй.",
     "countSingle": "{{count}} хэрэглэгч",
-    "countRange": "Хэрэглэгч {{from}}–{{to}}"
+    "countRange": "Хэрэглэгч {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Заавал бөглөнө: хоосон байж болохгүй.",
+      "tooLong": "Хамгийн ихдээ {{count}} тэмдэгт (одоо {{length}}): богиносгоно уу."
+    }
   },
   "mailboxCounts": {
     "total": "Нийт: {{value}}",

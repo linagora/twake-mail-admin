@@ -872,7 +872,8 @@
       "errorUpdating": "Error updating label",
       "deleted": "Label deleted",
       "errorDeleting": "Error deleting label",
-      "colorPicker": "Bộ chọn màu"
+      "colorPicker": "Bộ chọn màu",
+      "storedOverLimit": "Nhãn này vượt quá giới hạn kích thước của máy chủ: hãy rút ngắn trước khi lưu."
     },
     "jmapSettings": {
       "title": "Cài đặt JMAP",
@@ -887,7 +888,9 @@
       "addRow": "Thêm cài đặt",
       "removeRow": "Xóa mục này",
       "saved": "Đã lưu cài đặt JMAP",
-      "errorSaving": "Lỗi khi lưu cài đặt JMAP"
+      "errorSaving": "Lỗi khi lưu cài đặt JMAP",
+      "tooMany": "Mỗi người dùng có tối đa {{count}} cài đặt: hãy xóa {{excess}} trước khi lưu.",
+      "limitReached": "Đã đạt giới hạn {{count}} cài đặt."
     },
     "deletedVault": {
       "title": "Kho thư đã xóa",
@@ -1300,7 +1303,11 @@
     "unmanagedDomain": "miền không được quản lý",
     "unmanagedDomainHint": "Miền của người dùng này không còn tồn tại trên máy chủ: thư gửi tới địa chỉ này không được gửi nội bộ.",
     "countSingle": "{{count}} người dùng",
-    "countRange": "Người dùng {{from}}–{{to}}"
+    "countRange": "Người dùng {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Bắt buộc: không được để trống.",
+      "tooLong": "Tối đa {{count}} ký tự (hiện tại {{length}}): hãy rút ngắn."
+    }
   },
   "mailboxCounts": {
     "total": "Tổng: {{value}}",

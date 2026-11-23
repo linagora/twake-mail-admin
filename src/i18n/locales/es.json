@@ -882,7 +882,8 @@
       "errorUpdating": "Error al actualizar la etiqueta",
       "deleted": "Etiqueta eliminada",
       "errorDeleting": "Error al eliminar la etiqueta",
-      "colorPicker": "Selector de color"
+      "colorPicker": "Selector de color",
+      "storedOverLimit": "Esta etiqueta supera los límites de tamaño del servidor: acórtela antes de guardar."
     },
     "jmapSettings": {
       "title": "Ajustes JMAP",
@@ -897,7 +898,11 @@
       "addRow": "Añadir ajuste",
       "removeRow": "Quitar esta entrada",
       "saved": "Ajustes JMAP guardados",
-      "errorSaving": "Error al guardar los ajustes JMAP"
+      "errorSaving": "Error al guardar los ajustes JMAP",
+      "tooMany_one": "Un usuario tiene como máximo {{count}} ajuste: elimine {{excess}} antes de guardar.",
+      "tooMany_other": "Un usuario tiene como máximo {{count}} ajustes: elimine {{excess}} antes de guardar.",
+      "limitReached_one": "Se ha alcanzado el límite de {{count}} ajuste.",
+      "limitReached_other": "Se ha alcanzado el límite de {{count}} ajustes."
     },
     "deletedVault": {
       "title": "Almacén de mensajes eliminados",
@@ -1314,7 +1319,12 @@
     "unmanagedDomainHint": "El dominio de este usuario ya no existe en el servidor: el correo dirigido a esta dirección no se entrega localmente.",
     "countSingle_other": "{{count}} usuarios",
     "countSingle_one": "{{count}} usuario",
-    "countRange": "Usuarios {{from}}–{{to}}"
+    "countRange": "Usuarios {{from}}–{{to}}",
+    "sizeLimits": {
+      "required": "Obligatorio: no puede estar vacío.",
+      "tooLong_one": "Como máximo {{count}} carácter ({{length}} ahora): acórtelo.",
+      "tooLong_other": "Como máximo {{count}} caracteres ({{length}} ahora): acórtelo."
+    }
   },
   "mailboxCounts": {
     "total": "Total: {{value}}",
