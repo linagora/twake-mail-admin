@@ -2,8 +2,8 @@ import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { currentLocale } from "@/i18n/locale";
 import { formatByteSize } from "@/i18n/format-size";
-import { formatPercent } from "@/i18n/format-percent";
 import { NO_LIMITS, QuotaLimitValues } from "./quota-limits";
+import { barWidth, ComputedLimits, formatRatio, hasZeroLimit, occupationRatios } from "./quota-ratio";
 
 /** One level a limit can be set at, the most specific first: user or team mailbox, domain, global. */
 export interface QuotaLevel {
@@ -91,29 +91,37 @@ interface Occupation {
   ratio: { count: number; size: number; max: number };
 }
 
-const barClass = (max: number) => (max > 0.9 ? "bg-red-500" : max > 0.7 ? "bg-yellow-500" : "bg-green-500");
+const barClass = (max: number | null) => (max === null ? "bg-gray-400" : max > 0.9 ? "bg-red-500" : max > 0.7 ? "bg-yellow-500" : "bg-green-500");
+
+/** The limits that apply: the value of the most specific level setting each, null for none. */
+const appliedLimits = (levels: QuotaLevel[]): ComputedLimits => ({
+  count: appliedLevel(levels, "count")?.values?.count ?? null,
+  size: appliedLevel(levels, "size")?.values?.size ?? null,
+});
 
 /** What is used; the ratio and its bar only when a limit applies: a ratio of an unlimited quota means nothing. */
-export function QuotaOccupation({ occupation, limited }: { occupation: Occupation; limited: boolean }) {
+export function QuotaOccupation({ occupation, levels }: { occupation: Occupation; levels: QuotaLevel[] }) {
   const { t } = useTranslation();
-  const { ratio } = occupation;
+  const limits = appliedLimits(levels);
+  const ratio = occupationRatios(occupation, limits);
   return (
     <div>
       <h4 className="text-sm font-semibold mb-1">{t("common.occupation")}</h4>
       <Row label={t("common.used")} count={occupation.count.toLocaleString(currentLocale())} size={formatByteSize(occupation.size)} />
-      {limited && (
+      {isLimited(levels) && (
         <>
           <div className="flex flex-wrap justify-between items-center gap-x-4 py-1">
             <span className="text-sm text-gray-600">{t("common.ratio")}</span>
             <span className="ml-auto text-sm flex flex-wrap justify-end gap-x-4">
-              <span>{t("common.count")} <strong>{formatPercent(ratio.count)}</strong></span>
-              <span>{t("common.size")} <strong>{formatPercent(ratio.size)}</strong></span>
-              <span>{t("common.max")} <strong>{formatPercent(ratio.max)}</strong></span>
+              <span>{t("common.count")} <strong>{formatRatio(ratio.count)}</strong></span>
+              <span>{t("common.size")} <strong>{formatRatio(ratio.size)}</strong></span>
+              <span>{t("common.max")} <strong>{formatRatio(ratio.max)}</strong></span>
             </span>
           </div>
           <div className="mt-1 w-full bg-gray-200 rounded-full h-2">
-            <div className={`h-2 rounded-full ${barClass(ratio.max)}`} style={{ width: `${Math.min(ratio.max * 100, 100)}%` }} />
+            <div className={`h-2 rounded-full ${barClass(ratio.max)}`} style={{ width: barWidth(ratio.max) }} />
           </div>
+          {hasZeroLimit(limits) && <p className="mt-1 text-xs text-gray-500">{t("quota.zeroLimit")}</p>}
         </>
       )}
     </div>

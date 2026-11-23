@@ -2350,7 +2350,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Illimité (aucune limite définie)",
     "noLimit": "Aucune limite",
-    "domainLevel": "Domaine {{domain}}"
+    "domainLevel": "Domaine {{domain}}",
+    "zeroLimit": "La limite est 0 : rien ne peut être stocké."
   },
   "taskTypes": {
     "fullReindexing": "Réindexer toutes les données dans OpenSearch",

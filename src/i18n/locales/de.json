@@ -2348,7 +2348,8 @@
     "fromGlobal": "(global)",
     "noLimitSet": "Unbegrenzt (kein Limit gesetzt)",
     "noLimit": "Kein Limit",
-    "domainLevel": "Domain {{domain}}"
+    "domainLevel": "Domain {{domain}}",
+    "zeroLimit": "Das Limit ist 0: Es kann nichts gespeichert werden."
   },
   "taskTypes": {
     "fullReindexing": "Alle Daten in OpenSearch neu indizieren",
