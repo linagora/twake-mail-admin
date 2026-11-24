@@ -15,7 +15,7 @@ import { useCheckUserExists } from "@/hooks/use-check-user-exists";
 import { useDomain } from "@/modules/domain-admin/domain-context";
 import { getRegisteredUsers } from "@/modules/registered-users/api-client";
 import { RegisteredUser } from "@/modules/registered-users/types";
-import { buildOwnerEmailMap, ownerEmail, resourceSourceId, teamCalendarSourceId } from "./calendar-owner";
+import { SharedCalendarSource, buildOwnerEmailMap, ownerEmail, resourceSourceId, sharedCalendarSource, teamCalendarSourceId } from "./calendar-owner";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { Button } from "@/components/ui/button";
@@ -454,8 +454,18 @@ export default function UserCalendars({ username, onCalendarsChanged, defaultOpe
     }
   };
 
-  // The copy of another user's or of a team calendar: the DELETE removes it from this user only
+  // The copy of another user's calendar is unshared on its owner's calendar, which also removes the copy:
+  // a DELETE of the copy would leave the share in place. Without the right to change the share, it is deleted.
+  const shareToRevoke = (calendar: UserCalendar): SharedCalendarSource | null =>
+    permissions.invitees ? sharedCalendarSource(calendar, ownerEmails) : null;
+
+  const revokeShare = (share: SharedCalendarSource) =>
+    updateUserCalendarInvitees(share.owner, share.calendarId, { remove: [{ "dav:href": `mailto:${username}` }] });
+
+  // The copy of a team calendar, or one whose share cannot be revoked: the DELETE removes it from this user only
   const removeSharedMessage = (calendar: UserCalendar, name: string) => {
+    const share = shareToRevoke(calendar);
+    if (share) return t("users.calendars.revokeShareConfirm", { name, user: username, owner: share.owner });
     const domain = domainOf(username);
     if (teamCalendarSourceId(calendar)) {
       return (
@@ -468,7 +478,12 @@ export default function UserCalendars({ username, onCalendarsChanged, defaultOpe
         </p>
       );
     }
-    return t("users.calendars.removeSharedConfirm", { name, user: username, owner: ownerEmail(calendar, ownerEmails) ?? t("users.calendars.theOwner") });
+    const sharedByUser = categorize(calendar) === "delegated" && !resourceSourceId(calendar);
+    return t(sharedByUser ? "users.calendars.removeKeptShareConfirm" : "users.calendars.removeSharedConfirm", {
+      name,
+      user: username,
+      owner: ownerEmail(calendar, ownerEmails) ?? t("users.calendars.theOwner"),
+    });
   };
 
   const handleRemoveShared = async (calendar: UserCalendar) => {
@@ -480,7 +495,8 @@ export default function UserCalendars({ username, onCalendarsChanged, defaultOpe
     });
     if (!confirmed) return;
     try {
-      await deleteUserCalendar(username, calendarId(calendar));
+      const share = shareToRevoke(calendar);
+      await (share ? revokeShare(share) : deleteUserCalendar(username, calendarId(calendar)));
       toast({ title: t("users.calendars.removedShared", { user: username }) });
       onCalendarsChanged?.();
       await refresh();

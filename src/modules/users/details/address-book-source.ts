@@ -23,6 +23,26 @@ export function parseAddressBookSource(source: unknown): AddressBookSource | nul
   return { ownerId: decodeURIComponent(ownerId), addressBookId: decodeURIComponent(addressBookId) };
 }
 
+/** The address book of a user that another user's shared address book is the copy of. */
+export interface SharedAddressBookSource {
+  owner: string;
+  addressBookId: string;
+}
+
+/**
+ * The address book, and its owner's e-mail, an address book shared with the user is the copy of.
+ * Null for a subscription to a public address book, or when the owner's e-mail is unknown.
+ */
+export function sharedAddressBookSource(
+  addressBook: { "openpaas:source"?: unknown; "openpaas:subscription-type"?: string | null },
+  registeredUsers: RegisteredUser[] | null | undefined,
+): SharedAddressBookSource | null {
+  if (addressBook["openpaas:subscription-type"] !== "delegation") return null;
+  const source = parseAddressBookSource(addressBook["openpaas:source"]);
+  const owner = ownerEmail(source, registeredUsers);
+  return source && owner ? { owner, addressBookId: source.addressBookId } : null;
+}
+
 export function ownerEmail(
   source: AddressBookSource | null,
   registeredUsers: RegisteredUser[] | null | undefined,

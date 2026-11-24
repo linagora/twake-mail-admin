@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildOwnerEmailMap, ownerEmail, resourceSourceId, teamCalendarSourceId } from "./calendar-owner";
+import { buildOwnerEmailMap, ownerEmail, resourceSourceId, sharedCalendarSource, teamCalendarSourceId } from "./calendar-owner";
 import { UserCalendar } from "../types";
 
 const delegated = {
@@ -32,6 +32,27 @@ describe("calendar owner", () => {
 
   it("has no owner for a calendar of the user", () => {
     expect(ownerEmail({ "dav:name": "Own" } as UserCalendar, { "alice-id": "alice@example.com" })).toBeNull();
+  });
+});
+
+describe("calendars shared by a user", () => {
+  const emails = { "alice-id": "alice@example.com" };
+
+  it("tells the owner and the calendar a delegated copy comes from", () => {
+    const copy = { ...delegated, "calendarserver:delegatedsource": "/calendars/alice-id/work.json" } as UserCalendar;
+
+    expect(sharedCalendarSource(copy, emails)).toEqual({ owner: "alice@example.com", calendarId: "work" });
+  });
+
+  it("has no shared source for a team or resource calendar, an unknown owner or an own calendar", () => {
+    const team = {
+      "calendarserver:delegatedsource": "/calendars/team1/team1.json",
+      invite: [{ href: "mailto:team1@open-paas.org", principal: "principals/team-calendars/team1", access: 2 }],
+    } as unknown as UserCalendar;
+
+    expect(sharedCalendarSource(team, { team1: "team1@open-paas.org" })).toBeNull();
+    expect(sharedCalendarSource(delegated, {})).toBeNull();
+    expect(sharedCalendarSource({ "dav:name": "Own" } as UserCalendar, emails)).toBeNull();
   });
 });
 

@@ -62,6 +62,28 @@ export function resourceSourceId(calendar: UserCalendar): string | null {
   return delegatedSourceId(calendar, "principals/resources/");
 }
 
+/** The calendar of a user that another user's delegated calendar is the copy of. */
+export interface SharedCalendarSource {
+  owner: string;
+  calendarId: string;
+}
+
+/**
+ * The calendar of a user, and its owner's e-mail, a delegated calendar is the copy of: its
+ * delegated source is /calendars/{ownerId}/{calendarId}.json. Null for a team or resource calendar,
+ * or when the owner's e-mail is unknown.
+ */
+export function sharedCalendarSource(
+  calendar: UserCalendar,
+  ownerEmails: Record<string, string>,
+): SharedCalendarSource | null {
+  const sourceHref = calendar["calendarserver:delegatedsource"];
+  if (!sourceHref || teamCalendarSourceId(calendar) || resourceSourceId(calendar)) return null;
+  const sourceCalendarId = sourceHref.split("/").filter(Boolean)[2]?.replace(/\.json$/, "");
+  const owner = ownerEmail(calendar, ownerEmails);
+  return owner && sourceCalendarId ? { owner, calendarId: sourceCalendarId } : null;
+}
+
 export function ownerEmail(calendar: UserCalendar, ownerEmails: Record<string, string>): string | null {
   const sourceHref =
     calendar["calendarserver:delegatedsource"] ?? calendar["calendarserver:source"]?._links?.self?.href;

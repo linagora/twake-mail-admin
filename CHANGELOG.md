@@ -64,6 +64,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Fixed
 
 - A task that ended meanwhile is no longer reported as cancelled.
+- Removing a calendar or an address book shared by another user from a user revokes the share: the owner's row no longer counts that user (#751).
 - Adding a regular expression mapping on an existing account is refused like an address mapping: its mail would be rewritten (#674).
 - Creating a mailbox that already exists says so instead of "created" (#455).
 - Fractional message counts in quota limits are refused (#454).
