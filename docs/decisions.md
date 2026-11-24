@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-24, [UX] Booking link: "Remove all rules" only on a link stored with rules
+
+- Decision: the Edit booking link dialog offers "Remove all rules" only when the link had availability rules when the dialog opened; a link without rules shows only "Add rule", like the Create dialog. The button stays once its rules are removed one by one in the editor, since an empty rule list keeps the stored rules and only "Remove all rules" sends `availabilityRules: null`.
+- Decided by: chibenwa, [issue #752](https://github.com/linagora/twake-mail-admin/issues/752)
+- Why: the operator must not be told that rules will be deleted when there are none.
+- Scope: desktop and mobile, user detail page, Booking Links section, Edit dialog.
