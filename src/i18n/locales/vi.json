@@ -1594,7 +1594,8 @@
       },
       "processor": {
         "label": "Bộ xử lý đích",
-        "help": "Tên một bộ xử lý được cấu hình trong mailet container của máy chủ (mailetcontainer.xml), ví dụ root, transport, error, local-delivery hoặc relay. Để trống, mỗi thư trở về trạng thái đã lưu của chính nó."
+        "help": "Tên một bộ xử lý được cấu hình trong mailet container của máy chủ (mailetcontainer.xml), ví dụ root, transport, error, local-delivery hoặc relay. Để trống, mỗi thư trở về trạng thái đã lưu của chính nó.",
+        "placeholder": "Để trống: trạng thái riêng của từng thư"
       },
       "consume": {
         "label": "Xóa khỏi kho sau khi xử lý lại",

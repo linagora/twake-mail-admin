@@ -1613,7 +1613,8 @@
       },
       "processor": {
         "label": "Processeur cible",
-        "help": "Nom d'un processeur configuré dans le conteneur de mailets du serveur (mailetcontainer.xml), par exemple root, transport, error, local-delivery ou relay. Laissé vide, chaque mail retourne dans son propre état enregistré."
+        "help": "Nom d'un processeur configuré dans le conteneur de mailets du serveur (mailetcontainer.xml), par exemple root, transport, error, local-delivery ou relay. Laissé vide, chaque mail retourne dans son propre état enregistré.",
+        "placeholder": "Vide : l'état propre de chaque mail"
       },
       "consume": {
         "label": "Retirer du dépôt une fois retraités",

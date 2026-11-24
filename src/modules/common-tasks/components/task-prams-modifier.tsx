@@ -11,6 +11,7 @@ import {
   paramEmptyKey,
   paramHelpKey,
   paramLabelKey,
+  paramPlaceholderKey,
   paramUnitKey,
   paramValueKey,
 } from "../param-descriptions";
@@ -102,10 +103,14 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
     const description = PARAM_DESCRIPTIONS[param.key];
     return description?.values || value === "true" || value === "false" ? t(paramValueKey(param.key, value)) : value;
   };
-  const defaultPlaceholder = (param: TaskParam) =>
-    typeof param.defaultValue === "string" && param.defaultValue
+  // Shown once the field is cleared: what an empty field does, the prefilled value only
+  // when the server falls back to it
+  const placeholder = (param: TaskParam) => {
+    if (PARAM_DESCRIPTIONS[param.key]?.placeholder) return t(paramPlaceholderKey(param.key));
+    return typeof param.defaultValue === "string" && param.defaultValue
       ? t("commonTasks.params.defaultPlaceholder", { value: param.defaultValue })
       : undefined;
+  };
 
   const suggestionsId = (key: string) => `${idPrefix}-${key}-suggestions`;
 
@@ -126,7 +131,7 @@ const TaskParamsModifier = ({ params, handleChangeParam }: Props) => {
               list={hasSuggestions ? suggestionsId(param.key) : undefined}
               autoComplete={hasSuggestions ? "off" : undefined}
               value={formData[param.key] as string}
-              placeholder={defaultPlaceholder(param)}
+              placeholder={placeholder(param)}
               onChange={e => handleChange(param.key, e.target.value)}
             />
             {hasSuggestions && (
