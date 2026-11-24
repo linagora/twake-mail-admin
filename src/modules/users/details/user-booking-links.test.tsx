@@ -331,6 +331,47 @@ describe("booking link dialog: availability rules", () => {
   });
 });
 
+describe("booking link edit dialog: Remove all rules", () => {
+  const RULE = { type: "weekly", dayOfWeek: "MON", start: "09:00", end: "12:00", timeZone: "UTC" } as const;
+  const openEditOf = async (link: Partial<BookingLink>) => {
+    mocks.api.getUserBookingLinks.mockResolvedValue([
+      { publicId: "abc", calendarUrl: CALENDAR_URL, durationMinutes: 30, active: true, ...link },
+    ]);
+    await openSection();
+    fireEvent.click(screen.getByTitle("users.bookingLinks.editTitle"));
+  };
+
+  it.each([{}, { availabilityRules: [] }])("is not offered on a link without rules (%j)", async (link) => {
+    await openEditOf(link);
+
+    expect(screen.queryByText("users.bookingLinks.clearRules")).toBeNull();
+    expect(screen.getByText("users.bookingLinks.addRule")).toBeTruthy();
+  });
+
+  it("is offered on a link with rules, and clears them on save", async () => {
+    await openEditOf({ availabilityRules: [RULE] });
+
+    fireEvent.click(screen.getByText("users.bookingLinks.clearRules"));
+    expect(screen.getByText("users.bookingLinks.clearRulesWarning")).toBeTruthy();
+    fireEvent.click(saveButton());
+
+    await vi.waitFor(() => expect(mocks.api.updateUserBookingLink).toHaveBeenCalled());
+    expect(mocks.api.updateUserBookingLink).toHaveBeenCalledWith(
+      USERNAME,
+      "abc",
+      expect.objectContaining({ availabilityRules: null }),
+    );
+  });
+
+  it("stays offered once its rules are removed one by one", async () => {
+    await openEditOf({ availabilityRules: [RULE] });
+
+    fireEvent.click(screen.getByTitle("users.bookingLinks.removeRule"));
+
+    expect(screen.getByText("users.bookingLinks.clearRules")).toBeTruthy();
+  });
+});
+
 describe("booking link row: active state", () => {
   it("writes out that a link is inactive", async () => {
     mocks.api.getUserBookingLinks.mockResolvedValue([
