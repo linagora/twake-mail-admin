@@ -37,10 +37,14 @@ export default function UserDelegation({ username }: Props) {
   const [newUser, setNewUser] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const delegatedUserStatus = useCheckUserExists(newUser);
-  const isSelfDelegation = newUser.trim().toLowerCase() === username.toLowerCase();
-  const showUserStatus = !!newUser.trim() && !isSelfDelegation;
+  const typedUser = newUser.trim().toLowerCase();
+  const isSelfDelegation = typedUser === username.toLowerCase();
+  // WebAdmin answers 200 to an existing delegation too; addresses are case insensitive
+  const isAlreadyDelegated = !!typedUser && !!delegated?.some((user) => user.toLowerCase() === typedUser);
+  const isRefused = isSelfDelegation || isAlreadyDelegated;
+  const showUserStatus = !!typedUser && !isRefused;
   const canSubmit =
-    !!newUser.trim() && !isSelfDelegation && delegatedUserStatus !== "checking" && delegatedUserStatus !== "invalid";
+    !!typedUser && !isRefused && delegatedUserStatus !== "checking" && delegatedUserStatus !== "invalid";
 
   const sorted = useMemo(() => {
     if (!delegated) return [];
@@ -136,6 +140,9 @@ export default function UserDelegation({ username }: Props) {
           {/* Reserved height: the status appearing does not resize the modal */}
           <p className="h-4 mt-1 text-xs">
             {isSelfDelegation && <span className="text-red-600">{t("users.delegation.selfDelegation")}</span>}
+            {isAlreadyDelegated && (
+              <span className="text-red-600">{t("users.delegation.alreadyDelegated", { delegatedUser: newUser.trim(), username })}</span>
+            )}
             {showUserStatus && delegatedUserStatus === "checking" && <span className="text-gray-400">{t("common.checking")}</span>}
             {showUserStatus && delegatedUserStatus === "exists" && <span className="text-green-700">{t("common.userExists")}</span>}
             {showUserStatus && delegatedUserStatus === "not_found" && <span className="text-orange-600">{t("common.userNotFound")}</span>}

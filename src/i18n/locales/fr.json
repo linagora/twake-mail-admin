@@ -789,6 +789,7 @@
       "addTooltip": "Ajouter un utilisateur délégué",
       "removeTooltip": "Retirer l'utilisateur délégué",
       "selfDelegation": "Un utilisateur ne peut pas être délégué à lui-même",
+      "alreadyDelegated": "{{delegatedUser}} est déjà un utilisateur délégué de {{username}}",
       "unknownUserTitle": "Utilisateur inconnu",
       "unknownUserConfirm": "« {{delegatedUser}} » n'existe pas et ne pourra pas se connecter. L'ajouter quand même comme utilisateur délégué ?",
       "fieldLabel": "Utilisateur délégué"
