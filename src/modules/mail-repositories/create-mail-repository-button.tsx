@@ -24,6 +24,8 @@ const missingFields = (values: Record<Field, string>): Field[] =>
   (Object.keys(values) as Field[]).filter((field) => values[field].trim() === "");
 
 interface Props {
+  // The repositories the list already shows: WebAdmin answers 204 to an existing path too
+  existingRepositories: readonly string[];
   // Called once the repository is created, so the list can be re-read.
   onCreated: () => void;
 }
@@ -34,12 +36,13 @@ interface Props {
  * a refusal is shown in the dialog, where its text can be selected: the dialog keeps the focus
  * inside it, so a toast over it could not be.
  */
-export default function CreateMailRepositoryButton({ onCreated }: Props) {
+export default function CreateMailRepositoryButton({ existingRepositories, onCreated }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState<Record<Field, string>>({ path: "", protocol: DEFAULT_PROTOCOL });
   const [missing, setMissing] = useState<Field[]>([]);
+  const [existingPath, setExistingPath] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<unknown>(null);
 
@@ -47,12 +50,14 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
     setOpen(false);
     setValues({ path: "", protocol: DEFAULT_PROTOCOL });
     setMissing([]);
+    setExistingPath(null);
     setError(null);
   };
 
   const update = (field: Field, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
     setMissing((current) => current.filter((f) => f !== field));
+    if (field === "path") setExistingPath(null);
     setError(null);
   };
 
@@ -60,10 +65,16 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
     const invalid = missingFields(values);
     setMissing(invalid);
     if (invalid.length > 0) return;
+    const path = values.path.trim();
+    // Repository paths are case sensitive
+    if (existingRepositories.includes(path)) {
+      setExistingPath(path);
+      return;
+    }
     setCreating(true);
     setError(null);
     try {
-      await createMailRepository(encodeURIComponent(values.path.trim()), values.protocol.trim());
+      await createMailRepository(encodeURIComponent(path), values.protocol.trim());
       close();
       toast({ title: t("mailRepositories.created") });
       onCreated();
@@ -74,9 +85,15 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
     }
   };
 
+  const fieldErrorOf = (field: Field): string | null => {
+    if (missing.includes(field)) return t(REQUIRED_KEYS[field]);
+    if (field === "path" && existingPath !== null) return t("mailRepositories.alreadyExists", { path: existingPath });
+    return null;
+  };
+
   const renderField = (field: Field, label: string, options: { placeholder?: string; hint?: string; list?: string } = {}) => {
     const { placeholder, hint, list } = options;
-    const isMissing = missing.includes(field);
+    const fieldError = fieldErrorOf(field);
     const id = `mail-repository-${field}`;
     const hintId = `${id}-hint`;
     return (
@@ -86,17 +103,17 @@ export default function CreateMailRepositoryButton({ onCreated }: Props) {
         </label>
         <input
           id={id}
-          className={`${INPUT_CLASS} ${isMissing ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
+          className={`${INPUT_CLASS} ${fieldError ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
           placeholder={placeholder}
           value={values[field]}
           list={list}
           aria-required
-          aria-invalid={isMissing}
+          aria-invalid={fieldError !== null}
           aria-describedby={hint ? hintId : undefined}
           onChange={(e) => update(field, e.target.value)}
         />
         {hint && <p id={hintId} className="text-xs text-muted-foreground">{hint}</p>}
-        {isMissing && <p className="text-xs text-red-600">{t(REQUIRED_KEYS[field])}</p>}
+        {fieldError && <p className="text-xs text-red-600">{fieldError}</p>}
       </div>
     );
   };

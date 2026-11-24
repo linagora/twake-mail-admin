@@ -1970,6 +1970,7 @@
     "clearAllOf": "Eliminar todos los correos de «{{repository}}»",
     "createTitle": "Crear repositorio de correo",
     "pathRequired": "La ruta del repositorio es obligatoria",
+    "alreadyExists": "Ya existe un repositorio {{path}}.",
     "protocolRequired": "El protocolo es obligatorio",
     "createError": "No se pudo crear el repositorio de correo",
     "created": "Repositorio de correo creado correctamente",

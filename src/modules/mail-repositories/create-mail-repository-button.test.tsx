@@ -14,7 +14,7 @@ import CreateMailRepositoryButton from "./create-mail-repository-button";
 const onCreated = vi.fn();
 
 const openDialog = () => {
-  render(<CreateMailRepositoryButton onCreated={onCreated} />);
+  render(<CreateMailRepositoryButton existingRepositories={["var/mail/error"]} onCreated={onCreated} />);
   fireEvent.click(screen.getByText("mailRepositories.newRepository"));
 };
 
@@ -97,6 +97,37 @@ describe("create mail repository dialog", () => {
     fireEvent.change(pathInput(), { target: { value: "var/mail/x" } });
 
     expect(screen.queryByText("mailRepositories.pathRequired")).toBeNull();
+  });
+
+  it("refuses the path of an existing repository, without calling WebAdmin", () => {
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: " var/mail/error " } });
+    confirm();
+
+    expect(screen.getByText("mailRepositories.alreadyExists")).not.toBeNull();
+    expect(pathInput().getAttribute("aria-invalid")).toBe("true");
+    expect(screen.getByText("mailRepositories.createTitle")).not.toBeNull();
+    expect(api.createMailRepository).not.toHaveBeenCalled();
+    expect(toast).not.toHaveBeenCalled();
+  });
+
+  it("clears the existing repository refusal once the path is edited", () => {
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/error" } });
+    confirm();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/error2" } });
+
+    expect(screen.queryByText("mailRepositories.alreadyExists")).toBeNull();
+    expect(pathInput().getAttribute("aria-invalid")).toBe("false");
+  });
+
+  it("creates a path differing from an existing one only by its case", async () => {
+    api.createMailRepository.mockResolvedValue(undefined);
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/ERROR" } });
+    confirm();
+
+    await waitFor(() => expect(onCreated).toHaveBeenCalled());
   });
 
   it("creates the repository with the default protocol and closes", async () => {
