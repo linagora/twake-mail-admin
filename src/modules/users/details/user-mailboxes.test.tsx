@@ -81,6 +81,26 @@ describe("user mailboxes: create a mailbox", () => {
     expect((await screen.findByRole("alert")).textContent).toContain("users.mailboxes.alreadyExists");
     expect(mocks.api.createUserMailbox).not.toHaveBeenCalled();
   });
+
+  it.each([".", ".."])("refuses %s, a URL dot segment, without sending it", async (name) => {
+    renderMailboxes();
+    fireEvent.click(screen.getByTitle("users.mailboxes.createTooltip"));
+    fireEvent.change(await screen.findByLabelText("users.mailboxes.nameLabel"), { target: { value: name } });
+    fireEvent.click(screen.getByRole("button", { name: "common.create" }));
+
+    expect((await screen.findByRole("alert")).textContent).toBe("users.mailboxes.invalidName");
+    expect(mocks.api.createUserMailbox).not.toHaveBeenCalled();
+  });
+
+  it("refuses a name with a part starting with the namespace prefix, without sending it", async () => {
+    renderMailboxes();
+    fireEvent.click(screen.getByTitle("users.mailboxes.createTooltip"));
+    fireEvent.change(await screen.findByLabelText("users.mailboxes.nameLabel"), { target: { value: "INBOX.#work" } });
+    fireEvent.click(screen.getByRole("button", { name: "common.create" }));
+
+    expect((await screen.findByRole("alert")).textContent).toBe("users.mailboxes.namespacePrefixName");
+    expect(mocks.api.createUserMailbox).not.toHaveBeenCalled();
+  });
 });
 
 describe("user mailboxes: message search link", () => {

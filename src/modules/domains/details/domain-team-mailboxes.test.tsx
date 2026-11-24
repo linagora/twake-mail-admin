@@ -83,4 +83,20 @@ describe("domain team mailboxes: add", () => {
     expect(mocks.api.createTeamMailbox).not.toHaveBeenCalled();
     expect(screen.getByRole("dialog")).not.toBeNull();
   });
+
+  it.each([".", ".."])("refuses %s, a URL dot segment, without sending it", async (name) => {
+    render(
+      <MemoryRouter>
+        <DomainTeamMailboxes domain="example.com" />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByTitle("domains.teamMailboxes.addTooltip"));
+    const dialog = screen.getByRole("dialog");
+    fireEvent.change(within(dialog).getByLabelText("domains.teamMailboxes.nameLabel"), { target: { value: name } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "common.add" }));
+
+    expect((await within(dialog).findByRole("alert")).textContent).toBe("domains.teamMailboxes.dotName");
+    expect(mocks.api.createTeamMailbox).not.toHaveBeenCalled();
+  });
 });

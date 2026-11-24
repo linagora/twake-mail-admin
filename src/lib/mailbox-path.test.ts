@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { folderNameProblem, isTeamMailboxSystemFolder, parseMailboxPath } from "./mailbox-path";
+import { folderNameProblem, isDotSegment, isTeamMailboxSystemFolder, parseMailboxPath } from "./mailbox-path";
 
 describe("mailbox path", () => {
   it("tells the owner and the mailbox of a private path", () => {
@@ -27,9 +27,27 @@ describe("folder name", () => {
     expect(folderNameProblem("a..b")).toBe("emptyPart");
   });
 
+  it("refuses the URL dot segments", () => {
+    expect(folderNameProblem(".")).toBe("emptyPart");
+    expect(folderNameProblem("..")).toBe("emptyPart");
+  });
+
   it("refuses a name with a hierarchy part starting with the namespace prefix", () => {
     expect(folderNameProblem("#user")).toBe("namespacePrefix");
     expect(folderNameProblem("INBOX.#work")).toBe("namespacePrefix");
+  });
+});
+
+describe("dot segment", () => {
+  it("tells the names a URL resolves away", () => {
+    expect(isDotSegment(".")).toBe(true);
+    expect(isDotSegment("..")).toBe(true);
+  });
+
+  it("does not take a name holding dots for one", () => {
+    expect(isDotSegment("...")).toBe(false);
+    expect(isDotSegment("a.b")).toBe(false);
+    expect(isDotSegment("../x")).toBe(false);
   });
 });
 
