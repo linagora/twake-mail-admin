@@ -1605,7 +1605,8 @@
       },
       "processor": {
         "label": "Processore di destinazione",
-        "help": "Nome di un processore configurato nel contenitore di mailet del server (mailetcontainer.xml), ad es. root, transport, error, local-delivery o relay. Se vuoto, ogni messaggio torna al proprio stato salvato."
+        "help": "Nome di un processore configurato nel contenitore di mailet del server (mailetcontainer.xml), ad es. root, transport, error, local-delivery o relay. Se vuoto, ogni messaggio torna al proprio stato salvato.",
+        "placeholder": "Vuoto: lo stato proprio di ogni mail"
       },
       "consume": {
         "label": "Rimuovi dal repository dopo la rielaborazione",

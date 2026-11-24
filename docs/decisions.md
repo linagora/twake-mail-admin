@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-24, [UX] The placeholder of a task text field tells what leaving it empty does
+
+- Decision: in every task parameter form, an empty text field's placeholder describes what the server does without the parameter. "Default: <value>" stays only where the server falls back to the prefilled value (e.g. queue `spool`). The Target processor field shows "Empty: each mail's own state" in every reprocess dialog, even when "Reprocess all" prefills `root`.
+- Decided by: chibenwa, [issue #748](https://github.com/linagora/twake-mail-admin/issues/748).
+- Why: since #726 an empty processor is no longer sent as `root`, so "Default: root" on a cleared field announced a behaviour the request does not have.
+- Scope: desktop and mobile, all task dialogs (TaskParamsModifier), Mail and Calendar applications.

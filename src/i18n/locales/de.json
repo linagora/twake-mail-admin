@@ -1604,7 +1604,8 @@
       },
       "processor": {
         "label": "Ziel-Prozessor",
-        "help": "Name eines im Mailet-Container des Servers konfigurierten Prozessors (mailetcontainer.xml), z. B. root, transport, error, local-delivery oder relay. Leer gelassen, kehrt jede Mail in ihren eigenen gespeicherten Zustand zurück."
+        "help": "Name eines im Mailet-Container des Servers konfigurierten Prozessors (mailetcontainer.xml), z. B. root, transport, error, local-delivery oder relay. Leer gelassen, kehrt jede Mail in ihren eigenen gespeicherten Zustand zurück.",
+        "placeholder": "Leer: eigener Status jeder Mail"
       },
       "consume": {
         "label": "Nach der Verarbeitung aus dem Repository entfernen",

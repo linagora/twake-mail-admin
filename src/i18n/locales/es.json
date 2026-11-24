@@ -1605,7 +1605,8 @@
       },
       "processor": {
         "label": "Procesador de destino",
-        "help": "Nombre de un procesador configurado en el contenedor de mailets del servidor (mailetcontainer.xml), p. ej. root, transport, error, local-delivery o relay. Si se deja vacío, cada correo vuelve a su propio estado guardado."
+        "help": "Nombre de un procesador configurado en el contenedor de mailets del servidor (mailetcontainer.xml), p. ej. root, transport, error, local-delivery o relay. Si se deja vacío, cada correo vuelve a su propio estado guardado.",
+        "placeholder": "Vacío: el estado propio de cada correo"
       },
       "consume": {
         "label": "Quitar del repositorio una vez reprocesados",

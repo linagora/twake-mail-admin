@@ -59,6 +59,12 @@ describe("task parameters: field labels", () => {
     expect(screen.getByLabelText("messagesPerSecond (common.optional)").getAttribute("placeholder")).toBe("commonTasks.params.defaultPlaceholder");
   });
 
+  it("tells what an empty processor does rather than its prefilled value", () => {
+    render(<TaskParamsModifier params={[{ key: "processor", type: "input", defaultValue: "root" }]} handleChangeParam={() => {}} />);
+
+    expect(screen.getByLabelText("processor (common.optional)").getAttribute("placeholder")).toBe("commonTasks.params.processor.placeholder");
+  });
+
   it("names the duration unit select", () => {
     render(<TaskParamsModifier params={PARAMS} handleChangeParam={() => {}} />);
 
