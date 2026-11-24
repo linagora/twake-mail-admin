@@ -1875,6 +1875,7 @@
     "occupationCount": "Belegte Anzahl",
     "ratioMax": "Max. Verhältnis",
     "computedLimit": "Berechneter Grenzwert",
+    "teamMailbox": "Team-Postfach",
     "labelled": "{{label}}:",
     "page_one": "Seite {{page}} — {{count}} Ergebnis",
     "page_other": "Seite {{page}} — {{count}} Ergebnisse"

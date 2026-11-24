@@ -1,4 +1,5 @@
 import { FormEvent, useId, useState } from "react";
+import { Link } from "react-router";
 import UserLink from "@/components/custom/user-link";
 import { Search, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -13,6 +14,7 @@ import { formatRatio, occupationRatios } from "./quota-ratio";
 import { toErrorMessage } from "./error-message";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { findTeamMailboxes, NO_TEAM_MAILBOXES, TeamMailboxesByAddress, teamMailboxPath } from "./quota-team-mailboxes";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -68,6 +70,21 @@ function formatCount(count: number | null): string {
   return count.toLocaleString(currentLocale());
 }
 
+// A team mailbox shares the quota report of the users: it links to its own page, where its quota is set
+function QuotaOwnerLink({ address, teamMailboxes }: { address: string; teamMailboxes: TeamMailboxesByAddress }) {
+  const { t } = useTranslation();
+  const teamMailbox = teamMailboxes.get(address.toLowerCase());
+  if (!teamMailbox) return <UserLink address={address} known className="min-w-0 sm:truncate" />;
+  return (
+    <span className="min-w-0 sm:truncate">
+      <Link to={teamMailboxPath(teamMailbox)} className="text-blue-600 hover:underline break-all">{address}</Link>
+      <span className="ml-2 inline-block text-xs rounded px-1.5 py-0.5 bg-blue-50 text-blue-700 whitespace-nowrap">
+        {t("exploreQuota.teamMailbox")}
+      </span>
+    </span>
+  );
+}
+
 interface Props {
   domain?: string;
 }
@@ -111,11 +128,13 @@ export default function ExploreUserQuota({ domain }: Props) {
   const canSearchGlobal = useIsAllowed("GET", "/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}");
   const canSearchDomain = useIsAllowed("GET", "/quota/users?minOccupationRatio={min}&maxOccupationRatio={max}&limit={limit}&offset={offset}&domain={domain}");
   const canSearch = domain ? canSearchDomain : canSearchGlobal;
+  const canListTeamMailboxes = useIsAllowed("GET", "/domains/{domain}/team-mailboxes");
   const [open, setOpen, openContentId] = useSectionOpen("explore-user-quota");
   const [minPercent, setMinPercent] = useState("80");
   const [maxPercent, setMaxPercent] = useState("100");
   const [page, setPage] = useState(1);
   const [results, setResults] = useState<UserQuotaEntry[]>([]);
+  const [teamMailboxes, setTeamMailboxes] = useState<TeamMailboxesByAddress>(NO_TEAM_MAILBOXES);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
@@ -147,6 +166,8 @@ export default function ExploreUserQuota({ domain }: Props) {
       if (domain) params.set("domain", domain);
 
       const data: UserQuotaEntry[] = await apiClient.get(`/quota/users?${params.toString()}`);
+      const found = canListTeamMailboxes ? await findTeamMailboxes(data.map((entry) => entry.username)) : NO_TEAM_MAILBOXES;
+      setTeamMailboxes(found);
       setResults(data);
       setPage(targetPage);
       setSearched(true);
@@ -258,7 +279,7 @@ export default function ExploreUserQuota({ domain }: Props) {
                             className={`grid ${QUOTA_GRID_COLUMNS} gap-x-2 gap-y-1 items-center px-2 py-2 bg-white rounded hover:bg-gray-100 transition text-sm`}
                           >
                             <span className="text-muted-foreground">{globalIndex}.</span>
-                            <UserLink address={entry.username} known className="min-w-0 sm:truncate" />
+                            <QuotaOwnerLink address={entry.username} teamMailboxes={teamMailboxes} />
                             {/* Below sm the header is hidden: the labelled figures stack under the username */}
                             <div className="col-start-2 min-w-0 flex flex-col gap-0.5 text-xs sm:contents">
                               <span className="font-mono sm:text-right">

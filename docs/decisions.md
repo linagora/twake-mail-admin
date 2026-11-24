@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-24, [UX] Explore User Quota tells the team mailboxes from the users
+
+- Decision: in Explore User Quota (Global Quota page and domain page), an address of the report that is a team mailbox of its domain (`GET /domains/{domain}/team-mailboxes`, read once per domain listed on the page) links to its team mailbox page and carries a "Team mailbox" badge; the other addresses link to their user page as before. When the team mailboxes of a domain cannot be read (refused or failed), its addresses stay linked as users. Team mailboxes are kept in the report: WebAdmin lists their quota next to the users'.
+- Decided by: chibenwa, [issue #747](https://github.com/linagora/twake-mail-admin/issues/747); linking rather than leaving them out chosen by agent (PR for #747), to be confirmed by chibenwa.
+- Why: a team mailbox linked as a user opens a page saying the account does not exist, with no way to reach the team mailbox, where its quota is set.
+- Scope: desktop and mobile, Explore User Quota section.

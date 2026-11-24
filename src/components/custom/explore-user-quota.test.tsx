@@ -48,6 +48,15 @@ const webAdminError = (message: string) =>
     data: { statusCode: 400, type: "InvalidArgument", message },
   });
 
+// The quota report, then the team mailboxes of each domain it lists
+const answer = (report: unknown[], teamMailboxes: Record<string, unknown[]> = {}) =>
+  api.get.mockImplementation((url: string) => {
+    const domain = url.match(/^\/domains\/([^/]+)\/team-mailboxes$/)?.[1];
+    if (domain === undefined) return Promise.resolve(report);
+    const mailboxes = teamMailboxes[decodeURIComponent(domain)];
+    return mailboxes ? Promise.resolve(mailboxes) : Promise.reject(new Error("forbidden"));
+  });
+
 beforeEach(() => {
   api.get.mockReset();
 });
@@ -170,7 +179,7 @@ describe("explore user quota: phone layout", () => {
     element.className.split(" ").filter((name) => name.includes("grid-cols-"));
 
   const searchOneUser = async () => {
-    api.get.mockResolvedValue([entry]);
+    answer([entry]);
     renderOpened();
     search("0", "100");
     return screen.findByTestId("explore-quota-row");
@@ -198,4 +207,59 @@ describe("explore user quota: phone layout", () => {
 
       expect(within(row).getByText(`labelled(${label})`).className.split(" ")).toContain("sm:hidden");
     });
+});
+
+describe("explore user quota: team mailboxes", () => {
+  const entryOf = (username: string) => ({
+    username,
+    detail: {
+      global: { count: null, size: null },
+      domain: { count: null, size: null },
+      user: { count: null, size: null },
+      computed: { count: null, size: null },
+      occupation: { size: 0, count: 0, ratio: { size: 0, count: 0, max: 0 } },
+    },
+  });
+
+  const searchAll = () => {
+    renderOpened();
+    search("0", "100");
+  };
+
+  it("links a team mailbox to its page and tells it from the users", async () => {
+    answer([entryOf("alice@example.com"), entryOf("sales@example.com")], {
+      "example.com": [{ name: "sales", emailAddress: "sales@example.com" }],
+    });
+    searchAll();
+
+    const teamMailbox = await screen.findByRole("link", { name: "sales@example.com" });
+
+    expect(teamMailbox.getAttribute("href")).toBe("/domains/domain/example.com/team-mailbox/sales");
+    expect(within(teamMailbox.parentElement!).getByText("exploreQuota.teamMailbox")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "alice@example.com" }).getAttribute("href")).toBe("/users/user/alice%40example.com");
+    expect(screen.getAllByText("exploreQuota.teamMailbox")).toHaveLength(1);
+  });
+
+  it("reads the team mailboxes of each listed domain once", async () => {
+    answer([entryOf("alice@example.com"), entryOf("bob@example.com"), entryOf("carol@other.org")], {
+      "example.com": [],
+      "other.org": [],
+    });
+    searchAll();
+
+    await screen.findByRole("link", { name: "carol@other.org" });
+
+    const teamMailboxCalls = api.get.mock.calls.map(([url]) => url).filter((url: string) => url.endsWith("/team-mailboxes"));
+    expect(teamMailboxCalls.sort()).toEqual(["/domains/example.com/team-mailboxes", "/domains/other.org/team-mailboxes"]);
+  });
+
+  it("keeps the user links when the team mailboxes of a domain cannot be read", async () => {
+    answer([entryOf("sales@example.com")]);
+    searchAll();
+
+    const link = await screen.findByRole("link", { name: "sales@example.com" });
+
+    expect(link.getAttribute("href")).toBe("/users/user/sales%40example.com");
+    expect(screen.queryByText("common.errorPrefix", { exact: false })).toBeNull();
+  });
 });

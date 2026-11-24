@@ -1877,6 +1877,7 @@
     "occupationCount": "Número ocupado",
     "ratioMax": "Proporción máx.",
     "computedLimit": "Límite calculado",
+    "teamMailbox": "Buzón compartido",
     "labelled": "{{label}}:",
     "page_one": "Página {{page}} — {{count}} resultado",
     "page_other": "Página {{page}} — {{count}} resultados"
