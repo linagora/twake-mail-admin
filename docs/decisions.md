@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-24, [UX] Team mailbox "Add member" tells an existing member apart, and announces a role change as such
+
+- Decision: in the team mailbox Add member modal, a typed address matching a listed member (case-insensitive) replaces the "User exists" hint with "<user> is already a <role> of <mailbox>". With the same role, Add is disabled. With the other role, the button reads "Change role", the hint says the role will change to the picked one, and the toast reads "Role of <user> changed to <role>" instead of "Member added".
+- Decided by: chibenwa, [issue #749](https://github.com/linagora/twake-mail-admin/issues/749); allowing the role change from the modal, announced by its button, hint and toast, rather than refusing it, chosen by agent (PR for #749), to be confirmed by chibenwa.
+- Why: WebAdmin's member PUT is an upsert: it cannot tell an addition from a role change, so a manager was silently demoted while "Member added" was shown.
+- Scope: desktop and mobile, team mailbox detail page, members section.
