@@ -64,6 +64,14 @@ describe("user detail: account state", () => {
     expect(screen.getByRole("link", { name: "users.noAccount.search" }).getAttribute("href")).toBe("/users?q=nobody");
   });
 
+  it("wraps a long address inside the notice rather than widening the page", async () => {
+    head.mockRejectedValue(statusError(404));
+    renderPage("a.very.long.qa.address.without.any.break.at.all@example.com");
+    const sentence = (await screen.findByRole("alert")).querySelector("p");
+    expect(sentence?.className).toContain("[overflow-wrap:anywhere]");
+    expect(sentence?.parentElement?.className).toContain("min-w-0");
+  });
+
   it("shows no section for an address WebAdmin refuses", async () => {
     head.mockRejectedValue(statusError(400));
     renderPage("a@b@c");
