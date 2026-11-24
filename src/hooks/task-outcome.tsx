@@ -46,19 +46,23 @@ export function showTaskOutcome(task: TaskDetailResponse, name?: string) {
 /**
  * Follows a task the operator started until it ends, through WebAdmin's await route, then
  * tells its outcome. Best effort: a refused or failing request stops following it silently.
+ * Resolves with the ended task, or undefined when it could not be followed to its end.
  */
-export async function followTask(taskId: string, name: string | undefined, domain: string | undefined) {
+export async function followTask(
+  taskId: string, name: string | undefined, domain: string | undefined,
+): Promise<TaskDetailResponse | undefined> {
   for (let round = 0; round < MAX_ROUNDS; round++) {
     let task: TaskDetailResponse;
     try {
       task = await awaitTask(taskId, domain);
     } catch (err) {
       if (isRoundTimeout(err)) continue;
-      return;
+      return undefined;
     }
     if (!isRunning(task.status)) {
       showTaskOutcome(task, name);
-      return;
+      return task;
     }
   }
+  return undefined;
 }

@@ -5,6 +5,8 @@ import { MemoryRouter } from "react-router";
 
 const mocks = vi.hoisted(() => ({
   toast: vi.fn(),
+  confirm: vi.fn(),
+  awaitTask: vi.fn(),
   api: {
     getUserMailboxes: vi.fn(),
     createUserMailbox: vi.fn(),
@@ -21,8 +23,9 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
-vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
-vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
+vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => mocks.confirm }));
+vi.mock("@/modules/common-tasks/api-client", () => ({ awaitTask: mocks.awaitTask }));
+vi.mock("@/hooks/use-toast", () => ({ toast: mocks.toast, useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("../api-client", () => mocks.api);
 
 import UserMailboxes from "./user-mailboxes";
@@ -107,5 +110,28 @@ describe("user mailboxes: message search link", () => {
     expect(wrapper.getAttribute("title")).toBeNull();
     fireEvent.click(wrapper);
     expect(screen.getByRole("tooltip").textContent).toBe("users.messageSearch.unavailableTitle");
+  });
+});
+
+describe("user mailboxes: clear the content of a mailbox", () => {
+  const TASK_ID = "58ae73fa-5585-417c-b320-1c19667b4743";
+
+  it("shows the counters of the cleared mailbox again once its task ended", async () => {
+    mocks.api.getUserMailboxes.mockResolvedValue([{ mailboxName: "INBOX", mailboxId: "1" }]);
+    mocks.api.getMailboxMessageCount.mockResolvedValueOnce(1).mockResolvedValue(0);
+    mocks.api.getMailboxUnseenCount.mockResolvedValueOnce(1).mockResolvedValue(0);
+    mocks.api.clearMailboxContent.mockResolvedValue({ taskId: TASK_ID });
+    mocks.confirm.mockResolvedValue(true);
+    mocks.awaitTask.mockResolvedValue({ taskId: TASK_ID, type: "ClearMailboxContentTask", status: "completed" });
+    renderMailboxes();
+    fireEvent.click(screen.getByText("users.mailboxes.title"));
+    await waitFor(() => expect(mocks.api.getMailboxMessageCount).toHaveBeenCalledTimes(1));
+
+    fireEvent.click(await screen.findByTitle("users.mailboxes.clearTooltip"));
+
+    await waitFor(() => expect(mocks.api.clearMailboxContent).toHaveBeenCalledWith(ALICE, "INBOX"));
+    await waitFor(() => expect(mocks.api.getMailboxMessageCount).toHaveBeenCalledTimes(2));
+    expect(mocks.api.getMailboxUnseenCount).toHaveBeenCalledTimes(2);
+    expect(mocks.awaitTask).toHaveBeenCalledWith(TASK_ID, undefined);
   });
 });

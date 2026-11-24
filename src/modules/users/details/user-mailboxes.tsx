@@ -63,6 +63,10 @@ export default function UserMailboxes({ username }: Props) {
   const [page, setPage] = useState(1);
   const [newMailbox, setNewMailbox] = useState("");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  // Bumped once a clear of the mailbox ended: its counters are fetched again
+  const [countsVersions, setCountsVersions] = useState<Record<string, number>>({});
+  const refreshCounts = (mailboxName: string) =>
+    setCountsVersions((versions) => ({ ...versions, [mailboxName]: (versions[mailboxName] ?? 0) + 1 }));
 
   const filtered = useMemo(() => {
     if (!mailboxes) return [];
@@ -136,7 +140,7 @@ export default function UserMailboxes({ username }: Props) {
     if (!confirmed) return;
     try {
       const data = await clearMailboxContent(username, mailboxName);
-      toastTaskCreated(data.taskId, undefined, taskTypeLabel(t, "ClearMailboxContentTask"));
+      toastTaskCreated(data.taskId, undefined, taskTypeLabel(t, "ClearMailboxContentTask"), () => refreshCounts(mailboxName));
     } catch (err) {
       toast({
         title: t("users.mailboxes.errorClearing"),
@@ -270,7 +274,11 @@ export default function UserMailboxes({ username }: Props) {
                       </p>
                     </div>
                     <span className="flex shrink-0 items-center gap-2">
-                      <MailboxCounts username={username} mailboxName={mailbox.mailboxName} />
+                      <MailboxCounts
+                        key={countsVersions[mailbox.mailboxName] ?? 0}
+                        username={username}
+                        mailboxName={mailbox.mailboxName}
+                      />
                       {canClear && (
                         <button
                           onClick={() => handleClearMailbox(mailbox.mailboxName)}
