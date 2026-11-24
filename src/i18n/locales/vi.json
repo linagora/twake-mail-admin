@@ -779,6 +779,7 @@
       "addTooltip": "Thêm người dùng được ủy quyền",
       "removeTooltip": "Xóa người dùng được ủy quyền",
       "selfDelegation": "Không thể ủy quyền người dùng cho chính họ",
+      "alreadyDelegated": "{{delegatedUser}} đã là người dùng được ủy quyền của {{username}}",
       "unknownUserTitle": "Người dùng không xác định",
       "unknownUserConfirm": "\"{{delegatedUser}}\" không tồn tại và sẽ không thể đăng nhập. Vẫn thêm làm người dùng được ủy quyền?",
       "fieldLabel": "Người dùng được ủy quyền"

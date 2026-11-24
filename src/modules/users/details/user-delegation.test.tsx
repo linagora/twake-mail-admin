@@ -24,6 +24,7 @@ vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => mocks.confirm }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: mocks.userStatus }));
 vi.mock("../api-client", () => mocks.api);
+vi.mock("@/components/custom/user-link", () => ({ default: ({ address }: { address: string }) => <span>{address}</span> }));
 
 import UserDelegation from "./user-delegation";
 
@@ -77,6 +78,19 @@ describe("user delegation: add a delegated user", () => {
     await typeDelegatedUser(" BOB@example.com ", "exists");
 
     expect(screen.getByText("users.delegation.selfDelegation")).toBeTruthy();
+    expect(addButton().disabled).toBe(true);
+    fireEvent.submit(field().closest("form")!);
+    expect(mocks.api.addDelegatedUser).not.toHaveBeenCalled();
+  });
+
+  it("refuses a user already delegated, whatever the case", async () => {
+    mocks.api.getDelegatedUsers.mockResolvedValue([ALICE]);
+    await typeDelegatedUser(" Alice@Example.com ", "exists");
+
+    expect(
+      await screen.findByText(`users.delegation.alreadyDelegated ${JSON.stringify({ delegatedUser: "Alice@Example.com", username: BOB })}`),
+    ).toBeTruthy();
+    expect(screen.queryByText("common.userExists")).toBeNull();
     expect(addButton().disabled).toBe(true);
     fireEvent.submit(field().closest("form")!);
     expect(mocks.api.addDelegatedUser).not.toHaveBeenCalled();

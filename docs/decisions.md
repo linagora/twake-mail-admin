@@ -31,3 +31,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: Benoit Tellier, after the twake-qa security review of twake-calendar-side-service (SEV-1, 2026-11-23); the pipeline of twake-contacts-frontend is the model, the commit-bound "Build this please <sha>" comment comes from this repository (#697, #699).
 - Why: an unapproved fork used to run its code here and only lose the credentials for the rest of its build, but the agent is persistent and shared: a process it leaves behind can read the credentials of a later build, such as the next main delivery. Comments and reviews are now read on every page (100 per page at most).
 - Scope: `Jenkinsfile`. An unapproved fork gets no CI feedback anymore, the authorization failure excepted.
+
+## 2026-11-24, [UX] "Add delegated user" refuses a user already delegated
+
+- Decision: in the "Add delegated user" modal of a user, an address already in the user's delegated users (case insensitive, surrounding spaces ignored) shows "<delegated user> is already a delegated user of <user>" in red in place of the user existence hint, and disables Add, as self delegation does. Nothing is sent.
+- Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
+- Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
+- Scope: desktop and mobile, user detail page, Delegated Users section.
