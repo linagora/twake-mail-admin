@@ -868,7 +868,8 @@ export default function UserBookingLinks({ username, calendarsVersion }: Props) 
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">{t("users.bookingLinks.availabilityRules")}</label>
-                  {!editClearRules && (
+                  {/* Only a link stored with rules has rules to remove: removing them one by one keeps them stored */}
+                  {!editClearRules && (editLink.availabilityRules?.length ?? 0) > 0 && (
                     <Button
                       type="button"
                       variant="outline"
