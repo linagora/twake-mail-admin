@@ -25,7 +25,8 @@ import { PaginationControls } from "@/components/custom/pagination-controls";
 import { currentLocale } from "@/i18n/locale";
 import { formatByteSize } from "@/i18n/format-size";
 import { EXTENDED_PAGE_LIMIT } from "./page-limits";
-import { hasActiveFilter, lastPageAction, pagingLabel, repositoryPaging } from "./repository-paging";
+import { hasActiveFilter, lastPageAction, pagingLabel, repositoryPaging, sizeParam } from "./repository-paging";
+import { useRepositorySize } from "./use-repository-size";
 import Header from "@/components/custom/header";
 import { useBreadcrumbs } from "@/hooks/use-breadcrumbs";
 import EmptyState from "@/components/custom/empty-state";
@@ -93,7 +94,7 @@ export default function MailRepositoryExtended() {
   const canPatchMail = useIsAllowed("PATCH", "/mailRepositories/{encodedPath}/mails/{mailKey}");
   const canDeleteMail = useIsAllowed("DELETE", "/mailRepositories/{encodedPath}/mails/{mailKey}");
 
-  const repoSize = Number(searchParams.get("size")) || 0;
+  const repoSize = useRepositorySize(id!);
   const page = Number(searchParams.get("page")) || 1;
   const offset = (page - 1) * PAGE_LIMIT;
 
@@ -212,7 +213,7 @@ export default function MailRepositoryExtended() {
   });
 
   const buildParams = (overrides: Record<string, string> = {}): Record<string, string> => {
-    const params: Record<string, string> = { page: page.toString(), size: repoSize.toString(), ...overrides };
+    const params: Record<string, string> = { page: page.toString(), ...sizeParam(repoSize), ...overrides };
     if (activeFilters.sender) params.sender = activeFilters.sender;
     if (activeFilters.recipient) params.recipient = activeFilters.recipient;
     if (activeFilters.updatedBefore) params.updatedBefore = activeFilters.updatedBefore;
@@ -228,7 +229,7 @@ export default function MailRepositoryExtended() {
   };
 
   const handleApplyFilters = (newFilters: MailFilters) => {
-    const params: Record<string, string> = { page: "1", size: repoSize.toString() };
+    const params: Record<string, string> = { page: "1", ...sizeParam(repoSize) };
     if (newFilters.sender) params.sender = newFilters.sender;
     if (newFilters.recipient) params.recipient = newFilters.recipient;
     if (newFilters.updatedBefore) params.updatedBefore = newFilters.updatedBefore;
@@ -489,7 +490,7 @@ export default function MailRepositoryExtended() {
       )}
 
       {/* Pagination */}
-      {(filtered || repoSize > 0) && (
+      {(filtered || (repoSize ?? mailKeys.length) > 0) && (
         <PaginationControls
           onFirst={() => goToPage(1)}
           onPrev={() => goToPage(page - 1)}

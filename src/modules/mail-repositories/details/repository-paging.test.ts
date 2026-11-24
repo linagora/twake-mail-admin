@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { TFunction } from "i18next";
-import { hasActiveFilter, lastPageAction, pagingLabel, repositoryPaging } from "./repository-paging";
+import { hasActiveFilter, lastPageAction, pagingLabel, repositoryPaging, sizeParam } from "./repository-paging";
 
 const t = ((key: string, options?: Record<string, unknown>) =>
   `${key} ${JSON.stringify(options)}`) as unknown as TFunction;
@@ -34,6 +34,17 @@ describe("repository paging", () => {
 
     expect(paging.hasMore).toBe(true);
     expect(pagingLabel(t, 1, paging)).toBe('common.pageOf {"page":1,"count":2}+');
+  });
+
+  it("counts only the listed mails while the repository size is unknown", () => {
+    const paging = repositoryPaging({ page: 1, limit: 2, listed: 2, filtered: false });
+
+    expect(paging).toEqual({ hasMore: true, total: 2 });
+  });
+
+  it("keeps a known size in the URL, and none when unknown", () => {
+    expect(sizeParam(450)).toEqual({ size: "450" });
+    expect(sizeParam(undefined)).toEqual({});
   });
 
   it("offers no last page when the number of pages is unknown", () => {

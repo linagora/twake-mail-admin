@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-24, [Tech] A mail repository page reads the repository size from WebAdmin
+
+- Decision: the default and Extended views of a mail repository read its size with `GET /mailRepositories/{encodedPath}` whatever the way in (repository list, Health Check card, breadcrumb, bookmark, reload). The `size` of the URL is only a hint, used until WebAdmin answers or when it cannot be read; the known size is still written in the URL. With no size known at all, the pages count the listed mails like a filtered listing: Next after a full page, no Last.
+- Decided by: chibenwa, [issue #742](https://github.com/linagora/twake-mail-admin/issues/742); keeping the URL hint as a fallback chosen by agent (PR for #742), to be confirmed by chibenwa.
+- Why: a page opened without `?size=` read "Total: 0" with no pagination, so mails after the first page were unreachable; a size in a bookmarked URL also goes stale.
+- Scope: desktop and mobile, mail repository pages (default and Extended).
