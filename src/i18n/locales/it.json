@@ -1960,6 +1960,7 @@
     "clearAllOf": "Elimina tutte le email di «{{repository}}»",
     "createTitle": "Crea repository di posta",
     "pathRequired": "Il percorso del repository è obbligatorio",
+    "alreadyExists": "Esiste già un repository {{path}}.",
     "protocolRequired": "Il protocollo è obbligatorio",
     "createError": "Impossibile creare il repository di posta",
     "created": "Repository di posta creato correttamente",

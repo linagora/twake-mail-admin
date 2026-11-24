@@ -1960,6 +1960,7 @@
     "clearAllOf": "Vider tous les emails de « {{repository}} »",
     "createTitle": "Créer un dépôt de courrier",
     "pathRequired": "Le chemin du dépôt est obligatoire",
+    "alreadyExists": "Un dépôt {{path}} existe déjà.",
     "protocolRequired": "Le protocole est obligatoire",
     "createError": "Échec de la création du dépôt de mails",
     "created": "Dépôt de courrier créé avec succès",

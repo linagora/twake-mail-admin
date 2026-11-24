@@ -1958,6 +1958,7 @@
     "clearAllOf": "Clear all mails of \"{{repository}}\"",
     "createTitle": "Create Mail Repository",
     "pathRequired": "Repository path is required",
+    "alreadyExists": "A repository {{path}} already exists.",
     "protocolRequired": "Protocol is required",
     "createError": "Failed to create the mail repository",
     "created": "Mail repository created successfully",

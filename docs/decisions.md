@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-24, [UX] "New repository" refuses the path of an existing mail repository
+
+- Decision: the "New repository" dialog of the Mail Repositories page compares the typed path, trimmed, with the repositories the list shows, case sensitively. An existing path is flagged under the path field ("A repository var/mail/error already exists."), the dialog stays open with the typed values and no request is sent. Editing the path clears the refusal.
+- Decided by: Benoit Tellier, [issue #746](https://github.com/linagora/twake-mail-admin/issues/746)
+- Why: WebAdmin's `PUT /mailRepositories/{path}` answers 204 for an existing repository too, so the dialog reported "Mail repository created successfully" while nothing was created. "Create a domain" and "Add team mailbox" already refuse an existing name the same way. Repository paths are case sensitive, so only an exact path is refused.
+- Scope: desktop and mobile, Mail Repositories page, "New repository" dialog.
