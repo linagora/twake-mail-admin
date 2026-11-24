@@ -1896,6 +1896,7 @@
     "occupationCount": "Заполнение по количеству",
     "ratioMax": "Макс. соотношение",
     "computedLimit": "Вычисленный лимит",
+    "teamMailbox": "Командный почтовый ящик",
     "labelled": "{{label}}:",
     "page": "Страница {{page}} — результатов: {{count}}"
   },

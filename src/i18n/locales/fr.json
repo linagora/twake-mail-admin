@@ -1886,6 +1886,7 @@
     "occupationCount": "Occupation (nombre)",
     "ratioMax": "Ratio max",
     "computedLimit": "Limite calculée",
+    "teamMailbox": "Boîte partagée",
     "labelled": "{{label}} :",
     "page_one": "Page {{page}} — {{count}} résultat",
     "page_other": "Page {{page}} — {{count}} résultats"
