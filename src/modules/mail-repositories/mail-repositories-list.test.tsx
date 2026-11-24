@@ -21,7 +21,7 @@ vi.mock("./api-client", () => api);
 vi.mock("./create-mail-repository-button", () => ({ default: () => null }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast }) }));
 // Every route is allowed, so the created task would be followed through a real HTTP await call
-vi.mock("@/hooks/task-outcome", () => ({ followTask: vi.fn() }));
+vi.mock("@/hooks/task-outcome", () => ({ followTask: vi.fn(async () => undefined) }));
 const confirmed = vi.hoisted(() => ({
   message: undefined as ReactNode,
   actionError: undefined as unknown,

@@ -29,8 +29,9 @@ describe("following a started task", () => {
       .mockResolvedValueOnce(task("inProgress"))
       .mockResolvedValueOnce(task("completed"));
 
-    await followTask("58ae73fa-5585-417c-b320-1c19667b4743", "Subscribe to all mailboxes", undefined);
+    const ended = await followTask("58ae73fa-5585-417c-b320-1c19667b4743", "Subscribe to all mailboxes", undefined);
 
+    expect(ended).toMatchObject({ status: "completed" });
     expect(api.awaitTask).toHaveBeenCalledTimes(3);
     expect(toast).toHaveBeenCalledTimes(1);
     expect(toast.mock.calls[0][0]).toMatchObject({ title: "Task completed" });
@@ -45,7 +46,8 @@ describe("following a started task", () => {
   it("stops silently when the task cannot be followed", async () => {
     api.awaitTask.mockRejectedValueOnce(new AxiosError("Forbidden", "ERR_BAD_REQUEST", undefined, undefined,
       { status: 403, statusText: "Forbidden", headers: {}, config: {} as never, data: {} }));
-    await followTask("58ae73fa-5585-417c-b320-1c19667b4743", undefined, undefined);
+    const ended = await followTask("58ae73fa-5585-417c-b320-1c19667b4743", undefined, undefined);
+    expect(ended).toBeUndefined();
     expect(toast).not.toHaveBeenCalled();
   });
 });
