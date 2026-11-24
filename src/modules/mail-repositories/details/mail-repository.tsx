@@ -22,7 +22,8 @@ import { useConfirm } from "@/hooks/use-confirm";
 import ReprocessTaskContent from "../reprocess-task-content";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
 import { BASIC_PAGE_LIMIT, extendedPageOf } from "./page-limits";
-import { hasActiveFilter, lastPageAction, pagingLabel, repositoryPaging } from "./repository-paging";
+import { hasActiveFilter, lastPageAction, pagingLabel, repositoryPaging, sizeParam } from "./repository-paging";
+import { useRepositorySize } from "./use-repository-size";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { useTranslation } from "react-i18next";
 import Header from "@/components/custom/header";
@@ -89,7 +90,7 @@ export default function MailRepositoryDetail() {
   }, []);
 
   const page = Number(searchParams.get("page")) || 1;
-  const size = Number(searchParams.get("size")) || 0;
+  const size = useRepositorySize(id!);
   const limit = BASIC_PAGE_LIMIT;
   const offset = (page - 1) * limit;
 
@@ -138,7 +139,7 @@ export default function MailRepositoryDetail() {
   const paging = repositoryPaging({ page, limit, repositorySize: size, listed: mailKeys?.length ?? 0, filtered });
 
   const buildParams = (overrides: Record<string, string> = {}): Record<string, string> => {
-    const params: Record<string, string> = { page: page.toString(), size: size.toString(), ...overrides };
+    const params: Record<string, string> = { page: page.toString(), ...sizeParam(size), ...overrides };
     if (activeFilters.sender) params.sender = activeFilters.sender;
     if (activeFilters.recipient) params.recipient = activeFilters.recipient;
     if (activeFilters.updatedBefore) params.updatedBefore = activeFilters.updatedBefore;
@@ -155,7 +156,7 @@ export default function MailRepositoryDetail() {
   };
 
   const handleApplyFilters = (newFilters: MailFilters) => {
-    const params: Record<string, string> = { page: "1", size: size.toString() };
+    const params: Record<string, string> = { page: "1", ...sizeParam(size) };
     if (newFilters.sender) params.sender = newFilters.sender;
     if (newFilters.recipient) params.recipient = newFilters.recipient;
     if (newFilters.updatedBefore) params.updatedBefore = newFilters.updatedBefore;
