@@ -245,6 +245,8 @@ export interface UserAddressBook {
   // An address book shared with, or subscribed by, the user is listed as a
   // mirror of its owner's one, and carries a source pointing at it.
   "openpaas:source"?: unknown;
+  // "delegation" for the copy of an address book shared with the user, "public" for a subscription.
+  "openpaas:subscription-type"?: string | null;
   invite?: CalendarInvite[];
   acl?: CalendarAcl[];
 }

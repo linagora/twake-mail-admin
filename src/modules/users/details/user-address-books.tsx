@@ -10,7 +10,7 @@ import { AddressBookShareUpdate, CreateUserAddressBookPayload, GetUserAddressBoo
 import { addressBookKeys } from "./address-book-keys";
 import { ADDRESS_BOOK_RIGHTS, AddressBookRight, SHARE_ACCESS_NO_ACCESS, rightToShareAccess } from "./address-book-share-access";
 import { CurrentSharee, currentSharees, userEmailsById } from "./address-book-sharees";
-import { ownerEmail, parseAddressBookSource } from "./address-book-source";
+import { SharedAddressBookSource, ownerEmail, parseAddressBookSource, sharedAddressBookSource } from "./address-book-source";
 import { CollectionCountBadge, ExportCollectionButton, ImportCollectionButton } from "@/components/custom/dav-collection-actions";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -88,7 +88,14 @@ function isOwned(addressBook: UserAddressBook): boolean {
   return addressBook["openpaas:source"] == null;
 }
 
-const SHARE_PRIVILEGES = ["{DAV:}share", "{DAV:}all"];
+// A share revoked on the owner's address book, or kept when it cannot be: only a subscription has no share
+function removeSharedMessageKey(addressBook: UserAddressBook, share: SharedAddressBookSource | null): string {
+  if (share) return "users.addressBooks.revokeShareConfirm";
+  if (addressBook["openpaas:subscription-type"] === "delegation") return "users.addressBooks.removeKeptShareConfirm";
+  return "users.addressBooks.removeSharedConfirm";
+}
+
+const SHARE_PRIVILEGES =["{DAV:}share", "{DAV:}all"];
 
 // Sharing an address book, or changing its visibility, takes the {DAV:}share
 // privilege: the owner has it, the sharee of a mirror only through an
@@ -371,13 +378,24 @@ export default function UserAddressBooks({ username, defaultOpen = false }: Prop
     }
   };
 
-  // The copy of another user's address book: the DELETE removes it from this user only
+  // The copy of another user's address book is unshared on its owner's address book, which also removes
+  // the copy: a DELETE of the copy would leave the share in place. A subscription, or a share that cannot
+  // be revoked, is deleted from this user only.
+  const shareToRevoke = (addressBook: UserAddressBook): SharedAddressBookSource | null =>
+    permissions.invitees ? sharedAddressBookSource(addressBook, registeredUsers) : null;
+
+  const revokeShare = (share: SharedAddressBookSource) =>
+    updateUserAddressBookInvitees(share.owner, share.addressBookId, {
+      "dav:sharee": [{ "dav:href": `mailto:${username}`, "dav:share-access": SHARE_ACCESS_NO_ACCESS }],
+    });
+
   const handleRemoveShared = async (addressBook: UserAddressBook) => {
-    const owner = ownerEmail(parseAddressBookSource(addressBook["openpaas:source"]), registeredUsers);
+    const share = shareToRevoke(addressBook);
+    const owner = share?.owner ?? ownerEmail(parseAddressBookSource(addressBook["openpaas:source"]), registeredUsers);
     const confirmed = await confirm({
       header: t("users.addressBooks.removeSharedTitle"),
       confirmLabel: t("common.remove"),
-      message: t("users.addressBooks.removeSharedConfirm", {
+      message: t(removeSharedMessageKey(addressBook, share), {
         name: addressBookName(addressBook, t),
         user: username,
         owner: owner ?? t("users.calendars.theOwner"),
@@ -385,7 +403,7 @@ export default function UserAddressBooks({ username, defaultOpen = false }: Prop
     });
     if (!confirmed) return;
     try {
-      await deleteUserAddressBook(username, addressBookId(addressBook));
+      await (share ? revokeShare(share) : deleteUserAddressBook(username, addressBookId(addressBook)));
       toast({ title: t("users.addressBooks.removedShared", { user: username }) });
       await refresh();
     } catch (err) {

@@ -339,6 +339,57 @@ describe("calendars shared with the user: removed, not deleted", () => {
   });
 });
 
+describe("calendars shared with the user by another user: the share is revoked", () => {
+  const CHARLOTTE_ID = "6ad1f971f59875607bf8e999";
+  const renderWithUserShare = async (ownerInvite: { href: string; principal: string } | null) => {
+    mocks.api.getUserCalendars.mockResolvedValue({
+      _embedded: {
+        "dav:calendar": [
+          {
+            _links: { self: { href: `/calendars/${HOME}/copy2.json` } },
+            "dav:name": "QA Shared Cal",
+            "calendarserver:delegatedsource": `/calendars/${CHARLOTTE_ID}/7d906f41.json`,
+            invite: [
+              ...(ownerInvite ? [{ ...ownerInvite, access: 1 }] : []),
+              { href: `mailto:${BOB}`, principal: `principals/users/${HOME}`, access: 3 },
+            ],
+          },
+        ],
+      },
+    });
+    render(<MemoryRouter><UserCalendars username={BOB} /></MemoryRouter>);
+    fireEvent.click(screen.getByText("users.calendars.title"));
+    await screen.findByText("QA Shared Cal");
+    fireEvent.click(screen.getByTitle("users.calendars.removeSharedTitle"));
+    await waitFor(() => expect(mocks.confirm).toHaveBeenCalled());
+    return mocks.confirm.mock.calls[0][0];
+  };
+
+  it("removes the user from the sharees of the owner's calendar rather than deleting the copy", async () => {
+    mocks.confirm.mockResolvedValue(true);
+    mocks.api.updateUserCalendarInvitees.mockResolvedValue(undefined);
+
+    const options = await renderWithUserShare({ href: `mailto:${CHARLOTTE}`, principal: `principals/users/${CHARLOTTE_ID}` });
+
+    expect(options.message).toBe("users.calendars.revokeShareConfirm");
+    await waitFor(() => expect(mocks.api.updateUserCalendarInvitees)
+      .toHaveBeenCalledWith(CHARLOTTE, "7d906f41", { remove: [{ "dav:href": `mailto:${BOB}` }] }));
+    expect(mocks.api.deleteUserCalendar).not.toHaveBeenCalled();
+    expect(mocks.toast).toHaveBeenCalledWith({ title: "users.calendars.removedShared" });
+  });
+
+  it("deletes the copy, saying the share stays, when the owner is unknown", async () => {
+    mocks.confirm.mockResolvedValue(true);
+    mocks.api.deleteUserCalendar.mockResolvedValue(undefined);
+
+    const options = await renderWithUserShare(null);
+
+    expect(options.message).toBe("users.calendars.removeKeptShareConfirm");
+    await waitFor(() => expect(mocks.api.deleteUserCalendar).toHaveBeenCalledWith(BOB, "copy2"));
+    expect(mocks.api.updateUserCalendarInvitees).not.toHaveBeenCalled();
+  });
+});
+
 describe("resource calendars delegated to their administrators", () => {
   const ROOM = "6adf93a15ad990042c0824e1";
 
