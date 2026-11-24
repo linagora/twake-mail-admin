@@ -305,6 +305,7 @@
       "empty": "No extra senders.",
       "addTooltip": "Add extra sender",
       "removeTooltip": "Remove extra sender",
+      "removeNamed": "Remove extra sender \"{{item}}\"",
       "invalidAddress": "Invalid mail address",
       "otherDomainWarning": "This address does not belong to {{domain}}; the server refuses it unless cross-domain sharing is enabled."
     },
@@ -370,7 +371,8 @@
       "allRemoved": "All extra ACL entries removed",
       "errorClearing": "Error clearing ACL entries",
       "empty": "No extra ACL entries.",
-      "removeTooltip": "Remove ACL entry"
+      "removeTooltip": "Remove ACL entry",
+      "removeNamed": "Remove ACL entry of \"{{item}}\""
     },
     "tasks": {
       "title": "Tasks",
@@ -457,6 +459,7 @@
       "errorRemoving": "Error removing admin",
       "empty": "No domain admins.",
       "removeTooltip": "Remove admin",
+      "removeNamed": "Remove admin \"{{item}}\"",
       "addTooltip": "Add admin",
       "roleNote": "Domain admins can manage the domain address book.",
       "searchPlaceholder": "Search administrators..."

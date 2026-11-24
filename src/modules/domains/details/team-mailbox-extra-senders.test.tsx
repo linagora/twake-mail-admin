@@ -173,4 +173,16 @@ describe("team mailbox extra senders: remove a sender", () => {
     expect(screen.getByText("bob@example.com is a team mailbox member")).not.toBeNull();
     expect(screen.getByText("bob@example.com")).not.toBeNull();
   });
+
+  it("names each remove button after the sender of its row, keeping the short tooltip", async () => {
+    mocks.userStatus.mockReturnValue("idle");
+    mocks.api.getTeamMailboxExtraSenders.mockResolvedValue(["bob@example.com", "carol@example.com"]);
+    render(<TeamMailboxExtraSenders domain="example.com" mailbox="sales" />);
+
+    const bob = await screen.findByRole("button", { name: 'domains.extraSenders.removeNamed {"item":"bob@example.com"}' });
+    const carol = screen.getByRole("button", { name: 'domains.extraSenders.removeNamed {"item":"carol@example.com"}' });
+
+    expect(bob.getAttribute("title")).toBe("domains.extraSenders.removeTooltip");
+    expect(carol.getAttribute("title")).toBe("domains.extraSenders.removeTooltip");
+  });
 });

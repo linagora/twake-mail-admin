@@ -305,6 +305,7 @@
       "empty": "Aucun expéditeur supplémentaire.",
       "addTooltip": "Ajouter un expéditeur supplémentaire",
       "removeTooltip": "Retirer l'expéditeur",
+      "removeNamed": "Retirer l'expéditeur « {{item}} »",
       "invalidAddress": "Adresse mail invalide",
       "otherDomainWarning": "Cette adresse n'appartient pas à {{domain}} ; le serveur la refuse sauf si le partage inter-domaines est activé."
     },
@@ -370,7 +371,8 @@
       "allRemoved": "Toutes les ACL supplémentaires supprimées",
       "errorClearing": "Erreur lors de la suppression des ACL",
       "empty": "Aucune ACL supplémentaire.",
-      "removeTooltip": "Supprimer l'ACL"
+      "removeTooltip": "Supprimer l'ACL",
+      "removeNamed": "Supprimer l'ACL de « {{item}} »"
     },
     "tasks": {
       "title": "Tâches",
@@ -457,6 +459,7 @@
       "errorRemoving": "Erreur lors du retrait de l'administrateur",
       "empty": "Aucun administrateur de domaine.",
       "removeTooltip": "Retirer l'administrateur",
+      "removeNamed": "Retirer l'administrateur « {{item}} »",
       "addTooltip": "Ajouter un administrateur",
       "roleNote": "Les administrateurs du domaine peuvent gérer le carnet d'adresses du domaine.",
       "searchPlaceholder": "Rechercher des administrateurs…"

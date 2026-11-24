@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-24, [UX] A row icon button is named after the item it acts on
+
+- Decision: an icon-only button on a list row has an accessible name (`aria-label`) carrying its target, e.g. `Remove ACL entry of "alice@example.com"`, `Remove extra sender "bob@example.com"`, `Remove admin "alice@open-paas.org"`, translated in every locale, while its hover tooltip (`title`) stays short ("Remove ACL entry"). This now covers the team mailbox folder Extra ACL, the team mailbox Extra Senders and the calendar domain admins, as #492 and #658 did for the other lists.
+- Decided by: chibenwa, [issue #745](https://github.com/linagora/twake-mail-admin/issues/745), following #492 and #658.
+- Why: a screen reader or voice-control user otherwise hears the same "Remove ACL entry" on every row and only learns the target from the confirmation dialog.
+- Scope: desktop and mobile, team mailbox folder page, team mailbox page, calendar domain page.

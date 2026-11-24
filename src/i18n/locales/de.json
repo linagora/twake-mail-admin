@@ -305,6 +305,7 @@
       "empty": "Keine zusätzlichen Absender.",
       "addTooltip": "Zusätzlichen Absender hinzufügen",
       "removeTooltip": "Zusätzlichen Absender entfernen",
+      "removeNamed": "Zusätzlichen Absender „{{item}}“ entfernen",
       "invalidAddress": "Ungültige E-Mail-Adresse",
       "otherDomainWarning": "Diese Adresse gehört nicht zu {{domain}}; der Server lehnt sie ab, sofern die domänenübergreifende Freigabe nicht aktiviert ist."
     },
@@ -370,7 +371,8 @@
       "allRemoved": "Alle zusätzlichen ACL-Einträge entfernt",
       "errorClearing": "Fehler beim Löschen der ACL-Einträge",
       "empty": "Keine zusätzlichen ACL-Einträge.",
-      "removeTooltip": "ACL-Eintrag entfernen"
+      "removeTooltip": "ACL-Eintrag entfernen",
+      "removeNamed": "ACL-Eintrag von „{{item}}“ entfernen"
     },
     "tasks": {
       "title": "Aufgaben",
@@ -457,6 +459,7 @@
       "errorRemoving": "Fehler beim Entfernen des Administrators",
       "empty": "Keine Domain-Administratoren.",
       "removeTooltip": "Administrator entfernen",
+      "removeNamed": "Administrator „{{item}}“ entfernen",
       "addTooltip": "Administrator hinzufügen",
       "roleNote": "Domain-Administratoren können das Adressbuch der Domain verwalten.",
       "searchPlaceholder": "Administratoren suchen..."

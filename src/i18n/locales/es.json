@@ -305,6 +305,7 @@
       "empty": "No hay remitentes adicionales.",
       "addTooltip": "Añadir remitente adicional",
       "removeTooltip": "Quitar remitente adicional",
+      "removeNamed": "Quitar el remitente adicional «{{item}}»",
       "invalidAddress": "Dirección de correo no válida",
       "otherDomainWarning": "Esta dirección no pertenece a {{domain}}; el servidor la rechaza salvo que el uso compartido entre dominios esté activado."
     },
@@ -370,7 +371,8 @@
       "allRemoved": "Todas las entradas ACL adicionales quitadas",
       "errorClearing": "Error al borrar las entradas ACL",
       "empty": "No hay entradas ACL adicionales.",
-      "removeTooltip": "Quitar entrada ACL"
+      "removeTooltip": "Quitar entrada ACL",
+      "removeNamed": "Quitar la entrada ACL de «{{item}}»"
     },
     "tasks": {
       "title": "Tareas",
@@ -457,6 +459,7 @@
       "errorRemoving": "Error al quitar el administrador",
       "empty": "No hay administradores del dominio.",
       "removeTooltip": "Quitar administrador",
+      "removeNamed": "Quitar el administrador «{{item}}»",
       "addTooltip": "Añadir administrador",
       "roleNote": "Los administradores del dominio pueden gestionar la libreta de direcciones del dominio.",
       "searchPlaceholder": "Buscar administradores..."
