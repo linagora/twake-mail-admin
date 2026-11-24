@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-24, [UX] Removing a calendar or address book shared by a user revokes the share
+
+- Decision: on a user page, "Remove from this user's calendars / address books" on the copy of another user's calendar or address book removes the user from the sharees of the owner's one (`POST /users/{owner}/calendars/{id}/invitee` with `share.remove`, `POST /users/{owner}/addressbooks/{id}/invitee` with `dav:share-access` 4), which also removes the copy, and the confirmation says the owner stops sharing it. When the owner cannot be resolved or the share cannot be changed, the copy is deleted as before and the confirmation says the share stays and how to revoke it. Team calendars, resource calendars and subscriptions to public address books keep their DELETE and messages.
+- Decided by: chibenwa, [issue #751](https://github.com/linagora/twake-mail-admin/issues/751); revoking from the console, among the options of the issue, chosen by agent (PR for #751), to be confirmed by chibenwa.
+- Why: a DELETE of the sharee's copy left the invite and the ACL of the owner's calendar or address book in place, so the owner's row kept counting the user and the access right itself likely stayed.
+- Scope: desktop and mobile, user detail page, Calendars and Address books sections.
