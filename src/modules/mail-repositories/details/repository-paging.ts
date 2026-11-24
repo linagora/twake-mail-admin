@@ -12,8 +12,8 @@ export interface RepositoryPaging {
 interface PagingInput {
   page: number;
   limit: number;
-  // Size of the whole repository, passed by the repository list
-  repositorySize: number;
+  // Size of the whole repository read from WebAdmin, undefined while unknown (not loaded yet, or not readable)
+  repositorySize?: number;
   // Number of mail keys the current page returned
   listed: number;
   filtered: boolean;
@@ -21,20 +21,25 @@ interface PagingInput {
 
 export const hasActiveFilter = (filters: MailFilters): boolean => Object.values(filters).some(Boolean);
 
-const filteredPaging = ({ limit, listed }: PagingInput): RepositoryPaging => ({
-  // A full page may be followed by more matching mails
+// Without a known count, only the listed mails are counted
+const listedPaging = ({ limit, listed }: PagingInput): RepositoryPaging => ({
+  // A full page may be followed by more mails
   hasMore: listed === limit,
   total: listed,
 });
 
-const unfilteredPaging = ({ page, limit, repositorySize }: PagingInput): RepositoryPaging => ({
+const sizedPaging = ({ page, limit }: PagingInput, repositorySize: number): RepositoryPaging => ({
   hasMore: page * limit < repositorySize,
   total: repositorySize,
   totalPages: Math.max(1, Math.ceil(repositorySize / limit)),
 });
 
 export const repositoryPaging = (input: PagingInput): RepositoryPaging =>
-  input.filtered ? filteredPaging(input) : unfilteredPaging(input);
+  input.filtered || input.repositorySize === undefined ? listedPaging(input) : sizedPaging(input, input.repositorySize);
+
+// The known size is kept in the URL, as a hint for a reload until WebAdmin answers
+export const sizeParam = (repositorySize: number | undefined): Record<string, string> =>
+  repositorySize === undefined ? {} : { size: repositorySize.toString() };
 
 export const pagingLabel = (t: TFunction, page: number, paging: RepositoryPaging): string =>
   paging.totalPages === undefined
