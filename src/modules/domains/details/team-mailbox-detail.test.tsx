@@ -170,6 +170,44 @@ describe("team mailbox members: add a member", () => {
   });
 });
 
+describe("team mailbox members: user already a member", () => {
+  const openWithManager = async (typed: string) => {
+    mocks.api.getTeamMailboxMembers.mockResolvedValue([{ username: "charlotte@example.com", role: "manager" }]);
+    mocks.userStatus.mockReturnValue("exists");
+    render(<TeamMailboxDetail />);
+    await screen.findByText("charlotte@example.com");
+    fireEvent.click(screen.getByTitle("domains.teamMailbox.addMember"));
+    fireEvent.change(input(), { target: { value: typed } });
+  };
+  const hint = () => within(dialog()).queryByText(/domains.teamMailbox.alreadyMember/)?.textContent;
+  const submitButton = (name: string) => within(dialog()).getByRole("button", { name }) as HTMLButtonElement;
+
+  it("tells the member and its role, and disables Add, when the role is unchanged", async () => {
+    await openWithManager("Charlotte@Example.com");
+    fireEvent.change(roleSelect(), { target: { value: "manager" } });
+
+    expect(hint()).toContain("domains.teamMailbox.alreadyMember ");
+    expect(hint()).toContain('"mailbox":"sales@example.com","role":"domains.teamMailbox.manager"');
+    expect(within(dialog()).queryByText("common.userExists")).toBeNull();
+    expect(submitButton("common.add").disabled).toBe(true);
+  });
+
+  it("turns Add into an announced role change when another role is picked", async () => {
+    await openWithManager("charlotte@example.com");
+
+    expect(hint()).toContain("domains.teamMailbox.alreadyMemberRoleChange");
+    expect(hint()).toContain('"newRole":"domains.teamMailbox.member"');
+    fireEvent.click(submitButton("domains.teamMailbox.changeRole"));
+
+    await waitFor(() =>
+      expect(mocks.api.addTeamMailboxMember).toHaveBeenCalledWith("example.com", "sales", "charlotte@example.com", "member")
+    );
+    expect(mocks.toast).toHaveBeenCalledWith({
+      title: `domains.teamMailbox.memberRoleChanged ${JSON.stringify({ username: "charlotte@example.com", role: "domains.teamMailbox.member" })}`,
+    });
+  });
+});
+
 describe("team mailbox members: member of another domain", () => {
   const hint = () => within(dialog()).queryByText(/domains.teamMailbox.otherDomainHint/);
 

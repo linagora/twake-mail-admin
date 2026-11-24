@@ -35,6 +35,10 @@ const isOtherDomain = (username: string, mailboxDomain: string) => {
   return userDomain !== "" && userDomain !== mailboxDomain.toLowerCase();
 };
 
+// WebAdmin's PUT is an upsert: only the loaded members tell an addition from a role change
+const findMember = (members: GetTeamMailboxMembersResponseType, username: string) =>
+  members.find((member) => member.username.toLowerCase() === username.trim().toLowerCase());
+
 // The provider wraps the whole page, so that Expand all / Collapse all also reach the members section
 export default function TeamMailboxDetail() {
   return (
@@ -68,7 +72,10 @@ function TeamMailboxDetailContent() {
   const [newMember, setNewMember] = useState("");
   const [role, setRole] = useState<"member" | "manager">("member");
   const memberStatus = useCheckUserExists(newMember);
-  const canSubmit = !!newMember.trim() && isSubmittableUserStatus(memberStatus);
+  const existingMember = findMember(members ?? [], newMember);
+  const isRoleChange = !!existingMember && existingMember.role !== role;
+  const canSubmit = !!newMember.trim() && isSubmittableUserStatus(memberStatus) && (!existingMember || isRoleChange);
+  const roleLabel = (memberRole: string) => t(`domains.teamMailbox.${memberRole}`);
   const otherDomain = isOtherDomain(newMember, domain!);
   const otherDomainHintId = `${fieldId}-other-domain`;
 
@@ -99,7 +106,11 @@ function TeamMailboxDetailContent() {
       return false;
     }
     await addTeamMailboxMember(domain!, mailbox!, username, role);
-    toast({ title: t("domains.teamMailbox.memberAdded") });
+    toast({
+      title: isRoleChange
+        ? t("domains.teamMailbox.memberRoleChanged", { username, role: roleLabel(role) })
+        : t("domains.teamMailbox.memberAdded"),
+    });
     setNewMember("");
     setRole("member");
     await refresh();
@@ -206,7 +217,7 @@ function TeamMailboxDetailContent() {
           open={showAdd}
           onClose={closeAdd}
           title={t("domains.teamMailbox.addMember")}
-          submitLabel={t("common.add")}
+          submitLabel={isRoleChange ? t("domains.teamMailbox.changeRole") : t("common.add")}
           submitDisabled={!canSubmit}
           onSubmit={handleAdd}
         >
@@ -221,10 +232,20 @@ function TeamMailboxDetailContent() {
               className={FIELD_CLASS}
               aria-describedby={otherDomain ? otherDomainHintId : undefined}
             />
-            {/* Reserved height: the status appearing does not resize the modal */}
-            <p className="h-4 mt-1 text-xs">
+            {/* Reserved height: the status appearing does not resize the modal (a long "already a member" may wrap) */}
+            <p className="min-h-4 mt-1 text-xs">
               {memberStatus === "checking" && <span className="text-gray-400">{t("common.checking")}</span>}
-              {memberStatus === "exists" && <span className="text-green-700">{t("common.userExists")}</span>}
+              {existingMember && (
+                <span className="text-orange-600">
+                  {t(isRoleChange ? "domains.teamMailbox.alreadyMemberRoleChange" : "domains.teamMailbox.alreadyMember", {
+                    username: existingMember.username,
+                    mailbox: `${mailbox}@${domain}`,
+                    role: roleLabel(existingMember.role),
+                    newRole: roleLabel(role),
+                  })}
+                </span>
+              )}
+              {!existingMember && memberStatus === "exists" && <span className="text-green-700">{t("common.userExists")}</span>}
               {memberStatus === "not_found" && <span className="text-orange-600">{t("common.userNotFound")}</span>}
               {memberStatus === "invalid" && <span className="text-red-600">{t("common.invalidUsername")}</span>}
             </p>
