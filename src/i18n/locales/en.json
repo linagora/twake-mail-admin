@@ -1612,7 +1612,8 @@
       },
       "processor": {
         "label": "Target processor",
-        "help": "Name of a processor configured in the server's mailet container (mailetcontainer.xml), e.g. root, transport, error, local-delivery or relay. Left empty, each mail goes back to its own stored state."
+        "help": "Name of a processor configured in the server's mailet container (mailetcontainer.xml), e.g. root, transport, error, local-delivery or relay. Left empty, each mail goes back to its own stored state.",
+        "placeholder": "Empty: each mail's own state"
       },
       "consume": {
         "label": "Remove from the repository once reprocessed",

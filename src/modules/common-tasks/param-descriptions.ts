@@ -14,6 +14,9 @@ export interface ParamDescription {
   values?: boolean;
   // Label of the empty option of a select: what the server does without the parameter.
   empty?: "any" | "all" | "serverDefault";
+  // Placeholder of a text field telling what leaving it empty does, translated under
+  // `placeholder`: wins over the "Default: <prefilled value>" one when the two differ.
+  placeholder?: boolean;
 }
 
 export const PARAM_DESCRIPTIONS: Record<string, ParamDescription> = {
@@ -24,7 +27,7 @@ export const PARAM_DESCRIPTIONS: Record<string, ParamDescription> = {
   contactsPerSecond: { help: true },
   // Mail repositories and dead letters
   queue: { help: true },
-  processor: { help: true },
+  processor: { help: true, placeholder: true },
   consume: { help: true },
   limit: { help: true },
   maxRetries: { help: true, unit: true },
@@ -55,6 +58,7 @@ export const PARAM_DESCRIPTIONS: Record<string, ParamDescription> = {
 
 export const paramLabelKey = (key: string) => `commonTasks.params.${key}.label`;
 export const paramHelpKey = (key: string) => `commonTasks.params.${key}.help`;
+export const paramPlaceholderKey = (key: string) => `commonTasks.params.${key}.placeholder`;
 export const paramUnitKey = (key: string) => `commonTasks.params.${key}.unit`;
 export const paramValueKey = (key: string, value: string) =>
   value === "true" ? "common.yes" : value === "false" ? "common.no" : `commonTasks.params.${key}.values.${value}`;
