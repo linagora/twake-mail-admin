@@ -128,3 +128,17 @@ describe("team mailbox folder extra ACL: add an entry", () => {
     expect(input().value).toBe("ghost@example.com");
   });
 });
+
+describe("team mailbox folder extra ACL: entry rows", () => {
+  it("names each remove button after the user of its row, keeping the short tooltip", async () => {
+    api.getTeamMailboxFolderExtraAcl.mockResolvedValue({ "alice@example.com": "lr", "emma@example.com": "lrw" });
+    render(<TeamMailboxFolderExtraAcl domain="example.com" mailbox="sales" folder="INBOX" />);
+    fireEvent.click(screen.getByText("domains.extraAcl.title"));
+
+    const alice = await screen.findByRole("button", { name: 'domains.extraAcl.removeNamed {"item":"alice@example.com"}' });
+    const emma = screen.getByRole("button", { name: 'domains.extraAcl.removeNamed {"item":"emma@example.com"}' });
+
+    expect(alice.getAttribute("title")).toBe("domains.extraAcl.removeTooltip");
+    expect(emma.getAttribute("title")).toBe("domains.extraAcl.removeTooltip");
+  });
+});

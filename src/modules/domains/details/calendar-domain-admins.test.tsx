@@ -10,6 +10,11 @@ const api = vi.hoisted(() => ({
 }));
 const userCheck = vi.hoisted(() => ({ status: "idle" as UserExistsStatus }));
 
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => (options ? `${key} ${JSON.stringify(options)}` : key),
+  }),
+}));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => true }));
 vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: () => userCheck.status }));
@@ -131,5 +136,18 @@ describe("CalendarDomainAdmins add modal", () => {
 
     expect((await within(dialog).findByRole("alert")).textContent).toContain("Forbidden");
     expect(input).toHaveProperty("value", "nobody@open-paas.org");
+  });
+});
+
+describe("CalendarDomainAdmins admin rows", () => {
+  it("names each remove button after the admin of its row, keeping the short tooltip", async () => {
+    api.getDomainAdmins.mockResolvedValue(["alice@open-paas.org", "bob@open-paas.org"]);
+    render(<CalendarDomainAdmins domain="open-paas.org" defaultOpen />);
+
+    const alice = await screen.findByRole("button", { name: 'domains.calendarAdmins.removeNamed {"item":"alice@open-paas.org"}' });
+    const bob = screen.getByRole("button", { name: 'domains.calendarAdmins.removeNamed {"item":"bob@open-paas.org"}' });
+
+    expect(alice.getAttribute("title")).toBe("domains.calendarAdmins.removeTooltip");
+    expect(bob.getAttribute("title")).toBe("domains.calendarAdmins.removeTooltip");
   });
 });

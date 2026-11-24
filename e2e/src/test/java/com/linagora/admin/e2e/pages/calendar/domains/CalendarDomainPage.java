@@ -155,7 +155,7 @@ public class CalendarDomainPage {
 
     public Locator removeAdminButton(String admin) {
         return adminRows().filter(new Locator.FilterOptions().setHasText(admin)).locator("xpath=..")
-            .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Remove admin"));
+            .getByRole(AriaRole.BUTTON, new Locator.GetByRoleOptions().setName("Remove admin \"" + admin + "\"").setExact(true));
     }
 
     /** Types an address and waits for the existence check to be over. */

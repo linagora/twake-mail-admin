@@ -305,6 +305,7 @@
       "empty": "Không có người gửi bổ sung.",
       "addTooltip": "Thêm người gửi bổ sung",
       "removeTooltip": "Xóa người gửi bổ sung",
+      "removeNamed": "Xóa người gửi bổ sung \"{{item}}\"",
       "invalidAddress": "Địa chỉ email không hợp lệ",
       "otherDomainWarning": "Địa chỉ này không thuộc {{domain}}; máy chủ sẽ từ chối trừ khi bật chia sẻ giữa các tên miền."
     },
@@ -370,7 +371,8 @@
       "allRemoved": "Đã xóa tất cả mục ACL bổ sung",
       "errorClearing": "Lỗi khi xóa các mục ACL",
       "empty": "Không có mục ACL bổ sung.",
-      "removeTooltip": "Xóa mục ACL"
+      "removeTooltip": "Xóa mục ACL",
+      "removeNamed": "Xóa mục ACL của \"{{item}}\""
     },
     "tasks": {
       "title": "Tác vụ",
@@ -457,6 +459,7 @@
       "errorRemoving": "Lỗi khi xóa quản trị viên",
       "empty": "Không có quản trị viên tên miền.",
       "removeTooltip": "Xóa quản trị viên",
+      "removeNamed": "Xóa quản trị viên \"{{item}}\"",
       "addTooltip": "Thêm quản trị viên",
       "roleNote": "Quản trị viên tên miền có thể quản lý sổ địa chỉ tên miền.",
       "searchPlaceholder": "Tìm quản trị viên..."

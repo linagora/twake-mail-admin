@@ -237,6 +237,7 @@ export default function TeamMailboxFolderExtraAcl({ domain, mailbox, folder }: P
                         onClick={() => handleRemove(username)}
                         className="p-2 rounded-md hover:bg-gray-200 shrink-0"
                         title={t("domains.extraAcl.removeTooltip")}
+                        aria-label={t("domains.extraAcl.removeNamed", { item: username })}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>
