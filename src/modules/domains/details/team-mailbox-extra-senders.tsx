@@ -160,6 +160,7 @@ export default function TeamMailboxExtraSenders({ domain, mailbox }: Props) {
                   onClick={() => handleRemove(username)}
                   className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                   title={t("domains.extraSenders.removeTooltip")}
+                  aria-label={t("domains.extraSenders.removeNamed", { item: username })}
                 >
                   <Trash2 className="w-4 h-4 text-red-600" />
                 </button>

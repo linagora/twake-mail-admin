@@ -79,7 +79,7 @@ class TeamMailboxSettingsTest extends MailAdminE2ETest {
         assertThat(teamMailbox.sectionButton("Extra Senders", 1)).isVisible();
         assertThat(extraSenders(webAdmin, domain)).containsExactly(david);
 
-        teamMailbox.rowButton(david, "Remove extra sender").click();
+        teamMailbox.rowButton(david, "Remove extra sender \"" + david + "\"").click();
         assertThat(app.dialog()).containsText("Revoke send-as right for \"" + david + "\"?");
         teamMailbox.confirmWith("Remove");
         app.expectToast("Extra sender removed");

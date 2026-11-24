@@ -141,7 +141,12 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
                     {admin}
                   </h4>
                   {canRemove && (
-                    <button onClick={() => handleRemove(admin)} className="shrink-0 p-2 rounded-md hover:bg-gray-200" title={t("domains.calendarAdmins.removeTooltip")}>
+                    <button
+                      onClick={() => handleRemove(admin)}
+                      className="shrink-0 p-2 rounded-md hover:bg-gray-200"
+                      title={t("domains.calendarAdmins.removeTooltip")}
+                      aria-label={t("domains.calendarAdmins.removeNamed", { item: admin })}
+                    >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   )}

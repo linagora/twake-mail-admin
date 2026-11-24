@@ -83,7 +83,7 @@ class TeamMailboxFolderTest extends MailAdminE2ETest {
         assertThat(folder.row(alice)).containsText("Read");
         assertThat(extraAcl(webAdmin, domain).path(alice).asText()).isEqualTo("lr");
 
-        folder.rowButton(alice, "Remove ACL entry").click();
+        folder.rowButton(alice, "Remove ACL entry of \"" + alice + "\"").click();
         assertThat(app.dialog()).containsText("Remove all rights for \"" + alice + "\" on this folder?");
         folder.confirmWith("Remove");
         app.expectToast("ACL entry removed");

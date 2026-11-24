@@ -309,6 +309,7 @@
       "empty": "Nessun mittente aggiuntivo.",
       "addTooltip": "Aggiungi mittente aggiuntivo",
       "removeTooltip": "Rimuovi mittente aggiuntivo",
+      "removeNamed": "Rimuovi il mittente aggiuntivo «{{item}}»",
       "invalidAddress": "Indirizzo email non valido",
       "otherDomainWarning": "Questo indirizzo non appartiene a {{domain}}; il server lo rifiuta a meno che la condivisione tra domini non sia abilitata."
     },
@@ -374,7 +375,8 @@
       "allRemoved": "Tutte le voci ACL aggiuntive sono state rimosse",
       "errorClearing": "Errore durante la cancellazione delle voci ACL",
       "empty": "Nessuna voce ACL aggiuntiva.",
-      "removeTooltip": "Rimuovi voce ACL"
+      "removeTooltip": "Rimuovi voce ACL",
+      "removeNamed": "Rimuovi la voce ACL di «{{item}}»"
     },
     "tasks": {
       "title": "Attività",
@@ -461,6 +463,7 @@
       "errorRemoving": "Errore durante la rimozione dell'amministratore",
       "empty": "Nessun amministratore del dominio.",
       "removeTooltip": "Rimuovi amministratore",
+      "removeNamed": "Rimuovi l'amministratore «{{item}}»",
       "addTooltip": "Aggiungi amministratore",
       "roleNote": "Gli amministratori del dominio possono gestire la rubrica del dominio.",
       "searchPlaceholder": "Cerca amministratori..."
