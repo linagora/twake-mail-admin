@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-24, [UX] Mailbox names "." and ".." are refused before any request
+
+- Decision: the user "Create mailbox" modal checks the name like the team mailbox "Create folder" modal (every part between dots filled in, so `.` and `..` too; no part starting with `#`) and the "Add team mailbox" modal refuses `.` and `..`; the modal stays open with the typed name and a message, nothing is sent. Names are not escaped (`%2E`) in the URL instead.
+- Decided by: chibenwa, [issue #744](https://github.com/linagora/twake-mail-admin/issues/744); refusing in the modal rather than escaping chosen by agent (PR for #744), to be confirmed by chibenwa.
+- Why: `encodeURIComponent` leaves dots alone, so a `.` or `..` segment is resolved away by the browser and the PUT reaches a parent route (`/users/{user}/`, `/domains/{domain}/`), answering a confusing 404; WebAdmin refuses these names anyway (empty hierarchy part, team mailbox names limited to `[#a-zA-Z0-9-_]`), and Jetty may reject `%2E` segments as ambiguous.
+- Scope: desktop and mobile, user detail Mailboxes section and domain detail Team Mailboxes section.

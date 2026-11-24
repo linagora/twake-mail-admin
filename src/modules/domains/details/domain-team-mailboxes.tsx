@@ -13,6 +13,7 @@ import { useSearchPagination } from "@/hooks/use-search-pagination";
 import { ListSearchPagination } from "@/components/custom/list-search-pagination";
 import { SectionToggle, useSectionOpen } from "@/components/custom/collapsible-section";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
+import { isDotSegment } from "@/lib/mailbox-path";
 
 const searchable = (mb: TeamMailbox) => [mb.name, mb.emailAddress];
 
@@ -51,8 +52,10 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
   if (!canView) return null;
 
   // WebAdmin answers 204 to an existing team mailbox too: the listed ones are told apart here
+  // "." and ".." would be resolved away from the request URL, which would then reach the domain route
   const validateAdd = () => {
     const name = newName.trim();
+    if (isDotSegment(name)) return t("domains.teamMailboxes.dotName");
     return mailboxes?.some((mb) => mb.name === name) ? t("domains.teamMailboxes.alreadyExists", { name }) : null;
   };
 
