@@ -35,8 +35,8 @@ function NoAccount({ username, invalid }: { username: string; invalid: boolean }
   return (
     <div role="alert" className="mt-4 flex gap-2 items-start border-l-4 border-amber-500 bg-amber-50 text-amber-900 p-3 text-sm">
       <TriangleAlert className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
-      <div className="space-y-1">
-        <p>{invalid ? t("users.noAccount.invalid", { username }) : t("users.noAccount.missing", { username })}</p>
+      <div className="min-w-0 space-y-1">
+        <p className="[overflow-wrap:anywhere]">{invalid ? t("users.noAccount.invalid", { username }) : t("users.noAccount.missing", { username })}</p>
         <p className="flex flex-wrap gap-4">
           <Link to={`/users?q=${encodeURIComponent(localPart)}`} className="text-blue-600 hover:underline">{t("users.noAccount.search")}</Link>
           <Link to="/users" className="text-blue-600 hover:underline">{t("users.noAccount.back")}</Link>
