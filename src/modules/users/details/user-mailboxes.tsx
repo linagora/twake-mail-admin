@@ -17,6 +17,7 @@ import { currentLocale } from "@/i18n/locale";
 import { formatMailboxCreationDate } from "./mailbox-creation-date";
 import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
+import { folderNameProblem } from "@/lib/mailbox-path";
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
 import { useFeatureUnavailable } from "@/lib/unavailable-features";
 
@@ -89,8 +90,11 @@ export default function UserMailboxes({ username }: Props) {
 
   // WebAdmin answers 204 to an existing mailbox too: names are case sensitive, except INBOX
   const sameMailbox = (a: string, b: string) => a === b || (a.toUpperCase() === "INBOX" && b.toUpperCase() === "INBOX");
+  // "." and ".." would be resolved away from the request URL: refused here like WebAdmin refuses "a..b"
   const validateCreate = () => {
     const name = newMailbox.trim();
+    const nameProblem = folderNameProblem(name);
+    if (nameProblem) return t(nameProblem === "namespacePrefix" ? "users.mailboxes.namespacePrefixName" : "users.mailboxes.invalidName");
     return mailboxes?.some((m) => sameMailbox(m.mailboxName, name)) ? t("users.mailboxes.alreadyExists", { name }) : null;
   };
 

@@ -27,6 +27,14 @@ export function folderNameProblem(name: string): FolderNameProblem | null {
 }
 
 /**
+ * Whether this name is "." or "..": a URL path dot segment, which the browser resolves away
+ * before sending the request, so that it would reach the parent route instead of naming a mailbox.
+ */
+export function isDotSegment(name: string): boolean {
+  return name === "." || name === "..";
+}
+
+/**
  * The folders provisioned with every team mailbox: WebAdmin refuses to delete them.
  */
 const TEAM_MAILBOX_SYSTEM_FOLDERS: ReadonlySet<string> = new Set(["INBOX", "Sent", "Trash", "Outbox", "Drafts", "Templates"]);
