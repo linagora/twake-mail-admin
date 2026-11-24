@@ -1968,6 +1968,7 @@
     "clearAllOf": "Alle E-Mails von „{{repository}}“ löschen",
     "createTitle": "Mail-Repository erstellen",
     "pathRequired": "Repository-Pfad ist erforderlich",
+    "alreadyExists": "Ein Repository {{path}} existiert bereits.",
     "protocolRequired": "Protokoll ist erforderlich",
     "createError": "Mail-Repository konnte nicht erstellt werden",
     "created": "Mail-Repository erfolgreich erstellt",

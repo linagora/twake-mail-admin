@@ -82,6 +82,11 @@ export default function MailRepositoriesList() {
     }
   }, [mailRepositoriesResult, fetchRepositoryInfo]);
 
+  const existingRepositories = useMemo(
+    () => (mailRepositoriesResult ?? []).map((r) => r.repository),
+    [mailRepositoriesResult]
+  );
+
   const shown = useMemo(() => {
     const needle = search.trim().toLowerCase();
     return repositoriesWithSize
@@ -191,7 +196,7 @@ export default function MailRepositoriesList() {
     <>
       <div>
         <ListToolbar search={search} onSearch={setSearch} placeholder={t("mailRepositories.filterPlaceholder")}>
-          {canCreate && <CreateMailRepositoryButton onCreated={refresh} />}
+          {canCreate && <CreateMailRepositoryButton existingRepositories={existingRepositories} onCreated={refresh} />}
         </ListToolbar>
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
