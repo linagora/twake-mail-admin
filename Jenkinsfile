@@ -1,16 +1,14 @@
-import groovy.transform.Field
-
 // Threat model. Jenkins loads the Jenkinsfile from the trusted revision - the
 // target branch - so a pull request can never change the pipeline definition.
 // But every stage from Install on runs the contributor's code: npm lifecycle
 // scripts, the lint/test/build configs, e2e/pre-build.sh, the Maven plugins,
 // docker builds of the pull request's Dockerfiles. That code shares this agent,
-// its tool directories and its docker daemon with whatever runs after it.
+// its tool directories and its docker daemon with whatever runs after it,
+// including the credentials of a later build.
 //
-// Hence the one rule that matters: once code from an untrusted change request
-// has run, this build never binds a credential again. The trust of the change
-// request is decided by the first stage, before anything from it has run, and
-// every later credential binding checks credentialsAllowed().
+// Hence the rule: a fork pull request runs nothing of its own before a linagora
+// member vouched for its head commit (stage Authorize fork, see authorizeFork),
+// and credentials are bound only around the steps that use them.
 //
 // Files that the pipeline itself executes, or that decide what it executes.
 // Refusing changes to them keeps the failure report script and the profile
@@ -27,151 +25,19 @@ def isTrustedContributor() {
     if (!env.CHANGE_FORK) {
         return true
     }
-
-    def forkOwner = env.CHANGE_FORK.split('/')[0]
-    // The GitHub plugin sets CHANGE_FORK even for pull requests from this
-    // repository itself, and an organisation is not a member of itself, so a
-    // same-repo branch would fail the membership check below. Such a branch
-    // can already be pushed only by someone with write access: trusted.
+    // CHANGE_FORK is 'owner', or 'owner/repository' for a fork renamed on GitHub
+    def forkOwner = env.CHANGE_FORK.tokenize('/')[0]
+    // The GitHub plugin may set CHANGE_FORK for pull requests from this
+    // repository itself, and an organisation is not a member of itself. Such a
+    // branch can already be pushed only by someone with write access: trusted.
     if (forkOwner == 'linagora') {
         return true
     }
-    def status = null
-    withCredentials([usernamePassword(credentialsId: 'github',
-            usernameVariable: 'GITHUB_CREDENTIAL_USR', passwordVariable: 'GITHUB_CREDENTIAL_PSW')]) {
-        status = sh(
-            script: """curl -s -o /dev/null -w "%{http_code}" \
-              -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
-              "https://api.github.com/orgs/linagora/members/${forkOwner}" """,
-            returnStdout: true
-        ).trim()
+    def trusted = false
+    withGithubCredential {
+        trusted = isOrgMember(forkOwner)
     }
-
-    echo "GitHub org membership check returned HTTP ${status} for '${forkOwner}'"
-    if (status == '204') {
-        return true
-    }
-    if (status == '404') {
-        return false
-    }
-    if (status == '401' || status == '403') {
-        error("Authentication/permission error validating fork owner: ${status}")
-    }
-    error("GitHub API error ${status} while checking membership for '${forkOwner}'")
-}
-
-// The commit of the change request this build runs, as GitHub records it -
-// asked before anything from the change request has run. Null when it cannot be
-// established: the checked out HEAD must be that commit, or a merge of it.
-def changeHeadSha() {
-    def pullJson = null
-    withCredentials([usernamePassword(credentialsId: 'github',
-            usernameVariable: 'GITHUB_CREDENTIAL_USR', passwordVariable: 'GITHUB_CREDENTIAL_PSW')]) {
-        pullJson = sh(
-            script: """curl -s \
-              -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
-              "https://api.github.com/repos/linagora/twake-mail-admin/pulls/\${CHANGE_ID}" """,
-            returnStdout: true
-        ).trim()
-    }
-    def pull = readJSON text: pullJson
-    String head = pull?.head?.sha
-    if (head == null || !head.matches('[0-9a-f]{40}')) {
-        error("Unexpected GitHub API answer while reading the head of #${env.CHANGE_ID}")
-    }
-    // HEAD itself with the head strategy, one of its parents when Jenkins
-    // builds the merge with the target branch.
-    def built = sh(script: 'git rev-list --parents -n 1 HEAD', returnStdout: true).trim().split(' ') as List
-    if (!built.contains(head)) {
-        echo "The pull request head ${head} is not the commit being built (${built[0]}): it moved meanwhile."
-        return null
-    }
-    return head
-}
-
-// A change request from outside the organisation is vouched for once a linagora
-// member comments "Build this please <sha>" on it, <sha> being the full 40
-// character id of the commit they reviewed. A prefix is not accepted: the
-// contributor writes the commits, and can craft a second one sharing a short
-// prefix with the reviewed one. The approval covers that commit only: a later
-// push by the contributor needs a new one. A bare "Build this please"
-// approves nothing, as it would carry over to unreviewed pushes.
-def approvedByMember() {
-    String head = changeHeadSha()
-    if (head == null) {
-        return false
-    }
-    def approved = false
-    withCredentials([usernamePassword(credentialsId: 'github',
-            usernameVariable: 'GITHUB_CREDENTIAL_USR', passwordVariable: 'GITHUB_CREDENTIAL_PSW')]) {
-        def commentsJson = sh(
-            script: """curl -s \
-              -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
-              "https://api.github.com/repos/linagora/twake-mail-admin/issues/\${CHANGE_ID}/comments?per_page=100" """,
-            returnStdout: true
-        ).trim()
-        def comments = readJSON text: commentsJson
-        if (!(comments instanceof List)) {
-            error("Unexpected GitHub API answer while listing the comments of #${env.CHANGE_ID}")
-        }
-        for (comment in comments) {
-            String body = comment.body?.trim()?.toLowerCase()?.replaceAll('\\s+', ' ')
-            if (body == null || !body.matches('build this please [0-9a-f]{40}')) {
-                continue
-            }
-            String approvedSha = body.substring('build this please '.length())
-            if (head != approvedSha) {
-                continue
-            }
-            def commenter = comment.user.login
-            def commenterStatus = sh(
-                script: """curl -s -o /dev/null -w "%{http_code}" \
-                  -H "Authorization: token \${GITHUB_CREDENTIAL_PSW}" \
-                  "https://api.github.com/orgs/linagora/members/${commenter}" """,
-                returnStdout: true
-            ).trim()
-            if (commenterStatus == '204') {
-                echo "Build of ${head} approved by linagora member '${commenter}'."
-                approved = true
-                break
-            }
-        }
-    }
-    if (!approved) {
-        echo "Not approved: a linagora member can approve this commit by commenting \"Build this please ${head}\"."
-    }
-    return approved
-}
-
-// 'member'    - a branch or tag build, or a change request someone with push
-//               access could have pushed anyway;
-// 'approved'  - a fork from outside the organisation whose built commit a
-//               member vouched for;
-// 'untrusted' - anything else.
-// Null until the first stage decided it: an unknown trust is no trust.
-@Field String changeTrust = null
-
-// Must only run before anything from the change request has: it binds the
-// GitHub token, and calls curl through a PATH the change request could
-// otherwise have tampered with.
-def assessChangeTrust() {
-    if (!env.CHANGE_ID || isTrustedContributor()) {
-        changeTrust = 'member'
-    } else if (approvedByMember()) {
-        changeTrust = 'approved'
-    } else {
-        changeTrust = 'untrusted'
-    }
-    echo "Change request trust: ${changeTrust}"
-}
-
-// Whether this build may still bind a credential. Never assesses anything
-// itself: by the time it is asked, the change request's code has run.
-def credentialsAllowed() {
-    if (!env.CHANGE_ID) {
-        return true
-    }
-    return changeTrust == 'member' || changeTrust == 'approved'
+    return trusted
 }
 
 // Makes the target branch reachable as origin/<target> so that the change
@@ -214,7 +80,7 @@ def changedCiFiles() {
 // second lock. Returns null when no trusted copy can be found, and the failure
 // is then simply not reported rather than reported by untrusted code.
 def trustedReportScript() {
-    if (!env.CHANGE_ID || changeTrust == 'member') {
+    if (!env.CHANGE_ID || isTrustedContributor()) {
         return 'ci/report-build-failure.sh'
     }
 
@@ -261,17 +127,15 @@ def reportBuildFailure() {
         if (reportScript == null) {
             return
         }
-        if (credentialsAllowed()) {
+        if (mayRunChangeCode()) {
             withCredentials([usernamePassword(credentialsId: 'github',
                     usernameVariable: 'GITHUB_CREDENTIAL_USR', passwordVariable: 'GITHUB_TOKEN')]) {
                 sh "bash '${reportScript}' || true"
             }
         } else {
-            // The change request's code has run on this agent: the curl, awk,
-            // find... the script starts could be its own. The report is only
-            // written to the console; a member can rerun with "Build this please <sha>".
-            echo 'Untrusted change request: the failure report is not posted to GitHub.'
-            sh "bash '${reportScript}' || true"
+            // The fork was not authorized: nothing of it ran, and the failure is
+            // the authorization itself, already in the console.
+            echo 'Unauthorized fork: the failure report is not posted to GitHub.'
         }
     } catch (Exception e) {
         echo "Could not report the build failure: ${e.message}"
@@ -298,10 +162,23 @@ pipeline {
         disableConcurrentBuilds()
     }
 
+    // No pipeline-level credentials, see withGithubCredential and withDockerHubLogin.
     stages {
-        // First stage on purpose: nothing from the change request has been run
-        // yet at this point, so this is the only place its trust can be
-        // assessed with a credential.
+        // First stages on purpose: nothing from the change request has been run
+        // yet at this point.
+        stage('Authorize fork') {
+            // A fork pull request runs no code of its own before an org member vouches for its head
+            // commit, see authorizeFork
+            when {
+                changeRequest()
+                expression { env.CHANGE_FORK != null }
+            }
+            steps {
+                script {
+                    authorizeFork()
+                }
+            }
+        }
         stage('Validate CI files') {
             when {
                 changeRequest()
@@ -309,11 +186,10 @@ pipeline {
             steps {
                 script {
                     fetchChangeTarget()
-                    assessChangeTrust()
                     def offending = changedCiFiles()
                     if (offending.isEmpty()) {
                         echo 'No CI file touched by this change request.'
-                    } else if (changeTrust == 'member') {
+                    } else if (isTrustedContributor()) {
                         echo "Trusted contributor, changes to ${offending.join(', ')} allowed."
                     } else {
                         error("""This change request modifies files the CI executes: ${offending.join(', ')}.
@@ -396,20 +272,12 @@ Please drop these changes from the pull request, or ask a linagora member to car
             }
         }
         stage('Deploy docker image') {
-            // Gated before any credential is bound: no stage level environment,
-            // which Jenkins would evaluate before the when condition.
+            // A fork pull request reaches this stage only once authorized, see authorizeFork.
             when {
                 anyOf {
                     branch 'main'
                     buildingTag()
-                    allOf {
-                        changeRequest()
-                        // A fork owned by someone outside the linagora
-                        // organization only gets an image once a linagora
-                        // member commented "Build this please <sha>" on it - checked
-                        // by the first stage, before the fork's code ran.
-                        expression { credentialsAllowed() }
-                    }
+                    changeRequest()
                 }
             }
             steps {
@@ -431,32 +299,14 @@ Please drop these changes from the pull request, or ask a linagora member to car
 
                     sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
 
-                    // The Docker Hub login lands in a configuration private to
-                    // this build, removed right after the push: in the agent's
-                    // ~/.docker it would outlive the build, readable by the next
-                    // pull request's code on this shared agent.
-                    def tmpDir = env.WORKSPACE_TMP ?: "${env.WORKSPACE}@tmp"
-                    def dockerConfig = sh(
-                        returnStdout: true,
-                        script: "mkdir -p '${tmpDir}' && mktemp -d '${tmpDir}/docker-config-XXXXXXXX'"
-                    ).trim()
-                    try {
-                        withEnv(["DOCKER_CONFIG=${dockerConfig}"]) {
-                            withCredentials([usernamePassword(credentialsId: 'dockerHub',
-                                    usernameVariable: 'DOCKER_HUB_CREDENTIAL_USR', passwordVariable: 'DOCKER_HUB_CREDENTIAL_PSW')]) {
-                                sh 'echo "$DOCKER_HUB_CREDENTIAL_PSW" | docker login -u "$DOCKER_HUB_CREDENTIAL_USR" --password-stdin'
-                            }
-                            sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
-                        }
-                    } finally {
-                        sh "rm -rf '${dockerConfig}'"
+                    withDockerHubLogin {
+                        sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
                     }
 
                     if (env.CHANGE_ID) {
                         // A failed comment only warns: the image is already
                         // published, the build should not go red over it.
-                        withCredentials([usernamePassword(credentialsId: 'github',
-                                usernameVariable: 'GITHUB_CREDENTIAL_USR', passwordVariable: 'GITHUB_CREDENTIAL_PSW')]) {
+                        withGithubCredential {
                             sh '''
                                 HTTP_STATUS=$(curl -s -o gh_comment_response.json -w "%{http_code}" -X POST \\
                                   -H "Authorization: token $GITHUB_CREDENTIAL_PSW" \\
@@ -497,4 +347,155 @@ Please drop these changes from the pull request, or ask a linagora member to car
             deleteDir() /* clean up our workspace */
         }
     }
+}
+
+def githubRepository() {
+  return 'linagora/twake-mail-admin'
+}
+
+// ---- Fork authorization and credentials. The same block is in the Jenkinsfiles of
+// twake-contacts-frontend, twake-calendar-frontend, twake-calendar-side-service, webadmin-proxy,
+// tmail-flutter, esn-sabre, tmail-backend and twake-mail-admin: change it in all of them. Only
+// githubRepository() differs.
+//
+// No credential is bound at pipeline level: every stage runs code of the checked out sources (build
+// plugins, package scripts, tests, scripts/), so secrets are bound only around the steps that need
+// them, see withGithubCredential and withDockerHubLogin.
+
+// A fork pull request runs no code of its own before an org member vouches for its head commit: the
+// owner of the fork is a linagora member, or a member approved that very commit (see
+// memberReviewerOf). An approval names one commit, so a commit pushed after it is not built until a
+// member approves it again.
+def authorizeFork() {
+  withGithubCredential {
+    // CHANGE_FORK is 'owner', or 'owner/repository' for a fork renamed on GitHub
+    def forkOwner = env.CHANGE_FORK.tokenize('/')[0]
+    // Jenkins may set CHANGE_FORK to 'linagora' for a branch of the repository itself: only someone
+    // with write access pushes there, and an organization is not a member of itself.
+    if (forkOwner == 'linagora' || isOrgMember(forkOwner)) {
+      echo "Fork owner '${forkOwner}' is a linagora org member, proceeding."
+      env.FORK_AUTHORIZED = 'true'
+      return
+    }
+    def headSha = checkedOutPullRequestHead()
+    def approver = memberReviewerOf(headSha)
+    if (approver) {
+      echo "Commit ${headSha} approved by linagora member '${approver}', proceeding."
+      env.FORK_AUTHORIZED = 'true'
+      return
+    }
+    error("Fork owner '${forkOwner}' is not a linagora org member and no member reviewed commit ${headSha}. " +
+      "A linagora member must approve the pull request on this commit, or comment 'Build this please ${headSha}', " +
+      "then re-run the build.")
+  }
+}
+
+// Whether the build may run code of the checked out sources, for the post actions that run even
+// when the fork authorization failed
+def mayRunChangeCode() {
+  return env.CHANGE_FORK == null || env.FORK_AUTHORIZED == 'true'
+}
+
+// The head commit of the pull request, checked against the sources Jenkins checked out: HEAD itself,
+// or the second parent of the merge commit Jenkins builds with the target branch
+def checkedOutPullRequestHead() {
+  def headSha = githubApi("pulls/${env.CHANGE_ID}").head.sha
+  def checkedOut = sh(script: 'git rev-parse HEAD; git rev-parse -q --verify "HEAD^2" || true', returnStdout: true)
+    .trim().tokenize('\n')
+  if (!checkedOut.contains(headSha)) {
+    error("The pull request head moved to ${headSha} since the checkout of ${checkedOut}: re-run the build.")
+  }
+  return headSha
+}
+
+// The login of a linagora member who vouched for the given commit: an approving review of it, a review
+// 'Build this please' of it, or a comment 'Build this please <sha>' naming its full id. A prefix is not
+// accepted: the contributor writes the commits, and can craft one sharing a short prefix with the
+// reviewed one. GitHub lists reviews and comments oldest first, 100 per page at most: every page is read.
+def memberReviewerOf(String sha) {
+  def page = 1
+  while (true) {
+    def reviews = githubApi("pulls/${env.CHANGE_ID}/reviews?per_page=100&page=${page}")
+    for (review in reviews) {
+      def approves = review.state == 'APPROVED' ||
+        (review.state != 'DISMISSED' && "${review.body}".trim() == 'Build this please')
+      if (review.commit_id == sha && approves && isOrgMember(review.user.login)) {
+        return review.user.login
+      }
+    }
+    if (reviews.size() < 100) {
+      break
+    }
+    page++
+  }
+  def approval = "build this please ${sha}".toString()
+  page = 1
+  while (true) {
+    def comments = githubApi("issues/${env.CHANGE_ID}/comments?per_page=100&page=${page}")
+    for (comment in comments) {
+      def body = "${comment.body}".trim().toLowerCase().replaceAll('\\s+', ' ')
+      if (body == approval && isOrgMember(comment.user.login)) {
+        return comment.user.login
+      }
+    }
+    if (comments.size() < 100) {
+      return null
+    }
+    page++
+  }
+}
+
+def isOrgMember(String login) {
+  def status
+  withEnv(["GITHUB_LOGIN=${login}"]) {
+    status = sh(
+      script: 'curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $GITHUB_CREDENTIAL_PSW" ' +
+        '"https://api.github.com/orgs/linagora/members/$GITHUB_LOGIN"',
+      returnStdout: true
+    ).trim()
+  }
+  echo "GitHub org membership check returned HTTP ${status} for '${login}'"
+  if (status == '204') {
+    return true
+  }
+  if (status == '404') {
+    return false
+  }
+  error("GitHub API error ${status} while checking the membership of '${login}'")
+}
+
+def githubApi(String path) {
+  def json
+  withEnv(["GITHUB_API_PATH=${path}", "GITHUB_API_REPOSITORY=${githubRepository()}"]) {
+    json = sh(
+      script: 'curl -sf -H "Authorization: token $GITHUB_CREDENTIAL_PSW" ' +
+        '"https://api.github.com/repos/$GITHUB_API_REPOSITORY/$GITHUB_API_PATH"',
+      returnStdout: true
+    )
+  }
+  return readJSON(text: json)
+}
+
+// Binds the GitHub token as GITHUB_CREDENTIAL_USR / GITHUB_CREDENTIAL_PSW around the given steps only
+def withGithubCredential(Closure body) {
+  withCredentials([usernamePassword(credentialsId: 'github',
+      usernameVariable: 'GITHUB_CREDENTIAL_USR', passwordVariable: 'GITHUB_CREDENTIAL_PSW')]) {
+    body()
+  }
+}
+
+// Logs in Docker Hub in a throwaway Docker config deleted afterwards, so that the credential never
+// stays on the agent where a later build could read it
+def withDockerHubLogin(Closure body) {
+  withEnv(["DOCKER_CONFIG=${pwd(tmp: true)}/docker-config"]) {
+    try {
+      withCredentials([usernamePassword(credentialsId: 'dockerHub',
+          usernameVariable: 'DOCKER_HUB_CREDENTIAL_USR', passwordVariable: 'DOCKER_HUB_CREDENTIAL_PSW')]) {
+        sh 'mkdir -p "$DOCKER_CONFIG" && printf \'%s\' "$DOCKER_HUB_CREDENTIAL_PSW" | docker login -u "$DOCKER_HUB_CREDENTIAL_USR" --password-stdin'
+      }
+      body()
+    } finally {
+      sh 'docker logout || true; rm -rf "$DOCKER_CONFIG"'
+    }
+  }
 }

@@ -24,3 +24,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: Benoit Tellier, [issue #706](https://github.com/linagora/twake-mail-admin/issues/706)
 - Why: tmail-backend restores the whole vault of a team mailbox and answers 400 to any body, so a restore by criteria would either fail or restore more than asked.
 - Scope: desktop and mobile, team mailbox detail page, Tasks list and task page (task type `team-mailbox-deleted-messages-restore`).
+
+## 2026-11-24, [Infra] A fork pull request runs no code before a linagora member vouches for its head commit
+
+- Decision: the Jenkinsfile starts with an `Authorize fork` stage: a pull request from a fork runs nothing of its own (install, tests, build, e2e, image) unless the fork owner is a linagora member, or a member approved its head commit, submitted a review "Build this please" on it, or commented "Build this please <sha>" with its full id. `Validate CI files` and the trusted report script are kept. No credential is bound at pipeline level; `github` and `dockerHub` are bound only around the steps that use them (`withGithubCredential`, `withDockerHubLogin` with a throwaway Docker config). The block holding these helpers is the same in the Jenkinsfiles of twake-contacts-frontend, twake-calendar-frontend, twake-calendar-side-service, webadmin-proxy, tmail-flutter, esn-sabre, tmail-backend and twake-mail-admin, and is changed in all of them.
+- Decided by: Benoit Tellier, after the twake-qa security review of twake-calendar-side-service (SEV-1, 2026-11-23); the pipeline of twake-contacts-frontend is the model, the commit-bound "Build this please <sha>" comment comes from this repository (#697, #699).
+- Why: an unapproved fork used to run its code here and only lose the credentials for the rest of its build, but the agent is persistent and shared: a process it leaves behind can read the credentials of a later build, such as the next main delivery. Comments and reviews are now read on every page (100 per page at most).
+- Scope: `Jenkinsfile`. An unapproved fork gets no CI feedback anymore, the authorization failure excepted.
