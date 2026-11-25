@@ -40,8 +40,13 @@ describe("calendarDisplayName", () => {
   });
 
   it("names a delegated main calendar after its owner", () => {
-    expect(calendarDisplayName(calendar("#default", "/calendars/bob/x1.json"), t, "alice@open-paas.org"))
-      .toBe("users.calendars.mainCalendarOf:alice@open-paas.org");
+    const delegated = { ...calendar("#default", "/calendars/bob/x1.json"), "calendarserver:delegatedsource": "/calendars/alice/alice.json" } as UserCalendar;
+    expect(calendarDisplayName(delegated, t, "alice@open-paas.org")).toBe("users.calendars.mainCalendarOf:alice@open-paas.org");
+    expect(calendarDisplayName(delegated, t)).toBe("users.calendars.mainCalendar");
+  });
+
+  it("shows a secondary calendar of the user named \"#default\" by its name", () => {
+    expect(calendarDisplayName(calendar("#default", "/calendars/alice/073e50b9.json"), t)).toBe("#default");
   });
 
   it("keeps the name the user gave", () => {
