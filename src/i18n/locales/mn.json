@@ -461,6 +461,8 @@
       "addPlaceholder": "admin@domain.tld",
       "added": "Администратор нэмэгдлээ",
       "alreadyAdmin": "Аль хэдийн админ",
+      "otherDomain": "Зөвхөн {{domain}}-ийн хэрэглэгчид үүнийг удирдах боломжтой",
+      "otherDomainBadge": "Өөр домэйн: дахин нэмэх боломжгүй",
       "removeTitle": "Администратор устгах",
       "removeConfirm": "«{{username}}»-г {{domain}}-ийн администраторуудаас устгах уу?",
       "removed": "Администратор устгагдлаа",

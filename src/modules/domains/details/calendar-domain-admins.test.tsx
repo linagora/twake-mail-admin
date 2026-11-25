@@ -17,7 +17,10 @@ vi.mock("react-i18next", () => ({
 }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => true }));
-vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: () => userCheck.status }));
+vi.mock("@/hooks/use-check-user-exists", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/hooks/use-check-user-exists")>()),
+  useCheckUserExists: () => userCheck.status,
+}));
 vi.mock("../api-client", () => api);
 
 import CalendarDomainAdmins from "./calendar-domain-admins";
@@ -139,7 +142,68 @@ describe("CalendarDomainAdmins add modal", () => {
   });
 });
 
+describe("CalendarDomainAdmins user of another domain", () => {
+  async function typeOtherDomainAdmin(username: string) {
+    userCheck.status = "exists";
+    const input = await openAddInput();
+    fireEvent.change(input, { target: { value: username } });
+    return input;
+  }
+
+  it.each(["bob@other.com", " bob@sub.open-paas.org "])("flags %s, keeps Add disabled and sends nothing on Enter", async (username) => {
+    const input = await typeOtherDomainAdmin(username);
+
+    expect(screen.getByText('domains.calendarAdmins.otherDomain {"domain":"open-paas.org"}')).not.toBeNull();
+    expect(screen.queryByText("common.userExists")).toBeNull();
+    expect(addButton().disabled).toBe(true);
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(api.addDomainAdmin).not.toHaveBeenCalled();
+  });
+
+  it("tells an ill-formed address is invalid, not of another domain", async () => {
+    userCheck.status = "invalid";
+    const input = await openAddInput();
+    fireEvent.change(input, { target: { value: "a@b@c" } });
+
+    expect(screen.getByText("common.invalidUsername")).not.toBeNull();
+    expect(screen.queryByText('domains.calendarAdmins.otherDomain {"domain":"open-paas.org"}')).toBeNull();
+    expect(addButton().disabled).toBe(true);
+  });
+
+  it("compares the domain part case-insensitively", async () => {
+    await typeOtherDomainAdmin("Bob@Open-Paas.ORG");
+
+    expect(screen.queryByText('domains.calendarAdmins.otherDomain {"domain":"open-paas.org"}')).toBeNull();
+    expect(addButton().disabled).toBe(false);
+  });
+
+  it("shows the server refusal in the modal, keeps the typed address and announces nothing", async () => {
+    api.addDomainAdmin.mockRejectedValue(new Error("bob@open-paas.org does not belong to domain open-paas.org"));
+    const input = await typeOtherDomainAdmin("bob@open-paas.org");
+    const dialog = screen.getByRole("dialog");
+
+    fireEvent.click(addButton());
+
+    expect((await within(dialog).findByRole("alert")).textContent).toContain("does not belong to domain open-paas.org");
+    expect(input).toHaveProperty("value", "bob@open-paas.org");
+    expect(screen.queryByText("domains.calendarAdmins.added")).toBeNull();
+  });
+});
+
 describe("CalendarDomainAdmins admin rows", () => {
+  it("badges an admin of another domain and keeps its Remove button", async () => {
+    api.getDomainAdmins.mockResolvedValue(["alice@open-paas.org", "bob@other.com"]);
+    render(<CalendarDomainAdmins domain="open-paas.org" defaultOpen />);
+
+    const bobRow = (await screen.findByText("bob@other.com")).closest("div") as HTMLElement;
+    const aliceRow = screen.getByText("alice@open-paas.org").closest("div") as HTMLElement;
+
+    expect(within(bobRow).getByText("domains.calendarAdmins.otherDomainBadge")).not.toBeNull();
+    expect(within(aliceRow).queryByText("domains.calendarAdmins.otherDomainBadge")).toBeNull();
+    const remove = within(bobRow).getByRole<HTMLButtonElement>("button", { name: 'domains.calendarAdmins.removeNamed {"item":"bob@other.com"}' });
+    expect(remove.disabled).toBe(false);
+  });
+
   it("names each remove button after the admin of its row, keeping the short tooltip", async () => {
     api.getDomainAdmins.mockResolvedValue(["alice@open-paas.org", "bob@open-paas.org"]);
     render(<CalendarDomainAdmins domain="open-paas.org" defaultOpen />);

@@ -460,6 +460,8 @@
       "addPlaceholder": "admin@domain.tld",
       "added": "Đã thêm quản trị viên",
       "alreadyAdmin": "Đã là quản trị viên",
+      "otherDomain": "Chỉ người dùng của {{domain}} mới có thể quản trị miền này",
+      "otherDomainBadge": "Miền khác: không thể thêm lại",
       "removeTitle": "Xóa quản trị viên",
       "removeConfirm": "Xóa \"{{username}}\" khỏi quản trị viên của {{domain}}?",
       "removed": "Đã xóa quản trị viên",

@@ -7,7 +7,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getDomainAdmins, addDomainAdmin, removeDomainAdmin } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
-import { useCheckUserExists } from "@/hooks/use-check-user-exists";
+import { isWellFormedUsername, useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,11 @@ const searchable = (admin: string) => [admin];
 
 const isListedAdmin = (admins: string[], username: string) =>
   admins.some((admin) => admin.toLowerCase() === username.toLowerCase());
+
+// The side service refuses an admin of another domain (400), but still removes one.
+// An ill-formed address (a@b@c) is invalid, not of another domain.
+const isOfOtherDomain = (username: string, domain: string) =>
+  isWellFormedUsername(username) && username.includes("@") && username.slice(username.lastIndexOf("@") + 1).toLowerCase() !== domain.toLowerCase();
 
 interface Props {
   domain: string;
@@ -52,7 +57,8 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
 
   const trimmedAdmin = newAdmin.trim();
   const isAlreadyAdmin = isListedAdmin(admins ?? [], trimmedAdmin);
-  const canSubmit = !!trimmedAdmin && !isAlreadyAdmin && adminStatus === "exists";
+  const isOtherDomain = !isAlreadyAdmin && isOfOtherDomain(trimmedAdmin, domain);
+  const canSubmit = !!trimmedAdmin && !isAlreadyAdmin && !isOtherDomain && adminStatus === "exists";
 
   const closeAdd = () => {
     setShowAddInput(false);
@@ -139,6 +145,11 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
                   <h4 className="min-w-0 text-sm font-medium leading-none break-all">
                     <span className="text-gray-500 mr-2">{offset + index + 1}/</span>
                     {admin}
+                    {isOfOtherDomain(admin, domain) && (
+                      <span className="ml-2 inline-block text-xs font-normal rounded px-1.5 py-0.5 bg-orange-100 text-orange-700 whitespace-nowrap">
+                        {t("domains.calendarAdmins.otherDomainBadge")}
+                      </span>
+                    )}
                   </h4>
                   {canRemove && (
                     <button
@@ -177,6 +188,7 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
             aria-label={t("domains.calendarAdmins.addTooltip")}
             value={newAdmin}
             onValueChange={setNewAdmin}
+            domain={domain}
             placeholder={t("domains.calendarAdmins.addPlaceholder")}
             className={FIELD_CLASS}
           />
@@ -184,9 +196,10 @@ export default function CalendarDomainAdmins({ domain, defaultOpen = false }: Pr
           <p className="h-4 mt-1 text-xs">
             {trimmedAdmin && adminStatus === "checking" && <span className="text-gray-400">{t("common.checking")}</span>}
             {isAlreadyAdmin && <span className="text-orange-600">{t("domains.calendarAdmins.alreadyAdmin")}</span>}
-            {!isAlreadyAdmin && adminStatus === "exists" && <span className="text-green-700">{t("common.userExists")}</span>}
-            {adminStatus === "not_found" && <span className="text-orange-600">{t("common.userNotFound")}</span>}
-            {adminStatus === "invalid" && <span className="text-red-600">{t("common.invalidUsername")}</span>}
+            {isOtherDomain && <span className="text-red-600">{t("domains.calendarAdmins.otherDomain", { domain })}</span>}
+            {!isAlreadyAdmin && !isOtherDomain && adminStatus === "exists" && <span className="text-green-700">{t("common.userExists")}</span>}
+            {!isOtherDomain && adminStatus === "not_found" && <span className="text-orange-600">{t("common.userNotFound")}</span>}
+            {!isOtherDomain && adminStatus === "invalid" && <span className="text-red-600">{t("common.invalidUsername")}</span>}
           </p>
         </div>
       </FormDialog>
