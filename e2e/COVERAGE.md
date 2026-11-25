@@ -169,6 +169,7 @@ origin app cannot read them
 | DADM-01 | DomainAdminsTest.addCalendarDomainAdmin |
 | DADM-02 | DomainAdminsTest.searchAndRemoveDomainAdmin |
 | DADM-03 | DomainAdminsTest.existingAdminCannotBeAddedAgain |
+| DADM-04 | DomainAdminsTest.userOfAnotherDomainCannotBeAdded |
 | DSET-01 | DomainSettingsTest.viewAndChangeDomainSettings (fresh domain) |
 | DSET-02 | DomainSettingsTest.cancelAndBackToSystemDefault (fresh domain) |
 | DCON-01 | DomainContactsTest.domainAddressBooksAndTheirActions |

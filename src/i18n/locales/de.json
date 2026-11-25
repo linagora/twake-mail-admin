@@ -464,6 +464,8 @@
       "addPlaceholder": "admin@domain.tld",
       "added": "Administrator hinzugefügt",
       "alreadyAdmin": "Bereits Administrator",
+      "otherDomain": "Nur Benutzer von {{domain}} können sie verwalten",
+      "otherDomainBadge": "Andere Domain: kann nicht erneut hinzugefügt werden",
       "removeTitle": "Administrator entfernen",
       "removeConfirm": "„{{username}}“ aus den Administratoren von {{domain}} entfernen?",
       "removed": "Administrator entfernt",

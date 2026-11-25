@@ -49,9 +49,20 @@ public class CalendarFixtures {
         return newRegisteredUser("user");
     }
 
+    /** A new registered user of {@code domain}, which must exist (see {@link #newDomain}). */
+    public String newRegisteredUser(String prefix, String domain) {
+        String address = newUnregisteredUser(prefix, domain);
+        register(address);
+        return address;
+    }
+
     /** A new user of {@code /users} only, not registered as a calendar user. */
     public String newUnregisteredUser(String prefix) {
-        String address = Ids.unique(prefix) + "@" + DOMAIN;
+        return newUnregisteredUser(prefix, DOMAIN);
+    }
+
+    private String newUnregisteredUser(String prefix, String domain) {
+        String address = Ids.unique(prefix) + "@" + domain;
         webAdmin.put("/users/" + address, "{\"password\":\"" + PASSWORD + "\"}").expect(204);
         return address;
     }

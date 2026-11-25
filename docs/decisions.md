@@ -73,3 +73,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #798](https://github.com/linagora/twake-mail-admin/issues/798), following tmail-backend [61dd831](https://github.com/linagora/tmail-backend/commit/61dd83111af55831623fad32cf4e741989f06800) (GHSA-xh5x-j93m-v7p8); flagging the source only once its `@` is typed chosen by agent (PR for #798), to be confirmed by chibenwa.
 - Why: the backend now answers 400 to both, as the task used to copy (and prune) any folder of any user of any tenant.
 - Scope: desktop and mobile, domain page and user page, Tasks section.
+
+## 2026-11-25, [UX] Domain Admins accepts only users of the domain
+
+- Decision: in the "Add admin" modal of a calendar domain, an address whose domain part (after the last `@`, case insensitive) is not the page's domain shows "Only users of <domain> can administer it" in red in place of the user existence hint, and disables Add; nothing is sent. The suggestions under the field list only users of that domain. A 400 from the side service still keeps the modal open with the typed address and the server message, without "Admin added". In the list, an existing admin of another domain carries a badge "Other domain: cannot be added again" and keeps its Remove button.
+- Decided by: chibenwa, [issue #799](https://github.com/linagora/twake-mail-admin/issues/799), following twake-calendar-side-service [3c5855a](https://github.com/linagora/twake-calendar-side-service/commit/3c5855a433c53b0bce37e1214da639e12ef7d930) which answers 400 to such a `PUT /domains/{domain}/admins/{username}` while `DELETE` still works.
+- Why: the console used to offer and send an admin the server now refuses, and gave no hint that admins granted before the check can no longer be granted again.
+- Scope: desktop and mobile, calendar domain page and domain admin "Calendar Admins" page, Domain Admins section.

@@ -18,8 +18,9 @@ import com.linagora.admin.e2e.pages.calendar.domains.CalendarDomainPage;
 import com.microsoft.playwright.Page;
 
 /**
- * Each test administers a domain of its own with brand new registered users (the side service
- * refuses an admin that is not a registered user): the admin list and its counter are ours alone.
+ * Each test administers a domain of its own with brand new registered users of that domain (the
+ * side service refuses an admin that is not a registered user, or a user of another domain): the
+ * admin list and its counter are ours alone.
  */
 class DomainAdminsTest extends CalendarAdminE2ETest {
 
@@ -27,7 +28,7 @@ class DomainAdminsTest extends CalendarAdminE2ETest {
     @DisplayName("DADM-01 Add a calendar domain admin")
     void addCalendarDomainAdmin(AdminApp app, CalendarFixtures fixtures, WebAdmin webAdmin) {
         String domain = fixtures.newDomain("admins");
-        String alice = fixtures.newRegisteredUser("alice");
+        String alice = fixtures.newRegisteredUser("alice", domain);
         CalendarDomainPage detail = new CalendarDomainPage(app).open(domain).expand(CalendarDomainPage.ADMINS);
 
         assertThat(app.main().getByText("Domain admins can manage the domain address book.")).isVisible();
@@ -59,8 +60,8 @@ class DomainAdminsTest extends CalendarAdminE2ETest {
     @DisplayName("DADM-02 Search and remove a domain admin")
     void searchAndRemoveDomainAdmin(AdminApp app, CalendarFixtures fixtures, WebAdmin webAdmin) {
         String domain = fixtures.newDomain("admins");
-        String alice = fixtures.newRegisteredUser("alice");
-        String bob = fixtures.newRegisteredUser("bob");
+        String alice = fixtures.newRegisteredUser("alice", domain);
+        String bob = fixtures.newRegisteredUser("bob", domain);
         webAdmin.put("/domains/" + domain + "/admins/" + alice).expect(204);
         webAdmin.put("/domains/" + domain + "/admins/" + bob).expect(204);
         CalendarDomainPage detail = new CalendarDomainPage(app).open(domain).expand(CalendarDomainPage.ADMINS);
@@ -85,7 +86,7 @@ class DomainAdminsTest extends CalendarAdminE2ETest {
     @DisplayName("DADM-03 An existing admin cannot be added again")
     void existingAdminCannotBeAddedAgain(AdminApp app, Page page, CalendarFixtures fixtures, WebAdmin webAdmin) {
         String domain = fixtures.newDomain("admins");
-        String alice = fixtures.newRegisteredUser("alice");
+        String alice = fixtures.newRegisteredUser("alice", domain);
         webAdmin.put("/domains/" + domain + "/admins/" + alice).expect(204);
         List<String> puts = new CopyOnWriteArrayList<>();
         page.onRequest(request -> {
@@ -117,6 +118,33 @@ class DomainAdminsTest extends CalendarAdminE2ETest {
         assertThat(detail.adminRows()).hasText(new String[] {"1/" + alice});
         assertThat(puts).isEmpty();
         assertThat(admins(webAdmin, domain)).containsExactly(alice);
+    }
+
+    @Test
+    @DisplayName("DADM-04 A user of another domain cannot be added")
+    void userOfAnotherDomainCannotBeAdded(AdminApp app, Page page, CalendarFixtures fixtures, WebAdmin webAdmin) {
+        String domain = fixtures.newDomain("admins");
+        String outsider = fixtures.newRegisteredUser("outsider");
+        List<String> puts = new CopyOnWriteArrayList<>();
+        page.onRequest(request -> {
+            if ("PUT".equals(request.method()) && request.url().contains("/admins/")) {
+                puts.add(request.url());
+            }
+        });
+        CalendarDomainPage detail = new CalendarDomainPage(app).open(domain).expand(CalendarDomainPage.ADMINS);
+        detail.addAdminButton().click();
+
+        detail.typeAdmin(outsider);
+        assertThat(detail.indicator("Only users of " + domain + " can administer it")).isVisible();
+        assertThat(detail.indicator("User exists")).hasCount(0);
+        assertThat(detail.adminAddButton()).isDisabled();
+        detail.adminInput().press("Enter");
+
+        assertThat(detail.addAdminDialog()).isVisible();
+        assertThat(detail.adminInput()).hasValue(outsider);
+        app.cancel();
+        assertThat(puts).isEmpty();
+        assertThat(admins(webAdmin, domain)).isEmpty();
     }
 
     private static List<String> admins(WebAdmin webAdmin, String domain) {

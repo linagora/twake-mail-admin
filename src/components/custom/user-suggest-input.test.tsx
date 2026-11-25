@@ -15,13 +15,14 @@ vi.mock("@/modules/domain-admin/domain-context", () => ({ useDomain: () => mocks
 import UserSuggestInput from "./user-suggest-input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-function Field({ onEnter }: { onEnter?: () => void }) {
+function Field({ onEnter, domain }: { onEnter?: () => void; domain?: string }) {
   const [value, setValue] = useState("");
   return (
     <UserSuggestInput
       aria-label="user"
       value={value}
       onValueChange={setValue}
+      domain={domain}
       onKeyDown={(e) => { if (e.key === "Enter") onEnter?.(); }}
     />
   );
@@ -97,6 +98,17 @@ describe("user suggestions", () => {
 
     await screen.findByRole("listbox");
     expect(mocks.listUsernames).toHaveBeenCalledWith({ query: "ali", domain: "example.com", limit: 5 });
+  });
+
+  it("suggests only the users of the domain given to the field, outside DOMAIN mode too", async () => {
+    mocks.listUsernames.mockResolvedValue(["alice@example.com", "alien@other.com"]);
+    mocks.allowed = new Set(["/users?domain={domain}&{params}"]);
+    render(<Field domain="example.com" />);
+    type("ali");
+
+    expect(await screen.findByRole("option", { name: "alice@example.com" })).toBeTruthy();
+    expect(mocks.listUsernames).toHaveBeenCalledWith({ query: "ali", domain: "example.com", limit: 5 });
+    expect(screen.queryByRole("option", { name: "alien@other.com" })).toBeNull();
   });
 
   it("suggests nothing, and requests nothing, when listing users is not allowed", async () => {
