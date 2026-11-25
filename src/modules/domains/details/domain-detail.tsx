@@ -1,10 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Link, useParams } from "react-router";
 import { TriangleAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import DomainQuotaSection from "./domain-quota";
 import DomainAliases from "./domain-aliases";
-import DomainTeamMailboxes from "./domain-team-mailboxes";
+import DomainTeamMailboxes, { type TeamMailboxContactChange } from "./domain-team-mailboxes";
 import DomainContacts from "./domain-contacts";
 import DomainTasks from "./domain-tasks";
 import DomainSignatureTemplates from "./domain-signature-templates";
@@ -44,6 +44,8 @@ export default function DomainDetail() {
   const fetchRateLimits = useCallback(() => getDomainRateLimits(domain!), [domain]);
   const updateRateLimits = useCallback((limits: any) => updateDomainRateLimits(domain!, limits), [domain]);
   const domainState = useDomainState(domain!);
+  // A team mailbox comes with a contact: the Domain Contacts section follows its creation and deletion
+  const [teamMailboxChange, setTeamMailboxChange] = useState<TeamMailboxContactChange | null>(null);
 
   if (domainState === "checking" || domainState === "missing") {
     return (
@@ -68,8 +70,8 @@ export default function DomainDetail() {
 
       <DomainQuotaSection domain={domain!} />
       <DomainAliases domain={domain!} />
-      <DomainTeamMailboxes domain={domain!} />
-      <DomainContacts domain={domain!} />
+      <DomainTeamMailboxes domain={domain!} onChanged={setTeamMailboxChange} />
+      <DomainContacts domain={domain!} teamMailboxChange={teamMailboxChange} />
       {appConfig.application === 'MAIL' && <DomainSignatureTemplates domain={domain!} />}
       <RateLimitsSection fetchRateLimits={fetchRateLimits} updateRateLimits={updateRateLimits} canUpdate={canUpdateRateLimits} />
       <DomainJmapReport domain={domain!} />

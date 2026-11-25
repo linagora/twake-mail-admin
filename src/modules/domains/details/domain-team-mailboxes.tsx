@@ -17,12 +17,20 @@ import { isDotSegment } from "@/lib/mailbox-path";
 
 const searchable = (mb: TeamMailbox) => [mb.name, mb.emailAddress];
 
+/** The contact the server created or removed together with a team mailbox. */
+export interface TeamMailboxContactChange {
+  added?: string;
+  removed?: string;
+}
+
 interface Props {
   domain: string;
   defaultOpen?: boolean;
+  /** Told after a team mailbox is created or deleted, with the address of its contact. */
+  onChanged?: (change: TeamMailboxContactChange) => void;
 }
 
-export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
+export default function DomainTeamMailboxes({ domain, defaultOpen, onChanged }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
@@ -65,6 +73,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
     await createTeamMailbox(domain, name);
     toast({ title: t("domains.teamMailboxes.created") });
     setNewName("");
+    onChanged?.({ added: `${name}@${domain}` });
     await refresh();
   };
 
@@ -79,6 +88,7 @@ export default function DomainTeamMailboxes({ domain, defaultOpen }: Props) {
     try {
       await deleteTeamMailbox(domain, name);
       toast({ title: t("domains.teamMailboxes.deleted") });
+      onChanged?.({ removed: mailboxes?.find((mb) => mb.name === name)?.emailAddress ?? `${name}@${domain}` });
       await refresh();
     } catch (err) {
       toast({

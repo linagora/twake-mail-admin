@@ -14,6 +14,7 @@ import {
   getTeamMailboxes,
 } from "../api-client";
 import { DomainContact, GetTeamMailboxesResponseType, TeamMailbox } from "../types";
+import type { TeamMailboxContactChange } from "./domain-team-mailboxes";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useReturnFocus } from "@/hooks/use-return-focus";
@@ -29,6 +30,8 @@ const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
 interface Props {
   domain: string;
+  /** The latest team mailbox created or deleted on the page: its contact follows it. */
+  teamMailboxChange?: TeamMailboxContactChange | null;
 }
 
 // The contact listing is served by an eventually consistent search index: a refetch right after a
@@ -66,7 +69,7 @@ const byEmailAddress = (teamMailboxes: GetTeamMailboxesResponseType): Map<string
 const teamMailboxPath = (domain: string, mailbox: TeamMailbox) =>
   `/domains/domain/${encodeURIComponent(domain)}/team-mailbox/${encodeURIComponent(mailbox.name)}`;
 
-export default function DomainContacts({ domain }: Props) {
+export default function DomainContacts({ domain, teamMailboxChange }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const confirm = useConfirm();
@@ -86,6 +89,19 @@ export default function DomainContacts({ domain }: Props) {
   const { data: teamMailboxes, refresh: refreshTeamMailboxes } = useFetchData<GetTeamMailboxesResponseType>(
     canView && canListTeamMailboxes ? fetchTeamMailboxes : null
   );
+  // The server creates and removes the contact of a team mailbox with it; like a local write, the
+  // change is overlaid since the index may not show it yet, and the badges are fetched again
+  useEffect(() => {
+    if (!teamMailboxChange) return;
+    const { added, removed } = teamMailboxChange;
+    setLocalChanges((changes) => {
+      const withAddition = added ? withAdded(changes, added) : changes;
+      return removed ? withRemoved(withAddition, removed) : withAddition;
+    });
+    if (canListTeamMailboxes) refreshTeamMailboxes();
+    // refreshTeamMailboxes changes on every render: only a new change triggers this
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [teamMailboxChange]);
   const teamMailboxOf = useMemo(() => {
     const index = byEmailAddress(teamMailboxes ?? NO_TEAM_MAILBOXES);
     return (email: string) => index.get(email.toLowerCase());
