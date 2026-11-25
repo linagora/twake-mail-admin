@@ -30,6 +30,7 @@ vi.mock("../api-client", () => mocks.api);
 
 import UserMailboxes from "./user-mailboxes";
 import { markFeatureUnavailable } from "@/lib/unavailable-features";
+import { UserQuotaRevisionContext, useUserQuotaRevision, useUserQuotaRevisionState } from "./user-quota-revision";
 
 const ALICE = "alice@example.com";
 
@@ -153,5 +154,36 @@ describe("user mailboxes: clear the content of a mailbox", () => {
     await waitFor(() => expect(mocks.api.getMailboxMessageCount).toHaveBeenCalledTimes(2));
     expect(mocks.api.getMailboxUnseenCount).toHaveBeenCalledTimes(2);
     expect(mocks.awaitTask).toHaveBeenCalledWith(TASK_ID, undefined);
+  });
+
+  // Stands for the Quota section: it fetches the usage again on each revision
+  function QuotaProbe() {
+    return <output>{`quota revision ${useUserQuotaRevision().revision}`}</output>;
+  }
+  function PageWithQuota() {
+    return (
+      <UserQuotaRevisionContext.Provider value={useUserQuotaRevisionState()}>
+        <UserMailboxes username={ALICE} />
+        <QuotaProbe />
+      </UserQuotaRevisionContext.Provider>
+    );
+  }
+
+  it("has the quota fetched again once the task ended, not before", async () => {
+    mocks.api.getUserMailboxes.mockResolvedValue([{ mailboxName: "INBOX", mailboxId: "1" }]);
+    mocks.api.clearMailboxContent.mockResolvedValue({ taskId: TASK_ID });
+    mocks.confirm.mockResolvedValue(true);
+    let endTask: (task: unknown) => void = () => {};
+    mocks.awaitTask.mockReturnValue(new Promise((resolve) => { endTask = resolve; }));
+    render(<MemoryRouter><PageWithQuota /></MemoryRouter>);
+    fireEvent.click(screen.getByText("users.mailboxes.title"));
+
+    fireEvent.click(await screen.findByTitle("users.mailboxes.clearTooltip"));
+    await waitFor(() => expect(mocks.awaitTask).toHaveBeenCalled());
+    expect(screen.getByRole("status").textContent).toBe("quota revision 0");
+
+    endTask({ taskId: TASK_ID, type: "ClearMailboxContentTask", status: "completed" });
+
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("quota revision 1"));
   });
 });

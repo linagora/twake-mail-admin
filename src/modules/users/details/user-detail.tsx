@@ -19,6 +19,7 @@ import UserDeletedMessageVault from "./user-deleted-message-vault";
 import UserLabels from "./user-labels";
 import UserJmapSettings from "./user-jmap-settings";
 import { UserMappingsRevisionContext, useUserMappingsRevisionState } from "./user-mappings-revision";
+import { UserQuotaRevisionContext, useUserQuotaRevisionState } from "./user-quota-revision";
 import RateLimitsSection from "@/components/custom/rate-limits-section";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { getUserRateLimits, updateUserRateLimits, searchDeletedMessages, restoreDeletedMessages } from "../api-client";
@@ -62,6 +63,7 @@ export default function UserDetail() {
 
   const breadcrumbs = useBreadcrumbs();
   const mappingsRevision = useUserMappingsRevisionState();
+  const quotaRevision = useUserQuotaRevisionState();
   const fetchRateLimits = useCallback(() => getUserRateLimits(username!), [username]);
   const updateRateLimits = useCallback((limits: any) => updateUserRateLimits(username!, limits), [username]);
   const account = useAccountState(username!);
@@ -92,8 +94,10 @@ export default function UserDetail() {
     <MailUserSummary username={username!} />
     <div className="mt-4 p-4 bg-white rounded-2">
 
-      <UserMailboxes username={username!} />
-      <UserQuota username={username!} />
+      <UserQuotaRevisionContext.Provider value={quotaRevision}>
+        <UserMailboxes username={username!} />
+        <UserQuota username={username!} />
+      </UserQuotaRevisionContext.Provider>
       <UserMappingsRevisionContext.Provider value={mappingsRevision}>
         <UserAliases username={username!} />
         <UserForwards username={username!} />
