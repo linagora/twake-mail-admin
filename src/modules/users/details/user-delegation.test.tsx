@@ -133,3 +133,15 @@ describe("user delegation: a long address fits a phone screen", () => {
     expect(description.className).toContain("[overflow-wrap:anywhere]");
   });
 });
+
+describe("user delegation: remove buttons", () => {
+  it("names each remove button after its delegated user", async () => {
+    mocks.api.getDelegatedUsers.mockResolvedValue([ALICE, "emma@example.com"]);
+    render(<UserDelegation username={BOB} />);
+    fireEvent.click(screen.getByText("users.delegation.title"));
+
+    const named = (item: string) => `users.delegation.removeNamed ${JSON.stringify({ item })}`;
+    expect(await screen.findByRole("button", { name: named(ALICE) })).not.toBeNull();
+    expect(screen.getByRole("button", { name: named("emma@example.com") }).getAttribute("title")).toBe("users.delegation.removeTooltip");
+  });
+});

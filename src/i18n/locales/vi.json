@@ -793,6 +793,7 @@
       "empty": "Không có người dùng được ủy quyền.",
       "addTooltip": "Thêm người dùng được ủy quyền",
       "removeTooltip": "Xóa người dùng được ủy quyền",
+      "removeNamed": "Xóa người dùng được ủy quyền \"{{item}}\"",
       "selfDelegation": "Không thể ủy quyền người dùng cho chính họ",
       "alreadyDelegated": "{{delegatedUser}} đã là người dùng được ủy quyền của {{username}}",
       "unknownUserTitle": "Người dùng không xác định",
