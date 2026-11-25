@@ -121,6 +121,31 @@ describe("create mail repository dialog", () => {
     expect(pathInput().getAttribute("aria-invalid")).toBe("false");
   });
 
+  it.each(["../../etc", "var//mail/qa-repo", "var/mail/qa-repo/", "/var/mail/qa-repo", "var/mail/./qa-dot"])(
+    "refuses the malformed path %s, without calling WebAdmin",
+    (path) => {
+      openDialog();
+      fireEvent.change(pathInput(), { target: { value: path } });
+      confirm();
+
+      expect(screen.getByText("mailRepositories.malformedPath")).not.toBeNull();
+      expect(pathInput().getAttribute("aria-invalid")).toBe("true");
+      expect(api.createMailRepository).not.toHaveBeenCalled();
+
+      fireEvent.change(pathInput(), { target: { value: "var/mail/qa-repo" } });
+      expect(screen.queryByText("mailRepositories.malformedPath")).toBeNull();
+    }
+  );
+
+  it("accepts dots inside a part of the path", async () => {
+    api.createMailRepository.mockResolvedValue(undefined);
+    openDialog();
+    fireEvent.change(pathInput(), { target: { value: "var/mail/.hidden/a..b" } });
+    confirm();
+
+    await waitFor(() => expect(api.createMailRepository).toHaveBeenCalledWith("var%2Fmail%2F.hidden%2Fa..b", "cassandra"));
+  });
+
   it("creates a path differing from an existing one only by its case", async () => {
     api.createMailRepository.mockResolvedValue(undefined);
     openDialog();

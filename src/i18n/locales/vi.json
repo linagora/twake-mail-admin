@@ -1961,6 +1961,7 @@
     "createTitle": "Tạo kho lưu trữ thư",
     "pathRequired": "Đường dẫn kho là bắt buộc",
     "alreadyExists": "Kho {{path}} đã tồn tại.",
+    "malformedPath": "Mỗi phần của đường dẫn giữa các dấu \"/\" phải được điền và không được là \".\" hoặc \"..\".",
     "protocolRequired": "Giao thức là bắt buộc",
     "createError": "Không thể tạo kho thư",
     "created": "Đã tạo kho lưu trữ thư thành công",

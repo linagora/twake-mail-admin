@@ -23,6 +23,11 @@ const REQUIRED_KEYS: Record<Field, string> = {
 const missingFields = (values: Record<Field, string>): Field[] =>
   (Object.keys(values) as Field[]).filter((field) => values[field].trim() === "");
 
+// WebAdmin stores any path as typed and offers no way to delete a repository: a path with an empty
+// part (a leading, trailing or doubled "/") or a "." / ".." part is refused before it is sent
+const isMalformedPath = (path: string): boolean =>
+  path.split("/").some((part) => part === "" || part === "." || part === "..");
+
 interface Props {
   // The repositories the list already shows: WebAdmin answers 204 to an existing path too
   existingRepositories: readonly string[];
@@ -43,6 +48,7 @@ export default function CreateMailRepositoryButton({ existingRepositories, onCre
   const [values, setValues] = useState<Record<Field, string>>({ path: "", protocol: DEFAULT_PROTOCOL });
   const [missing, setMissing] = useState<Field[]>([]);
   const [existingPath, setExistingPath] = useState<string | null>(null);
+  const [malformedPath, setMalformedPath] = useState(false);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<unknown>(null);
 
@@ -51,13 +57,17 @@ export default function CreateMailRepositoryButton({ existingRepositories, onCre
     setValues({ path: "", protocol: DEFAULT_PROTOCOL });
     setMissing([]);
     setExistingPath(null);
+    setMalformedPath(false);
     setError(null);
   };
 
   const update = (field: Field, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
     setMissing((current) => current.filter((f) => f !== field));
-    if (field === "path") setExistingPath(null);
+    if (field === "path") {
+      setExistingPath(null);
+      setMalformedPath(false);
+    }
     setError(null);
   };
 
@@ -66,6 +76,10 @@ export default function CreateMailRepositoryButton({ existingRepositories, onCre
     setMissing(invalid);
     if (invalid.length > 0) return;
     const path = values.path.trim();
+    if (isMalformedPath(path)) {
+      setMalformedPath(true);
+      return;
+    }
     // Repository paths are case sensitive
     if (existingRepositories.includes(path)) {
       setExistingPath(path);
@@ -87,6 +101,7 @@ export default function CreateMailRepositoryButton({ existingRepositories, onCre
 
   const fieldErrorOf = (field: Field): string | null => {
     if (missing.includes(field)) return t(REQUIRED_KEYS[field]);
+    if (field === "path" && malformedPath) return t("mailRepositories.malformedPath");
     if (field === "path" && existingPath !== null) return t("mailRepositories.alreadyExists", { path: existingPath });
     return null;
   };

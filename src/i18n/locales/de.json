@@ -1980,6 +1980,7 @@
     "createTitle": "Mail-Repository erstellen",
     "pathRequired": "Repository-Pfad ist erforderlich",
     "alreadyExists": "Ein Repository {{path}} existiert bereits.",
+    "malformedPath": "Jeder Teil des Pfads zwischen „/“ muss ausgefüllt sein und darf nicht „.“ oder „..“ sein.",
     "protocolRequired": "Protokoll ist erforderlich",
     "createError": "Mail-Repository konnte nicht erstellt werden",
     "created": "Mail-Repository erfolgreich erstellt",

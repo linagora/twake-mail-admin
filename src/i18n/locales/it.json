@@ -1982,6 +1982,7 @@
     "createTitle": "Crea repository di posta",
     "pathRequired": "Il percorso del repository è obbligatorio",
     "alreadyExists": "Esiste già un repository {{path}}.",
+    "malformedPath": "Ogni parte del percorso tra «/» deve essere compilata e non può essere «.» o «..».",
     "protocolRequired": "Il protocollo è obbligatorio",
     "createError": "Impossibile creare il repository di posta",
     "created": "Repository di posta creato correttamente",
