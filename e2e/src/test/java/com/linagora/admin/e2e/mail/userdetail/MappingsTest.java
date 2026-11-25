@@ -138,7 +138,7 @@ class MappingsTest extends MailAdminE2ETest {
         assertThat(keptCopy).hasCount(1);
         Locator forward = mappings.row(brian, "Forward", charlotte);
         mappings.removeButton(forward).click();
-        assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Remove Forward Mapping");
+        assertThat(app.dialog().getByRole(AriaRole.HEADING)).hasText("Remove forward mapping");
         mappings.confirmRemove();
         app.expectToast("Forward mapping removed successfully");
         assertThat(forward).hasCount(0);
