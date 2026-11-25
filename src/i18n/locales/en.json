@@ -1980,6 +1980,7 @@
     "createTitle": "Create Mail Repository",
     "pathRequired": "Repository path is required",
     "alreadyExists": "A repository {{path}} already exists.",
+    "malformedPath": "Each part of the path between \"/\" must be filled in, and cannot be \".\" or \"..\".",
     "protocolRequired": "Protocol is required",
     "createError": "Failed to create the mail repository",
     "created": "Mail repository created successfully",
