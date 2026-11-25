@@ -7,6 +7,7 @@ import { UserQuota as UserQuotaType } from "../types";
 import QuotaLimits, { NO_LIMITS, QuotaLimitsApi } from "@/components/custom/quota-limits";
 import { domainOf, QuotaLevel, QuotaLevelRows, QuotaOccupation } from "@/components/custom/quota-levels";
 import { SectionToggle, useSectionFact, useSectionOpen } from "@/components/custom/collapsible-section";
+import { useUserQuotaRevision } from "./user-quota-revision";
 
 interface Props {
   username: string;
@@ -27,12 +28,14 @@ export default function UserQuota({ username }: Props) {
   }), [username]);
 
   const fetchQuota = useCallback(() => getUserQuota(username), [username]);
+  // Fetched again once messages were removed from the page (a mailbox cleared or deleted)
+  const { revision: quotaRevision } = useUserQuotaRevision();
   const {
     data: quota,
     isLoading,
     error,
     refresh,
-  } = useFetchData<UserQuotaType>(canView ? fetchQuota : null);
+  } = useFetchData<UserQuotaType>(canView ? fetchQuota : null, quotaRevision);
   // The summary strip of the page follows each edit of the limits
   useSectionFact("quota", quota);
 

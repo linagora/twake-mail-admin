@@ -20,6 +20,7 @@ import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { folderNameProblem } from "@/lib/mailbox-path";
 import { taskTypeLabel } from "@/modules/tasks/task-summary";
 import { useFeatureUnavailable } from "@/lib/unavailable-features";
+import { useUserQuotaRevision } from "./user-quota-revision";
 
 const PAGE_LIMIT = Number(import.meta.env.VITE_PAGE_LIMIT) || 50;
 
@@ -68,6 +69,7 @@ export default function UserMailboxes({ username }: Props) {
   const [countsVersions, setCountsVersions] = useState<Record<string, number>>({});
   const refreshCounts = (mailboxName: string) =>
     setCountsVersions((versions) => ({ ...versions, [mailboxName]: (versions[mailboxName] ?? 0) + 1 }));
+  const { notifyQuotaChanged } = useUserQuotaRevision();
 
   const filtered = useMemo(() => {
     if (!mailboxes) return [];
@@ -124,6 +126,7 @@ export default function UserMailboxes({ username }: Props) {
     try {
       await deleteUserMailbox(username, mailboxName);
       toast({ title: t("users.mailboxes.deleted") });
+      notifyQuotaChanged();
       await refresh();
     } catch (err) {
       toast({
@@ -144,7 +147,10 @@ export default function UserMailboxes({ username }: Props) {
     if (!confirmed) return;
     try {
       const data = await clearMailboxContent(username, mailboxName);
-      toastTaskCreated(data.taskId, undefined, taskTypeLabel(t, "ClearMailboxContentTask"), () => refreshCounts(mailboxName));
+      toastTaskCreated(data.taskId, undefined, taskTypeLabel(t, "ClearMailboxContentTask"), () => {
+        refreshCounts(mailboxName);
+        notifyQuotaChanged();
+      });
     } catch (err) {
       toast({
         title: t("users.mailboxes.errorClearing"),
