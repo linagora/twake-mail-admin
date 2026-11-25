@@ -119,7 +119,11 @@ export default function HealthCheck() {
     if (healthCheckResponse) setCheckedAt(new Date());
   }, [healthCheckResponse]);
 
-  const checks = healthCheckResponse?.checks || [];
+  // Only a report naming its components is a statement on their health: another answer (a page of
+  // a proxy or of a login, a JSON without checks) is an error, never "All 0 components are healthy"
+  const isReport = Array.isArray(healthCheckResponse?.checks) && healthCheckResponse.checks.length > 0;
+  const checks = isReport ? healthCheckResponse!.checks : [];
+  const shownError = error ?? (healthCheckResponse && !isReport ? t("healthCheck.unexpectedAnswer") : null);
   const sections = groupHealthChecks(checks, isCalendar);
 
   // Checking again keeps the cards of the previous check on screen
@@ -138,9 +142,9 @@ export default function HealthCheck() {
         docuUrl={isCalendar ? CALENDAR_WEBADMIN_DOC_URL : DOCU_URL_MAIL}
       />
 
-      {error && (
+      {shownError && (
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <p role="alert" className="text-red-500">{t("common.errorPrefix", { message: error })}</p>
+          <p role="alert" className="text-red-500">{t("common.errorPrefix", { message: shownError })}</p>
           {refreshButton}
         </div>
       )}
@@ -156,7 +160,7 @@ export default function HealthCheck() {
         </>
       )}
 
-      {healthCheckResponse && !error && (
+      {isReport && !error && (
         <SummaryBanner checks={checks} checkedAt={checkedAt} refreshButton={refreshButton} />
       )}
 

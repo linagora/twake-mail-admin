@@ -1784,6 +1784,7 @@
   },
   "healthCheck": {
     "checking": "Checking the components, this can take a while…",
+    "unexpectedAnswer": "unexpected answer from WebAdmin, which lists no component",
     "welcome": "Welcome to Twake Mail administration!",
     "description": "This tool makes it easy to manage Twake Mail via webadmin.",
     "welcomeCalendar": "Welcome to Twake Calendar administration!",
