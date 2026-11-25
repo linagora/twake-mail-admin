@@ -24,4 +24,6 @@ export interface MailDetail {
   remoteHost: string;
   remoteAddr: string;
   lastUpdated: string | null;
+  /** Size of the message in bytes, only sent when asked with additionalFields=messageSize. */
+  messageSize?: number;
 }

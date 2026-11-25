@@ -41,7 +41,7 @@ const mailDetail = (name: string) => ({
 function answer(url: string) {
   if (url === "/mailRepositories") return Promise.resolve([{ repository: REPOSITORY }, { repository: "var/mail/other" }]);
   if (url.includes("/mails?")) return Promise.resolve(MAIL_KEYS);
-  return Promise.resolve(mailDetail(MAIL_KEYS.find((key) => url.endsWith(`/mails/${key}`)) ?? MAIL_KEYS[0]));
+  return Promise.resolve(mailDetail(MAIL_KEYS.find((key) => url.split("?")[0].endsWith(`/mails/${key}`)) ?? MAIL_KEYS[0]));
 }
 
 function renderAt(path: string) {
