@@ -38,3 +38,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #743](https://github.com/linagora/twake-mail-admin/issues/743)
 - Why: WebAdmin answers 200 to an existing delegation, so the console used to report "Delegated user added" while nothing changed.
 - Scope: desktop and mobile, user detail page, Delegated Users section.
+
+## 2026-11-25, [Infra] The console's nginx hides its version and sends a Referrer-Policy
+
+- Decision: `nginx.conf` sets `server_tokens off;` and adds `Referrer-Policy: strict-origin-when-cross-origin` (with `always`) at the server level, re-declared in every `location` that has its own `add_header` (`/env.js`, `/index.html`, `/assets/`), next to the CSP and `X-Content-Type-Options`.
+- Decided by: chibenwa, [issue #767](https://github.com/linagora/twake-mail-admin/issues/767); `strict-origin-when-cross-origin` rather than `no-referrer` chosen by agent (PR for #767), to be confirmed by chibenwa.
+- Why: the exact nginx version helps fingerprint the image, and console paths hold user addresses that must not reach another origin; the bare origin is still sent so that a backend checking it keeps working.
+- Scope: every response of the console image (documents, assets, env.js, error pages).
