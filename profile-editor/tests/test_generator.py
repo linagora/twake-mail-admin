@@ -488,15 +488,43 @@ class GeneratorTest(unittest.TestCase):
 
 
     def test_an_endpoint_the_baseline_misses_is_emitted_explicitly(self):
-        """The mail baseline has no rule for /mappings/user/{username}.
-
-        It grants /mappings/sources/%@{domain} with no query string, which the proxy
-        applies to every query: the ?type= variant is covered, not repeated.
-        """
+        """The mail baseline has no rule for /mappings/user/{username}."""
         baseline = find_profile("classpath://functional-admin-mail-baseline.json")
         generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline)
         assert ("GET", "/mappings/user/%@{domain}") in endpoints_of(generated)
-        assert ("GET", "/mappings/sources/%@{domain}?type={type}") not in endpoints_of(generated)
+
+    REVERSE_MAPPING_URLS = tuple(
+        f"/mappings/sources/alice@a.org?type={mapping_type}"
+        for mapping_type in ("address", "alias", "forward", "group")
+    )
+
+    def test_a_domain_profile_never_grants_the_reverse_mapping_lookup(self):
+        """It lists and removes the sources of every domain pointing at the user."""
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        domain_rules = (
+            generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN)).rules,
+            expand(generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline).rules, baseline),
+            baseline.rules,
+        )
+        for rules in domain_rules:
+            assert not any(
+                rule.endpoint.startswith("/mappings/sources")
+                for rule in rules
+                if isinstance(rule, Rule) and not rule.denied
+            )
+            resolver = Resolver(
+                [replace(rule, endpoint=rule.endpoint.replace("{domain}", "a.org")) for rule in rules]
+            )
+            for verb in ("GET", "DELETE"):
+                for url in self.REVERSE_MAPPING_URLS:
+                    assert not resolver.is_allowed(verb, url), (verb, url)
+
+    def test_a_platform_operator_keeps_the_reverse_mapping_lookup(self):
+        resolver = Resolver(generate(INVENTORY, MAIL_GLOBAL, grant_all(MAIL_GLOBAL)).rules)
+        for verb in ("GET", "DELETE"):
+            assert resolver.is_allowed(verb, "/mappings/sources/{username}"), verb
+            for url in self.REVERSE_MAPPING_URLS:
+                assert resolver.is_allowed(verb, url), (verb, url)
 
     def test_domain_scope_rewrites_only_user_address_segments(self):
         cases = [

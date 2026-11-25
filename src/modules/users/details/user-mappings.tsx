@@ -27,6 +27,9 @@ export default function UserMappings({ username }: Props) {
   const { toast } = useToast();
   const confirm = useConfirm();
   const canView = useIsAllowed("GET", "/mappings/user/{username}");
+  // Reverse lookup across every domain: a profile may grant the user's own
+  // mappings without the sources other addresses point at it with.
+  const canViewSources = useIsAllowed("GET", "/mappings/sources/{username}");
   const canDeleteSources = useIsAllowed("DELETE", "/mappings/sources/{username}");
 
   const [open, setOpen, openContentId] = useSectionOpen("mappings");
@@ -59,7 +62,7 @@ export default function UserMappings({ username }: Props) {
     data: sourcesData,
     isLoading: loadingSources,
     error: errorSources,
-  } = useFetchData<{ type: SourceType; sources: string[] }[]>(canView ? fetchSources : null, revision);
+  } = useFetchData<{ type: SourceType; sources: string[] }[]>(canView && canViewSources ? fetchSources : null, revision);
 
   const sortedMappings = useMemo(() => {
     if (!mappings) return [];

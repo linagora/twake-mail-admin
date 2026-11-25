@@ -6,6 +6,7 @@ import i18n from "@/i18n";
 const mocks = vi.hoisted(() => ({
   confirm: vi.fn(),
   toast: vi.fn(),
+  isAllowed: vi.fn(),
   api: {
     getUserMappings: vi.fn(),
     getUserMappingSources: vi.fn(),
@@ -13,7 +14,7 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
+vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: mocks.isAllowed }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => mocks.confirm }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("../api-client", () => mocks.api);
@@ -27,6 +28,7 @@ beforeAll(() => i18n.changeLanguage("en"));
 
 beforeEach(() => {
   vi.resetAllMocks();
+  mocks.isAllowed.mockReturnValue(true);
   mocks.confirm.mockResolvedValue(true);
   mocks.api.getUserMappings.mockResolvedValue([]);
   mocks.api.getUserMappingSources.mockImplementation(async (_user: string, type: string) =>
@@ -79,6 +81,27 @@ describe("user mappings: sources pointing to the user", () => {
         expect.objectContaining({ title: `Error removing the Alias sources of ${EMMA}` })
       )
     );
+  });
+});
+
+describe("user mappings: a profile without the reverse lookup", () => {
+  const OWN_DESTINATION = "emma.forward@example.com";
+
+  beforeEach(() => {
+    mocks.isAllowed.mockImplementation(
+      (_verb: string, pattern: string) => !pattern.startsWith("/mappings/sources/")
+    );
+    mocks.api.getUserMappings.mockResolvedValue([{ type: "Forward", mapping: OWN_DESTINATION }]);
+  });
+
+  it("shows the user's own mappings but never asks for the sources pointing at the user", async () => {
+    render(<UserMappings username={EMMA} />);
+    fireEvent.click(await screen.findByRole("button", { name: /Mappings/ }));
+
+    await screen.findByText(OWN_DESTINATION);
+    expect(mocks.api.getUserMappingSources).not.toHaveBeenCalled();
+    expect(screen.queryByText(ALIAS)).toBeNull();
+    expect(screen.queryByTitle("Remove all Alias sources")).toBeNull();
   });
 });
 

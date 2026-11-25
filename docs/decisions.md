@@ -45,3 +45,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #767](https://github.com/linagora/twake-mail-admin/issues/767); `strict-origin-when-cross-origin` rather than `no-referrer` chosen by agent (PR for #767), to be confirmed by chibenwa.
 - Why: the exact nginx version helps fingerprint the image, and console paths hold user addresses that must not reach another origin; the bare origin is still sent so that a backend checking it keeps working.
 - Scope: every response of the console image (documents, assets, env.js, error pages).
+
+## 2026-11-25, [Product] Only platform operators see and remove the sources pointing at a user
+
+- Decision: on a user's Mappings section, "Sources pointing to this user" and its "Remove all <type> sources" buttons need `GET` / `DELETE /mappings/sources/{username}`; without the GET the sources are neither fetched nor shown, while the user's own mappings (`GET /mappings/user/{username}`) stay. The profile generator offers both calls in GLOBAL mode only, and the vendored `functional-admin-mail-baseline.json` no longer grants `/mappings/sources/%@{domain}` but denies `/mappings/sources/{target}` (a documented difference from webadmin-proxy, see `profile-editor/UPSTREAM.md`).
+- Decided by: chibenwa, [issue #770](https://github.com/linagora/twake-mail-admin/issues/770) (twake-qa security review SEV-1 of 2026-11-25); dropping the view for domain admins rather than a domain-filtered backend route chosen by agent (PR for #770), to be confirmed by chibenwa.
+- Why: the route is a reverse lookup across every domain, so a domain profile pinning `{username}` to its own domain could still list and remove other tenants' aliases, forwards and groups pointing at its users.
+- Scope: desktop and mobile, user detail page, Mappings section; generated DOMAIN profiles and the vendored mail baseline. The same change is still due in webadmin-proxy's own baselines.
