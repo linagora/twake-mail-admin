@@ -181,3 +181,24 @@ describe("address book shared with chip", () => {
     expect(await screen.findByPlaceholderText("users.addressBooks.invitees.placeholder")).not.toBeNull();
   });
 });
+
+describe("address book rows: long description", () => {
+  it("wraps a description without spaces inside its row", async () => {
+    const description = "D".repeat(2000);
+    mocks.userStatus.mockReturnValue("idle");
+    mocks.api.getUserAddressBookContactCount.mockResolvedValue({ count: 0 });
+    mocks.api.getUserAddressBooks.mockResolvedValue({
+      _embedded: {
+        "dav:addressbook": [{
+          "dav:name": "qa-long-desc",
+          "carddav:description": description,
+          _links: { self: { href: "/addressbooks/bob/qa.json" } },
+        }],
+      },
+    });
+    render(<UserAddressBooks username={BOB} />);
+    fireEvent.click(screen.getByText("users.addressBooks.title"));
+
+    expect((await screen.findByText(description)).className).toContain("[overflow-wrap:anywhere]");
+  });
+});
