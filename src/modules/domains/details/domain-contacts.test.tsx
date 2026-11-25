@@ -183,3 +183,41 @@ describe("domain contacts of the team mailboxes", () => {
     expect(counter()).toBe("(2)");
   });
 });
+
+describe("domain contacts following the team mailboxes of the page", () => {
+  const renderWithChange = (teamMailboxChange: { added?: string; removed?: string } | null) => (
+    <MemoryRouter><DomainContacts domain="example.com" teamMailboxChange={teamMailboxChange} /></MemoryRouter>
+  );
+
+  const renderFollowing = async () => {
+    cleanup();
+    proxy.resolver = new ProxyResolver([...CONTACT_ENDPOINTS, ...TEAM_MAILBOX_ENDPOINTS]);
+    const view = render(renderWithChange(null));
+    fireEvent.click(screen.getByText("domains.contacts.title"));
+    await screen.findByText("alice@example.com");
+    return view.rerender;
+  };
+
+  it("drops the contact of a deleted team mailbox, although the listing still has it, and fetches the badges again", async () => {
+    api.getDomainContacts.mockResolvedValue([...STALE_LISTING, "qateam2@example.com"]);
+    api.getTeamMailboxes.mockResolvedValue([{ name: "qateam2", emailAddress: "qateam2@example.com" }]);
+    const rerender = await renderFollowing();
+    expect(counter()).toBe("(3)");
+    api.getTeamMailboxes.mockClear();
+
+    api.getTeamMailboxes.mockResolvedValue([]);
+    rerender(renderWithChange({ removed: "qateam2@example.com" }));
+
+    await waitFor(() => expect(screen.queryByText("qateam2@example.com")).toBeNull());
+    expect(counter()).toBe("(2)");
+    expect(api.getTeamMailboxes).toHaveBeenCalledTimes(1);
+  });
+
+  it("lists the contact of a created team mailbox before the listing has it", async () => {
+    const rerender = await renderFollowing();
+    rerender(renderWithChange({ added: "qateam3@example.com" }));
+
+    expect(await screen.findByText("qateam3@example.com")).not.toBeNull();
+    expect(counter()).toBe("(3)");
+  });
+});
