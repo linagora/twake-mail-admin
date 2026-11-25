@@ -174,10 +174,12 @@ export const reprocessMailRepository = async (
  */
 export const getMailDetail = async (
   encodedPathOfTheRepository: string,
-  mailKey: string
+  mailKey: string,
+  additionalFields: string[] = []
 ): Promise<MailDetail> => {
+  const query = additionalFields.length > 0 ? `?additionalFields=${additionalFields.join(",")}` : "";
   return apiClient.get(
-    `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}`,
+    `/mailRepositories/${encodedPathOfTheRepository}/mails/${mailKey}${query}`,
     { headers: { Accept: "application/json" } }
   );
 };

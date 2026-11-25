@@ -49,7 +49,8 @@ const WRAP_BELOW_MD = "[overflow-wrap:anywhere] md:truncate";
 type SortField = "name" | "sender" | "recipients" | "size" | "lastUpdated";
 
 interface MailRow extends MailDetail {
-  size: number;
+  // The size WebAdmin reports for the message, null when it did not
+  size: number | null;
 }
 
 function compareValues(a: string | number | null, b: string | number | null, asc: boolean): number {
@@ -62,8 +63,8 @@ function compareValues(a: string | number | null, b: string | number | null, asc
   return asc ? sa.localeCompare(sb) : sb.localeCompare(sa);
 }
 
-function formatSize(bytes: number): string {
-  if (bytes === 0) return "—";
+function formatSize(bytes: number | null): string {
+  if (bytes === null) return "—";
   return formatByteSize(bytes);
 }
 
@@ -150,10 +151,8 @@ export default function MailRepositoryExtended() {
       const details = await Promise.all(
         keys.map(async (key) => {
           try {
-            const detail = await getMailDetail(encodedRepo, key);
-            // Estimate size from JSON payload
-            const size = JSON.stringify(detail).length;
-            return { ...detail, size } as MailRow;
+            const detail = await getMailDetail(encodedRepo, key, ["messageSize"]);
+            return { ...detail, size: detail.messageSize ?? null } as MailRow;
           } catch {
             return {
               name: key,
@@ -164,7 +163,7 @@ export default function MailRepositoryExtended() {
               remoteHost: "",
               remoteAddr: "",
               lastUpdated: null,
-              size: 0,
+              size: null,
             } as MailRow;
           }
         })

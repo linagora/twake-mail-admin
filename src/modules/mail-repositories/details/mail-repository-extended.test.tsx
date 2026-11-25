@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 
 const http = vi.hoisted(() => ({ get: vi.fn() }));
@@ -33,7 +33,8 @@ const mailDetail = {
 function answer(url: string) {
   if (url === "/mailRepositories") return Promise.resolve([{ repository: "var/mail/error" }]);
   if (url.includes("/mails?")) return Promise.resolve([mailDetail.name]);
-  return Promise.resolve(mailDetail);
+  // WebAdmin only sends the size of the message when asked for it
+  return Promise.resolve(url.endsWith("?additionalFields=messageSize") ? { ...mailDetail, messageSize: 123 } : mailDetail);
 }
 
 function renderExtended() {
@@ -135,5 +136,40 @@ describe("mail repository extended view: layout", () => {
     const recipientsCell = within(row).getByText("labelled(mailRepositories.colRecipients)").parentElement!;
 
     expect(recipientsCell.classList).toContain("[overflow-wrap:anywhere]");
+  });
+});
+
+describe("mail repository extended view: size", () => {
+  // A long key and a short message: the size must be the message's, not the length of the detail
+  const mails: Record<string, number> = { ["k-" + "x".repeat(60)]: 300, "k-short": 900 };
+
+  beforeEach(() => {
+    http.get.mockImplementation((url: string) => {
+      if (url === "/mailRepositories") return Promise.resolve([{ repository: "var/mail/error" }]);
+      if (url.includes("/mails?")) return Promise.resolve(Object.keys(mails));
+      const key = Object.keys(mails).find((k) => url.includes(`/mails/${k}`))!;
+      return Promise.resolve({ ...mailDetail, name: key, ...(url.endsWith("?additionalFields=messageSize") && { messageSize: mails[key] }) });
+    });
+  });
+
+  it("asks WebAdmin for the size of each message and sorts on it", async () => {
+    renderExtended();
+    await screen.findAllByTestId("mail-repository-extended-row");
+
+    expect(http.get).toHaveBeenCalledWith(
+      `/mailRepositories/var%2Fmail%2Ferror/mails/k-short?additionalFields=messageSize`,
+      expect.anything()
+    );
+    // Each row as "<key kind> <size>"
+    const rows = () => screen.getAllByTestId("mail-repository-extended-row").map((row) =>
+      `${row.textContent!.includes("k-short") ? "short" : "long"} ${within(row).getByText(/^\d+( .*)?$/).textContent!.split(" ")[0]}`);
+
+    fireEvent.change(screen.getByLabelText("mailRepositories.sortBy"), { target: { value: "size" } });
+    const firstOrder = rows();
+    fireEvent.click(screen.getByText(/mailRepositories\.sort(Asc|Desc)/));
+    const secondOrder = rows();
+
+    expect([firstOrder, secondOrder]).toContainEqual(["long 300", "short 900"]);
+    expect([firstOrder, secondOrder]).toContainEqual(["short 900", "long 300"]);
   });
 });
