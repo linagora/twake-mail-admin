@@ -52,3 +52,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #770](https://github.com/linagora/twake-mail-admin/issues/770) (twake-qa security review SEV-1 of 2026-11-25); dropping the view for domain admins rather than a domain-filtered backend route chosen by agent (PR for #770), to be confirmed by chibenwa.
 - Why: the route is a reverse lookup across every domain, so a domain profile pinning `{username}` to its own domain could still list and remove other tenants' aliases, forwards and groups pointing at its users.
 - Scope: desktop and mobile, user detail page, Mappings section; generated DOMAIN profiles and the vendored mail baseline. The same change is still due in webadmin-proxy's own baselines.
+
+## 2026-11-25, [UX] A Users domain filter naming an unmanaged domain stays applied
+
+- Decision: when the Users list is opened with `?domain=` naming a domain that is not managed (unknown, or deleted since the link was made), the filter is kept and the Domain select shows it as an extra selected option "<domain> (domain not managed)"; picking "All domains" drops it. The URL is not rewritten.
+- Decided by: agent, fixing [issue #772](https://github.com/linagora/twake-mail-admin/issues/772), which offered keeping or dropping the filter; to be confirmed by chibenwa.
+- Why: the users of a deleted domain stay on the server and the list already badges them "domain not managed", so a link to them is meaningful; only the select disagreed with the list.
+- Scope: desktop and mobile, Users list.

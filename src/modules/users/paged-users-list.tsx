@@ -64,6 +64,9 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
   const managedDomains = useMemo(() => new Set(domainChoices.map((d) => d.toLowerCase())), [domainChoices]);
   const isUnmanaged = (username: string) =>
     managedDomains.size > 0 && !managedDomains.has(username.slice(username.lastIndexOf("@") + 1).toLowerCase());
+  // A link or a bookmark may name a domain that is not (or no longer) managed: its users still
+  // exist, so the filter stays, shown as its own option rather than under "All domains"
+  const unmanagedSelection = selectedDomain && !managedDomains.has(selectedDomain.toLowerCase()) ? selectedDomain : null;
 
   return (
     <div>
@@ -76,6 +79,9 @@ export function PagedUsersList({ source, domain, domainChoices = [] }: PagedUser
             className="h-10 max-w-full px-3 border rounded-md bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
           >
             <option value="">{t("users.allDomains")}</option>
+            {unmanagedSelection && (
+              <option value={unmanagedSelection}>{`${unmanagedSelection} (${t("users.unmanagedDomain")})`}</option>
+            )}
             {sortedDomainChoices.map((choice) => (
               <option key={choice} value={choice}>{choice}</option>
             ))}
