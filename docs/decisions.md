@@ -59,3 +59,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: agent, fixing [issue #772](https://github.com/linagora/twake-mail-admin/issues/772), which offered keeping or dropping the filter; to be confirmed by chibenwa.
 - Why: the users of a deleted domain stay on the server and the list already badges them "domain not managed", so a link to them is meaningful; only the select disagreed with the list.
 - Scope: desktop and mobile, Users list.
+
+## 2026-11-25, [UX] The page of an unmanaged domain says so and shows no section
+
+- Decision: the domain page first asks `HEAD /domains/{domain}`. On a 404 it shows only its header (kind "Unknown domain") and a notice "No domain named <domain> exists on this server." with a link back to Domains: no summary, section nor action. Any other failure of the check renders the page as before.
+- Decided by: agent, fixing [issue #773](https://github.com/linagora/twake-mail-admin/issues/773), modelled on the user page's "Address without account" state.
+- Why: a stale link used to open a full domain page with scattered errors and actions (Save, Run) that make no sense for a domain the server does not have.
+- Scope: desktop and mobile, mail domain page (`/domains/domain/<domain>`).
