@@ -61,8 +61,22 @@ rules:
 
 Without them `/users/%@{domain}/*` and `/domains/{domain}/*` let a tenant admin
 provision templates copied from a user of *another* tenant (`from=` is a free
-address). They are a security fix that belongs upstream; until webadmin-proxy
-ships them, this is the only accepted difference:
+address).
+
+It also drops upstream's `{"endpoint": "/mappings/sources/%@{domain}"}` grant and
+denies the route instead, right before the `/domains/{domain}` rules (#770):
+
+```json
+{"denied": true, "endpoint": "/mappings/sources/{target}"},
+```
+
+`/mappings/sources/{user}` is a reverse lookup: it lists and removes every source,
+in any domain, whose mapping points at the user. Pinning the user to the caller's
+domain pins the target, not the owner of the records, so a tenant admin could read
+and remove other tenants' aliases, forwards and groups pointing at their users.
+
+Both are security fixes that belong upstream; until webadmin-proxy ships them,
+these are the only accepted differences:
 
 ```sh
 diff <(gh api 'repos/linagora/webadmin-proxy/contents/src/main/resources/functional-admin-mail-baseline.json?ref=master' --jq .content | base64 -d) \

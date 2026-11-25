@@ -1189,20 +1189,32 @@ USERS = page(
             "Mappings tab",
             "Onglet Réécritures",
             applications=MAIL,
+            # /mappings/sources/{username} is a reverse lookup: it lists and
+            # removes every source pointing at the user, in any domain. Pinning
+            # {username} to the caller's domain pins the target, not the owner
+            # of the records, so a domain admin would read and delete other
+            # tenants' mappings. Reverse mappings are a platform operator's view.
             endpoints=[
                 must("GET", "/mappings/user/{username}"),
-                must("GET", "/mappings/sources/{username}?type={type}"),
+                may(
+                    "GET",
+                    "/mappings/sources/{username}?type={type}",
+                    gates=("/mappings/sources/{username}",),
+                    modes=GLOBAL,
+                ),
             ],
             children=[
                 action(
                     "delete-sources",
                     "Delete mapping sources",
                     "Supprimer des sources de réécriture",
+                    modes=GLOBAL,
                     endpoints=[
                         may(
                             "DELETE",
                             "/mappings/sources/{username}?type={type}",
                             gates=("/mappings/sources/{username}",),
+                            modes=GLOBAL,
                         )
                     ],
                 )

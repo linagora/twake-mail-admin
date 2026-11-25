@@ -35,6 +35,7 @@ a task or action parameter.
 | `DELETE /deletedMessages` | `DELETE /deletedMessages?scope=expired` |
 | `DELETE /jmap/uploads` | `DELETE /jmap/uploads?scope=expired&{params}` |
 | `DELETE /mappings/sources/{username}` | `DELETE /mappings/sources/{username}?type={type}` |
+| `GET /mappings/sources/{username}` | `GET /mappings/sources/{username}?type={type}` |
 | `DELETE /messages` | `DELETE /messages?mailbox={mailbox}&olderThan={date}&useSavedDate` |
 | `DELETE /messages?user={username}&mailbox=Spam` | `DELETE /messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` |
 | `DELETE /messages?user={username}&mailbox=Trash` | `DELETE /messages?user={username}&mailbox={mailbox}&olderThan={date}&useSavedDate` |
@@ -501,8 +502,10 @@ that tenant's mail to a user of the domain.
 | Trigger | Verb | Pattern | MUST/MAY |
 |---------|------|---------|----------|
 | Tab load | GET | `/mappings/user/{username}` | MUST |
-| Mapping sources | GET | `/mappings/sources/{username}?type={type}` | MUST |
-| "Delete mapping sources" button | DELETE | `/mappings/sources/{username}?type={type}` | MAY (do not show the button if missing) |
+| Mapping sources | GET | `/mappings/sources/{username}?type={type}` | MAY (do not show the sources pointing to the user if missing; platform operators only, see below) |
+| "Delete mapping sources" button | DELETE | `/mappings/sources/{username}?type={type}` | MAY (do not show the button if missing; platform operators only) |
+
+`/mappings/sources/{username}` is a reverse lookup: it lists, and removes, every source pointing at the user **in any domain**. A domain profile must not grant it — pinning `{username}` to the caller's domain pins the target, not the owner of the records.
 
 ### User detail — Labels tab *(APPLICATION:"MAIL")*
 
