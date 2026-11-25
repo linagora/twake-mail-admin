@@ -191,7 +191,7 @@ function AddressBookRow({
           )}
         </div>
         {addressBook["carddav:description"] && (
-          <p className="text-xs text-gray-400">{addressBook["carddav:description"]}</p>
+          <p className="text-xs text-gray-400 [overflow-wrap:anywhere]">{addressBook["carddav:description"]}</p>
         )}
         {owner && (
           <p className="text-xs text-gray-400">

@@ -419,3 +419,20 @@ describe("resource calendars delegated to their administrators", () => {
       .toBe(`/domains/domain/open-paas.org/resource/${ROOM}`);
   });
 });
+
+describe("calendar rows: long description", () => {
+  it("wraps a description without spaces inside its row", async () => {
+    const description = "D".repeat(2000);
+    mocks.api.getUserCalendars.mockResolvedValue({
+      _embedded: {
+        "dav:calendar": [
+          { _links: { self: { href: `/calendars/${HOME}/${HOME}.json` } }, "dav:name": "#default" },
+          { _links: { self: { href: `/calendars/${HOME}/qa.json` } }, "dav:name": "QA LongDesc", "caldav:description": description },
+        ],
+      },
+    });
+    await openCalendars();
+
+    expect(screen.getByText(description).className).toContain("[overflow-wrap:anywhere]");
+  });
+});

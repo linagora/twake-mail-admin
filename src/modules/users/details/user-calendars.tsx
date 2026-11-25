@@ -201,7 +201,7 @@ function CalendarRow({
           )}
         </div>
         {description && (
-          <p className="text-xs text-gray-400">{description}</p>
+          <p className="text-xs text-gray-400 [overflow-wrap:anywhere]">{description}</p>
         )}
         {/* A team calendar names its domain, where its members are managed; a resource links to its page; another user's calendar, its owner */}
         {teamCalendarSourceId(calendar) ? (
