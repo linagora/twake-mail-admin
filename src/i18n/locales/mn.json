@@ -1770,6 +1770,7 @@
   },
   "healthCheck": {
     "checking": "Бүрэлдэхүүн хэсгүүдийг шалгаж байна, энэ нь хэсэг хугацаа шаардаж магадгүй…",
+    "unexpectedAnswer": "WebAdmin-аас ямар ч бүрэлдэхүүн хэсэг жагсаагаагүй гэнэтийн хариу ирлээ",
     "welcome": "Twake Mail удирдлагад тавтай морил!",
     "description": "Энэ хэрэгсэл нь Twake Mail-г webadmin-аар удирдахад хялбар болгоно.",
     "welcomeCalendar": "Twake Calendar удирдлагад тавтай морил!",

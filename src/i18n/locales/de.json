@@ -1784,6 +1784,7 @@
   },
   "healthCheck": {
     "checking": "Komponenten werden geprüft, dies kann eine Weile dauern…",
+    "unexpectedAnswer": "unerwartete Antwort von WebAdmin, die keine Komponente aufführt",
     "welcome": "Willkommen in der Twake Mail-Verwaltung!",
     "description": "Mit diesem Tool verwalten Sie Twake Mail ganz einfach über webadmin.",
     "welcomeCalendar": "Willkommen in der Twake Calendar-Verwaltung!",

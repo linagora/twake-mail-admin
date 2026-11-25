@@ -1796,6 +1796,7 @@
   },
   "healthCheck": {
     "checking": "Проверка компонентов, это может занять некоторое время…",
+    "unexpectedAnswer": "неожиданный ответ WebAdmin, в котором нет ни одного компонента",
     "welcome": "Добро пожаловать в администрирование Twake Mail!",
     "description": "Этот инструмент упрощает управление Twake Mail через webadmin.",
     "welcomeCalendar": "Добро пожаловать в администрирование Twake Calendar!",

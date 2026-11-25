@@ -112,6 +112,19 @@ describe("health check: loading and failure", () => {
 
     expect((await screen.findByRole("alert")).textContent).toContain("Network Error");
   });
+
+  it.each([
+    ["an HTML page", "<html>proxy</html>"],
+    ["a JSON without checks", { status: "healthy" }],
+    ["a JSON with no check", { status: "healthy", checks: [] }],
+  ])("shows an error, not a healthy banner, for %s", async (_, body) => {
+    api.getHealthCheck.mockReset().mockResolvedValue(body);
+    render(<MemoryRouter><HealthCheck /></MemoryRouter>);
+
+    expect((await screen.findByRole("alert")).textContent).toContain("healthCheck.unexpectedAnswer");
+    expect(screen.queryByText(/healthCheck\.summary\./)).toBeNull();
+    expect(screen.getByText("healthCheck.refresh")).not.toBeNull();
+  });
 });
 
 describe("health check: component names", () => {
