@@ -24,9 +24,10 @@ export default function DeleteUserDataForm({ onChange, fromStepPlaceholderKey = 
           type="text"
           className="mt-1"
           placeholder={t(fromStepPlaceholderKey)}
+          aria-describedby={`${fromStepId}-help`}
           onChange={(e) => onChange(e.target.value)}
         />
-        <p className="text-xs text-muted-foreground mt-1">{t("deleteUserDataForm.fromStepHelp")}</p>
+        <p id={`${fromStepId}-help`} className="text-xs text-muted-foreground mt-1">{t("deleteUserDataForm.fromStepHelp")}</p>
       </div>
     </details>
   );

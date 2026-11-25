@@ -31,4 +31,10 @@ describe("rename user form", () => {
     render(<RenameUserForm username="ren1@example.com" onChange={() => {}} />);
     expect(screen.queryByText("renameUserForm.mergeIntoExisting")).not.toBeNull();
   });
+
+  it("describes the resume step field with its help", () => {
+    render(<RenameUserForm username="ren1@example.com" onChange={() => {}} />);
+    const field = screen.getByLabelText("renameUserForm.fromStep");
+    expect(document.getElementById(field.getAttribute("aria-describedby")!)?.textContent).toBe("renameUserForm.fromStepHelp");
+  });
 });
