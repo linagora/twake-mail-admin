@@ -23,7 +23,7 @@ export function ReportTable({ report }: { report: JmapSettingsReport }) {
         const entries = Object.entries(values).sort((a, b) => b[1] - a[1]);
         return (
           <div key={key}>
-            <h3 className="text-sm font-semibold font-mono text-gray-700 mb-1">{key}</h3>
+            <h3 className="text-sm font-semibold font-mono text-gray-700 mb-1 [overflow-wrap:anywhere]">{key}</h3>
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-gray-100 text-left text-xs text-gray-500 uppercase">
@@ -34,7 +34,7 @@ export function ReportTable({ report }: { report: JmapSettingsReport }) {
               <tbody>
                 {entries.map(([value, count]) => (
                   <tr key={value} className="border-t border-gray-100 hover:bg-gray-50">
-                    <td className="px-3 py-2 font-mono text-xs text-gray-700">{value}</td>
+                    <td className="px-3 py-2 font-mono text-xs text-gray-700 [overflow-wrap:anywhere]">{value}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{count}</td>
                   </tr>
                 ))}
