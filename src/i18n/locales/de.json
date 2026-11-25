@@ -1,13 +1,19 @@
 {
   "provisionTemplates": {
     "sourceUser": "Quellbenutzer",
-    "sourceUserHint": "Das Konto, dessen Vorlagenordner als Referenz verwendet wird.",
+    "sourceUserHint": "Das Konto von {{domain}}, dessen Vorlagenordner als Referenz verwendet wird.",
     "sourceUserRequired": "Quellbenutzer ist erforderlich",
-    "sourceUserOtherDomain": "Der Quellbenutzer muss zur Domain {{domain}} gehören",
+    "sourceUserOtherDomain": "Das Quellkonto muss zu {{domain}} gehören",
     "folderName": "Ordnername",
+    "folderNameHint": "Templates oder einer seiner Unterordner, z. B. Templates.Marketing",
+    "folderNotTemplates": "Der Ordner muss Templates oder einer seiner Unterordner sein, z. B. Templates.Marketing",
     "overwriteExisting": "Vorhandene Vorlagen überschreiben",
     "prune": "Vorlagen entfernen, die in der Quelle nicht mehr vorhanden sind",
-    "usersPerSecond": "Benutzer pro Sekunde"
+    "usersPerSecond": "Benutzer pro Sekunde",
+    "refused": {
+      "source": "Der Server hat das Quellkonto abgelehnt: Es muss zu {{domain}} gehören. Es wurde keine Aufgabe erstellt.",
+      "folder": "Der Server hat den Ordner abgelehnt: Er muss Templates oder einer seiner Unterordner sein. Es wurde keine Aufgabe erstellt."
+    }
   },
   "common": {
     "save": "Speichern",
@@ -394,7 +400,7 @@
       "deleteAllDataConfirm": "Dadurch werden die Daten ALLER Benutzer von „{{domain}}“ gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher?",
       "errorDeletingData": "Fehler beim Löschen der Benutzerdaten",
       "provisionTemplates": "Vorlagen bereitstellen",
-      "provisionTemplatesDesc": "Den Vorlagenordner des Quellbenutzers zu jedem Benutzer dieser Domain kopieren.",
+      "provisionTemplatesDesc": "Den Vorlagenordner (Templates oder einer seiner Unterordner) eines Quellbenutzers dieser Domain zu jedem Benutzer dieser Domain kopieren.",
       "provisionTemplatesTitle": "Vorlagen bereitstellen",
       "errorProvisionTemplates": "Fehler beim Bereitstellen der Vorlagen"
     },
@@ -1090,7 +1096,7 @@
         "restoreDeleted": "Holt passende Nachrichten aus dem Tresor gelöschter Nachrichten in einen Ordner Restored-Messages zurück.",
         "cleanupTrash": "Löscht alte Nachrichten im Papierkorb dieses Benutzers endgültig.",
         "cleanupSpam": "Löscht alte Nachrichten im Spam-Ordner dieses Benutzers endgültig.",
-        "provisionTemplates": "Kopiert den Vorlagenordner eines Quellbenutzers in das Postfach dieses Benutzers.",
+        "provisionTemplates": "Kopiert den Vorlagenordner (Templates oder einer seiner Unterordner) eines Quellbenutzers derselben Domain in das Postfach dieses Benutzers.",
         "tierData": "Verschiebt zwischengespeicherte Daten alter Nachrichten in günstigeren Speicher; die Nachrichten bleiben lesbar.",
         "renameUser": "Verschiebt alle Daten dieses Benutzers in ein anderes bestehendes Konto.",
         "deleteAllMailboxes": "Löscht endgültig alle Postfächer dieses Benutzers samt Nachrichten.",

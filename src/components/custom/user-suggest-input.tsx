@@ -12,6 +12,8 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "o
   onValueChange: (value: string) => void;
   // Sizing of the field in its row (flex-1, basis…): the suggestions are anchored to it
   wrapperClassName?: string;
+  // Only suggests the users of this domain, e.g. the domain a task applies to
+  domain?: string;
 }
 
 // Arrows go round the suggestions
@@ -24,11 +26,11 @@ const previousIndex = (index: number, count: number) => (index <= 0 ? count - 1 
  * that is not offered can still be typed and submitted.
  */
 const UserSuggestInput = forwardRef<HTMLInputElement, Props>(
-  ({ value, onValueChange, wrapperClassName, onKeyDown, onBlur, onFocus, className, ...props }, ref) => {
+  ({ value, onValueChange, wrapperClassName, domain, onKeyDown, onBlur, onFocus, className, ...props }, ref) => {
     const listId = useId();
     const [open, setOpen] = useState(false);
     const [active, setActive] = useState(-1);
-    const suggestions = useUserSuggestions(value, open).filter((s) => s.toLowerCase() !== value.trim().toLowerCase());
+    const suggestions = useUserSuggestions(value, open, domain).filter((s) => s.toLowerCase() !== value.trim().toLowerCase());
     const shown = open && suggestions.length > 0;
 
     const pick = (username: string) => {

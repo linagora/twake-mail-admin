@@ -1,13 +1,19 @@
 {
   "provisionTemplates": {
     "sourceUser": "Người dùng nguồn",
-    "sourceUserHint": "Tài khoản có thư mục mẫu sẽ được dùng làm tham chiếu.",
+    "sourceUserHint": "Tài khoản của {{domain}} có thư mục mẫu sẽ được dùng làm tham chiếu.",
     "sourceUserRequired": "Bắt buộc nhập người dùng nguồn",
-    "sourceUserOtherDomain": "Người dùng nguồn phải thuộc miền {{domain}}",
+    "sourceUserOtherDomain": "Tài khoản nguồn phải thuộc {{domain}}",
     "folderName": "Tên thư mục",
+    "folderNameHint": "Templates hoặc một thư mục con của nó, ví dụ Templates.Marketing",
+    "folderNotTemplates": "Thư mục phải là Templates hoặc một thư mục con của nó, ví dụ Templates.Marketing",
     "overwriteExisting": "Ghi đè các mẫu hiện có",
     "prune": "Xóa các mẫu không còn trong nguồn",
-    "usersPerSecond": "Số người dùng mỗi giây"
+    "usersPerSecond": "Số người dùng mỗi giây",
+    "refused": {
+      "source": "Máy chủ đã từ chối tài khoản nguồn: tài khoản phải thuộc {{domain}}. Không có tác vụ nào được tạo.",
+      "folder": "Máy chủ đã từ chối thư mục: thư mục phải là Templates hoặc một thư mục con của nó. Không có tác vụ nào được tạo."
+    }
   },
   "common": {
     "save": "Lưu",
@@ -390,7 +396,7 @@
       "deleteAllDataConfirm": "Thao tác này sẽ xóa dữ liệu của TẤT CẢ người dùng thuộc \"{{domain}}\". Không thể hoàn tác. Bạn có chắc không?",
       "errorDeletingData": "Lỗi khi xóa dữ liệu người dùng",
       "provisionTemplates": "Cung cấp mẫu",
-      "provisionTemplatesDesc": "Sao chép thư mục mẫu của người dùng nguồn vào mọi người dùng của miền này.",
+      "provisionTemplatesDesc": "Sao chép thư mục mẫu (Templates hoặc một thư mục con) của người dùng nguồn thuộc miền này vào mọi người dùng của miền này.",
       "provisionTemplatesTitle": "Cung cấp mẫu",
       "errorProvisionTemplates": "Lỗi khi cung cấp mẫu"
     },
@@ -1076,7 +1082,7 @@
         "restoreDeleted": "Khôi phục các thư khớp tiêu chí từ kho thư đã xóa vào thư mục Restored-Messages.",
         "cleanupTrash": "Xóa vĩnh viễn thư cũ trong Thùng rác của người dùng này.",
         "cleanupSpam": "Xóa vĩnh viễn thư cũ trong Spam của người dùng này.",
-        "provisionTemplates": "Sao chép thư mục mẫu của người dùng nguồn vào hộp thư của người dùng này.",
+        "provisionTemplates": "Sao chép thư mục mẫu (Templates hoặc một thư mục con) của người dùng nguồn cùng miền vào hộp thư của người dùng này.",
         "tierData": "Chuyển dữ liệu đệm của thư cũ sang kho rẻ hơn; thư vẫn đọc được.",
         "renameUser": "Chuyển toàn bộ dữ liệu của người dùng này sang một tài khoản khác đã có.",
         "deleteAllMailboxes": "Xóa vĩnh viễn mọi hộp thư của người dùng này cùng thư bên trong.",

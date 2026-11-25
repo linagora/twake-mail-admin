@@ -66,3 +66,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: agent, fixing [issue #773](https://github.com/linagora/twake-mail-admin/issues/773), modelled on the user page's "Address without account" state.
 - Why: a stale link used to open a full domain page with scattered errors and actions (Save, Run) that make no sense for a domain the server does not have.
 - Scope: desktop and mobile, mail domain page (`/domains/domain/<domain>`).
+
+## 2026-11-25, [UX] Provision templates only from an account of the target's domain, and only a Templates folder
+
+- Decision: in the domain and user "Provision templates" dialogs, the source user must belong to the target domain (the user's domain on the user page), whatever the console mode, and the folder name must be empty (sent as none, the server uses `Templates`), `Templates` or `Templates.<sub-folder>` (case sensitive, trimmed before sending). A typed source of another domain (once its `@` is typed) or another folder is flagged in red on its field and disables Start task; the source user suggestions are limited to the target domain. A 400 naming either field keeps the dialog open with its values, a sentence naming the refused field and the server message. This replaces the DOMAIN-mode-only source domain check.
+- Decided by: chibenwa, [issue #798](https://github.com/linagora/twake-mail-admin/issues/798), following tmail-backend [61dd831](https://github.com/linagora/tmail-backend/commit/61dd83111af55831623fad32cf4e741989f06800) (GHSA-xh5x-j93m-v7p8); flagging the source only once its `@` is typed chosen by agent (PR for #798), to be confirmed by chibenwa.
+- Why: the backend now answers 400 to both, as the task used to copy (and prune) any folder of any user of any tenant.
+- Scope: desktop and mobile, domain page and user page, Tasks section.

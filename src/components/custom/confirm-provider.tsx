@@ -34,6 +34,8 @@ export interface ConfirmAppearance {
   confirmLabel?: string;
   /** What will be lost, shown above the message in a red-bordered block. */
   consequence?: ReactNode;
+  /** Disables the confirm button while the content shows a value that would be refused, e.g. an inline field error. */
+  confirmDisabled?: boolean;
 }
 
 export interface ConfirmOptions extends ConfirmAppearance {
@@ -176,7 +178,7 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
     || matchesTypeToConfirm(typed, confirmState.typeToConfirm, confirmState.typeToConfirmIgnoreCase);
 
   const handleConfirm = () => {
-    if (!typedMatches) return;
+    if (!typedMatches || confirmState.confirmDisabled) return;
     const error = confirmState.validate?.() ?? null;
     if (error === false) return;
     if (error) {
@@ -270,7 +272,7 @@ export function ConfirmProvider({ children }: ConfirmProviderProps) {
             <Button
               className="mb-4 md:mb-0"
               variant={confirmState.destructive ? "destructive" : "default"}
-              disabled={confirmState.pending || !typedMatches}
+              disabled={confirmState.pending || !typedMatches || !!confirmState.confirmDisabled}
               onClick={handleConfirm}
             >
               {confirmState.pending && <Loader2 className="animate-spin" />}

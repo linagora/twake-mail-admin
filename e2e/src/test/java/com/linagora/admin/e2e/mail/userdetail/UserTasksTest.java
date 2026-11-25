@@ -55,9 +55,22 @@ class UserTasksTest extends MailAdminE2ETest {
             assertThat(detail.commandPreview()).hasText("Command: " + command);
             switch (label) {
                 case "Provision templates" -> {
-                    app.dialog().getByLabel("Source user").fill("alice@example.com");
+                    String domain = user.substring(user.indexOf('@') + 1);
+                    Locator source = app.dialog().getByLabel("Source user", new Locator.GetByLabelOptions().setExact(true));
+                    Locator folder = app.dialog().getByLabel("Folder name", new Locator.GetByLabelOptions().setExact(true));
+                    Locator startTask = detail.dialogButton("Start task");
+                    // WebAdmin refuses a source of another domain and a folder other than Templates (400)
+                    source.fill("alice@other.example");
+                    assertThat(app.dialog()).containsText("The source account must belong to " + domain);
+                    assertThat(startTask).isDisabled();
+                    source.fill("alice@" + domain);
+                    folder.fill("INBOX");
+                    assertThat(app.dialog()).containsText("The folder must be Templates or one of its sub-folders");
+                    assertThat(startTask).isDisabled();
+                    folder.fill(" Templates.Marketing ");
+                    assertThat(startTask).isEnabled();
                     assertThat(detail.commandPreview()).hasText("Command: curl -XPOST /users/" + user
-                        + "/templates?action=provision&from=alice@example.com");
+                        + "/templates?action=provision&from=alice@" + domain + "&folderName=Templates.Marketing");
                 }
                 case "Rename user" -> {
                     app.dialog().getByLabel("New username", new Locator.GetByLabelOptions().setExact(true)).fill("x@example.com");

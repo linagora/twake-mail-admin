@@ -1,13 +1,19 @@
 {
   "provisionTemplates": {
     "sourceUser": "Utente di origine",
-    "sourceUserHint": "L'account la cui cartella dei modelli verrà usata come riferimento.",
+    "sourceUserHint": "L'account di {{domain}} la cui cartella dei modelli verrà usata come riferimento.",
     "sourceUserRequired": "L'utente di origine è obbligatorio",
-    "sourceUserOtherDomain": "L'utente di origine deve appartenere al dominio {{domain}}",
+    "sourceUserOtherDomain": "L'account di origine deve appartenere a {{domain}}",
     "folderName": "Nome della cartella",
+    "folderNameHint": "Templates o una delle sue sottocartelle, ad es. Templates.Marketing",
+    "folderNotTemplates": "La cartella deve essere Templates o una delle sue sottocartelle, ad es. Templates.Marketing",
     "overwriteExisting": "Sovrascrivi i modelli esistenti",
     "prune": "Rimuovi i modelli non più presenti nell'origine",
-    "usersPerSecond": "Utenti al secondo"
+    "usersPerSecond": "Utenti al secondo",
+    "refused": {
+      "source": "Il server ha rifiutato l'account di origine: deve appartenere a {{domain}}. Nessuna attività è stata creata.",
+      "folder": "Il server ha rifiutato la cartella: deve essere Templates o una delle sue sottocartelle. Nessuna attività è stata creata."
+    }
   },
   "common": {
     "save": "Salva",
@@ -394,7 +400,7 @@
       "deleteAllDataConfirm": "Verranno eliminati i dati di TUTTI gli utenti di «{{domain}}». Questa azione non può essere annullata. Sei sicuro?",
       "errorDeletingData": "Errore durante l'eliminazione dei dati degli utenti",
       "provisionTemplates": "Distribuisci i modelli",
-      "provisionTemplatesDesc": "Copia la cartella dei modelli dell'utente di origine in ogni utente di questo dominio.",
+      "provisionTemplatesDesc": "Copia la cartella dei modelli (Templates o una delle sue sottocartelle) di un utente di origine di questo dominio in ogni utente di questo dominio.",
       "provisionTemplatesTitle": "Distribuisci i modelli",
       "errorProvisionTemplates": "Errore durante la distribuzione dei modelli"
     },
@@ -1090,7 +1096,7 @@
         "restoreDeleted": "Riporta i messaggi dell'archivio degli eliminati che soddisfano i criteri in una cartella Restored-Messages.",
         "cleanupTrash": "Elimina definitivamente i vecchi messaggi del Cestino di questo utente.",
         "cleanupSpam": "Elimina definitivamente i vecchi messaggi dello Spam di questo utente.",
-        "provisionTemplates": "Copia la cartella dei modelli di un utente sorgente nella casella di questo utente.",
+        "provisionTemplates": "Copia la cartella dei modelli (Templates o una delle sue sottocartelle) di un utente sorgente dello stesso dominio nella casella di questo utente.",
         "tierData": "Sposta i dati in cache dei vecchi messaggi su uno storage più economico; i messaggi restano leggibili.",
         "renameUser": "Sposta tutti i dati di questo utente su un altro account esistente.",
         "deleteAllMailboxes": "Elimina definitivamente tutte le caselle di questo utente e i loro messaggi.",

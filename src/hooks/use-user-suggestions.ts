@@ -19,11 +19,12 @@ const fetchSuggestions = async (query: string, domain: string) =>
 
 /**
  * Up to five usernames starting with what the admin typed, from `GET /users?query&limit`
- * (scoped to the domain in DOMAIN mode). Only a suggestion: nothing is suggested without
- * the right to list users, and a failed request simply suggests nothing.
+ * (scoped to `scope` when given, else to the domain in DOMAIN mode). Only a suggestion: nothing
+ * is suggested without the right to list users, and a failed request simply suggests nothing.
  */
-export function useUserSuggestions(text: string, enabled = true): string[] {
-  const domain = useDomain();
+export function useUserSuggestions(text: string, enabled = true, scope?: string): string[] {
+  const administeredDomain = useDomain();
+  const domain = scope || administeredDomain;
   const canList = useIsAllowed("GET", domain ? "/users?domain={domain}&{params}" : "/users");
   const query = useDebouncedValue(text.trim(), SUGGEST_DEBOUNCE_MS);
   const [suggestions, setSuggestions] = useState<string[]>([]);

@@ -1,13 +1,19 @@
 {
   "provisionTemplates": {
     "sourceUser": "Source user",
-    "sourceUserHint": "The account whose templates folder will be used as the reference.",
+    "sourceUserHint": "The account of {{domain}} whose templates folder will be used as the reference.",
     "sourceUserRequired": "Source user is required",
-    "sourceUserOtherDomain": "The source user must belong to the domain {{domain}}",
+    "sourceUserOtherDomain": "The source account must belong to {{domain}}",
     "folderName": "Folder name",
+    "folderNameHint": "Templates or one of its sub-folders, e.g. Templates.Marketing",
+    "folderNotTemplates": "The folder must be Templates or one of its sub-folders, e.g. Templates.Marketing",
     "overwriteExisting": "Overwrite existing templates",
     "prune": "Prune templates no longer present in the source",
-    "usersPerSecond": "Users per second"
+    "usersPerSecond": "Users per second",
+    "refused": {
+      "source": "The server refused the source account: it must belong to {{domain}}. No task was created.",
+      "folder": "The server refused the folder: it must be Templates or one of its sub-folders. No task was created."
+    }
   },
   "common": {
     "save": "Save",
@@ -394,7 +400,7 @@
       "deleteAllDataConfirm": "This will delete the data of ALL users belonging to \"{{domain}}\". This action cannot be undone. Are you sure?",
       "errorDeletingData": "Error deleting users data",
       "provisionTemplates": "Provision templates",
-      "provisionTemplatesDesc": "Copy the source user's templates folder into every user of this domain.",
+      "provisionTemplatesDesc": "Copy the templates folder (Templates or one of its sub-folders) of a source user of this domain into every user of this domain.",
       "provisionTemplatesTitle": "Provision templates",
       "errorProvisionTemplates": "Error provisioning templates"
     },
@@ -1090,7 +1096,7 @@
         "restoreDeleted": "Brings back messages of the Deleted Messages Vault matching the criteria into a Restored-Messages folder.",
         "cleanupTrash": "Permanently deletes the old messages of this user's Trash.",
         "cleanupSpam": "Permanently deletes the old messages of this user's Spam.",
-        "provisionTemplates": "Copies the templates folder of a source user into this user's mailbox.",
+        "provisionTemplates": "Copies the templates folder (Templates or one of its sub-folders) of a source user of the same domain into this user's mailbox.",
         "tierData": "Moves the cached data of old messages to cheaper storage; the messages stay readable.",
         "renameUser": "Moves all the data of this user to another existing account.",
         "deleteAllMailboxes": "Permanently deletes every mailbox of this user and the messages they contain.",
