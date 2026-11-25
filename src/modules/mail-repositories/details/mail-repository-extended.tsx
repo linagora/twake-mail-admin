@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
-import { useParams, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
+import { useRepositoryId } from "./use-repository-id";
 import { useTranslation } from "react-i18next";
 import { Download, MoveHorizontal, Trash2, RefreshCw, Loader2 } from "lucide-react";
 import MailFiltersPanel, { MailFilters } from "./mail-filters-panel";
@@ -87,7 +88,7 @@ export default function MailRepositoryExtended() {
   const { toast } = useToast();
   const toastTaskCreated = useTaskCreatedToast();
   const confirm = useConfirm();
-  const { id } = useParams();
+  const id = useRepositoryId();
   const breadcrumbs = useBreadcrumbs();
   const [searchParams, setSearchParams] = useSearchParams();
   const canViewMail = useIsAllowed("GET", "/mailRepositories/{encodedPath}/mails/{mailKey}");

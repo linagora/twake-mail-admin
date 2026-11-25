@@ -1,4 +1,5 @@
-import { useParams, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
+import { useRepositoryId } from "./use-repository-id";
 import { Button } from "@/components/ui/button";
 import i18n from "i18next";
 import { useJsonDialog } from "@/components/custom/json-dialog";
@@ -77,7 +78,7 @@ export default function MailRepositoryDetail() {
   const { toast } = useToast();
   const toastTaskCreated = useTaskCreatedToast();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { id } = useParams();
+  const id = useRepositoryId();
   const breadcrumbs = useBreadcrumbs();
   const confirm = useConfirm();
   const canViewMail = useIsAllowed("GET", "/mailRepositories/{encodedPath}/mails/{mailKey}");
