@@ -90,9 +90,9 @@ export default function MappingsList() {
   const handleDelete = async (mapping: FlatMapping) => {
     const typeLabel = typeName(mapping.type).toLowerCase();
     const confirmed = await confirm({
-      header: t("mappings.removeTitle", { type: typeName(mapping.type) }),
+      header: t("mappings.removeTitle", { typeLabel }),
       destructive: true,
-      confirmLabel: t("common.remove"),
+      confirmLabel: t("mappings.removeAction"),
       message: t("mappings.removeConfirm", { typeLabel, source: mapping.source, destination: mapping.destination }),
       ...(isKeptCopy(mapping) && { consequence: t("mappings.removeKeptCopyConsequence", { source: mapping.source }) }),
     });
@@ -300,8 +300,12 @@ export default function MappingsList() {
                     <button
                       onClick={() => handleDelete(mapping)}
                       className="p-1 rounded-md hover:bg-red-100 text-red-500 transition"
-                      title={t("mappings.removeTitle", { type: typeName(mapping.type) })}
-                      aria-label={t("mappings.removeNamed", { type: typeName(mapping.type), source: mapping.source, destination: mapping.destination })}
+                      title={t("mappings.removeTitle", { typeLabel: typeName(mapping.type).toLowerCase() })}
+                      aria-label={t("mappings.removeNamed", {
+                        typeLabel: typeName(mapping.type).toLowerCase(),
+                        source: mapping.source,
+                        destination: mapping.destination,
+                      })}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
