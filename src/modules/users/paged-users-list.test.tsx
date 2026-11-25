@@ -149,6 +149,23 @@ describe("paged users list: search and filter in the URL", () => {
 
     expect(screen.getByTestId("location").textContent).toBe("?domain=example.org&q=bo");
   });
+
+  it("shows a domain of the URL that is not managed as the selected filter, and lets all domains be picked", async () => {
+    const source: UsernamesSource = async ({ domain }) =>
+      ["bob@example.com", "gone@qa-gone.test"].filter((u) => !domain || u.endsWith(`@${domain}`));
+    renderAt("/users?domain=qa-gone.test", source, ["example.com"]);
+
+    expect(await screen.findByText("gone@qa-gone.test")).not.toBeNull();
+    const select = screen.getByLabelText("common.domain") as HTMLSelectElement;
+    expect(select.value).toBe("qa-gone.test");
+    expect(select.selectedOptions[0].textContent).toBe("qa-gone.test (users.unmanagedDomain)");
+
+    fireEvent.change(select, { target: { value: "" } });
+
+    expect(await screen.findByText("bob@example.com")).not.toBeNull();
+    expect(screen.getByTestId("location").textContent).toBe("");
+    expect(Array.from(select.options).map((o) => o.value)).toEqual(["", "example.com"]);
+  });
 });
 
 describe("paged users list: users of a deleted domain", () => {
