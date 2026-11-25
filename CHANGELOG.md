@@ -100,6 +100,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 ### Security
 
+- The profile editor ships the updated mail baseline of webadmin-proxy, which withholds from every tenant profile the domain-wide data wipe, the creation and removal of the domain, the creation, overwrite and deletion of accounts (a `PUT /users/{user}?force` reset the password of any user of the domain) and the quota routes setting both limits at once. A domain profile answering yes to the domain data wipe now grants it with an explicit rule before the include. New generator tests check that a read-only tenant profile refuses every quota write, account write, domain wipe and template provisioning.
 - Domain administrators can no longer rename users into another domain, add aliases of another domain, copy another tenant's address book, provision templates from another tenant, or read other tenants' mailing lists.
 - Domain administrators can no longer run platform-wide tasks through the mail baseline profile: `POST /messages` is denied, and only `DELETE /messages?user=…` and `GET /quota/users?domain=…` remain granted, so the triage, SolveInconsistencies and RecomputeCurrentQuotas tasks are out of their reach (#643).
 - A profile granting nothing now denies every call instead of allowing everything.
