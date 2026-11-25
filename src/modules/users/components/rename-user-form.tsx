@@ -60,9 +60,10 @@ export default function RenameUserForm({ username, onChange }: Props) {
               className="mt-1"
               placeholder={t("renameUserForm.fromStepPlaceholder")}
               value={values.fromStep}
+              aria-describedby={`${fromStepId}-help`}
               onChange={(e) => update({ fromStep: e.target.value })}
             />
-            <p className="text-xs text-muted-foreground mt-1">{t("renameUserForm.fromStepHelp")}</p>
+            <p id={`${fromStepId}-help`} className="text-xs text-muted-foreground mt-1">{t("renameUserForm.fromStepHelp")}</p>
           </div>
         </div>
       </details>

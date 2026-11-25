@@ -41,4 +41,10 @@ describe("delete user data form", () => {
     expect(screen.getByLabelText("deleteUserDataForm.fromStep").getAttribute("placeholder"))
       .toBe("deleteUserDataForm.calendarFromStepPlaceholder");
   });
+
+  it("describes the resume step field with its help", () => {
+    render(<DeleteUserDataForm onChange={() => {}} />);
+    const field = screen.getByLabelText("deleteUserDataForm.fromStep");
+    expect(document.getElementById(field.getAttribute("aria-describedby")!)?.textContent).toBe("deleteUserDataForm.fromStepHelp");
+  });
 });
