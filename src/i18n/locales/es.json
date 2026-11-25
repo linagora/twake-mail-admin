@@ -803,6 +803,7 @@
       "empty": "No hay usuarios delegados.",
       "addTooltip": "Añadir usuario delegado",
       "removeTooltip": "Quitar usuario delegado",
+      "removeNamed": "Quitar el usuario delegado «{{item}}»",
       "selfDelegation": "No se puede delegar un usuario a sí mismo",
       "alreadyDelegated": "{{delegatedUser}} ya es un usuario delegado de {{username}}",
       "unknownUserTitle": "Usuario desconocido",

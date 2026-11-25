@@ -177,6 +177,7 @@ export default function UserDelegation({ username }: Props) {
                       onClick={() => handleRemove(user)}
                       className="shrink-0 p-2 rounded-md hover:bg-gray-200"
                       title={t("users.delegation.removeTooltip")}
+                      aria-label={t("users.delegation.removeNamed", { item: user })}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
