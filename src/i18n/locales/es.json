@@ -1,13 +1,19 @@
 {
   "provisionTemplates": {
     "sourceUser": "Usuario de origen",
-    "sourceUserHint": "La cuenta cuya carpeta de plantillas se usará como referencia.",
+    "sourceUserHint": "La cuenta de {{domain}} cuya carpeta de plantillas se usará como referencia.",
     "sourceUserRequired": "El usuario de origen es obligatorio",
-    "sourceUserOtherDomain": "El usuario de origen debe pertenecer al dominio {{domain}}",
+    "sourceUserOtherDomain": "La cuenta de origen debe pertenecer a {{domain}}",
     "folderName": "Nombre de la carpeta",
+    "folderNameHint": "Templates o una de sus subcarpetas, p. ej. Templates.Marketing",
+    "folderNotTemplates": "La carpeta debe ser Templates o una de sus subcarpetas, p. ej. Templates.Marketing",
     "overwriteExisting": "Sobrescribir las plantillas existentes",
     "prune": "Eliminar las plantillas que ya no existen en el origen",
-    "usersPerSecond": "Usuarios por segundo"
+    "usersPerSecond": "Usuarios por segundo",
+    "refused": {
+      "source": "El servidor rechazó la cuenta de origen: debe pertenecer a {{domain}}. No se creó ninguna tarea.",
+      "folder": "El servidor rechazó la carpeta: debe ser Templates o una de sus subcarpetas. No se creó ninguna tarea."
+    }
   },
   "common": {
     "save": "Guardar",
@@ -394,7 +400,7 @@
       "deleteAllDataConfirm": "Se eliminarán los datos de TODOS los usuarios de «{{domain}}». Esta acción no se puede deshacer. ¿Está seguro?",
       "errorDeletingData": "Error al eliminar los datos de los usuarios",
       "provisionTemplates": "Distribuir plantillas",
-      "provisionTemplatesDesc": "Copiar la carpeta de plantillas del usuario de origen en cada usuario de este dominio.",
+      "provisionTemplatesDesc": "Copiar la carpeta de plantillas (Templates o una de sus subcarpetas) de un usuario de origen de este dominio en cada usuario de este dominio.",
       "provisionTemplatesTitle": "Distribuir plantillas",
       "errorProvisionTemplates": "Error al distribuir las plantillas"
     },
@@ -1090,7 +1096,7 @@
         "restoreDeleted": "Recupera los mensajes del almacén de eliminados que cumplen los criterios en una carpeta Restored-Messages.",
         "cleanupTrash": "Elimina definitivamente los mensajes antiguos de la Papelera de este usuario.",
         "cleanupSpam": "Elimina definitivamente los mensajes antiguos del Spam de este usuario.",
-        "provisionTemplates": "Copia la carpeta de plantillas de un usuario de origen en el buzón de este usuario.",
+        "provisionTemplates": "Copia la carpeta de plantillas (Templates o una de sus subcarpetas) de un usuario de origen del mismo dominio en el buzón de este usuario.",
         "tierData": "Mueve los datos en caché de los mensajes antiguos a un almacenamiento más barato; los mensajes siguen legibles.",
         "renameUser": "Mueve todos los datos de este usuario a otra cuenta existente.",
         "deleteAllMailboxes": "Elimina definitivamente todos los buzones de este usuario y sus mensajes.",

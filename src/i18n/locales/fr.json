@@ -1,13 +1,19 @@
 {
   "provisionTemplates": {
     "sourceUser": "Utilisateur source",
-    "sourceUserHint": "Le compte dont le dossier de modèles servira de référence.",
+    "sourceUserHint": "Le compte de {{domain}} dont le dossier de modèles servira de référence.",
     "sourceUserRequired": "L'utilisateur source est obligatoire",
-    "sourceUserOtherDomain": "L'utilisateur source doit appartenir au domaine {{domain}}",
+    "sourceUserOtherDomain": "Le compte source doit appartenir à {{domain}}",
     "folderName": "Nom du dossier",
+    "folderNameHint": "Templates ou l'un de ses sous-dossiers, par ex. Templates.Marketing",
+    "folderNotTemplates": "Le dossier doit être Templates ou l'un de ses sous-dossiers, par ex. Templates.Marketing",
     "overwriteExisting": "Écraser les modèles existants",
     "prune": "Supprimer les modèles absents de la source",
-    "usersPerSecond": "Utilisateurs par seconde"
+    "usersPerSecond": "Utilisateurs par seconde",
+    "refused": {
+      "source": "Le serveur a refusé le compte source : il doit appartenir à {{domain}}. Aucune tâche n'a été créée.",
+      "folder": "Le serveur a refusé le dossier : il doit être Templates ou l'un de ses sous-dossiers. Aucune tâche n'a été créée."
+    }
   },
   "common": {
     "save": "Enregistrer",
@@ -394,7 +400,7 @@
       "deleteAllDataConfirm": "Les données de TOUS les utilisateurs du domaine « {{domain}} » seront supprimées. Cette action est irréversible. Confirmer ?",
       "errorDeletingData": "Erreur lors de la suppression des données",
       "provisionTemplates": "Provisionner les modèles",
-      "provisionTemplatesDesc": "Copier le dossier de modèles de l'utilisateur source vers tous les utilisateurs de ce domaine.",
+      "provisionTemplatesDesc": "Copier le dossier de modèles (Templates ou l'un de ses sous-dossiers) d'un utilisateur source de ce domaine vers tous les utilisateurs de ce domaine.",
       "provisionTemplatesTitle": "Provisionner les modèles",
       "errorProvisionTemplates": "Erreur lors du provisionnement des modèles"
     },
@@ -1090,7 +1096,7 @@
         "restoreDeleted": "Ramène les messages du coffre des messages supprimés correspondant aux critères dans un dossier Restored-Messages.",
         "cleanupTrash": "Supprime définitivement les anciens messages de la Corbeille de cet utilisateur.",
         "cleanupSpam": "Supprime définitivement les anciens messages du Spam de cet utilisateur.",
-        "provisionTemplates": "Copie le dossier de modèles d'un utilisateur source dans la boîte de cet utilisateur.",
+        "provisionTemplates": "Copie le dossier de modèles (Templates ou l'un de ses sous-dossiers) d'un utilisateur source du même domaine dans la boîte de cet utilisateur.",
         "tierData": "Déplace les données en cache des anciens messages vers un stockage moins coûteux ; les messages restent lisibles.",
         "renameUser": "Déplace toutes les données de cet utilisateur vers un autre compte existant.",
         "deleteAllMailboxes": "Supprime définitivement toutes les boîtes de cet utilisateur et leurs messages.",

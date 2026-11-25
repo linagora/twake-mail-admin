@@ -130,15 +130,49 @@ describe("user tasks: confirmation dialogs preview their command", () => {
     expect(dialog.options!.validate!()).toBeNull();
   });
 
-  it("refuses, in DOMAIN mode, to provision templates from another domain", async () => {
+  it("refuses to provision templates from another domain", async () => {
     await openDialog("users.tasks.provisionTemplates");
     expect(dialog.options!.validate!()).toBe("provisionTemplates.sourceUserRequired");
 
     fireEvent.change(screen.getByLabelText("provisionTemplates.sourceUser"), { target: { value: "victim@other.com" } });
     expect(dialog.options!.validate!()).toBe("provisionTemplates.sourceUserOtherDomain");
+    expect(screen.getByLabelText("provisionTemplates.sourceUser").getAttribute("aria-invalid")).toBe("true");
 
     fireEvent.change(screen.getByLabelText("provisionTemplates.sourceUser"), { target: { value: "ref@LINAGORA.com" } });
     expect(dialog.options!.validate!()).toBeNull();
+  });
+
+  it.each([
+    ["Templates.Marketing", null],
+    ["  Templates  ", null],
+    ["INBOX", "provisionTemplates.folderNotTemplates"],
+  ])("checks the provisioned folder %j", async (folderName, expected) => {
+    await openDialog("users.tasks.provisionTemplates");
+    fireEvent.change(screen.getByLabelText("provisionTemplates.sourceUser"), { target: { value: "ref@linagora.com" } });
+    fireEvent.change(screen.getByLabelText("provisionTemplates.folderName"), { target: { value: folderName } });
+
+    expect(dialog.options!.validate!()).toBe(expected);
+  });
+
+  it("previews the trimmed folder name it sends", async () => {
+    await openDialog("users.tasks.provisionTemplates");
+    fireEvent.change(screen.getByLabelText("provisionTemplates.sourceUser"), { target: { value: "ref@linagora.com" } });
+    fireEvent.change(screen.getByLabelText("provisionTemplates.folderName"), { target: { value: " Templates.Marketing " } });
+
+    expect(screen.getByText("curl -XPOST /users/bob@linagora.com/templates?action=provision&from=ref@linagora.com&folderName=Templates.Marketing", { exact: false })).not.toBeNull();
+  });
+
+  it("names the field WebAdmin refused with a 400", async () => {
+    await openDialog("users.tasks.provisionTemplates");
+    const refusal = new AxiosError("Request failed with status code 400", "ERR_BAD_REQUEST", undefined, undefined, {
+      status: 400, statusText: "", headers: {}, config: { headers: {} as never },
+      data: { statusCode: 400, type: "InvalidArgument", message: "Invalid 'folderName' value 'INBOX'. Expected 'Templates' or one of its sub-folders.", details: null },
+    });
+    cleanup();
+    render(<>{dialog.options!.describeError!(refusal)}</>);
+
+    expect(screen.getByText("provisionTemplates.refused.folder")).not.toBeNull();
+    expect(screen.getByText("Invalid 'folderName' value 'INBOX'. Expected 'Templates' or one of its sub-folders.")).not.toBeNull();
   });
 
   it("refuses to restore deleted messages while a criterion is incomplete, and flags it", async () => {

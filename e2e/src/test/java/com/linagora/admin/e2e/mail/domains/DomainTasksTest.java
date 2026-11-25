@@ -29,6 +29,7 @@ class DomainTasksTest extends MailAdminE2ETest {
         String alice = fixtures.newUser("alice");
         fixtures.newUser("bob");
         webAdmin.put("/users/" + alice + "/mailboxes/Templates").expect(204);
+        webAdmin.put("/users/" + alice + "/mailboxes/Templates.Marketing").expect(204);
 
         DomainDetailPage detail = DomainDetailPage.open(app, domain).openSection("Tasks");
         for (String row : new String[] {"Provision templates", "Apply signature templates", "Delete all users data"}) {
@@ -59,12 +60,26 @@ class DomainTasksTest extends MailAdminE2ETest {
         assertThat(app.dialogError()).hasText("Source user is required");
         assertThat(dialog).isVisible();
 
+        // WebAdmin refuses a source account of another domain and a folder that is not a templates
+        // folder (400): both are flagged on their field, and the task cannot be started
+        Locator startTask = detail.dialogButton("Start task");
+        source.fill("victim@other.example");
+        assertThat(dialog).containsText("The source account must belong to " + domain);
+        assertThat(startTask).isDisabled();
+
         source.fill(alice);
         assertThat(dialog.getByText("User exists")).isVisible();
-        folder.fill("Templates");
+        assertThat(folder).hasAttribute("placeholder", "Templates");
+        assertThat(dialog).containsText("Templates or one of its sub-folders, e.g. Templates.Marketing");
+        folder.fill("INBOX");
+        assertThat(dialog).containsText("The folder must be Templates or one of its sub-folders");
+        assertThat(startTask).isDisabled();
+
+        folder.fill("Templates.Marketing");
+        assertThat(startTask).isEnabled();
         usersPerSecond.fill("5");
         assertThat(dialog).containsText("Command: curl -XPOST /domains/" + domain
-            + "/templates?action=provision&from=" + alice + "&folderName=Templates&usersPerSecond=5");
+            + "/templates?action=provision&from=" + alice + "&folderName=Templates.Marketing&usersPerSecond=5");
         detail.confirmWith("Start task");
         String taskId = taskIdOfToast(app, "Task created");
         JsonNode task = webAdmin.awaitTask(taskId);

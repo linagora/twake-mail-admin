@@ -7,7 +7,8 @@ import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
 import { useConfirm } from "@/hooks/use-confirm";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import ProvisionTemplatesForm, { ProvisionTemplatesValues } from "@/components/custom/provision-templates-form";
-import { provisionSourceError } from "@/components/custom/provision-source";
+import { provisionValuesError } from "@/components/custom/provision-source";
+import { describeProvisionRefusal } from "@/components/custom/provision-refusal";
 import { useIsAllowed } from "@/lib/proxy-resolver-context";
 import { appConfig } from "@/lib/config";
 import ConfirmTaskContent from "@/modules/common-tasks/components/confirm-task-content";
@@ -76,15 +77,17 @@ export default function DomainTasks({ domain, defaultOpen }: Props) {
       message: (
         <FormTaskContent
           initialValues={values}
-          renderForm={(onChange) => <ProvisionTemplatesForm showUsersPerSecond onChange={onChange} />}
+          renderForm={(onChange) => <ProvisionTemplatesForm domain={domain} showUsersPerSecond onChange={onChange} />}
           buildCommand={(v) => provisionDomainTemplatesCommand(domain, v)}
           onChange={(v) => { values = v; }}
         />
       ),
       validate: () => {
-        const error = provisionSourceError(values.sourceUser.trim(), domain, appConfig.mode === "DOMAIN");
+        const error = provisionValuesError(values.sourceUser, values.folderName, domain);
         return error ? t(error, { domain }) : null;
       },
+      // A 400 keeps the dialog open with its values, and says which field WebAdmin refused
+      describeError: describeProvisionRefusal(domain),
       action: async () => {
         const { taskId } = await provisionDomainTemplates(domain, {
           from: values.sourceUser.trim(),

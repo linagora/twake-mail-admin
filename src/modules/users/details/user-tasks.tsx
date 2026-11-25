@@ -7,7 +7,8 @@ import RestoreCriteriaBuilder from "../components/restore-criteria-builder";
 import RenameUserForm from "../components/rename-user-form";
 import DeleteUserDataForm from "../components/delete-user-data-form";
 import ProvisionTemplatesForm, { ProvisionTemplatesValues } from "@/components/custom/provision-templates-form";
-import { provisionSourceError } from "@/components/custom/provision-source";
+import { provisionValuesError } from "@/components/custom/provision-source";
+import { describeProvisionRefusal } from "@/components/custom/provision-refusal";
 import { appConfig } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
 import { useTaskCreatedToast } from "@/hooks/use-task-created-toast";
@@ -126,21 +127,24 @@ export default function UserTasks({ username }: Props) {
 
   const handleProvisionTemplates = async () => {
     let values = INITIAL_PROVISION_VALUES;
+    const targetDomain = domainOf(username);
 
     await confirm({
       header: t("users.tasks.provisionTemplatesTitle"),
       message: (
         <FormTaskContent
           initialValues={values}
-          renderForm={(onChange) => <ProvisionTemplatesForm onChange={onChange} />}
+          renderForm={(onChange) => <ProvisionTemplatesForm domain={targetDomain} onChange={onChange} />}
           buildCommand={(v) => provisionTemplatesCommand(username, v)}
           onChange={(v) => { values = v; }}
         />
       ),
       validate: () => {
-        const error = provisionSourceError(values.sourceUser.trim(), domainOf(username), appConfig.mode === "DOMAIN");
-        return error ? t(error, { domain: domainOf(username) }) : null;
+        const error = provisionValuesError(values.sourceUser, values.folderName, targetDomain);
+        return error ? t(error, { domain: targetDomain }) : null;
       },
+      // A 400 keeps the dialog open with its values, and says which field WebAdmin refused
+      describeError: describeProvisionRefusal(targetDomain),
       action: async () => {
         const data = await provisionUserTemplates(username, {
           from: values.sourceUser.trim(),
