@@ -111,7 +111,7 @@ class UserDetailSettingsTest extends MailAdminE2ETest {
         assertThat(texts(webAdmin.get("/users/" + bob + "/authorizedUsers").expect(200).json(), null))
             .containsExactly(alice);
 
-        detail.clickItemButton(delegation, alice, "Remove delegated user");
+        detail.clickItemButton(delegation, alice, "Remove delegated user \"" + alice + "\"");
         detail.confirm("Remove");
         app.expectToast("Delegated user removed");
         assertThat(delegation.getByText("No delegated users.")).isVisible();
