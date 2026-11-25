@@ -7,7 +7,7 @@ import { useFetchData } from "@/hooks/use-fetch-data";
 import { getDomainAdmins, addDomainAdmin, removeDomainAdmin } from "../api-client";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/hooks/use-confirm";
-import { useCheckUserExists } from "@/hooks/use-check-user-exists";
+import { isWellFormedUsername, useCheckUserExists } from "@/hooks/use-check-user-exists";
 import ErrorDisplayer from "@/components/custom/error-displayer";
 import FormDialog, { FIELD_CLASS } from "@/components/custom/form-dialog";
 import { useTranslation } from "react-i18next";
@@ -19,9 +19,10 @@ const searchable = (admin: string) => [admin];
 const isListedAdmin = (admins: string[], username: string) =>
   admins.some((admin) => admin.toLowerCase() === username.toLowerCase());
 
-// The side service refuses an admin of another domain (400), but still removes one
+// The side service refuses an admin of another domain (400), but still removes one.
+// An ill-formed address (a@b@c) is invalid, not of another domain.
 const isOfOtherDomain = (username: string, domain: string) =>
-  username.includes("@") && username.slice(username.lastIndexOf("@") + 1).toLowerCase() !== domain.toLowerCase();
+  isWellFormedUsername(username) && username.includes("@") && username.slice(username.lastIndexOf("@") + 1).toLowerCase() !== domain.toLowerCase();
 
 interface Props {
   domain: string;

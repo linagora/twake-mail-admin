@@ -17,7 +17,10 @@ vi.mock("react-i18next", () => ({
 }));
 vi.mock("@/lib/proxy-resolver-context", () => ({ useIsAllowed: () => true }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => async () => true }));
-vi.mock("@/hooks/use-check-user-exists", () => ({ useCheckUserExists: () => userCheck.status }));
+vi.mock("@/hooks/use-check-user-exists", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/hooks/use-check-user-exists")>()),
+  useCheckUserExists: () => userCheck.status,
+}));
 vi.mock("../api-client", () => api);
 
 import CalendarDomainAdmins from "./calendar-domain-admins";
@@ -155,6 +158,16 @@ describe("CalendarDomainAdmins user of another domain", () => {
     expect(addButton().disabled).toBe(true);
     fireEvent.keyDown(input, { key: "Enter" });
     expect(api.addDomainAdmin).not.toHaveBeenCalled();
+  });
+
+  it("tells an ill-formed address is invalid, not of another domain", async () => {
+    userCheck.status = "invalid";
+    const input = await openAddInput();
+    fireEvent.change(input, { target: { value: "a@b@c" } });
+
+    expect(screen.getByText("common.invalidUsername")).not.toBeNull();
+    expect(screen.queryByText('domains.calendarAdmins.otherDomain {"domain":"open-paas.org"}')).toBeNull();
+    expect(addButton().disabled).toBe(true);
   });
 
   it("compares the domain part case-insensitively", async () => {
