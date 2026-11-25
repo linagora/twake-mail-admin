@@ -13,7 +13,7 @@ from twake_profile_editor.generator import (
     generate,
 )
 from twake_profile_editor.inventory import INVENTORY
-from twake_profile_editor.model import Application, Inventory, Mode, must, page
+from twake_profile_editor.model import Application, Inventory, Kind, Mode, must, page
 from twake_profile_editor.profiles import IncludeDirective, find_profile
 from twake_profile_editor.resolver import Resolver, Rule
 
@@ -282,6 +282,68 @@ class GeneratorTest(unittest.TestCase):
             assert resolver.is_allowed("DELETE", "/messages?user={username}&mailbox=Trash")
             assert resolver.is_allowed("DELETE", "/messages?user=a@a.org&mailbox=Spam&olderThan=5d")
             assert resolver.is_allowed("GET", "/quota/users?domain=a.org")
+
+    #: Backend writes the frontend never calls, which the mail baseline's verb-less
+    #: /domains/{domain} and /users/%@{domain} rules used to grant to every tenant role:
+    #: PUT /users/{user}?force resets a password, DELETE /domains/{domain} unregisters it.
+    NEVER_GRANTED_TO_A_TENANT = (
+        ("PUT", "/users/bob@a.org?force"),
+        ("PUT", "/users/new@a.org"),
+        ("DELETE", "/users/bob@a.org"),
+        ("PUT", "/domains/a.org"),
+        ("DELETE", "/domains/a.org"),
+        ("PUT", "/quota/users/bob@a.org"),
+        ("PUT", "/quota/domains/a.org"),
+    )
+
+    QUOTA_WRITES = tuple(
+        (verb, f"{base}/{limit}")
+        for base in ("/quota/users/bob@a.org", "/quota/domains/a.org")
+        for limit in ("count", "size")
+        for verb in ("PUT", "DELETE")
+    )
+
+    REFUSED_TO_A_READ_ONLY_TENANT = (
+        *NEVER_GRANTED_TO_A_TENANT,
+        *QUOTA_WRITES,
+        ("POST", "/domains/a.org?action=deleteData"),
+        ("POST", "/users/bob@a.org?action=deleteData"),
+        ("POST", "/domains/a.org/templates?action=provision&from=ceo@a.org&folderName=INBOX&prune=true"),
+        ("POST", "/users/bob@a.org/templates?action=provision&from=ceo@a.org"),
+    )
+
+    @staticmethod
+    def read_only(scope: Scope) -> dict[str, bool]:
+        """Every page and section granted, every action refused: a support agent."""
+        scoped = INVENTORY.for_scope(scope.application, scope.mode)
+        return {node.id: node.kind is not Kind.ACTION for node in scoped.nodes}
+
+    def test_a_read_only_tenant_profile_refuses_every_write_of_the_mail_baseline(self):
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        generated = generate(INVENTORY, MAIL_DOMAIN, self.read_only(MAIL_DOMAIN), baseline)
+        resolver = Resolver(expand(generated.rules, baseline))
+        for verb, url in self.REFUSED_TO_A_READ_ONLY_TENANT:
+            assert not resolver.is_allowed(verb, url), f"{verb} {url}"
+        assert resolver.is_allowed("GET", "/quota/users/bob@a.org")
+        assert resolver.is_allowed("GET", "/quota/domains/a.org")
+
+    def test_a_full_tenant_profile_still_refuses_what_the_frontend_never_calls(self):
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline)
+        resolver = Resolver(expand(generated.rules, baseline))
+        for verb, url in self.NEVER_GRANTED_TO_A_TENANT:
+            assert not resolver.is_allowed(verb, url), f"{verb} {url}"
+        for verb, url in self.QUOTA_WRITES:
+            assert resolver.is_allowed(verb, url), f"{verb} {url}"
+
+    def test_the_domain_data_wipe_denied_by_the_mail_baseline_is_granted_when_answered_yes(self):
+        """The baseline denies it: a yes has to come out as an allow before the include."""
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        assert not Resolver(baseline.rules).is_allowed("POST", "/domains/a.org?action=deleteData")
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline)
+        assert Resolver(expand(generated.rules, baseline)).is_allowed(
+            "POST", "/domains/a.org?action=deleteData"
+        )
 
     def test_a_domain_profile_is_never_offered_the_platform_wide_tasks(self):
         """The baseline's leading POST /messages deny would make such a grant dead."""
