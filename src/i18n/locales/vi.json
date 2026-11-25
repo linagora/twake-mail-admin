@@ -644,6 +644,11 @@
     "subtitleMail": "Quản lý các tên miền đã đăng ký trên máy chủ thư.",
     "subtitleCalendar": "Quản lý các tên miền đã đăng ký trên máy chủ lịch.",
     "detailKind": "Miền",
+    "noDomain": {
+      "kind": "Miền không xác định",
+      "missing": "Không có miền nào tên {{domain}} trên máy chủ này.",
+      "back": "Quay lại Miền"
+    },
     "createButton": "Tạo miền",
     "domainName": "Tên miền",
     "createHint": "Hãy chắc chắn đây là miền bạn muốn tạo: người dùng của miền sẽ nhận thư dưới tên này.",

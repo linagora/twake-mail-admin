@@ -650,6 +650,11 @@
     "subtitleMail": "Gestisci i domini registrati sul server di posta.",
     "subtitleCalendar": "Gestisci i domini registrati sul server del calendario.",
     "detailKind": "Dominio",
+    "noDomain": {
+      "kind": "Dominio sconosciuto",
+      "missing": "Su questo server non esiste alcun dominio chiamato {{domain}}.",
+      "back": "Torna ai domini"
+    },
     "createButton": "Crea un dominio",
     "domainName": "Nome del dominio",
     "createHint": "Verifica che sia il dominio voluto: i suoi utenti riceveranno la posta con questo nome.",

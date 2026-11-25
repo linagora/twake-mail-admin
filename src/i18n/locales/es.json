@@ -650,6 +650,11 @@
     "subtitleMail": "Gestione los dominios registrados en el servidor de correo.",
     "subtitleCalendar": "Gestione los dominios registrados en el servidor de calendario.",
     "detailKind": "Dominio",
+    "noDomain": {
+      "kind": "Dominio desconocido",
+      "missing": "No existe ningún dominio llamado {{domain}} en este servidor.",
+      "back": "Volver a Dominios"
+    },
     "createButton": "Crear un dominio",
     "domainName": "Nombre del dominio",
     "createHint": "Compruebe que es el dominio deseado: sus usuarios recibirán el correo con este nombre.",

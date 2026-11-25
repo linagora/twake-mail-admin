@@ -650,6 +650,11 @@
     "subtitleMail": "Manage domains registered on the mail server.",
     "subtitleCalendar": "Manage domains registered on the calendar server.",
     "detailKind": "Domain",
+    "noDomain": {
+      "kind": "Unknown domain",
+      "missing": "No domain named {{domain}} exists on this server.",
+      "back": "Back to Domains"
+    },
     "createButton": "Create a domain",
     "domainName": "Domain name",
     "createHint": "Make sure this is the domain you intend to create: its users will receive mail under it.",
