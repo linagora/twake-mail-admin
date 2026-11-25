@@ -135,7 +135,7 @@ export default function Tasks({ domain }: Props = {}) {
   const sortParam = searchParams.get("sort") as SortField | null;
   const sortField: SortField = sortParam && SORT_FIELD_KEYS.includes(sortParam) ? sortParam : "submitDate";
   const sortAsc = searchParams.get("asc") === "1"; // default: recent first
-  const page = Math.max(1, Math.floor(Number(searchParams.get("page"))) || 1);
+  const requestedPage = Math.max(1, Math.floor(Number(searchParams.get("page"))) || 1);
   const setPage = (next: number) => updateParams({ page: next > 1 ? String(next) : "" }, true);
 
   // The applied type and dates, as a stable key: the list is fetched again only when they change
@@ -212,6 +212,14 @@ export default function Tasks({ domain }: Props = {}) {
     return copy;
   }, [tasks, statusChip, sortField, sortAsc, t]);
 
+  // A page beyond the last one (a stale link, tasks cleaned up since) is brought back to the last one
+  const lastPage = Math.max(1, Math.ceil(sorted.length / PAGE_LIMIT));
+  const page = tasks ? Math.min(requestedPage, lastPage) : requestedPage;
+  useEffect(() => {
+    if (page !== requestedPage) setPage(page);
+    // setPage writes the URL from the latest parameters: only the page values matter here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, requestedPage]);
   const pageTasks = useMemo(() => sorted.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT), [sorted, page]);
   const hasMore = sorted.length > page * PAGE_LIMIT;
 

@@ -436,6 +436,21 @@ describe("tasks: type picker and dates", () => {
     await waitFor(() => expect(api.listTasks).toHaveBeenLastCalledWith({}));
   });
 
+  it("brings a page beyond the last one back to the last page, in the URL too", async () => {
+    api.listTasks.mockResolvedValue(
+      Array.from({ length: 51 }, (_, index) => ({
+        taskId: `task-${index}`,
+        type: `type-${String(index).padStart(2, "0")}`,
+        status: "completed",
+        submitDate: `2026-10-10T06:00:${String(59 - index).padStart(2, "0")}Z`,
+      }))
+    );
+    renderTasks("/tasks?page=999");
+
+    await waitFor(() => expect(screen.getByTestId("location").textContent).toBe("/tasks?page=2"));
+    expect(rowTypes()).toEqual(["type-50"]);
+  });
+
   it("does not keep showing previous tasks when the filtered request fails", async () => {
     api.listTasks.mockResolvedValueOnce([
       { taskId: "task-1", type: "previous-task", status: "completed", submitDate: "2026-10-09T10:00:00Z" },
