@@ -125,6 +125,9 @@ def generate(
         restrictions=_restrictions(granted_keys, scope),
     )
 
+    if scope.is_domain:
+        _refuse_always_denied_grants(granted_keys)
+
     if baseline is None:
         result.rules = _merge_rules(granted_keys, denied=False) or _deny_all(result)
         return result
@@ -142,11 +145,37 @@ def generate(
 #: Denies a DOMAIN profile carries itself, whatever baseline it includes.
 #:
 #: An ``include`` is resolved by the proxy against its *own* classpath resource,
-#: not against the copy vendored here, so a deny that only the vendored copy holds
-#: never applies. webadmin-proxy's ``functional-admin-mail-baseline.json`` still
-#: grants ``/mappings/sources/%@{domain}`` (see ``UPSTREAM.md``): a reverse lookup
-#: listing and removing the sources of *every* domain pointing at the user (#770).
+#: not against the copy vendored here, so a rule that only the vendored copy holds
+#: never applies. Every security difference listed in ``UPSTREAM.md`` therefore has
+#: to be emitted by the generated profile itself.
+#:
+#: Emitted first. webadmin-proxy's ``functional-admin-mail-baseline.json`` still
+#: grants ``/mappings/sources/%@{domain}``: a reverse lookup listing and removing
+#: the sources of *every* domain pointing at the user (#770). A domain grant
+#: matching one of these is an inventory bug (:func:`_refuse_always_denied_grants`).
 DOMAIN_ALWAYS_DENIED = (Rule(endpoint="/mappings/sources/{target}", denied=True),)
+
+#: Emitted after the generated grants, right before the ``include``.
+#:
+#: The proxy's baseline grants ``/users/%@{domain}/*`` and ``/domains/{domain}/*``,
+#: hence template provisioning ``from=`` a user of *any* tenant (#634). The scoped
+#: grant, ``from=%@{domain}``, is emitted ahead of these when answered yes
+#: (:func:`_rules_against_baseline`); anything else reaching them is refused.
+DOMAIN_FALLBACK_DENIED = (
+    Rule(endpoint="/users/{user}/templates", verb=("POST",), denied=True),
+    Rule(endpoint="/domains/{targetDomain}/templates", verb=("POST",), denied=True),
+)
+
+
+def _refuse_always_denied_grants(granted: Sequence[tuple[str, str]]) -> None:
+    """Fail rather than drop a :data:`DOMAIN_ALWAYS_DENIED` rule a grant overlaps."""
+    for rule in DOMAIN_ALWAYS_DENIED:
+        shadowed = _granted_shadowed_by_rule(rule, granted)
+        if shadowed:
+            raise UnscopedDomainRule(
+                f"{shadowed[0]} {shadowed[1]} is granted but {rule.endpoint} is "
+                "never granted to a domain administrator; make it GLOBAL only."
+            )
 
 
 def _rules_against_baseline(
@@ -179,43 +208,27 @@ def _rules_against_baseline(
             continue
         to_deny.append(key)
 
-    extra = [key for key in granted if not resolver.is_allowed(*key)]
+    fallback = DOMAIN_FALLBACK_DENIED if domain else ()
+    extra = [
+        key
+        for key in granted
+        if not resolver.is_allowed(*key) or _shadowed_by_any(key, fallback)
+    ]
 
     # Denies first so they win the first-match race, then the endpoints the
-    # baseline does not cover, then the baseline itself.
+    # baseline does not cover or the fallback denies would block, then those
+    # denies, then the baseline itself.
     return [
-        *(_domain_always_denied(granted, baseline, result) if domain else ()),
+        *(DOMAIN_ALWAYS_DENIED if domain else ()),
         *_merge_rules([(verb, _deny_pattern(pattern)) for verb, pattern in to_deny], denied=True),
         *_merge_rules(extra, denied=False),
+        *fallback,
         IncludeDirective(baseline.uri),
     ]
 
 
-def _domain_always_denied(
-    granted: Sequence[tuple[str, str]], baseline: Profile, result: Generated
-) -> list[Rule]:
-    """:data:`DOMAIN_ALWAYS_DENIED`, but none that would take a grant down.
-
-    Not filtered through the vendored baseline: it already refuses these routes,
-    the proxy's own copy does not.
-    """
-    kept = []
-    for rule in DOMAIN_ALWAYS_DENIED:
-        shadowed = _granted_shadowed_by_rule(rule, granted)
-        if shadowed:
-            result.warnings.append(
-                _label(
-                    "warn.baseline-shadow",
-                    verb="/".join(rule.verb) if rule.verb else "*",
-                    pattern=rule.endpoint,
-                    profile=baseline.uri,
-                    shadow_verb=shadowed[0],
-                    shadow_pattern=shadowed[1],
-                )
-            )
-            continue
-        kept.append(rule)
-    return kept
+def _shadowed_by_any(key: tuple[str, str], rules: Sequence[Rule]) -> bool:
+    return any(_granted_shadowed_by_rule(rule, [key]) for rule in rules)
 
 
 def _deny_pattern(pattern: str) -> str:
