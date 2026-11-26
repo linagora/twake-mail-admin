@@ -80,3 +80,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #799](https://github.com/linagora/twake-mail-admin/issues/799), following twake-calendar-side-service [3c5855a](https://github.com/linagora/twake-calendar-side-service/commit/3c5855a433c53b0bce37e1214da639e12ef7d930) which answers 400 to such a `PUT /domains/{domain}/admins/{username}` while `DELETE` still works.
 - Why: the console used to offer and send an admin the server now refuses, and gave no hint that admins granted before the check can no longer be granted again.
 - Scope: desktop and mobile, calendar domain page and domain admin "Calendar Admins" page, Domain Admins section.
+
+## 2026-11-26, [Security] Refusing team mailbox quota edits also refuses the route setting both limits
+
+- Decision: the profile editor's "Update the quota" action of the team mailbox Quota sub-tab (`domains.team-mailboxes.quota.save`) also covers `PUT /domains/{domain}/team-mailboxes/{mailbox}/quota/limit`. The console never calls this route. It sets both limits at once, so a generated profile that refuses the action now denies it before including the mail baseline. validation.md lists it as a "never called" row so the inventory stays aligned with it.
+- Decided by: chibenwa, following webadmin-proxy [PR #74](https://github.com/linagora/webadmin-proxy/pull/74) (issue #73), which closed the same gap in `linagora-mail-functional-support.json`.
+- Why: the mail baseline allows `/domains/{domain}/*`, and the editor only denied `…/quota/limit/count` and `…/size`. A support profile answering "no" to quota edits could still lift every team mailbox limit of its tenant.
+- Scope: profile editor (generated profiles reusing the mail baseline), validation.md. No UI change.
