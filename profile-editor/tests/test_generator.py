@@ -35,6 +35,29 @@ def endpoints_of(generated: Generated) -> set[tuple[str, str]]:
     }
 
 
+#: The rules the vendored mail baseline holds and webadmin-proxy's own copy does not
+#: (UPSTREAM.md, "Known, deliberate difference").
+VENDORED_ONLY_MAIL_RULES = (
+    Rule(endpoint="/users/%@{domain}/templates?action=provision&from=%@{domain}", verb=("POST",)),
+    Rule(endpoint="/users/{user}/templates", verb=("POST",), denied=True),
+    Rule(endpoint="/domains/{domain}/templates?action=provision&from=%@{domain}", verb=("POST",)),
+    Rule(endpoint="/domains/{targetDomain}/templates", verb=("POST",), denied=True),
+    Rule(endpoint="/mappings/sources/{target}", denied=True),
+)
+
+
+def upstream_mail_baseline():
+    """The proxy's own classpath copy, which an include really expands to.
+
+    The vendored one minus its local security differences, plus the reverse
+    lookup grant upstream still holds (see UPSTREAM.md).
+    """
+    vendored = find_profile("classpath://functional-admin-mail-baseline.json")
+    rules = tuple(rule for rule in vendored.rules if rule not in VENDORED_ONLY_MAIL_RULES)
+    assert len(rules) == len(vendored.rules) - len(VENDORED_ONLY_MAIL_RULES)
+    return replace(vendored, rules=(*rules, Rule(endpoint="/mappings/sources/%@{domain}")))
+
+
 def expand(rules, baseline) -> list[Rule]:
     """Replace the include directive by the baseline's rules, as the proxy does."""
     return [
@@ -251,12 +274,11 @@ class GeneratorTest(unittest.TestCase):
     def test_the_mail_baseline_cannot_provision_templates_from_another_domain(self):
         baseline = find_profile("classpath://functional-admin-mail-baseline.json")
         generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline)
-        expanded = [
-            expanded_rule
-            for rule in generated.rules
-            for expanded_rule in (baseline.rules if isinstance(rule, IncludeDirective) else [rule])
-        ]
-        for resolver in (Resolver(baseline.rules), Resolver(expanded)):
+        for resolver in (
+            Resolver(baseline.rules),
+            Resolver(expand(generated.rules, baseline)),
+            Resolver(expand(generated.rules, upstream_mail_baseline())),
+        ):
             for url in self.PROVISION_FROM_OTHER_DOMAIN:
                 assert not resolver.is_allowed("POST", url), url
             for url in self.PROVISION_FROM_OWN_DOMAIN:
@@ -370,6 +392,19 @@ class GeneratorTest(unittest.TestCase):
         resolver = Resolver(expand(generated.rules, baseline))
         assert resolver.is_allowed("POST", "/messages?task=SolveInconsistencies")
         assert resolver.is_allowed("POST", "/quota/users?task=RecomputeCurrentQuotas")
+
+    def test_the_proxy_baseline_lets_a_tenant_provision_templates_from_another_domain(self):
+        """Why the generated profile has to refuse it itself (#634 is vendored only)."""
+        resolver = Resolver(upstream_mail_baseline().rules)
+        for url in self.PROVISION_FROM_OTHER_DOMAIN:
+            assert resolver.is_allowed("POST", url), url
+
+    def test_a_domain_profile_refusing_templates_refuses_them_over_the_proxy_baseline(self):
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        generated = generate(INVENTORY, MAIL_DOMAIN, self.read_only(MAIL_DOMAIN), baseline)
+        resolver = Resolver(expand(generated.rules, upstream_mail_baseline()))
+        for url in (*self.PROVISION_FROM_OTHER_DOMAIN, *self.PROVISION_FROM_OWN_DOMAIN):
+            assert not resolver.is_allowed("POST", url), url
 
     def test_a_domain_admin_still_sees_the_provision_templates_buttons(self):
         resolver = Resolver(generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN)).rules)
@@ -593,6 +628,46 @@ class GeneratorTest(unittest.TestCase):
             for verb in ("GET", "DELETE"):
                 for url in self.REVERSE_MAPPING_URLS:
                     assert not resolver.is_allowed(verb, url), (verb, url)
+
+    def test_a_domain_profile_refuses_the_reverse_mapping_lookup_the_proxy_baseline_grants(self):
+        """The deny has to live in the generated profile, not the vendored baseline.
+
+        Generated against the vendored copy, as the CLI does, but expanded against
+        the proxy's own one, as webadmin-proxy does.
+        """
+        upstream = upstream_mail_baseline()
+        assert Resolver(
+            [replace(rule, endpoint=rule.endpoint.replace("{domain}", "a.org")) for rule in upstream.rules]
+        ).is_allowed("GET", self.REVERSE_MAPPING_URLS[0])
+
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), baseline)
+        resolver = Resolver(
+            [
+                replace(rule, endpoint=rule.endpoint.replace("{domain}", "a.org"))
+                for rule in expand(generated.rules, upstream)
+            ]
+        )
+        for verb in ("GET", "DELETE"):
+            for url in self.REVERSE_MAPPING_URLS:
+                assert not resolver.is_allowed(verb, url), (verb, url)
+        assert resolver.is_allowed("GET", "/users/alice@a.org/mailboxes")
+
+    def test_a_global_profile_carries_no_domain_only_deny(self):
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        generated = generate(INVENTORY, MAIL_GLOBAL, grant_all(MAIL_GLOBAL), baseline)
+        assert not any(rule.denied for rule in generated.rules if isinstance(rule, Rule))
+
+    def test_a_domain_grant_of_the_reverse_mapping_lookup_is_refused(self):
+        """Dropping the always-deny instead would reopen #770 with a mere warning."""
+        inventory = Inventory(
+            pages=(page("p", "P", "P", endpoints=[must("GET", "/mappings/sources/{username}")]),)
+        )
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        for profile in (None, baseline):
+            with self.assertRaises(UnscopedDomainRule) as raised:
+                generate(inventory, MAIL_DOMAIN, {"p": True}, profile)
+            assert "GET /mappings/sources/%@{domain}" in str(raised.exception)
 
     def test_a_platform_operator_keeps_the_reverse_mapping_lookup(self):
         resolver = Resolver(generate(INVENTORY, MAIL_GLOBAL, grant_all(MAIL_GLOBAL)).rules)
