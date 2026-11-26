@@ -325,9 +325,21 @@ class GeneratorTest(unittest.TestCase):
         for verb in ("PUT", "DELETE")
     )
 
+    #: The base route sets both limits at once: the frontend never calls it, but a
+    #: refused "save" must not leave it to the baseline's /domains/{domain}/* allow.
+    TEAM_MAILBOX_QUOTA_WRITES = (
+        ("PUT", "/domains/a.org/team-mailboxes/sales/quota/limit"),
+        *(
+            (verb, f"/domains/a.org/team-mailboxes/sales/quota/limit/{limit}")
+            for limit in ("count", "size")
+            for verb in ("PUT", "DELETE")
+        ),
+    )
+
     REFUSED_TO_A_READ_ONLY_TENANT = (
         *NEVER_GRANTED_TO_A_TENANT,
         *QUOTA_WRITES,
+        *TEAM_MAILBOX_QUOTA_WRITES,
         ("POST", "/domains/a.org?action=deleteData"),
         ("POST", "/users/bob@a.org?action=deleteData"),
         ("POST", "/domains/a.org/templates?action=provision&from=ceo@a.org&folderName=INBOX&prune=true"),
@@ -348,6 +360,7 @@ class GeneratorTest(unittest.TestCase):
             assert not resolver.is_allowed(verb, url), f"{verb} {url}"
         assert resolver.is_allowed("GET", "/quota/users/bob@a.org")
         assert resolver.is_allowed("GET", "/quota/domains/a.org")
+        assert resolver.is_allowed("GET", "/domains/a.org/team-mailboxes/sales/quota")
 
     def test_a_full_tenant_profile_still_refuses_what_the_frontend_never_calls(self):
         baseline = find_profile("classpath://functional-admin-mail-baseline.json")
@@ -355,7 +368,7 @@ class GeneratorTest(unittest.TestCase):
         resolver = Resolver(expand(generated.rules, baseline))
         for verb, url in self.NEVER_GRANTED_TO_A_TENANT:
             assert not resolver.is_allowed(verb, url), f"{verb} {url}"
-        for verb, url in self.QUOTA_WRITES:
+        for verb, url in (*self.QUOTA_WRITES, *self.TEAM_MAILBOX_QUOTA_WRITES):
             assert resolver.is_allowed(verb, url), f"{verb} {url}"
 
     def test_the_domain_data_wipe_denied_by_the_mail_baseline_is_granted_when_answered_yes(self):

@@ -235,6 +235,7 @@ The usage figures come from the same call as the tab load; there is no second en
 | "Edit limits" dialog: size, emptied field | DELETE | `/domains/{domain}/team-mailboxes/{mailbox}/quota/limit/size` | MAY (a refusal is shown in the dialog) |
 | "Remove specific limits" button | DELETE | `/domains/{domain}/team-mailboxes/{mailbox}/quota/limit/size` | MAY (do not show the button if missing) |
 | "Remove specific limits" button, message count | DELETE | `/domains/{domain}/team-mailboxes/{mailbox}/quota/limit/count` | MAY |
+| Never called: sets both limits at once, so a profile refusing "Edit limits" must refuse it too | PUT | `/domains/{domain}/team-mailboxes/{mailbox}/quota/limit` | MAY |
 
 #### Team mailbox detail — Folders sub-tab
 

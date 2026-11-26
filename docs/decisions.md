@@ -81,6 +81,12 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Why: the console used to offer and send an admin the server now refuses, and gave no hint that admins granted before the check can no longer be granted again.
 - Scope: desktop and mobile, calendar domain page and domain admin "Calendar Admins" page, Domain Admins section.
 
+## 2026-11-26, [Security] Refusing team mailbox quota edits also refuses the route setting both limits
+
+- Decision: the profile editor's "Update the quota" action of the team mailbox Quota sub-tab (`domains.team-mailboxes.quota.save`) also covers `PUT /domains/{domain}/team-mailboxes/{mailbox}/quota/limit`. The console never calls this route. It sets both limits at once, so a generated profile that refuses the action now denies it before including the mail baseline. validation.md lists it as a "never called" row so the inventory stays aligned with it.
+- Decided by: chibenwa, following webadmin-proxy [PR #74](https://github.com/linagora/webadmin-proxy/pull/74) (issue #73), which closed the same gap in `linagora-mail-functional-support.json`.
+- Why: the mail baseline allows `/domains/{domain}/*`, and the editor only denied `…/quota/limit/count` and `…/size`. A support profile answering "no" to quota edits could still lift every team mailbox limit of its tenant.
+- Scope: profile editor (generated profiles reusing the mail baseline), validation.md. No UI change.
 ## 2026-11-26, [Architecture] A generated DOMAIN profile carries the vendored-only security rules itself
 
 - Decision: with a baseline, every generated DOMAIN profile starts with `{"denied": true, "endpoint": "/mappings/sources/{target}"}` (`DOMAIN_ALWAYS_DENIED` in `profile-editor/twake_profile_editor/generator.py`), before its other denies, and ends, right before its `include`, with the `POST /users/{user}/templates` and `POST /domains/{targetDomain}/templates` denies of #634 (`DOMAIN_FALLBACK_DENIED`). A granted template provisioning is emitted as an allow ahead of those denies, even though the vendored baseline allows it. None of these is filtered through the vendored baseline. A DOMAIN grant that `DOMAIN_ALWAYS_DENIED` would block makes generation fail (`UnscopedDomainRule`), with or without a baseline: it is an inventory bug, never a reason to drop the deny. GLOBAL profiles carry none of them. This completes the 2026-11-25 decision "Only platform operators see and remove the sources pointing at a user" and #634: the vendored baseline's rules stay, but are no longer what protects a deployment.

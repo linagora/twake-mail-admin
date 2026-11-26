@@ -440,6 +440,9 @@ DOMAINS = page(
                             endpoints=[
                                 may("PUT", f"{_TM}/quota/limit/count"),
                                 may("PUT", f"{_TM}/quota/limit/size"),
+                                # Never called by the UI, but sets both limits:
+                                # refusing "save" must refuse it too.
+                                may("PUT", f"{_TM}/quota/limit"),
                             ],
                         ),
                         action(
