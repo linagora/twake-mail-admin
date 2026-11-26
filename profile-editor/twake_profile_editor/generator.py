@@ -125,11 +125,16 @@ def generate(
         restrictions=_restrictions(granted_keys, scope),
     )
 
+    if scope.is_domain:
+        _refuse_always_denied_grants(granted_keys)
+
     if baseline is None:
         result.rules = _merge_rules(granted_keys, denied=False) or _deny_all(result)
         return result
 
-    result.rules = _rules_against_baseline(granted_keys, all_keys, baseline, result)
+    result.rules = _rules_against_baseline(
+        granted_keys, all_keys, baseline, result, domain=scope.is_domain
+    )
     return result
 
 
@@ -137,12 +142,49 @@ def generate(
 # Baseline reuse
 # ---------------------------------------------------------------------------
 
+#: Denies a DOMAIN profile carries itself, whatever baseline it includes.
+#:
+#: An ``include`` is resolved by the proxy against its *own* classpath resource,
+#: not against the copy vendored here, so a rule that only the vendored copy holds
+#: never applies. Every security difference listed in ``UPSTREAM.md`` therefore has
+#: to be emitted by the generated profile itself.
+#:
+#: Emitted first. webadmin-proxy's ``functional-admin-mail-baseline.json`` still
+#: grants ``/mappings/sources/%@{domain}``: a reverse lookup listing and removing
+#: the sources of *every* domain pointing at the user (#770). A domain grant
+#: matching one of these is an inventory bug (:func:`_refuse_always_denied_grants`).
+DOMAIN_ALWAYS_DENIED = (Rule(endpoint="/mappings/sources/{target}", denied=True),)
+
+#: Emitted after the generated grants, right before the ``include``.
+#:
+#: The proxy's baseline grants ``/users/%@{domain}/*`` and ``/domains/{domain}/*``,
+#: hence template provisioning ``from=`` a user of *any* tenant (#634). The scoped
+#: grant, ``from=%@{domain}``, is emitted ahead of these when answered yes
+#: (:func:`_rules_against_baseline`); anything else reaching them is refused.
+DOMAIN_FALLBACK_DENIED = (
+    Rule(endpoint="/users/{user}/templates", verb=("POST",), denied=True),
+    Rule(endpoint="/domains/{targetDomain}/templates", verb=("POST",), denied=True),
+)
+
+
+def _refuse_always_denied_grants(granted: Sequence[tuple[str, str]]) -> None:
+    """Fail rather than drop a :data:`DOMAIN_ALWAYS_DENIED` rule a grant overlaps."""
+    for rule in DOMAIN_ALWAYS_DENIED:
+        shadowed = _granted_shadowed_by_rule(rule, granted)
+        if shadowed:
+            raise UnscopedDomainRule(
+                f"{shadowed[0]} {shadowed[1]} is granted but {rule.endpoint} is "
+                "never granted to a domain administrator; make it GLOBAL only."
+            )
+
 
 def _rules_against_baseline(
     granted: Sequence[tuple[str, str]],
     candidates: Sequence[tuple[str, str]],
     baseline: Profile,
     result: Generated,
+    *,
+    domain: bool = False,
 ) -> list[Rule | IncludeDirective]:
     resolver = Resolver(baseline.rules)
     granted_set = set(granted)
@@ -166,15 +208,27 @@ def _rules_against_baseline(
             continue
         to_deny.append(key)
 
-    extra = [key for key in granted if not resolver.is_allowed(*key)]
+    fallback = DOMAIN_FALLBACK_DENIED if domain else ()
+    extra = [
+        key
+        for key in granted
+        if not resolver.is_allowed(*key) or _shadowed_by_any(key, fallback)
+    ]
 
     # Denies first so they win the first-match race, then the endpoints the
-    # baseline does not cover, then the baseline itself.
+    # baseline does not cover or the fallback denies would block, then those
+    # denies, then the baseline itself.
     return [
+        *(DOMAIN_ALWAYS_DENIED if domain else ()),
         *_merge_rules([(verb, _deny_pattern(pattern)) for verb, pattern in to_deny], denied=True),
         *_merge_rules(extra, denied=False),
+        *fallback,
         IncludeDirective(baseline.uri),
     ]
+
+
+def _shadowed_by_any(key: tuple[str, str], rules: Sequence[Rule]) -> bool:
+    return any(_granted_shadowed_by_rule(rule, [key]) for rule in rules)
 
 
 def _deny_pattern(pattern: str) -> str:
@@ -204,11 +258,14 @@ def _granted_shadowed_by(
     one would silently take the other down with it.
     """
     verb, pattern = deny_key
-    probe = Resolver([Rule(endpoint=pattern, verb=(verb,))])
-    for granted_key in granted:
-        if probe.is_allowed(*granted_key):
-            return granted_key
-    return None
+    return _granted_shadowed_by_rule(Rule(endpoint=pattern, verb=(verb,)), granted)
+
+
+def _granted_shadowed_by_rule(
+    rule: Rule, granted: Sequence[tuple[str, str]]
+) -> tuple[str, str] | None:
+    probe = Resolver([Rule(endpoint=rule.endpoint, verb=rule.verb)])
+    return next((key for key in granted if probe.is_allowed(*key)), None)
 
 
 # ---------------------------------------------------------------------------

@@ -75,6 +75,21 @@ in any domain, whose mapping points at the user. Pinning the user to the caller'
 domain pins the target, not the owner of the records, so a tenant admin could read
 and remove other tenants' aliases, forwards and groups pointing at their users.
 
+Neither difference protects anything at run time: the proxy resolves a
+`classpath://` include against its *own* resource, which still grants both
+routes. A generated DOMAIN profile therefore carries them itself (#803):
+
+- `DOMAIN_ALWAYS_DENIED` in `generator.py`, the reverse lookup deny, comes first.
+  A DOMAIN grant it would block makes generation fail.
+- `DOMAIN_FALLBACK_DENIED`, the two template denies, comes right before the
+  `include`; a granted template provisioning (`from=%@{domain}`) is emitted ahead
+  of them even though the vendored copy already allows it.
+
+`upstream_mail_baseline()` in `tests/test_generator.py` rebuilds the proxy's copy
+from the vendored one minus `VENDORED_ONLY_MAIL_RULES`, and the generator tests
+expand the include against it. Any future vendored-only rule needs the same
+treatment, and an entry in that list.
+
 Both are security fixes that belong upstream; until webadmin-proxy ships them,
 these are the only accepted differences:
 
