@@ -75,6 +75,14 @@ in any domain, whose mapping points at the user. Pinning the user to the caller'
 domain pins the target, not the owner of the records, so a tenant admin could read
 and remove other tenants' aliases, forwards and groups pointing at their users.
 
+This deny protects nothing at run time: the proxy resolves a `classpath://`
+include against its *own* resource, which still grants the route. A generated
+DOMAIN profile therefore carries the deny itself, ahead of its `include`
+(`DOMAIN_ALWAYS_DENIED` in `generator.py`, #803), and
+`test_a_domain_profile_refuses_the_reverse_mapping_lookup_the_proxy_baseline_grants`
+expands the include against the upstream rule set. Any future vendored-only deny
+needs the same treatment.
+
 Both are security fixes that belong upstream; until webadmin-proxy ships them,
 these are the only accepted differences:
 

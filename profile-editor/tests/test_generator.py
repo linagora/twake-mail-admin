@@ -581,6 +581,44 @@ class GeneratorTest(unittest.TestCase):
                 for url in self.REVERSE_MAPPING_URLS:
                     assert not resolver.is_allowed(verb, url), (verb, url)
 
+    @staticmethod
+    def upstream_mail_baseline():
+        """The proxy's own classpath copy: the vendored one minus its #770 difference.
+
+        An include is resolved by webadmin-proxy against its own resource, which
+        still grants the reverse lookup (see UPSTREAM.md).
+        """
+        vendored = find_profile("classpath://functional-admin-mail-baseline.json")
+        vendored_deny = Rule(endpoint="/mappings/sources/{target}", denied=True)
+        upstream_grant = Rule(endpoint="/mappings/sources/%@{domain}")
+        rules = tuple(rule for rule in vendored.rules if rule != vendored_deny)
+        assert len(rules) == len(vendored.rules) - 1
+        return replace(vendored, rules=(*rules, upstream_grant))
+
+    def test_a_domain_profile_refuses_the_reverse_mapping_lookup_the_proxy_baseline_grants(self):
+        """The deny has to live in the generated profile, not the vendored baseline."""
+        upstream = self.upstream_mail_baseline()
+        assert Resolver(
+            [replace(rule, endpoint=rule.endpoint.replace("{domain}", "a.org")) for rule in upstream.rules]
+        ).is_allowed("GET", self.REVERSE_MAPPING_URLS[0])
+
+        generated = generate(INVENTORY, MAIL_DOMAIN, grant_all(MAIL_DOMAIN), upstream)
+        resolver = Resolver(
+            [
+                replace(rule, endpoint=rule.endpoint.replace("{domain}", "a.org"))
+                for rule in expand(generated.rules, upstream)
+            ]
+        )
+        for verb in ("GET", "DELETE"):
+            for url in self.REVERSE_MAPPING_URLS:
+                assert not resolver.is_allowed(verb, url), (verb, url)
+        assert resolver.is_allowed("GET", "/users/alice@a.org/mailboxes")
+
+    def test_a_global_profile_carries_no_domain_only_deny(self):
+        baseline = find_profile("classpath://functional-admin-mail-baseline.json")
+        generated = generate(INVENTORY, MAIL_GLOBAL, grant_all(MAIL_GLOBAL), baseline)
+        assert Rule(endpoint="/mappings/sources/{target}", denied=True) not in generated.rules
+
     def test_a_platform_operator_keeps_the_reverse_mapping_lookup(self):
         resolver = Resolver(generate(INVENTORY, MAIL_GLOBAL, grant_all(MAIL_GLOBAL)).rules)
         for verb in ("GET", "DELETE"):

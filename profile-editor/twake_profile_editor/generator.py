@@ -129,7 +129,9 @@ def generate(
         result.rules = _merge_rules(granted_keys, denied=False) or _deny_all(result)
         return result
 
-    result.rules = _rules_against_baseline(granted_keys, all_keys, baseline, result)
+    result.rules = _rules_against_baseline(
+        granted_keys, all_keys, baseline, result, domain=scope.is_domain
+    )
     return result
 
 
@@ -137,12 +139,23 @@ def generate(
 # Baseline reuse
 # ---------------------------------------------------------------------------
 
+#: Denies a DOMAIN profile carries itself, whatever baseline it includes.
+#:
+#: An ``include`` is resolved by the proxy against its *own* classpath resource,
+#: not against the copy vendored here, so a deny that only the vendored copy holds
+#: never applies. webadmin-proxy's ``functional-admin-mail-baseline.json`` still
+#: grants ``/mappings/sources/%@{domain}`` (see ``UPSTREAM.md``): a reverse lookup
+#: listing and removing the sources of *every* domain pointing at the user (#770).
+DOMAIN_ALWAYS_DENIED = (Rule(endpoint="/mappings/sources/{target}", denied=True),)
+
 
 def _rules_against_baseline(
     granted: Sequence[tuple[str, str]],
     candidates: Sequence[tuple[str, str]],
     baseline: Profile,
     result: Generated,
+    *,
+    domain: bool = False,
 ) -> list[Rule | IncludeDirective]:
     resolver = Resolver(baseline.rules)
     granted_set = set(granted)
@@ -171,10 +184,38 @@ def _rules_against_baseline(
     # Denies first so they win the first-match race, then the endpoints the
     # baseline does not cover, then the baseline itself.
     return [
+        *(_domain_always_denied(granted, baseline, result) if domain else ()),
         *_merge_rules([(verb, _deny_pattern(pattern)) for verb, pattern in to_deny], denied=True),
         *_merge_rules(extra, denied=False),
         IncludeDirective(baseline.uri),
     ]
+
+
+def _domain_always_denied(
+    granted: Sequence[tuple[str, str]], baseline: Profile, result: Generated
+) -> list[Rule]:
+    """:data:`DOMAIN_ALWAYS_DENIED`, but none that would take a grant down.
+
+    Not filtered through the vendored baseline: it already refuses these routes,
+    the proxy's own copy does not.
+    """
+    kept = []
+    for rule in DOMAIN_ALWAYS_DENIED:
+        shadowed = _granted_shadowed_by_rule(rule, granted)
+        if shadowed:
+            result.warnings.append(
+                _label(
+                    "warn.baseline-shadow",
+                    verb="/".join(rule.verb) if rule.verb else "*",
+                    pattern=rule.endpoint,
+                    profile=baseline.uri,
+                    shadow_verb=shadowed[0],
+                    shadow_pattern=shadowed[1],
+                )
+            )
+            continue
+        kept.append(rule)
+    return kept
 
 
 def _deny_pattern(pattern: str) -> str:
@@ -204,11 +245,14 @@ def _granted_shadowed_by(
     one would silently take the other down with it.
     """
     verb, pattern = deny_key
-    probe = Resolver([Rule(endpoint=pattern, verb=(verb,))])
-    for granted_key in granted:
-        if probe.is_allowed(*granted_key):
-            return granted_key
-    return None
+    return _granted_shadowed_by_rule(Rule(endpoint=pattern, verb=(verb,)), granted)
+
+
+def _granted_shadowed_by_rule(
+    rule: Rule, granted: Sequence[tuple[str, str]]
+) -> tuple[str, str] | None:
+    probe = Resolver([Rule(endpoint=rule.endpoint, verb=rule.verb)])
+    return next((key for key in granted if probe.is_allowed(*key)), None)
 
 
 # ---------------------------------------------------------------------------

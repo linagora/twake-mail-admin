@@ -80,3 +80,10 @@ Categories: UX, UI, Product, Architecture, Infra, Tech.
 - Decided by: chibenwa, [issue #799](https://github.com/linagora/twake-mail-admin/issues/799), following twake-calendar-side-service [3c5855a](https://github.com/linagora/twake-calendar-side-service/commit/3c5855a433c53b0bce37e1214da639e12ef7d930) which answers 400 to such a `PUT /domains/{domain}/admins/{username}` while `DELETE` still works.
 - Why: the console used to offer and send an admin the server now refuses, and gave no hint that admins granted before the check can no longer be granted again.
 - Scope: desktop and mobile, calendar domain page and domain admin "Calendar Admins" page, Domain Admins section.
+
+## 2026-11-26, [Architecture] A generated DOMAIN profile carries the reverse mapping lookup deny itself
+
+- Decision: with a baseline, every generated DOMAIN profile starts with `{"denied": true, "endpoint": "/mappings/sources/{target}"}` (`DOMAIN_ALWAYS_DENIED` in `profile-editor/twake_profile_editor/generator.py`), before its other denies and its `include`. It is not filtered through the vendored baseline, and is left out, with a warning, only when it would block a granted endpoint. GLOBAL profiles do not carry it. This completes the 2026-11-25 decision "Only platform operators see and remove the sources pointing at a user": the vendored baseline's deny stays, but is no longer what protects a deployment.
+- Decided by: chibenwa, [issue #803](https://github.com/linagora/twake-mail-admin/issues/803) (twake-qa security review SEV-1 of 2026-11-26); the narrow fixed list rather than a deny derived from every GLOBAL-only endpoint chosen by agent (PR for #803), to be confirmed by chibenwa.
+- Why: webadmin-proxy resolves `classpath://functional-admin-mail-baseline.json` against its own resource, which still grants `/mappings/sources/%@{domain}`; a deny held only by the vendored copy never applies, and the generator's tests and `--check` read that copy.
+- Scope: profile editor, generated DOMAIN profiles reusing a baseline. Profiles generated since #770 must be regenerated. The change is still due in webadmin-proxy's own baselines.
